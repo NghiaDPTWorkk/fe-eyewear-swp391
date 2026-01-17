@@ -39,9 +39,9 @@ export default function TestButton() {
       </Section>
 
       <Section title="Sizes">
-        <Button size="sm">Small</Button>
-        <Button size="md">Medium</Button>
-        <Button size="lg">Large</Button>
+        <Button size="sm" colorScheme="neutral">Small</Button>
+        <Button size="md" colorScheme="neutral">Medium</Button>
+        <Button size="lg" colorScheme="neutral">Large</Button>
       </Section>
 
       <Section title="With Icons">

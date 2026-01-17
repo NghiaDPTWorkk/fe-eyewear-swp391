@@ -1,0 +1,40 @@
+.textarea {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  background: white;
+  color: #1f2937;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--color-primary-500);
+  box-shadow: 0 0 0 3px var(--color-primary-100);
+}
+
+.textarea::placeholder {
+  color: #9ca3af;
+}
+
+/* Sizes */
+.textarea--sm { padding: 0.5rem; font-size: 0.875rem; min-height: 4rem; }
+.textarea--md { padding: 0.75rem; font-size: 0.9375rem; min-height: 5rem; }
+.textarea--lg { padding: 1rem; font-size: 1rem; min-height: 6rem; }
+
+/* States */
+.textarea--invalid {
+  border-color: #dc2626;
+}
+
+.textarea--invalid:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px #fef2f2;
+}
+
+.textarea--disabled {
+  background: #f3f4f6;
+  cursor: not-allowed;
+  opacity: 0.6;
+}

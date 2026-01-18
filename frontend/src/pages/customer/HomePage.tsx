@@ -1,5 +1,6 @@
 import TestButton from '@/test/Button/TestButton'
 import TestInput from '@/test/Input/TestInput'
+import TestSelection from '@/test/Selection/TestSelection'
 
 export const HomePage = () => {
   return (
@@ -15,6 +16,11 @@ export const HomePage = () => {
         Input Components
       </h2>
       <TestInput />
+
+      <h2 style={{ marginTop: '3rem', marginBottom: '1rem', borderBottom: '1px solid #e5e7eb', paddingBottom: '0.5rem' }}>
+        Selection Components
+      </h2>
+      <TestSelection />
     </div>
   )
 }

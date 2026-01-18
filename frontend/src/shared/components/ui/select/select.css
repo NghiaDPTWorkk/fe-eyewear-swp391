@@ -1,0 +1,59 @@
+.select {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.select__input {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  background: white;
+  color: #1f2937;
+  cursor: pointer;
+  appearance: none;
+  transition: all 0.2s ease;
+  padding-right: 2.5rem;
+}
+
+.select__input:focus {
+  outline: none;
+  border-color: var(--color-primary-500);
+  box-shadow: 0 0 0 3px var(--color-primary-100);
+}
+
+/* Sizes */
+.select--sm .select__input { height: 2rem; padding: 0 0.5rem; font-size: 0.875rem; }
+.select--md .select__input { height: 2.5rem; padding: 0 0.75rem; font-size: 0.9375rem; }
+.select--lg .select__input { height: 3rem; padding: 0 1rem; font-size: 1rem; }
+
+/* States */
+.select--invalid .select__input {
+  border-color: #dc2626;
+}
+
+.select--invalid .select__input:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px #fef2f2;
+}
+
+.select--disabled {
+  opacity: 0.6;
+}
+
+.select--disabled .select__input {
+  background: #f3f4f6;
+  cursor: not-allowed;
+}
+
+/* Arrow */
+.select__arrow {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}

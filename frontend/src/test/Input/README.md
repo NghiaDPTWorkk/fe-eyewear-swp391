@@ -14,9 +14,9 @@ import { Input, Textarea, FormField } from '@/shared/components/ui'
 |------|------|---------|-------|
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Kích thước |
 | `isInvalid` | `boolean` | `false` | Trạng thái lỗi |
+| `isDisabled` | `boolean` | `false` | Disabled state |
 | `leftElement` | `ReactNode` | - | Element bên trái |
 | `rightElement` | `ReactNode` | - | Element bên phải |
-| `disabled` | `boolean` | `false` | Disabled state |
 | + tất cả props của `<input>` |
 
 ## Ví dụ
@@ -34,7 +34,7 @@ import { Input, Textarea, FormField } from '@/shared/components/ui'
 
 // States
 <Input isInvalid placeholder="Lỗi" />
-<Input disabled placeholder="Disabled" />
+<Input isDisabled placeholder="Disabled" />
 ```
 
 ---
@@ -46,8 +46,8 @@ import { Input, Textarea, FormField } from '@/shared/components/ui'
 |------|------|---------|-------|
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Kích thước |
 | `isInvalid` | `boolean` | `false` | Trạng thái lỗi |
+| `isDisabled` | `boolean` | `false` | Disabled state |
 | `resize` | `'none' \| 'vertical' \| 'horizontal' \| 'both'` | `'vertical'` | Resize behavior |
-| `disabled` | `boolean` | `false` | Disabled state |
 | + tất cả props của `<textarea>` |
 
 ## Ví dụ
@@ -64,6 +64,7 @@ import { Input, Textarea, FormField } from '@/shared/components/ui'
 
 // States
 <Textarea isInvalid placeholder="Lỗi" />
+<Textarea isDisabled placeholder="Disabled" />
 ```
 
 ---
@@ -77,30 +78,30 @@ Wrapper component cho Input/Textarea với label, error, và helper text.
 | Prop | Type | Default | Mô tả |
 |------|------|---------|-------|
 | `label` | `string` | **Required** | Label text |
-| `id` | `string` | auto | ID cho label htmlFor |
+| `fieldId` | `string` | auto | ID cho label htmlFor |
 | `error` | `string` | - | Error message |
 | `helperText` | `string` | - | Helper text |
-| `required` | `boolean` | `false` | Hiện dấu * |
+| `isRequired` | `boolean` | `false` | Hiện dấu * |
 | `children` | `ReactNode` | **Required** | Input/Textarea |
 
 ## Ví dụ
 ```tsx
-// Cơ bản - truyền cùng id cho FormField và Input
-<FormField label="Email" id="email" required>
+// Cơ bản - truyền cùng fieldId cho FormField và id cho Input
+<FormField label="Email" fieldId="email" isRequired>
   <Input type="email" id="email" placeholder="example@email.com" />
 </FormField>
 
 // Với error
-<FormField label="Mật khẩu" id="password" error="Mật khẩu phải có ít nhất 8 ký tự">
+<FormField label="Mật khẩu" fieldId="password" error="Mật khẩu phải có ít nhất 8 ký tự">
   <Input type="password" id="password" isInvalid />
 </FormField>
 
 // Với helper text
-<FormField label="Mô tả" id="desc" helperText="Tối đa 500 ký tự">
+<FormField label="Mô tả" fieldId="desc" helperText="Tối đa 500 ký tự">
   <Textarea id="desc" />
 </FormField>
 ```
 
 ## Lưu ý quan trọng
-- **Phải truyền cùng `id`** vào cả FormField và Input để click label focus input
+- **Phải truyền cùng `fieldId`** vào FormField và `id` vào Input để click label focus input
 - Error và helperText không hiển thị cùng lúc (error ưu tiên)

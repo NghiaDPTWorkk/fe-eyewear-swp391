@@ -16,46 +16,42 @@ const EyeIcon = () => (
 
 export default function TestInput() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-      {/* Input cơ bản */}
+    <div className="flex flex-col gap-8 p-4">
       <Section title="Input Sizes">
         <Input size="sm" placeholder="Small" />
         <Input size="md" placeholder="Medium" />
         <Input size="lg" placeholder="Large" />
       </Section>
 
-      {/* Input với icons */}
       <Section title="Input với Icons">
         <Input leftElement={<SearchIcon />} placeholder="Tìm kiếm..." />
         <Input rightElement={<EyeIcon />} type="password" placeholder="Mật khẩu" />
         <Input leftElement={<SearchIcon />} rightElement={<EyeIcon />} placeholder="Cả hai" />
       </Section>
 
-      {/* Input states */}
       <Section title="Input States">
         <Input placeholder="Normal" />
         <Input isInvalid placeholder="Invalid" />
-        <Input disabled placeholder="Disabled" />
+        <Input isDisabled placeholder="Disabled" />
       </Section>
 
-      {/* Textarea */}
       <Section title="Textarea">
         <Textarea placeholder="Nhập mô tả..." />
         <Textarea size="lg" placeholder="Large textarea" />
         <Textarea isInvalid placeholder="Invalid textarea" />
+        <Textarea isDisabled placeholder="Disabled textarea" />
       </Section>
 
-      {/* FormField - Click label để focus */}
-      <Section title="FormField (click label để focus)">
-        <FormField label="Email" id="email" required>
+      <Section title="FormField">
+        <FormField label="Email" fieldId="email" isRequired>
           <Input type="email" id="email" placeholder="example@email.com" />
         </FormField>
 
-        <FormField label="Mật khẩu" id="password" error="Mật khẩu phải có ít nhất 8 ký tự">
+        <FormField label="Mật khẩu" fieldId="password" error="Mật khẩu phải có ít nhất 8 ký tự">
           <Input type="password" id="password" placeholder="Nhập mật khẩu" isInvalid />
         </FormField>
 
-        <FormField label="Mô tả" id="description" helperText="Tối đa 500 ký tự">
+        <FormField label="Mô tả" fieldId="description" helperText="Tối đa 500 ký tự">
           <Textarea id="description" placeholder="Nhập mô tả sản phẩm..." />
         </FormField>
       </Section>
@@ -66,8 +62,8 @@ export default function TestInput() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h3 style={{ marginBottom: '0.75rem', color: '#374151' }}>{title}</h3>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>{children}</div>
+      <h3 className="mb-3 text-lg font-medium text-neutral-700">{title}</h3>
+      <div className="flex flex-col gap-2">{children}</div>
     </div>
   )
 }

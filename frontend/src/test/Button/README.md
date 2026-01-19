@@ -18,7 +18,7 @@ import { Button, IconButton } from '@/shared/components/ui'
 | `leftIcon` | `ReactNode` | - | Icon bên trái |
 | `rightIcon` | `ReactNode` | - | Icon bên phải |
 | `isDisabled` | `boolean` | `false` | Disabled state |
-| `fullWidth` | `boolean` | `false` | Full width |
+| `isFullWidth` | `boolean` | `false` | Full width |
 | `as` | `ElementType` | `'button'` | Render as element khác |
 
 ## Ví dụ sử dụng
@@ -41,9 +41,9 @@ import { Button, IconButton } from '@/shared/components/ui'
 
 ### Sizes
 ```tsx
-<Button size="sm" colorScheme="neutral">Small</Button>
-<Button size="md" colorScheme="neutral">Medium</Button>
-<Button size="lg" colorScheme="neutral">Large</Button>
+<Button size="sm">Small</Button>
+<Button size="md">Medium</Button>
+<Button size="lg">Large</Button>
 ```
 
 ### Với Icons
@@ -61,7 +61,7 @@ import { Button, IconButton } from '@/shared/components/ui'
 ### States
 ```tsx
 <Button isDisabled>Disabled</Button>
-<Button fullWidth>Full Width</Button>
+<Button isFullWidth>Full Width</Button>
 ```
 
 ---
@@ -78,6 +78,7 @@ import { Button, IconButton } from '@/shared/components/ui'
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Kích thước |
 | `isRound` | `boolean` | `false` | Bo tròn |
 | `isDisabled` | `boolean` | `false` | Disabled state |
+| `as` | `ElementType` | `'button'` | Render as element khác |
 
 ## Ví dụ sử dụng
 

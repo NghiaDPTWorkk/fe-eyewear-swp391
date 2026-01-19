@@ -10,60 +10,110 @@ export default function TestSelection() {
   const [category, setCategory] = useState('')
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-      {/* Checkbox */}
+    <div className="flex flex-col gap-8 p-4">
       <Section title="Checkbox">
-        <Checkbox checked={agree} onChange={setAgree} label="Tôi đồng ý điều khoản sử dụng" />
-        <Checkbox checked={remember} onChange={setRemember} label="Ghi nhớ đăng nhập" />
-        <Checkbox disabled label="Disabled unchecked" />
-        <Checkbox checked disabled label="Disabled checked" />
+        <Checkbox
+          isChecked={agree}
+          onCheckedChange={setAgree}
+          label="Tôi đồng ý điều khoản sử dụng"
+        />
+        <Checkbox
+          isChecked={remember}
+          onCheckedChange={setRemember}
+          label="Ghi nhớ đăng nhập"
+        />
+        <Checkbox isDisabled label="Disabled unchecked" />
+        <Checkbox isChecked isDisabled label="Disabled checked" />
       </Section>
 
       <Section title="Checkbox Sizes">
-        <Checkbox checked size="sm" label="Small" />
-        <Checkbox checked size="md" label="Medium" />
-        <Checkbox checked size="lg" label="Large" />
+        <Checkbox isChecked size="sm" label="Small" />
+        <Checkbox isChecked size="md" label="Medium" />
+        <Checkbox isChecked size="lg" label="Large" />
       </Section>
 
-      {/* Radio */}
       <Section title="Radio (Vertical)">
         <RadioGroup>
-          <Radio name="gender" value="male" label="Nam" checked={gender === 'male'} onChange={setGender} />
-          <Radio name="gender" value="female" label="Nữ" checked={gender === 'female'} onChange={setGender} />
-          <Radio name="gender" value="other" label="Khác" checked={gender === 'other'} onChange={setGender} />
+          <Radio
+            name="gender"
+            value="male"
+            label="Nam"
+            isChecked={gender === 'male'}
+            onValueChange={setGender}
+          />
+          <Radio
+            name="gender"
+            value="female"
+            label="Nữ"
+            isChecked={gender === 'female'}
+            onValueChange={setGender}
+          />
+          <Radio
+            name="gender"
+            value="other"
+            label="Khác"
+            isChecked={gender === 'other'}
+            onValueChange={setGender}
+          />
         </RadioGroup>
       </Section>
 
       <Section title="Radio (Horizontal)">
         <RadioGroup orientation="horizontal">
-          <Radio name="payment" value="momo" label="MoMo" checked={payment === 'momo'} onChange={setPayment} />
-          <Radio name="payment" value="vnpay" label="VNPay" checked={payment === 'vnpay'} onChange={setPayment} />
-          <Radio name="payment" value="cod" label="COD" checked={payment === 'cod'} onChange={setPayment} />
+          <Radio
+            name="payment"
+            value="momo"
+            label="MoMo"
+            isChecked={payment === 'momo'}
+            onValueChange={setPayment}
+          />
+          <Radio
+            name="payment"
+            value="vnpay"
+            label="VNPay"
+            isChecked={payment === 'vnpay'}
+            onValueChange={setPayment}
+          />
+          <Radio
+            name="payment"
+            value="cod"
+            label="COD"
+            isChecked={payment === 'cod'}
+            onValueChange={setPayment}
+          />
         </RadioGroup>
       </Section>
 
       <Section title="Radio Disabled">
         <RadioGroup orientation="horizontal">
-          <Radio name="status" value="active" label="Active" checked disabled />
-          <Radio name="status" value="inactive" label="Inactive" disabled />
+          <Radio name="status" value="active" label="Active" isChecked isDisabled />
+          <Radio name="status" value="inactive" label="Inactive" isDisabled />
         </RadioGroup>
       </Section>
 
-      {/* Select */}
       <Section title="Select">
-        <Select value={role} onChange={(e) => setRole(e.target.value)} placeholder="Chọn role">
+        <Select
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+          placeholder="Chọn role"
+        >
           <option value="admin">Admin</option>
           <option value="staff">Staff</option>
           <option value="customer">Customer</option>
         </Select>
 
-        <Select value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Chọn danh mục" size="lg">
+        <Select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          placeholder="Chọn danh mục"
+          size="lg"
+        >
           <option value="sunglasses">Kính râm</option>
           <option value="eyeglasses">Kính cận</option>
           <option value="lenses">Tròng kính</option>
         </Select>
 
-        <Select disabled placeholder="Disabled">
+        <Select isDisabled placeholder="Disabled">
           <option value="1">Option 1</option>
         </Select>
 
@@ -72,16 +122,27 @@ export default function TestSelection() {
         </Select>
       </Section>
 
-      {/* With FormField */}
       <Section title="Selection với FormField">
-        <FormField label="Giới tính" id="gender-field">
+        <FormField label="Giới tính" fieldId="gender-field">
           <RadioGroup orientation="horizontal">
-            <Radio name="gender-field" value="male" label="Nam" checked={gender === 'male'} onChange={setGender} />
-            <Radio name="gender-field" value="female" label="Nữ" checked={gender === 'female'} onChange={setGender} />
+            <Radio
+              name="gender-field"
+              value="male"
+              label="Nam"
+              isChecked={gender === 'male'}
+              onValueChange={setGender}
+            />
+            <Radio
+              name="gender-field"
+              value="female"
+              label="Nữ"
+              isChecked={gender === 'female'}
+              onValueChange={setGender}
+            />
           </RadioGroup>
         </FormField>
 
-        <FormField label="Quốc gia" id="country" required>
+        <FormField label="Quốc gia" fieldId="country" isRequired>
           <Select id="country" placeholder="Chọn quốc gia">
             <option value="vn">Việt Nam</option>
             <option value="us">United States</option>
@@ -89,8 +150,13 @@ export default function TestSelection() {
           </Select>
         </FormField>
 
-        <FormField label="Điều khoản" id="terms">
-          <Checkbox id="terms" checked={agree} onChange={setAgree} label="Tôi đồng ý với điều khoản dịch vụ" />
+        <FormField label="Điều khoản" fieldId="terms">
+          <Checkbox
+            id="terms"
+            isChecked={agree}
+            onCheckedChange={setAgree}
+            label="Tôi đồng ý với điều khoản dịch vụ"
+          />
         </FormField>
       </Section>
     </div>
@@ -100,8 +166,8 @@ export default function TestSelection() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h3 style={{ marginBottom: '0.75rem', color: '#374151' }}>{title}</h3>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>{children}</div>
+      <h3 className="mb-3 text-lg font-medium text-neutral-700">{title}</h3>
+      <div className="flex flex-col gap-2">{children}</div>
     </div>
   )
 }

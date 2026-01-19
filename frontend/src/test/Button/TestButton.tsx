@@ -1,5 +1,4 @@
 import { Button, IconButton } from '@/shared/components/ui'
-import './TestButton.css'
 
 const SearchIcon = () => (
   <svg
@@ -44,7 +43,7 @@ const HeartIcon = () => (
 
 export default function TestButton() {
   return (
-    <div className="test-button">
+    <div className="flex flex-col gap-8 p-4">
       <Section title="Variants">
         <Button variant="solid">Solid</Button>
         <Button variant="outline">Outline</Button>
@@ -60,15 +59,9 @@ export default function TestButton() {
       </Section>
 
       <Section title="Sizes">
-        <Button size="sm" colorScheme="neutral">
-          Small
-        </Button>
-        <Button size="md" colorScheme="neutral">
-          Medium
-        </Button>
-        <Button size="lg" colorScheme="neutral">
-          Large
-        </Button>
+        <Button size="sm" colorScheme="neutral">Small</Button>
+        <Button size="md" colorScheme="neutral">Medium</Button>
+        <Button size="lg" colorScheme="neutral">Large</Button>
       </Section>
 
       <Section title="With Icons">
@@ -79,7 +72,7 @@ export default function TestButton() {
         </Button>
       </Section>
 
-      <Section title="Full Width ">
+      <Section title="Full Width">
         <Button isFullWidth>Full Width Button</Button>
         <Button isFullWidth variant="outline" colorScheme="secondary">
           Full Width Outline
@@ -87,12 +80,8 @@ export default function TestButton() {
       </Section>
 
       <Section title="As Link">
-        <Button as="a" href="#about">
-          Link Button
-        </Button>
-        <Button as="a" href="#products" variant="outline">
-          Outline Link
-        </Button>
+        <Button as="a" href="#about">Link Button</Button>
+        <Button as="a" href="#products" variant="outline">Outline Link</Button>
       </Section>
 
       <Section title="Icon Buttons">
@@ -109,31 +98,14 @@ export default function TestButton() {
       </Section>
 
       <Section title="Icon Button Variants">
-        <IconButton
-          icon={<SearchIcon />}
-          aria-label="Solid"
-          variant="solid"
-          colorScheme="primary"
-        />
-        <IconButton
-          icon={<SearchIcon />}
-          aria-label="Outline"
-          variant="outline"
-          colorScheme="primary"
-        />
-        <IconButton
-          icon={<SearchIcon />}
-          aria-label="Ghost"
-          variant="ghost"
-          colorScheme="primary"
-        />
+        <IconButton icon={<SearchIcon />} aria-label="Solid" variant="solid" colorScheme="primary" />
+        <IconButton icon={<SearchIcon />} aria-label="Outline" variant="outline" colorScheme="primary" />
+        <IconButton icon={<SearchIcon />} aria-label="Ghost" variant="ghost" colorScheme="primary" />
       </Section>
 
-      <Section title="Disabled ">
+      <Section title="Disabled">
         <Button isDisabled>Disabled</Button>
-        <Button variant="outline" isDisabled>
-          Disabled Outline
-        </Button>
+        <Button variant="outline" isDisabled>Disabled Outline</Button>
         <IconButton icon={<SearchIcon />} aria-label="Search" isDisabled />
         <IconButton
           icon={<HeartIcon />}
@@ -149,9 +121,9 @@ export default function TestButton() {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="test-section">
-      <h3>{title}</h3>
-      <div className="test-row">{children}</div>
+    <section>
+      <h3 className="mb-3 text-lg font-medium text-neutral-700">{title}</h3>
+      <div className="flex flex-wrap items-center gap-3">{children}</div>
     </section>
   )
 }

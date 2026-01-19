@@ -1,16 +1,28 @@
 import type { ReactNode } from 'react'
-import "../radio/radio.css"
+import { cn } from '@/lib/utils'
 
 export type RadioGroupOrientation = 'vertical' | 'horizontal'
 
 export interface RadioGroupProps {
   children: ReactNode
   orientation?: RadioGroupOrientation
+  className?: string
 }
 
-export function RadioGroup({ children, orientation = 'vertical' }: RadioGroupProps) {
+export function RadioGroup({
+  children,
+  orientation = 'vertical',
+  className,
+}: RadioGroupProps) {
   return (
-    <div className={`radio-group radio-group--${orientation}`} role="radiogroup">
+    <div
+      role="radiogroup"
+      className={cn(
+        'flex',
+        orientation === 'vertical' ? 'flex-col gap-2' : 'flex-row gap-4',
+        className
+      )}
+    >
       {children}
     </div>
   )

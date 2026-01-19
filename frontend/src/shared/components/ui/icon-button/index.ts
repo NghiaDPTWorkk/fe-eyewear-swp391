@@ -3,5 +3,5 @@ export type {
   IconButtonProps,
   IconButtonVariant,
   IconButtonColorScheme,
-  IconButtonSize,
+  IconButtonSize
 } from './IconButton'

@@ -8,7 +8,7 @@ export type {
   IconButtonProps,
   IconButtonVariant,
   IconButtonColorScheme,
-  IconButtonSize,
+  IconButtonSize
 } from './icon-button'
 
 // Input
@@ -29,7 +29,7 @@ export type { CheckboxProps, CheckboxSize } from './checkbox'
 
 // Radio
 export { Radio } from './radio'
-export type { RadioProps} from './radio'
+export type { RadioProps } from './radio'
 
 // RadioGroup
 export { RadioGroup } from './radio-group'
@@ -38,4 +38,3 @@ export type { RadioGroupProps } from './radio-group'
 // Select
 export { Select } from './select'
 export type { SelectProps, SelectSize } from './select'
-

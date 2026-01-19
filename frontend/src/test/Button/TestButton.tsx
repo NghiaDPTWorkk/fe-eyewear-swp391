@@ -59,9 +59,15 @@ export default function TestButton() {
       </Section>
 
       <Section title="Sizes">
-        <Button size="sm" colorScheme="neutral">Small</Button>
-        <Button size="md" colorScheme="neutral">Medium</Button>
-        <Button size="lg" colorScheme="neutral">Large</Button>
+        <Button size="sm" colorScheme="neutral">
+          Small
+        </Button>
+        <Button size="md" colorScheme="neutral">
+          Medium
+        </Button>
+        <Button size="lg" colorScheme="neutral">
+          Large
+        </Button>
       </Section>
 
       <Section title="With Icons">
@@ -80,8 +86,12 @@ export default function TestButton() {
       </Section>
 
       <Section title="As Link">
-        <Button as="a" href="#about">Link Button</Button>
-        <Button as="a" href="#products" variant="outline">Outline Link</Button>
+        <Button as="a" href="#about">
+          Link Button
+        </Button>
+        <Button as="a" href="#products" variant="outline">
+          Outline Link
+        </Button>
       </Section>
 
       <Section title="Icon Buttons">
@@ -98,14 +108,31 @@ export default function TestButton() {
       </Section>
 
       <Section title="Icon Button Variants">
-        <IconButton icon={<SearchIcon />} aria-label="Solid" variant="solid" colorScheme="primary" />
-        <IconButton icon={<SearchIcon />} aria-label="Outline" variant="outline" colorScheme="primary" />
-        <IconButton icon={<SearchIcon />} aria-label="Ghost" variant="ghost" colorScheme="primary" />
+        <IconButton
+          icon={<SearchIcon />}
+          aria-label="Solid"
+          variant="solid"
+          colorScheme="primary"
+        />
+        <IconButton
+          icon={<SearchIcon />}
+          aria-label="Outline"
+          variant="outline"
+          colorScheme="primary"
+        />
+        <IconButton
+          icon={<SearchIcon />}
+          aria-label="Ghost"
+          variant="ghost"
+          colorScheme="primary"
+        />
       </Section>
 
       <Section title="Disabled">
         <Button isDisabled>Disabled</Button>
-        <Button variant="outline" isDisabled>Disabled Outline</Button>
+        <Button variant="outline" isDisabled>
+          Disabled Outline
+        </Button>
         <IconButton icon={<SearchIcon />} aria-label="Search" isDisabled />
         <IconButton
           icon={<HeartIcon />}

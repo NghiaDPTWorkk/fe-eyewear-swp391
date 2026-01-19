@@ -6,31 +6,32 @@ const selectVariants = cva(
   [
     'relative flex w-full rounded-lg border bg-white transition-all duration-200',
     'focus-within:ring-2 focus-within:ring-offset-1',
-    'has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50',
+    'has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50'
   ],
   {
     variants: {
       size: {
         sm: 'h-8 text-sm',
         md: 'h-10 text-base',
-        lg: 'h-12 text-lg',
+        lg: 'h-12 text-lg'
       },
       isInvalid: {
         true: 'border-danger-500 focus-within:ring-danger-500',
-        false: 'border-neutral-300 focus-within:border-primary-500 focus-within:ring-primary-500',
-      },
+        false: 'border-neutral-300 focus-within:border-primary-500 focus-within:ring-primary-500'
+      }
     },
     defaultVariants: {
       size: 'md',
-      isInvalid: false,
-    },
+      isInvalid: false
+    }
   }
 )
 
 export type SelectSize = 'sm' | 'md' | 'lg'
 
 export interface SelectProps
-  extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'>,
+  extends
+    Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'>,
     Omit<VariantProps<typeof selectVariants>, 'isInvalid'> {
   isInvalid?: boolean
   isDisabled?: boolean

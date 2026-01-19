@@ -18,7 +18,7 @@ export function Radio({
   isChecked = false,
   isDisabled = false,
   onValueChange,
-  className,
+  className
 }: RadioProps) {
   const id = useId()
 

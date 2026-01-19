@@ -17,11 +17,7 @@ export default function TestSelection() {
           onCheckedChange={setAgree}
           label="Tôi đồng ý điều khoản sử dụng"
         />
-        <Checkbox
-          isChecked={remember}
-          onCheckedChange={setRemember}
-          label="Ghi nhớ đăng nhập"
-        />
+        <Checkbox isChecked={remember} onCheckedChange={setRemember} label="Ghi nhớ đăng nhập" />
         <Checkbox isDisabled label="Disabled unchecked" />
         <Checkbox isChecked isDisabled label="Disabled checked" />
       </Section>
@@ -92,11 +88,7 @@ export default function TestSelection() {
       </Section>
 
       <Section title="Select">
-        <Select
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-          placeholder="Chọn role"
-        >
+        <Select value={role} onChange={(e) => setRole(e.target.value)} placeholder="Chọn role">
           <option value="admin">Admin</option>
           <option value="staff">Staff</option>
           <option value="customer">Customer</option>

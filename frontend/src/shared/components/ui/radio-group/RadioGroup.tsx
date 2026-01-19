@@ -9,11 +9,7 @@ export interface RadioGroupProps {
   className?: string
 }
 
-export function RadioGroup({
-  children,
-  orientation = 'vertical',
-  className,
-}: RadioGroupProps) {
+export function RadioGroup({ children, orientation = 'vertical', className }: RadioGroupProps) {
   return (
     <div
       role="radiogroup"

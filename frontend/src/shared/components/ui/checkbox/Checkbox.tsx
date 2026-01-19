@@ -2,48 +2,45 @@ import { useId } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
-const checkboxVariants = cva(
-  'inline-flex cursor-pointer items-center gap-2 select-none',
-  {
-    variants: {
-      size: {
-        sm: 'text-sm',
-        md: 'text-base',
-        lg: 'text-lg',
-      },
-      isDisabled: {
-        true: 'cursor-not-allowed opacity-50',
-        false: '',
-      },
+const checkboxVariants = cva('inline-flex cursor-pointer items-center gap-2 select-none', {
+  variants: {
+    size: {
+      sm: 'text-sm',
+      md: 'text-base',
+      lg: 'text-lg'
     },
-    defaultVariants: {
-      size: 'md',
-      isDisabled: false,
-    },
+    isDisabled: {
+      true: 'cursor-not-allowed opacity-50',
+      false: ''
+    }
+  },
+  defaultVariants: {
+    size: 'md',
+    isDisabled: false
   }
-)
+})
 
 const checkboxBoxVariants = cva(
   [
     'flex items-center justify-center rounded border-2 transition-all duration-200',
-    'peer-focus-visible:ring-2 peer-focus-visible:ring-primary-500 peer-focus-visible:ring-offset-1',
+    'peer-focus-visible:ring-2 peer-focus-visible:ring-primary-500 peer-focus-visible:ring-offset-1'
   ],
   {
     variants: {
       size: {
         sm: 'h-4 w-4',
         md: 'h-5 w-5',
-        lg: 'h-6 w-6',
+        lg: 'h-6 w-6'
       },
       isChecked: {
         true: 'border-primary-600 bg-primary-600 text-white',
-        false: 'border-neutral-300 bg-white',
-      },
+        false: 'border-neutral-300 bg-white'
+      }
     },
     defaultVariants: {
       size: 'md',
-      isChecked: false,
-    },
+      isChecked: false
+    }
   }
 )
 
@@ -65,7 +62,7 @@ export function Checkbox({
   isDisabled = false,
   size = 'md',
   id,
-  className,
+  className
 }: CheckboxProps) {
   const generatedId = useId()
   const checkboxId = id || generatedId
@@ -77,10 +74,7 @@ export function Checkbox({
   }
 
   return (
-    <label
-      htmlFor={checkboxId}
-      className={cn(checkboxVariants({ size, isDisabled }), className)}
-    >
+    <label htmlFor={checkboxId} className={cn(checkboxVariants({ size, isDisabled }), className)}>
       <input
         type="checkbox"
         id={checkboxId}

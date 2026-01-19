@@ -29,7 +29,7 @@ export const router = createBrowserRouter([
       </LazyPage>
     )
   },
-  
+
   {
     path: '*',
     element: (
@@ -39,4 +39,3 @@ export const router = createBrowserRouter([
     )
   }
 ])
-

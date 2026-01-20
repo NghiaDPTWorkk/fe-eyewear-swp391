@@ -4,8 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "dev:check": "npm run validate && vite",
+    "dev": "npm run validate && vite",
     "build": "npm run validate && tsc -b && vite build",
     "preview": "vite preview",
     "lint": "eslint src --ext .ts,.tsx",
@@ -13,12 +12,12 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json}\"",
     "type-check": "tsc --noEmit",
-    "validate": "npm run type-check && npm run lint && npm run format:check",
-    "validate:fix": "npm run lint:fix && npm run format",
+    "validate": "node scripts/validate.mjs",
+    "validate:fix": "node scripts/validate-fix.mjs",
     "test": "vitest",
     "test:watch": "vitest watch",
     "test:ui": "vitest --ui",
-    "prepare": "husky"
+    "prepare": "cd .. && git config core.hooksPath frontend/.husky"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
@@ -32,15 +31,19 @@
   "dependencies": {
     "@tanstack/react-query": "^5.90.16",
     "axios": "^1.13.2",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.12.0",
+    "tailwind-merge": "^3.4.0",
     "zustand": "^5.0.10"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.3.1",
     "@commitlint/config-conventional": "^20.3.1",
     "@eslint/js": "^9.39.1",
+    "@tailwindcss/vite": "^4.1.18",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
     "@types/node": "^24.10.1",

@@ -497,6 +497,8 @@ export function Cart() {
 
 ### 8.1 Available Components
 
+#### UI Components
+
 | Component       | Import                   | Description                         |
 | --------------- | ------------------------ | ----------------------------------- |
 | `Button`        | `@/shared/components/ui` | Button với variants, sizes, loading |
@@ -509,7 +511,16 @@ export function Cart() {
 | `Skeleton`      | `@/shared/components/ui` | Loading placeholder                 |
 | `ErrorBoundary` | `@/shared/components/ui` | Error boundary                      |
 
+#### Layout Components
+
+| Layout      | Import                | Description                                                   |
+| ----------- | --------------------- | ------------------------------------------------------------- |
+| `Container` | `@/components/layout` | Container với maxWidth tùy chỉnh, centered layout             |
+| `Header`    | `@/components/layout` | Header với composition pattern (logo, search, iconList slots) |
+
 ### 8.2 Usage Examples
+
+#### UI Components
 
 ```typescript
 import {
@@ -547,6 +558,79 @@ import {
 
 // Badge
 <Badge variant="success" dot>Active</Badge>
+```
+
+#### Layout Components
+
+##### Container
+
+```typescript
+import { Container } from '@/components/layout'
+
+// Default: maxWidth = '1320px'
+<Container>
+  <h1>Page Content</h1>
+</Container>
+
+// Custom width (70% for header)
+<Container maxWidth="70%">
+  <nav>Navigation</nav>
+</Container>
+
+// Full width
+<Container maxWidth="100%">
+  <div>Full width content</div>
+</Container>
+
+// With custom styles
+<Container maxWidth="1200px" style={{ padding: '20px' }}>
+  <main>Content with padding</main>
+</Container>
+```
+
+##### Header
+
+```typescript
+import { Header } from '@/components/layout'
+
+// Staff Page - với logo, 70% width (default)
+<Header
+  logo={
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <img src="/logo.png" alt="Logo" />
+      <span>OpticView</span>
+    </div>
+  }
+  search={
+    <input
+      type="text"
+      placeholder="Search orders, customers, or frames..."
+    />
+  }
+  iconList={
+    <div style={{ display: 'flex', gap: '16px' }}>
+      <NotificationIcon />
+      <UserAvatar />
+    </div>
+  }
+/>
+
+// Customer Page - không có logo, 100% width
+<Header
+  containerWidth="100%"
+  search={
+    <input
+      type="text"
+      placeholder="Search products..."
+    />
+  }
+  iconList={
+    <div style={{ display: 'flex', gap: '16px' }}>
+      <UserIcon />
+      <CartIcon />
+    </div>
+  }
+/>
 ```
 
 ---

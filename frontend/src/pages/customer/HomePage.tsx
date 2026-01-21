@@ -2,8 +2,6 @@
 // import TestInput from '@/test/Input/TestInput'
 // import TestSelection from '@/test/Selection/TestSelection'
 
-import { Container } from '@/components/layout'
-
 export const HomePage = () => {
   return (
     <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
@@ -39,9 +37,11 @@ export const HomePage = () => {
         Selection Components
       </h2>
       <TestSelection /> */}
-      <Container>
+      {/* <Container>
         <h2>hehe</h2>
-      </Container>
+      </Container> */}
+      {/* Cách dùng Header header có logo | ko logo
+      <Header containerWidth="100%" search={<SearchBar />} iconList={<CustomerIcons />} /> */}
     </div>
   )
 }

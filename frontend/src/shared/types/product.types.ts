@@ -15,3 +15,17 @@ export interface Product {
   createdAt: Date
   updatedAt: Date
 }
+
+export interface ProductSearchRequest {
+  keyword?: string
+  category?: string
+  brand?: string
+  minPrice?: number
+  maxPrice?: number
+  rating?: number
+  isNew?: boolean
+  isSale?: boolean
+  page?: number
+  limit?: number
+  sort?: 'price_asc' | 'price_desc' | 'newest' | 'rating'
+}

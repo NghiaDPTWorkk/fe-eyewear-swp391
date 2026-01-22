@@ -1,2 +1,4 @@
 export { Footer } from './Footer'
-export { Header } from './Header'
+export { HeaderStaff } from './HeaderStaff'
+export { Container } from './container'
+export type { ContainerProps } from './container'

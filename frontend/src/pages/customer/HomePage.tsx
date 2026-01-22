@@ -1,11 +1,11 @@
-// import TestButton from '@/test/Button/TestButton'
-// import TestInput from '@/test/Input/TestInput'
-// import TestSelection from '@/test/Selection/TestSelection'
+import TestButton from '@/test/Button/TestButton'
+import TestInput from '@/test/Input/TestInput'
+import TestSelection from '@/test/Selection/TestSelection'
 
 export const HomePage = () => {
   return (
     <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
-      {/* <h1 style={{ marginBottom: '2rem' }}>Component Demo</h1>
+      <h1 style={{ marginBottom: '2rem' }}>Component Demo</h1>
 
       <h2
         style={{ marginBottom: '1rem', borderBottom: '1px solid #e5e7eb', paddingBottom: '0.5rem' }}
@@ -36,12 +36,7 @@ export const HomePage = () => {
       >
         Selection Components
       </h2>
-      <TestSelection /> */}
-      {/* <Container>
-        <h2>hehe</h2>
-      </Container> */}
-      {/* Cách dùng Header header có logo | ko logo
-      <Header containerWidth="100%" search={<SearchBar />} iconList={<CustomerIcons />} /> */}
+      <TestSelection />
     </div>
   )
 }

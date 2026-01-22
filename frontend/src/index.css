@@ -2,60 +2,23 @@
 
 /* Custom theme configuration for Eyewear Project */
 @theme {
-  /* Colors - Premium Eyewear Palette */
-  --color-primary-50: #f0f9ff;
-  --color-primary-100: #e0f2fe;
-  --color-primary-200: #bae6fd;
-  --color-primary-300: #7dd3fc;
-  --color-primary-400: #38bdf8;
-  --color-primary-500: #0ea5e9;
-  --color-primary-600: #0284c7;
-  --color-primary-700: #0369a1;
-  --color-primary-800: #075985;
-  --color-primary-900: #0c4a6e;
+  /* background colors */
+  --color-mint-200: #f6fffb;
+  --color-mint-300: #d4ede5;
+  --color-mint-500: #7fe3c7;
+  --color-mint-700: #4ad7b0;
+  --color-mint-900: #2aa57f;
 
-  --color-secondary-50: #fdf4ff;
-  --color-secondary-100: #fae8ff;
-  --color-secondary-200: #f5d0fe;
-  --color-secondary-300: #f0abfc;
-  --color-secondary-400: #e879f9;
-  --color-secondary-500: #d946ef;
-  --color-secondary-600: #c026d3;
-  --color-secondary-700: #a21caf;
-  --color-secondary-800: #86198f;
-  --color-secondary-900: #701a75;
+  /* text colors */
+  --color-mint-1200: #043026; /* dùng cho tiêu đề hoặc văn bản đậm màu */
+  --color-gray-eyewear: #5b6b66; /* text chữ nhỏ kiểu z */
 
-  --color-danger-50: #fef2f2;
-  --color-danger-100: #fee2e2;
-  --color-danger-200: #fecaca;
-  --color-danger-300: #fca5a5;
-  --color-danger-400: #f87171;
-  --color-danger-500: #ef4444;
-  --color-danger-600: #dc2626;
-  --color-danger-700: #b91c1c;
-  --color-danger-800: #991b1b;
-  --color-danger-900: #7f1d1d;
-
-  --color-neutral-50: #fafafa;
-  --color-neutral-100: #f5f5f5;
-  --color-neutral-200: #e5e5e5;
-  --color-neutral-300: #d4d4d4;
-  --color-neutral-400: #a3a3a3;
-  --color-neutral-500: #737373;
-  --color-neutral-600: #525252;
-  --color-neutral-700: #404040;
-  --color-neutral-800: #262626;
-  --color-neutral-900: #171717;
-
-  /* Typography */
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-heading: 'Outfit', system-ui, sans-serif;
 
-  /* Spacing */
   --spacing-18: 4.5rem;
   --spacing-88: 22rem;
 
-  /* Border Radius */
   --radius-4xl: 2rem;
 }
 
@@ -71,6 +34,8 @@
 
   body {
     font-family: var(--font-sans);
+    color: var(--color-mint-1200);
+    background-color: var(--color-mint-200); /* Ví dụ đặt nền mặc định là mint-200 */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Container } from './container' // Import from barrel export
+import { Container } from './container'
 
 interface HeaderItem {
   component: ReactNode

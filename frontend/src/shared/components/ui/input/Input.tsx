@@ -55,7 +55,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className={cn(inputVariants({ size, isInvalid }), className)}>
         {leftElement && (
-          <span className="flex items-center justify-center pl-3 text-neutral-500">
+          <span className="flex items-center justify-center pl-3 text-neutral-500 ">
             {leftElement}
           </span>
         )}

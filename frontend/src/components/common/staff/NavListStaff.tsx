@@ -15,8 +15,12 @@ export function NavSearch({ className, placeholder }: NavSearchProps) {
       <Input
         placeholder={placeholder || 'Search orders, customers, or frames...'}
         size="md"
-        leftElement={<FiSearch className="text-xl text-mint-700" />}
-        className="w-full bg-mint-200 border-mint-500 rounded-xl"
+        leftElement={
+          <span className="pointer-events-none flex items-center justify-center ml-2">
+            <FiSearch className="text-xl text-mint-700" />
+          </span>
+        }
+        className="w-full bg-mint-200 border-mint-500 rounded-xl "
       />
     </div>
   )

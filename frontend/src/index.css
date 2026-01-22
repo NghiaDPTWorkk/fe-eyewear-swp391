@@ -93,3 +93,6 @@
     -moz-osx-font-smoothing: grayscale;
   }
 }
+.caret-transparent {
+  caret-color: transparent;
+}

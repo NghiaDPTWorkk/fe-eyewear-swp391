@@ -12,10 +12,10 @@ export default function HomePageOperation() {
       <div className="flex-1 flex flex-col">
         <HeaderStaff containerWidth="1200px" left={<NavSearch />} right={<NavActions />} />
 
-        <main className="p-2">
+        <main className="p-4">
           <Container>
-            <div className="bg-white p-6 rounded-xl shadow-sm min-h-[500px]">
-              <h4 className="text-2xl font-bold text-mint-1200">hehhe</h4>
+            <div className=" min-h-[500px] ">
+              <h4 className="text-xl font-bold text-primary-800 mb-6">Order Overview</h4>
             </div>
           </Container>
         </main>

@@ -80,7 +80,7 @@ export default function TestButton() {
 
       <Section title="Full Width">
         <Button isFullWidth>Full Width Button</Button>
-        <Button isFullWidth variant="outline" colorScheme="secondary">
+        <Button isFullWidth variant="outline" colorScheme="primary">
           Full Width Outline
         </Button>
       </Section>

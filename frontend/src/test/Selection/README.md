@@ -12,13 +12,13 @@ import { Checkbox, Radio, RadioGroup, Select } from '@/shared/components/ui'
 
 ## Props
 
-| Prop | Type | Default | Mô tả |
-|------|------|---------|-------|
-| `isChecked` | `boolean` | `false` | Trạng thái được chọn |
-| `onCheckedChange` | `(checked: boolean) => void` | - | Callback khi thay đổi |
-| `label` | `string` | - | Text hiển thị |
-| `isDisabled` | `boolean` | `false` | Vô hiệu hóa |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Kích thước |
+| Prop              | Type                         | Default | Mô tả                 |
+| ----------------- | ---------------------------- | ------- | --------------------- |
+| `isChecked`       | `boolean`                    | `false` | Trạng thái được chọn  |
+| `onCheckedChange` | `(checked: boolean) => void` | -       | Callback khi thay đổi |
+| `label`           | `string`                     | -       | Text hiển thị         |
+| `isDisabled`      | `boolean`                    | `false` | Vô hiệu hóa           |
+| `size`            | `'sm' \| 'md' \| 'lg'`       | `'md'`  | Kích thước            |
 
 ## Ví dụ
 
@@ -46,21 +46,21 @@ const [agree, setAgree] = useState(false)
 
 ## Radio Props
 
-| Prop | Type | Default | Mô tả |
-|------|------|---------|-------|
-| `name` | `string` | required | Tên nhóm radio |
-| `value` | `string` | required | Giá trị của radio |
-| `label` | `string` | required | Text hiển thị |
-| `isChecked` | `boolean` | `false` | Trạng thái được chọn |
-| `isDisabled` | `boolean` | `false` | Vô hiệu hóa |
-| `onValueChange` | `(value: string) => void` | - | Callback khi chọn |
+| Prop            | Type                      | Default  | Mô tả                |
+| --------------- | ------------------------- | -------- | -------------------- |
+| `name`          | `string`                  | required | Tên nhóm radio       |
+| `value`         | `string`                  | required | Giá trị của radio    |
+| `label`         | `string`                  | required | Text hiển thị        |
+| `isChecked`     | `boolean`                 | `false`  | Trạng thái được chọn |
+| `isDisabled`    | `boolean`                 | `false`  | Vô hiệu hóa          |
+| `onValueChange` | `(value: string) => void` | -        | Callback khi chọn    |
 
 ## RadioGroup Props
 
-| Prop | Type | Default | Mô tả |
-|------|------|---------|-------|
-| `children` | `ReactNode` | required | Các Radio bên trong |
-| `orientation` | `'vertical' \| 'horizontal'` | `'vertical'` | Hướng sắp xếp |
+| Prop          | Type                         | Default      | Mô tả               |
+| ------------- | ---------------------------- | ------------ | ------------------- |
+| `children`    | `ReactNode`                  | required     | Các Radio bên trong |
+| `orientation` | `'vertical' \| 'horizontal'` | `'vertical'` | Hướng sắp xếp       |
 
 ## Ví dụ
 
@@ -100,13 +100,13 @@ const [gender, setGender] = useState('male')
 
 ## Props
 
-| Prop | Type | Default | Mô tả |
-|------|------|---------|-------|
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Kích thước |
-| `isInvalid` | `boolean` | `false` | Trạng thái lỗi |
-| `isDisabled` | `boolean` | `false` | Vô hiệu hóa |
-| `placeholder` | `string` | - | Placeholder text |
-| `children` | `ReactNode` | required | Các option |
+| Prop                          | Type                   | Default  | Mô tả            |
+| ----------------------------- | ---------------------- | -------- | ---------------- |
+| `size`                        | `'sm' \| 'md' \| 'lg'` | `'md'`   | Kích thước       |
+| `isInvalid`                   | `boolean`              | `false`  | Trạng thái lỗi   |
+| `isDisabled`                  | `boolean`              | `false`  | Vô hiệu hóa      |
+| `placeholder`                 | `string`               | -        | Placeholder text |
+| `children`                    | `ReactNode`            | required | Các option       |
 | + tất cả props của `<select>` |
 
 ## Ví dụ

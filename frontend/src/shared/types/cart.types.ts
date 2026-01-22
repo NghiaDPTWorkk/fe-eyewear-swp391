@@ -13,3 +13,13 @@ export interface CartSummary {
   totalPrice: number
   itemCount: number
 }
+
+export interface AddToCartRequest {
+  productId: string
+  variantId?: string
+  quantity: number
+}
+
+export interface UpdateCartRequest {
+  quantity: number
+}

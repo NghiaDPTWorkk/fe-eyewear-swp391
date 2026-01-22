@@ -1,6 +1,7 @@
 # Input Components
 
 ## Import
+
 ```tsx
 import { Input, Textarea, FormField } from '@/shared/components/ui'
 ```
@@ -10,16 +11,18 @@ import { Input, Textarea, FormField } from '@/shared/components/ui'
 # Input
 
 ## Props
-| Prop | Type | Default | Mô tả |
-|------|------|---------|-------|
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Kích thước |
-| `isInvalid` | `boolean` | `false` | Trạng thái lỗi |
-| `isDisabled` | `boolean` | `false` | Disabled state |
-| `leftElement` | `ReactNode` | - | Element bên trái |
-| `rightElement` | `ReactNode` | - | Element bên phải |
+
+| Prop                         | Type                   | Default | Mô tả            |
+| ---------------------------- | ---------------------- | ------- | ---------------- |
+| `size`                       | `'sm' \| 'md' \| 'lg'` | `'md'`  | Kích thước       |
+| `isInvalid`                  | `boolean`              | `false` | Trạng thái lỗi   |
+| `isDisabled`                 | `boolean`              | `false` | Disabled state   |
+| `leftElement`                | `ReactNode`            | -       | Element bên trái |
+| `rightElement`               | `ReactNode`            | -       | Element bên phải |
 | + tất cả props của `<input>` |
 
 ## Ví dụ
+
 ```tsx
 // Cơ bản
 <Input placeholder="Email" type="email" />
@@ -42,15 +45,17 @@ import { Input, Textarea, FormField } from '@/shared/components/ui'
 # Textarea
 
 ## Props
-| Prop | Type | Default | Mô tả |
-|------|------|---------|-------|
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Kích thước |
-| `isInvalid` | `boolean` | `false` | Trạng thái lỗi |
-| `isDisabled` | `boolean` | `false` | Disabled state |
-| `resize` | `'none' \| 'vertical' \| 'horizontal' \| 'both'` | `'vertical'` | Resize behavior |
+
+| Prop                            | Type                                             | Default      | Mô tả           |
+| ------------------------------- | ------------------------------------------------ | ------------ | --------------- |
+| `size`                          | `'sm' \| 'md' \| 'lg'`                           | `'md'`       | Kích thước      |
+| `isInvalid`                     | `boolean`                                        | `false`      | Trạng thái lỗi  |
+| `isDisabled`                    | `boolean`                                        | `false`      | Disabled state  |
+| `resize`                        | `'none' \| 'vertical' \| 'horizontal' \| 'both'` | `'vertical'` | Resize behavior |
 | + tất cả props của `<textarea>` |
 
 ## Ví dụ
+
 ```tsx
 // Cơ bản
 <Textarea placeholder="Nhập mô tả..." />
@@ -75,16 +80,18 @@ Wrapper component cho Input/Textarea với label, error, và helper text.
 **Click label sẽ tự động focus vào input.**
 
 ## Props
-| Prop | Type | Default | Mô tả |
-|------|------|---------|-------|
-| `label` | `string` | **Required** | Label text |
-| `fieldId` | `string` | auto | ID cho label htmlFor |
-| `error` | `string` | - | Error message |
-| `helperText` | `string` | - | Helper text |
-| `isRequired` | `boolean` | `false` | Hiện dấu * |
-| `children` | `ReactNode` | **Required** | Input/Textarea |
+
+| Prop         | Type        | Default      | Mô tả                |
+| ------------ | ----------- | ------------ | -------------------- |
+| `label`      | `string`    | **Required** | Label text           |
+| `fieldId`    | `string`    | auto         | ID cho label htmlFor |
+| `error`      | `string`    | -            | Error message        |
+| `helperText` | `string`    | -            | Helper text          |
+| `isRequired` | `boolean`   | `false`      | Hiện dấu \*          |
+| `children`   | `ReactNode` | **Required** | Input/Textarea       |
 
 ## Ví dụ
+
 ```tsx
 // Cơ bản - truyền cùng fieldId cho FormField và id cho Input
 <FormField label="Email" fieldId="email" isRequired>
@@ -103,5 +110,6 @@ Wrapper component cho Input/Textarea với label, error, và helper text.
 ```
 
 ## Lưu ý quan trọng
+
 - **Phải truyền cùng `fieldId`** vào FormField và `id` vào Input để click label focus input
 - Error và helperText không hiển thị cùng lúc (error ưu tiên)

@@ -18,7 +18,7 @@ if [ $EXIT_CODE -ne 0 ]; then
   echo "║     KAN-123 feat: add login feature                       ║"
   echo "║     KAN-456 fix: fix button color                         ║"
   echo "║                                                           ║"
-  echo "║  📄 Xem chi tiết: frontend/COMMIT_CONVENTION.md           ║"
+  echo "║  📄 Xem chi tiết: frontend/docs/DEVELOPER_GUIDE.md       ║"
   echo "║                                                           ║"
   echo "╚═══════════════════════════════════════════════════════════╝"
   echo ""

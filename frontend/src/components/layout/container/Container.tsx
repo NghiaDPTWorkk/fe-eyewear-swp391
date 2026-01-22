@@ -12,16 +12,12 @@ export function Container({
   className = '',
   ...props
 }: ContainerProps) {
-  const defaultStyle: React.CSSProperties = {
-    maxWidth: maxWidth,
-    margin: '0 auto',
-    padding: '0',
-    boxSizing: 'border-box',
-    ...style
-  }
-
   return (
-    <div className={`container-main ${className}`} style={defaultStyle} {...props}>
+    <div
+      className={`mx-auto p-0 box-border ${className}`}
+      style={{ maxWidth, ...style }}
+      {...props}
+    >
       {children}
     </div>
   )

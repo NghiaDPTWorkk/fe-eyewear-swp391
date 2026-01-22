@@ -1,33 +1,23 @@
 import type { ReactNode } from 'react'
 import { Container } from './container'
 
-interface HeaderItem {
-  component: ReactNode
-  width: string
+interface HeaderStaffProps {
+  containerWidth?: string
+  logo?: ReactNode
+  search?: ReactNode
+  iconList: ReactNode
 }
 
-interface HeaderProps {
-  items: HeaderItem[]
-}
-
-export function Header({ items }: HeaderProps) {
+export function HeaderStaff({ containerWidth = '70%', logo, search, iconList }: HeaderStaffProps) {
   return (
-    <header className="header-wrapper" style={{ width: '100%', borderBottom: '1px solid #ddd' }}>
-      <Container>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            width: '100%',
-            height: '60px'
-          }}
-        >
-          {items.map((item, index) => (
-            <div key={index} style={{ width: item.width }}>
-              {item.component}
-            </div>
-          ))}
+    <header className="w-full border-b border-gray-300">
+      <Container maxWidth={containerWidth}>
+        <div className="flex items-center justify-between w-full h-[60px] gap-4">
+          {logo && <div className="flex-none">{logo}</div>}
+
+          {search && <div className="flex-1">{search}</div>}
+
+          <div className="flex-none">{iconList}</div>
         </div>
       </Container>
     </header>

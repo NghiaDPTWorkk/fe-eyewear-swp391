@@ -5,11 +5,9 @@ interface HeaderCustomerProps {
   containerWidth?: string
   containerJustify?: string
 
-  // Mode 1: [Logo + NavList] | [Search + NavListIcon]
   logoNavList?: ReactNode
   searchNavListIcon?: ReactNode
 
-  // Mode 2: Logo | NavListContent | NavListIcon
   logo?: ReactNode
   navListContent?: ReactNode
   navListIcon?: ReactNode

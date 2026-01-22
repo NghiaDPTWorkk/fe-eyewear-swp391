@@ -497,6 +497,8 @@ export function Cart() {
 
 ### 8.1 Available Components
 
+#### UI Components
+
 | Component       | Import                   | Description                         |
 | --------------- | ------------------------ | ----------------------------------- |
 | `Button`        | `@/shared/components/ui` | Button với variants, sizes, loading |
@@ -509,7 +511,16 @@ export function Cart() {
 | `Skeleton`      | `@/shared/components/ui` | Loading placeholder                 |
 | `ErrorBoundary` | `@/shared/components/ui` | Error boundary                      |
 
+#### Layout Components
+
+| Component     | Import                | Description                                                                                              |
+| ------------- | --------------------- | -------------------------------------------------------------------------------------------------------- |
+| `Container`   | `@/components/layout` | Container với maxWidth tùy chỉnh, centered layout                                                        |
+| `HeaderStaff` | `@/components/layout` | Header cho staff pages với width mặc định 70%, flexible search/action slot, và icon list (optional logo) |
+
 ### 8.2 Usage Examples
+
+#### UI Components
 
 ```typescript
 import {
@@ -548,6 +559,161 @@ import {
 // Badge
 <Badge variant="success" dot>Active</Badge>
 ```
+
+#### Layout Components
+
+##### Container
+
+```typescript
+import { Container } from '@/components/layout'
+
+// Default: maxWidth = '1320px'
+<Container>
+  <h1>Page Content</h1>
+</Container>
+
+// Custom width (70% for header)
+<Container maxWidth="70%">
+  <nav>Navigation</nav>
+</Container>
+
+// Full width
+<Container maxWidth="100%">
+  <div>Full width content</div>
+</Container>
+
+// With Tailwind CSS classes
+<Container maxWidth="1200px" className="p-5">
+  <main>Content with padding</main>
+</Container>
+
+// With custom Tailwind classes
+<Container className="bg-gray-50 rounded-lg shadow-md p-6">
+  <div>Styled container with background, rounded corners, and shadow</div>
+</Container>
+```
+
+##### HeaderStaff
+
+```typescript
+import { HeaderStaff } from '@/components/layout'
+
+// Example 1: Default usage - 70% width với logo và search
+<HeaderStaff
+  logo={
+    <div className="flex items-center gap-2">
+      <img src="/logo.png" alt="Logo" />
+      <span>OpticView</span>
+    </div>
+  }
+  search={
+    <input
+      type="text"
+      placeholder="Search invoices, patients..."
+      className="w-full px-2 py-1 border border-gray-300 rounded"
+    />
+  }
+  iconList={
+    <div className="flex gap-4">
+      <NotificationIcon />
+      <SettingsIcon />
+    </div>
+  }
+/>
+
+// Example 2: Custom width - 80% width
+<HeaderStaff
+  containerWidth="80%"
+  logo={<Logo />}
+  search={<SearchBar />}
+  iconList={<UserMenu />}
+/>
+
+// Example 3: Replace search with action buttons (Support & Help Center)
+<HeaderStaff
+  logo={<Logo />}
+  search={
+    <div className="flex gap-3">
+      <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+        Knowledge Base
+      </button>
+      <button className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+        Report a Bug
+      </button>
+    </div>
+  }
+  iconList={
+    <div className="flex gap-4">
+      <NotificationIcon />
+      <SettingsIcon />
+    </div>
+  }
+/>
+
+// Example 4: Without search slot - chỉ có logo và icons
+<HeaderStaff
+  logo={<Logo />}
+  iconList={
+    <div className="flex gap-4">
+      <NotificationIcon />
+      <UserAvatar />
+    </div>
+  }
+/>
+
+// Example 5: Full width - 100% width
+<HeaderStaff
+  containerWidth="100%"
+  logo={<Logo />}
+  search={<SearchBar />}
+  iconList={<IconList />}
+/>
+
+// Example 6: Advanced - với Tailwind styling
+<HeaderStaff
+  containerWidth="90%"
+  logo={
+    <div className="flex items-center gap-3">
+      <img src="/logo.png" alt="Logo" className="w-10 h-10" />
+      <span className="text-xl font-bold text-gray-800">OpticView</span>
+    </div>
+  }
+  search={
+    <div className="relative">
+      <input
+        type="text"
+        placeholder="Search..."
+        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+      <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+    </div>
+  }
+  iconList={
+    <div className="flex items-center gap-4">
+      <button className="relative">
+        <BellIcon className="w-6 h-6 text-gray-600" />
+        <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">
+          3
+        </span>
+      </button>
+      <UserAvatar />
+    </div>
+  }
+/>
+```
+
+**Props:**
+
+- `containerWidth` (optional): Width của container, mặc định là `'70%'`. Có thể truyền bất kỳ giá trị CSS width nào (`'80%'`, `'1200px'`, `'100%'`, etc.)
+- `logo` (optional): ReactNode cho logo section
+- `search` (optional): ReactNode cho search bar hoặc action buttons. Có thể thay thế bằng bất kỳ component nào (search input, buttons, links, etc.)
+- `iconList` (required): ReactNode cho icon list (notifications, settings, user menu, etc.)
+
+**Styling:**
+
+- Component sử dụng **Tailwind CSS** cho tất cả styling
+- Có thể kết hợp với custom Tailwind classes trong children components
+- Responsive và accessible by default
 
 ---
 

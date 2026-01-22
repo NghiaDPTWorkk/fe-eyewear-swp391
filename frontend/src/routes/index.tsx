@@ -1,7 +1,7 @@
 import { lazy } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
 import { LazyPage } from '@/pages/LazyPage'
-import HomePageOperation from '@/pages/operation/HomePageOperation'
+import { HomePage } from '@/pages/customer'
 
 // const HomePage = lazy(() =>
 //   import('@/pages/customer/HomePage').then((m) => ({ default: m.HomePage }))
@@ -12,14 +12,16 @@ const LoginPage = lazy(() =>
 const NotFoundPage = lazy(() =>
   import('@/pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage }))
 )
+const SaleStaffDashboard = lazy(() =>
+  import('@/pages/salestaff/SaleStaffDashboard').then((m) => ({ default: m.default }))
+)
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: (
       <LazyPage>
-        {/* <HomePage /> */}
-        <HomePageOperation />
+        <HomePage />
       </LazyPage>
     )
   },
@@ -31,7 +33,14 @@ export const router = createBrowserRouter([
       </LazyPage>
     )
   },
-
+  {
+    path: '/salestaff/dashboard',
+    element: (
+      <LazyPage>
+        <SaleStaffDashboard />
+      </LazyPage>
+    )
+  },
   {
     path: '*',
     element: (

@@ -11,7 +11,7 @@ interface NavSearchProps {
 
 export function NavSearch({ className, placeholder }: NavSearchProps) {
   return (
-    <div className={cn('w-[400px] pl-4', className)}>
+    <div className={cn('w-[500px] pl-4', className)}>
       <Input
         placeholder={placeholder || 'Search orders, customers, or frames...'}
         size="md"

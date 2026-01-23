@@ -1,7 +1,7 @@
-import { SidebarStaff } from '@/components/layout/staff-core/SidebarStaff'
-import { HeaderStaff } from '@/components/layout/staff-core/HeaderStaff'
-import { UserWidgetWithLogout } from '@/components/layout/staff-core/sidebar/UserWidgetWithLogout'
-import { ThemeToggle } from '@/components/layout/staff-core/sidebar/ThemeToggle'
+import { SidebarStaff } from '@/components/templates/staff/sidebar/SidebarStaff'
+import { HeaderStaff } from '@/components/templates/staff/header/HeaderStaff'
+import { UserWidgetWithLogout } from '@/components/common/staff/sidebar/UserWidgetWithLogout'
+import { ThemeToggle } from '@/components/common/staff/sidebar/ThemeToggle'
 import {
   IoGrid,
   IoReceipt,
@@ -13,7 +13,7 @@ import {
   IoStorefront
 } from 'react-icons/io5'
 import { Container } from '@/components'
-import { NavActions, NavSearch } from '@/components/common/staff-core/NavListStaff'
+import { NavActions, NavSearch } from '@/components/templates/staff/navbar/NavListStaff'
 
 export default function SaleStaffDashboard() {
   return (

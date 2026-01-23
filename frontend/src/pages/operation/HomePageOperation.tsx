@@ -1,7 +1,7 @@
-import { SidebarStaff } from '@/components/layout/staff-core/SidebarStaff'
-import { HeaderStaff } from '@/components/layout/staff-core/HeaderStaff'
-import { UserWidgetWithLogout } from '@/components/layout/staff-core/sidebar/UserWidgetWithLogout'
-import { ThemeToggle } from '@/components/layout/staff-core/sidebar/ThemeToggle'
+import { SidebarStaff } from '@/components/templates/staff/sidebar/SidebarStaff'
+import { HeaderStaff } from '@/components/templates/staff/header/HeaderStaff'
+import { UserWidgetWithLogout } from '@/components/common/staff/sidebar/UserWidgetWithLogout'
+import { ThemeToggle } from '@/components/common/staff/sidebar/ThemeToggle'
 import {
   IoGridOutline,
   IoReceipt,
@@ -13,8 +13,8 @@ import {
 import { TbTruckDelivery } from 'react-icons/tb'
 import { FaBoxesPacking } from 'react-icons/fa6'
 import { Container } from '@/components'
-import OrderTable from '@/components/layout/staff-core/ordertable/OrderTable'
-import { NavActions, NavSearch } from '@/components/common/staff-core/NavListStaff'
+import OrderTable from '@/components/common/staff/ordertable/OrderTable'
+import { NavActions, NavSearch } from '@/components/templates/staff/navbar/NavListStaff'
 
 export default function HomePageOperation() {
   return (

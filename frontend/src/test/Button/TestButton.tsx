@@ -1,4 +1,4 @@
-import { Button, IconButton } from '@/shared/components/ui'
+import { Button, IconButton } from '@/shared/components/atoms'
 
 const SearchIcon = () => (
   <svg

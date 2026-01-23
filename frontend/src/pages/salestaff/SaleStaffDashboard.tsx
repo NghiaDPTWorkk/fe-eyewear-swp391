@@ -13,6 +13,7 @@ import {
   IoHelpCircle,
   IoStorefront
 } from 'react-icons/io5'
+import { Container } from '@/components'
 
 export default function SaleStaffDashboard() {
   return (
@@ -61,11 +62,13 @@ export default function SaleStaffDashboard() {
         <HeaderStaff left={<NavSearch />} right={<NavActions userInitials="SL" />} />
 
         <main className="flex-1 overflow-auto p-6 bg-gray-50">
-          <div className="text-sm text-gray-600 mb-2">Dashboard / Order Management</div>
-          <h1 className="text-2xl font-semibold mb-6">Order List</h1>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <p>Content goes here...</p>
-          </div>
+          <Container>
+            <div className="text-sm text-gray-600 mb-2">Dashboard / Order Management</div>
+            <h1 className="text-2xl font-semibold mb-6">Order List</h1>
+            <div className="bg-white p-6 rounded-lg shadow">
+              <p>Content goes here...</p>
+            </div>
+          </Container>
         </main>
       </div>
     </div>

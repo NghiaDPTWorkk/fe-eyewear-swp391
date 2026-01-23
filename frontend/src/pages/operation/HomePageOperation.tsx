@@ -13,6 +13,7 @@ import {
 } from 'react-icons/io5'
 import { TbTruckDelivery } from 'react-icons/tb'
 import { FaBoxesPacking } from 'react-icons/fa6'
+import { Container } from '@/components'
 
 export default function HomePageOperation() {
   return (
@@ -53,12 +54,14 @@ export default function HomePageOperation() {
       <div className="flex-1 flex flex-col ml-[260px]">
         <HeaderStaff containerWidth="1200px" left={<NavSearch />} right={<NavActions />} />
 
-        <main className="flex-1 overflow-auto p-6 bg-gray-50">
-          <div className="text-sm text-gray-600 mb-2">Dashboard / Order Management</div>
-          <h1 className="text-2xl font-semibold mb-6">Order List</h1>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <p>Content goes here...</p>
-          </div>
+        <main className="p-4">
+          <Container>
+            <div className="text-sm text-gray-600 mb-2">Dashboard / Order Management</div>
+            <h1 className="text-2xl font-semibold mb-6">Order List</h1>
+            <div className="bg-white p-6 rounded-lg shadow">
+              <p>Content goes here...</p>
+            </div>
+          </Container>
         </main>
       </div>
     </div>

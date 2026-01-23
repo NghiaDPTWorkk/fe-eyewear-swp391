@@ -1,5 +1,5 @@
+import { Container } from '@/ui'
 import type { ReactNode } from 'react'
-import { Container } from '../container'
 
 interface HeaderStaffProps {
   containerWidth?: string

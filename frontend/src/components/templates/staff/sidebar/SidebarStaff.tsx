@@ -1,6 +1,11 @@
 import type { ReactNode } from 'react'
 import { LAYOUT } from '@/shared/constants/layout'
-import { StoreDropdown, MenuSection, MenuItem, SubMenuItem } from '../../common/staff-core/sidebar'
+import {
+  MenuItem,
+  MenuSection,
+  StoreDropdown,
+  SubMenuItem
+} from '@/components/common/staff/sidebar'
 
 interface SidebarStaffProps {
   logo?: ReactNode

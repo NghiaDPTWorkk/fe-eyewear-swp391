@@ -34,7 +34,9 @@ export function MenuItem({
       <button
         onClick={handleClick}
         className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${
-          active ? 'bg-mint-50 text-mint-600 font-medium' : 'text-gray-700 hover:bg-gray-50'
+          active
+            ? 'bg-primary-200 text-primary-800 font-medium'
+            : 'text-gray-700 hover:bg-primary-100'
         }`}
       >
         {icon && (
@@ -70,7 +72,9 @@ export function SubMenuItem({
     <button
       onClick={onClick}
       className={`w-full text-left px-4 py-2 text-sm rounded-lg transition-colors ${
-        active ? 'bg-mint-50 text-mint-600 font-medium' : 'text-gray-600 hover:bg-gray-50'
+        active
+          ? 'bg-primary-200 text-primary-800 font-medium'
+          : 'text-gray-600 hover:bg-primary-100'
       }`}
     >
       {label}

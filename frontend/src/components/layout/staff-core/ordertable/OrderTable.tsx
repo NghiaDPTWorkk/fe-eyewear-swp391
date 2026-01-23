@@ -144,9 +144,7 @@ export default function OrderTable({ columns }: OrderTableProps) {
   return (
     <div className="overflow-x-auto bg-white rounded-lg shadow">
       <table className="w-full text-left border-collapse">
-        {/* Truyền mảng columns xuống cho Header */}
         <OrderHeaderTable columns={activeColumns} />
-        {/* Truyền mảng columns xuống cho Body de render cell */}
         <OrderList orders={orders} columns={activeColumns} />
       </table>
     </div>

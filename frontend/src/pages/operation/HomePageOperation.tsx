@@ -14,6 +14,7 @@ import {
 import { TbTruckDelivery } from 'react-icons/tb'
 import { FaBoxesPacking } from 'react-icons/fa6'
 import { Container } from '@/components'
+import OrderTable from '@/components/layout/staff-core/ordertable/OrderTable'
 
 export default function HomePageOperation() {
   return (
@@ -54,13 +55,11 @@ export default function HomePageOperation() {
       <div className="flex-1 flex flex-col ml-[260px]">
         <HeaderStaff containerWidth="1200px" left={<NavSearch />} right={<NavActions />} />
 
-        <main className="p-4">
+        <main className="p-4 bg-mint-200 h-full">
           <Container>
             <div className="text-sm text-gray-600 mb-2">Dashboard / Order Management</div>
-            <h1 className="text-2xl font-semibold mb-6">Order List</h1>
-            <div className="bg-white p-6 rounded-lg shadow">
-              <p>Content goes here...</p>
-            </div>
+            <h1 className="text-xl font-semibold mb-5 text-primary-700">Priority Orders</h1>
+            <OrderTable />
           </Container>
         </main>
       </div>

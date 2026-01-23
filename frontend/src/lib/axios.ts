@@ -1,47 +1,48 @@
-import type { ApiClientConfig } from '@/shared/types'
-import axios, { type AxiosInstance } from 'axios'
+import { authEventEmitter } from '@/api'
+import { getOrCreateDeviceId } from '@/utils/device'
+import axios, { type AxiosError, type AxiosInstance, type InternalAxiosRequestConfig } from 'axios'
+const API_URL = import.meta.env.VITE_API_URL ?? 'https://be-swp391-eye-wear-bwlm.vercel.app'
 
-export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+export const apiClient: AxiosInstance = axios.create({
+  baseURL: `${API_URL}/api/v1`,
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  // true nếu be dùng Cookie và setup CORS Credentials
+  withCredentials: false
+})
 
-export const getStoredToken = (): string | null => localStorage.getItem('accessToken')
-
-export const handleUnauthorized = (): void => {
-  localStorage.removeItem('accessToken')
-  localStorage.removeItem('refreshToken')
-  if (!window.location.pathname.includes('/login')) {
-    window.location.href = '/login'
-  }
-}
-
-export function createApiClient({
-  baseURL,
-  timeout = 10000,
-  headers = {},
-  getToken,
-  onUnauthorized,
-  onForbidden
-}: ApiClientConfig): AxiosInstance {
-  const client = axios.create({
-    baseURL,
-    timeout,
-    headers: { 'Content-Type': 'application/json', ...headers }
-  })
-
-  client.interceptors.request.use((config) => {
-    const token = getToken?.()
-    if (token) config.headers.Authorization = `Bearer ${token}`
-    return config
-  })
-
-  client.interceptors.response.use(
-    (res) => res,
-    (error) => {
-      const status = error.response?.status
-      if (status === 401) onUnauthorized?.()
-      if (status === 403) onForbidden?.()
-      return Promise.reject(error)
+// Request Interceptor
+apiClient.interceptors.request.use(
+  (config: InternalAxiosRequestConfig) => {
+    const deviceId = getOrCreateDeviceId()
+    const token = localStorage.getItem('access_token')
+    config.headers['x-device-id'] = deviceId
+    // nếu có token và header chưa được set thì mới gán
+    if (token && !config.url?.includes('/auth/login')) {
+      config.headers.Authorization = `Bearer ${token}`
     }
-  )
 
-  return client
-}
+    return config
+  },
+  (error) => Promise.reject(error)
+)
+
+// Response Interceptor
+apiClient.interceptors.response.use(
+  (response) => {
+    // apiClients xử lý .data
+    return response
+  },
+  async (error: AxiosError) => {
+    if (error.response?.status === 401) {
+      authEventEmitter.emit('UNAUTHORIZED')
+
+      // xóa tránh loop
+      localStorage.removeItem('access_token')
+    }
+
+    return Promise.reject(error)
+  }
+)

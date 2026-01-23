@@ -1,6 +1,7 @@
-import React from 'react'
+import type { ReactNode } from 'react'
 import OrderHeaderTable from './OrderHeaderTable'
 import OrderList from './OrderList'
+import { IoEyeOutline, IoChevronForward, IoTimeOutline } from 'react-icons/io5'
 
 export interface Order {
   id: string
@@ -13,33 +14,20 @@ export interface Order {
   isNextActive: boolean
 }
 
-// Config để bật/tắt các cột
-export interface ColumnConfig {
-  showOrderId?: boolean
-  showCustomer?: boolean
-  showItem?: boolean
-  showWaitingFor?: boolean
-  showStatus?: boolean
-  showTimeElapsed?: boolean
-  showActions?: boolean
+// Định nghĩa cấu trúc 1 cột
+export interface Column<T> {
+  header: string | ReactNode // Tiêu đề cột (Text hoặc Component)
+  render: (item: T) => ReactNode // Hàm hiển thị dữ liệu cho từng dòng
+  className?: string // Class cho td (cell)
+  headerClassName?: string // Class cho th (header)
 }
 
 interface OrderTableProps {
-  columns?: ColumnConfig
+  columns?: Column<Order>[] // Mảng các cột
 }
 
-export default function OrderTable({
-  columns = {
-    showOrderId: true,
-    showCustomer: true,
-    showItem: true,
-    showWaitingFor: false, // Mặc định ẩn cột này
-    showStatus: true,
-    showTimeElapsed: true,
-    showActions: true
-  }
-}: OrderTableProps) {
-  // Mock data - will be replaced with API fetch in the future
+export default function OrderTable({ columns }: OrderTableProps) {
+  // Mock data
   const orders: Order[] = [
     {
       id: 'PRE-001',
@@ -74,7 +62,6 @@ export default function OrderTable({
       id: 'PRE-004',
       customer: 'Pham Thi D',
       item: 'SKU-001',
-      waitingFor: 'Kính Cận',
       currentStatus: 'Processing',
       timeElapsed: '1h 45m',
       statusColor: 'bg-blue-100 text-blue-600',
@@ -82,11 +69,85 @@ export default function OrderTable({
     }
   ]
 
+  // Default Columns nếu không truyền props
+  const defaultColumns: Column<Order>[] = [
+    {
+      header: 'Order ID',
+      render: (order) => (
+        <div>
+          <div>{order.id}</div>
+          <div className="w-12 h-1.5 bg-gray-200 rounded-full mt-1">
+            <div className="bg-emerald-400 h-full rounded-full w-1/2"></div>
+          </div>
+        </div>
+      ),
+      className: 'font-medium'
+    },
+    {
+      header: 'Customer',
+      render: (order) => order.customer
+    },
+    {
+      header: 'Items',
+      render: (order) => order.item,
+      className: 'text-gray-400'
+    },
+    // Ví dụ cột Waiting For (mặc định có thể comment lại hoặc để đó)
+    {
+      header: 'Waiting For',
+      render: (order) => order.waitingFor || '-',
+      className: 'text-purple-600 font-medium'
+    },
+    {
+      header: 'Current Status',
+      render: (order) => (
+        <span className={`px-3 py-1 rounded-md text-xs font-medium ${order.statusColor}`}>
+          {order.currentStatus}
+        </span>
+      )
+    },
+    {
+      header: 'Time Elapsed',
+      render: (order) => (
+        <div className="flex items-center gap-1.5">
+          <IoTimeOutline />
+          {order.timeElapsed}
+        </div>
+      ),
+      className: 'text-gray-500'
+    },
+    {
+      header: 'Actions',
+      headerClassName: 'text-center',
+      render: (order) => (
+        <div className="flex items-center justify-center gap-4">
+          <button className="text-blue-500 hover:text-blue-700">
+            <IoEyeOutline size={20} />
+          </button>
+          <button
+            className={`flex items-center gap-1 px-4 py-1.5 rounded-lg text-white text-xs font-medium transition-colors ${
+              order.isNextActive
+                ? 'bg-emerald-500 hover:bg-emerald-600'
+                : 'bg-gray-300 cursor-not-allowed'
+            }`}
+            disabled={!order.isNextActive}
+          >
+            Next <IoChevronForward />
+          </button>
+        </div>
+      )
+    }
+  ]
+
+  const activeColumns = columns || defaultColumns
+
   return (
     <div className="overflow-x-auto bg-white rounded-lg shadow">
       <table className="w-full text-left border-collapse">
-        <OrderHeaderTable columns={columns} />
-        <OrderList orders={orders} columns={columns} />
+        {/* Truyền mảng columns xuống cho Header */}
+        <OrderHeaderTable columns={activeColumns} />
+        {/* Truyền mảng columns xuống cho Body de render cell */}
+        <OrderList orders={orders} columns={activeColumns} />
       </table>
     </div>
   )

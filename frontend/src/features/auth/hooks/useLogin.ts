@@ -1,34 +1,27 @@
+import { authApi } from '@/api/modules/auth.api'
 import { useMutation } from '@tanstack/react-query'
-import { authService } from '../services/auth.service' // Nhớ import đúng path
-import { useAuthStore } from '@/store'
-import { useNavigate } from 'react-router-dom'
 import type { LoginRequest, LoginResponse } from '@/shared/types'
-// Import toast library của bạn (ví dụ react-toastify, sonner...)
-// import { toast } from 'sonner'
+import { useNavigate } from 'react-router-dom'
 
-export function useLogin() {
-  const setUser = useAuthStore((state) => state.setUser)
+export const useLogin = (role: 'customer' | 'staff' = 'customer') => {
   const navigate = useNavigate()
-
   return useMutation({
-    mutationFn: (payload: LoginRequest) => authService.login(payload),
-
+    mutationFn: (payload: LoginRequest) => {
+      if (role === 'staff') {
+        return authApi.loginStaff(payload)
+      }
+      return authApi.loginCustomer(payload)
+    },
     onSuccess: (response: LoginResponse) => {
-      if (response.success && response.data) {
-        const { user } = response.data
+      const { accessToken } = response.data
+      localStorage.setItem('accessToken', accessToken)
 
-        if (user) {
-          setUser(user)
-        }
-        console.log(user)
-
-        // toast.success('Đăng nhập thành công')
-        navigate('/')
+      if (role === 'staff') {
+        navigate('/admin/dashboard')
       } else {
-        // toast.error(response.message || 'Đăng nhập thất bại')
+        navigate('/')
       }
     },
-
     onError: (error: any) => {
       console.error('Login failed', error)
     }

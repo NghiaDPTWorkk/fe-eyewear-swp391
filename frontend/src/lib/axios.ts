@@ -20,7 +20,10 @@ apiClient.interceptors.request.use(
     const token = localStorage.getItem('access_token')
     config.headers['x-device-id'] = deviceId
     // nếu có token và header chưa được set thì mới gán
-    if (token && !config.url?.includes('/auth/login')) {
+    const authRoutes = ['/auth/login', '/admin/auth/login']
+    const isAuthRequest = authRoutes.some((route) => config.url?.includes(route))
+
+    if (token && !isAuthRequest) {
       config.headers.Authorization = `Bearer ${token}`
     }
 

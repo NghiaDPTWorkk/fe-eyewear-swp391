@@ -4,8 +4,12 @@ import { ENDPOINTS } from '../endpoints'
 import type { LoginRequest, LoginResponse, RegisterRequest, User } from '@/shared/types'
 
 export const authApi = {
-  login(payload: LoginRequest) {
-    return httpClient.post<LoginResponse>(ENDPOINTS.AUTH.LOGIN, payload)
+  loginCustomer(payload: LoginRequest) {
+    return httpClient.post<LoginResponse>(ENDPOINTS.AUTH.LOGIN_CUSTOMER, payload)
+  },
+
+  loginStaff(payload: LoginRequest) {
+    return httpClient.post<LoginResponse>(ENDPOINTS.AUTH.LOGIN_STAFF, payload)
   },
 
   register(payload: RegisterRequest) {

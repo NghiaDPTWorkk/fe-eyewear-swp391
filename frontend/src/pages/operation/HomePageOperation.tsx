@@ -53,7 +53,11 @@ export default function HomePageOperation() {
       </SidebarStaff>
 
       <div className="flex-1 flex flex-col ml-[260px]">
-        <HeaderStaff containerWidth="1200px" left={<NavSearch />} right={<NavActions />} />
+        <HeaderStaff
+          containerWidth="1200px"
+          left={<NavSearch placeholder={'Search orders...'} />}
+          right={<NavActions />}
+        />
 
         <main className="p-4 bg-mint-200 h-full">
           <Container>

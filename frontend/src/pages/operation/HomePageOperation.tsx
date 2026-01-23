@@ -1,6 +1,5 @@
 import { SidebarStaff } from '@/components/layout/staff-core/SidebarStaff'
 import { HeaderStaff } from '@/components/layout/staff-core/HeaderStaff'
-import { NavSearch, NavActions } from '@/components/common/staff/NavListStaff'
 import { UserWidgetWithLogout } from '@/components/layout/staff-core/sidebar/UserWidgetWithLogout'
 import { ThemeToggle } from '@/components/layout/staff-core/sidebar/ThemeToggle'
 import {
@@ -15,6 +14,7 @@ import { TbTruckDelivery } from 'react-icons/tb'
 import { FaBoxesPacking } from 'react-icons/fa6'
 import { Container } from '@/components'
 import OrderTable from '@/components/layout/staff-core/ordertable/OrderTable'
+import { NavActions, NavSearch } from '@/components/common/staff-core/NavListStaff'
 
 export default function HomePageOperation() {
   return (

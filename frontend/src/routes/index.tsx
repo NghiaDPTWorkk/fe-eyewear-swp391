@@ -9,6 +9,7 @@ import { HomePage } from '@/pages/customer'
 const LoginPage = lazy(() =>
   import('@/pages/auth/LoginPage').then((m) => ({ default: m.LoginPage }))
 )
+
 const NotFoundPage = lazy(() =>
   import('@/pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage }))
 )
@@ -16,6 +17,9 @@ const SaleStaffDashboard = lazy(() =>
   import('@/pages/salestaff/SaleStaffDashboard').then((m) => ({ default: m.default }))
 )
 
+const HomePageOperation = lazy(() =>
+  import('@/pages/operation/HomePageOperation').then((m) => ({ default: m.default }))
+)
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -38,6 +42,14 @@ export const router = createBrowserRouter([
     element: (
       <LazyPage>
         <SaleStaffDashboard />
+      </LazyPage>
+    )
+  },
+  {
+    path: '/operationstaff/dashboard',
+    element: (
+      <LazyPage>
+        <HomePageOperation />
       </LazyPage>
     )
   },

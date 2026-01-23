@@ -1,19 +1,30 @@
 import type { ReactNode } from 'react'
+import { Container } from '../container'
 
 interface HeaderStaffProps {
+  containerWidth?: string
+  containerJustify?: string
   left?: ReactNode
   center?: ReactNode
-  right?: ReactNode
+  right: ReactNode
 }
 
-export function HeaderStaff({ left, center, right }: HeaderStaffProps) {
+export function HeaderStaff({
+  containerWidth = '100%',
+  containerJustify,
+  left,
+  center,
+  right
+}: HeaderStaffProps) {
   return (
-    <header className="w-full h-14 bg-white border-b border-gray-200 px-6 flex items-center justify-between sticky top-0 z-10">
-      <div className="flex items-center flex-1">
-        {left}
-        {center}
-      </div>
-      {right && <div className="flex items-center gap-4">{right}</div>}
+    <header className="w-full bg-white border-b border-neutral-200">
+      <Container maxWidth={containerWidth} justify={containerJustify}>
+        <div className="flex items-center justify-between w-full h-[60px] gap-2 md:gap-4">
+          {left && <div className="hidden sm:flex items-center">{left}</div>}
+          {center && <div className="flex-1 flex justify-center px-2 md:px-0">{center}</div>}
+          <div className="flex items-center shrink-0">{right}</div>
+        </div>
+      </Container>
     </header>
   )
 }

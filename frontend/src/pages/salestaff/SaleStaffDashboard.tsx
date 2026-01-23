@@ -1,6 +1,5 @@
 import { SidebarStaff } from '@/components/layout/staff-core/SidebarStaff'
 import { HeaderStaff } from '@/components/layout/staff-core/HeaderStaff'
-import { NavSearch, NavActions } from '@/components/common/staff/NavListStaff'
 import { UserWidgetWithLogout } from '@/components/layout/staff-core/sidebar/UserWidgetWithLogout'
 import { ThemeToggle } from '@/components/layout/staff-core/sidebar/ThemeToggle'
 import {
@@ -14,6 +13,7 @@ import {
   IoStorefront
 } from 'react-icons/io5'
 import { Container } from '@/components'
+import { NavActions, NavSearch } from '@/components/common/staff-core/NavListStaff'
 
 export default function SaleStaffDashboard() {
   return (

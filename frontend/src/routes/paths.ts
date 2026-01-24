@@ -12,5 +12,12 @@ export const PATHS = {
   ADMIN: {
     DASHBOARD: '/admin/dashboard'
   },
+  SALESTAFF: {
+    DASHBOARD: '/salestaff/dashboard'
+  },
+  OPERATIONSTAFF: {
+    DASHBOARD: '/operationstaff/dashboard',
+    PRESCRIPTION_ORDERS: '/operationstaff/prescription-orders'
+  },
   NOT_FOUND: '*'
 }

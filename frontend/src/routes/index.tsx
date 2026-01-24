@@ -1,15 +1,53 @@
 import { lazy } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
 import { LazyPage } from '@/pages/LazyPage'
+import { CustomerHomePage } from '@/pages/customer'
 
-const HomePage = lazy(() =>
-  import('@/pages/customer/HomePage').then((m) => ({ default: m.HomePage }))
-)
 const LoginPage = lazy(() =>
   import('@/pages/auth/LoginPage').then((m) => ({ default: m.LoginPage }))
 )
+
 const NotFoundPage = lazy(() =>
   import('@/pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage }))
+)
+const SaleStaffLayout = lazy(() =>
+  import('@/components/layout/staff/salestaff/SaleStaffLayout').then((m) => ({
+    default: m.default
+  }))
+)
+
+const SaleStaffDashboardPage = lazy(() =>
+  import('@/pages/salestaff/SaleStaffDashboardPage').then((m) => ({ default: m.default }))
+)
+
+const OperationLayout = lazy(() =>
+  import('@/components/layout/staff/operationstaff/OperationLayout').then((m) => ({
+    default: m.default
+  }))
+)
+
+const OperationDashboardPage = lazy(() =>
+  import('@/pages/operation/OperationDashboardPage').then((m) => ({ default: m.default }))
+)
+
+const OperationPrescriptionPage = lazy(() =>
+  import('@/pages/operation/OperationPrescriptionPage').then((m) => ({ default: m.default }))
+)
+
+const OperationPreOrdersPage = lazy(() =>
+  import('@/pages/operation/OperationPreOrdersPage').then((m) => ({ default: m.default }))
+)
+
+const OperationAllOrdersPage = lazy(() =>
+  import('@/pages/operation/OperationAllOrdersPage').then((m) => ({ default: m.default }))
+)
+
+const OperationDeliveryPage = lazy(() =>
+  import('@/pages/operation/OperationDeliveryPage').then((m) => ({ default: m.default }))
+)
+
+const OperationPackingPage = lazy(() =>
+  import('@/pages/operation/OperationPackingPage').then((m) => ({ default: m.default }))
 )
 
 export const router = createBrowserRouter([
@@ -17,7 +55,7 @@ export const router = createBrowserRouter([
     path: '/',
     element: (
       <LazyPage>
-        <HomePage />
+        <CustomerHomePage />
       </LazyPage>
     )
   },
@@ -29,7 +67,54 @@ export const router = createBrowserRouter([
       </LazyPage>
     )
   },
-
+  {
+    path: '/salestaff',
+    element: (
+      <LazyPage>
+        <SaleStaffLayout />
+      </LazyPage>
+    ),
+    children: [
+      {
+        path: 'dashboard',
+        element: <SaleStaffDashboardPage />
+      }
+    ]
+  },
+  {
+    path: '/operationstaff',
+    element: (
+      <LazyPage>
+        <OperationLayout />
+      </LazyPage>
+    ),
+    children: [
+      {
+        path: 'dashboard',
+        element: <OperationDashboardPage />
+      },
+      {
+        path: 'all',
+        element: <OperationAllOrdersPage />
+      },
+      {
+        path: 'prescription-orders',
+        element: <OperationPrescriptionPage />
+      },
+      {
+        path: 'pre-orders',
+        element: <OperationPreOrdersPage />
+      },
+      {
+        path: 'packing',
+        element: <OperationPackingPage />
+      },
+      {
+        path: 'delivery-orders',
+        element: <OperationDeliveryPage />
+      }
+    ]
+  },
   {
     path: '*',
     element: (

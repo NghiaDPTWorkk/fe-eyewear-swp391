@@ -1,81 +1,82 @@
 @import 'tailwindcss';
 
-/* Custom theme configuration for Eyewear Project */
+/* Custom theme configuration for Eyewear Project - Optimized based on reference designs */
 @theme {
-  /* ===== MINT COLORS (Brand) ===== */
-  --color-mint-200: #f6fffb;
-  --color-mint-300: #d4ede5;
-  --color-mint-500: #7fe3c7;
-  --color-mint-700: #4ad7b0;
-  --color-mint-900: #2aa57f;
-  --color-mint-1200: #043026; /* dùng cho tiêu đề hoặc văn bản đậm màu */
-  --color-gray-eyewear: #5b6b66; /* text chữ nhỏ kiểu z */
+  /* ===== MINT COLORS (Brand - Vibrant & Professional) ===== */
+  --color-mint-50: #f0fff9;
+  --color-mint-100: #e6faf2;
+  --color-mint-200: #d1f5e9;
+  --color-mint-300: #a3ecd2;
+  --color-mint-400: #75e4bc;
+  --color-mint-500: #4fdab4; /* Main Brand Color from reference buttons */
+  --color-mint-600: #42b999;
+  --color-mint-700: #35987d;
+  --color-mint-800: #287762;
+  --color-mint-900: #1b5646;
+  --color-mint-1200: #0f172a; /* Darkest slate for text headings */
 
-  /* ===== PRIMARY COLORS (Mint Green - Main Actions) ===== */
-  --color-primary-50: #f6fffb; /* same as mint-200 */
-  --color-primary-100: #e6f9f4;
-  --color-primary-200: #d4ede5; /* same as mint-300 */
-  --color-primary-300: #a8e0d1;
-  --color-primary-400: #7fe3c7; /* same as mint-500 */
-  --color-primary-500: #4ad7b0; /* same as mint-700 - main brand color */
-  --color-primary-600: #3bc19d;
-  --color-primary-700: #2aa57f; /* same as mint-900 */
-  --color-primary-800: #228a6a;
-  --color-primary-900: #1a6d53;
-  --color-primary-950: #043026; /* same as mint-1200 */
+  /* ===== PRIMARY COLORS (Mapped to Mint for global consistency) ===== */
+  --color-primary-50: var(--color-mint-50);
+  --color-primary-100: var(--color-mint-100);
+  --color-primary-200: var(--color-mint-200);
+  --color-primary-300: var(--color-mint-300);
+  --color-primary-400: var(--color-mint-400);
+  --color-primary-500: var(--color-mint-500);
+  --color-primary-600: var(--color-mint-600);
+  --color-primary-700: var(--color-mint-700);
+  --color-primary-800: var(--color-mint-800);
+  --color-primary-900: var(--color-mint-900);
+  --color-primary-950: #0f172a;
 
-  /* ===== SECONDARY COLORS (Blue - Dashboard & Charts) ===== */
+  /* ===== SECONDARY COLORS (Soft Blue - Indicators & Data) ===== */
   --color-secondary-50: #eff6ff;
   --color-secondary-100: #dbeafe;
-  --color-secondary-200: #bfdbfe;
-  --color-secondary-300: #93c5fd;
-  --color-secondary-400: #60a5fa;
   --color-secondary-500: #3b82f6;
-  --color-secondary-600: #2563eb;
   --color-secondary-700: #1d4ed8;
-  --color-secondary-800: #1e40af;
-  --color-secondary-900: #1e3a8a;
-  --color-secondary-950: #172554;
 
-  /* ===== DANGER COLORS (Red - Errors & Warnings) ===== */
+  /* ===== DANGER COLORS (Professional Red) ===== */
   --color-danger-50: #fef2f2;
-  --color-danger-100: #fee2e2;
-  --color-danger-200: #fecaca;
-  --color-danger-300: #fca5a5;
-  --color-danger-400: #f87171;
   --color-danger-500: #ef4444;
-  --color-danger-600: #dc2626;
   --color-danger-700: #b91c1c;
-  --color-danger-800: #991b1b;
-  --color-danger-900: #7f1d1d;
-  --color-danger-950: #450a0a;
 
-  /* ===== NEUTRAL COLORS (Gray - Borders & Backgrounds) ===== */
-  --color-neutral-50: #f9fafb;
-  --color-neutral-100: #f3f4f6;
-  --color-neutral-200: #e5e7eb;
-  --color-neutral-300: #d1d5db;
-  --color-neutral-400: #9ca3af;
-  --color-neutral-500: #6b7280;
-  --color-neutral-600: #4b5563;
-  --color-neutral-700: #374151;
-  --color-neutral-800: #1f2937;
-  --color-neutral-900: #111827;
-  --color-neutral-950: #030712;
+  /* ===== WARNING COLORS (Soft Orange) ===== */
+  --color-warning-50: #fffbeb;
+  --color-warning-500: #f59e0b;
+
+  /* ===== NEUTRAL COLORS (Clean Slate Gray Scale) ===== */
+  --color-neutral-50: #f8fafc; /* Standard page background */
+  --color-neutral-100: #f1f5f9; /* Border color */
+  --color-neutral-200: #e2e8f0;
+  --color-neutral-300: #cbd5e1;
+  --color-neutral-400: #94a3b8;
+  --color-neutral-500: #64748b; /* Secondary text */
+  --color-neutral-600: #475569;
+  --color-neutral-700: #334155;
+  --color-neutral-800: #1e293b;
+  --color-neutral-900: #0f172a; /* Primary text / Headings */
 
   /* ===== TYPOGRAPHY ===== */
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-heading: 'Outfit', system-ui, sans-serif;
+  --font-sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-heading: 'Outfit', sans-serif;
 
   /* ===== SPACING ===== */
   --spacing-18: 4.5rem;
+  --spacing-62_5: 15.625rem;
+  --spacing-65: 16.25rem;
+  --spacing-75: 18.75rem;
   --spacing-88: 22rem;
+  --spacing-125: 31.25rem;
 
   /* ===== BORDER RADIUS ===== */
   --radius-4xl: 2rem;
 }
 
-/* Base styles */
+@layer utilities {
+  .order-status-gradient {
+    background: conic-gradient(#10b981 0% 65%, #3b82f6 65% 90%, #f97316 90% 100%);
+  }
+}
+
 @layer base {
   * {
     box-sizing: border-box;
@@ -87,9 +88,24 @@
 
   body {
     font-family: var(--font-sans);
-    color: var(--color-mint-1200);
-    background-color: var(--color-mint-200); /* Ví dụ đặt nền mặc định là mint-200 */
+    color: var(--color-neutral-900);
+    background-color: var(--color-neutral-50);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    color: var(--color-neutral-900);
+  }
+}
+
+.caret-transparent {
+  caret-color: transparent;
 }

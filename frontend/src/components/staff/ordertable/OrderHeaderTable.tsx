@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils'
 import type { Column, Order } from './OrderTable'
 
 interface OrderHeaderTableProps {
@@ -7,9 +8,15 @@ interface OrderHeaderTableProps {
 export default function OrderHeaderTable({ columns }: OrderHeaderTableProps) {
   return (
     <thead>
-      <tr className="border-b border-gray-50 text-xs bg-gray-100 font-bold text-gray-400 uppercase tracking-wider cursor-default select-none">
+      <tr className="border-b border-neutral-200 bg-neutral-50/50">
         {columns.map((col, index) => (
-          <th key={index} className={`px-6 py-4 ${col.headerClassName || ''}`}>
+          <th
+            key={index}
+            className={cn(
+              'px-4 py-3.5 text-[11px] font-bold text-neutral-500 uppercase tracking-wider',
+              col.headerClassName
+            )}
+          >
             {col.header}
           </th>
         ))}

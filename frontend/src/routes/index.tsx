@@ -20,8 +20,36 @@ const SaleStaffDashboardPage = lazy(() =>
   import('@/pages/salestaff/SaleStaffDashboardPage').then((m) => ({ default: m.default }))
 )
 
+const SaleStaffOrderPage = lazy(() =>
+  import('@/pages/salestaff/SaleStaffOrderPage').then((m) => ({ default: m.default }))
+)
+
+const SaleStaffProductPage = lazy(() =>
+  import('@/pages/salestaff/SaleStaffProductPage').then((m) => ({ default: m.default }))
+)
+
+const SaleStaffCustomerPage = lazy(() =>
+  import('@/pages/salestaff/SaleStaffCustomerPage').then((m) => ({ default: m.default }))
+)
+
+const SaleStaffLabStatusPage = lazy(() =>
+  import('@/pages/salestaff/SaleStaffLabStatusPage').then((m) => ({ default: m.default }))
+)
+
+const SaleStaffRxVerificationPage = lazy(() =>
+  import('@/pages/salestaff/SaleStaffRxVerificationPage').then((m) => ({ default: m.default }))
+)
+
+const SaleStaffPreOrdersPage = lazy(() =>
+  import('@/pages/salestaff/SaleStaffPreOrdersPage').then((m) => ({ default: m.default }))
+)
+
+const SaleStaffReturnsPage = lazy(() =>
+  import('@/pages/salestaff/SaleStaffReturnsPage').then((m) => ({ default: m.default }))
+)
+
 const OperationLayout = lazy(() =>
-  import('@/components/layout/staff/operationstaff/OperationLayout').then((m) => ({
+  import('@/pages/operation/OperationLayout').then((m) => ({
     default: m.default
   }))
 )
@@ -78,6 +106,34 @@ export const router = createBrowserRouter([
       {
         path: 'dashboard',
         element: <SaleStaffDashboardPage />
+      },
+      {
+        path: 'orders',
+        element: <SaleStaffOrderPage />
+      },
+      {
+        path: 'orders/rx-verification',
+        element: <SaleStaffRxVerificationPage />
+      },
+      {
+        path: 'orders/pre-orders',
+        element: <SaleStaffPreOrdersPage />
+      },
+      {
+        path: 'orders/returns',
+        element: <SaleStaffReturnsPage />
+      },
+      {
+        path: 'products',
+        element: <SaleStaffProductPage />
+      },
+      {
+        path: 'customers',
+        element: <SaleStaffCustomerPage />
+      },
+      {
+        path: 'lab-status',
+        element: <SaleStaffLabStatusPage />
       }
     ]
   },

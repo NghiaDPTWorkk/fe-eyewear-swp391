@@ -12,16 +12,7 @@ export interface FormFieldProps extends HTMLAttributes<HTMLDivElement> {
 
 export const FormField = forwardRef<HTMLDivElement, FormFieldProps>(
   (
-    {
-      label,
-      fieldId,
-      children, //
-      error,
-      helperText,
-      isRequired = false,
-      className,
-      ...props
-    },
+    { label, fieldId, children, error, helperText, isRequired = false, className, ...props },
     ref
   ) => {
     const generatedId = useId()

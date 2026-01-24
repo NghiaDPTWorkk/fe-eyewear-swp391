@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import OrderHeaderTable from './OrderHeaderTable'
 import OrderList from './OrderList'
+import { Button } from '@/components'
 import { IoTimeOutline, IoEyeOutline, IoChevronForward } from 'react-icons/io5'
 
 export interface Order {
@@ -32,13 +33,13 @@ interface OrderTableProps {
 const getOrderTypeStyles = (type: string) => {
   switch (type) {
     case 'Đơn Thường':
-      return 'bg-green-100 text-green-700'
+      return 'bg-emerald-50 text-emerald-600'
     case 'Pre-order':
-      return 'bg-yellow-100 text-yellow-700'
+      return 'bg-amber-50 text-amber-600'
     case 'Prescription':
-      return 'bg-blue-100 text-blue-700'
+      return 'bg-indigo-50 text-indigo-600'
     default:
-      return 'bg-gray-100 text-gray-700'
+      return 'bg-neutral-50 text-neutral-600'
   }
 }
 
@@ -165,20 +166,20 @@ export default function OrderTable({ columns, hiddenColumns = [], filterType }: 
       header: 'ACTION',
       headerClassName: 'text-center',
       render: (order) => (
-        <div className="flex items-center justify-center gap-4">
-          <button className="text-blue-500 hover:text-blue-700">
+        <div className="flex items-center justify-center gap-3">
+          <Button variant="ghost" size="sm" colorScheme="secondary" className="p-2">
             <IoEyeOutline size={20} />
-          </button>
-          <button
-            className={`flex items-center gap-1 px-4 py-1.5 rounded-lg text-white text-xs font-medium transition-colors ${
-              order.isNextActive
-                ? 'bg-emerald-500 hover:bg-emerald-600'
-                : 'bg-gray-300 cursor-not-allowed'
-            }`}
-            disabled={!order.isNextActive}
+          </Button>
+          <Button
+            variant="solid"
+            colorScheme="primary"
+            size="sm"
+            className="text-xs"
+            isDisabled={!order.isNextActive}
+            rightIcon={<IoChevronForward />}
           >
-            Next <IoChevronForward />
-          </button>
+            Next
+          </Button>
         </div>
       )
     }

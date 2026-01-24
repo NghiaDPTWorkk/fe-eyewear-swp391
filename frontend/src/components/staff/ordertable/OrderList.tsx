@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils'
 import type { Column, Order } from './OrderTable'
 
 interface OrderListProps {
@@ -7,14 +8,11 @@ interface OrderListProps {
 
 export default function OrderList({ orders, columns }: OrderListProps) {
   return (
-    <tbody className="divide-y divide-gray-50">
+    <tbody className="divide-y divide-neutral-50">
       {orders.map((order, orderIndex) => (
-        <tr
-          key={orderIndex}
-          className="hover:bg-gray-50 transition-colors text-sm text-gray-700 cursor-default select-none"
-        >
+        <tr key={orderIndex} className="group hover:bg-neutral-50/50 transition-colors">
           {columns.map((col, colIndex) => (
-            <td key={colIndex} className={`px-6 py-4 ${col.className || ''}`}>
+            <td key={colIndex} className={cn('px-4 py-4 text-sm text-gray-600', col.className)}>
               {col.render(order)}
             </td>
           ))}

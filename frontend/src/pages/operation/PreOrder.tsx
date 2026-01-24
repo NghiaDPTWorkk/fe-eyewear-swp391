@@ -6,7 +6,7 @@ export default function PreOrder() {
     <Container>
       <div className="text-sm text-gray-600 mb-2">Logistics Waiting Station / Pre-Orders</div>
       <h1 className="text-xl font-semibold mb-5 text-primary-700">Pre-Orders</h1>
-      <OrderTable />
+      <OrderTable filterType="Pre-order" />
     </Container>
   )
 }

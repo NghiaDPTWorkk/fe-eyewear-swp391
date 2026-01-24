@@ -6,7 +6,7 @@ export default function HomePageOperation() {
     <Container>
       <div className="text-sm text-gray-600 mb-2">Dashboard / Order Management</div>
       <h1 className="text-xl font-semibold mb-5 text-primary-700">Priority Orders</h1>
-      <OrderTable />
+      <OrderTable hiddenColumns={['WAITING FOR']} />
     </Container>
   )
 }

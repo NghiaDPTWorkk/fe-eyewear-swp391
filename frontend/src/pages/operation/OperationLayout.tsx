@@ -45,7 +45,12 @@ export default function OperationLayout() {
             active={location.pathname === '/operationstaff/dashboard'}
             onClick={() => navigate('/operationstaff/dashboard')}
           />
-          <SidebarStaff.MenuItem icon={<IoReceipt />} label="All Orders" />
+          <SidebarStaff.MenuItem
+            icon={<IoReceipt />}
+            label="All Orders"
+            active={location.pathname === '/operationstaff/all'}
+            onClick={() => navigate('/operationstaff/all')}
+          />
           <SidebarStaff.MenuItem
             icon={<IoBuildOutline />}
             label="Technical Stations"
@@ -58,8 +63,18 @@ export default function OperationLayout() {
             active={location.pathname === '/operationstaff/pre-orders'}
             onClick={() => navigate('/operationstaff/pre-orders')}
           />
-          <SidebarStaff.MenuItem icon={<FaBoxesPacking />} label="Packing Station" />
-          <SidebarStaff.MenuItem icon={<TbTruckDelivery />} label="Delivery Handover" />
+          <SidebarStaff.MenuItem
+            icon={<FaBoxesPacking />}
+            label="Packing Station"
+            active={location.pathname === '/operationstaff/packing'}
+            onClick={() => navigate('/operationstaff/packing')}
+          />
+          <SidebarStaff.MenuItem
+            icon={<TbTruckDelivery />}
+            label="Delivery Handover"
+            active={location.pathname === '/operationstaff/delivery-orders'}
+            onClick={() => navigate('/operationstaff/delivery-orders')}
+          />
         </SidebarStaff.MenuSection>
 
         <SidebarStaff.MenuSection label="TOOLS">

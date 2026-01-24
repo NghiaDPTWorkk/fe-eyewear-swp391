@@ -1,10 +1,11 @@
 import type { ReactNode } from 'react'
 import OrderHeaderTable from './OrderHeaderTable'
 import OrderList from './OrderList'
-import { IoEyeOutline, IoChevronForward, IoTimeOutline } from 'react-icons/io5'
+import { IoTimeOutline, IoEyeOutline, IoChevronForward } from 'react-icons/io5'
 
 export interface Order {
   id: string
+  orderType: string
   customer: string
   item: string
   waitingFor?: string
@@ -18,61 +19,94 @@ export interface Order {
 export interface Column<T> {
   header: string | ReactNode // Tiêu đề cột (Text hoặc Component)
   render: (item: T) => ReactNode // Hàm hiển thị dữ liệu cho từng dòng
-  className?: string // Class cho td (cell)
-  headerClassName?: string // Class cho th (header)
+  className?: string // Class cho td á
+  headerClassName?: string // Class cho th
 }
 
 interface OrderTableProps {
   columns?: Column<Order>[] // Mảng các cột
+  hiddenColumns?: string[] // Mảng các header cột muốn ẩn
+  filterType?: string // Loại đơn muốn lọc
 }
 
-export default function OrderTable({ columns }: OrderTableProps) {
-  // Mock data
+const getOrderTypeStyles = (type: string) => {
+  switch (type) {
+    case 'Đơn Thường':
+      return 'bg-green-100 text-green-700'
+    case 'Pre-order':
+      return 'bg-yellow-100 text-yellow-700'
+    case 'Prescription':
+      return 'bg-blue-100 text-blue-700'
+    default:
+      return 'bg-gray-100 text-gray-700'
+  }
+}
+
+export default function OrderTable({ columns, hiddenColumns = [], filterType }: OrderTableProps) {
+  // Mock data mốt thay sau
   const orders: Order[] = [
     {
-      id: 'PRE-001',
-      customer: 'Nguyen Van A',
+      id: 'ORD-001',
+      orderType: 'Đơn Thường',
+      customer: 'Nguyễn Văn A',
       item: 'SKU-001',
       waitingFor: 'Tròng Chemi 5.5',
-      currentStatus: 'Awaiting Stock',
-      timeElapsed: '2d 5h',
-      statusColor: 'bg-orange-100 text-orange-600',
+      currentStatus: 'Processing',
+      timeElapsed: '2h 15m',
+      statusColor: 'bg-blue-100 text-blue-600',
       isNextActive: true
     },
     {
-      id: 'PRE-002',
-      customer: 'Tran Thi B',
+      id: 'ORD-002',
+      orderType: 'Pre-order',
+      customer: 'Trần Thị B',
       item: 'SKU-001',
       waitingFor: 'Gọng Titan',
-      currentStatus: 'Awaiting Stock',
-      timeElapsed: '1d 12h',
-      statusColor: 'bg-orange-100 text-orange-600',
+      currentStatus: 'Lens Edging & Mounting',
+      timeElapsed: '3h 45m',
+      statusColor: 'bg-purple-100 text-purple-600',
       isNextActive: false
     },
     {
       id: 'PRE-003',
-      customer: 'Le Van C',
+      orderType: 'Pre-order',
+      customer: 'Lê Văn C',
       item: 'SKU-001',
-      currentStatus: 'In Stock',
-      timeElapsed: '3h 20m',
-      statusColor: 'bg-green-100 text-green-600',
+      currentStatus: 'Awaiting Stock',
+      timeElapsed: '5d 2h',
+      statusColor: 'bg-orange-100 text-orange-600',
       isNextActive: true
     },
     {
-      id: 'PRE-004',
-      customer: 'Pham Thi D',
+      id: 'ORD-004',
+      orderType: 'Prescription',
+      customer: 'Phạm Thị D',
       item: 'SKU-001',
-      currentStatus: 'Processing',
-      timeElapsed: '1h 45m',
+      currentStatus: 'Pending QC',
+      timeElapsed: '45m',
+      statusColor: 'bg-gray-100 text-gray-600',
+      isNextActive: true
+    },
+    {
+      id: 'ORD-005',
+      orderType: 'Đơn Thường',
+      customer: 'Hoàng Văn E',
+      item: 'SKU-001',
+      currentStatus: 'Packed',
+      timeElapsed: '1h 30m',
       statusColor: 'bg-blue-100 text-blue-600',
       isNextActive: true
     }
   ]
 
+  const filteredOrders = filterType
+    ? orders.filter((order) => order.orderType === filterType)
+    : orders
+
   // Default Columns nếu không truyền props
   const defaultColumns: Column<Order>[] = [
     {
-      header: 'Order ID',
+      header: 'MÃ ĐƠN',
       render: (order) => (
         <div>
           <div>{order.id}</div>
@@ -84,22 +118,33 @@ export default function OrderTable({ columns }: OrderTableProps) {
       className: 'font-medium'
     },
     {
-      header: 'Customer',
+      header: 'LOẠI ĐƠN',
+      render: (order) => (
+        <span
+          className={`px-3 py-1 rounded-md text-xs font-medium whitespace-nowrap ${getOrderTypeStyles(
+            order.orderType
+          )}`}
+        >
+          {order.orderType}
+        </span>
+      )
+    },
+    {
+      header: 'CUSTOMER',
       render: (order) => order.customer
     },
     {
-      header: 'Items',
+      header: 'ITEMS',
       render: (order) => order.item,
       className: 'text-gray-400'
     },
-    // Ví dụ cột Waiting For (mặc định có thể comment lại hoặc để đó)
     {
-      header: 'Waiting For',
+      header: 'WAITING FOR',
       render: (order) => order.waitingFor || '-',
       className: 'text-purple-600 font-medium'
     },
     {
-      header: 'Current Status',
+      header: 'TRẠNG THÁI',
       render: (order) => (
         <span className={`px-3 py-1 rounded-md text-xs font-medium ${order.statusColor}`}>
           {order.currentStatus}
@@ -107,7 +152,7 @@ export default function OrderTable({ columns }: OrderTableProps) {
       )
     },
     {
-      header: 'Time Elapsed',
+      header: 'ORDER AT',
       render: (order) => (
         <div className="flex items-center gap-1.5">
           <IoTimeOutline />
@@ -117,7 +162,7 @@ export default function OrderTable({ columns }: OrderTableProps) {
       className: 'text-gray-500'
     },
     {
-      header: 'Actions',
+      header: 'ACTION',
       headerClassName: 'text-center',
       render: (order) => (
         <div className="flex items-center justify-center gap-4">
@@ -139,13 +184,15 @@ export default function OrderTable({ columns }: OrderTableProps) {
     }
   ]
 
-  const activeColumns = columns || defaultColumns
+  const activeColumns = (columns || defaultColumns).filter(
+    (col) => !hiddenColumns.includes(col.header as string)
+  )
 
   return (
     <div className="overflow-x-auto bg-white rounded-lg shadow">
       <table className="w-full text-left border-collapse">
         <OrderHeaderTable columns={activeColumns} />
-        <OrderList orders={orders} columns={activeColumns} />
+        <OrderList orders={filteredOrders} columns={activeColumns} />
       </table>
     </div>
   )

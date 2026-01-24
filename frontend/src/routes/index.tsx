@@ -33,6 +33,18 @@ const PreOrdersPage = lazy(() =>
   import('@/pages/operation/PreOrder').then((m) => ({ default: m.default }))
 )
 
+const DisplayAllOrderPage = lazy(() =>
+  import('@/pages/operation/DisplayAllOrder').then((m) => ({ default: m.default }))
+)
+
+const DeliveryPage = lazy(() =>
+  import('@/pages/operation/DeliveryPage').then((m) => ({ default: m.default }))
+)
+
+const PackingPage = lazy(() =>
+  import('@/pages/operation/PackingPage').then((m) => ({ default: m.default }))
+)
+
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -71,12 +83,24 @@ export const router = createBrowserRouter([
         element: <HomePageOperation />
       },
       {
+        path: 'all',
+        element: <DisplayAllOrderPage />
+      },
+      {
         path: 'prescription-orders',
         element: <PrescriptionOrdersPage />
       },
       {
         path: 'pre-orders',
         element: <PreOrdersPage />
+      },
+      {
+        path: 'packing',
+        element: <PackingPage />
+      },
+      {
+        path: 'delivery-orders',
+        element: <DeliveryPage />
       }
     ]
   },

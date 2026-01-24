@@ -3,7 +3,7 @@ import { Container } from '@/components'
 import OrderTable from '@/components/staff/ordertable/OrderTable'
 import FilterButtonList from '@/components/staff/filterbuttonlist/FilterButtonList'
 
-export default function DisplayAllOrder() {
+export default function OperationAllOrdersPage() {
   const [filter, setFilter] = useState('all')
 
   const filterButtons = [
@@ -16,10 +16,12 @@ export default function DisplayAllOrder() {
   return (
     <Container>
       <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm text-gray-400 mb-2">
-          <span>Order Management</span>
+        <div className="flex items-center gap-2 text-sm text-neutral-400 mb-2">
+          <a href="/operationstaff/dashboard" className="hover:text-mint-600 transition-colors">
+            Dashboard
+          </a>
           <span>/</span>
-          <span className="text-gray-600 font-medium">All Orders</span>
+          <span className="text-mint-600 font-bold">All Orders</span>
         </div>
         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">All Orders</h1>
         <p className="text-gray-500 mt-1">Manage and track all customer orders in one place.</p>

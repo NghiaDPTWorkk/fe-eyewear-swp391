@@ -45,15 +45,54 @@ export default function SaleStaffLayout() {
           active={location.pathname === '/salestaff/dashboard'}
           onClick={() => navigate('/salestaff/dashboard')}
         />
-        <SidebarStaff.MenuItem icon={<IoReceipt />} label="Orders" hasDropdown>
-          <SidebarStaff.SubMenuItem label="All Orders" />
-          <SidebarStaff.SubMenuItem label="Rx Verification" badge={24} />
-          <SidebarStaff.SubMenuItem label="Pre-orders" badge={15} />
-          <SidebarStaff.SubMenuItem label="Returns" badge={8} />
+        <SidebarStaff.MenuItem
+          icon={<IoReceipt />}
+          label="Orders"
+          hasDropdown
+          active={location.pathname.startsWith('/salestaff/orders')}
+        >
+          <SidebarStaff.SubMenuItem
+            label="All Orders"
+            active={location.pathname === '/salestaff/orders'}
+            onClick={() => navigate('/salestaff/orders')}
+          />
+          <SidebarStaff.SubMenuItem
+            label="Rx Verification"
+            badge={24}
+            active={location.pathname === '/salestaff/orders/rx-verification'}
+            onClick={() => navigate('/salestaff/orders/rx-verification')}
+          />
+          <SidebarStaff.SubMenuItem
+            label="Pre-orders"
+            badge={15}
+            active={location.pathname === '/salestaff/orders/pre-orders'}
+            onClick={() => navigate('/salestaff/orders/pre-orders')}
+          />
+          <SidebarStaff.SubMenuItem
+            label="Returns"
+            badge={8}
+            active={location.pathname === '/salestaff/orders/returns'}
+            onClick={() => navigate('/salestaff/orders/returns')}
+          />
         </SidebarStaff.MenuItem>
-        <SidebarStaff.MenuItem icon={<IoCube />} label="Products" />
-        <SidebarStaff.MenuItem icon={<IoPeople />} label="Customers" />
-        <SidebarStaff.MenuItem icon={<IoFlask />} label="Lab Status" />
+        <SidebarStaff.MenuItem
+          icon={<IoCube />}
+          label="Products"
+          active={location.pathname === '/salestaff/products'}
+          onClick={() => navigate('/salestaff/products')}
+        />
+        <SidebarStaff.MenuItem
+          icon={<IoPeople />}
+          label="Customers"
+          active={location.pathname === '/salestaff/customers'}
+          onClick={() => navigate('/salestaff/customers')}
+        />
+        <SidebarStaff.MenuItem
+          icon={<IoFlask />}
+          label="Lab Status"
+          active={location.pathname === '/salestaff/lab-status'}
+          onClick={() => navigate('/salestaff/lab-status')}
+        />
       </SidebarStaff.MenuSection>
 
       <SidebarStaff.MenuSection label="TOOLS">

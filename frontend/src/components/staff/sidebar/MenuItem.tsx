@@ -47,7 +47,7 @@ export function MenuItem({
           active
             ? 'bg-mint-50 text-mint-700'
             : hasDropdown && isOpen
-              ? 'text-mint-700'
+              ? 'text-neutral-900 bg-neutral-50'
               : 'text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900'
         )}
         title={sidebarCollapsed ? label : undefined}

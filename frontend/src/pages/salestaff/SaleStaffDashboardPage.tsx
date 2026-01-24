@@ -8,11 +8,6 @@ export default function SaleStaffDashboardPage() {
   return (
     <Container>
       <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm text-gray-400 mb-2">
-          <span>Dashboard</span>
-          <span>/</span>
-          <span className="text-gray-600 font-medium">Sales Dashboard</span>
-        </div>
         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Sales Overview</h1>
         <p className="text-gray-500 mt-1">
           Overview of store performance and daily sales operations.

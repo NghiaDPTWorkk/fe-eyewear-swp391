@@ -33,7 +33,8 @@ export const buttonVariants = cva(
       {
         variant: 'solid',
         colorScheme: 'primary',
-        className: 'bg-primary-600 text-white hover:bg-primary-700 focus-visible:ring-primary-500'
+        className:
+          'bg-mint-500 text-white hover:bg-mint-600 focus-visible:ring-mint-500 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all'
       },
       {
         variant: 'solid',
@@ -54,8 +55,7 @@ export const buttonVariants = cva(
       {
         variant: 'outline',
         colorScheme: 'primary',
-        className:
-          'border-primary-600 text-primary-600 hover:bg-primary-50 focus-visible:ring-primary-500'
+        className: 'border-mint-500 text-mint-600 hover:bg-mint-50 focus-visible:ring-mint-500'
       },
       {
         variant: 'outline',

@@ -1,14 +1,16 @@
 import { Container } from '@/components'
 import OrderTable from '@/components/staff/ordertable/OrderTable'
 
-export default function PrescriptionOrders() {
+export default function OperationPrescriptionPage() {
   return (
     <Container>
       <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm text-gray-400 mb-2">
-          <span>Technical Stations</span>
+        <div className="flex items-center gap-2 text-sm text-neutral-400 mb-2">
+          <a href="/operationstaff/dashboard" className="hover:text-mint-600 transition-colors">
+            Dashboard
+          </a>
           <span>/</span>
-          <span className="text-gray-600 font-medium">Prescription Orders</span>
+          <span className="text-mint-600 font-bold">Prescription Orders</span>
         </div>
         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Prescription Orders</h1>
         <p className="text-gray-500 mt-1">Process and verify custom lens orders with precision.</p>

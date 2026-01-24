@@ -1,8 +1,8 @@
 import { FiSearch } from 'react-icons/fi'
 import { MdOutlineNotifications } from 'react-icons/md'
-import { Input } from '@/shared/components'
 import { cn } from '@/lib/utils'
 import type { ReactNode } from 'react'
+import { Input } from '@/components/common'
 
 interface NavSearchProps {
   className?: string

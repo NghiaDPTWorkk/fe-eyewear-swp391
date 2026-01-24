@@ -1,4 +1,4 @@
-import { Card } from '@/shared/components/atoms/card'
+import { Card } from '@/components/common/atoms/card'
 import { ORDER_STATUSES } from '../constants'
 
 function LegendItem({ color, label }: { color: string; label: string }) {
@@ -12,8 +12,8 @@ function LegendItem({ color, label }: { color: string; label: string }) {
 
 export default function OrderStatusChart() {
   const gradient = `conic-gradient(
-    ${ORDER_STATUSES[0].hex} 0% 65%, 
-    ${ORDER_STATUSES[1].hex} 65% 90%, 
+    ${ORDER_STATUSES[0].hex} 0% 65%,
+    ${ORDER_STATUSES[1].hex} 65% 90%,
     ${ORDER_STATUSES[2].hex} 90% 100%
   )`
 

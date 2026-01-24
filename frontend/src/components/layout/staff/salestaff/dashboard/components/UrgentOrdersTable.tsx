@@ -1,5 +1,5 @@
 import { IoFilter, IoAdd } from 'react-icons/io5'
-import { Card } from '@/shared/components/atoms/card'
+import { Card } from '@/components/common/atoms/card'
 import OrderTable from '@/components/common/staff/ordertable/OrderTable'
 
 export default function UrgentOrdersTable() {

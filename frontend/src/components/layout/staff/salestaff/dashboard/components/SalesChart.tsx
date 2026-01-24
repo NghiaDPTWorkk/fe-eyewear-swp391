@@ -1,4 +1,4 @@
-import { Card } from '@/shared/components/atoms/card'
+import { Card } from '@/components/common/atoms/card'
 
 function LegendItem({ color, label }: { color: string; label: string }) {
   return (

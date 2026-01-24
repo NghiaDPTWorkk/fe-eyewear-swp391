@@ -1,11 +1,10 @@
-import type { ElementType, ReactNode, ComponentPropsWithoutRef } from 'react'
-import { cva, type VariantProps } from 'class-variance-authority'
-import { cn } from '@/lib/utils'
+import { cva } from 'class-variance-authority'
 
-const iconButtonVariants = cva(
+export const buttonVariants = cva(
   [
-    'inline-flex items-center justify-center',
-    'transition-all duration-200',
+    'inline-flex items-center justify-center gap-2',
+    'font-medium whitespace-nowrap',
+    'rounded-lg transition-all duration-200',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
     'disabled:pointer-events-none disabled:opacity-50',
     'cursor-pointer'
@@ -15,7 +14,8 @@ const iconButtonVariants = cva(
       variant: {
         solid: '',
         outline: 'bg-transparent border-2',
-        ghost: 'bg-transparent'
+        ghost: 'bg-transparent',
+        link: 'bg-transparent underline-offset-4 hover:underline'
       },
       colorScheme: {
         primary: '',
@@ -24,13 +24,9 @@ const iconButtonVariants = cva(
         neutral: ''
       },
       size: {
-        sm: 'h-8 w-8 text-sm',
-        md: 'h-10 w-10 text-base',
-        lg: 'h-12 w-12 text-lg'
-      },
-      isRound: {
-        true: 'rounded-full',
-        false: 'rounded-lg'
+        sm: 'h-8 px-3 text-sm',
+        md: 'h-10 px-4 text-base',
+        lg: 'h-12 px-6 text-lg'
       }
     },
     compoundVariants: [
@@ -98,56 +94,36 @@ const iconButtonVariants = cva(
         variant: 'ghost',
         colorScheme: 'neutral',
         className: 'text-neutral-600 hover:bg-neutral-100 focus-visible:ring-neutral-500'
+      },
+      {
+        variant: 'link',
+        colorScheme: 'primary',
+        className: 'text-primary-600 hover:text-primary-700'
+      },
+      {
+        variant: 'link',
+        colorScheme: 'secondary',
+        className: 'text-secondary-600 hover:text-secondary-700'
+      },
+      {
+        variant: 'link',
+        colorScheme: 'danger',
+        className: 'text-danger-600 hover:text-danger-700'
+      },
+      {
+        variant: 'link',
+        colorScheme: 'neutral',
+        className: 'text-neutral-600 hover:text-neutral-700'
       }
     ],
     defaultVariants: {
-      variant: 'ghost',
-      colorScheme: 'neutral',
-      size: 'md',
-      isRound: false
+      variant: 'solid',
+      colorScheme: 'primary',
+      size: 'md'
     }
   }
 )
 
-export type IconButtonVariant = 'solid' | 'outline' | 'ghost'
-export type IconButtonColorScheme = 'primary' | 'secondary' | 'danger' | 'neutral'
-export type IconButtonSize = 'sm' | 'md' | 'lg'
-
-type IconButtonOwnProps<E extends ElementType = 'button'> = {
-  as?: E
-  icon: ReactNode
-  'aria-label': string
-  isRound?: boolean
-  isDisabled?: boolean
-  className?: string
-} & Omit<VariantProps<typeof iconButtonVariants>, 'isRound'>
-
-export type IconButtonProps<E extends ElementType = 'button'> = IconButtonOwnProps<E> &
-  Omit<ComponentPropsWithoutRef<E>, keyof IconButtonOwnProps<E>>
-
-export function IconButton<E extends ElementType = 'button'>({
-  as,
-  icon,
-  variant = 'ghost',
-  colorScheme = 'neutral',
-  size = 'md',
-  isRound = false,
-  isDisabled = false,
-  className,
-  ...props
-}: IconButtonProps<E>) {
-  const Component = as || 'button'
-
-  return (
-    <Component
-      className={cn(iconButtonVariants({ variant, colorScheme, size, isRound }), className)}
-      disabled={Component === 'button' ? isDisabled : undefined}
-      aria-disabled={Component !== 'button' ? isDisabled : undefined}
-      {...props}
-    >
-      {icon}
-    </Component>
-  )
-}
-
-export { iconButtonVariants }
+export type ButtonVariant = 'solid' | 'outline' | 'ghost' | 'link'
+export type ButtonColorScheme = 'primary' | 'secondary' | 'danger' | 'neutral'
+export type ButtonSize = 'sm' | 'md' | 'lg'

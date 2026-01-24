@@ -1,73 +1,39 @@
-import { SidebarStaff } from '@/components/templates/staff/sidebar/SidebarStaff'
+import { SaleStaffSidebar } from './components/SaleStaffSidebar'
+import { DashboardMetrics } from './components/DashboardMetrics'
 import { HeaderStaff } from '@/components/templates/staff/header/HeaderStaff'
-import { UserWidgetWithLogout } from '@/components/common/staff/sidebar/UserWidgetWithLogout'
-import { ThemeToggle } from '@/components/common/staff/sidebar/ThemeToggle'
-import {
-  IoGrid,
-  IoReceipt,
-  IoCube,
-  IoPeople,
-  IoFlask,
-  IoSettings,
-  IoHelpCircle,
-  IoStorefront
-} from 'react-icons/io5'
-import { Container } from '@/components'
 import { NavActions, NavSearch } from '@/components/templates/staff/navbar/NavListStaff'
+import { Container } from '@/components'
+import SalesChart from '@/components/layout/staff/salestaff/dashboard/components/SalesChart'
+import OrderStatusChart from '@/components/layout/staff/salestaff/dashboard/components/OrderStatusChart'
+import UrgentOrdersTable from '@/components/layout/staff/salestaff/dashboard/components/UrgentOrdersTable'
 
 export default function SaleStaffDashboard() {
   return (
     <div className="flex h-screen bg-white">
-      <SidebarStaff
-        logo={
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-mint-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">O</span>
-            </div>
-            <span className="font-semibold text-gray-900">OpticView</span>
-          </div>
-        }
-        storeName="Downtown Vision"
-        storeIcon={<IoStorefront />}
-        userWidget={
-          <UserWidgetWithLogout
-            userInitials="SL"
-            userName="Dr. Sarah L."
-            userRole="Head Optometrist"
-          />
-        }
-      >
-        <SidebarStaff.MenuSection label="GENERAL">
-          <SidebarStaff.MenuItem icon={<IoGrid />} label="Dashboard" />
-
-          <SidebarStaff.MenuItem icon={<IoReceipt />} label="Orders" hasDropdown>
-            <SidebarStaff.SubMenuItem label="Order List" active />
-            <SidebarStaff.SubMenuItem label="Create New Order" />
-            <SidebarStaff.SubMenuItem label="Pre-orders" />
-          </SidebarStaff.MenuItem>
-
-          <SidebarStaff.MenuItem icon={<IoCube />} label="Products" />
-          <SidebarStaff.MenuItem icon={<IoPeople />} label="Customers" />
-          <SidebarStaff.MenuItem icon={<IoFlask />} label="Lab Status" />
-        </SidebarStaff.MenuSection>
-
-        <SidebarStaff.MenuSection label="TOOLS">
-          <SidebarStaff.MenuItem icon={<IoSettings />} label="Settings" />
-          <SidebarStaff.MenuItem icon={<IoHelpCircle />} label="Support" />
-          <ThemeToggle />
-        </SidebarStaff.MenuSection>
-      </SidebarStaff>
+      <SaleStaffSidebar />
 
       <div className="flex-1 flex flex-col ml-[260px]">
         <HeaderStaff left={<NavSearch />} right={<NavActions userInitials="SL" />} />
 
         <main className="flex-1 overflow-auto p-6 bg-gray-50">
           <Container>
-            <div className="text-sm text-gray-600 mb-2">Dashboard / Order Management</div>
-            <h1 className="text-2xl font-semibold mb-6">Order List</h1>
-            <div className="bg-white p-6 rounded-lg shadow">
-              <p>Content goes here...</p>
+            <div className="mb-8">
+              <h1 className="text-2xl font-bold text-gray-900">Operation Dashboard</h1>
+              <p className="text-gray-500">Overview of store performance and daily operations.</p>
             </div>
+
+            <DashboardMetrics />
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+              <div className="lg:col-span-2">
+                <SalesChart />
+              </div>
+              <div className="lg:col-span-1">
+                <OrderStatusChart />
+              </div>
+            </div>
+
+            <UrgentOrdersTable />
           </Container>
         </main>
       </div>

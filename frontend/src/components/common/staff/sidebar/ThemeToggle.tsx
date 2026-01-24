@@ -1,46 +1,37 @@
-import { IoMoon, IoSunny } from 'react-icons/io5'
+import { FiMoon, FiSun } from 'react-icons/fi'
 import { useState } from 'react'
+import { cn } from '@/lib/utils'
 
-interface ThemeToggleProps {
-  label?: string
-  defaultDark?: boolean
-  onChange?: (isDark: boolean) => void
-}
+export function ThemeToggle() {
+  const [isDark, setIsDark] = useState(false)
 
-export function ThemeToggle({
-  label = 'Dark Mode',
-  defaultDark = false,
-  onChange
-}: ThemeToggleProps) {
-  const [isDark, setIsDark] = useState(defaultDark)
-
-  const handleToggle = () => {
-    const newValue = !isDark
-    setIsDark(newValue)
-    onChange?.(newValue)
+  // This is a mock implementation. In a real app, you'd use a theme context or hook
+  const toggleTheme = () => {
+    setIsDark(!isDark)
+    // document.documentElement.classList.toggle('dark')
   }
 
   return (
     <button
-      onClick={handleToggle}
-      className="w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-gray-700 hover:bg-gray-50 transition-all"
+      onClick={toggleTheme}
+      className={cn(
+        'flex items-center gap-3 w-full px-3 py-2 text-sm font-medium rounded-lg transition-colors',
+        'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+      )}
     >
-      <div className="flex items-center gap-3">
-        {isDark ? (
-          <IoMoon className="text-lg text-gray-500" />
-        ) : (
-          <IoSunny className="text-lg text-gray-500" />
-        )}
-        <span className="text-sm">{label}</span>
-      </div>
-
+      {isDark ? <FiSun className="text-lg" /> : <FiMoon className="text-lg" />}
+      <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>
       <div
-        className={`w-10 h-5 rounded-full transition-colors ${isDark ? 'bg-mint-500' : 'bg-gray-300'}`}
+        className={cn(
+          'ml-auto w-9 h-5 rounded-full flex items-center transition-colors p-1',
+          isDark ? 'bg-mint-500' : 'bg-gray-200'
+        )}
       >
         <div
-          className={`w-4 h-4 bg-white rounded-full transition-transform mt-0.5 ${
-            isDark ? 'ml-5' : 'ml-0.5'
-          }`}
+          className={cn(
+            'bg-white w-3.5 h-3.5 rounded-full shadow-sm transform transition-transform',
+            isDark ? 'translate-x-4' : 'translate-x-0'
+          )}
         />
       </div>
     </button>

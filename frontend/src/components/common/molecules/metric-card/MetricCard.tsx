@@ -1,112 +1,82 @@
-import { type ReactNode } from 'react'
-import { Card } from '@/shared/components/atoms/card'
+import type { ReactNode } from 'react'
+import { Card } from '@/components/common/atoms/card'
 import { cn } from '@/lib/utils'
 
 export interface MetricCardProps {
-  title: string
+  label: string
   value: string | number
-  icon?: ReactNode
+  subValue?: string
   trend?: {
-    value?: string
-    label: string
-    isPositive?: boolean
-  }
-  progress?: {
     value: number
-    colorClass?: string
+    label: string
+    isPositive: boolean
   }
-  variant?: 'default' | 'primary'
+  icon?: ReactNode
+  colorScheme?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info'
   className?: string
-  action?: ReactNode
 }
 
 export function MetricCard({
-  title,
+  label,
   value,
-  icon,
+  subValue,
   trend,
-  progress,
-  variant = 'default',
-  className,
-  action
+  icon,
+  colorScheme = 'primary',
+  className
 }: MetricCardProps) {
-  const isPrimary = variant === 'primary'
+  const getIconBgColor = () => {
+    switch (colorScheme) {
+      case 'primary':
+        return 'bg-blue-50 text-blue-600'
+      case 'secondary':
+        return 'bg-purple-50 text-purple-600'
+      case 'success':
+        return 'bg-emerald-50 text-emerald-600'
+      case 'warning':
+        return 'bg-orange-50 text-orange-600'
+      case 'danger':
+        return 'bg-red-50 text-red-600'
+      case 'info':
+        return 'bg-sky-50 text-sky-600'
+      default:
+        return 'bg-gray-50 text-gray-600'
+    }
+  }
 
   return (
-    <Card
-      className={cn(
-        'relative overflow-hidden p-6',
-        isPrimary &&
-          'bg-gradient-to-br from-emerald-400 to-emerald-500 text-white shadow-lg shadow-emerald-500/20 border-none',
-        className
-      )}
-    >
-      <div className="flex justify-between items-start mb-4">
+    <Card className={cn('p-6', className)}>
+      <div className="flex justify-between items-start">
         <div>
-          <p
-            className={cn(
-              'text-sm font-medium mb-1',
-              isPrimary ? 'text-emerald-100' : 'text-gray-500'
-            )}
-          >
-            {title}
-          </p>
-          <h3 className={cn('text-2xl font-bold', isPrimary ? 'text-white' : 'text-gray-900')}>
-            {value}
-          </h3>
+          <p className="text-sm font-medium text-gray-500">{label}</p>
+          <h3 className="text-2xl font-bold mt-2 text-gray-900">{value}</h3>
         </div>
-        {(icon || action) && (
-          <div
-            className={cn(
-              'p-2 rounded-lg',
-              isPrimary ? 'bg-emerald-400/20 text-white' : 'bg-gray-50 text-gray-500'
-            )}
-          >
-            {action || icon}
-          </div>
-        )}
+        {icon && <div className={cn('p-3 rounded-lg', getIconBgColor())}>{icon}</div>}
       </div>
 
-      {/* Trend Section */}
-      {trend && (
-        <div className="flex items-center gap-2 mb-4 text-sm">
-          {trend.value && (
+      {(trend || subValue) && (
+        <div className="mt-4 flex items-center gap-2 text-sm">
+          {trend && (
             <span
               className={cn(
-                'font-medium px-1.5 py-0.5 rounded',
-                isPrimary
-                  ? 'bg-white/20 text-white'
-                  : trend.isPositive
-                    ? 'bg-emerald-100 text-emerald-600'
-                    : 'bg-rose-100 text-rose-600'
+                'font-medium flex items-center',
+                trend.isPositive ? 'text-emerald-600' : 'text-red-600'
               )}
             >
-              {trend.value}
+              {trend.isPositive ? '↗' : '↘'} {Math.abs(trend.value)}%
             </span>
           )}
-          <span className={cn(isPrimary ? 'text-emerald-100' : 'text-gray-500')}>
-            {trend.label}
-          </span>
+          <span className="text-gray-500">{trend ? trend.label : subValue}</span>
         </div>
       )}
 
-      {/* Progress Bar */}
-      {progress && (
-        <div className="mt-auto">
+      {/* Progress bar for target (optional - based on image 'Monthly Target') */}
+      {label.includes('Target') && subValue && (
+        <div className="mt-3 w-full bg-gray-100 rounded-full h-1.5">
           <div
-            className={cn(
-              'h-1.5 w-full rounded-full overflow-hidden',
-              isPrimary ? 'bg-black/10' : 'bg-gray-100'
-            )}
-          >
-            <div
-              className={cn(
-                'h-full rounded-full transition-all duration-500',
-                progress.colorClass || (isPrimary ? 'bg-white' : 'bg-emerald-500')
-              )}
-              style={{ width: `${progress.value}%` }}
-            />
-          </div>
+            className="bg-blue-600 h-1.5 rounded-full"
+            style={{ width: '85%' }} // Hardcoded for demo or passed via props if needed
+          ></div>
         </div>
       )}
     </Card>

@@ -29,6 +29,10 @@ const PrescriptionOrdersPage = lazy(() =>
   import('@/pages/operation/PrescriptionOrders').then((m) => ({ default: m.default }))
 )
 
+const PreOrdersPage = lazy(() =>
+  import('@/pages/operation/PreOrder').then((m) => ({ default: m.default }))
+)
+
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -69,6 +73,10 @@ export const router = createBrowserRouter([
       {
         path: 'prescription-orders',
         element: <PrescriptionOrdersPage />
+      },
+      {
+        path: 'pre-orders',
+        element: <PreOrdersPage />
       }
     ]
   },

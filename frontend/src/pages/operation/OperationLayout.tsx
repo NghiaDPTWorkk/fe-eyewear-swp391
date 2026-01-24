@@ -52,7 +52,12 @@ export default function OperationLayout() {
             active={location.pathname === '/operationstaff/prescription-orders'}
             onClick={() => navigate('/operationstaff/prescription-orders')}
           />
-          <SidebarStaff.MenuItem icon={<IoCarOutline />} label="Logistics Waiting Station" />
+          <SidebarStaff.MenuItem
+            icon={<IoCarOutline />}
+            label="Logistics Waiting Station"
+            active={location.pathname === '/operationstaff/pre-orders'}
+            onClick={() => navigate('/operationstaff/pre-orders')}
+          />
           <SidebarStaff.MenuItem icon={<FaBoxesPacking />} label="Packing Station" />
           <SidebarStaff.MenuItem icon={<TbTruckDelivery />} label="Delivery Handover" />
         </SidebarStaff.MenuSection>

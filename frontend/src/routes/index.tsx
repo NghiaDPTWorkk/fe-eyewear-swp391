@@ -17,9 +17,18 @@ const SaleStaffDashboard = lazy(() =>
   import('@/pages/salestaff/SaleStaffDashboard').then((m) => ({ default: m.default }))
 )
 
+const OperationLayout = lazy(() =>
+  import('@/pages/operation/OperationLayout').then((m) => ({ default: m.default }))
+)
+
 const HomePageOperation = lazy(() =>
   import('@/pages/operation/HomePageOperation').then((m) => ({ default: m.default }))
 )
+
+const PrescriptionOrdersPage = lazy(() =>
+  import('@/pages/operation/PrescriptionOrders').then((m) => ({ default: m.default }))
+)
+
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -46,12 +55,22 @@ export const router = createBrowserRouter([
     )
   },
   {
-    path: '/operationstaff/dashboard',
+    path: '/operationstaff',
     element: (
       <LazyPage>
-        <HomePageOperation />
+        <OperationLayout />
       </LazyPage>
-    )
+    ),
+    children: [
+      {
+        path: 'dashboard',
+        element: <HomePageOperation />
+      },
+      {
+        path: 'prescription-orders',
+        element: <PrescriptionOrdersPage />
+      }
+    ]
   },
   {
     path: '*',

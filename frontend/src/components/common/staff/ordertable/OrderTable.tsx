@@ -189,7 +189,7 @@ export default function OrderTable({ columns, hiddenColumns = [], filterType }: 
   )
 
   return (
-    <div className="overflow-x-auto bg-white rounded-lg shadow">
+    <div className="overflow-x-auto">
       <table className="w-full text-left border-collapse">
         <OrderHeaderTable columns={activeColumns} />
         <OrderList orders={filteredOrders} columns={activeColumns} />

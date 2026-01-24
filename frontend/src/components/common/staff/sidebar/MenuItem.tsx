@@ -1,99 +1,34 @@
-import { useState, type ReactNode } from 'react'
-import { IoChevronDown, IoChevronForward } from 'react-icons/io5'
+import { useState, type ReactNode, Children, isValidElement } from 'react'
 import { cn } from '@/lib/utils'
-import { cva } from 'class-variance-authority'
+import { FiChevronDown } from 'react-icons/fi'
+import { useLayoutStore } from '@/store/layout.store'
 
-const menuItemVariants = cva(
-  [
-    'w-full flex items-center gap-3',
-    'px-4 py-2.5 rounded-lg',
-    'transition-all duration-200',
-    'text-sm font-normal',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-1'
-  ],
-  {
-    variants: {
-      active: {
-        true: 'bg-primary-200 text-primary-800 font-medium',
-        false: 'text-gray-700 hover:bg-primary-100 hover:text-gray-900'
-      },
-      hasDropdown: {
-        true: '',
-        false: ''
-      }
-    },
-    compoundVariants: [
-      {
-        active: true,
-        hasDropdown: true,
-        className: 'bg-transparent text-gray-700 font-normal hover:bg-primary-50'
-      }
-    ],
-    defaultVariants: {
-      active: false,
-      hasDropdown: false
-    }
-  }
-)
-
-const menuItemIconVariants = cva('text-lg transition-colors', {
-  variants: {
-    active: {
-      true: 'text-primary-600',
-      false: 'text-gray-500'
-    }
-  },
-  defaultVariants: {
-    active: false
-  }
-})
-
-const subMenuItemVariants = cva(
-  [
-    'w-full text-left px-4 py-2',
-    'text-sm rounded-lg',
-    'transition-colors duration-200',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-1'
-  ],
-  {
-    variants: {
-      active: {
-        true: 'bg-primary-200 text-primary-800 font-medium',
-        false: 'text-gray-600 hover:bg-primary-100 hover:text-gray-900'
-      }
-    },
-    defaultVariants: {
-      active: false
-    }
-  }
-)
-
-export interface MenuItemProps {
-  icon?: ReactNode
+interface MenuItemProps {
+  icon: ReactNode
   label: string
   active?: boolean
-  badge?: string
-  badgeVariant?: 'default' | 'primary' | 'danger'
   hasDropdown?: boolean
-  defaultOpen?: boolean
   children?: ReactNode
   onClick?: () => void
-  className?: string
+  menuOpen?: boolean
+  isOpen?: boolean
 }
 
 export function MenuItem({
   icon,
   label,
-  active = false,
-  badge,
-  badgeVariant = 'default',
-  hasDropdown = false,
-  defaultOpen,
+  active,
+  hasDropdown,
   children,
   onClick,
-  className
+  isOpen: defaultIsOpen = false
 }: MenuItemProps) {
-  const [isOpen, setIsOpen] = useState(defaultOpen ?? (active && hasDropdown))
+  const { sidebarCollapsed } = useLayoutStore()
+  const hasActiveChild = Children.toArray(children).some(
+    (child) => isValidElement(child) && (child.props as any).active
+  )
+
+  const [isOpen, setIsOpen] = useState(defaultIsOpen || hasActiveChild)
 
   const handleClick = () => {
     if (hasDropdown) {
@@ -102,60 +37,56 @@ export function MenuItem({
     onClick?.()
   }
 
-  const badgeStyles = {
-    default: 'bg-gray-100 text-gray-600',
-    primary: 'bg-primary-100 text-primary-700',
-    danger: 'bg-danger-100 text-danger-700'
-  }
-
   return (
-    <div>
+    <div className="mb-1">
       <button
         onClick={handleClick}
-        className={cn(menuItemVariants({ active: active && !hasDropdown, hasDropdown }), className)}
-        aria-expanded={hasDropdown ? isOpen : undefined}
+        className={cn(
+          'w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-300',
+          sidebarCollapsed ? 'justify-center gap-0' : 'justify-start gap-3',
+          active
+            ? 'bg-mint-50 text-mint-700'
+            : hasDropdown && isOpen
+              ? 'text-mint-700'
+              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+        )}
+        title={sidebarCollapsed ? label : undefined}
       >
-        {icon && (
-          <span className={menuItemIconVariants({ active: active && !hasDropdown })}>{icon}</span>
+        <span
+          className={cn(
+            'text-xl transition-colors',
+            active || (hasDropdown && isOpen) ? 'text-mint-500' : 'text-gray-400'
+          )}
+        >
+          {icon}
+        </span>
+        {!sidebarCollapsed && (
+          <>
+            <span className="flex-1 text-left truncate transition-opacity duration-300">
+              {label}
+            </span>
+            {hasDropdown && (
+              <FiChevronDown
+                className={cn(
+                  'text-gray-400 transition-transform duration-200 shrink-0',
+                  isOpen && 'rotate-180 text-mint-500'
+                )}
+              />
+            )}
+          </>
         )}
-        <span className="flex-1 text-left">{label}</span>
-        {badge && (
-          <span
-            className={cn('px-2 py-0.5 text-xs rounded font-medium', badgeStyles[badgeVariant])}
-          >
-            {badge}
-          </span>
-        )}
-        {hasDropdown &&
-          (isOpen ? (
-            <IoChevronDown className="text-gray-400 transition-transform" />
-          ) : (
-            <IoChevronForward className="text-gray-400 transition-transform" />
-          ))}
       </button>
 
-      {hasDropdown && isOpen && children && (
-        <div className="ml-8 mt-1 space-y-0.5" role="group">
-          {children}
+      {hasDropdown && !sidebarCollapsed && (
+        <div
+          className={cn(
+            'overflow-hidden transition-all duration-300 ease-in-out',
+            isOpen ? 'max-h-[500px] opacity-100 mt-1' : 'max-h-0 opacity-0 mt-0'
+          )}
+        >
+          <div className="ml-9 space-y-1 pb-1">{children}</div>
         </div>
       )}
     </div>
   )
 }
-
-export interface SubMenuItemProps {
-  label: string
-  active?: boolean
-  onClick?: () => void
-  className?: string
-}
-
-export function SubMenuItem({ label, active = false, onClick, className }: SubMenuItemProps) {
-  return (
-    <button onClick={onClick} className={cn(subMenuItemVariants({ active }), className)}>
-      {label}
-    </button>
-  )
-}
-
-export { menuItemVariants, subMenuItemVariants }

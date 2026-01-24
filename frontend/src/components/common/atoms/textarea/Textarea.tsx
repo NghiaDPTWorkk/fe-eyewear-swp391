@@ -52,12 +52,18 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     },
     ref
   ) => {
+    const resizeClasses: Record<TextareaResize, string> = {
+      none: 'resize-none',
+      vertical: 'resize-y',
+      horizontal: 'resize-x',
+      both: 'resize'
+    }
+
     return (
       <textarea
         ref={ref}
         disabled={isDisabled}
-        className={cn(textareaVariants({ size, isInvalid }), className)}
-        style={{ resize }}
+        className={cn(textareaVariants({ size, isInvalid }), resizeClasses[resize], className)}
         {...props}
       />
     )

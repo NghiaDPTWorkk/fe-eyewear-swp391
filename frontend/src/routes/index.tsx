@@ -1,11 +1,8 @@
 import { lazy } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
 import { LazyPage } from '@/pages/LazyPage'
-import { HomePage } from '@/pages/customer'
+import { CustomerHomePage } from '@/pages/customer'
 
-// const HomePage = lazy(() =>
-//   import('@/pages/customer/HomePage').then((m) => ({ default: m.HomePage }))
-// )
 const LoginPage = lazy(() =>
   import('@/pages/auth/LoginPage').then((m) => ({ default: m.LoginPage }))
 )
@@ -13,36 +10,44 @@ const LoginPage = lazy(() =>
 const NotFoundPage = lazy(() =>
   import('@/pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage }))
 )
-const SaleStaffDashboard = lazy(() =>
-  import('@/pages/salestaff/SaleStaffDashboard').then((m) => ({ default: m.default }))
+const SaleStaffLayout = lazy(() =>
+  import('@/components/layout/staff/salestaff/SaleStaffLayout').then((m) => ({
+    default: m.default
+  }))
+)
+
+const SaleStaffDashboardPage = lazy(() =>
+  import('@/pages/salestaff/SaleStaffDashboardPage').then((m) => ({ default: m.default }))
 )
 
 const OperationLayout = lazy(() =>
-  import('@/pages/operation/OperationLayout').then((m) => ({ default: m.default }))
+  import('@/components/layout/staff/operationstaff/OperationLayout').then((m) => ({
+    default: m.default
+  }))
 )
 
-const HomePageOperation = lazy(() =>
-  import('@/pages/operation/HomePageOperation').then((m) => ({ default: m.default }))
+const OperationDashboardPage = lazy(() =>
+  import('@/pages/operation/OperationDashboardPage').then((m) => ({ default: m.default }))
 )
 
-const PrescriptionOrdersPage = lazy(() =>
-  import('@/pages/operation/PrescriptionOrders').then((m) => ({ default: m.default }))
+const OperationPrescriptionPage = lazy(() =>
+  import('@/pages/operation/OperationPrescriptionPage').then((m) => ({ default: m.default }))
 )
 
-const PreOrdersPage = lazy(() =>
-  import('@/pages/operation/PreOrder').then((m) => ({ default: m.default }))
+const OperationPreOrdersPage = lazy(() =>
+  import('@/pages/operation/OperationPreOrdersPage').then((m) => ({ default: m.default }))
 )
 
-const DisplayAllOrderPage = lazy(() =>
-  import('@/pages/operation/DisplayAllOrder').then((m) => ({ default: m.default }))
+const OperationAllOrdersPage = lazy(() =>
+  import('@/pages/operation/OperationAllOrdersPage').then((m) => ({ default: m.default }))
 )
 
-const DeliveryPage = lazy(() =>
-  import('@/pages/operation/DeliveryPage').then((m) => ({ default: m.default }))
+const OperationDeliveryPage = lazy(() =>
+  import('@/pages/operation/OperationDeliveryPage').then((m) => ({ default: m.default }))
 )
 
-const PackingPage = lazy(() =>
-  import('@/pages/operation/PackingPage').then((m) => ({ default: m.default }))
+const OperationPackingPage = lazy(() =>
+  import('@/pages/operation/OperationPackingPage').then((m) => ({ default: m.default }))
 )
 
 export const router = createBrowserRouter([
@@ -50,7 +55,7 @@ export const router = createBrowserRouter([
     path: '/',
     element: (
       <LazyPage>
-        <HomePage />
+        <CustomerHomePage />
       </LazyPage>
     )
   },
@@ -63,12 +68,18 @@ export const router = createBrowserRouter([
     )
   },
   {
-    path: '/salestaff/dashboard',
+    path: '/salestaff',
     element: (
       <LazyPage>
-        <SaleStaffDashboard />
+        <SaleStaffLayout />
       </LazyPage>
-    )
+    ),
+    children: [
+      {
+        path: 'dashboard',
+        element: <SaleStaffDashboardPage />
+      }
+    ]
   },
   {
     path: '/operationstaff',
@@ -80,27 +91,27 @@ export const router = createBrowserRouter([
     children: [
       {
         path: 'dashboard',
-        element: <HomePageOperation />
+        element: <OperationDashboardPage />
       },
       {
         path: 'all',
-        element: <DisplayAllOrderPage />
+        element: <OperationAllOrdersPage />
       },
       {
         path: 'prescription-orders',
-        element: <PrescriptionOrdersPage />
+        element: <OperationPrescriptionPage />
       },
       {
         path: 'pre-orders',
-        element: <PreOrdersPage />
+        element: <OperationPreOrdersPage />
       },
       {
         path: 'packing',
-        element: <PackingPage />
+        element: <OperationPackingPage />
       },
       {
         path: 'delivery-orders',
-        element: <DeliveryPage />
+        element: <OperationDeliveryPage />
       }
     ]
   },

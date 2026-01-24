@@ -1,5 +1,4 @@
-// Auth Service - Business Logic
-import { publicAuthClient } from '@/api/clients'
+import { publicAuthClient } from '@/api/apiClients'
 import { ENDPOINTS } from '@/api/endpoints'
 import { useAuthStore } from '@/store'
 import type { LoginInformation } from '../types/auth.types'

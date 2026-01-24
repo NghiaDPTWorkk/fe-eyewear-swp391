@@ -1,4 +1,3 @@
-// useAuth Hook - Integration with React Query
 import { useAuthStore } from '@/store'
 import { useMutation } from '@tanstack/react-query'
 import { authService } from '../services'

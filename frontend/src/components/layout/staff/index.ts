@@ -1,3 +1,3 @@
-export { HeaderStaff } from './HeaderStaff'
-export { SidebarStaff } from './SidebarStaff'
-export { MainLayoutStaff } from './MainLayoutStaff'
+export * from './MainLayoutStaff'
+export { default as OperationLayout } from './operationstaff/OperationLayout'
+export { default as SaleStaffLayout } from './salestaff/SaleStaffLayout'

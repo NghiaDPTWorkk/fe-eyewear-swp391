@@ -15,6 +15,7 @@ export function DashboardMetrics() {
         trend={{ value: 12, label: 'from yesterday', isPositive: true }}
         icon={<IoClipboardOutline className="text-2xl" />}
         colorScheme="warning"
+        progress={{ value: 45, colorClass: 'bg-orange-500' }}
       />
       <MetricCard
         label="Daily Revenue"
@@ -22,6 +23,7 @@ export function DashboardMetrics() {
         trend={{ value: 8.2, label: 'vs last week', isPositive: true }}
         icon={<IoWalletOutline className="text-2xl" />}
         colorScheme="success"
+        progress={{ value: 70, colorClass: 'bg-emerald-500' }}
       />
       <MetricCard
         label="Open Tickets"
@@ -29,6 +31,7 @@ export function DashboardMetrics() {
         trend={{ value: -2, label: 'new today', isPositive: false }}
         icon={<IoTicketOutline className="text-2xl" />}
         colorScheme="danger"
+        progress={{ value: 25, colorClass: 'bg-red-500' }}
       />
       <MetricCard
         label="Monthly Target"
@@ -36,6 +39,7 @@ export function DashboardMetrics() {
         subValue="$102k achieved"
         icon={<IoFlagOutline className="text-2xl" />}
         colorScheme="primary"
+        progress={{ value: 85, colorClass: 'bg-blue-600' }}
       />
     </div>
   )

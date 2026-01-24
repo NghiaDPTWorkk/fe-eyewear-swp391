@@ -34,11 +34,12 @@ export function SaleStaffSidebar() {
       }
     >
       <SidebarStaff.MenuSection label="GENERAL">
-        <SidebarStaff.MenuItem icon={<IoGrid />} label="Dashboard" active />
-        <SidebarStaff.MenuItem icon={<IoReceipt />} label="Orders" hasDropdown>
-          <SidebarStaff.SubMenuItem label="Order List" />
-          <SidebarStaff.SubMenuItem label="Create New Order" />
-          <SidebarStaff.SubMenuItem label="Pre-orders" />
+        <SidebarStaff.MenuItem icon={<IoGrid />} label="Dashboard" />
+        <SidebarStaff.MenuItem icon={<IoReceipt />} label="Orders" hasDropdown isOpen>
+          <SidebarStaff.SubMenuItem label="All Orders" active />
+          <SidebarStaff.SubMenuItem label="Rx Verification" badge={24} />
+          <SidebarStaff.SubMenuItem label="Pre-orders" badge={15} />
+          <SidebarStaff.SubMenuItem label="Returns" badge={8} />
         </SidebarStaff.MenuItem>
         <SidebarStaff.MenuItem icon={<IoCube />} label="Products" />
         <SidebarStaff.MenuItem icon={<IoPeople />} label="Customers" />

@@ -3,6 +3,8 @@
 /* Custom theme configuration for Eyewear Project */
 @theme {
   /* ===== MINT COLORS (Brand) ===== */
+  --color-mint-50: #f0fdf9;
+  --color-mint-100: #e6f9f4;
   --color-mint-200: #f6fffb;
   --color-mint-300: #d4ede5;
   --color-mint-500: #7fe3c7;

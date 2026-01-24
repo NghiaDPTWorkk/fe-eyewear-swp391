@@ -25,7 +25,7 @@ export default function SalesChart() {
         </button>
       </div>
 
-      <div className="relative flex-1 h-[300px] w-full border-b border-l border-gray-100 flex items-end">
+      <div className="relative h-[300px] w-full border-b border-l border-gray-100 mt-4">
         {/* Background Grid */}
         <div className="absolute inset-0 flex flex-col justify-between pointer-events-none pb-6">
           {[...Array(5)].map((_, i) => (
@@ -37,12 +37,20 @@ export default function SalesChart() {
         <svg
           className="absolute inset-0 w-full h-full pb-6 pl-2"
           preserveAspectRatio="none"
+          width="100%"
+          height="100%"
           viewBox="0 0 1200 300"
         >
+          <defs>
+            <linearGradient id="sales-chart-gradient-green" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#34D399" stopOpacity={0.8} />
+              <stop offset="100%" stopColor="#34D399" stopOpacity={0} />
+            </linearGradient>
+          </defs>
           {/* Gradient Fill */}
           <path
             d="M0 250 C 200 200, 400 280, 600 150 S 800 100, 1000 120 L 1200 20 L 1200 300 L 0 300 Z"
-            fill="url(#gradient-green)"
+            fill="url(#sales-chart-gradient-green)"
             opacity="0.1"
           />
           {/* Lines */}
@@ -61,12 +69,6 @@ export default function SalesChart() {
             strokeDasharray="8 8"
             strokeLinecap="round"
           />
-          <defs>
-            <linearGradient id="gradient-green" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#34D399" stopOpacity={0.8} />
-              <stop offset="100%" stopColor="#34D399" stopOpacity={0} />
-            </linearGradient>
-          </defs>
         </svg>
 
         {/* Floating Tooltip */}

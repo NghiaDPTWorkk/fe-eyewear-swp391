@@ -14,6 +14,10 @@ export interface MetricCardProps {
   icon?: ReactNode
   colorScheme?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info'
   className?: string
+  progress?: {
+    value: number
+    colorClass?: string
+  }
 }
 
 export function MetricCard({
@@ -23,7 +27,8 @@ export function MetricCard({
   trend,
   icon,
   colorScheme = 'primary',
-  className
+  className,
+  progress
 }: MetricCardProps) {
   const getIconBgColor = () => {
     switch (colorScheme) {
@@ -70,13 +75,18 @@ export function MetricCard({
         </div>
       )}
 
-      {/* Progress bar for target (optional - based on image 'Monthly Target') */}
-      {label.includes('Target') && subValue && (
+      {progress && (
         <div className="mt-3 w-full bg-gray-100 rounded-full h-1.5">
           <div
-            className="bg-blue-600 h-1.5 rounded-full"
-            style={{ width: '85%' }} // Hardcoded for demo or passed via props if needed
-          ></div>
+            className={cn('h-1.5 rounded-full', progress.colorClass || 'bg-blue-600')}
+            style={{ width: `${progress.value}%` }}
+          />
+        </div>
+      )}
+
+      {!progress && label.includes('Target') && subValue && (
+        <div className="mt-3 w-full bg-gray-100 rounded-full h-1.5">
+          <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: '85%' }}></div>
         </div>
       )}
     </Card>

@@ -10,7 +10,7 @@ interface NavSearchProps {
 
 export function NavSearch({ className, placeholder }: NavSearchProps) {
   return (
-    <div className={cn('max-w-[500px] w-full pl-4 hidden md:block', className)}>
+    <div className={cn('max-w-125 w-full pl-4 hidden md:block', className)}>
       <Input
         placeholder={placeholder || 'Search orders, customers, or frames...'}
         size="md"
@@ -41,11 +41,17 @@ export function NavActions({
   return (
     <div className={cn('flex justify-end items-center gap-6 pr-4', className)}>
       <div className="flex items-center gap-4 text-gray-500">
-        <button className="relative p-1 hover:text-mint-500 transition-colors">
+        <button
+          className="relative p-1 hover:text-mint-500 transition-colors"
+          title="View Messages"
+        >
           <FiMail className="text-2xl" />
           <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-danger-500 ring-2 ring-white"></span>
         </button>
-        <button className="relative p-1 hover:text-mint-500 transition-colors">
+        <button
+          className="relative p-1 hover:text-mint-500 transition-colors"
+          title="View Notifications"
+        >
           <MdOutlineNotifications className="text-2xl" />
           <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-mint-500 ring-2 ring-white"></span>
         </button>

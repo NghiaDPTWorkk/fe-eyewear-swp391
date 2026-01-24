@@ -19,7 +19,7 @@ export default function SaleStaffDashboard() {
       <div
         className={cn(
           'flex-1 flex flex-col transition-all duration-300',
-          sidebarCollapsed ? 'ml-20' : 'ml-[260px]'
+          sidebarCollapsed ? 'ml-20' : 'ml-65'
         )}
       >
         <HeaderStaff

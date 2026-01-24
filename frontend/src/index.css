@@ -73,8 +73,21 @@
   --spacing-18: 4.5rem;
   --spacing-88: 22rem;
 
+  /* Canonical values from warnings */
+  --spacing-62_5: 15.625rem; /* 250px */
+  --spacing-65: 16.25rem; /* 260px */
+  --spacing-75: 18.75rem; /* 300px */
+  --spacing-125: 31.25rem; /* 500px */
+
   /* ===== BORDER RADIUS ===== */
   --radius-4xl: 2rem;
+}
+
+/* Custom Utilities */
+@layer utilities {
+  .order-status-gradient {
+    background: conic-gradient(#10b981 0% 65%, #3b82f6 65% 90%, #f97316 90% 100%);
+  }
 }
 
 /* Base styles */

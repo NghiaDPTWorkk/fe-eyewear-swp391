@@ -25,7 +25,7 @@ export default function SalesChart() {
         </button>
       </div>
 
-      <div className="relative h-[300px] w-full border-b border-l border-gray-100 mt-4">
+      <div className="relative h-75 w-full border-b border-l border-gray-100 mt-4">
         {/* Background Grid */}
         <div className="absolute inset-0 flex flex-col justify-between pointer-events-none pb-6">
           {[...Array(5)].map((_, i) => (

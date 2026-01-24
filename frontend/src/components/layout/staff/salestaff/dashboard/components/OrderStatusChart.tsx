@@ -11,12 +11,6 @@ function LegendItem({ color, label }: { color: string; label: string }) {
 }
 
 export default function OrderStatusChart() {
-  const gradient = `conic-gradient(
-    ${ORDER_STATUSES[0].hex} 0% 65%,
-    ${ORDER_STATUSES[1].hex} 65% 90%,
-    ${ORDER_STATUSES[2].hex} 90% 100%
-  )`
-
   return (
     <Card className="p-6 flex flex-col">
       <div className="flex justify-between items-center mb-6">
@@ -24,8 +18,8 @@ export default function OrderStatusChart() {
         <span className="text-gray-400 cursor-pointer">•••</span>
       </div>
 
-      <div className="relative flex-1 min-h-[250px] flex items-center justify-center">
-        <div className="w-56 h-56 rounded-full" style={{ background: gradient }}>
+      <div className="relative flex-1 min-h-62.5 flex items-center justify-center">
+        <div className="w-56 h-56 rounded-full order-status-gradient">
           <div className="absolute inset-0 m-auto w-40 h-40 bg-white rounded-full flex flex-col items-center justify-center shadow-inner">
             <span className="text-4xl font-bold text-gray-900">1,240</span>
             <span className="text-sm text-gray-500 font-medium">Total Orders</span>

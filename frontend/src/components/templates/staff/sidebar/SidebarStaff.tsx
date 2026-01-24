@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import { LAYOUT } from '@/shared/constants/layout'
 import {
   MenuItem,
   MenuSection,
@@ -24,32 +23,29 @@ export function SidebarStaff({
   storeName,
   storeIcon,
   children,
-  userWidget,
-  headerHeight = LAYOUT.HEADER.HEIGHT
+  userWidget
 }: SidebarStaffProps) {
   const { sidebarCollapsed, toggleSidebar } = useLayoutStore()
-  const width = sidebarCollapsed ? 80 : LAYOUT.SIDEBAR.WIDTH
 
   return (
     <aside
       className={cn(
         'fixed left-0 top-0 h-screen bg-white border-r border-gray-200 flex flex-col transition-all duration-300 z-50 overflow-x-hidden',
-        sidebarCollapsed ? 'w-20' : 'w-[260px]'
+        sidebarCollapsed ? 'w-20' : 'w-65'
       )}
-      style={{ width: `${width}px` }}
     >
       <div
         className={cn(
-          'flex items-center border-b border-gray-200 transition-all duration-300 overflow-hidden',
+          'flex items-center border-b border-gray-200 transition-all duration-300 overflow-hidden h-16',
           sidebarCollapsed ? 'justify-center px-0' : 'justify-between px-6'
         )}
-        style={{ height: `${headerHeight}px` }}
       >
         {!sidebarCollapsed && logo && (
           <div className="transition-opacity duration-300 shrink-0">{logo}</div>
         )}
         <button
           onClick={toggleSidebar}
+          title={sidebarCollapsed ? 'Open Sidebar' : 'Close Sidebar'}
           className={cn(
             'p-2 rounded-lg text-gray-400 hover:bg-gray-100 transition-colors shrink-0',
             sidebarCollapsed && 'text-mint-500'

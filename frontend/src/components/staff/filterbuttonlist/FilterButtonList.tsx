@@ -31,18 +31,16 @@ export default function FilterButtonList({
             variant={isActive ? 'solid' : 'ghost'}
             colorScheme={isActive ? 'primary' : 'neutral'}
             className={cn(
-              'rounded-xl text-sm font-semibold transition-all duration-300 px-4 py-2 flex items-center gap-2 border',
-              isActive
-                ? 'bg-mint-50 border-mint-100 text-mint-700 shadow-sm'
-                : 'bg-white border-neutral-100 text-neutral-500 hover:bg-neutral-50 hover:border-neutral-200'
+              'rounded-lg text-sm font-medium transition-colors',
+              isActive ? 'shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             )}
             size="sm"
           >
             {btn.label}
             <span
               className={cn(
-                'px-1.5 py-0.5 rounded-md text-[10px] font-bold',
-                isActive ? 'bg-mint-500 text-white' : 'bg-neutral-100 text-neutral-500'
+                'ml-2 px-1.5 py-0.5 rounded-md text-xs',
+                isActive ? 'bg-white/20 text-white' : 'bg-white text-gray-500'
               )}
             >
               {btn.count}

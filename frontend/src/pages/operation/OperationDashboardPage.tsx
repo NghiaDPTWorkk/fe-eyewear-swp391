@@ -1,24 +1,12 @@
 import { Container } from '@/components'
-import OrderTable from '@/components/staff/ordertable/OrderTable'
+import { OrderTable } from '@/components/staff'
 
-export default function HomePageOperation() {
+export default function OperationDashboardPage() {
   return (
     <Container>
-      <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm text-gray-400 mb-2">
-          <span>Dashboard</span>
-          <span>/</span>
-          <span className="text-gray-600 font-medium">Order Management</span>
-        </div>
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Priority Orders</h1>
-        <p className="text-gray-500 mt-1">Orders requiring immediate attention and processing.</p>
-      </div>
-
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="p-0">
-          <OrderTable hiddenColumns={['WAITING FOR']} />
-        </div>
-      </div>
+      <div className="text-sm text-gray-600 mb-2">Dashboard / Order Management</div>
+      <h1 className="text-xl font-semibold mb-5 text-primary-700">Priority Orders</h1>
+      <OrderTable hiddenColumns={['WAITING FOR']} />
     </Container>
   )
 }

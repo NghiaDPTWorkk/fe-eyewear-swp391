@@ -1,45 +1,39 @@
+import { cva } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
-interface SubMenuItemProps {
+const subMenuItemVariants = cva(
+  [
+    'w-full text-left px-4 py-2',
+    'text-sm rounded-lg',
+    'transition-colors duration-200',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-1'
+  ],
+  {
+    variants: {
+      active: {
+        true: 'bg-primary-200 text-primary-800 font-medium',
+        false: 'text-gray-600 hover:bg-primary-100 hover:text-gray-900'
+      }
+    },
+    defaultVariants: {
+      active: false
+    }
+  }
+)
+
+export interface SubMenuItemProps {
   label: string
   active?: boolean
-  badge?: string | number
-  badgeColor?: 'red' | 'gray'
   onClick?: () => void
+  className?: string
 }
 
-export function SubMenuItem({
-  label,
-  active,
-  badge,
-  badgeColor = 'red',
-  onClick
-}: SubMenuItemProps) {
+export function SubMenuItem({ label, active = false, onClick, className }: SubMenuItemProps) {
   return (
-    <button
-      onClick={onClick}
-      className={cn(
-        'w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all duration-200',
-        active
-          ? 'bg-mint-500 text-white font-semibold shadow-sm shadow-mint-100'
-          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-      )}
-    >
-      <span className="truncate">{label}</span>
-      {badge !== undefined && (
-        <span
-          className={cn(
-            'px-2 py-0.5 rounded-full text-[11px] font-bold min-w-[22px] text-center',
-            active
-              ? 'bg-white/20 text-white'
-              : badgeColor === 'red'
-                ? 'bg-red-50 text-red-500'
-                : 'bg-gray-100 text-gray-500'
-          )}
-        >
-          {badge}
-        </span>
-      )}
+    <button onClick={onClick} className={cn(subMenuItemVariants({ active }), className)}>
+      {label}
     </button>
   )
 }
+
+export { subMenuItemVariants }

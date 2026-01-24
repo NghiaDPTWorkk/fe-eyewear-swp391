@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import { Container } from '@/components'
-import OrderTable from '@/components/staff/ordertable/OrderTable'
-import FilterButtonList from '@/components/staff/filterbuttonlist/FilterButtonList'
+import { OrderTable, FilterButtonList } from '@/components/staff'
 
-export default function DisplayAllOrder() {
+export default function OperationAllOrdersPage() {
   const [filter, setFilter] = useState('all')
 
   const filterButtons = [
@@ -15,28 +14,20 @@ export default function DisplayAllOrder() {
 
   return (
     <Container>
-      <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm text-gray-400 mb-2">
-          <span>Order Management</span>
-          <span>/</span>
-          <span className="text-gray-600 font-medium">All Orders</span>
-        </div>
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">All Orders</h1>
-        <p className="text-gray-500 mt-1">Manage and track all customer orders in one place.</p>
-      </div>
+      <div className="text-sm text-gray-600 mb-2">Order Management / All Orders</div>
+      <h1 className="text-xl font-semibold mb-5 text-primary-700">All Orders</h1>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="p-6 border-b border-gray-50">
-          <FilterButtonList buttons={filterButtons} selectedValue={filter} onChange={setFilter} />
-        </div>
+      <FilterButtonList
+        buttons={filterButtons}
+        selectedValue={filter}
+        onChange={setFilter}
+        className="mb-4"
+      />
 
-        <div className="p-0">
-          <OrderTable
-            hiddenColumns={['WAITING FOR']}
-            filterType={filter === 'all' ? undefined : filter}
-          />
-        </div>
-      </div>
+      <OrderTable
+        hiddenColumns={['WAITING FOR']}
+        filterType={filter === 'all' ? undefined : filter}
+      />
     </Container>
   )
 }

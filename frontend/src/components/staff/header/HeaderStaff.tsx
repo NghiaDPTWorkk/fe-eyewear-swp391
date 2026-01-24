@@ -1,4 +1,4 @@
-import { Container } from '@/components/atoms'
+import { Container } from '@/components'
 import type { ReactNode } from 'react'
 
 interface HeaderStaffProps {

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
+import OrderHeaderTable from './OrderHeaderTable'
+import OrderList from './OrderList'
 import { IoTimeOutline, IoEyeOutline, IoChevronForward } from 'react-icons/io5'
-import { Button } from '@/components'
-import { cn } from '@/lib/utils'
 
 export interface Order {
   id: string
@@ -15,33 +15,35 @@ export interface Order {
   isNextActive: boolean
 }
 
+// Định nghĩa cấu trúc 1 cột
 export interface Column<T> {
-  header: string | ReactNode
-  render: (item: T) => ReactNode
-  className?: string
-  headerClassName?: string
+  header: string | ReactNode // Tiêu đề cột (Text hoặc Component)
+  render: (item: T) => ReactNode // Hàm hiển thị dữ liệu cho từng dòng
+  className?: string // Class cho td á
+  headerClassName?: string // Class cho th
 }
 
 interface OrderTableProps {
-  columns?: Column<Order>[]
-  hiddenColumns?: string[]
-  filterType?: string
+  columns?: Column<Order>[] // Mảng các cột
+  hiddenColumns?: string[] // Mảng các header cột muốn ẩn
+  filterType?: string // Loại đơn muốn lọc
 }
 
 const getOrderTypeStyles = (type: string) => {
   switch (type) {
     case 'Đơn Thường':
-      return 'bg-emerald-50 text-emerald-600'
+      return 'bg-green-100 text-green-700'
     case 'Pre-order':
-      return 'bg-amber-50 text-amber-600'
+      return 'bg-yellow-100 text-yellow-700'
     case 'Prescription':
-      return 'bg-indigo-50 text-indigo-600'
+      return 'bg-blue-100 text-blue-700'
     default:
-      return 'bg-neutral-100 text-neutral-600'
+      return 'bg-gray-100 text-gray-700'
   }
 }
 
 export default function OrderTable({ columns, hiddenColumns = [], filterType }: OrderTableProps) {
+  // Mock data mốt thay sau
   const orders: Order[] = [
     {
       id: 'ORD-001',
@@ -51,7 +53,7 @@ export default function OrderTable({ columns, hiddenColumns = [], filterType }: 
       waitingFor: 'Tròng Chemi 5.5',
       currentStatus: 'Processing',
       timeElapsed: '2h 15m',
-      statusColor: 'bg-blue-50 text-blue-600',
+      statusColor: 'bg-blue-100 text-blue-600',
       isNextActive: true
     },
     {
@@ -62,7 +64,7 @@ export default function OrderTable({ columns, hiddenColumns = [], filterType }: 
       waitingFor: 'Gọng Titan',
       currentStatus: 'Lens Edging & Mounting',
       timeElapsed: '3h 45m',
-      statusColor: 'bg-indigo-50 text-indigo-600',
+      statusColor: 'bg-purple-100 text-purple-600',
       isNextActive: false
     },
     {
@@ -72,7 +74,7 @@ export default function OrderTable({ columns, hiddenColumns = [], filterType }: 
       item: 'SKU-001',
       currentStatus: 'Awaiting Stock',
       timeElapsed: '5d 2h',
-      statusColor: 'bg-amber-50 text-amber-600',
+      statusColor: 'bg-orange-100 text-orange-600',
       isNextActive: true
     },
     {
@@ -92,7 +94,7 @@ export default function OrderTable({ columns, hiddenColumns = [], filterType }: 
       item: 'SKU-001',
       currentStatus: 'Packed',
       timeElapsed: '1h 30m',
-      statusColor: 'bg-emerald-50 text-emerald-600',
+      statusColor: 'bg-blue-100 text-blue-600',
       isNextActive: true
     }
   ]
@@ -101,14 +103,15 @@ export default function OrderTable({ columns, hiddenColumns = [], filterType }: 
     ? orders.filter((order) => order.orderType === filterType)
     : orders
 
+  // Default Columns nếu không truyền props
   const defaultColumns: Column<Order>[] = [
     {
       header: 'MÃ ĐƠN',
       render: (order) => (
         <div>
           <div>{order.id}</div>
-          <div className="w-12 h-1.5 bg-neutral-100 rounded-full mt-1 overflow-hidden">
-            <div className="bg-mint-500 h-full rounded-full w-1/2"></div>
+          <div className="w-12 h-1.5 bg-gray-200 rounded-full mt-1">
+            <div className="bg-emerald-400 h-full rounded-full w-1/2"></div>
           </div>
         </div>
       ),
@@ -156,16 +159,16 @@ export default function OrderTable({ columns, hiddenColumns = [], filterType }: 
           {order.timeElapsed}
         </div>
       ),
-      className: 'text-neutral-500'
+      className: 'text-gray-500'
     },
     {
       header: 'ACTION',
       headerClassName: 'text-center',
       render: (order) => (
         <div className="flex items-center justify-center gap-4">
-          <Button className="text-blue-500 hover:text-blue-700">
+          <button className="text-blue-500 hover:text-blue-700">
             <IoEyeOutline size={20} />
-          </Button>
+          </button>
           <button
             className={`flex items-center gap-1 px-4 py-1.5 rounded-lg text-white text-xs font-medium transition-colors ${
               order.isNextActive
@@ -186,47 +189,11 @@ export default function OrderTable({ columns, hiddenColumns = [], filterType }: 
   )
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto bg-white rounded-lg shadow">
       <table className="w-full text-left border-collapse">
         <OrderHeaderTable columns={activeColumns} />
         <OrderList orders={filteredOrders} columns={activeColumns} />
       </table>
     </div>
-  )
-}
-
-function OrderHeaderTable({ columns }: { columns: Column<Order>[] }) {
-  return (
-    <thead>
-      <tr className="border-b border-gray-100">
-        {columns.map((col, idx) => (
-          <th
-            key={idx}
-            className={cn(
-              'px-4 py-3 text-[11px] font-bold text-neutral-400 uppercase tracking-wider',
-              col.headerClassName
-            )}
-          >
-            {col.header}
-          </th>
-        ))}
-      </tr>
-    </thead>
-  )
-}
-
-function OrderList({ orders, columns }: { orders: Order[]; columns: Column<Order>[] }) {
-  return (
-    <tbody className="divide-y divide-gray-50">
-      {orders.map((order) => (
-        <tr key={order.id} className="group hover:bg-gray-50/50 transition-colors">
-          {columns.map((col, idx) => (
-            <td key={idx} className={cn('px-4 py-4 text-sm text-gray-600', col.className)}>
-              {col.render(order)}
-            </td>
-          ))}
-        </tr>
-      ))}
-    </tbody>
   )
 }

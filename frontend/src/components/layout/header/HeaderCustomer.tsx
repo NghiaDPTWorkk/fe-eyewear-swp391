@@ -1,5 +1,5 @@
+import { Container } from '@/components/atoms'
 import type { ReactNode } from 'react'
-import { Container } from '@/components/layout/container'
 
 interface HeaderCustomerProps {
   containerWidth?: string

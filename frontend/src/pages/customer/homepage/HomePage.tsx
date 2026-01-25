@@ -1,5 +1,5 @@
-import { HeaderCustomer } from '@/components'
-import { Input } from '@/shared/components'
+import { Input } from '@/components'
+import HeaderCustomer from '@/components/layout/header/HeaderCustomer'
 import {
   Search,
   ShoppingCart,

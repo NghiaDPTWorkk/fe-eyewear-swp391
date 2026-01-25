@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { Button, Input, Checkbox, FormField } from '@/shared/components'
 import { Divider } from '@/shared/components/ui/divider'
 import type { LoginRequest } from '@/shared/types'
 import { useLogin } from '@/features/auth/hooks/useLogin'
+import { FormField } from '@/components/molecules'
+import { Button, Checkbox, Input } from '@/components/atoms'
 
 interface LoginFormProps {
   role: 'customer' | 'staff'

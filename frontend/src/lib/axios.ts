@@ -1,7 +1,7 @@
 import { authEventEmitter } from '@/api'
 import { getOrCreateDeviceId } from '@/utils/device'
 import axios, { type AxiosError, type AxiosInstance, type InternalAxiosRequestConfig } from 'axios'
-const API_URL = import.meta.env.VITE_API_URL ?? 'https://be-swp391-eye-wear-bwlm.vercel.app'
+const API_URL = import.meta.env.VITE_API_URL ?? 'http://34.92.192.47:5000'
 
 export const apiClient: AxiosInstance = axios.create({
   baseURL: `${API_URL}/api/v1`,

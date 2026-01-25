@@ -64,9 +64,9 @@ export default function HeaderCustomer({
 
   // Mode 2: 3 sections layout
   return (
-    <header className="w-full border-b border-gray-300">
+    <header className="w-full bg-white border-b border-mint-300 sticky top-0 z-50 shadow-sm">
       <Container maxWidth={containerWidth} justify={containerJustify}>
-        <div className="flex items-center justify-between w-full h-[60px] gap-4">
+        <div className="flex items-center justify-between w-full h-[70px] gap-4">
           {logo && (
             <div className="flex" style={{ justifyContent: leftJustify }}>
               {logo}

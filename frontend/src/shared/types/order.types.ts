@@ -1,3 +1,6 @@
+import type { OrderType, OrderStatus, AssignmentOrderStatus, InvoiceStatus } from './enums'
+import type { Address } from './address.types'
+
 export interface LensParameters {
   left: {
     SPH: number
@@ -12,71 +15,82 @@ export interface LensParameters {
   PD: number
 }
 
-export interface OrderItem {
-  product_id: string
-  sku: string
-  quantity: number
-  lens?: {
-    lens_id: string
-    parameters: LensParameters
-    quantity: number
+export interface OrderProduct {
+  product: {
+    _id: string
+    sku: string
+    name: string
+    price: number
+    finalPrice: number
+    img: string
   }
-}
-
-export interface ShippingAddress {
-  no: string
-  ward: string
-  city: string
-}
-
-export interface CustomerInfo {
-  fullName: string
-  phone: string
-}
-
-export interface PaymentDetails {
-  totalPrice: number
-  totalDiscount: number
-  finalPrice: number
-  voucher: string[]
-}
-
-export interface VerificationStatus {
-  status: 'PENDING' | 'APPROVE' | 'REJECT'
-  staffVerified?: string
-}
-
-export interface Assignment {
-  staffId?: string
-  assignStaff?: string
-  assignedAt?: string
-  startedAt?: string
-  completedAt?: string
-  status: 'PENDING' | 'ASSIGNED' | 'IN_PROGRESS' | 'COMPLETED'
+  lens?: {
+    _id: string
+    sku: string
+    name: string
+    price: number
+    finalPrice: number
+    img: string
+    parameters: LensParameters
+  }
+  quantity: number
 }
 
 export interface Order {
   _id: string
   owner: string
-  type: 'NORMAL' | 'PRE-ORDER' | 'MANUFACTURING'
-  products: OrderItem[]
-  shippingAddress: ShippingAddress
-  customerInfo: CustomerInfo
-  payment: PaymentDetails
-  isVerified?: VerificationStatus
-  assignment?: Assignment
+  type: OrderType
+  status: OrderStatus
+  assignmentStatus: AssignmentOrderStatus
+  products: OrderProduct[]
+  // Flattened assignment fields
+  staffId?: string | null
+  assignStaff?: string | null
+  assignedAt?: Date | null
+  startedAt?: Date | null
+  completedAt?: Date | null
+  staffVerified?: string | null
+  price: number
   note?: string
-  createdAt?: string
-  updatedAt?: string
-  deletedAt?: string | null
+  createdAt: Date
+  updatedAt: Date
+  deletedAt?: Date | null
+}
+
+export interface Invoice {
+  _id: string
+  orders: string[] // Order IDs
+  owner: string
+  totalPrice: number
+  voucher: string[]
+  address: Address
+  status: InvoiceStatus
+  fullName: string
+  phone: string
+  totalDiscount: number
+  manager_onboard?: string | null
+  createdAt: Date
+  updatedAt: Date
+  deletedAt?: Date | null
 }
 
 export interface CreateOrderRequest {
-  products: OrderItem[]
-  shippingAddress: ShippingAddress
-  customerInfo: CustomerInfo
+  products: {
+    product_id: string
+    quantity: number
+    lens?: {
+      lens_id: string
+      parameters: LensParameters
+      quantity: number
+    }
+  }[]
+  shippingAddress: Address
+  customerInfo: {
+    fullName: string
+    phone: string
+  }
   voucher?: string[]
-  paymentMethod: 'COD' | 'VNPAY' | 'MOMO'
+  paymentMethod: 'COD' | 'VNPAY' | 'MOMO' | 'ZALAPAY'
   note?: string
 }
 

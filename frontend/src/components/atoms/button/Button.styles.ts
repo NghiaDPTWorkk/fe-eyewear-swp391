@@ -123,7 +123,3 @@ export const buttonVariants = cva(
     }
   }
 )
-
-export type ButtonVariant = 'solid' | 'outline' | 'ghost' | 'link'
-export type ButtonColorScheme = 'primary' | 'secondary' | 'danger' | 'neutral'
-export type ButtonSize = 'sm' | 'md' | 'lg'

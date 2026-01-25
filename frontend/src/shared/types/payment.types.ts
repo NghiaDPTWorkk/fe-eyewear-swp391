@@ -1,18 +1,30 @@
+import type { PaymentMethodType, PaymentStatus } from './enums'
+
+export interface Payment {
+  _id: string
+  paymentMethod: PaymentMethodType
+  status: PaymentStatus
+  ownerId: string
+  orderId: string
+  note?: string
+  price: number
+  createdAt: Date
+  updatedAt: Date
+}
+
 export interface PaymentRequest {
   orderId: string
   amount: number
-  method: 'momo' | 'vnpay'
-  bankCode?: string
-  language?: 'vn' | 'en'
+  method: PaymentMethodType
+  note?: string
 }
 
 export interface PaymentResponse {
-  paymentUrl: string
-  transactionId: string
+  payment: Payment
 }
 
 export interface PaymentStatusResponse {
-  transactionId: string
-  status: 'pending' | 'success' | 'failed'
+  _id: string
+  status: PaymentStatus
   message: string
 }

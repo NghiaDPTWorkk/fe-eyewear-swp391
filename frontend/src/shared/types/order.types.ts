@@ -15,30 +15,28 @@ export interface LensParameters {
   PD: number
 }
 
+/**
+ * Order product structure matching backend
+ */
+export interface OrderProductFrame {
+  product_id: string
+  sku: string
+}
+
+export interface OrderProductLens {
+  lens_id: string
+  sku: string
+  parameters: LensParameters
+}
+
 export interface OrderProduct {
-  product: {
-    _id: string
-    sku: string
-    name: string
-    price: number
-    finalPrice: number
-    img: string
-  }
-  lens?: {
-    _id: string
-    sku: string
-    name: string
-    price: number
-    finalPrice: number
-    img: string
-    parameters: LensParameters
-  }
+  product?: OrderProductFrame
+  lens?: OrderProductLens
   quantity: number
 }
 
 export interface Order {
   _id: string
-  owner: string
   type: OrderType
   status: OrderStatus
   assignmentStatus: AssignmentOrderStatus
@@ -51,7 +49,6 @@ export interface Order {
   completedAt?: Date | null
   staffVerified?: string | null
   price: number
-  note?: string
   createdAt: Date
   updatedAt: Date
   deletedAt?: Date | null
@@ -74,23 +71,56 @@ export interface Invoice {
   deletedAt?: Date | null
 }
 
+/**
+ * Create order request matching backend ClientCreateOrderSchema
+ */
 export interface CreateOrderRequest {
+  type: OrderType
   products: {
-    product_id: string
-    quantity: number
+    product?: {
+      product_id: string
+      sku: string
+    }
     lens?: {
       lens_id: string
+      sku: string
       parameters: LensParameters
-      quantity: number
     }
+    quantity: number
   }[]
-  shippingAddress: Address
-  customerInfo: {
+  voucher?: string[]
+  paymentMethod: string
+  shippingAddress?: Address
+  customerInfo?: {
     fullName: string
     phone: string
   }
+  note?: string
+  status?: OrderStatus
+}
+
+/**
+ * Update order request matching backend ClientUpdateOrderSchema
+ */
+export interface UpdateOrderRequest {
+  type?: OrderType
+  products?: OrderProduct[]
+  price?: number
+  status?: OrderStatus
+  staffVerified?: string | null
+  assignmentStatus?: AssignmentOrderStatus
+  staffId?: string | null
+  assignStaff?: string | null
+  assignedAt?: Date | null
+  startedAt?: Date | null
+  completedAt?: Date | null
   voucher?: string[]
-  paymentMethod: 'COD' | 'VNPAY' | 'MOMO' | 'ZALAPAY'
+  paymentMethod?: string
+  shippingAddress?: Address
+  customerInfo?: {
+    fullName: string
+    phone: string
+  }
   note?: string
 }
 
@@ -100,6 +130,20 @@ export interface OrderResponse {
 
 export interface OrderListResponse {
   items: Order[]
+  pagination: {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+  }
+}
+
+export interface InvoiceResponse {
+  invoice: Invoice
+}
+
+export interface InvoiceListResponse {
+  items: Invoice[]
   pagination: {
     page: number
     limit: number

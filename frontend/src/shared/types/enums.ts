@@ -3,6 +3,7 @@
  * Using const objects instead of enum for erasableSyntaxOnly compatibility
  */
 
+// Order Enums
 export const OrderType = {
   NORMAL: 'NORMAL',
   PRE_ORDER: 'PRE_ORDER',
@@ -31,6 +32,7 @@ export const AssignmentOrderStatus = {
 export type AssignmentOrderStatus =
   (typeof AssignmentOrderStatus)[keyof typeof AssignmentOrderStatus]
 
+// Invoice Enums
 export const InvoiceStatus = {
   PENDING: 'PENDING',
   DEPOSITED: 'DEPOSITED',
@@ -42,6 +44,7 @@ export const InvoiceStatus = {
 } as const
 export type InvoiceStatus = (typeof InvoiceStatus)[keyof typeof InvoiceStatus]
 
+// Payment Enums
 export const PaymentMethodType = {
   COD: 'COD',
   ZALAPAY: 'ZALAPAY',
@@ -55,3 +58,46 @@ export const PaymentStatus = {
   UNPAID: 'UNPAID'
 } as const
 export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
+
+// Product Enums
+export const ProductType = {
+  FRAME: 'frame',
+  LENS: 'lens',
+  SUNGLASS: 'sunglass'
+} as const
+export type ProductType = (typeof ProductType)[keyof typeof ProductType]
+
+// Voucher Enums
+export const VoucherStatus = {
+  DRAFT: 'DRAFT',
+  ACTIVE: 'ACTIVE',
+  DISABLE: 'DISABLE'
+} as const
+export type VoucherStatus = (typeof VoucherStatus)[keyof typeof VoucherStatus]
+
+export const VoucherDiscountType = {
+  FIXED: 'FIXED',
+  PERCENTAGE: 'PERCENTAGE'
+} as const
+export type VoucherDiscountType = (typeof VoucherDiscountType)[keyof typeof VoucherDiscountType]
+
+export const VoucherApplyScope = {
+  ALL: 'ALL',
+  SPECIFIC: 'SPECIFIC'
+} as const
+export type VoucherApplyScope = (typeof VoucherApplyScope)[keyof typeof VoucherApplyScope]
+
+// Attribute Enums
+export const AttributeShowType = {
+  COLOR: 'color',
+  TEXT: 'text'
+} as const
+export type AttributeShowType = (typeof AttributeShowType)[keyof typeof AttributeShowType]
+
+// Gender Enum
+export const Gender = {
+  FEMALE: 'F',
+  MALE: 'M',
+  NON_BINARY: 'N'
+} as const
+export type Gender = (typeof Gender)[keyof typeof Gender]

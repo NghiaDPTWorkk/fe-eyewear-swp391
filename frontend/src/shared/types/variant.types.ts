@@ -11,15 +11,16 @@ export interface VariantOption {
 }
 
 export interface Variant {
-  sku: string
-  name: string
-  slug: string
+  sku?: string
+  name?: string
+  slug?: string
   options: VariantOption[]
   price: number
   finalPrice: number
   stock: number
   imgs: string[]
   isDefault: boolean
-  createdAt: Date
-  updatedAt: Date
+  createdAt?: Date
+  updatedAt?: Date
+  deletedAt?: Date | null
 }

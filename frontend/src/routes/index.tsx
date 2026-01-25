@@ -4,7 +4,7 @@ import { LazyPage } from '@/pages/LazyPage'
 import { CustomerHomePage } from '@/pages/customer'
 
 const LoginPage = lazy(() =>
-  import('@/pages/auth/LoginPage').then((m) => ({ default: m.LoginPage }))
+  import('@/pages/auth/customer/LoginPage').then((m) => ({ default: m.LoginPage }))
 )
 
 const NotFoundPage = lazy(() =>

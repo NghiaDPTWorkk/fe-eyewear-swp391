@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "npm run validate && vite",
+    "dev:skip": "vite",
     "build": "npm run validate && tsc -b && vite build",
     "preview": "vite preview",
     "lint": "eslint src --ext .ts,.tsx",

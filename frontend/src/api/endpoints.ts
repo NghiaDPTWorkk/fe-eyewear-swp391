@@ -3,10 +3,11 @@
 export const ENDPOINTS = {
   // Auth
   AUTH: {
-    LOGIN: '/auth/login',
+    LOGIN_CUSTOMER: '/auth/login',
+    LOGIN_STAFF: '/admin/auth/login',
     REGISTER: '/auth/register',
     LOGOUT: '/auth/logout',
-    REFRESH: '/auth/refresh',
+    REFRESH_TOKEN: '/auth/refresh',
     PROFILE: '/auth/profile'
   },
 

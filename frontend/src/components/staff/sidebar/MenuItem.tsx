@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react'
 import { IoChevronDown, IoChevronForward } from 'react-icons/io5'
 import { cn } from '@/lib/utils'
 import { cva } from 'class-variance-authority'
+import { useLayoutStore } from '@/store/layout.store'
 
 const menuItemVariants = cva(
   [
@@ -82,6 +83,8 @@ export function MenuItem({
     onClick?.()
   }
 
+  const { sidebarCollapsed } = useLayoutStore()
+
   const badgeStyles = {
     default: 'bg-gray-100 text-gray-600',
     primary: 'bg-primary-100 text-primary-700',
@@ -94,27 +97,32 @@ export function MenuItem({
         onClick={handleClick}
         className={cn(menuItemVariants({ active: active && !hasDropdown, hasDropdown }), className)}
         aria-expanded={hasDropdown ? isOpen : undefined}
+        title={sidebarCollapsed ? label : undefined}
       >
         {icon && (
           <span className={menuItemIconVariants({ active: active && !hasDropdown })}>{icon}</span>
         )}
-        <span className="flex-1 text-left">{label}</span>
-        {badge && (
-          <span
-            className={cn('px-2 py-0.5 text-xs rounded font-medium', badgeStyles[badgeVariant])}
-          >
-            {badge}
-          </span>
+        {!sidebarCollapsed && (
+          <>
+            <span className="flex-1 text-left">{label}</span>
+            {badge && (
+              <span
+                className={cn('px-2 py-0.5 text-xs rounded font-medium', badgeStyles[badgeVariant])}
+              >
+                {badge}
+              </span>
+            )}
+            {hasDropdown &&
+              (isOpen ? (
+                <IoChevronDown className="text-gray-400 transition-transform" />
+              ) : (
+                <IoChevronForward className="text-gray-400 transition-transform" />
+              ))}
+          </>
         )}
-        {hasDropdown &&
-          (isOpen ? (
-            <IoChevronDown className="text-gray-400 transition-transform" />
-          ) : (
-            <IoChevronForward className="text-gray-400 transition-transform" />
-          ))}
       </button>
 
-      {hasDropdown && isOpen && children && (
+      {hasDropdown && !sidebarCollapsed && isOpen && children && (
         <div className="ml-8 mt-1 space-y-0.5" role="group">
           {children}
         </div>

@@ -17,10 +17,13 @@ import {
 } from 'react-icons/io5'
 import { TbTruckDelivery } from 'react-icons/tb'
 import { FaBoxesPacking } from 'react-icons/fa6'
+import { useLayoutStore } from '@/store/layout.store'
+import { cn } from '@/lib/utils'
 
 export default function OperationLayout() {
   const location = useLocation()
   const navigate = useNavigate()
+  const { sidebarCollapsed } = useLayoutStore()
 
   return (
     <div className="flex h-screen bg-white">
@@ -87,7 +90,12 @@ export default function OperationLayout() {
         </SidebarStaff.MenuSection>
       </SidebarStaff>
 
-      <div className="flex-1 flex flex-col ml-[260px]">
+      <div
+        className={cn(
+          'flex-1 flex flex-col transition-all duration-300',
+          sidebarCollapsed ? 'ml-20' : 'ml-[260px]'
+        )}
+      >
         <HeaderStaff
           containerWidth="1200px"
           left={<NavSearch placeholder={'Search orders...'} />}

@@ -1,8 +1,10 @@
 import type { ReactNode } from 'react'
+import { useNavigate } from 'react-router-dom'
 import OrderHeaderTable from './OrderHeaderTable'
 import OrderList from './OrderList'
 import { Button } from '@/components'
 import { IoTimeOutline, IoEyeOutline, IoChevronForward } from 'react-icons/io5'
+import { PATHS } from '@/routes/paths'
 
 export interface Order {
   id: string
@@ -44,6 +46,13 @@ const getOrderTypeStyles = (type: string) => {
 }
 
 export default function OrderTable({ columns, hiddenColumns = [], filterType }: OrderTableProps) {
+  const navigate = useNavigate()
+
+  // Handler để navigate đến trang chi tiết đơn hàng
+  const handleViewOrder = (orderId: string) => {
+    navigate(PATHS.OPERATIONSTAFF.ORDER_DETAIL(orderId))
+  }
+
   // Mock data mốt thay sau
   const orders: Order[] = [
     {
@@ -167,7 +176,13 @@ export default function OrderTable({ columns, hiddenColumns = [], filterType }: 
       headerClassName: 'text-center',
       render: (order) => (
         <div className="flex items-center justify-center gap-3">
-          <Button variant="ghost" size="sm" colorScheme="secondary" className="p-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            colorScheme="secondary"
+            className="p-2"
+            onClick={() => handleViewOrder(order.id)}
+          >
             <IoEyeOutline size={20} />
           </Button>
           <Button
@@ -177,6 +192,7 @@ export default function OrderTable({ columns, hiddenColumns = [], filterType }: 
             className="text-xs"
             isDisabled={!order.isNextActive}
             rightIcon={<IoChevronForward />}
+            onClick={() => handleViewOrder(order.id)}
           >
             Next
           </Button>

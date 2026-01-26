@@ -86,6 +86,14 @@ const OperationPackingPage = lazy(() =>
   import('@/pages/operation/OperationPackingPage').then((m) => ({ default: m.default }))
 )
 
+const OrderDetailPage = lazy(() =>
+  import('@/pages/operation/OperationOrderDetailPage').then((m) => ({ default: m.default }))
+)
+
+const OperationOrderPackingProcess = lazy(() =>
+  import('@/pages/operation/OperationOrderPackingProcess').then((m) => ({ default: m.default }))
+)
+
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -188,6 +196,14 @@ export const router = createBrowserRouter([
       {
         path: 'packing',
         element: <OperationPackingPage />
+      },
+      {
+        path: 'orders/:orderId',
+        element: <OrderDetailPage />
+      },
+      {
+        path: 'orders/:orderId/process',
+        element: <OperationOrderPackingProcess />
       },
       {
         path: 'delivery-orders',

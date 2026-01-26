@@ -1,6 +1,6 @@
 import { authApi } from '@/api/modules/auth.api'
 import { STORAGE_KEYS } from '@/shared/constants/storage'
-import type { LoginRequest } from '@/shared/types'
+import type { LoginRequest, RegisterRequest } from '@/shared/types'
 
 export const authService = {
   async login(payload: LoginRequest) {
@@ -18,6 +18,11 @@ export const authService = {
       localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken)
     }
 
+    return response
+  },
+
+  async register(payload: RegisterRequest) {
+    const response = await authApi.register(payload)
     return response
   }
 }

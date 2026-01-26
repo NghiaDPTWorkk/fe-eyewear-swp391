@@ -1,17 +1,19 @@
 import { useState } from 'react'
 import { Divider } from '@/components/atoms/divider'
-import type { CreateCustomerRequest } from '@/shared/types/customer.types'
 import { Gender } from '@/shared/types/enums'
 import { FormField } from '@/components/molecules'
 import { Button, Input } from '@/components/atoms'
+import type { RegisterRequest } from '@/shared/types'
+import { useRegister } from '@/features/auth/hooks/useRegister'
 
 interface RegisterFormProps {
-  onSubmit?: (data: CreateCustomerRequest) => void
+  onSubmit?: (data: RegisterRequest) => void
   isPending?: boolean
 }
 
-export const RegisterForm = ({ onSubmit, isPending = false }: RegisterFormProps) => {
-  const [formData, setFormData] = useState<CreateCustomerRequest>({
+export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
+  const registerMutation = useRegister()
+  const [formData, setFormData] = useState<RegisterRequest>({
     name: '',
     email: '',
     password: '',
@@ -19,7 +21,7 @@ export const RegisterForm = ({ onSubmit, isPending = false }: RegisterFormProps)
     gender: Gender.MALE
   })
 
-  const [showPassword, setShowPassword] = useState(false)
+  const showPassword = useState(false)
 
   const isValidEmail = formData.email.includes('@') && formData.email.includes('.')
   const isValidPhone = /^[0-9]{10,11}$/.test(formData.phone)
@@ -32,10 +34,16 @@ export const RegisterForm = ({ onSubmit, isPending = false }: RegisterFormProps)
       return
     }
 
-    onSubmit?.(formData)
+    registerMutation.mutate({
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      phone: formData.phone,
+      gender: formData.gender
+    })
   }
 
-  const handleChange = (field: keyof CreateCustomerRequest, value: string) => {
+  const handleChange = (field: keyof RegisterRequest, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
@@ -110,15 +118,6 @@ export const RegisterForm = ({ onSubmit, isPending = false }: RegisterFormProps)
           onChange={(e) => handleChange('password', e.target.value)}
           size="lg"
           required
-          rightElement={
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="text-neutral-500 hover:text-neutral-700"
-            >
-              {showPassword ? 'Hide' : 'Show'}
-            </button>
-          }
         />
       </FormField>
 

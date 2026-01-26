@@ -2,9 +2,8 @@ import { authEventEmitter } from '@/api'
 import { getOrCreateDeviceId } from '@/utils/device'
 import axios, { type AxiosError, type AxiosInstance, type InternalAxiosRequestConfig } from 'axios'
 
-const API_URL = import.meta.env.VITE_API_URL
 export const apiClient: AxiosInstance = axios.create({
-  baseURL: `${API_URL}/api/v1`,
+  baseURL: `${import.meta.env.VITE_API_URL}/api/v1`,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'

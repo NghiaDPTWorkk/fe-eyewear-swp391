@@ -81,7 +81,7 @@ export default function SaleStaffOrderPage() {
 
         {/* Table Card */}
         <Card className="p-0 overflow-hidden border border-neutral-200 shadow-sm">
-          <OrderTable />
+          <OrderTable role="sales" />
         </Card>
 
         {/* Pagination placeholder (OrderTable might handle it or we add below) */}

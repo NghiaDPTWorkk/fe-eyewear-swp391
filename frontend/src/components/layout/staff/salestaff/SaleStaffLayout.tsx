@@ -59,10 +59,10 @@ export default function SaleStaffLayout() {
             active={location.pathname === '/salestaff/orders'}
           />
           <SidebarStaff.SubMenuItem
-            label="Prescription"
-            to="/salestaff/orders/rx-verification"
+            label="Prescription Orders"
+            to="/salestaff/orders/prescription-orders"
             badge={24}
-            active={location.pathname === '/salestaff/orders/rx-verification'}
+            active={location.pathname === '/salestaff/orders/prescription-orders'}
           />
           <SidebarStaff.SubMenuItem
             label="Pre-orders"

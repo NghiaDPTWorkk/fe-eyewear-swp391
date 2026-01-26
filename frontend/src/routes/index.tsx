@@ -43,8 +43,8 @@ const SaleStaffLabStatusPage = lazy(() =>
   import('@/pages/sales/SaleStaffLabStatusPage').then((m) => ({ default: m.default }))
 )
 
-const SaleStaffRxVerificationPage = lazy(() =>
-  import('@/pages/sales/SaleStaffRxVerificationPage').then((m) => ({ default: m.default }))
+const SaleStaffPrescriptionPage = lazy(() =>
+  import('@/pages/sales').then((m) => ({ default: m.SaleStaffPrescriptionPage }))
 )
 
 const SaleStaffPreOrdersPage = lazy(() =>
@@ -135,8 +135,8 @@ export const router = createBrowserRouter([
         element: <SaleStaffOrderPage />
       },
       {
-        path: 'orders/rx-verification',
-        element: <SaleStaffRxVerificationPage />
+        path: 'orders/prescription-orders',
+        element: <SaleStaffPrescriptionPage />
       },
       {
         path: 'orders/pre-orders',

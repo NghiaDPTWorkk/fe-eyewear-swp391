@@ -4,7 +4,9 @@ import {
   IoSearchOutline,
   IoRefreshOutline,
   IoChevronBackOutline,
-  IoChevronForwardOutline
+  IoChevronForwardOutline,
+  IoEyeOutline,
+  IoReaderOutline // for review
 } from 'react-icons/io5'
 
 export default function SaleStaffReturnsPage() {
@@ -43,7 +45,12 @@ export default function SaleStaffReturnsPage() {
               className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all placeholder:text-gray-400"
             />
           </div>
-          <Button variant="solid" colorScheme="primary" leftIcon={<IoRefreshOutline />}>
+          <Button
+            variant="solid"
+            colorScheme="primary"
+            leftIcon={<IoRefreshOutline />}
+            className="rounded-xl font-bold"
+          >
             Process New Return
           </Button>
         </div>
@@ -53,25 +60,25 @@ export default function SaleStaffReturnsPage() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="px-6 py-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider align-middle">
                     Return ID
                   </th>
-                  <th className="px-6 py-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider align-middle">
                     Original Order
                   </th>
-                  <th className="px-6 py-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider align-middle">
                     Customer
                   </th>
-                  <th className="px-6 py-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider align-middle">
                     Reason
                   </th>
-                  <th className="px-6 py-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider text-center align-middle">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider align-middle">
                     Date
                   </th>
-                  <th className="px-6 py-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider text-right">
+                  <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider text-center align-middle">
                     Action
                   </th>
                 </tr>
@@ -82,16 +89,35 @@ export default function SaleStaffReturnsPage() {
                   <td className="px-6 py-4 text-sm text-blue-600">#ORD-2023-098</td>
                   <td className="px-6 py-4 text-sm text-gray-600">Michael Scott</td>
                   <td className="px-6 py-4 text-sm text-gray-600">Defective Frame</td>
-                  <td className="px-6 py-4">
-                    <span className="px-2 py-1 rounded text-xs font-bold bg-orange-100 text-orange-600">
-                      Pending
-                    </span>
+                  <td className="px-6 py-4 align-middle">
+                    <div className="flex justify-center">
+                      <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-orange-100 text-orange-600 whitespace-nowrap">
+                        Pending
+                      </span>
+                    </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">Oct 24, 2023</td>
-                  <td className="px-6 py-4 text-right">
-                    <Button size="sm" variant="outline" colorScheme="neutral">
-                      Review
-                    </Button>
+                  <td className="px-6 py-4 text-sm text-gray-600">Oct 23, 2023</td>
+                  <td className="px-6 py-4 text-center align-middle">
+                    <div className="flex items-center justify-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        colorScheme="primary"
+                        className="p-2 h-8 w-8 text-primary-500"
+                        title="Review"
+                      >
+                        <IoReaderOutline size={18} />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        colorScheme="neutral"
+                        className="p-2 h-8 w-8 text-neutral-400 hover:text-primary-500"
+                        title="Details"
+                      >
+                        <IoEyeOutline size={18} />
+                      </Button>
+                    </div>
                   </td>
                 </tr>
                 <tr className="hover:bg-gray-50/50">
@@ -99,16 +125,26 @@ export default function SaleStaffReturnsPage() {
                   <td className="px-6 py-4 text-sm text-blue-600">#ORD-2023-012</td>
                   <td className="px-6 py-4 text-sm text-gray-600">Pam Beesly</td>
                   <td className="px-6 py-4 text-sm text-gray-600">Wrong Size</td>
-                  <td className="px-6 py-4">
-                    <span className="px-2 py-1 rounded text-xs font-bold bg-green-100 text-green-600">
-                      Approved
-                    </span>
+                  <td className="px-6 py-4 align-middle">
+                    <div className="flex justify-center">
+                      <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-600 whitespace-nowrap">
+                        Approved
+                      </span>
+                    </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">Oct 23, 2023</td>
-                  <td className="px-6 py-4 text-right">
-                    <Button size="sm" variant="ghost" colorScheme="neutral">
-                      Details
-                    </Button>
+                  <td className="px-6 py-4 text-sm text-gray-500 align-middle">Oct 23, 2023</td>
+                  <td className="px-6 py-4 text-center align-middle">
+                    <div className="flex items-center justify-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        colorScheme="neutral"
+                        className="p-2 h-8 w-8 text-neutral-400 hover:text-primary-500"
+                        title="Details"
+                      >
+                        <IoEyeOutline size={18} />
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               </tbody>

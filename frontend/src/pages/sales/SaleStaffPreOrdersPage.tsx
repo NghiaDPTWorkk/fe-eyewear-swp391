@@ -7,10 +7,12 @@ import {
   IoHourglassOutline,
   IoWalletOutline,
   IoCalendarOutline,
-  IoChevronForward,
   IoFilter,
   IoChevronBackOutline,
-  IoChevronForwardOutline
+  IoChevronForwardOutline,
+  IoSyncOutline, // for update
+  IoEyeOutline, // for details
+  IoNotificationsOutline // for notify
 } from 'react-icons/io5'
 
 export default function SaleStaffPreOrdersPage() {
@@ -36,18 +38,8 @@ export default function SaleStaffPreOrdersPage() {
         </div>
         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Pre-order Tracking</h1>
         <p className="text-gray-500 mt-1">Manage outstanding orders and supplier ETA updates.</p>
-
-        <div className="mt-4 flex gap-3 justify-end">
-          <Button variant="outline" colorScheme="neutral" leftIcon={<IoCloudDownloadOutline />}>
-            Export
-          </Button>
-          <Button variant="solid" colorScheme="primary" leftIcon={<IoAdd />}>
-            New Pre-order
-          </Button>
-        </div>
       </div>
 
-      {/* Metric Cards - Custom for Pre-orders */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <Card className="p-5 border border-neutral-100 flex flex-col justify-between">
           <div className="flex justify-between items-start">
@@ -110,9 +102,19 @@ export default function SaleStaffPreOrdersPage() {
         </Card>
       </div>
 
-      {/* Custom Table for Pre-orders */}
+      <div className="mb-4 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+        <div className="flex-1 max-w-xl w-full"></div>
+        <div className="flex gap-3 justify-end w-full md:w-auto">
+          <Button variant="outline" colorScheme="neutral" leftIcon={<IoCloudDownloadOutline />}>
+            Export
+          </Button>
+          <Button variant="solid" colorScheme="primary" leftIcon={<IoAdd />}>
+            New Pre-order
+          </Button>
+        </div>
+      </div>
+
       <Card className="p-0 overflow-hidden border border-neutral-200 shadow-sm">
-        {/* Table Controls */}
         <div className="p-4 border-b border-gray-100 flex justify-between items-center">
           <div className="flex gap-3">
             <Button size="sm" variant="outline" colorScheme="neutral" leftIcon={<IoFilter />}>
@@ -134,121 +136,175 @@ export default function SaleStaffPreOrdersPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="px-6 py-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider align-middle">
                   SKU / Product
                 </th>
-                <th className="px-6 py-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider align-middle">
                   Order ID
                 </th>
-                <th className="px-6 py-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider align-middle">
                   Customer
                 </th>
-                <th className="px-6 py-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider align-middle">
                   Deposit
                 </th>
-                <th className="px-6 py-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider align-middle">
                   ETA Date
                 </th>
-                <th className="px-6 py-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider text-center align-middle">
                   Supplier Status
                 </th>
-                <th className="px-6 py-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider text-right">
+                <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider text-center align-middle">
                   Actions
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               <tr className="hover:bg-gray-50/50">
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 align-middle">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gray-100 rounded-md"></div>
+                    <div className="w-10 h-10 bg-gray-100 rounded-xl"></div>
                     <div>
                       <div className="text-sm font-medium text-gray-900">RB-3025-L0205</div>
                       <div className="text-xs text-gray-500">Ray-Ban Aviator Gold</div>
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-sm text-primary-500 font-medium">#PO-2849</td>
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 text-sm text-primary-500 font-medium align-middle">
+                  #PO-2849
+                </td>
+                <td className="px-6 py-4 align-middle">
                   <div className="text-sm text-gray-900">John Doe</div>
                   <div className="text-xs text-gray-500">+1 (555) 012-3456</div>
                 </td>
-                <td className="px-6 py-4 text-sm font-medium">$50.00</td>
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 text-sm font-medium align-middle">$50.00</td>
+                <td className="px-6 py-4 align-middle">
                   <div className="text-sm font-bold text-red-500">Oct 12, 2023</div>
                   <div className="text-[10px] text-red-400">3 days overdue</div>
                 </td>
-                <td className="px-6 py-4">
-                  <span className="px-2 py-1 rounded text-xs font-bold bg-amber-100 text-amber-600">
-                    DELAYED
-                  </span>
+                <td className="px-6 py-4 align-middle">
+                  <div className="flex justify-center">
+                    <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-600 whitespace-nowrap">
+                      DELAYED
+                    </span>
+                  </div>
                 </td>
-                <td className="px-6 py-4 text-right">
-                  <Button size="sm" variant="outline" colorScheme="primary">
-                    Update ETA
-                  </Button>
+                <td className="px-6 py-4 text-center align-middle">
+                  <div className="flex items-center justify-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      colorScheme="primary"
+                      className="p-2 h-8 w-8 text-primary-500"
+                      title="Update ETA"
+                    >
+                      <IoSyncOutline size={18} />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      colorScheme="neutral"
+                      className="p-2 h-8 w-8 text-neutral-400 hover:text-primary-500"
+                      title="Details"
+                    >
+                      <IoEyeOutline size={18} />
+                    </Button>
+                  </div>
                 </td>
               </tr>
 
               <tr className="hover:bg-gray-50/50">
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 align-middle">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gray-100 rounded-md"></div>
+                    <div className="w-10 h-10 bg-gray-100 rounded-xl"></div>
                     <div>
                       <div className="text-sm font-medium text-gray-900">TF-5532-B</div>
                       <div className="text-xs text-gray-500">Tom Ford Square Black</div>
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-sm text-primary-500 font-medium">#PO-2850</td>
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 text-sm text-primary-500 font-medium align-middle">
+                  #PO-2850
+                </td>
+                <td className="px-6 py-4 align-middle">
                   <div className="text-sm text-gray-900">Emily Chen</div>
                   <div className="text-xs text-gray-500">emily.c@example.com</div>
                 </td>
-                <td className="px-6 py-4 text-sm font-medium">$120.00</td>
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 text-sm font-medium align-middle">$120.00</td>
+                <td className="px-6 py-4 align-middle">
                   <div className="text-sm text-gray-900">Oct 24, 2023</div>
                 </td>
-                <td className="px-6 py-4">
-                  <span className="px-2 py-1 rounded text-xs font-bold bg-blue-100 text-blue-600">
-                    ON ORDER
-                  </span>
+                <td className="px-6 py-4 align-middle">
+                  <div className="flex justify-center">
+                    <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-600 whitespace-nowrap">
+                      ON ORDER
+                    </span>
+                  </div>
                 </td>
-                <td className="px-6 py-4 text-right">
-                  <Button size="sm" variant="ghost" colorScheme="neutral">
-                    <IoChevronForward />
-                  </Button>
+                <td className="px-6 py-4 text-center align-middle">
+                  <div className="flex items-center justify-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      colorScheme="neutral"
+                      className="p-2 h-8 w-8 text-neutral-400 hover:text-primary-500"
+                      title="Details"
+                    >
+                      <IoEyeOutline size={18} />
+                    </Button>
+                  </div>
                 </td>
               </tr>
 
               <tr className="hover:bg-gray-50/50">
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 align-middle">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gray-100 rounded-md"></div>
+                    <div className="w-10 h-10 bg-gray-100 rounded-xl"></div>
                     <div>
                       <div className="text-sm font-medium text-gray-900">PR-17WS</div>
                       <div className="text-xs text-gray-500">Prada Symbole</div>
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-sm text-primary-500 font-medium">#PO-2852</td>
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 text-sm text-primary-500 font-medium align-middle">
+                  #PO-2852
+                </td>
+                <td className="px-6 py-4 align-middle">
                   <div className="text-sm text-gray-900">Sarah Connor</div>
                   <div className="text-xs text-gray-500">+1 (555) 999-8888</div>
                 </td>
-                <td className="px-6 py-4 text-sm font-medium">$150.00</td>
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 text-sm font-medium align-middle">$150.00</td>
+                <td className="px-6 py-4 align-middle">
                   <div className="text-sm text-gray-900">Oct 20, 2023</div>
                 </td>
-                <td className="px-6 py-4">
-                  <span className="px-2 py-1 rounded text-xs font-bold bg-emerald-100 text-emerald-600">
-                    ARRIVED
-                  </span>
+                <td className="px-6 py-4 align-middle">
+                  <div className="flex justify-center">
+                    <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-600 whitespace-nowrap">
+                      ARRIVED
+                    </span>
+                  </div>
                 </td>
-                <td className="px-6 py-4 text-right">
-                  <Button size="sm" variant="outline" colorScheme="neutral">
-                    Notify Customer
-                  </Button>
+                <td className="px-6 py-4 text-center align-middle">
+                  <div className="flex items-center justify-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      colorScheme="primary"
+                      className="p-2 h-8 w-8 text-primary-500"
+                      title="Notify Customer"
+                    >
+                      <IoNotificationsOutline size={18} />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      colorScheme="neutral"
+                      className="p-2 h-8 w-8 text-neutral-400 hover:text-primary-500"
+                      title="Details"
+                    >
+                      <IoEyeOutline size={18} />
+                    </Button>
+                  </div>
                 </td>
               </tr>
             </tbody>

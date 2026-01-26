@@ -212,7 +212,7 @@ function UrgentOrdersTable() {
         </div>
       </div>
 
-      <OrderTable />
+      <OrderTable role="sales" />
     </Card>
   )
 }

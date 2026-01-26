@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Divider } from '@/shared/components/ui/divider'
+import { Divider } from '@/components/atoms/divider'
 import type { LoginRequest } from '@/shared/types'
 import { useLogin } from '@/features/auth/hooks/useLogin'
 import { FormField } from '@/components/molecules'

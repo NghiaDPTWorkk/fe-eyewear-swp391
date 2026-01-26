@@ -1,7 +1,7 @@
-import { Container } from 'lucide-react'
+import { Container } from '@/components'
 import type { ReactNode } from 'react'
 
-interface HeaderCustomerProps {
+interface CustomerHeaderProps {
   containerWidth?: string
   containerJustify?: string
 
@@ -19,7 +19,7 @@ interface HeaderCustomerProps {
   rightJustify?: string
 }
 
-export default function HeaderCustomer({
+export default function CustomerHeader({
   containerWidth = '100%',
   containerJustify,
 
@@ -36,7 +36,7 @@ export default function HeaderCustomer({
   leftJustify = 'flex-start',
   centerJustify = 'center',
   rightJustify = 'flex-end'
-}: HeaderCustomerProps) {
+}: CustomerHeaderProps) {
   const isMode1 = logoNavList !== undefined || searchNavListIcon !== undefined
   const isMode2 = logo !== undefined || navListContent !== undefined || navListIcon !== undefined
 

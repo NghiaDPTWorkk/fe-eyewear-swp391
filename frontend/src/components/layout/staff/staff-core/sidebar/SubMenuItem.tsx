@@ -1,7 +1,9 @@
+import { Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 
 interface SubMenuItemProps {
   label: string
+  to?: string
   active?: boolean
   badge?: string | number
   badgeColor?: 'red' | 'gray'
@@ -10,13 +12,15 @@ interface SubMenuItemProps {
 
 export function SubMenuItem({
   label,
+  to = '#',
   active,
   badge,
   badgeColor = 'red',
   onClick
 }: SubMenuItemProps) {
   return (
-    <button
+    <Link
+      to={to}
       onClick={onClick}
       className={cn(
         'w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all duration-200',
@@ -40,6 +44,6 @@ export function SubMenuItem({
           {badge}
         </span>
       )}
-    </button>
+    </Link>
   )
 }

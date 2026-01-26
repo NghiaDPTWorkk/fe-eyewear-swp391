@@ -1,4 +1,4 @@
-import HeaderCustomer from '@/components/layout/customer/header/CustomerHeader'
+import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
 import { Input } from '@/shared/components/ui'
 
 import {
@@ -39,7 +39,7 @@ export const CustomerHomePage = () => {
 
   return (
     <div className="min-h-screen bg-mint-200">
-      <HeaderCustomer
+      <CustomerHeader
         containerWidth="1200px"
         logo={
           <div className="flex items-center gap-3">

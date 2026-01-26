@@ -1,7 +1,7 @@
 import { Container } from '@/components'
 import type { ReactNode } from 'react'
 
-interface StaffHeaderProp {
+interface StaffHeaderProps {
   containerWidth?: string
   containerJustify?: string
   left?: ReactNode
@@ -9,13 +9,13 @@ interface StaffHeaderProp {
   right: ReactNode
 }
 
-export function HeaderStaff({
+export function StaffHeader({
   containerWidth = '100%',
   containerJustify,
   left,
   center,
   right
-}: StaffHeaderProp) {
+}: StaffHeaderProps) {
   return (
     <header className="w-full bg-white border-b border-neutral-200">
       <Container maxWidth={containerWidth} justify={containerJustify}>

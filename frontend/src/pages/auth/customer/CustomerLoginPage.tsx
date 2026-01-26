@@ -1,6 +1,6 @@
 import { LoginForm } from '@/components/layout/login-form/LoginForm'
 
-export const LoginPage = () => {
+export const CustomerLoginPage = () => {
   return (
     <div className="flex min-h-screen w-full">
       {/* Left Side - Login Form */}

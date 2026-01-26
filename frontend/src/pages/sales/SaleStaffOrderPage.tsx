@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Container, Button, Card } from '@/components'
 import { OrderTable, FilterButtonList } from '@/components/staff'
 import {
@@ -25,12 +26,12 @@ export default function SaleStaffOrderPage() {
     <Container>
       <div className="mb-8">
         <div className="flex items-center gap-2 text-sm mb-2 font-medium">
-          <a
-            href="/salestaff/dashboard"
+          <Link
+            to="/salestaff/dashboard"
             className="text-neutral-400 hover:text-primary-500 transition-colors"
           >
             Dashboard
-          </a>
+          </Link>
           <span className="text-neutral-300">/</span>
           <span className="text-primary-500 font-bold">Order Management</span>
         </div>

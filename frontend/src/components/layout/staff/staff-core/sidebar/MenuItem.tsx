@@ -1,4 +1,5 @@
 import { useState, type ReactNode, Children, isValidElement } from 'react'
+import { Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { FiChevronDown } from 'react-icons/fi'
 import { useLayoutStore } from '@/store/layout.store'
@@ -6,6 +7,7 @@ import { useLayoutStore } from '@/store/layout.store'
 interface MenuItemProps {
   icon: ReactNode
   label: string
+  to?: string
   active?: boolean
   hasDropdown?: boolean
   children?: ReactNode
@@ -17,6 +19,7 @@ interface MenuItemProps {
 export function MenuItem({
   icon,
   label,
+  to,
   active,
   hasDropdown,
   children,
@@ -30,58 +33,76 @@ export function MenuItem({
 
   const [isOpen, setIsOpen] = useState(defaultIsOpen || hasActiveChild)
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
     if (hasDropdown) {
+      e.preventDefault()
       setIsOpen(!isOpen)
     }
     onClick?.()
   }
 
+  const commonClasses = cn(
+    'w-full flex items-center transition-all duration-300 relative group',
+    sidebarCollapsed ? 'justify-center py-2 px-0' : 'justify-start px-3 py-2.5 rounded-lg gap-3',
+    !sidebarCollapsed && active
+      ? 'bg-primary-50 text-primary-700'
+      : !sidebarCollapsed && hasDropdown && isOpen
+        ? 'text-neutral-900 bg-neutral-50'
+        : !sidebarCollapsed && 'text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900'
+  )
+
+  const content = (
+    <>
+      {sidebarCollapsed && active && (
+        <div className="absolute inset-0 mx-auto w-10 h-10 bg-primary-50 rounded-xl -z-10 top-1/2 -translate-y-1/2" />
+      )}
+      <span
+        className={cn(
+          'text-xl transition-colors relative z-10',
+          active || (hasDropdown && isOpen) ? 'text-primary-500' : 'text-neutral-400',
+          sidebarCollapsed && 'group-hover:text-primary-500'
+        )}
+      >
+        {icon}
+      </span>
+      {!sidebarCollapsed && (
+        <>
+          <span className="flex-1 text-left truncate transition-opacity duration-300 font-medium">
+            {label}
+          </span>
+          {hasDropdown && (
+            <FiChevronDown
+              className={cn(
+                'text-neutral-400 transition-transform duration-200 shrink-0',
+                isOpen && 'rotate-180 text-primary-500'
+              )}
+            />
+          )}
+        </>
+      )}
+    </>
+  )
+
   return (
     <div className="mb-1">
-      <button
-        onClick={handleClick}
-        className={cn(
-          'w-full flex items-center transition-all duration-300 relative group',
-          sidebarCollapsed
-            ? 'justify-center py-2 px-0'
-            : 'justify-start px-3 py-2.5 rounded-lg gap-3',
-          !sidebarCollapsed && active
-            ? 'bg-primary-50 text-primary-700'
-            : !sidebarCollapsed && hasDropdown && isOpen
-              ? 'text-neutral-900 bg-neutral-50'
-              : !sidebarCollapsed && 'text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900'
-        )}
-        title={sidebarCollapsed ? label : undefined}
-      >
-        {sidebarCollapsed && active && (
-          <div className="absolute inset-0 mx-auto w-10 h-10 bg-primary-50 rounded-xl -z-10 top-1/2 -translate-y-1/2" />
-        )}
-        <span
-          className={cn(
-            'text-xl transition-colors relative z-10',
-            active || (hasDropdown && isOpen) ? 'text-primary-500' : 'text-neutral-400',
-            sidebarCollapsed && 'group-hover:text-primary-500'
-          )}
+      {hasDropdown || !to ? (
+        <button
+          onClick={handleClick}
+          className={commonClasses}
+          title={sidebarCollapsed ? label : undefined}
         >
-          {icon}
-        </span>
-        {!sidebarCollapsed && (
-          <>
-            <span className="flex-1 text-left truncate transition-opacity duration-300 font-medium">
-              {label}
-            </span>
-            {hasDropdown && (
-              <FiChevronDown
-                className={cn(
-                  'text-neutral-400 transition-transform duration-200 shrink-0',
-                  isOpen && 'rotate-180 text-primary-500'
-                )}
-              />
-            )}
-          </>
-        )}
-      </button>
+          {content}
+        </button>
+      ) : (
+        <Link
+          to={to}
+          onClick={onClick}
+          className={commonClasses}
+          title={sidebarCollapsed ? label : undefined}
+        >
+          {content}
+        </Link>
+      )}
 
       {hasDropdown && !sidebarCollapsed && (
         <div

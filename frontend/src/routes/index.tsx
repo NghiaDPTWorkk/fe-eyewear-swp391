@@ -3,11 +3,11 @@ import { createBrowserRouter } from 'react-router-dom'
 import { LazyPage } from '@/pages/LazyPage'
 
 const LoginPage = lazy(() =>
-  import('@/pages/auth/customer/CustomerLoginPage').then((m) => ({ default: m.LoginPage }))
+  import('@/pages/auth/customer/CustomerLoginPage').then((m) => ({ default: m.CustomerLoginPage }))
 )
 
 const LoginStaffPage = lazy(() =>
-  import('@/pages/auth/staff/StaffLoginPage').then((m) => ({ default: m.LoginStaffPage }))
+  import('@/pages/auth/staff/StaffLoginPage').then((m) => ({ default: m.StaffLoginPage }))
 )
 
 const CustomerHomePage = lazy(() =>

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Container } from '@/components'
 import { OrderTable, FilterButtonList } from '@/components/staff'
 
@@ -14,8 +15,19 @@ export default function OperationAllOrdersPage() {
 
   return (
     <Container>
-      <div className="text-sm text-gray-600 mb-2">Order Management / All Orders</div>
-      <h1 className="text-xl font-semibold mb-5 text-primary-700">All Orders</h1>
+      <div className="mb-8">
+        <div className="flex items-center gap-2 text-sm mb-2 font-medium">
+          <Link
+            to="/operationstaff/dashboard"
+            className="text-neutral-400 hover:text-primary-500 transition-colors"
+          >
+            Dashboard
+          </Link>
+          <span className="text-neutral-300">/</span>
+          <span className="text-primary-500 font-bold">All Orders</span>
+        </div>
+        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Order Database</h1>
+      </div>
 
       <FilterButtonList
         buttons={filterButtons}

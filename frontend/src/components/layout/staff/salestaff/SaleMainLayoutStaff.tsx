@@ -2,8 +2,11 @@ import type { ReactNode } from 'react'
 import { Outlet } from 'react-router-dom'
 import { useLayoutStore } from '@/store/layout.store'
 import { cn } from '@/lib/utils'
-import { HeaderStaff } from '@/components/staff/header/HeaderStaff'
-import { SaleNavActions, SaleNavSearch } from '@/components/staff'
+import { HeaderStaff } from '@/components/layout/staff/staff-core/header'
+import {
+  NavActions as SaleNavActions,
+  NavSearch as SaleNavSearch
+} from '@/components/layout/staff/staff-core/navbar/NavListStaff'
 
 interface SaleMainLayoutStaffProps {
   sidebar: ReactNode

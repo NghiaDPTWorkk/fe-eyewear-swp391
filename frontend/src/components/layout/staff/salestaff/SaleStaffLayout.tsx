@@ -1,6 +1,10 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { SaleMainLayoutStaff } from './SaleMainLayoutStaff'
-import { SaleSidebarStaff, ThemeToggle, UserWidgetWithLogout } from '@/components/staff'
+import {
+  SidebarStaff,
+  ThemeToggle,
+  UserWidgetWithLogout
+} from '@/components/layout/staff/staff-core/sidebar'
 import {
   IoGrid,
   IoReceipt,
@@ -17,7 +21,7 @@ export default function SaleStaffLayout() {
   const location = useLocation()
 
   const sidebar = (
-    <SaleSidebarStaff
+    <SidebarStaff
       logo={
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-mint-500 rounded-lg flex items-center justify-center">
@@ -36,69 +40,69 @@ export default function SaleStaffLayout() {
         />
       }
     >
-      <SaleSidebarStaff.MenuSection label="GENERAL">
-        <SaleSidebarStaff.MenuItem
+      <SidebarStaff.MenuSection label="GENERAL">
+        <SidebarStaff.MenuItem
           icon={<IoGrid />}
           label="Dashboard"
           active={location.pathname === '/salestaff/dashboard'}
           onClick={() => navigate('/salestaff/dashboard')}
         />
-        <SaleSidebarStaff.MenuItem
+        <SidebarStaff.MenuItem
           icon={<IoReceipt />}
           label="Orders"
           hasDropdown
           active={location.pathname.startsWith('/salestaff/orders')}
         >
-          <SaleSidebarStaff.SubMenuItem
+          <SidebarStaff.SubMenuItem
             label="All Orders"
             active={location.pathname === '/salestaff/orders'}
             onClick={() => navigate('/salestaff/orders')}
           />
-          <SaleSidebarStaff.SubMenuItem
+          <SidebarStaff.SubMenuItem
             label="Prescription"
             badge={24}
             active={location.pathname === '/salestaff/orders/rx-verification'}
             onClick={() => navigate('/salestaff/orders/rx-verification')}
           />
-          <SaleSidebarStaff.SubMenuItem
+          <SidebarStaff.SubMenuItem
             label="Pre-orders"
             badge={15}
             active={location.pathname === '/salestaff/orders/pre-orders'}
             onClick={() => navigate('/salestaff/orders/pre-orders')}
           />
-          <SaleSidebarStaff.SubMenuItem
+          <SidebarStaff.SubMenuItem
             label="Returns"
             badge={8}
             active={location.pathname === '/salestaff/orders/returns'}
             onClick={() => navigate('/salestaff/orders/returns')}
           />
-        </SaleSidebarStaff.MenuItem>
-        <SaleSidebarStaff.MenuItem
+        </SidebarStaff.MenuItem>
+        <SidebarStaff.MenuItem
           icon={<IoCube />}
           label="Products"
           active={location.pathname === '/salestaff/products'}
           onClick={() => navigate('/salestaff/products')}
         />
-        <SaleSidebarStaff.MenuItem
+        <SidebarStaff.MenuItem
           icon={<IoPeople />}
           label="Customers"
           active={location.pathname === '/salestaff/customers'}
           onClick={() => navigate('/salestaff/customers')}
         />
-        <SaleSidebarStaff.MenuItem
+        <SidebarStaff.MenuItem
           icon={<IoFlask />}
           label="Lab Status"
           active={location.pathname === '/salestaff/lab-status'}
           onClick={() => navigate('/salestaff/lab-status')}
         />
-      </SaleSidebarStaff.MenuSection>
+      </SidebarStaff.MenuSection>
 
-      <SaleSidebarStaff.MenuSection label="TOOLS">
-        <SaleSidebarStaff.MenuItem icon={<IoSettings />} label="Settings" />
-        <SaleSidebarStaff.MenuItem icon={<IoHelpCircle />} label="Support" />
+      <SidebarStaff.MenuSection label="TOOLS">
+        <SidebarStaff.MenuItem icon={<IoSettings />} label="Settings" />
+        <SidebarStaff.MenuItem icon={<IoHelpCircle />} label="Support" />
         <ThemeToggle />
-      </SaleSidebarStaff.MenuSection>
-    </SaleSidebarStaff>
+      </SidebarStaff.MenuSection>
+    </SidebarStaff>
   )
 
   return <SaleMainLayoutStaff sidebar={sidebar} />

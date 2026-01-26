@@ -1,5 +1,5 @@
 // API Layer Exports - test
-export * from './httpClient'
+export * from './apiClients'
 export * from './endpoints'
-export * from './authEvents'
-export * from '../lib/axios'
+export * from '@/shared/utils/auth.events'
+export * from '@/lib/axios'

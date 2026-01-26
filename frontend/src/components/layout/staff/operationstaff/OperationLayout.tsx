@@ -1,8 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom'
-import { MainLayoutStaff } from '../MainLayoutStaff'
-import { SidebarStaff } from '@/components/staff/sidebar/SidebarStaff'
-import { UserWidgetWithLogout } from '@/components/staff/sidebar/UserWidgetWithLogout'
-import { ThemeToggle } from '@/components/staff/sidebar/ThemeToggle'
+import { SaleMainLayoutStaff } from '@/components/layout/staff/salestaff/SaleMainLayoutStaff'
+import { SidebarStaff, UserWidgetWithLogout, ThemeToggle, NavSearch } from '@/components/staff'
 import {
   IoGridOutline,
   IoReceipt,
@@ -13,7 +11,6 @@ import {
 } from 'react-icons/io5'
 import { TbTruckDelivery } from 'react-icons/tb'
 import { FaBoxesPacking } from 'react-icons/fa6'
-import { NavSearch } from '@/components/staff/navbar/NavListStaff'
 
 export default function OperationLayout() {
   const location = useLocation()
@@ -85,6 +82,10 @@ export default function OperationLayout() {
   )
 
   return (
-    <MainLayoutStaff sidebar={sidebar} headerLeft={<NavSearch placeholder="Search orders..." />} />
+    <SaleMainLayoutStaff
+      sidebar={sidebar}
+      headerLeft={<NavSearch placeholder="Search orders..." styleVariant="operation" />}
+      mainClassName="p-4 md:p-8 bg-mint-200"
+    />
   )
 }

@@ -17,6 +17,10 @@ const CustomerHomePage = lazy(() =>
 const NotFoundPage = lazy(() =>
   import('@/pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage }))
 )
+
+const CustomerProductPage = lazy(() =>
+  import('@/pages/customer/CustomerProductPage').then((m) => ({ default: m.CustomerProductPage }))
+)
 const SaleStaffLayout = lazy(() =>
   import('@/components/layout/staff/salestaff/SaleStaffLayout').then((m) => ({
     default: m.default
@@ -99,6 +103,14 @@ export const router = createBrowserRouter([
     element: (
       <LazyPage>
         <LoginPage />
+      </LazyPage>
+    )
+  },
+  {
+    path: '/products',
+    element: (
+      <LazyPage>
+        <CustomerProductPage />
       </LazyPage>
     )
   },

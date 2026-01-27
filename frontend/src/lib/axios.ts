@@ -1,51 +1,47 @@
-import { authEventEmitter } from '@/api'
-import { getOrCreateDeviceId } from '@/utils/device'
-import axios, { type AxiosError, type AxiosInstance, type InternalAxiosRequestConfig } from 'axios'
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://34.92.192.47:5000'
+import type { ApiClientConfig } from '@/shared/types'
+import axios, { type AxiosInstance } from 'axios'
 
-export const apiClient: AxiosInstance = axios.create({
-  baseURL: `${API_URL}/api/v1`,
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  // true nếu be dùng Cookie và setup CORS Credentials
-  withCredentials: false
-})
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 
-// Request Interceptor
-apiClient.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    const deviceId = getOrCreateDeviceId()
-    const token = localStorage.getItem('access_token')
-    config.headers['x-device-id'] = deviceId
-    // nếu có token và header chưa được set thì mới gán
-    const authRoutes = ['/auth/login', '/admin/auth/login']
-    const isAuthRequest = authRoutes.some((route) => config.url?.includes(route))
+export const getStoredToken = (): string | null => localStorage.getItem('accessToken')
 
-    if (token && !isAuthRequest) {
-      config.headers.Authorization = `Bearer ${token}`
-    }
-
-    return config
-  },
-  (error) => Promise.reject(error)
-)
-
-// Response Interceptor
-apiClient.interceptors.response.use(
-  (response) => {
-    // apiClients xử lý .data
-    return response
-  },
-  async (error: AxiosError) => {
-    if (error.response?.status === 401) {
-      authEventEmitter.emit('UNAUTHORIZED')
-
-      // xóa tránh loop
-      localStorage.removeItem('access_token')
-    }
-
-    return Promise.reject(error)
+export const handleUnauthorized = (): void => {
+  localStorage.removeItem('accessToken')
+  localStorage.removeItem('refreshToken')
+  if (!window.location.pathname.includes('/login')) {
+    window.location.href = '/login'
   }
-)
+}
+
+export function createApiClient({
+  baseURL,
+  timeout = 10000,
+  headers = {},
+  getToken,
+  onUnauthorized,
+  onForbidden
+}: ApiClientConfig): AxiosInstance {
+  const client = axios.create({
+    baseURL,
+    timeout,
+    headers: { 'Content-Type': 'application/json', ...headers }
+  })
+
+  client.interceptors.request.use((config) => {
+    const token = getToken?.()
+    if (token) config.headers.Authorization = `Bearer ${token}`
+    return config
+  })
+
+  client.interceptors.response.use(
+    (res) => res,
+    (error) => {
+      const status = error.response?.status
+      if (status === 401) onUnauthorized?.()
+      if (status === 403) onForbidden?.()
+      return Promise.reject(error)
+    }
+  )
+
+  return client
+}

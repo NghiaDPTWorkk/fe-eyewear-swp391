@@ -1,5 +1,3 @@
-export * from './atoms'
-export * from './molecules'
-export * from './organisms'
-export * from './staff'
+export * from './common'
 export * from './layout'
+export * from './types'

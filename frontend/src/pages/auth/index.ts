@@ -1,1 +1,1 @@
-export * from './customer/LoginPage'
+export * from './LoginPage'

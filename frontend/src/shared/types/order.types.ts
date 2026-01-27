@@ -1,6 +1,3 @@
-import type { OrderType, OrderStatus, AssignmentOrderStatus, InvoiceStatus } from './enums'
-import type { Address } from './address.types'
-
 export interface LensParameters {
   left: {
     SPH: number
@@ -15,112 +12,71 @@ export interface LensParameters {
   PD: number
 }
 
-/**
- * Order product structure matching backend
- */
-export interface OrderProductFrame {
+export interface OrderItem {
   product_id: string
   sku: string
-}
-
-export interface OrderProductLens {
-  lens_id: string
-  sku: string
-  parameters: LensParameters
-}
-
-export interface OrderProduct {
-  product?: OrderProductFrame
-  lens?: OrderProductLens
   quantity: number
+  lens?: {
+    lens_id: string
+    parameters: LensParameters
+    quantity: number
+  }
+}
+
+export interface ShippingAddress {
+  no: string
+  ward: string
+  city: string
+}
+
+export interface CustomerInfo {
+  fullName: string
+  phone: string
+}
+
+export interface PaymentDetails {
+  totalPrice: number
+  totalDiscount: number
+  finalPrice: number
+  voucher: string[]
+}
+
+export interface VerificationStatus {
+  status: 'PENDING' | 'APPROVE' | 'REJECT'
+  staffVerified?: string
+}
+
+export interface Assignment {
+  staffId?: string
+  assignStaff?: string
+  assignedAt?: string
+  startedAt?: string
+  completedAt?: string
+  status: 'PENDING' | 'ASSIGNED' | 'IN_PROGRESS' | 'COMPLETED'
 }
 
 export interface Order {
   _id: string
-  type: OrderType
-  status: OrderStatus
-  assignmentStatus: AssignmentOrderStatus
-  products: OrderProduct[]
-  // Flattened assignment fields
-  staffId?: string | null
-  assignStaff?: string | null
-  assignedAt?: Date | null
-  startedAt?: Date | null
-  completedAt?: Date | null
-  staffVerified?: string | null
-  price: number
-  createdAt: Date
-  updatedAt: Date
-  deletedAt?: Date | null
-}
-
-export interface Invoice {
-  _id: string
-  orders: string[] // Order IDs
   owner: string
-  totalPrice: number
-  voucher: string[]
-  address: Address
-  status: InvoiceStatus
-  fullName: string
-  phone: string
-  totalDiscount: number
-  manager_onboard?: string | null
-  createdAt: Date
-  updatedAt: Date
-  deletedAt?: Date | null
-}
-
-/**
- * Create order request matching backend ClientCreateOrderSchema
- */
-export interface CreateOrderRequest {
-  type: OrderType
-  products: {
-    product?: {
-      product_id: string
-      sku: string
-    }
-    lens?: {
-      lens_id: string
-      sku: string
-      parameters: LensParameters
-    }
-    quantity: number
-  }[]
-  voucher?: string[]
-  paymentMethod: string
-  shippingAddress?: Address
-  customerInfo?: {
-    fullName: string
-    phone: string
-  }
+  type: 'NORMAL' | 'PRE-ORDER' | 'MANUFACTURING'
+  products: OrderItem[]
+  shippingAddress: ShippingAddress
+  customerInfo: CustomerInfo
+  payment: PaymentDetails
+  isVerified?: VerificationStatus
+  assignment?: Assignment
   note?: string
-  status?: OrderStatus
+  createdAt?: string
+  updatedAt?: string
+  deletedAt?: string | null
 }
 
-/**
- * Update order request matching backend ClientUpdateOrderSchema
- */
-export interface UpdateOrderRequest {
-  type?: OrderType
-  products?: OrderProduct[]
-  price?: number
-  status?: OrderStatus
-  staffVerified?: string | null
-  assignmentStatus?: AssignmentOrderStatus
-  staffId?: string | null
-  assignStaff?: string | null
-  assignedAt?: Date | null
-  startedAt?: Date | null
-  completedAt?: Date | null
+export interface CreateOrderRequest {
+  products: OrderItem[]
+  shippingAddress: ShippingAddress
+  customerInfo: CustomerInfo
   voucher?: string[]
-  paymentMethod?: string
-  shippingAddress?: Address
-  customerInfo?: {
-    fullName: string
-    phone: string
-  }
+  paymentMethod: 'COD' | 'VNPAY' | 'MOMO'
   note?: string
 }
 
@@ -130,20 +86,6 @@ export interface OrderResponse {
 
 export interface OrderListResponse {
   items: Order[]
-  pagination: {
-    page: number
-    limit: number
-    total: number
-    totalPages: number
-  }
-}
-
-export interface InvoiceResponse {
-  invoice: Invoice
-}
-
-export interface InvoiceListResponse {
-  items: Invoice[]
   pagination: {
     page: number
     limit: number

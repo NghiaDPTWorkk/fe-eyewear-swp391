@@ -13,8 +13,7 @@ export const useLogin = (role: 'customer' | 'staff' = 'customer') => {
       return authApi.loginCustomer(payload)
     },
     onSuccess: (response: LoginResponse) => {
-      // httpClient already unwraps res.data, so response is the actual data
-      const { accessToken } = response as any
+      const { accessToken } = response.data
       localStorage.setItem('accessToken', accessToken)
 
       if (role === 'staff') {

@@ -1,6 +1,6 @@
-import { LoginForm } from '@/components/layout/login-form/LoginForm'
+import { RegisterForm } from '@/components/layout/form/RegisterForm'
 
-export const CustomerLoginPage = () => {
+export const RegisterPage = () => {
   return (
     <div className="flex min-h-screen w-full">
       {/* Left Side - Login Form */}
@@ -19,12 +19,12 @@ export const CustomerLoginPage = () => {
 
           {/* Form */}
           <div>
-            <h1 className="mb-2 text-3xl font-bold text-primary-950">Sign In</h1>
+            <h1 className="mb-2 text-3xl font-bold text-primary-950">Sign Up</h1>
             <p className="mb-6 text-sm text-gray-eyewear">
               Lorem ipsum dolor sit amet consectetur. Leo eget mauris dui in posuere nulla
             </p>
 
-            <LoginForm role="customer" />
+            <RegisterForm />
           </div>
         </div>
       </div>

@@ -4,18 +4,20 @@ import type { LoginRequest } from '@/shared/types'
 
 export const authService = {
   async login(payload: LoginRequest) {
-    // httpClient already unwraps res.data, so response is the actual data
-    const response = await authApi.loginCustomer(payload)
+    // response lúc này có kiểu là LoginResponse (ApiResponse<...>)
+    const response = await authApi.login(payload)
 
-    // Extract tokens from response
-    const { accessToken, refreshToken } = response as any
+    // Kiểm tra success (tùy chọn, vì thường lỗi axios đã catch rồi)
+    if (response.success && response.data) {
+      const { accessToken, refreshToken } = response.data // 👈 Phải chọc vào .data
 
-    if (accessToken) {
-      localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken)
-    }
+      if (accessToken) {
+        localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken)
+      }
 
-    if (refreshToken) {
-      localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken)
+      if (refreshToken) {
+        localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken)
+      }
     }
 
     return response

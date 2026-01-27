@@ -13,7 +13,10 @@ export const ENDPOINTS = {
 
   // Products
   PRODUCTS: {
-    COMMON_GET: (page: number, limit: number) => `/products?page=${page}&limit=${limit}`
+    LIST: '/products',
+    DETAIL: (id: string) => `/products/${id}`,
+    SEARCH: '/products/search',
+    CATEGORIES: '/products/categories'
   },
 
   // Cart

@@ -1,2 +1,1 @@
-export * from './customer/CustomerLoginPage'
-export * from './staff/StaffLoginPage'
+export * from './customer/LoginPage'

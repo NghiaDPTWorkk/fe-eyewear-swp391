@@ -1,16 +1,11 @@
-import type { Address } from './address.types'
+import type { UserRole } from '../constants'
 
 export interface User {
-  _id: string
+  id: string
   email: string
-  name: string
-  phone: string
-  gender: 'F' | 'M' | 'N'
-  address: Address[]
-  hobbies: string[]
-  isVerified: boolean
-  linkedAccounts?: Record<string, unknown>
-  deletedAt: Date | null
+  fullName: string
+  phone?: string
+  role: UserRole
   createdAt: Date
   updatedAt: Date
 }

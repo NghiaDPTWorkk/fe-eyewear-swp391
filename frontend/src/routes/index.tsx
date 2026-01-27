@@ -1,7 +1,7 @@
 import { lazy } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
 import { LazyPage } from '@/pages/LazyPage'
-import { HomePage } from '@/pages/customer'
+import { HomePage, ProductsPage } from '@/pages/customer'
 import { RegisterPage } from '@/pages/auth/customer/RegisterPage'
 
 const LoginPage = lazy(() =>
@@ -109,6 +109,14 @@ export const router = createBrowserRouter([
     element: (
       <LazyPage>
         <RegisterPage />
+      </LazyPage>
+    )
+  },
+  {
+    path: '/products',
+    element: (
+      <LazyPage>
+        <ProductsPage />
       </LazyPage>
     )
   },

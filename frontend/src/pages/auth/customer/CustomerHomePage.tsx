@@ -1,6 +1,5 @@
-import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
-import { Input } from '@/shared/components/ui'
-
+import { Input } from '@/components'
+import HeaderCustomer from '@/components/layout/customer/header/CustomerHeader'
 import {
   Search,
   ShoppingCart,
@@ -16,11 +15,10 @@ import {
 } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 
-export const CustomerHomePage = () => {
+export const HomePage = () => {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
 
-  // Handle click outside to close expanded search
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
@@ -39,7 +37,7 @@ export const CustomerHomePage = () => {
 
   return (
     <div className="min-h-screen bg-mint-200">
-      <CustomerHeader
+      <HeaderCustomer
         containerWidth="1200px"
         logo={
           <div className="flex items-center gap-3">

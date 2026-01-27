@@ -1,5 +1,4 @@
 import { useState, type ReactNode } from 'react'
-import { IoChevronDown, IoChevronForward } from 'react-icons/io5'
 import { cn } from '@/lib/utils'
 import { cva } from 'class-variance-authority'
 import { useLayoutStore } from '@/store/layout.store'

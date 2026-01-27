@@ -86,11 +86,11 @@ const OperationPackingPage = lazy(() =>
 )
 
 const OrderDetailPage = lazy(() =>
-  import('@/pages/operation/OperationOrderDetailPage').then((m) => ({ default: m.default }))
+  import('@/pages/operations/OperationOrderDetailPage').then((m) => ({ default: m.default }))
 )
 
 const OperationOrderPackingProcess = lazy(() =>
-  import('@/pages/operation/OperationOrderPackingProcess').then((m) => ({ default: m.default }))
+  import('@/pages/operations/OperationOrderPackingProcess').then((m) => ({ default: m.default }))
 )
 
 export const router = createBrowserRouter([

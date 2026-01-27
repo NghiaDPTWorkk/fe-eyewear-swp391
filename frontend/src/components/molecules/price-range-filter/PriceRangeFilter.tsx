@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Checkbox, Input } from '@/components/atoms'
+import { Input } from '@/components/atoms'
 import { cn } from '@/lib/utils'
 import { Divider } from '@/components/atoms/divider'
 
@@ -17,71 +17,49 @@ export interface PriceRangeFilterProps {
   className?: string
 }
 
-export function PriceRangeFilter({
-  ranges,
-  selectedRanges,
-  onRangeChange,
-  className
-}: PriceRangeFilterProps) {
-  const [localSelected, setLocalSelected] = useState<string[]>(selectedRanges)
+export function PriceRangeFilter({ className }: PriceRangeFilterProps) {
   const [minPrice, setMinPrice] = useState<string>('')
   const [maxPrice, setMaxPrice] = useState<string>('')
 
-  const handleCheckboxChange = (rangeId: string, checked: boolean) => {
-    const newSelected = checked
-      ? [...localSelected, rangeId]
-      : localSelected.filter((id) => id !== rangeId)
+  const handleApply = () => {
+    // You can implement custom logic here to handle the price range
+    // For now, we'll just log the values
+    console.log('Applying price range:', { min: minPrice, max: maxPrice })
 
-    setLocalSelected(newSelected)
-    onRangeChange(newSelected)
+    // Optional: Clear the selection or trigger a filter update
+    // onRangeChange([]) // This would clear any previous selections
   }
-
-  // const handleClear = () => {
-  //   setLocalSelected([])
-  //   setMinPrice('')
-  //   setMaxPrice('')
-  //   onRangeChange([])
-  //   if (onClear) {
-  //     onClear()
-  //   }
-  // }
 
   return (
     <div className={cn('flex flex-col gap-3', className)}>
       <h3 className="text-primary-500 font-semibold text-lg">Price Range</h3>
 
-      <div className="flex flex-col gap-2">
-        {ranges.map((range) => (
-          <Checkbox
-            key={range.id}
-            id={`price-range-${range.id}`}
-            label={range.label}
-            isChecked={localSelected.includes(range.id)}
-            onCheckedChange={(checked) => handleCheckboxChange(range.id, checked)}
-            size="sm"
-          />
-        ))}
-      </div>
-
-      <div className="flex gap-2 mt-2">
+      <div className="flex gap-2">
         <Input
           type="number"
-          placeholder="min"
+          placeholder="Min"
           value={minPrice}
           onChange={(e) => setMinPrice(e.target.value)}
           size="sm"
           className="flex-1 w-[40%]"
         />
-        <Divider text="to"></Divider>
+        <Divider text="to" className="w-[20%]"></Divider>
         <Input
           type="number"
-          placeholder="max"
+          placeholder="Max"
           value={maxPrice}
           onChange={(e) => setMaxPrice(e.target.value)}
           size="sm"
           className="flex-1 w-[40%]"
         />
       </div>
+
+      <button
+        onClick={handleApply}
+        className="w-full bg-primary-500 hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+      >
+        Apply
+      </button>
     </div>
   )
 }

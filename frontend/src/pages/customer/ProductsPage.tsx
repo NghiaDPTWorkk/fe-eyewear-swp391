@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Search, Glasses, ShoppingCart, User, Heart } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { Input } from '@/components/atoms'
 import { Pagination } from '@/components/molecules'
 import { FilterTags, type FilterTag } from '@/components/molecules/filter-tags'
@@ -8,7 +8,7 @@ import { ProductGrid } from '@/components/organisms/product-grid'
 import type { PriceRange } from '@/components/molecules/price-range-filter'
 import type { ColorOption } from '@/components/molecules/color-filter'
 import { useGetProductWithPagination } from '@/shared/hooks/products/useGetProductWithPagination'
-import HeaderCustomer from '@/components/layout/header/HeaderCustomer'
+import { Header } from './homepage/header/Header'
 
 const PRICE_RANGES: PriceRange[] = [
   { id: '1', label: '$20.00 - $ 50.00', min: 20, max: 50 },
@@ -176,91 +176,11 @@ export default function ProductsPage() {
   return (
     <div className="min-h-screen bg-[#f0f9f7] flex flex-col">
       {/* Header */}
-      <HeaderCustomer
-        containerWidth="1200px"
-        logo={
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-md">
-              <Glasses className="w-6 h-6 text-white" />
-            </div>
-            <span className="text-2xl font-heading font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent">
-              Eyewear
-            </span>
-          </div>
-        }
-        navListContent={
-          <nav className="flex items-center gap-8">
-            <a
-              href="/"
-              className="text-gray-eyewear hover:text-primary-500 font-medium transition-all relative group"
-            >
-              Home
-              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary-500 transform scale-x-0 group-hover:scale-x-100 transition-transform"></span>
-            </a>
-            <a
-              href="/products"
-              className="text-mint-1200 hover:text-primary-500 font-semibold transition-all relative group"
-            >
-              Products
-              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary-500 transform scale-x-100 transition-transform"></span>
-            </a>
-            <a
-              href="/about"
-              className="text-gray-eyewear hover:text-primary-500 font-medium transition-all relative group"
-            >
-              About
-              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary-500 transform scale-x-0 group-hover:scale-x-100 transition-transform"></span>
-            </a>
-            <a
-              href="/contact"
-              className="text-gray-eyewear hover:text-primary-500 font-medium transition-all relative group"
-            >
-              Contact
-              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary-500 transform scale-x-0 group-hover:scale-x-100 transition-transform"></span>
-            </a>
-          </nav>
-        }
-        navListIcon={
-          <div className="flex items-center gap-4">
-            <button
-              className="p-2 hover:bg-mint-200 rounded-full transition-all relative group"
-              aria-label="Wishlist"
-            >
-              <Heart className="w-5 h-5 text-gray-eyewear group-hover:text-primary-500 transition-colors" />
-            </button>
-            <button
-              className="p-2 hover:bg-mint-200 rounded-full transition-all relative group"
-              aria-label="Shopping Cart"
-            >
-              <ShoppingCart className="w-5 h-5 text-gray-eyewear group-hover:text-primary-500 transition-colors" />
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary-500 text-white text-xs rounded-full flex items-center justify-center font-semibold shadow-md">
-                0
-              </span>
-            </button>
-            <button
-              className="p-2 hover:bg-mint-200 rounded-full transition-all group"
-              aria-label="User Profile"
-            >
-              <User className="w-5 h-5 text-gray-eyewear group-hover:text-primary-500 transition-colors" />
-            </button>
-          </div>
-        }
-      />
+      <Header />
 
       {/* Main Content */}
       <div className="flex-1">
         <div className="max-w-[1400px] mx-auto px-6 py-8">
-          {/* Page Header */}
-          <div className="mb-8">
-            <h1 className="text-5xl font-bold text-mint-1200 mb-4">All Eyewear</h1>
-
-            {/* Description */}
-            <p className="text-gray-eyewear mb-4 max-w-3xl">
-              Curated minimalist frames designed for clarity and character. Crafted with premium
-              acetate and sustainable materials.
-            </p>
-          </div>
-
           {/* Main Layout: Filters + Products */}
           <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8">
             {/* Filters Sidebar */}
@@ -283,6 +203,16 @@ export default function ProductsPage() {
             <main>
               {/* Search Bar and Filter Tags */}
               <div className="mb-6">
+                {/* Page Header */}
+                <div className="mb-8">
+                  <h1 className="text-5xl font-bold text-mint-1200 mb-4">All Eyewear</h1>
+
+                  {/* Description */}
+                  <p className="text-gray-eyewear mb-4 max-w-3xl">
+                    Curated minimalist frames designed for clarity and character. Crafted with
+                    premium acetate and sustainable materials.
+                  </p>
+                </div>
                 <div className="mb-4">
                   <Input
                     placeholder="Find frame..."

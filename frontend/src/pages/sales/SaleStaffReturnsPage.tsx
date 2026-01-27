@@ -5,8 +5,7 @@ import {
   IoRefreshOutline,
   IoChevronBackOutline,
   IoChevronForwardOutline,
-  IoEyeOutline,
-  IoReaderOutline // for review
+  IoChevronForward
 } from 'react-icons/io5'
 
 export default function SaleStaffReturnsPage() {
@@ -98,24 +97,15 @@ export default function SaleStaffReturnsPage() {
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-600">Oct 23, 2023</td>
                   <td className="px-6 py-4 text-center align-middle">
-                    <div className="flex items-center justify-center gap-1">
+                    <div className="flex items-center justify-center">
                       <Button
                         variant="ghost"
                         size="sm"
                         colorScheme="primary"
                         className="p-2 h-8 w-8 text-primary-500"
-                        title="Review"
-                      >
-                        <IoReaderOutline size={18} />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        colorScheme="neutral"
-                        className="p-2 h-8 w-8 text-neutral-400 hover:text-primary-500"
                         title="Details"
                       >
-                        <IoEyeOutline size={18} />
+                        <IoChevronForward size={18} />
                       </Button>
                     </div>
                   </td>
@@ -134,7 +124,7 @@ export default function SaleStaffReturnsPage() {
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500 align-middle">Oct 23, 2023</td>
                   <td className="px-6 py-4 text-center align-middle">
-                    <div className="flex items-center justify-center gap-1">
+                    <div className="flex items-center justify-center">
                       <Button
                         variant="ghost"
                         size="sm"
@@ -142,7 +132,7 @@ export default function SaleStaffReturnsPage() {
                         className="p-2 h-8 w-8 text-neutral-400 hover:text-primary-500"
                         title="Details"
                       >
-                        <IoEyeOutline size={18} />
+                        <IoChevronForward size={18} />
                       </Button>
                     </div>
                   </td>

@@ -1,227 +1,228 @@
 import { Link } from 'react-router-dom'
-import { Container, Card, Button } from '@/components'
-import { IoSearchOutline, IoAdd, IoFilter, IoCloudDownloadOutline } from 'react-icons/io5'
+import { Container, Button } from '@/components'
+import {
+  IoAdd,
+  IoChevronDown,
+  IoFilterOutline,
+  IoSettingsOutline,
+  IoEllipsisVertical,
+  IoChevronForward
+} from 'react-icons/io5'
 
 export default function SaleStaffProductPage() {
+  const metrics = [
+    { title: 'Total Products', value: '1,240', trend: '+12%', subtext: '+48 from last month' },
+    {
+      title: 'Low Stock Items',
+      value: '12',
+      trend: '+5%',
+      trendColor: 'text-rose-500 bg-rose-50',
+      subtext: '+2 compared to last week'
+    },
+    {
+      title: 'Out of Stock',
+      value: '6',
+      trend: '-2%',
+      trendColor: 'text-emerald-500 bg-emerald-50',
+      subtext: '-3 compared to yesterday'
+    },
+    { title: 'Avg. Profit Margin', value: '42%', trend: '+0.5%', subtext: '+2% from last year' }
+  ]
+
   const products = [
     {
-      name: 'Ray-Ban Aviator Classic',
-      desc: 'Gold Frame / G-15 Green Lens',
-      sku: 'RB-3025-001',
-      stock: 42,
-      status: 'in stock',
-      price: '$163.00'
+      id: '1004',
+      category: 'Backpack',
+      date: 'Since Aug, 2021',
+      name: 'Noveli Backpack',
+      email: 'noveli.info@eyewear.com',
+      brand: 'Noveli Team',
+      price: '¥ 489.00',
+      stock: '350 items',
+      status: 'Active'
     },
     {
-      name: 'Oakley Plank 2.0',
-      desc: 'Soft Touch Black',
-      sku: 'OX-8081-01',
-      stock: 5,
-      status: 'low stock',
-      price: '$186.00'
+      id: '2317',
+      category: 'Sling Bag',
+      date: 'Since Mar, 2021',
+      name: 'Noveli Sling Bag',
+      email: 'sling.bag@eyewear.com',
+      brand: 'Product Team',
+      price: '¥ 289.00',
+      stock: '150 items',
+      status: 'Active'
     },
     {
-      name: 'Tom Ford Blue Block',
-      desc: 'Shiny Black / Blue Block Lens',
-      sku: 'TF-5555-B',
-      stock: 0,
-      status: 'out of stock',
-      price: '$415.00'
+      id: '4241',
+      category: 'Wallet',
+      date: 'Since Feb, 2022',
+      name: 'Noveli Brown Wallet',
+      email: 'wallet.br@eyewear.com',
+      brand: 'Design Team',
+      price: '¥ 189.00',
+      stock: '200 items',
+      status: 'Active'
     },
     {
-      name: 'Gucci Round Metal',
-      desc: 'Gold / Grey Gradient',
-      sku: 'GG-0061S-01',
-      stock: 18,
-      status: 'in stock',
-      price: '$350.00'
-    },
-    {
-      name: 'Prada Symbole',
-      desc: 'Black / Dark Grey',
-      sku: 'PR-17WS-1AB5S0',
-      stock: 24,
-      status: 'in stock',
-      price: '$460.00'
-    },
-    {
-      name: 'Bvlgari Serpenti',
-      desc: 'Black / Grey Gradient',
-      sku: 'BV-8205-501/8G',
-      stock: 3,
-      status: 'low stock',
-      price: '$380.00'
-    },
-    {
-      name: 'Warby Parker Wilkie',
-      desc: 'Eastern Bluebird Fade',
-      sku: 'VP-1234-BLK',
-      stock: 56,
-      status: 'in stock',
-      price: '$95.00'
+      id: '1007',
+      category: 'Backpack',
+      date: 'Since Apr, 2023',
+      name: 'Noveli Sport Bag',
+      email: 'sport.bag@eyewear.com',
+      brand: 'Sport Team',
+      price: '¥ 489.00',
+      stock: '310 items',
+      status: 'Active'
     }
   ]
 
-  const getStockStatusStyles = (status: string) => {
-    switch (status) {
-      case 'in stock':
-        return 'text-emerald-500 bg-emerald-500'
-      case 'low stock':
-        return 'text-amber-500 bg-amber-500'
-      case 'out of stock':
-        return 'text-red-500 bg-red-500'
-      default:
-        return 'text-gray-400 bg-gray-400'
-    }
-  }
-
   return (
-    <Container>
-      <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm mb-2 font-medium">
-          <Link
-            to="/salestaff/dashboard"
-            className="text-neutral-400 hover:text-primary-500 transition-colors"
-          >
-            Dashboard
-          </Link>
-          <span className="text-neutral-300">/</span>
-          <span className="text-primary-500 font-bold">Product Management</span>
-        </div>
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Product Inventory</h1>
-          <div className="flex gap-3">
-            <div className="relative">
-              <IoSearchOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search SKU, name or brand..."
-                className="pl-10 pr-4 py-2 border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 w-64"
-              />
-            </div>
-            <Button
-              variant="solid"
-              colorScheme="primary"
-              leftIcon={<IoAdd />}
-              className="rounded-xl font-bold"
-            >
-              Add Product
-            </Button>
-          </div>
-        </div>
+    <Container className="max-w-[1600px] bg-[#f8f9fa] min-h-screen pb-10">
+      {/* Breadcrumb Path */}
+      <div className="flex items-center gap-2 text-sm pt-8 px-2 font-medium">
+        <Link
+          to="/salestaff/dashboard"
+          className="text-neutral-400 hover:text-primary-500 transition-colors"
+        >
+          Dashboard
+        </Link>
+        <span className="text-neutral-300">/</span>
+        <span className="text-primary-500 font-bold">Product Management</span>
       </div>
 
-      <Card className="p-0 overflow-hidden border border-neutral-200 shadow-sm">
-        <div className="p-4 border-b border-neutral-100 flex justify-between items-center bg-white">
-          <div className="flex items-center gap-4">
-            <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
-              All Products{' '}
-              <span className="ml-1 px-2 py-0.5 bg-neutral-100 rounded text-neutral-600">842</span>
-            </span>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-4 bg-neutral-200 rounded-full relative">
-                <div className="absolute left-1 top-1 w-2 h-2 bg-white rounded-full"></div>
-              </div>
-              <span className="text-xs font-medium text-neutral-500 italic">Low Stock</span>
+      {/* Metrics Row */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 pt-6">
+        {metrics.map((m, idx) => (
+          <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm border-none">
+            <div className="text-sm font-medium text-neutral-500 mb-4">{m.title}</div>
+            <div className="flex items-center gap-3 mb-2">
+              <span className="text-3xl font-bold text-neutral-800">{m.value}</span>
+              <span
+                className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${m.trendColor || 'text-emerald-500 bg-emerald-50'}`}
+              >
+                {m.trend}
+              </span>
             </div>
-            <div className="h-4 w-px bg-neutral-200"></div>
+            <div className="text-xs text-neutral-400 font-medium">{m.subtext}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Main List Container */}
+      <div className="bg-white rounded-[32px] shadow-sm overflow-hidden min-h-[600px] border-none">
+        {/* Header Bar */}
+        <div className="px-10 py-8 flex flex-col md:flex-row justify-between items-center gap-4 bg-white">
+          <h2 className="text-2xl font-bold text-[#0a1d37]">Product List</h2>
+          <div className="flex items-center gap-4">
             <Button
               variant="outline"
-              size="sm"
-              colorScheme="neutral"
-              leftIcon={<IoFilter />}
-              className="border-neutral-200 text-neutral-600 rounded-lg"
+              leftIcon={<IoFilterOutline />}
+              className="rounded-xl text-sm border-neutral-100 h-11 px-6 font-bold text-[#3d4465] hover:bg-neutral-50 transition-colors"
             >
               Filter
             </Button>
             <Button
-              variant="outline"
-              size="sm"
-              colorScheme="neutral"
-              leftIcon={<IoCloudDownloadOutline />}
-              className="border-neutral-200 text-neutral-600 rounded-lg"
+              colorScheme="primary"
+              leftIcon={<IoAdd />}
+              className="rounded-xl text-sm h-11 px-6 font-bold bg-[#63b38e] hover:bg-[#52a67f] border-none shadow-sm"
             >
-              Export
+              Add Product
             </Button>
+            <button className="p-2 text-neutral-300 hover:text-neutral-500 transition-colors">
+              <IoSettingsOutline size={22} className="opacity-60" />
+            </button>
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-neutral-50/50 border-b border-neutral-100">
-                <th className="px-6 py-4 text-[11px] font-bold text-neutral-500 uppercase tracking-wider">
-                  Thumbnail
+        {/* Table */}
+        <div className="w-full overflow-x-auto">
+          <table className="w-full text-left">
+            <thead className="bg-[#fcfdfe] text-[10px] font-medium text-[#a4a9c1] uppercase tracking-widest border-b border-neutral-50/50">
+              <tr>
+                <th className="pl-10 px-6 py-5">
+                  Product Name <IoChevronDown className="inline text-[10px] ml-1 opacity-50" />
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold text-neutral-500 uppercase tracking-wider">
-                  Name
+                <th className="px-6 py-5">
+                  Category <IoChevronDown className="inline text-[10px] ml-1 opacity-50" />
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold text-neutral-500 uppercase tracking-wider">
-                  SKU
+                <th className="px-6 py-5">
+                  Brand <IoChevronDown className="inline text-[10px] ml-1 opacity-50" />
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold text-neutral-500 uppercase tracking-wider">
-                  Stock Level
+                <th className="px-6 py-5">
+                  Price <IoChevronDown className="inline text-[10px] ml-1 opacity-50" />
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold text-neutral-500 uppercase tracking-wider text-right">
-                  Price
+                <th className="px-6 py-5">
+                  Stock <IoChevronDown className="inline text-[10px] ml-1 opacity-50" />
                 </th>
+                <th className="px-6 py-5">
+                  Status <IoChevronDown className="inline text-[10px] ml-1 opacity-50" />
+                </th>
+                <th className="pr-10 py-5"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-50">
-              {products.map((product, idx) => (
-                <tr key={idx} className="hover:bg-neutral-50/30 transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="w-12 h-10 bg-neutral-100 rounded-lg flex items-center justify-center border border-neutral-200/50">
-                      <svg
-                        className="w-6 h-6 text-neutral-300"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 4.5c5 0 9 5 9 5s-4 5-9 5-9-5-9-5 4-5 9-5z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 4.5l-2.5 3.5h5L12 4.5z"
-                        />
-                      </svg>
+            <tbody className="divide-y divide-neutral-50/50">
+              {products.map((p, idx) => (
+                <tr key={idx} className="hover:bg-neutral-50/30 transition-colors group">
+                  <td className="pl-10 px-6 py-6">
+                    <div className="flex flex-col">
+                      <span className="text-sm font-semibold text-[#0a1d37] mb-0.5">{p.name}</span>
+                      <span className="text-[11px] text-[#a4a9c1] font-medium">{p.email}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm font-bold text-neutral-900">{product.name}</div>
-                    <div className="text-xs text-neutral-400 font-medium">{product.desc}</div>
-                  </td>
-                  <td className="px-6 py-4 text-xs font-mono text-neutral-500 uppercase">
-                    {product.sku}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`w-2 h-2 rounded-full ${getStockStatusStyles(product.status)}`}
-                      ></span>
-                      <span className="text-xs font-bold text-neutral-700">
-                        {product.stock}{' '}
-                        <span className="text-neutral-400 font-medium">{product.status}</span>
+                  <td className="px-6 py-6">
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium text-[#3d4465] mb-0.5">
+                        {p.category}
                       </span>
+                      <span className="text-[11px] text-[#a4a9c1] font-medium">{p.date}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm font-bold text-neutral-900 text-right">
-                    {product.price}
+                  <td className="px-6 py-6 font-medium text-[#3d4465] text-sm">{p.brand}</td>
+                  <td className="px-6 py-6 font-medium text-[#0a1d37] text-sm tracking-tight">
+                    {p.price}
+                  </td>
+                  <td className="px-6 py-6 font-medium text-[#0a1d37] text-sm tracking-tight">
+                    {p.stock}
+                  </td>
+                  <td className="px-6 py-6">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-semibold bg-[#f1fcf6] text-[#63b38e] border border-[#e2f7eb]">
+                      <div className="w-1 h-1 rounded-full bg-[#63b38e]" />
+                      {p.status}
+                    </span>
+                  </td>
+                  <td className="pr-10 py-6 text-right">
+                    <button className="text-neutral-300 hover:text-neutral-500 transition-colors">
+                      <IoEllipsisVertical />
+                    </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-      </Card>
+
+        {/* Pagination */}
+        <div className="px-10 py-10 flex justify-between items-center text-[11px] font-semibold text-[#a4a9c1] uppercase tracking-widest bg-white">
+          <div className="flex items-center gap-1.5 p-1.5 bg-neutral-50/50 rounded-2xl border border-neutral-100">
+            <button className="w-9 h-9 flex items-center justify-center hover:bg-white hover:shadow-sm rounded-xl transition-all text-neutral-400">
+              <IoChevronForward className="rotate-180" size={14} />
+            </button>
+            <button className="w-9 h-9 rounded-xl bg-white shadow-sm text-[#63b38e] flex items-center justify-center border border-neutral-100/50">
+              1
+            </button>
+            <button className="w-9 h-9 rounded-xl hover:bg-white hover:shadow-sm flex items-center justify-center transition-all border border-transparent">
+              2
+            </button>
+            <button className="w-9 h-9 rounded-xl hover:bg-white hover:shadow-sm flex items-center justify-center transition-all border border-transparent">
+              3
+            </button>
+            <button className="w-9 h-9 flex items-center justify-center hover:bg-white hover:shadow-sm rounded-xl transition-all text-neutral-400">
+              <IoChevronForward size={14} />
+            </button>
+          </div>
+          <span className="opacity-80">Page 1 of 10</span>
+        </div>
+      </div>
     </Container>
   )
 }

@@ -10,9 +10,7 @@ import {
   IoFilter,
   IoChevronBackOutline,
   IoChevronForwardOutline,
-  IoSyncOutline, // for update
-  IoEyeOutline, // for details
-  IoNotificationsOutline // for notify
+  IoChevronForward // for details
 } from 'react-icons/io5'
 
 export default function SaleStaffPreOrdersPage() {
@@ -190,16 +188,7 @@ export default function SaleStaffPreOrdersPage() {
                   </div>
                 </td>
                 <td className="px-6 py-4 text-center align-middle">
-                  <div className="flex items-center justify-center gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      colorScheme="primary"
-                      className="p-2 h-8 w-8 text-primary-500"
-                      title="Update ETA"
-                    >
-                      <IoSyncOutline size={18} />
-                    </Button>
+                  <div className="flex items-center justify-center">
                     <Button
                       variant="ghost"
                       size="sm"
@@ -207,7 +196,7 @@ export default function SaleStaffPreOrdersPage() {
                       className="p-2 h-8 w-8 text-neutral-400 hover:text-primary-500"
                       title="Details"
                     >
-                      <IoEyeOutline size={18} />
+                      <IoChevronForward size={18} />
                     </Button>
                   </div>
                 </td>
@@ -242,7 +231,7 @@ export default function SaleStaffPreOrdersPage() {
                   </div>
                 </td>
                 <td className="px-6 py-4 text-center align-middle">
-                  <div className="flex items-center justify-center gap-1">
+                  <div className="flex items-center justify-center">
                     <Button
                       variant="ghost"
                       size="sm"
@@ -250,7 +239,7 @@ export default function SaleStaffPreOrdersPage() {
                       className="p-2 h-8 w-8 text-neutral-400 hover:text-primary-500"
                       title="Details"
                     >
-                      <IoEyeOutline size={18} />
+                      <IoChevronForward size={18} />
                     </Button>
                   </div>
                 </td>
@@ -285,16 +274,7 @@ export default function SaleStaffPreOrdersPage() {
                   </div>
                 </td>
                 <td className="px-6 py-4 text-center align-middle">
-                  <div className="flex items-center justify-center gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      colorScheme="primary"
-                      className="p-2 h-8 w-8 text-primary-500"
-                      title="Notify Customer"
-                    >
-                      <IoNotificationsOutline size={18} />
-                    </Button>
+                  <div className="flex items-center justify-center">
                     <Button
                       variant="ghost"
                       size="sm"
@@ -302,7 +282,7 @@ export default function SaleStaffPreOrdersPage() {
                       className="p-2 h-8 w-8 text-neutral-400 hover:text-primary-500"
                       title="Details"
                     >
-                      <IoEyeOutline size={18} />
+                      <IoChevronForward size={18} />
                     </Button>
                   </div>
                 </td>

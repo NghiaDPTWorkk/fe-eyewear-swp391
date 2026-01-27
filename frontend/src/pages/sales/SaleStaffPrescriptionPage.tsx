@@ -8,7 +8,8 @@ import {
   IoCheckmarkDoneCircleOutline,
   IoCheckboxOutline,
   IoChevronBackOutline,
-  IoChevronForwardOutline
+  IoChevronForwardOutline,
+  IoChevronForward
 } from 'react-icons/io5'
 
 export default function SaleStaffPrescriptionPage() {
@@ -154,6 +155,9 @@ export default function SaleStaffPrescriptionPage() {
                 <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider text-center align-middle">
                   Lab Status
                 </th>
+                <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider text-right align-middle">
+                  Action
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 bg-white">
@@ -200,6 +204,16 @@ export default function SaleStaffPrescriptionPage() {
                   <span className="px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-orange-100 text-orange-600 whitespace-nowrap">
                     Grinding
                   </span>
+                </td>
+                <td className="px-6 py-4 text-right align-middle">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    colorScheme="primary"
+                    className="p-2 h-8 w-8 text-primary-500 float-right"
+                  >
+                    <IoChevronForward size={18} />
+                  </Button>
                 </td>
               </tr>
 
@@ -248,6 +262,16 @@ export default function SaleStaffPrescriptionPage() {
                   <span className="px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-600 whitespace-nowrap">
                     Coating
                   </span>
+                </td>
+                <td className="px-6 py-4 text-right align-middle">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    colorScheme="primary"
+                    className="p-2 h-8 w-8 text-primary-500 float-right"
+                  >
+                    <IoChevronForward size={18} />
+                  </Button>
                 </td>
               </tr>
             </tbody>

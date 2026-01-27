@@ -1,13 +1,12 @@
+import { Link } from 'react-router-dom'
 import { Container, Card, Button } from '@/components'
 import {
-  IoSearchOutline,
   IoFilter,
   IoRefresh,
   IoFlaskOutline,
   IoWarningOutline,
   IoCheckmarkCircleOutline,
-  IoNotificationsOutline,
-  IoMailOutline
+  IoChevronForward
 } from 'react-icons/io5'
 
 export default function SaleStaffLabStatusPage() {
@@ -64,22 +63,16 @@ export default function SaleStaffLabStatusPage() {
 
   return (
     <Container>
-      {/* Top Header Navigation */}
-      <div className="flex justify-between items-center mb-6">
-        <div className="relative w-full max-w-lg">
-          <IoSearchOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search orders, station, or lens type..."
-            className="w-full pl-10 pr-4 py-2 bg-white border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary-500/20"
-          />
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="flex gap-2">
-            <IoMailOutline className="text-xl text-neutral-400 cursor-pointer" />
-            <IoNotificationsOutline className="text-xl text-neutral-400 cursor-pointer" />
-          </div>
-          <div className="text-sm font-medium text-neutral-600">Oct 24, 2023</div>
+      <div className="mb-8">
+        <div className="flex items-center gap-2 text-sm mb-4 font-medium">
+          <Link
+            to="/salestaff/dashboard"
+            className="text-neutral-400 hover:text-primary-500 transition-colors"
+          >
+            Dashboard
+          </Link>
+          <span className="text-neutral-300">/</span>
+          <span className="text-primary-500 font-bold">Lab Status Tracking</span>
         </div>
       </div>
 
@@ -269,14 +262,14 @@ export default function SaleStaffLabStatusPage() {
         </Card>
       </div>
 
-      <Card className="p-0 overflow-hidden border border-neutral-100 shadow-sm">
-        <div className="p-4 border-b border-neutral-100 flex justify-between items-center bg-white">
-          <h3 className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
+      <Card className="p-0 overflow-hidden border border-neutral-100 shadow-sm rounded-2xl">
+        <div className="px-8 py-5 border-b border-neutral-100 flex justify-between items-center bg-white">
+          <h3 className="text-[11px] font-bold text-[#a4a9c1] uppercase tracking-widest">
             Active Lab Orders
           </h3>
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-orange-500"></span>
-            <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#f97316]"></span>
+            <span className="text-[11px] font-bold text-[#a4a9c1] uppercase tracking-widest">
               Urgency Requested
             </span>
           </div>
@@ -285,84 +278,72 @@ export default function SaleStaffLabStatusPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-neutral-50/50 border-b border-neutral-100">
-                <th className="px-6 py-4 text-[11px] font-bold text-neutral-500 uppercase tracking-wider">
+              <tr className="bg-[#fcfdfe] border-b border-neutral-50 px-8">
+                <th className="pl-10 px-6 py-5 text-[10px] font-bold text-[#a4a9c1] uppercase tracking-widest">
                   Order ID
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold text-neutral-500 uppercase tracking-wider">
+                <th className="px-6 py-5 text-[10px] font-bold text-[#a4a9c1] uppercase tracking-widest">
                   Lens Type
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold text-neutral-500 uppercase tracking-wider">
+                <th className="px-6 py-5 text-[10px] font-bold text-[#a4a9c1] uppercase tracking-widest">
                   Lab Station
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold text-neutral-500 uppercase tracking-wider">
+                <th className="px-6 py-5 text-[10px] font-bold text-[#a4a9c1] uppercase tracking-widest">
                   Progress
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold text-neutral-500 uppercase tracking-wider">
+                <th className="px-6 py-5 text-[10px] font-bold text-[#a4a9c1] uppercase tracking-widest">
                   Time in Stn.
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold text-neutral-500 uppercase tracking-wider">
+                <th className="px-6 py-5 text-[10px] font-bold text-[#a4a9c1] uppercase tracking-widest">
                   Urgency
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold text-neutral-500 uppercase tracking-wider text-right">
+                <th className="pr-10 px-6 py-5 text-[10px] font-bold text-[#a4a9c1] uppercase tracking-widest text-right">
                   Action
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-50">
               {labOrders.map((order, idx) => (
-                <tr
-                  key={idx}
-                  className={`hover:bg-neutral-50/30 transition-colors ${idx === 0 ? 'bg-emerald-50/20' : ''}`}
-                >
-                  <td className="px-6 py-4 text-sm font-bold text-neutral-900 border-l-2 border-transparent">
-                    {order.id}
+                <tr key={idx} className="hover:bg-neutral-50/20 transition-colors">
+                  <td className="pl-10 px-6 py-6 text-sm font-bold text-[#3d4465]">{order.id}</td>
+                  <td className="px-6 py-6">
+                    <div className="text-sm font-bold text-[#3d4465] mb-0.5">{order.type}</div>
+                    <div className="text-[11px] text-[#a4a9c1] font-medium">{order.material}</div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="text-xs font-bold text-neutral-800">{order.type}</div>
-                    <div className="text-[10px] text-neutral-400 font-medium">{order.material}</div>
-                  </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-6">
                     <span
-                      className={`px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider ${order.stationColor}`}
+                      className={`inline-flex items-center justify-center px-4 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider border ${order.stationColor.replace('bg-', 'bg-opacity-50 border-').replace('text-', 'border-opacity-30 text-')}`}
                     >
                       {order.station}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex-1 h-1.5 bg-neutral-100 rounded-full overflow-hidden">
+                  <td className="px-6 py-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-24 h-1.5 bg-neutral-100 rounded-full overflow-hidden">
                         <div
                           className={`h-full ${order.progressColor}`}
                           style={{ width: `${order.progress}%` }}
                         ></div>
                       </div>
-                      <span className="text-[10px] font-bold text-neutral-600">
-                        {order.progress}%
-                      </span>
+                      <span className="text-xs font-bold text-[#3d4465]">{order.progress}%</span>
                     </div>
                   </td>
                   <td
-                    className={`px-6 py-4 text-xs font-mono font-bold ${order.urgency === 'Late' ? 'text-red-600' : 'text-neutral-500'}`}
+                    className={`px-6 py-6 text-xs font-bold ${order.urgency === 'Late' ? 'text-red-500' : 'text-[#3d4465]'}`}
                   >
                     {order.time}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-6">
                     <span
-                      className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${order.urgencyColor}`}
+                      className={`px-3 py-1 rounded-md text-[9px] font-bold uppercase tracking-wider ${order.urgencyColor}`}
                     >
                       {order.urgency}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-right">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      colorScheme="primary"
-                      className="text-[9px] font-bold uppercase tracking-widest h-7 px-3 border border-primary-500/20 hover:bg-primary-50"
-                    >
-                      Request Urgent
-                    </Button>
+                  <td className="pr-10 px-6 py-6 text-right">
+                    <button className="text-emerald-400 hover:text-emerald-500 transition-colors p-2">
+                      <IoChevronForward size={20} />
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -370,25 +351,15 @@ export default function SaleStaffLabStatusPage() {
           </table>
         </div>
 
-        <div className="p-3 border-t border-neutral-100 flex justify-between items-center text-xs font-medium text-neutral-400 bg-neutral-50/30">
-          <span>Showing 1 to 4 of 42 active orders</span>
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant="outline"
-              colorScheme="neutral"
-              className="bg-white px-4 h-8 font-bold border-neutral-200"
-            >
+        <div className="px-10 py-6 flex justify-between items-center text-xs font-bold text-[#a4a9c1] bg-white border-t border-neutral-100">
+          <span className="opacity-70">Showing 1 to 4 of 42 active orders</span>
+          <div className="flex gap-3">
+            <button className="px-6 py-2 border border-neutral-200 rounded-lg text-sm font-bold text-[#3d4465] hover:bg-neutral-50 transition-colors bg-white">
               Previous
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              colorScheme="neutral"
-              className="bg-white px-4 h-8 font-bold border-neutral-200"
-            >
+            </button>
+            <button className="px-6 py-2 border border-neutral-200 rounded-lg text-sm font-bold text-[#3d4465] hover:bg-neutral-50 transition-colors bg-white">
               Next
-            </Button>
+            </button>
           </div>
         </div>
       </Card>

@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import OrderHeaderTable from './OrderHeaderTable'
 import OrderList from './OrderList'
 import { Button } from '@/components'
-import { IoTimeOutline, IoEyeOutline, IoChevronForward } from 'react-icons/io5'
+import { IoTimeOutline, IoChevronForward } from 'react-icons/io5'
 
 export interface Order {
   id: string
@@ -198,28 +198,20 @@ export default function OrderTable({
       header: 'ACTION',
       headerClassName: 'text-center w-32',
       render: (order) => (
-        <div className={`flex items-center justify-center ${isSales ? 'gap-1' : 'gap-2'}`}>
-          <Button
-            variant="ghost"
-            size="sm"
-            colorScheme="neutral"
-            className={
-              isSales ? 'p-2 h-8 w-8 text-neutral-400 hover:text-primary-500' : 'p-2 h-8 w-8'
-            }
-            title={isSales ? 'View Details' : ''}
-          >
-            <IoEyeOutline size={18} />
-          </Button>
+        <div className={`flex items-center justify-center`}>
           <Button
             variant={isSales ? 'ghost' : 'solid'}
             colorScheme="primary"
             size="sm"
-            className={isSales ? 'p-2 h-8 w-8' : 'text-xs rounded-xl h-8 px-4 font-bold'}
+            className={
+              isSales ? 'p-2 h-8 w-8 text-primary-500' : 'text-xs rounded-xl h-8 px-4 font-bold'
+            }
             isDisabled={!order.isNextActive}
-            title={isSales ? 'Next Step' : ''}
+            title={isSales ? 'Details' : 'Next'}
             rightIcon={!isSales ? <IoChevronForward /> : undefined}
           >
-            {isSales ? <IoChevronForward size={18} /> : 'Next'}
+            {isSales && <IoChevronForward size={18} />}
+            {!isSales && 'Next'}
           </Button>
         </div>
       )

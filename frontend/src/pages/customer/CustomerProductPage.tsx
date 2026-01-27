@@ -1,6 +1,6 @@
 import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
 import { useGetProductWithPagination } from '@/shared/hooks/products/useGetProductWithPagination'
-import { Input } from '@/shared/components/ui'
+import { Button, Input } from '@/components'
 
 import { ArrowLeft, ArrowRight, Glasses, Heart, Search, ShoppingCart, User, X } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -213,9 +213,9 @@ export const CustomerProductPage = () => {
                           ? p.defaultVariantPrice.toLocaleString('vi-VN')
                           : '—'}
                     </span>
-                    <button className="w-8 h-8 bg-primary-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button className="w-8 h-8 bg-primary-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <ShoppingCart className="w-4 h-4" />
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))}

@@ -1,6 +1,4 @@
-import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
-import { Input } from '@/shared/components/ui'
-
+import { CustomerHeader, Input } from '@/components'
 import {
   Search,
   ShoppingCart,

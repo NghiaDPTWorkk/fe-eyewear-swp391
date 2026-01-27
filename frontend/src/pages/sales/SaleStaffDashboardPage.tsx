@@ -1,6 +1,4 @@
-import { Container } from '@/shared/components/ui/container'
-import { MetricCard } from '@/shared/components/ui/metric-card'
-import { Card } from '@/shared/components/ui/card'
+import { Card, Container, MetricCard } from '@/components'
 import OrderTable from '@/features/staff/components/OrderTable/OrderTable'
 import {
   IoClipboardOutline,

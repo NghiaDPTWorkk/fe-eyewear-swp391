@@ -93,3 +93,11 @@
     -moz-osx-font-smoothing: grayscale;
   }
 }
+.caret-transparent {
+  caret-color: transparent;
+}
+
+#root {
+  background-color: white;
+  min-height: 100vh;
+}

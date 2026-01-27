@@ -1,27 +1,25 @@
-// Auth Service - Business Logic
-import { publicAuthClient } from '@/api/clients'
-import { ENDPOINTS } from '@/api/endpoints'
-import { useAuthStore } from '@/store'
-import type { LoginInformation } from '../types/auth.types'
+import { authApi } from '@/api/modules/auth.api'
+import { STORAGE_KEYS } from '@/shared/constants/storage'
+import type { LoginRequest } from '@/shared/types'
 
-export class AuthService {
-  /**
-   * Handle user login
-   */
-  async login(loginInfo: LoginInformation): Promise<boolean> {
-    try {
-      const response = await publicAuthClient.post(ENDPOINTS.AUTH.LOGIN, loginInfo)
-      const { user, accessToken } = response.data
+export const authService = {
+  async login(payload: LoginRequest) {
+    // response lúc này có kiểu là LoginResponse (ApiResponse<...>)
+    const response = await authApi.login(payload)
 
-      useAuthStore.getState().setUser(user)
-      useAuthStore.getState().setToken(accessToken)
-      localStorage.setItem('accessToken', accessToken)
+    // Kiểm tra success (tùy chọn, vì thường lỗi axios đã catch rồi)
+    if (response.success && response.data) {
+      const { accessToken, refreshToken } = response.data // 👈 Phải chọc vào .data
 
-      return true
-    } catch {
-      return false
+      if (accessToken) {
+        localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken)
+      }
+
+      if (refreshToken) {
+        localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken)
+      }
     }
+
+    return response
   }
 }
-
-export const authService = new AuthService()

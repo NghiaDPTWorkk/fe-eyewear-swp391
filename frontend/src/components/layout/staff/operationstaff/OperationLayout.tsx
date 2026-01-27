@@ -1,0 +1,90 @@
+import { useLocation, useNavigate } from 'react-router-dom'
+import { MainLayoutStaff } from '../MainLayoutStaff'
+import { SidebarStaff } from '@/components/staff/sidebar/SidebarStaff'
+import { UserWidgetWithLogout } from '@/components/staff/sidebar/UserWidgetWithLogout'
+import { ThemeToggle } from '@/components/staff/sidebar/ThemeToggle'
+import {
+  IoGridOutline,
+  IoReceipt,
+  IoCarOutline,
+  IoSettingsOutline,
+  IoHelpCircleOutline,
+  IoBuildOutline
+} from 'react-icons/io5'
+import { TbTruckDelivery } from 'react-icons/tb'
+import { FaBoxesPacking } from 'react-icons/fa6'
+import { NavSearch } from '@/components/staff/navbar/NavListStaff'
+
+export default function OperationLayout() {
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  const sidebar = (
+    <SidebarStaff
+      logo={
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-mint-500 rounded-lg flex items-center justify-center">
+            <span className="text-white font-bold text-lg">O</span>
+          </div>
+          <span className="font-semibold text-gray-900">OpticView</span>
+        </div>
+      }
+      userWidget={
+        <UserWidgetWithLogout
+          userInitials="SL"
+          userName="Dr. Sarah L."
+          userRole="Head Optometrist"
+        />
+      }
+    >
+      <SidebarStaff.MenuSection label="WORK STATIONS">
+        <SidebarStaff.MenuItem
+          icon={<IoGridOutline />}
+          label="Dashboard"
+          active={location.pathname === '/operationstaff/dashboard'}
+          onClick={() => navigate('/operationstaff/dashboard')}
+        />
+        <SidebarStaff.MenuItem
+          icon={<IoReceipt />}
+          label="All Orders"
+          active={location.pathname === '/operationstaff/all'}
+          onClick={() => navigate('/operationstaff/all')}
+        />
+        <SidebarStaff.MenuItem
+          icon={<IoBuildOutline />}
+          label="Technical Stations"
+          active={location.pathname === '/operationstaff/prescription-orders'}
+          onClick={() => navigate('/operationstaff/prescription-orders')}
+        />
+        <SidebarStaff.MenuItem
+          icon={<IoCarOutline />}
+          label="Logistics Waiting Station"
+          active={location.pathname === '/operationstaff/pre-orders'}
+          onClick={() => navigate('/operationstaff/pre-orders')}
+        />
+        <SidebarStaff.MenuItem
+          icon={<FaBoxesPacking />}
+          label="Packing Station"
+          active={location.pathname === '/operationstaff/packing'}
+          onClick={() => navigate('/operationstaff/packing')}
+        />
+        <SidebarStaff.MenuItem
+          icon={<TbTruckDelivery />}
+          label="Delivery Handover"
+          active={location.pathname === '/operationstaff/delivery-orders'}
+          onClick={() => navigate('/operationstaff/delivery-orders')}
+        />
+      </SidebarStaff.MenuSection>
+
+      <SidebarStaff.MenuSection label="TOOLS">
+        <SidebarStaff.MenuItem icon={<IoSettingsOutline />} label="Settings" />
+        <SidebarStaff.MenuItem icon={<IoHelpCircleOutline />} label="Support" />
+        <ThemeToggle />
+      </SidebarStaff.MenuSection>
+    </SidebarStaff>
+  )
+
+  return (
+    <MainLayoutStaff sidebar={sidebar} headerLeft={<NavSearch placeholder="Search orders..." />} />
+  )
+}

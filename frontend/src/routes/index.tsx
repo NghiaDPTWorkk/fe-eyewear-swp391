@@ -1,5 +1,5 @@
 import { lazy } from 'react'
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { LazyPage } from '@/pages/LazyPage'
 
 const LoginPage = lazy(() =>
@@ -56,7 +56,7 @@ const SaleStaffReturnsPage = lazy(() =>
 )
 
 const OperationLayout = lazy(() =>
-  import('@/components/layout/staff/operationstaff/OperationLayout').then((m) => ({
+  import('@/pages/operations/OperationLayout').then((m) => ({
     default: m.default
   }))
 )
@@ -176,6 +176,10 @@ export const router = createBrowserRouter([
       </LazyPage>
     ),
     children: [
+      {
+        index: true,
+        element: <Navigate to="/operationstaff/dashboard" replace />
+      },
       {
         path: 'dashboard',
         element: <OperationDashboardPage />

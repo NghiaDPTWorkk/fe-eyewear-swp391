@@ -1,8 +1,11 @@
 import type { ReactNode } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { cn } from '@/lib/utils'
 import OrderHeaderTable from './OrderHeaderTable'
 import OrderList from './OrderList'
 import { Button } from '@/components'
-import { IoTimeOutline, IoChevronForward } from 'react-icons/io5'
+import { IoTimeOutline, IoChevronForward, IoEyeOutline } from 'react-icons/io5'
+import { PATHS } from '@/routes/paths'
 
 export interface Order {
   id: string
@@ -44,7 +47,7 @@ const getOrderTypeStyles = (type: string, role: string) => {
         return 'bg-neutral-50 text-neutral-600'
     }
   } else {
-    // Original styles for operations (Vietnamese)
+    // Original styles for operations from reference
     switch (type) {
       case 'Đơn Thường':
         return 'bg-emerald-50 text-emerald-600'
@@ -65,6 +68,11 @@ export default function OrderTable({
   role = 'operation'
 }: OrderTableProps) {
   const isSales = role === 'sales'
+  const navigate = useNavigate()
+
+  const handleViewOrder = (orderId: string) => {
+    navigate(PATHS.OPERATIONSTAFF.ORDER_DETAIL(orderId))
+  }
 
   const orders: Order[] = [
     {
@@ -125,15 +133,24 @@ export default function OrderTable({
     ? orders.filter((order) => order.orderType === filterType)
     : orders
 
-  // Default Columns (Phân biệt UI theo role)
   const defaultColumns: Column<Order>[] = [
     {
-      header: isSales ? 'ORDER ID' : 'MÃ ĐƠN',
+      header: 'ORDER ID',
       render: (order) => (
         <div className={isSales ? 'flex flex-col items-center' : ''}>
-          <div className="font-bold text-neutral-900">{order.id}</div>
-          <div className="w-12 h-1 bg-neutral-100 rounded-full mt-1 overflow-hidden">
-            <div className="bg-emerald-400 h-full w-1/2"></div>
+          <div
+            className={cn('font-bold text-neutral-900 cursor-pointer', !isSales && 'font-medium')}
+            onClick={() => handleViewOrder(order.id)}
+          >
+            {order.id}
+          </div>
+          <div
+            className={cn(
+              'w-12 mt-1 rounded-full overflow-hidden',
+              isSales ? 'h-1 bg-neutral-100' : 'h-1.5 bg-gray-200'
+            )}
+          >
+            <div className="bg-emerald-400 h-full w-1/2 rounded-full"></div>
           </div>
         </div>
       ),
@@ -141,13 +158,16 @@ export default function OrderTable({
       className: isSales ? 'font-medium text-center' : 'font-medium'
     },
     {
-      header: isSales ? 'TYPE' : 'LOẠI ĐƠN',
+      header: 'TYPE',
       render: (order) => (
         <span
-          className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider whitespace-nowrap ${getOrderTypeStyles(
-            order.orderType,
-            role
-          )}`}
+          className={cn(
+            'whitespace-nowrap font-bold uppercase tracking-wider',
+            isSales
+              ? 'px-3 py-1 rounded-full text-[10px]'
+              : 'px-3 py-1 rounded-md text-xs font-medium',
+            getOrderTypeStyles(order.orderType, role)
+          )}
         >
           {order.orderType}
         </span>
@@ -156,8 +176,10 @@ export default function OrderTable({
       className: isSales ? 'text-center' : ''
     },
     {
-      header: isSales ? 'CUSTOMER' : 'CUSTOMER',
-      render: (order) => <div className="font-medium text-neutral-900">{order.customer}</div>
+      header: 'CUSTOMER',
+      render: (order) => (
+        <div className={cn('text-neutral-900', isSales ? 'font-medium' : '')}>{order.customer}</div>
+      )
     },
     {
       header: 'ITEMS',
@@ -172,10 +194,16 @@ export default function OrderTable({
       headerClassName: 'text-center'
     },
     {
-      header: isSales ? 'STATUS' : 'TRẠNG THÁI',
+      header: 'STATUS',
       render: (order) => (
         <span
-          className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider whitespace-nowrap ${order.statusColor}`}
+          className={cn(
+            'font-bold uppercase tracking-wider whitespace-nowrap',
+            isSales
+              ? 'px-3 py-1 rounded-full text-[10px]'
+              : 'px-3 py-1 rounded-md text-xs font-medium',
+            order.statusColor
+          )}
         >
           {order.currentStatus}
         </span>
@@ -184,7 +212,7 @@ export default function OrderTable({
       className: 'text-center'
     },
     {
-      header: isSales ? 'DATE' : 'ORDER AT',
+      header: 'ORDER AT',
       render: (order) => (
         <div className={`flex items-center gap-1.5 ${isSales ? 'justify-center' : ''}`}>
           <IoTimeOutline className={isSales ? 'text-neutral-400' : ''} />
@@ -198,7 +226,18 @@ export default function OrderTable({
       header: 'ACTION',
       headerClassName: 'text-center w-32',
       render: (order) => (
-        <div className={`flex items-center justify-center`}>
+        <div className={`flex items-center justify-center gap-3`}>
+          {!isSales && (
+            <Button
+              variant="ghost"
+              size="sm"
+              colorScheme="secondary"
+              className="p-2"
+              onClick={() => handleViewOrder(order.id)}
+            >
+              <IoEyeOutline size={20} />
+            </Button>
+          )}
           <Button
             variant={isSales ? 'ghost' : 'solid'}
             colorScheme="primary"
@@ -209,6 +248,7 @@ export default function OrderTable({
             isDisabled={!order.isNextActive}
             title={isSales ? 'Details' : 'Next'}
             rightIcon={!isSales ? <IoChevronForward /> : undefined}
+            onClick={() => handleViewOrder(order.id)}
           >
             {isSales && <IoChevronForward size={18} />}
             {!isSales && 'Next'}
@@ -223,7 +263,7 @@ export default function OrderTable({
   )
 
   return (
-    <div className="overflow-x-auto bg-white rounded-lg">
+    <div className="overflow-x-auto bg-white rounded-lg shadow">
       <table className="w-full text-left border-collapse">
         <OrderHeaderTable columns={activeColumns} role={role} />
         <OrderList orders={filteredOrders} columns={activeColumns} role={role} />

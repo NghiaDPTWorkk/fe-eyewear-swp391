@@ -18,10 +18,8 @@ export default function OrderList({ orders, columns, role = 'operation' }: Order
             <td
               key={colIndex}
               className={cn(
-                'px-4 py-4 text-sm text-gray-600 align-middle',
-                col.header === 'ACTION' ||
-                  (isSales && col.header === 'ORDER ID') ||
-                  (!isSales && col.header === 'MÃ ĐƠN')
+                'px-4 py-4 text-sm text-gray-600',
+                col.header === 'ACTION' || (isSales && col.header === 'ORDER ID')
                   ? 'text-center'
                   : '',
                 col.className

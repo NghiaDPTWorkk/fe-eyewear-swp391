@@ -16,11 +16,9 @@ export default function OrderHeaderTable({ columns, role = 'operation' }: OrderH
           <th
             key={index}
             className={cn(
-              'px-4 py-3.5 text-[11px] font-bold text-neutral-500 uppercase tracking-wider align-middle',
-              // Sales centers Order ID and Action, Operation centers only Action and MÃ ĐƠN
-              col.header === 'ACTION' ||
-                (isSales && col.header === 'ORDER ID') ||
-                (!isSales && col.header === 'MÃ ĐƠN')
+              'px-4 py-3.5 text-[11px] font-bold text-neutral-500 uppercase tracking-wider',
+              // Keep text-center for Action always as it looks better and is often implied in 'y chang' requests for functional parity
+              col.header === 'ACTION' || (isSales && col.header === 'ORDER ID')
                 ? 'text-center'
                 : '',
               col.headerClassName

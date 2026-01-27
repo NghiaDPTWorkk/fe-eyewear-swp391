@@ -1,15 +1,13 @@
 export interface PrescriptionData {
-  right: {
-    SPH: number
-    CYL: number
-    AXIS: number
-  }
-  left: {
-    SPH: number
-    CYL: number
-    AXIS: number
-  }
-  PD: number
+  od_sph: number
+  od_cyl: number
+  od_axis: number
+  od_add?: number
+  os_sph: number
+  os_cyl: number
+  os_axis: number
+  os_add?: number
+  pd: number
 }
 
 export interface PrescriptionValidateRequest {

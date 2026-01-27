@@ -14,12 +14,15 @@ export default function OperationPrescriptionPage() {
             Dashboard
           </Link>
           <span className="text-neutral-300">/</span>
-          <span className="text-primary-500 font-bold">Technical Stations</span>
+          <span className="text-primary-500 font-bold">Technical</span>
         </div>
         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Prescription Orders</h1>
+        <p className="text-gray-500 mt-1">
+          Manage technical specifications and lens processing status.
+        </p>
       </div>
 
-      <OrderTable hiddenColumns={['WAITING FOR']} filterType="Prescription" />
+      <OrderTable hiddenColumns={['WAITING FOR']} filterType="Prescription" role="operation" />
     </Container>
   )
 }

@@ -7,9 +7,9 @@ export default function OperationAllOrdersPage() {
   const [filter, setFilter] = useState('all')
 
   const filterButtons = [
-    { label: 'Tất cả', count: 5, value: 'all' },
+    { label: 'All', count: 5, value: 'all' },
     { label: 'Pre-order', count: 2, value: 'Pre-order' },
-    { label: 'Đơn Thường', count: 2, value: 'Đơn Thường' },
+    { label: 'Normal', count: 2, value: 'Đơn Thường' },
     { label: 'Prescription', count: 1, value: 'Prescription' }
   ]
 
@@ -26,19 +26,21 @@ export default function OperationAllOrdersPage() {
           <span className="text-neutral-300">/</span>
           <span className="text-primary-500 font-bold">All Orders</span>
         </div>
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Order Database</h1>
+        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Order List</h1>
+        <p className="text-gray-500 mt-1">Manage the entire database of orders in the system.</p>
       </div>
 
       <FilterButtonList
         buttons={filterButtons}
         selectedValue={filter}
         onChange={setFilter}
-        className="mb-4"
+        className="mb-6"
       />
 
       <OrderTable
         hiddenColumns={['WAITING FOR']}
         filterType={filter === 'all' ? undefined : filter}
+        role="operation"
       />
     </Container>
   )

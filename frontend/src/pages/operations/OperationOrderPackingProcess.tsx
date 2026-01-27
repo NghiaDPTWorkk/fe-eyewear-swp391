@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { Container } from '@/components'
 import { PATHS } from '@/routes/paths'
 import {
@@ -13,11 +13,11 @@ import {
 } from 'react-icons/io5'
 
 const PACKING_ITEMS = [
-  'Tròng kính (cặp)',
-  'Gọng kính',
-  'Hộp đựng kính',
-  'Khăn lau kính',
-  'Tài liệu & hóa đơn'
+  'Lenses (pair)',
+  'Frames',
+  'Glasses Case',
+  'Cleaning Cloth',
+  'Documents & Invoices'
 ]
 
 export default function OperationOrderPackingProcess() {
@@ -44,23 +44,38 @@ export default function OperationOrderPackingProcess() {
 
   return (
     <Container>
+      {/* Breadcrumb Path */}
+      <div className="flex items-center gap-2 text-sm pt-8 mb-6 font-medium">
+        <Link
+          to="/operationstaff/dashboard"
+          className="text-neutral-400 hover:text-primary-500 transition-colors"
+        >
+          Dashboard
+        </Link>
+        <span className="text-neutral-300">/</span>
+        <span className="text-primary-500 font-bold">Packing Station</span>
+      </div>
+
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-5">
           <button
             onClick={() => navigate(-1)}
-            className="p-2 hover:bg-mint-100 rounded-lg transition-colors"
+            className="p-3 bg-white hover:bg-neutral-50 rounded-xl shadow-sm transition-all border border-neutral-100"
           >
             <IoArrowBack size={20} className="text-gray-600" />
           </button>
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
-              <IoCubeOutline /> Trạm đóng gói
+            <h1 className="text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
+              <IoCubeOutline className="text-primary-500" /> Packing Station
             </h1>
+            <p className="text-sm text-neutral-500 mt-1 font-medium italic opacity-80 uppercase tracking-widest text-[10px]">
+              CHECKLIST & PACKAGING WORKFLOW
+            </p>
           </div>
         </div>
-        <span className="px-3 py-1 bg-mint-100 text-mint-700 rounded-full text-xs font-medium">
-          Packing Station
+        <span className="px-6 py-2 bg-amber-100 text-amber-700 border border-amber-200 rounded-full text-xs font-bold uppercase tracking-widest">
+          In Progress
         </span>
       </div>
 

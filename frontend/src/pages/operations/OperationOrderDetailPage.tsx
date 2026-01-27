@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { Container } from '@/components'
 import { PATHS } from '@/routes/paths'
 import {
@@ -15,18 +15,44 @@ export default function OperationOrderDetailPage() {
 
   return (
     <Container>
+      {/* Breadcrumb Path */}
+      <div className="flex items-center gap-2 text-sm pt-8 mb-6 font-medium">
+        <Link
+          to="/operationstaff/dashboard"
+          className="text-neutral-400 hover:text-primary-500 transition-colors"
+        >
+          Dashboard
+        </Link>
+        <span className="text-neutral-300">/</span>
+        <Link
+          to="/operationstaff/all"
+          className="text-neutral-400 hover:text-primary-500 transition-colors"
+        >
+          Orders
+        </Link>
+        <span className="text-neutral-300">/</span>
+        <span className="text-primary-500 font-bold">Details</span>
+      </div>
+
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
-        <button className="p-2 hover:bg-mint-100 rounded-lg transition-colors">
+      <div className="flex items-center gap-5 mb-8">
+        <button
+          onClick={() => navigate(-1)}
+          className="p-3 bg-white hover:bg-neutral-50 rounded-xl shadow-sm transition-all border border-neutral-100"
+        >
           <IoArrowBack size={20} className="text-gray-600" />
         </button>
         <div>
-          {/* <div className="text-sm text-mint-900">Chi tiết đơn hàng</div> */}
-          <h1 className="text-2xl font-semibold text-mint-900">Đơn hàng #{orderId || 'REG-001'}</h1>
+          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
+            Order #{orderId || 'REG-001'}
+          </h1>
+          <p className="text-sm text-neutral-500 mt-1 font-medium tracking-wide italic opacity-80 uppercase tracking-widest text-[10px]">
+            DETAILED ORDER INFORMATION
+          </p>
         </div>
         <div className="ml-auto">
-          <span className="px-4 py-2 bg-mint-100 text-mint-700 rounded-lg text-sm font-medium">
-            Chờ xử lý
+          <span className="px-6 py-2 bg-mint-100 text-mint-700 border border-mint-200 rounded-full text-xs font-bold uppercase tracking-widest">
+            Pending
           </span>
         </div>
       </div>

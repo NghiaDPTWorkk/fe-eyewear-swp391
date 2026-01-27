@@ -3,6 +3,7 @@ import { IoChevronDown, IoChevronForward } from 'react-icons/io5'
 import { cn } from '@/lib/utils'
 import { cva } from 'class-variance-authority'
 import { useLayoutStore } from '@/store/layout.store'
+import { Button } from '@/shared/components/ui'
 
 const menuItemVariants = cva(
   [
@@ -93,7 +94,7 @@ export function MenuItem({
 
   return (
     <div>
-      <button
+      <Button
         onClick={handleClick}
         className={cn(menuItemVariants({ active: active && !hasDropdown, hasDropdown }), className)}
         aria-expanded={hasDropdown ? isOpen : undefined}
@@ -120,7 +121,7 @@ export function MenuItem({
               ))}
           </>
         )}
-      </button>
+      </Button>
 
       {hasDropdown && !sidebarCollapsed && isOpen && children && (
         <div className="ml-8 mt-1 space-y-0.5" role="group">

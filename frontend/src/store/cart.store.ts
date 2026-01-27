@@ -5,12 +5,11 @@ interface CartState {
   items: CartItem[]
   isLoading: boolean
   addItem: (item: CartItem) => void
-  updateQuantity: (itemId: string, quantity: number) => void
-  removeItem: (itemId: string) => void
+  updateQuantity: (productId: string, quantity: number) => void
+  removeItem: (productId: string) => void
   clearCart: () => void
   setLoading: (loading: boolean) => void
   totalItems: () => number
-  totalPrice: () => number
 }
 
 export const useCartStore = create<CartState>((set, get) => ({
@@ -22,21 +21,21 @@ export const useCartStore = create<CartState>((set, get) => ({
       items: [...state.items, item]
     })),
 
-  updateQuantity: (itemId, quantity) =>
+  updateQuantity: (productId, quantity) =>
     set((state) => ({
-      items: state.items.map((item) => (item.variantId === itemId ? { ...item, quantity } : item))
+      items: state.items.map((item) =>
+        item.product_id === productId ? { ...item, quantity } : item
+      )
     })),
 
-  removeItem: (itemId) =>
+  removeItem: (productId) =>
     set((state) => ({
-      items: state.items.filter((item) => item.variantId !== itemId)
+      items: state.items.filter((item) => item.product_id !== productId)
     })),
 
   clearCart: () => set({ items: [] }),
 
   setLoading: (loading) => set({ isLoading: loading }),
 
-  totalItems: () => get().items.reduce((sum, item) => sum + item.quantity, 0),
-
-  totalPrice: () => get().items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  totalItems: () => get().items.reduce((sum, item) => sum + item.quantity, 0)
 }))

@@ -1,6 +1,6 @@
-import { authApi } from '@/api/modules/auth.api'
 import { STORAGE_KEYS } from '@/shared/constants/storage'
 import type { LoginRequest, RegisterRequest } from '@/shared/types'
+import { authApi } from './auth.api.legacy'
 
 export const authService = {
   async login(payload: LoginRequest) {

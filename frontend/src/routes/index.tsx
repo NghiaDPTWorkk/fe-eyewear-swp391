@@ -1,6 +1,7 @@
 import { lazy } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { LazyPage } from '@/pages/LazyPage'
+import { RegisterPage } from '@/pages/auth/customer/RegisterPage'
 
 const LoginPage = lazy(() =>
   import('@/pages/auth/customer/CustomerLoginPage').then((m) => ({ default: m.CustomerLoginPage }))
@@ -111,6 +112,14 @@ export const router = createBrowserRouter([
     element: (
       <LazyPage>
         <LoginPage />
+      </LazyPage>
+    )
+  },
+  {
+    path: '/register',
+    element: (
+      <LazyPage>
+        <RegisterPage />
       </LazyPage>
     )
   },

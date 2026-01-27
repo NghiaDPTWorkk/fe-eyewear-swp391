@@ -1,11 +1,16 @@
 export interface CartItem {
-  id: string
-  productId: string
-  variantId: string
-  name: string
-  price: number
+  product_id: string // SKU
   quantity: number
-  image: string
+  addAt: Date
+}
+
+export interface Cart {
+  _id: string
+  owner: string
+  products: CartItem[]
+  totalProduct: number
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface CartSummary {
@@ -15,11 +20,11 @@ export interface CartSummary {
 }
 
 export interface AddToCartRequest {
-  productId: string
-  variantId?: string
+  product_id: string // SKU
   quantity: number
 }
 
 export interface UpdateCartRequest {
+  product_id: string // SKU
   quantity: number
 }

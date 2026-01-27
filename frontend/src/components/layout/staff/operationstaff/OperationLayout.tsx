@@ -1,8 +1,12 @@
-import { useLocation, useNavigate } from 'react-router-dom'
-import { MainLayoutStaff } from '../MainLayoutStaff'
-import { SidebarStaff } from '@/components/staff/sidebar/SidebarStaff'
-import { UserWidgetWithLogout } from '@/components/staff/sidebar/UserWidgetWithLogout'
-import { ThemeToggle } from '@/components/staff/sidebar/ThemeToggle'
+import { useLocation } from 'react-router-dom'
+import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layout/StaffMainLayout'
+import {
+  SidebarStaff,
+  UserWidgetWithLogout,
+  ThemeToggle,
+  NavSearch,
+  NavActions
+} from '@/components/staff'
 import {
   IoGridOutline,
   IoReceipt,
@@ -13,11 +17,9 @@ import {
 } from 'react-icons/io5'
 import { TbTruckDelivery } from 'react-icons/tb'
 import { FaBoxesPacking } from 'react-icons/fa6'
-import { NavSearch } from '@/components/staff/navbar/NavListStaff'
 
 export default function OperationLayout() {
   const location = useLocation()
-  const navigate = useNavigate()
 
   const sidebar = (
     <SidebarStaff
@@ -41,50 +43,63 @@ export default function OperationLayout() {
         <SidebarStaff.MenuItem
           icon={<IoGridOutline />}
           label="Dashboard"
+          to="/operationstaff/dashboard"
           active={location.pathname === '/operationstaff/dashboard'}
-          onClick={() => navigate('/operationstaff/dashboard')}
         />
         <SidebarStaff.MenuItem
           icon={<IoReceipt />}
           label="All Orders"
+          to="/operationstaff/all"
           active={location.pathname === '/operationstaff/all'}
-          onClick={() => navigate('/operationstaff/all')}
         />
         <SidebarStaff.MenuItem
           icon={<IoBuildOutline />}
           label="Technical Stations"
+          to="/operationstaff/prescription-orders"
           active={location.pathname === '/operationstaff/prescription-orders'}
-          onClick={() => navigate('/operationstaff/prescription-orders')}
         />
         <SidebarStaff.MenuItem
           icon={<IoCarOutline />}
           label="Logistics Waiting Station"
+          to="/operationstaff/pre-orders"
           active={location.pathname === '/operationstaff/pre-orders'}
-          onClick={() => navigate('/operationstaff/pre-orders')}
         />
         <SidebarStaff.MenuItem
           icon={<FaBoxesPacking />}
           label="Packing Station"
+          to="/operationstaff/packing"
           active={location.pathname === '/operationstaff/packing'}
-          onClick={() => navigate('/operationstaff/packing')}
         />
         <SidebarStaff.MenuItem
           icon={<TbTruckDelivery />}
           label="Delivery Handover"
+          to="/operationstaff/delivery-orders"
           active={location.pathname === '/operationstaff/delivery-orders'}
-          onClick={() => navigate('/operationstaff/delivery-orders')}
         />
       </SidebarStaff.MenuSection>
 
       <SidebarStaff.MenuSection label="TOOLS">
-        <SidebarStaff.MenuItem icon={<IoSettingsOutline />} label="Settings" />
-        <SidebarStaff.MenuItem icon={<IoHelpCircleOutline />} label="Support" />
+        <SidebarStaff.MenuItem
+          icon={<IoSettingsOutline />}
+          label="Settings"
+          to="/operationstaff/settings"
+        />
+        <SidebarStaff.MenuItem
+          icon={<IoHelpCircleOutline />}
+          label="Support"
+          to="/operationstaff/support"
+        />
         <ThemeToggle />
       </SidebarStaff.MenuSection>
     </SidebarStaff>
   )
 
   return (
-    <MainLayoutStaff sidebar={sidebar} headerLeft={<NavSearch placeholder="Search orders..." />} />
+    <StaffMainLayout
+      sidebar={sidebar}
+      headerLeft={<NavSearch placeholder="Search orders..." styleVariant="operation" />}
+      headerRight={<NavActions />}
+      mainClassName="p-4 md:p-8 bg-mint-200"
+    />
   )
 }

@@ -1,8 +1,0 @@
-export { default as OperationDashboardPage } from './OperationDashboardPage'
-export { default as OperationPrescriptionPage } from './OperationPrescriptionPage'
-export { default as OperationAllOrdersPage } from './OperationAllOrdersPage'
-export { default as OperationDeliveryPage } from './OperationDeliveryPage'
-export { default as OperationPackingPage } from './OperationPackingPage'
-export { default as OperationPreOrdersPage } from './OperationPreOrdersPage'
-export { default as OperationTechnicalPage } from './OperationTechnicalPage'
-export { default as OperationLayout } from './OperationLayout'

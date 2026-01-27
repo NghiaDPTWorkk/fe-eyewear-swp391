@@ -86,7 +86,7 @@ export default function OperationLayout() {
       <div
         className={cn(
           'flex-1 flex flex-col transition-all duration-300',
-          sidebarCollapsed ? 'ml-20' : 'ml-[260px]'
+          sidebarCollapsed ? 'ml-20' : 'ml-[240px]'
         )}
       >
         <HeaderStaff
@@ -96,7 +96,7 @@ export default function OperationLayout() {
         />
 
         <main
-          className="p-4 bg-mint-200 flex-1"
+          className="p-5 bg-mint-200 flex-1"
           style={{ backgroundColor: 'var(--color-mint-200)' }}
         >
           <Outlet />

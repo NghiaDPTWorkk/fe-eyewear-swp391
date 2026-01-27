@@ -5,18 +5,27 @@ export interface Payment {
   paymentMethod: PaymentMethodType
   status: PaymentStatus
   ownerId: string
-  orderId: string
+  invoiceId: string
   note?: string
   price: number
   createdAt: Date
   updatedAt: Date
 }
 
-export interface PaymentRequest {
-  orderId: string
-  amount: number
-  method: PaymentMethodType
+export interface CreatePaymentRequest {
+  ownerId: string
+  invoiceId: string
+  paymentMethod: PaymentMethodType
+  status?: PaymentStatus
   note?: string
+  price: number
+}
+
+export interface UpdatePaymentRequest {
+  paymentMethod?: PaymentMethodType
+  status?: PaymentStatus
+  note?: string
+  price?: number
 }
 
 export interface PaymentResponse {

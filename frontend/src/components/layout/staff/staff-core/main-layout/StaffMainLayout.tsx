@@ -3,7 +3,6 @@ import { Outlet } from 'react-router-dom'
 import { useLayoutStore } from '@/store/layout.store'
 import { cn } from '@/lib/utils'
 import { StaffHeader } from '../header'
-import { Container } from '@/shared/components/ui'
 
 interface StaffMainLayoutProps {
   sidebar: ReactNode
@@ -41,13 +40,7 @@ export function StaffMainLayout({
           sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-64'
         )}
       >
-        <Container>
-          <StaffHeader
-            containerWidth={headerContainerWidth}
-            left={headerLeft}
-            right={headerRight}
-          />
-        </Container>
+        <StaffHeader containerWidth={headerContainerWidth} left={headerLeft} right={headerRight} />
 
         <main className={cn('h-full overflow-auto', mainClassName)}>
           <Outlet />

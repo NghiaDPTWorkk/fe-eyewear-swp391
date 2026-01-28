@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils'
 import { PriceRangeFilter, type PriceRange } from '../price-range-filter'
 import { ColorFilter, type ColorOption } from '../color-filter'
 import { FilterSection } from '../filter-section'
+import { Checkbox } from '../checkbox'
 
 export interface Category {
   id: string
@@ -65,11 +66,9 @@ export function ProductFilters({
             <div className="space-y-2">
               {categories.map((category) => (
                 <label key={category.id} className="flex items-center gap-2 cursor-pointer group">
-                  <input
-                    type="checkbox"
-                    checked={selectedCategories.includes(category.id)}
-                    onChange={() => handleCategoryClick(category.id)}
-                    className="w-4 h-4 rounded border-mint-500 text-primary-500 focus:ring-primary-500 cursor-pointer"
+                  <Checkbox
+                    isChecked={selectedCategories.includes(category.id)}
+                    onCheckedChange={() => handleCategoryClick(category.id)}
                   />
                   <span className="text-sm text-mint-1200 group-hover:text-primary-500 transition-colors">
                     {category.name}

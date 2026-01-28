@@ -1,8 +1,7 @@
 import { useState } from 'react'
-import { Divider } from '@/shared/components/ui/divider'
 import type { LoginRequest } from '@/shared/types'
 import { useLogin } from '@/features/auth/hooks/useLogin'
-import { Button, Checkbox, Input, FormField } from '@/components'
+import { Button, Checkbox, Input, FormField, Divider } from '@/components'
 
 interface LoginFormProps {
   role: 'customer' | 'staff'
@@ -17,7 +16,7 @@ export const LoginForm = ({ role }: LoginFormProps) => {
   })
 
   const [rememberMe, setRememberMe] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
+  const showPassword = useState(false)
 
   const isValidEmail = formData.email.includes('@') && formData.email.includes('.')
 
@@ -68,15 +67,6 @@ export const LoginForm = ({ role }: LoginFormProps) => {
           value={formData.password}
           onChange={(e) => handleChange('password', e.target.value)}
           size="lg"
-          rightElement={
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="text-neutral-500 hover:text-neutral-700"
-            >
-              {showPassword ? 'Hide' : 'Show'}
-            </button>
-          }
         />
       </FormField>
 

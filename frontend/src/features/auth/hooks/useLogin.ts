@@ -1,5 +1,5 @@
-import type { LoginRequest, LoginResponse } from '@/shared/types'
 import { useMutation } from '@tanstack/react-query'
+import type { LoginRequest, LoginResponse } from '@/shared/types'
 import { useNavigate } from 'react-router-dom'
 import { authApi } from '../services/auth.api.legacy'
 

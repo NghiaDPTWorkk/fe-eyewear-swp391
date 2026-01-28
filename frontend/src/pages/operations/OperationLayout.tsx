@@ -16,7 +16,6 @@ import {
   IoBuildOutline
 } from 'react-icons/io5'
 import { FaBoxesPacking } from 'react-icons/fa6'
-import { TbTruckDelivery } from 'react-icons/tb'
 
 export default function OperationLayout() {
   const location = useLocation()
@@ -70,12 +69,6 @@ export default function OperationLayout() {
           label="Packing Station"
           active={location.pathname === '/operationstaff/packing'}
           onClick={() => navigate('/operationstaff/packing')}
-        />
-        <SidebarStaff.MenuItem
-          icon={<TbTruckDelivery />}
-          label="Delivery Handover"
-          active={location.pathname === '/operationstaff/delivery-orders'}
-          onClick={() => navigate('/operationstaff/delivery-orders')}
         />
       </SidebarStaff.MenuSection>
 

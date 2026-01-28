@@ -39,14 +39,6 @@ interface BaseProduct {
 }
 
 /**
- * Product discriminated union
- */
-export type Product =
-  | (BaseProduct & { type: 'frame'; spec: FrameSpec })
-  | (BaseProduct & { type: 'sunglass'; spec: FrameSpec })
-  | (BaseProduct & { type: 'lens'; spec: LenSpec | null })
-
-/**
  * Standard product for list views (simplified)
  */
 export interface StandardProduct {
@@ -63,6 +55,14 @@ export interface StandardProduct {
   totalVariants: number
   createdAt: string
 }
+/**
+ * Product discriminated union
+ */
+export type Product =
+  | (BaseProduct & { type: 'frame'; spec: FrameSpec })
+  | (BaseProduct & { type: 'sunglass'; spec: FrameSpec })
+  | (BaseProduct & { type: 'lens'; spec: LenSpec | null })
+  | StandardProduct
 
 /**
  * Product create request types
@@ -130,18 +130,88 @@ export interface ProductSearchRequest {
 /**
  * Product API response with pagination
  */
-export interface ProductResponse {
-  data: Product[]
-  total: number
-  page: number
-  limit: number
-  totalPages: number
+export interface ProductListData {
+  productList: StandardProduct[]
+  pagination: {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+  }
 }
 
-export interface StandardProductResponse {
-  data: StandardProduct[]
-  total: number
-  page: number
-  limit: number
-  totalPages: number
+export interface ProductListApiResponse {
+  success: boolean
+  message: string
+  data: ProductListData
+}
+
+export interface ProductDetailData {
+  product: Product
+}
+
+export interface ProductDetailApiResponse {
+  success: boolean
+  message: string
+  data: ProductDetailData
+}
+
+/**
+ * {
+    "products": [
+        {
+            "product": {
+                "product_id": "6965c4bc979f1a2fb5e32963",
+                "sku": "LENS-007-01"
+            },
+            "quantity": 1
+        }
+    ],
+    "address": {
+        "street": "Le van viet",
+        "ward": "Phuong Thu Duc",
+        "city": "Thanh pho Ho Chi Minh"
+    },
+    "fullName": "Minh Lâm",
+    "phone": "0812345678",
+    "voucher": [],
+    "paymentMethod": "COD",
+    "note": "Giao ngoài giờ hành chánh dùm"
+}
+ */
+
+export interface ProductInvoiceItemRequest {
+  product: {
+    product_id: string
+    sku: string
+  }
+  quantity: number
+}
+
+/**
+ * {
+    "nameBase": "Premium Sunglasses",
+    "categories": ["6965c4bc979f1a2fb5e32801"],
+    "brand": "LuxuryBrand",
+    "type": "sunglass",
+    "gender": "UNISEX",
+    "material": "Metal",
+    "description": "High quality sunglasses",
+    "shortDescription": "Best in class",
+    "price": 1000000,
+    "variants": []
+}
+    create product
+ */
+export interface CreateProductRequest {
+  nameBase: string
+  categories: string[]
+  brand: string | null
+  type: ProductType
+  gender: Gender
+  material: string
+  description: string
+  shortDescription: string
+  price: number
+  variants: Variant[]
 }

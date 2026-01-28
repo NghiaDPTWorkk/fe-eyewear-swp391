@@ -1,6 +1,7 @@
 import { lazy } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { LazyPage } from '@/pages/LazyPage'
+import { RegisterPage } from '@/pages/auth/customer/RegisterPage'
 
 const LoginPage = lazy(() =>
   import('@/pages/auth/customer/CustomerLoginPage').then((m) => ({ default: m.CustomerLoginPage }))
@@ -14,8 +15,16 @@ const CustomerHomePage = lazy(() =>
   import('@/pages/customer/CustomerHomePage').then((m) => ({ default: m.CustomerHomePage }))
 )
 
+const LandingPage = lazy(() =>
+  import('@/pages/LandingPage').then((m) => ({ default: m.LandingPage }))
+)
+
 const NotFoundPage = lazy(() =>
   import('@/pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage }))
+)
+
+const CustomerProductPage = lazy(() =>
+  import('@/pages/customer/CustomerProductPage').then((m) => ({ default: m.CustomerProductPage }))
 )
 const SaleStaffLayout = lazy(() =>
   import('@/components/layout/staff/salestaff/SaleStaffLayout').then((m) => ({
@@ -110,7 +119,7 @@ export const router = createBrowserRouter([
     path: '/',
     element: (
       <LazyPage>
-        <CustomerHomePage />
+        <LandingPage />
       </LazyPage>
     )
   },
@@ -119,6 +128,22 @@ export const router = createBrowserRouter([
     element: (
       <LazyPage>
         <LoginPage />
+      </LazyPage>
+    )
+  },
+  {
+    path: '/register',
+    element: (
+      <LazyPage>
+        <RegisterPage />
+      </LazyPage>
+    )
+  },
+  {
+    path: '/products',
+    element: (
+      <LazyPage>
+        <CustomerProductPage />
       </LazyPage>
     )
   },

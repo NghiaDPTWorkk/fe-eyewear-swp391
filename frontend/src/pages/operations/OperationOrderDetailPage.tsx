@@ -1,8 +1,13 @@
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { Container } from '@/components'
 import { PATHS } from '@/routes/paths'
-import { IoTimeOutline, IoConstructOutline, IoCubeOutline, IoCarOutline } from 'react-icons/io5'
-import { ArrowLeft } from 'lucide-react'
+import {
+  IoArrowBack,
+  IoTimeOutline,
+  IoConstructOutline,
+  IoCubeOutline,
+  IoCarOutline
+} from 'react-icons/io5'
 
 export default function OperationOrderDetailPage() {
   const { orderId } = useParams<{ orderId: string }>()
@@ -10,6 +15,7 @@ export default function OperationOrderDetailPage() {
 
   return (
     <Container>
+      {/* Breadcrumb Path */}
       <div className="flex items-center gap-2 text-sm pt-8 mb-6 font-medium">
         <Link
           to="/operationstaff/dashboard"
@@ -28,102 +34,107 @@ export default function OperationOrderDetailPage() {
         <span className="text-primary-500 font-bold">Details</span>
       </div>
 
-      <div className="flex items-center gap-6 mb-10">
+      {/* Header */}
+      <div className="flex items-center gap-5 mb-8">
         <button
           onClick={() => navigate(-1)}
-          className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all duration-200 group cursor-pointer"
+          className="p-3 bg-white hover:bg-neutral-50 rounded-xl shadow-sm transition-all border border-neutral-100"
         >
-          <ArrowLeft size={24} className="group-hover:-translate-x-0.5 transition-transform" />
+          <IoArrowBack size={20} className="text-gray-600" />
         </button>
-        <div className="flex flex-col gap-1">
-          <h1 className="text-4xl font-extrabold text-[#0f172a] tracking-tight">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
             Order #{orderId || 'REG-001'}
           </h1>
-          <p className="text-[11px] text-slate-400 font-bold uppercase tracking-[0.2em]">
+          <p className="text-sm text-neutral-500 mt-1 font-medium tracking-wide italic opacity-80 uppercase tracking-widest text-[10px]">
             DETAILED ORDER INFORMATION
           </p>
         </div>
         <div className="ml-auto">
-          <span className="px-6 py-2 bg-[#dcfce7] text-[#15803d] text-[11px] font-extrabold uppercase tracking-widest rounded-full border border-[#bbf7d0] cursor-pointer shadow-sm">
+          <span className="px-6 py-2 bg-mint-100 text-mint-700 border border-mint-200 rounded-full text-xs font-bold uppercase tracking-widest">
             Pending
           </span>
         </div>
       </div>
 
+      {/* Progress Tracker */}
       <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border border-mint-200">
-        <h2 className="text-lg font-semibold text-mint-900 mb-6">Order Progress</h2>
+        <h2 className="text-lg font-semibold text-mint-900 mb-6">Tiến độ đơn hàng</h2>
         <div className="flex items-center justify-between">
           <div className="flex flex-col items-center flex-1">
             <div className="w-12 h-12 rounded-full bg-mint-500 flex items-center justify-center mb-2">
               <IoTimeOutline size={24} className="text-white" />
             </div>
-            <span className="text-xs text-gray-600 text-center font-medium">Pending</span>
+            <span className="text-xs text-gray-600 text-center font-medium">Chờ xử lý</span>
           </div>
           <div className="flex-1 h-0.5 bg-gray-200 -mx-2"></div>
           <div className="flex flex-col items-center flex-1">
             <div className="w-12 h-12 rounded-full bg-mint-500 flex items-center justify-center mb-2">
               <IoConstructOutline size={24} className="text-white" />
             </div>
-            <span className="text-xs text-gray-600 text-center font-medium">Processing</span>
+            <span className="text-xs text-gray-600 text-center font-medium">Đang xử lý</span>
           </div>
           <div className="flex-1 h-0.5 bg-gray-200 -mx-2"></div>
           <div className="flex flex-col items-center flex-1">
             <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-2">
               <IoCubeOutline size={24} className="text-gray-400" />
             </div>
-            <span className="text-xs text-gray-400 text-center">Packing</span>
+            <span className="text-xs text-gray-400 text-center">Đóng gói</span>
           </div>
           <div className="flex-1 h-0.5 bg-gray-200 -mx-2"></div>
           <div className="flex flex-col items-center flex-1">
             <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-2">
               <IoCubeOutline size={24} className="text-gray-400" />
             </div>
-            <span className="text-xs text-gray-400 text-center">Ready for Pickup</span>
+            <span className="text-xs text-gray-400 text-center">Chờ lấy</span>
           </div>
           <div className="flex-1 h-0.5 bg-gray-200 -mx-2"></div>
           <div className="flex flex-col items-center flex-1">
             <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-2">
               <IoCarOutline size={24} className="text-gray-400" />
             </div>
-            <span className="text-xs text-gray-400 text-center">Shipping</span>
+            <span className="text-xs text-gray-400 text-center">Vận chuyển</span>
           </div>
         </div>
       </div>
 
+      {/* Prescription - Lens Specifications */}
       <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border-2 border-mint-300">
         <h2 className="text-lg font-semibold text-mint-900 mb-4 pb-2 border-b-2 border-mint-200">
-          Lens Specifications
+          Thông Số Tròng Kính
         </h2>
 
+        {/* Prescription Table */}
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-mint-50">
                 <th className="border border-mint-200 px-4 py-3 text-left text-sm font-semibold text-gray-700">
-                  Eye
+                  Mắt
                 </th>
                 <th className="border border-mint-200 px-4 py-3 text-center text-sm font-semibold text-gray-700">
-                  Sphere (SPH)
+                  Độ Cầu (SPH)
                 </th>
                 <th className="border border-mint-200 px-4 py-3 text-center text-sm font-semibold text-gray-700">
-                  Cylinder (CYL)
+                  Độ Trụ (CYL)
                 </th>
                 <th className="border border-mint-200 px-4 py-3 text-center text-sm font-semibold text-gray-700">
-                  Axis
+                  Trục (AXIS)
                 </th>
                 <th className="border border-mint-200 px-4 py-3 text-center text-sm font-semibold text-gray-700">
-                  Prism
+                  Lăng Kính
                 </th>
                 <th className="border border-mint-200 px-4 py-3 text-center text-sm font-semibold text-gray-700">
-                  Add
+                  Độ Add
                 </th>
               </tr>
             </thead>
             <tbody>
-              <tr className="hover:bg-mint-50/50 transition-colors">
+              {/* Right Eye */}
+              <tr className="hover:bg-mint-25">
                 <td className="border border-mint-200 px-4 py-3">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium text-gray-900">Right Eye (OD)</span>
+                    <span className="font-medium text-gray-900">Mắt Phải (OD)</span>
                   </div>
                 </td>
                 <td className="border border-mint-200 px-4 py-3 text-center font-mono font-semibold text-gray-900">
@@ -142,10 +153,11 @@ export default function OperationOrderDetailPage() {
                   -
                 </td>
               </tr>
-              <tr className="hover:bg-mint-50/50 transition-colors">
+              {/* Left Eye */}
+              <tr className="hover:bg-mint-25">
                 <td className="border border-mint-200 px-4 py-3">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium text-gray-900">Left Eye (OS)</span>
+                    <span className="font-medium text-gray-900">Mắt Trái (OS)</span>
                   </div>
                 </td>
                 <td className="border border-mint-200 px-4 py-3 text-center font-mono font-semibold text-gray-900">
@@ -168,72 +180,77 @@ export default function OperationOrderDetailPage() {
           </table>
         </div>
 
+        {/* Additional Lens Info */}
         <div className="mt-4 grid grid-cols-2 gap-4">
-          <div className="bg-mint-50 rounded-lg p-4 border border-mint-200">
-            <div className="text-xs text-mint-600 font-bold uppercase tracking-wider mb-1">
-              Lens Type
-            </div>
+          <div className="bg-mint-50 rounded-lg p-3 border border-mint-200">
+            <div className="text-xs text-gray-500 mb-1">Loại Tròng</div>
             <div className="font-semibold text-gray-900">Single Vision</div>
           </div>
-          <div className="bg-mint-50 rounded-lg p-4 border border-mint-200">
-            <div className="text-xs text-mint-600 font-bold uppercase tracking-wider mb-1">
-              Material
-            </div>
+          <div className="bg-mint-50 rounded-lg p-3 border border-mint-200">
+            <div className="text-xs text-gray-500 mb-1">Chất Liệu</div>
             <div className="font-semibold text-gray-900">CR-39 Plastic</div>
           </div>
         </div>
       </div>
 
+      {/* Frame Specifications */}
       <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border-2 border-mint-300">
         <h2 className="text-lg font-semibold text-mint-900 mb-4 pb-2 border-b-2 border-mint-200">
-          Frame Specifications
+          Thông Tin Gọng Kính
         </h2>
 
         <div className="flex gap-6">
+          {/* Frame Image */}
           <div className="flex-shrink-0">
-            <div className="w-60 h-60 bg-mint-50 rounded-xl border-2 border-mint-200 flex items-center justify-center overflow-hidden p-4 group transition-all hover:border-mint-400">
+            <div className="w-60 h-60 bg-mint-50 rounded-lg border-2 border-mint-200 flex items-center justify-center overflow-hidden p-2">
               <img
                 src="https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&q=80&w=800"
                 alt="Rayban Aviator"
-                className="w-full h-full object-contain mix-blend-multiply transition-transform group-hover:scale-110"
+                className="w-full h-full object-contain mix-blend-multiply"
               />
             </div>
           </div>
 
-          <div className="flex-1 grid grid-cols-2 gap-4">
-            {[
-              { label: 'Frame Code', value: 'RB-AV-001' },
-              { label: 'Frame Name', value: 'Aviator Classic' },
-              { label: 'Brand', value: 'Ray-Ban' },
-              { label: 'Material', value: 'Metal Titanium' },
-              { label: 'Color', value: 'Gold', isColor: true },
-              { label: 'Coating', value: 'Anti-Reflective' }
-            ].map((item, idx) => (
-              <div
-                key={idx}
-                className="bg-mint-50 rounded-lg p-4 border border-mint-200 hover:border-mint-400 transition-colors group"
-              >
-                <div className="text-xs text-mint-600 font-bold uppercase tracking-wider mb-1 group-hover:text-mint-700">
-                  {item.label}
-                </div>
-                <div className="font-semibold text-gray-900 flex items-center gap-2">
-                  {item.isColor && (
-                    <span className="w-4 h-4 rounded-full bg-yellow-600 border border-gray-300"></span>
-                  )}
-                  {item.value}
-                </div>
+          {/* Frame Details */}
+          <div className="flex-1 grid grid-cols-2 gap-3">
+            <div className="bg-mint-50 rounded-lg p-3 border border-mint-200">
+              <div className="text-xs text-gray-500 mb-0.5">Mã Gọng</div>
+              <div className="font-semibold text-gray-900">RB-AV-001</div>
+            </div>
+            <div className="bg-mint-50 rounded-lg p-3 border border-mint-200">
+              <div className="text-xs text-gray-500 mb-0.5">Tên Gọng</div>
+              <div className="font-semibold text-gray-900">Aviator Classic</div>
+            </div>
+            <div className="bg-mint-50 rounded-lg p-3 border border-mint-200">
+              <div className="text-xs text-gray-500 mb-0.5">Thương Hiệu</div>
+              <div className="font-semibold text-gray-900">Ray-Ban</div>
+            </div>
+            <div className="bg-mint-50 rounded-lg p-3 border border-mint-200">
+              <div className="text-xs text-gray-500 mb-0.5">Chất Liệu</div>
+              <div className="font-semibold text-gray-900">Metal Titanium</div>
+            </div>
+            <div className="bg-mint-50 rounded-lg p-3 border border-mint-200">
+              <div className="text-xs text-gray-500 mb-0.5">Màu Sắc</div>
+              <div className="font-semibold text-gray-900 flex items-center gap-2">
+                <span className="w-4 h-4 rounded-full bg-yellow-600 border border-gray-300"></span>
+                Gold
               </div>
-            ))}
+            </div>
+            <div className="bg-mint-50 rounded-lg p-3 border border-mint-200">
+              <div className="text-xs text-gray-500 mb-0.5">Lớp Phủ</div>
+              <div className="font-semibold text-gray-900">Anti-Reflective</div>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="flex justify-end gap-3 pb-8">
+      {/* Action Button */}
+      <div className="flex justify-end gap-3">
         <button
-          className="px-8 py-3 bg-mint-600 text-white rounded-xl font-bold transition-all shadow-lg hover:bg-mint-700 hover:shadow-mint-200 transform hover:-translate-y-1 active:scale-95"
+          className="px-6 py-3 bg-mint-900 hover:bg-mint-700 text-white rounded-lg font-medium transition-colors shadow-sm"
           onClick={() => navigate(PATHS.OPERATIONSTAFF.PACKING_PROCESS(orderId || ''))}
         >
-          Start Processing
+          Bắt đầu xử lý
         </button>
       </div>
     </Container>

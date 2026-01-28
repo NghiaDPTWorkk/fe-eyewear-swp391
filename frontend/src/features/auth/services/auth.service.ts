@@ -8,7 +8,7 @@ export const authService = {
     const response = await authApi.loginCustomer(payload)
 
     // Extract tokens from response
-    const { accessToken, refreshToken } = response
+    const { accessToken, refreshToken } = response as any
 
     if (accessToken) {
       localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken)

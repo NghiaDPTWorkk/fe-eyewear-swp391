@@ -1,69 +1,71 @@
+// Error Messages Constants
 export const ERROR_MESSAGES = {
   AUTH: {
-    INVALID_CREDENTIALS: 'Incorrect email or password',
-    LOGIN_FAILED: 'Login failed. Please try again.',
-    REGISTER_FAILED: 'Registration failed. Please try again.',
-    INVALID_EMAIL: 'Invalid email address',
-    PASSWORD_MIN_LENGTH: 'Password must be at least 8 characters long',
-    PASSWORD_UPPERCASE: 'Password must contain at least 1 uppercase letter',
-    PASSWORD_NUMBER: 'Password must contain at least 1 number',
-    UNAUTHORIZED: 'Session expired. Please log in again.'
+    INVALID_CREDENTIALS: 'Email hoặc mật khẩu không đúng',
+    LOGIN_FAILED: 'Đăng nhập thất bại. Vui lòng thử lại.',
+    REGISTER_FAILED: 'Đăng ký thất bại. Vui lòng thử lại.',
+    INVALID_EMAIL: 'Email không hợp lệ',
+    PASSWORD_MIN_LENGTH: 'Mật khẩu phải có ít nhất 8 ký tự',
+    PASSWORD_UPPERCASE: 'Mật khẩu phải có ít nhất 1 chữ hoa',
+    PASSWORD_NUMBER: 'Mật khẩu phải có ít nhất 1 số',
+    UNAUTHORIZED: 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.'
   },
   CART: {
-    ADD_FAILED: 'Failed to add to cart',
-    UPDATE_FAILED: 'Failed to update cart',
-    REMOVE_FAILED: 'Failed to remove product',
-    EMPTY_CART: 'Cart is empty'
+    ADD_FAILED: 'Thêm vào giỏ hàng thất bại',
+    UPDATE_FAILED: 'Cập nhật giỏ hàng thất bại',
+    REMOVE_FAILED: 'Xóa sản phẩm thất bại',
+    EMPTY_CART: 'Giỏ hàng trống'
   },
   CHECKOUT: {
-    STOCK_UNAVAILABLE: 'Product is out of stock',
-    PAYMENT_FAILED: 'Payment failed. Please try again.',
-    ORDER_FAILED: 'Order failed. Please try again.'
+    STOCK_UNAVAILABLE: 'Sản phẩm đã hết hàng',
+    PAYMENT_FAILED: 'Thanh toán thất bại. Vui lòng thử lại.',
+    ORDER_FAILED: 'Đặt hàng thất bại. Vui lòng thử lại.'
   },
   PRESCRIPTION: {
-    INVALID_SPH: 'Invalid SPH value (-20.00 to +20.00)',
-    INVALID_CYL: 'Invalid CYL value (-6.00 to +6.00)',
-    INVALID_AXIS: 'Invalid AXIS value (1 to 180)',
-    INVALID_PD: 'Invalid PD value (50 to 80)',
-    AXIS_REQUIRED: 'AXIS is required when CYL is not 0'
+    INVALID_SPH: 'Thông số SPH không hợp lệ (-20.00 đến +20.00)',
+    INVALID_CYL: 'Thông số CYL không hợp lệ (-6.00 đến +6.00)',
+    INVALID_AXIS: 'Thông số AXIS không hợp lệ (1 đến 180)',
+    INVALID_PD: 'Thông số PD không hợp lệ (50 đến 80)',
+    AXIS_REQUIRED: 'AXIS bắt buộc khi CYL khác 0'
   },
   PRODUCT: {
-    NOT_FOUND: 'Product not found',
-    INVALID_PRICE: 'Invalid product price',
-    LOAD_FAILED: 'Failed to load products',
-    CREATE_FAILED: 'Failed to create product',
-    UPDATE_FAILED: 'Failed to update product',
-    DELETE_FAILED: 'Failed to delete product'
+    NOT_FOUND: 'Không tìm thấy sản phẩm',
+    INVALID_PRICE: 'Giá sản phẩm không hợp lệ',
+    LOAD_FAILED: 'Lỗi tải sản phẩm',
+    CREATE_FAILED: 'Tạo sản phẩm thất bại',
+    UPDATE_FAILED: 'Cập nhật sản phẩm thất bại',
+    DELETE_FAILED: 'Xóa sản phẩm thất bại'
   },
   HTTP: {
-    BAD_REQUEST: 'Invalid request',
-    FORBIDDEN: 'You do not have permission to access this',
-    NOT_FOUND: 'Data not found',
-    CONFLICT: 'Data already exists',
-    UNPROCESSABLE: 'Invalid data',
-    TOO_MANY_REQUESTS: 'Too many requests. Please try again later.',
-    SERVICE_UNAVAILABLE: 'System maintenance. Please try again later.'
+    BAD_REQUEST: 'Yêu cầu không hợp lệ',
+    FORBIDDEN: 'Bạn không có quyền truy cập',
+    NOT_FOUND: 'Không tìm thấy dữ liệu',
+    CONFLICT: 'Dữ liệu đã tồn tại',
+    UNPROCESSABLE: 'Dữ liệu không hợp lệ',
+    TOO_MANY_REQUESTS: 'Quá nhiều yêu cầu. Vui lòng thử lại sau',
+    SERVICE_UNAVAILABLE: 'Hệ thống đang bảo trì. Vui lòng thử lại sau'
   },
   GENERAL: {
-    SUCCESS: 'Success',
-    NETWORK_ERROR: 'Connection error. Please check your network.',
-    SERVER_ERROR: 'System error. Please try again later.',
-    UNKNOWN_ERROR: 'An error occurred. Please try again.'
+    SUCCESS: 'Thành công',
+    NETWORK_ERROR: 'Lỗi kết nối. Vui lòng kiểm tra mạng.',
+    SERVER_ERROR: 'Lỗi hệ thống. Vui lòng thử lại sau.',
+    UNKNOWN_ERROR: 'Đã xảy ra lỗi. Vui lòng thử lại.'
   }
 } as const
 
+// Success Messages Constants
 export const SUCCESS_MESSAGES = {
   AUTH: {
-    LOGIN_SUCCESS: 'Login successful',
-    REGISTER_SUCCESS: 'Registration successful',
-    LOGOUT_SUCCESS: 'Logout successful'
+    LOGIN_SUCCESS: 'Đăng nhập thành công',
+    REGISTER_SUCCESS: 'Đăng ký thành công',
+    LOGOUT_SUCCESS: 'Đăng xuất thành công'
   },
   CART: {
-    ADDED: 'Added to cart',
-    UPDATED: 'Cart updated',
-    REMOVED: 'Product removed'
+    ADDED: 'Đã thêm vào giỏ hàng',
+    UPDATED: 'Đã cập nhật giỏ hàng',
+    REMOVED: 'Đã xóa sản phẩm'
   },
   CHECKOUT: {
-    ORDER_SUCCESS: 'Order placed successfully'
+    ORDER_SUCCESS: 'Đặt hàng thành công'
   }
 } as const

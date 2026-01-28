@@ -70,12 +70,12 @@ export default function OrderDetailsDrawer({
   }
 
   const statusOptions = [
-    { label: 'In Production', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
-    { label: 'Quality Check', color: 'bg-amber-50 text-amber-600 border-amber-100' },
-    { label: 'Ready to Ship', color: 'bg-blue-50 text-blue-600 border-blue-100' },
-    { label: 'Shipped', color: 'bg-purple-50 text-purple-600 border-purple-100' },
-    { label: 'Delivered', color: 'bg-gray-50 text-gray-600 border-gray-100' },
-    { label: 'On Hold', color: 'bg-red-50 text-red-600 border-red-100' }
+    { label: 'In Production', color: 'bg-[#dcfce7] text-[#15803d] border-[#bbf7d0]' },
+    { label: 'Quality Check', color: 'bg-[#fef3c7] text-[#b45309] border-[#fde68a]' },
+    { label: 'Ready to Ship', color: 'bg-[#dbeafe] text-[#1d4ed8] border-[#bfdbfe]' },
+    { label: 'Shipped', color: 'bg-[#f3e8ff] text-[#7e22ce] border-[#e9d5ff]' },
+    { label: 'Delivered', color: 'bg-[#f3f4f6] text-[#374151] border-[#e5e7eb]' },
+    { label: 'On Hold', color: 'bg-[#fee2e2] text-[#b91c1c] border-[#fecaca]' }
   ]
 
   const handleUpdateClick = () => {
@@ -111,15 +111,15 @@ export default function OrderDetailsDrawer({
           {/* Header */}
           <div className="flex items-center justify-between p-6 pb-4">
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 tracking-tight">Order Details</h2>
-              <p className="text-gray-500 text-sm mt-0.5">{orderData.id}</p>
+              <h2 className="text-2xl font-bold text-[#0f172a] tracking-tight">Order Details</h2>
+              <p className="text-slate-400 text-base mt-1 font-medium">{orderData.id}</p>
             </div>
-            <Button
+            <button
               onClick={onClose}
-              className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+              className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-all"
             >
               <IoClose size={24} />
-            </Button>
+            </button>
           </div>
 
           {/* Scrollable Content */}
@@ -129,7 +129,7 @@ export default function OrderDetailsDrawer({
               <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-widest">
                 STATUS
               </h3>
-              <span className="inline-block px-4 py-1 bg-emerald-50 text-emerald-500 font-semibold rounded-full text-[10px] uppercase tracking-widest border border-emerald-100">
+              <span className="inline-block px-6 py-2 bg-[#dcfce7] text-[#15803d] text-[11px] font-bold uppercase tracking-widest rounded-full border border-[#bbf7d0] cursor-pointer shadow-sm">
                 {orderData.status}
               </span>
             </div>
@@ -265,12 +265,15 @@ export default function OrderDetailsDrawer({
         >
           {/* Header */}
           <div className="p-6 pb-4 border-b border-neutral-50 flex items-center gap-4">
-            <Button
+            <button
               onClick={() => setIsUpdatingStatus(false)}
-              className="p-2 text-gray-400 hover:text-emerald-500 hover:bg-emerald-50 rounded-xl transition-all"
+              className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all cursor-pointer group"
             >
-              <IoArrowBack size={22} />
-            </Button>
+              <IoArrowBack
+                size={22}
+                className="group-hover:-translate-x-0.5 transition-transform"
+              />
+            </button>
             <div>
               <h2 className="text-lg font-semibold text-gray-900 tracking-tight">Update Status</h2>
               <p className="text-gray-500 text-xs mt-0.5">
@@ -318,7 +321,7 @@ export default function OrderDetailsDrawer({
                       >
                         {option.label}
                         {isCurrentStatus && (
-                          <span className="ml-2 text-[10px] font-semibold text-emerald-500 bg-emerald-100 px-2 py-0.5 rounded-full">
+                          <span className="ml-2 text-[10px] font-bold text-[#15803d] bg-[#dcfce7] px-2.5 py-1 rounded-full border border-[#bbf7d0]">
                             Current
                           </span>
                         )}

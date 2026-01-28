@@ -123,7 +123,7 @@ export function NavActions({
     >
       <div className="flex items-center gap-4 text-neutral-500">
         <button
-          className="relative p-1 hover:text-primary-500 transition-colors"
+          className="relative p-1 hover:text-primary-500 transition-colors cursor-pointer"
           title="View Messages"
         >
           <FiMail className="text-2xl" />
@@ -136,7 +136,7 @@ export function NavActions({
               setOpenDropdown(openDropdown === 'notifications' ? null : 'notifications')
             }
             className={cn(
-              'relative p-1 transition-colors',
+              'relative p-1 transition-colors cursor-pointer',
               openDropdown === 'notifications' ? 'text-primary-500' : 'hover:text-primary-500'
             )}
             title="View Notifications"
@@ -189,7 +189,7 @@ export function NavActions({
       <div className="relative">
         <button
           onClick={() => setOpenDropdown(openDropdown === 'profile' ? null : 'profile')}
-          className="flex items-center gap-3 group transition-opacity hover:opacity-80"
+          className="flex items-center gap-3 group transition-opacity hover:opacity-80 cursor-pointer"
         >
           <div className="text-right hidden sm:block">
             <div className="text-sm font-semibold text-neutral-900 leading-tight">{userName}</div>

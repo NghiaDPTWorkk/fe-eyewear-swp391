@@ -129,44 +129,46 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
     <div className="space-y-6 pb-20 animate-in fade-in slide-in-from-right-4 duration-300 font-sans">
       {/* Top Navigation Bar */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-6">
           <button
             onClick={onBack}
-            className="p-2 hover:bg-emerald-50 text-neutral-500 hover:text-emerald-600 rounded-full transition-all"
+            className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all duration-200 group cursor-pointer"
           >
-            <IoArrowBack size={22} />
+            <IoArrowBack size={24} className="group-hover:-translate-x-0.5 transition-transform" />
           </button>
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-4">
+              <h1 className="text-4xl font-extrabold text-[#0f172a] tracking-tight">
                 Order #{order.id}
               </h1>
-              <span className="px-3 py-1 bg-emerald-50 text-emerald-500 text-xs font-medium uppercase tracking-wider rounded-full border border-emerald-100">
+              <span className="px-5 py-2 bg-[#dcfce7] text-[#15803d] text-[11px] font-bold uppercase tracking-widest rounded-full border border-[#bbf7d0] cursor-pointer shadow-sm">
                 {order.status}
               </span>
             </div>
-            <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
-              <span className="flex items-center gap-1.5">
-                <IoCalendarOutline /> {order.date}
-              </span>
-              <span className="w-1 h-1 bg-gray-300 rounded-full" />
-              <span className="flex items-center gap-1.5">
-                <IoCubeOutline /> {order.items.length} Items
-              </span>
+            <div className="flex items-center gap-5 mt-1.5">
+              <div className="flex items-center gap-2 text-[14px] font-medium text-slate-500">
+                <IoCalendarOutline className="text-slate-400" size={18} />
+                {order.date}
+              </div>
+              <div className="w-1.5 h-1.5 bg-slate-200 rounded-full" />
+              <div className="flex items-center gap-2 text-[14px] font-medium text-slate-500">
+                <IoCubeOutline className="text-slate-400" size={18} />
+                {order.items.length} Items
+              </div>
             </div>
           </div>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-4">
           <Button
             variant="outline"
-            className="border-neutral-200 text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 font-medium"
-            leftIcon={<IoPrintOutline size={18} />}
+            className="border-slate-200 text-slate-600 bg-white hover:bg-slate-50 hover:text-slate-900 font-bold rounded-2xl px-6 h-12 transition-all border-2"
+            leftIcon={<IoPrintOutline size={20} />}
           >
             Invoice
           </Button>
           <Button
-            className="bg-emerald-400 hover:bg-emerald-500 text-white font-medium shadow-md shadow-emerald-200 border-none"
-            leftIcon={<IoPencilOutline size={18} />}
+            className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold shadow-lg shadow-emerald-100/50 border-none rounded-2xl px-6 h-12 transition-all active:scale-95"
+            leftIcon={<IoPencilOutline size={20} />}
           >
             Update Status
           </Button>

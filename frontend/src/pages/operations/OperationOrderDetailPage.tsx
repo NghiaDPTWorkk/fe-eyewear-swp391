@@ -28,26 +28,23 @@ export default function OperationOrderDetailPage() {
         <span className="text-primary-500 font-bold">Details</span>
       </div>
 
-      <div className="flex items-center gap-5 mb-8">
+      <div className="flex items-center gap-6 mb-10">
         <button
           onClick={() => navigate(-1)}
-          className="w-10 h-10 flex items-center justify-center bg-white hover:bg-mint-50 rounded-xl shadow-sm transition-all duration-300 border border-neutral-100 hover:border-mint-200 hover:shadow-md hover:-translate-x-0.5 active:scale-90 group"
+          className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all duration-200 group cursor-pointer"
         >
-          <ArrowLeft
-            size={20}
-            className="text-neutral-500 group-hover:text-mint-600 transition-colors stroke-[2.5px]"
-          />
+          <ArrowLeft size={24} className="group-hover:-translate-x-0.5 transition-transform" />
         </button>
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-4xl font-extrabold text-[#0f172a] tracking-tight">
             Order #{orderId || 'REG-001'}
           </h1>
-          <p className="text-sm text-neutral-500 mt-1 font-medium tracking-wide italic opacity-80 uppercase tracking-widest text-[10px]">
+          <p className="text-[11px] text-slate-400 font-bold uppercase tracking-[0.2em]">
             DETAILED ORDER INFORMATION
           </p>
         </div>
         <div className="ml-auto">
-          <span className="px-6 py-2 bg-mint-100 text-mint-700 border border-mint-200 rounded-full text-xs font-bold uppercase tracking-widest">
+          <span className="px-6 py-2 bg-[#dcfce7] text-[#15803d] text-[11px] font-extrabold uppercase tracking-widest rounded-full border border-[#bbf7d0] cursor-pointer shadow-sm">
             Pending
           </span>
         </div>

@@ -17,7 +17,8 @@ export const ENDPOINTS = {
     COMMON_GET_BY_TYPE: (page: number, limit: number, type: string) =>
       `/products?page=${page}&limit=${limit}&type=${type}`,
     SEARCH: (page: number, limit: number, search: string) =>
-      `/products?page=${page}&limit=${limit}&search=${search}`
+      `/products?page=${page}&limit=${limit}&search=${search}`,
+    DETAIL: (id: string) => `/products/${id}`
   },
 
   // Cart

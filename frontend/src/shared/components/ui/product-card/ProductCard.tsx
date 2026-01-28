@@ -12,6 +12,7 @@ export interface ProductCardProps {
   salePercent?: number
   onAddToCart?: (productId: string) => void
   onAddToWishlist?: (productId: string) => void
+  onClick?: (productId: string) => void
   className?: string
 }
 
@@ -25,6 +26,7 @@ export function ProductCard({
   salePercent,
   onAddToCart,
   onAddToWishlist,
+  onClick,
   className
 }: ProductCardProps) {
   const handleAddToCart = () => {
@@ -42,10 +44,17 @@ export function ProductCard({
   const hasSale = salePercent && salePercent > 0
   const finalPrice = discountPrice || price || 0
 
+  const handleCardClick = () => {
+    if (onClick) {
+      onClick(id)
+    }
+  }
+
   return (
     <div
+      onClick={handleCardClick}
       className={cn(
-        'bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group relative',
+        'bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group relative cursor-pointer',
         className
       )}
     >
@@ -58,7 +67,10 @@ export function ProductCard({
 
       {/* Wishlist Button */}
       <button
-        onClick={handleAddToWishlist}
+        onClick={(e) => {
+          e.stopPropagation()
+          handleAddToWishlist()
+        }}
         className="absolute top-3 right-3 z-10 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-white hover:scale-110"
         aria-label="Add to wishlist"
       >
@@ -102,7 +114,10 @@ export function ProductCard({
             </span>
           </div>
           <Button
-            onClick={handleAddToCart}
+            onClick={(e) => {
+              e.stopPropagation()
+              handleAddToCart()
+            }}
             className="w-12 h-12 bg-primary-500 text-white rounded-full flex items-center justify-center hover:bg-primary-600 transition-all hover:scale-110 shadow-md"
           >
             <ShoppingCart className="w-6 h-6" />

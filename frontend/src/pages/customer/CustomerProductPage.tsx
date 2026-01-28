@@ -6,9 +6,10 @@ import { ProductCard } from '@/shared/components/ui/product-card'
 
 import { ArrowRight } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 export const CustomerProductPage = () => {
+  const navigate = useNavigate()
   const location = useLocation()
   const [page, setPage] = useState(1)
   const limit = 12
@@ -194,6 +195,7 @@ export const CustomerProductPage = () => {
                         price={originalPrice}
                         discountPrice={discountPrice}
                         salePercent={salePercent}
+                        onClick={(id) => navigate(`/products/${id}`)}
                         onAddToCart={() => {
                           /* TODO: Implement add to cart */
                         }}

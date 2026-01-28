@@ -8,17 +8,16 @@ import { useLayoutStore } from '@/store/layout.store'
 interface NavSearchProps {
   className?: string
   placeholder?: string
-  styleVariant?: 'default' | 'operation' // Added variant prop
+  styleVariant?: 'default' | 'operation'
 }
 
 export function NavSearch({ className, placeholder, styleVariant = 'default' }: NavSearchProps) {
   const { toggleSidebar } = useLayoutStore()
 
-  // Define styles based on variant
   const inputStyles =
     styleVariant === 'operation'
-      ? 'bg-mint-200 border-mint-500 rounded-xl' // Operation style
-      : 'bg-neutral-50 border-neutral-100 rounded-xl' // Default/Sales style
+      ? 'bg-mint-200 border-mint-500 rounded-xl'
+      : 'bg-neutral-50 border-neutral-100 rounded-xl'
 
   const iconColor = styleVariant === 'operation' ? 'text-mint-700' : 'text-neutral-400'
 

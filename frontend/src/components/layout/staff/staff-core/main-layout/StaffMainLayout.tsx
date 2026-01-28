@@ -25,7 +25,6 @@ export function StaffMainLayout({
     <div className="flex h-screen bg-white">
       {sidebar}
 
-      {/* Mobile Overlay */}
       {!sidebarCollapsed && (
         <div
           className="fixed inset-0 bg-neutral-900/40 z-40 lg:hidden animate-in fade-in duration-200"

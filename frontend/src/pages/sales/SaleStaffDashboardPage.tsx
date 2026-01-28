@@ -194,7 +194,12 @@ function OrderStatusChart() {
   )
 }
 
-function UrgentOrdersTable() {
+// --- Main Page Component ---
+import { useState } from 'react'
+import OrderDetail from '@/features/staff/components/OrderDetail/OrderDetail'
+import OrderDetailsDrawer from '@/features/staff/components/OrderDetailsDrawer/OrderDetailsDrawer'
+
+function UrgentOrdersTable({ onRowClick }: { onRowClick: (id: string) => void }) {
   return (
     <Card className="p-6">
       <div className="flex items-center justify-between mb-6">
@@ -212,14 +217,36 @@ function UrgentOrdersTable() {
         </div>
       </div>
 
-      <OrderTable role="sales" />
+      <OrderTable role="sales" onRowClick={onRowClick} />
     </Card>
   )
 }
 
-// --- Main Page Component ---
-
 export default function SaleStaffDashboardPage() {
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [viewFullId, setViewFullId] = useState<string | null>(null)
+
+  const handleOpenDrawer = (id: string) => {
+    setSelectedOrderId(id)
+    setIsDrawerOpen(true)
+  }
+
+  const handleViewFullDetails = () => {
+    if (selectedOrderId) {
+      setViewFullId(selectedOrderId)
+      setIsDrawerOpen(false)
+    }
+  }
+
+  if (viewFullId) {
+    return (
+      <Container>
+        <OrderDetail orderId={viewFullId} onBack={() => setViewFullId(null)} />
+      </Container>
+    )
+  }
+
   return (
     <Container>
       <div className="mb-8">
@@ -243,7 +270,14 @@ export default function SaleStaffDashboardPage() {
         </div>
       </div>
 
-      <UrgentOrdersTable />
+      <UrgentOrdersTable onRowClick={handleOpenDrawer} />
+
+      <OrderDetailsDrawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        orderId={selectedOrderId}
+        onViewFullDetails={handleViewFullDetails}
+      />
     </Container>
   )
 }

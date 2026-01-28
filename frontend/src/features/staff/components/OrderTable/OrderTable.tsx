@@ -32,6 +32,7 @@ interface OrderTableProps {
   hiddenColumns?: string[] // Mảng các header cột muốn ẩn
   filterType?: string // Loại đơn muốn lọc
   role?: 'sales' | 'operation' // Phân biệt vai trò để hiển thị UI khác nhau
+  onRowClick?: (orderId: string) => void
 }
 
 const getOrderTypeStyles = (type: string, role: string) => {
@@ -65,13 +66,18 @@ export default function OrderTable({
   columns,
   hiddenColumns = [],
   filterType,
-  role = 'operation'
+  role = 'operation',
+  onRowClick
 }: OrderTableProps) {
   const isSales = role === 'sales'
   const navigate = useNavigate()
 
   const handleViewOrder = (orderId: string) => {
-    navigate(PATHS.OPERATIONSTAFF.ORDER_DETAIL(orderId))
+    if (onRowClick) {
+      onRowClick(orderId)
+    } else {
+      navigate(PATHS.OPERATIONSTAFF.ORDER_DETAIL(orderId))
+    }
   }
 
   const orders: Order[] = [

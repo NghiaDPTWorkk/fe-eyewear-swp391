@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Container, Button, Card } from '@/components'
 import {
@@ -10,10 +11,39 @@ import {
   IoFilter,
   IoChevronBackOutline,
   IoChevronForwardOutline,
-  IoChevronForward // for details
+  IoChevronForward
 } from 'react-icons/io5'
+import OrderDetailsDrawer from '@/features/staff/components/OrderDetailsDrawer/OrderDetailsDrawer'
+import OrderDetail from '@/features/staff/components/OrderDetail/OrderDetail'
 
 export default function SaleStaffPreOrdersPage() {
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [showFullDetails, setShowFullDetails] = useState(false)
+
+  const handleOpenDrawer = (orderId: string) => {
+    setSelectedOrderId(orderId)
+    setIsDrawerOpen(true)
+  }
+
+  const handleViewFullDetails = () => {
+    setIsDrawerOpen(false)
+    setShowFullDetails(true)
+  }
+
+  const handleBackToTable = () => {
+    setShowFullDetails(false)
+    setSelectedOrderId(null)
+  }
+
+  if (showFullDetails && selectedOrderId) {
+    return (
+      <Container>
+        <OrderDetail orderId={selectedOrderId} onBack={handleBackToTable} isPreOrder={true} />
+      </Container>
+    )
+  }
+
   return (
     <Container>
       <div className="mb-8">
@@ -158,7 +188,10 @@ export default function SaleStaffPreOrdersPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              <tr className="hover:bg-gray-50/50">
+              <tr
+                className="hover:bg-gray-50/50 cursor-pointer"
+                onClick={() => handleOpenDrawer('PO-2849')}
+              >
                 <td className="px-6 py-4 align-middle">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-gray-100 rounded-xl"></div>
@@ -195,6 +228,10 @@ export default function SaleStaffPreOrdersPage() {
                       colorScheme="neutral"
                       className="p-2 h-8 w-8 text-neutral-400 hover:text-primary-500"
                       title="Details"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleOpenDrawer('PO-2849')
+                      }}
                     >
                       <IoChevronForward size={18} />
                     </Button>
@@ -202,7 +239,10 @@ export default function SaleStaffPreOrdersPage() {
                 </td>
               </tr>
 
-              <tr className="hover:bg-gray-50/50">
+              <tr
+                className="hover:bg-gray-50/50 cursor-pointer"
+                onClick={() => handleOpenDrawer('PO-2850')}
+              >
                 <td className="px-6 py-4 align-middle">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-gray-100 rounded-xl"></div>
@@ -238,6 +278,10 @@ export default function SaleStaffPreOrdersPage() {
                       colorScheme="neutral"
                       className="p-2 h-8 w-8 text-neutral-400 hover:text-primary-500"
                       title="Details"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleOpenDrawer('PO-2850')
+                      }}
                     >
                       <IoChevronForward size={18} />
                     </Button>
@@ -245,7 +289,10 @@ export default function SaleStaffPreOrdersPage() {
                 </td>
               </tr>
 
-              <tr className="hover:bg-gray-50/50">
+              <tr
+                className="hover:bg-gray-50/50 cursor-pointer"
+                onClick={() => handleOpenDrawer('PO-2852')}
+              >
                 <td className="px-6 py-4 align-middle">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-gray-100 rounded-xl"></div>
@@ -281,6 +328,10 @@ export default function SaleStaffPreOrdersPage() {
                       colorScheme="neutral"
                       className="p-2 h-8 w-8 text-neutral-400 hover:text-primary-500"
                       title="Details"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleOpenDrawer('PO-2852')
+                      }}
                     >
                       <IoChevronForward size={18} />
                     </Button>
@@ -322,6 +373,14 @@ export default function SaleStaffPreOrdersPage() {
           </div>
         </div>
       </Card>
+
+      {/* Slide-out Drawer */}
+      <OrderDetailsDrawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        orderId={selectedOrderId}
+        onViewFullDetails={handleViewFullDetails}
+      />
     </Container>
   )
 }

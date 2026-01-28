@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Container, Button, Card } from '@/components'
+import ReturnDetails from '@/features/staff/components/ReturnDetails/ReturnDetails'
 import {
   IoSearchOutline,
   IoRefreshOutline,
@@ -9,6 +11,16 @@ import {
 } from 'react-icons/io5'
 
 export default function SaleStaffReturnsPage() {
+  const [selectedReturnId, setSelectedReturnId] = useState<string | null>(null)
+
+  if (selectedReturnId) {
+    return (
+      <Container>
+        <ReturnDetails returnId={selectedReturnId} onBack={() => setSelectedReturnId(null)} />
+      </Container>
+    )
+  }
+
   return (
     <Container>
       <div className="mb-8">
@@ -104,6 +116,7 @@ export default function SaleStaffReturnsPage() {
                         colorScheme="primary"
                         className="p-2 h-8 w-8 text-primary-500"
                         title="Details"
+                        onClick={() => setSelectedReturnId('RET-8821')}
                       >
                         <IoChevronForward size={18} />
                       </Button>
@@ -131,6 +144,7 @@ export default function SaleStaffReturnsPage() {
                         colorScheme="neutral"
                         className="p-2 h-8 w-8 text-neutral-400 hover:text-primary-500"
                         title="Details"
+                        onClick={() => setSelectedReturnId('RET-8819')}
                       >
                         <IoChevronForward size={18} />
                       </Button>

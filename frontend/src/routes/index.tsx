@@ -51,6 +51,10 @@ const SaleStaffPreOrdersPage = lazy(() =>
   import('@/pages/sales/SaleStaffPreOrdersPage').then((m) => ({ default: m.default }))
 )
 
+const SaleStaffLiveMapPage = lazy(() =>
+  import('@/pages/sales/SaleStaffLiveMapPage').then((m) => ({ default: m.default }))
+)
+
 const SaleStaffReturnsPage = lazy(() =>
   import('@/pages/sales/SaleStaffReturnsPage').then((m) => ({ default: m.default }))
 )
@@ -165,6 +169,10 @@ export const router = createBrowserRouter([
       {
         path: 'lab-status',
         element: <SaleStaffLabStatusPage />
+      },
+      {
+        path: 'live-map/:trackingId',
+        element: <SaleStaffLiveMapPage />
       }
     ]
   },

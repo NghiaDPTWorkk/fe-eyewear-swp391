@@ -18,18 +18,17 @@ export interface Order {
   isNextActive: boolean
 }
 
-// Định nghĩa cấu trúc 1 cột
 export interface Column<T> {
-  header: string | ReactNode // Tiêu đề cột (Text hoặc Component)
-  render: (item: T) => ReactNode // Hàm hiển thị dữ liệu cho từng dòng
-  className?: string // Class cho td á
-  headerClassName?: string // Class cho th
+  header: string | ReactNode
+  render: (item: T) => ReactNode
+  className?: string
+  headerClassName?: string
 }
 
 interface OrderTableProps {
-  columns?: Column<Order>[] // Mảng các cột
-  hiddenColumns?: string[] // Mảng các header cột muốn ẩn
-  filterType?: string // Loại đơn muốn lọc
+  columns?: Column<Order>[]
+  hiddenColumns?: string[]
+  filterType?: string
 }
 
 const getOrderTypeStyles = (type: string) => {
@@ -48,12 +47,10 @@ const getOrderTypeStyles = (type: string) => {
 export default function OrderTable({ columns, hiddenColumns = [], filterType }: OrderTableProps) {
   const navigate = useNavigate()
 
-  // Handler để navigate đến trang chi tiết đơn hàng
   const handleViewOrder = (orderId: string) => {
     navigate(PATHS.OPERATIONSTAFF.ORDER_DETAIL(orderId))
   }
 
-  // Mock data mốt thay sau
   const orders: Order[] = [
     {
       id: 'ORD-001',
@@ -113,7 +110,6 @@ export default function OrderTable({ columns, hiddenColumns = [], filterType }: 
     ? orders.filter((order) => order.orderType === filterType)
     : orders
 
-  // Default Columns nếu không truyền props
   const defaultColumns: Column<Order>[] = [
     {
       header: 'MÃ ĐƠN',

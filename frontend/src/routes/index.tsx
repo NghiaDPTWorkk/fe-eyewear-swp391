@@ -15,6 +15,10 @@ const CustomerHomePage = lazy(() =>
   import('@/pages/customer/CustomerHomePage').then((m) => ({ default: m.CustomerHomePage }))
 )
 
+const LandingPage = lazy(() =>
+  import('@/pages/LandingPage').then((m) => ({ default: m.LandingPage }))
+)
+
 const NotFoundPage = lazy(() =>
   import('@/pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage }))
 )
@@ -103,7 +107,7 @@ export const router = createBrowserRouter([
     path: '/',
     element: (
       <LazyPage>
-        <CustomerHomePage />
+        <LandingPage />
       </LazyPage>
     )
   },

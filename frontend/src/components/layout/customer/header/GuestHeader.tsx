@@ -1,10 +1,10 @@
 import Header from '@/shared/components/ui/header/Header'
 import { Input } from '@/components'
-import { Search, ShoppingCart, User, X, Glasses, Heart } from 'lucide-react'
+import { Search, X, Glasses, ShoppingCart, User, Heart } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
-export default function CustomerHeader() {
+export default function GuestHeader() {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
@@ -168,8 +168,9 @@ export default function CustomerHeader() {
               </span>
             </button>
             <button
+              onClick={() => navigate('/login')}
               className="p-2 hover:bg-mint-200 rounded-full transition-all group"
-              aria-label="User Profile"
+              aria-label="User Profile - Click to Login"
             >
               <User className="w-5 h-5 text-gray-eyewear group-hover:text-primary-500 transition-colors" />
             </button>

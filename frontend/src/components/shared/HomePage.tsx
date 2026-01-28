@@ -1,30 +1,14 @@
+import type { ReactNode } from 'react'
 import { ShoppingCart, Truck, RotateCcw, Glasses, Headphones, ArrowRight, Star } from 'lucide-react'
-import { useState, useRef, useEffect } from 'react'
-import { Header } from '@/pages/customer/homepage/header/Header'
 
-export const HomePage = () => {
-  const [isSearchExpanded, setIsSearchExpanded] = useState(false)
-  const searchRef = useRef<HTMLDivElement>(null)
+interface HomePageProps {
+  header: ReactNode
+}
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setIsSearchExpanded(false)
-      }
-    }
-
-    if (isSearchExpanded) {
-      document.addEventListener('mousedown', handleClickOutside)
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [isSearchExpanded])
-
+export const HomePage = ({ header }: HomePageProps) => {
   return (
     <div className="min-h-screen bg-mint-200">
-      <Header />
+      {header}
 
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-mint-300 via-mint-200 to-primary-100 overflow-hidden">

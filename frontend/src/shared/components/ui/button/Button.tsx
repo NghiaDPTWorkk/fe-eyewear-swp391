@@ -52,5 +52,3 @@ export function Button<E extends ElementType = 'button'>({
     </Component>
   )
 }
-
-export { buttonVariants }

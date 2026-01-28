@@ -1,0 +1,105 @@
+
+> eyewear-project@0.0.0 lint
+> eslint src --ext .ts,.tsx
+
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\components\layout\staff\staff-core\sidebar\MenuItem.tsx
+  31:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\components\staff\sidebar\MenuItem.tsx
+  135:10  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\features\auth\hooks\useLogin.ts
+  17:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  26:22  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\features\auth\services\auth.service.ts
+  11:55  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\features\staff\components\OrderDetail\OrderDetail.tsx
+  258:1  warning  File has too many lines (548). Maximum allowed is 250  max-lines
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\features\staff\components\OrderDetailsDrawer\OrderDetailsDrawer.tsx
+   36:7  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\features\staff\components\OrderDetailsDrawer\OrderDetailsDrawer.tsx:36:7
+  34 |     } else {
+  35 |       document.body.style.overflow = 'unset'
+> 36 |       setIsUpdatingStatus(false)
+     |       ^^^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  37 |     }
+  38 |     return () => {
+  39 |       document.body.style.overflow = 'unset'  react-hooks/set-state-in-effect
+   84:5  warning  Unexpected console statement. Only these console methods are allowed: warn, error                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            no-console
+  273:1  warning  File has too many lines (335). Maximum allowed is 250                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        max-lines
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\features\staff\components\PrescriptionVerification\PrescriptionVerification.tsx
+  264:1  warning  File has too many lines (572). Maximum allowed is 250  max-lines
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\features\staff\components\ReturnDetails\ReturnDetails.tsx
+  266:1  warning  File has too many lines (442). Maximum allowed is 250  max-lines
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\pages\auth\customer\CustomerHomePage.tsx
+  259:1  warning  File has too many lines (488). Maximum allowed is 250  max-lines
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\pages\customer\CustomerHomePage.tsx
+  261:1  warning  File has too many lines (488). Maximum allowed is 250  max-lines
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\pages\operations\OperationOrderPackingProcess.tsx
+  268:1  warning  File has too many lines (253). Maximum allowed is 250  max-lines
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\pages\sales\SaleStaffCustomerPage.tsx
+  18:60  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  21:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\pages\sales\SaleStaffDashboardPage.tsx
+   77:34  warning  Unexpected any. Specify a different type               @typescript-eslint/no-explicit-any
+  279:1   warning  File has too many lines (255). Maximum allowed is 250  max-lines
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\pages\sales\SaleStaffLabStatusPage.tsx
+  259:1   warning  File has too many lines (382). Maximum allowed is 250                              max-lines
+  310:34  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+  367:25  warning  Unexpected console statement. Only these console methods are allowed: warn, error  no-console
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\pages\sales\SaleStaffPreOrdersPage.tsx
+  264:1  warning  File has too many lines (314). Maximum allowed is 250  max-lines
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\pages\sales\SaleStaffPrescriptionPage.tsx
+  262:1  warning  File has too many lines (386). Maximum allowed is 250  max-lines
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\pages\sales\SaleStaffRxVerificationPage.tsx
+  264:1  warning  File has too many lines (676). Maximum allowed is 250  max-lines
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\pages\sales\SaleStaffSettingsPage.tsx
+  263:1  warning  File has too many lines (401). Maximum allowed is 250  max-lines
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\pages\sales\SaleStaffSupportPage.tsx
+  265:1  warning  File has too many lines (267). Maximum allowed is 250  max-lines
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\shared\components\ui\button\Button.tsx
+  179:10  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\shared\components\ui\checkbox\Checkbox.tsx
+  108:10  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+  108:28  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\shared\components\ui\icon-button\IconButton.tsx
+  153:10  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\shared\components\ui\input\Input.tsx
+  86:10  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\shared\components\ui\select\Select.tsx
+  92:10  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\FOR_LEARN\FPT\LEARN\SEMESTER_5\SWP391-ThinhDP\FE_Eyewear_Project\frontend\src\shared\components\ui\textarea\Textarea.tsx
+  75:10  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+✖ 33 problems (1 error, 32 warnings)
+

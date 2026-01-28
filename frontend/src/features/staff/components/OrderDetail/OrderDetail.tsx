@@ -295,7 +295,7 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
                 </div>
                 <div className="border-t border-gray-200 my-2 pt-3 flex justify-between items-center">
                   <span className="text-gray-900 font-semibold text-base">Total Due</span>
-                  <span className="text-emerald-600 font-bold text-xl">{order.total}</span>
+                  <span className="text-emerald-600 font-semibold text-xl">{order.total}</span>
                 </div>
               </div>
             </div>
@@ -337,25 +337,25 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
                   <div className="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center border-4 border-white shadow-sm">
                     <IoBusinessOutline />
                   </div>
-                  <span className="text-xs font-bold text-emerald-600">Supplier (Italy)</span>
+                  <span className="text-xs font-semibold text-emerald-600">Supplier (Italy)</span>
                 </div>
                 <div className="flex flex-col items-center gap-2 relative z-10">
                   <div className="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center border-4 border-white shadow-sm">
                     <IoAirplaneOutline />
                   </div>
-                  <span className="text-xs font-bold text-emerald-600">In Transit</span>
+                  <span className="text-xs font-semibold text-emerald-600">In Transit</span>
                 </div>
                 <div className="flex flex-col items-center gap-2 relative z-10">
                   <div className="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center border-4 border-white shadow-sm">
                     <IoCheckmarkCircle />
                   </div>
-                  <span className="text-xs font-bold text-emerald-600">Customs</span>
+                  <span className="text-xs font-semibold text-emerald-600">Customs</span>
                 </div>
                 <div className="flex flex-col items-center gap-2 relative z-10">
                   <div className="w-10 h-10 rounded-full bg-white border-2 border-emerald-500 text-emerald-500 flex items-center justify-center border-4 border-white shadow-sm">
                     <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse"></div>
                   </div>
-                  <span className="text-xs font-bold text-gray-800">Dist. Center</span>
+                  <span className="text-xs font-semibold text-gray-800">Dist. Center</span>
                 </div>
                 <div className="flex flex-col items-center gap-2 relative z-10">
                   <div className="w-10 h-10 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center border-4 border-white">
@@ -478,7 +478,7 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
             </h2>
             <div className="relative z-10">
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center font-bold text-xl shadow-inner border-2 border-white">
+                <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center font-semibold text-xl shadow-inner border-2 border-white">
                   {order.customer.avatar}
                 </div>
                 <div>
@@ -518,7 +518,7 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
 
           {/* Delivery & Billing */}
           <Card className="p-6 border border-neutral-100 shadow-sm rounded-2xl">
-            <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-6">
+            <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-6">
               Delivery Details
             </h2>
 
@@ -549,7 +549,7 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
 
           {/* Notes */}
           <Card className="p-6 border border-neutral-100 shadow-sm rounded-2xl bg-amber-50/30 border-amber-100/50">
-            <h2 className="text-sm font-bold text-amber-700/70 uppercase tracking-wider mb-3">
+            <h2 className="text-sm font-semibold text-amber-700/70 uppercase tracking-wider mb-3">
               Order Notes
             </h2>
             <textarea

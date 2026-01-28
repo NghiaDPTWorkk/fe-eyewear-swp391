@@ -14,11 +14,22 @@ import {
 } from 'react-icons/io5'
 import CustomerCommunicationDrawer from '@/features/staff/components/CustomerCommunicationDrawer/CustomerCommunicationDrawer'
 
+interface Customer {
+  name: string
+  activity: string
+  badge: string
+  badgeColor: string
+  phone: string
+  email: string
+  website: string
+  avatar: string
+}
+
 export default function SaleStaffCustomerPage() {
-  const [selectedCustomer, setSelectedCustomer] = useState<any>(null)
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
-  const handleCustomerClick = (customer: any) => {
+  const handleCustomerClick = (customer: Customer) => {
     setSelectedCustomer(customer)
     setIsDrawerOpen(true)
   }
@@ -112,9 +123,9 @@ export default function SaleStaffCustomerPage() {
                 Dashboard
               </Link>
               <span className="text-neutral-300">/</span>
-              <span className="text-primary-500 font-bold">Customer Management</span>
+              <span className="text-primary-500 font-semibold">Customer Management</span>
             </div>
-            <h1 className="text-3xl font-bold text-neutral-800 tracking-tight">
+            <h1 className="text-3xl font-semibold text-neutral-800 tracking-tight">
               Customer Database
             </h1>
           </div>
@@ -134,10 +145,10 @@ export default function SaleStaffCustomerPage() {
                   {metric.icon}
                 </div>
                 <div>
-                  <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest leading-none mb-1.5">
+                  <div className="text-[10px] font-semibold text-neutral-400 uppercase tracking-widest leading-none mb-1.5">
                     {metric.label}
                   </div>
-                  <div className="text-2xl font-bold text-neutral-800 tracking-tight">
+                  <div className="text-2xl font-semibold text-neutral-800 tracking-tight">
                     {metric.value}
                   </div>
                 </div>
@@ -163,7 +174,7 @@ export default function SaleStaffCustomerPage() {
                       alt={customer.name}
                     />
                     <div className="pt-1">
-                      <h3 className="text-lg font-bold text-neutral-800 leading-tight mb-1 group-hover:text-primary-600 transition-colors">
+                      <h3 className="text-lg font-semibold text-neutral-800 leading-tight mb-1 group-hover:text-primary-600 transition-colors">
                         {customer.name}
                       </h3>
                       <p className="text-xs text-neutral-400 font-medium tracking-wide">
@@ -181,7 +192,7 @@ export default function SaleStaffCustomerPage() {
 
                 <div className="mb-8">
                   <div
-                    className={`w-full py-2.5 px-4 rounded-xl text-xs font-bold text-center transition-colors ${customer.badgeColor}`}
+                    className={`w-full py-2.5 px-4 rounded-xl text-xs font-semibold text-center transition-colors ${customer.badgeColor}`}
                   >
                     {customer.badge}
                   </div>
@@ -220,7 +231,7 @@ export default function SaleStaffCustomerPage() {
               {[1, 2, 3].map((page) => (
                 <button
                   key={page}
-                  className={`w-12 h-12 rounded-xl text-sm font-bold transition-all ${
+                  className={`w-12 h-12 rounded-xl text-sm font-semibold transition-all ${
                     page === 1
                       ? 'bg-primary-500 text-white shadow-lg shadow-primary-200'
                       : 'text-neutral-400 hover:bg-neutral-50'

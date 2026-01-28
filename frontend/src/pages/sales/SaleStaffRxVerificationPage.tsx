@@ -127,13 +127,13 @@ export default function SaleStaffRxVerificationPage() {
 
       {/* Urgent Attention Needed Section */}
       <div className="mb-8">
-        <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
           <IoWarningOutline className="text-red-500" /> Urgent Attention Needed
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="p-4 border-l-4 border-l-red-500 bg-red-50/10 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
             <div className="flex justify-between items-start mb-2">
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 uppercase tracking-wide">
+              <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-red-100 text-red-700 uppercase tracking-wide">
                 Job Rejected
               </span>
               <span className="text-xs text-gray-400 font-medium">2h ago</span>
@@ -152,7 +152,7 @@ export default function SaleStaffRxVerificationPage() {
 
           <Card className="p-4 border-l-4 border-l-amber-500 bg-amber-50/10 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
             <div className="flex justify-between items-start mb-2">
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700 uppercase tracking-wide">
+              <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-100 text-amber-700 uppercase tracking-wide">
                 Missing Data
               </span>
               <span className="text-xs text-gray-400 font-medium">5h ago</span>
@@ -171,7 +171,7 @@ export default function SaleStaffRxVerificationPage() {
 
           <Card className="p-4 border-l-4 border-l-blue-500 bg-blue-50/10 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
             <div className="flex justify-between items-start mb-2">
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700 uppercase tracking-wide">
+              <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-100 text-blue-700 uppercase tracking-wide">
                 High Complexity
               </span>
               <span className="text-xs text-gray-400 font-medium">10m ago</span>
@@ -193,7 +193,7 @@ export default function SaleStaffRxVerificationPage() {
       {/* Laboratory Operations Requests - "Confirm from Operation" Section */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
             <IoConstructOutline className="text-emerald-600" /> Laboratory Operations Requests
             <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
               3 Action Items
@@ -210,9 +210,11 @@ export default function SaleStaffRxVerificationPage() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-sm font-bold text-gray-900">Lens Blank Unavailable</span>
+                  <span className="text-sm font-semibold text-gray-900">
+                    Lens Blank Unavailable
+                  </span>
                   <span className="text-xs font-mono text-gray-400">#REQ-2023-089</span>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700 uppercase">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-100 text-amber-700 uppercase">
                     Action Required
                   </span>
                 </div>
@@ -254,7 +256,7 @@ export default function SaleStaffRxVerificationPage() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-sm font-bold text-gray-900">Frame Damage Report</span>
+                  <span className="text-sm font-semibold text-gray-900">Frame Damage Report</span>
                   <span className="text-xs font-mono text-gray-400">#REQ-2023-092</span>
                 </div>
                 <p className="text-sm text-gray-600">
@@ -298,7 +300,7 @@ export default function SaleStaffRxVerificationPage() {
         <div className="flex-1 min-w-0">
           <div className="mb-4 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
             <div className="flex-1">
-              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                 Verification Queue{' '}
                 <span className="text-sm font-normal text-gray-500 ml-2">(48 orders)</span>
               </h2>
@@ -369,7 +371,7 @@ export default function SaleStaffRxVerificationPage() {
                   <tr className="hover:bg-emerald-50/10 transition-colors group">
                     <td className="px-6 py-4 align-middle">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold border border-emerald-200 shadow-sm">
+                        <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-semibold border border-emerald-200 shadow-sm">
                           JD
                         </div>
                         <div>
@@ -377,12 +379,12 @@ export default function SaleStaffRxVerificationPage() {
                             <div className="text-sm font-semibold text-gray-900 leading-tight group-hover:text-emerald-700 transition-colors">
                               John Doe
                             </div>
-                            <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-red-50 text-red-600 border border-red-100">
+                            <span className="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-red-50 text-red-600 border border-red-100">
                               URGENT
                             </span>
                           </div>
                           <div className="text-[11px] text-gray-400 font-medium mt-0.5 flex gap-2">
-                            <span>#ORD-2023-001</span>
+                            <span className="text-emerald-500 font-semibold">#ORD-2023-001</span>
                             <span>•</span>
                             <span>Oct 24, 2023</span>
                           </div>
@@ -479,7 +481,7 @@ export default function SaleStaffRxVerificationPage() {
                   <tr className="hover:bg-emerald-50/10 transition-colors group">
                     <td className="px-6 py-4 align-middle">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold border border-indigo-200 shadow-sm">
+                        <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-semibold border border-indigo-200 shadow-sm">
                           AS
                         </div>
                         <div>
@@ -492,7 +494,7 @@ export default function SaleStaffRxVerificationPage() {
                             </span>
                           </div>
                           <div className="text-[11px] text-gray-400 font-medium mt-0.5 flex gap-2">
-                            <span>#ORD-2023-004</span>
+                            <span className="text-emerald-500 font-semibold">#ORD-2023-004</span>
                             <span>•</span>
                             <span>Oct 23, 2023</span>
                           </div>
@@ -615,7 +617,7 @@ export default function SaleStaffRxVerificationPage() {
           {/* Operations Confirmation */}
           <Card className="p-5 border border-neutral-200 shadow-sm">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-gray-900 text-sm flex items-center gap-2">
+              <h3 className="font-semibold text-gray-900 text-sm flex items-center gap-2">
                 <IoConstructOutline className="text-emerald-500" /> Operations
               </h3>
               <span className="text-[10px] font-semibold bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
@@ -631,7 +633,7 @@ export default function SaleStaffRxVerificationPage() {
                     Order #88229 accepted by Essilor Lab for surfacing.
                   </p>
                   <div className="mt-1.5">
-                    <button className="text-[10px] font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 px-2 py-1 rounded">
+                    <button className="text-[10px] font-semibold text-emerald-600 hover:text-emerald-700 bg-emerald-50 px-2 py-1 rounded">
                       Acknowledge
                     </button>
                   </div>
@@ -655,7 +657,7 @@ export default function SaleStaffRxVerificationPage() {
           {/* Recent Status Updates */}
           <Card className="p-5 border border-neutral-200 shadow-sm grow">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-gray-900 text-sm flex items-center gap-2">
+              <h3 className="font-semibold text-gray-900 text-sm flex items-center gap-2">
                 <IoTimeOutline className="text-emerald-500" /> Activity Feed
               </h3>
             </div>

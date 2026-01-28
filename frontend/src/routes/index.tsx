@@ -59,6 +59,14 @@ const SaleStaffReturnsPage = lazy(() =>
   import('@/pages/sales/SaleStaffReturnsPage').then((m) => ({ default: m.default }))
 )
 
+const SaleStaffSettingsPage = lazy(() =>
+  import('@/pages/sales/SaleStaffSettingsPage').then((m) => ({ default: m.default }))
+)
+
+const SaleStaffSupportPage = lazy(() =>
+  import('@/pages/sales/SaleStaffSupportPage').then((m) => ({ default: m.default }))
+)
+
 const OperationLayout = lazy(() =>
   import('@/pages/operations/OperationLayout').then((m) => ({
     default: m.default
@@ -173,6 +181,14 @@ export const router = createBrowserRouter([
       {
         path: 'live-map/:trackingId',
         element: <SaleStaffLiveMapPage />
+      },
+      {
+        path: 'settings',
+        element: <SaleStaffSettingsPage />
+      },
+      {
+        path: 'support',
+        element: <SaleStaffSupportPage />
       }
     ]
   },
@@ -219,6 +235,14 @@ export const router = createBrowserRouter([
       {
         path: 'delivery-orders',
         element: <OperationDeliveryPage />
+      },
+      {
+        path: 'settings',
+        element: <SaleStaffSettingsPage />
+      },
+      {
+        path: 'support',
+        element: <SaleStaffSupportPage />
       }
     ]
   },

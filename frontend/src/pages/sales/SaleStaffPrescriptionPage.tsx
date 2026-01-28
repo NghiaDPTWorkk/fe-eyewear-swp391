@@ -11,7 +11,8 @@ import {
   IoCheckboxOutline,
   IoChevronBackOutline,
   IoChevronForwardOutline,
-  IoChevronForward
+  IoChevronForward,
+  IoGlassesOutline
 } from 'react-icons/io5'
 
 export default function SaleStaffPrescriptionPage() {
@@ -179,39 +180,45 @@ export default function SaleStaffPrescriptionPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 bg-white">
-              <tr className="hover:bg-gray-50/50">
+              <tr
+                className="hover:bg-gray-50/50 cursor-pointer group"
+                onClick={() => setSelectedPrescriptionId('ORD-2023-001')}
+              >
                 <td className="px-6 py-4 align-middle">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gray-100 rounded-xl overflow-hidden">
-                      <img
-                        src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?q=80&w=2080&auto=format&fit=crop"
-                        alt="Frames"
-                        className="w-full h-full object-cover mix-blend-multiply"
+                    <div className="w-10 h-10 bg-gray-50 rounded-xl border border-gray-200 flex items-center justify-center text-gray-400 shrink-0 group-hover:border-emerald-200 group-hover:bg-emerald-50 transition-colors">
+                      <IoGlassesOutline
+                        size={20}
+                        className="group-hover:text-emerald-500 transition-colors"
                       />
                     </div>
                     <div>
-                      <div className="text-sm font-medium text-gray-900">RB-3025-L0205</div>
-                      <div className="text-xs text-gray-500">Ray-Ban Aviator Gold</div>
+                      <div className="text-sm font-semibold text-gray-900">RB-3025-L0205</div>
+                      <div className="text-[11px] text-gray-400 font-medium">
+                        Ray-Ban Aviator Gold
+                      </div>
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-sm text-primary-500 font-medium align-middle">
+                <td className="px-6 py-4 text-sm text-emerald-500 font-semibold align-middle tracking-tight">
                   #ORD-2023-001
                 </td>
                 <td className="px-6 py-4 align-middle">
-                  <div className="text-sm text-gray-900">John Doe</div>
-                  <div className="text-xs text-gray-500">+1 (555) 012-3456</div>
+                  <div className="text-sm font-semibold text-gray-900">John Doe</div>
+                  <div className="text-[11px] text-gray-400 font-medium">+1 (555) 012-3456</div>
                 </td>
                 <td className="px-6 py-4 align-middle">
-                  <div className="text-sm font-medium text-gray-900">Progressive</div>
-                  <div className="text-[10px] text-gray-500">High Index 1.67</div>
+                  <div className="text-sm font-semibold text-gray-900">Progressive</div>
+                  <div className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">
+                    High Index 1.67
+                  </div>
                 </td>
                 <td className="px-6 py-4 align-middle">
-                  <div className="text-sm text-gray-900">Oct 24, 2023</div>
+                  <div className="text-sm font-semibold text-gray-600">Oct 24, 2023</div>
                 </td>
-                <td className="px-6 py-4 align-middle">
+                <td className="px-6 py-4 align-middle text-center">
                   <div className="flex justify-center">
-                    <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-orange-100 text-orange-600 whitespace-nowrap">
+                    <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-orange-50 text-orange-600 border border-orange-100 whitespace-nowrap">
                       GRINDING
                     </span>
                   </div>
@@ -221,9 +228,11 @@ export default function SaleStaffPrescriptionPage() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      colorScheme="neutral"
-                      className="p-2 h-8 w-8 text-neutral-400 hover:text-primary-500"
-                      onClick={() => setSelectedPrescriptionId('ORD-2023-001')}
+                      className="p-2 h-9 w-9 text-neutral-400 hover:text-emerald-500 hover:bg-emerald-50 rounded-xl transition-all"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setSelectedPrescriptionId('ORD-2023-001')
+                      }}
                       title="Details"
                     >
                       <IoChevronForward size={18} />
@@ -232,39 +241,45 @@ export default function SaleStaffPrescriptionPage() {
                 </td>
               </tr>
 
-              <tr className="hover:bg-gray-50/50">
+              <tr
+                className="hover:bg-gray-50/50 cursor-pointer group"
+                onClick={() => setSelectedPrescriptionId('ORD-2023-004')}
+              >
                 <td className="px-6 py-4 align-middle">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gray-100 rounded-xl overflow-hidden">
-                      <img
-                        src="https://images.unsplash.com/photo-1511499767150-a48a237f0083?q=80&w=1780&auto=format&fit=crop"
-                        alt="Frames"
-                        className="w-full h-full object-cover mix-blend-multiply"
+                    <div className="w-10 h-10 bg-gray-50 rounded-xl border border-gray-200 flex items-center justify-center text-gray-400 shrink-0 group-hover:border-emerald-200 group-hover:bg-emerald-50 transition-colors">
+                      <IoGlassesOutline
+                        size={20}
+                        className="group-hover:text-emerald-500 transition-colors"
                       />
                     </div>
                     <div>
-                      <div className="text-sm font-medium text-gray-900">TF-5532-B</div>
-                      <div className="text-xs text-gray-500">Tom Ford Square Black</div>
+                      <div className="text-sm font-semibold text-gray-900">TF-5532-B</div>
+                      <div className="text-[11px] text-gray-400 font-medium">
+                        Tom Ford Square Black
+                      </div>
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-sm text-primary-500 font-medium align-middle">
+                <td className="px-6 py-4 text-sm text-emerald-500 font-semibold align-middle tracking-tight">
                   #ORD-2023-004
                 </td>
                 <td className="px-6 py-4 align-middle">
-                  <div className="text-sm text-gray-900">Alice Smith</div>
-                  <div className="text-xs text-gray-500">alice.s@example.com</div>
+                  <div className="text-sm font-semibold text-gray-900">Alice Smith</div>
+                  <div className="text-[11px] text-gray-400 font-medium">alice.s@example.com</div>
                 </td>
                 <td className="px-6 py-4 align-middle">
-                  <div className="text-sm font-medium text-gray-900">Single Vision</div>
-                  <div className="text-[10px] text-gray-500">Polycarbonate</div>
+                  <div className="text-sm font-semibold text-gray-900">Single Vision</div>
+                  <div className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">
+                    Polycarbonate
+                  </div>
                 </td>
                 <td className="px-6 py-4 align-middle">
-                  <div className="text-sm text-gray-900">Oct 23, 2023</div>
+                  <div className="text-sm font-semibold text-gray-600">Oct 23, 2023</div>
                 </td>
-                <td className="px-6 py-4 align-middle">
+                <td className="px-6 py-4 align-middle text-center">
                   <div className="flex justify-center">
-                    <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-600 whitespace-nowrap">
+                    <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-blue-50 text-blue-600 border border-blue-100 whitespace-nowrap">
                       COATING
                     </span>
                   </div>
@@ -274,9 +289,11 @@ export default function SaleStaffPrescriptionPage() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      colorScheme="neutral"
-                      className="p-2 h-8 w-8 text-neutral-400 hover:text-primary-500"
-                      onClick={() => setSelectedPrescriptionId('ORD-2023-004')}
+                      className="p-2 h-9 w-9 text-neutral-400 hover:text-emerald-500 hover:bg-emerald-50 rounded-xl transition-all"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setSelectedPrescriptionId('ORD-2023-004')
+                      }}
                       title="Details"
                     >
                       <IoChevronForward size={18} />
@@ -285,39 +302,43 @@ export default function SaleStaffPrescriptionPage() {
                 </td>
               </tr>
 
-              <tr className="hover:bg-gray-50/50">
+              <tr
+                className="hover:bg-gray-50/50 cursor-pointer group"
+                onClick={() => setSelectedPrescriptionId('ORD-2023-006')}
+              >
                 <td className="px-6 py-4 align-middle">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gray-100 rounded-xl overflow-hidden">
-                      <img
-                        src="https://images.unsplash.com/photo-1483412919093-03a22057d0d7?q=80&w=2664&auto=format&fit=crop"
-                        alt="Frames"
-                        className="w-full h-full object-cover mix-blend-multiply"
+                    <div className="w-10 h-10 bg-gray-50 rounded-xl border border-gray-200 flex items-center justify-center text-gray-400 shrink-0 group-hover:border-emerald-200 group-hover:bg-emerald-50 transition-colors">
+                      <IoGlassesOutline
+                        size={20}
+                        className="group-hover:text-emerald-500 transition-colors"
                       />
                     </div>
                     <div>
-                      <div className="text-sm font-medium text-gray-900">PR-17WS</div>
-                      <div className="text-xs text-gray-500">Prada Symbole</div>
+                      <div className="text-sm font-semibold text-gray-900">PR-17WS</div>
+                      <div className="text-[11px] text-gray-400 font-medium">Prada Symbole</div>
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-sm text-primary-500 font-medium align-middle">
+                <td className="px-6 py-4 text-sm text-emerald-500 font-semibold align-middle tracking-tight">
                   #ORD-2023-006
                 </td>
                 <td className="px-6 py-4 align-middle">
-                  <div className="text-sm text-gray-900">Michael Brown</div>
-                  <div className="text-xs text-gray-500">+1 (555) 987-6543</div>
+                  <div className="text-sm font-semibold text-gray-900">Michael Brown</div>
+                  <div className="text-[11px] text-gray-400 font-medium">+1 (555) 987-6543</div>
                 </td>
                 <td className="px-6 py-4 align-middle">
-                  <div className="text-sm font-medium text-gray-900">Bifocal</div>
-                  <div className="text-[10px] text-gray-500">Trivex</div>
+                  <div className="text-sm font-semibold text-gray-900">Bifocal</div>
+                  <div className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">
+                    Trivex
+                  </div>
                 </td>
                 <td className="px-6 py-4 align-middle">
-                  <div className="text-sm text-gray-900">Oct 20, 2023</div>
+                  <div className="text-sm font-semibold text-gray-600">Oct 20, 2023</div>
                 </td>
-                <td className="px-6 py-4 align-middle">
+                <td className="px-6 py-4 align-middle text-center">
                   <div className="flex justify-center">
-                    <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-purple-100 text-purple-600 whitespace-nowrap">
+                    <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-purple-50 text-purple-600 border border-purple-100 whitespace-nowrap">
                       QA CHECK
                     </span>
                   </div>
@@ -327,9 +348,11 @@ export default function SaleStaffPrescriptionPage() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      colorScheme="neutral"
-                      className="p-2 h-8 w-8 text-neutral-400 hover:text-primary-500"
-                      onClick={() => setSelectedPrescriptionId('ORD-2023-006')}
+                      className="p-2 h-9 w-9 text-neutral-400 hover:text-emerald-500 hover:bg-emerald-50 rounded-xl transition-all"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setSelectedPrescriptionId('ORD-2023-006')
+                      }}
                       title="Details"
                     >
                       <IoChevronForward size={18} />

@@ -3,7 +3,6 @@ import { ENDPOINTS } from '../endpoints'
 
 import type { LoginRequest, LoginResponse, RegisterRequest, User } from '@/shared/types'
 
-// Khúc này nên đổi tên là service, không nên đặt tên như vầy
 export const authApi = {
   loginCustomer(payload: LoginRequest) {
     return httpClient.post<LoginResponse>(ENDPOINTS.AUTH.LOGIN_CUSTOMER, payload)

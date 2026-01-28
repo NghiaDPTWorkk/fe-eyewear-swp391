@@ -17,7 +17,7 @@ export function StaffMainLayout({
   headerLeft,
   headerRight,
   headerContainerWidth = '100%',
-  mainClassName = 'p-4 md:p-8 bg-neutral-50'
+  mainClassName = 'p-4 md:p-6 bg-neutral-50'
 }: StaffMainLayoutProps) {
   const { sidebarCollapsed, toggleSidebar } = useLayoutStore()
 

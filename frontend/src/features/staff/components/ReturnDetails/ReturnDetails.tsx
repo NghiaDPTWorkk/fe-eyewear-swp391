@@ -1,5 +1,4 @@
 import {
-  IoArrowBack,
   IoPersonOutline,
   IoLocationOutline,
   IoCubeOutline,
@@ -10,7 +9,7 @@ import {
 } from 'react-icons/io5'
 import { FaTruck } from 'react-icons/fa'
 import { Card, Button } from '@/components'
-import { cn } from '@/lib/utils'
+import { ArrowLeft } from 'lucide-react'
 
 interface ReturnDetailsProps {
   returnId: string
@@ -18,12 +17,8 @@ interface ReturnDetailsProps {
 }
 
 export default function ReturnDetails({ returnId, onBack }: ReturnDetailsProps) {
-  // Use returnId for fetching data in the future
-  console.log('Viewing details for:', returnId)
-
-  // Mock data to match the screenshot
   const data = {
-    id: 'RT-2024-5001',
+    id: returnId || 'RT-2024-5001',
     date: '2026-01-14 14:30 PM',
     status: 'Processing',
     customer: {
@@ -85,23 +80,25 @@ export default function ReturnDetails({ returnId, onBack }: ReturnDetailsProps) 
       { id: 1, title: 'Lab Inspection Completed', date: 'Jan 14, 2026 11:30 AM', active: true },
       { id: 2, title: 'Goods Received', date: 'Jan 14, 2026 10:00 AM', active: true },
       { id: 3, title: 'Return Shipped', date: 'Jan 14, 2026 8:00 AM', active: true },
-      { id: 4, title: 'Return Requested', date: 'Jan 14, 2026 2:30 PM', active: false } // Date makes no sense chronologically but matching screenshot
+      { id: 4, title: 'Return Requested', date: 'Jan 14, 2026 2:30 PM', active: false }
     ]
   }
 
   return (
     <div className="space-y-6 pb-12 animate-in fade-in slide-in-from-right-4 duration-300">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button
             onClick={onBack}
-            className="p-2 hover:bg-neutral-100 rounded-full transition-colors"
+            className="w-10 h-10 flex items-center justify-center bg-white hover:bg-mint-50 rounded-xl shadow-sm transition-all duration-300 border border-neutral-100 hover:border-mint-200 hover:shadow-md hover:-translate-x-0.5 active:scale-90 group"
           >
-            <IoArrowBack size={24} className="text-neutral-600" />
+            <ArrowLeft
+              size={20}
+              className="text-neutral-500 group-hover:text-mint-600 transition-colors stroke-[2.5px]"
+            />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-neutral-900">Return Detail</h1>
+            <h1 className="text-2xl font-semibold text-neutral-900">Return Detail</h1>
             <div className="flex items-center gap-2 text-sm text-neutral-500 mt-1">
               <span>{data.id}</span>
               <span>•</span>
@@ -109,15 +106,13 @@ export default function ReturnDetails({ returnId, onBack }: ReturnDetailsProps) 
             </div>
           </div>
         </div>
-        <div className="px-4 py-1.5 bg-blue-50 text-blue-600 font-medium rounded-full text-sm">
+        <div className="px-4 py-1.5 bg-mint-50 text-mint-600 font-semibold rounded-full text-xs uppercase tracking-wider border border-mint-100 shadow-sm shadow-mint-50">
           {data.status}
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Customer & Order Info */}
           <Card className="p-6">
             <div className="flex items-center gap-2 mb-6">
               <IoPersonOutline className="text-lg text-neutral-400" />
@@ -153,7 +148,7 @@ export default function ReturnDetails({ returnId, onBack }: ReturnDetailsProps) 
                   <label className="text-xs font-medium text-neutral-400 uppercase tracking-wide">
                     Original Order ID
                   </label>
-                  <div className="font-medium text-blue-600 mt-1 cursor-pointer">
+                  <div className="font-medium text-mint-600 mt-1 cursor-pointer hover:underline">
                     {data.originalOrder.id}
                   </div>
                 </div>
@@ -175,7 +170,6 @@ export default function ReturnDetails({ returnId, onBack }: ReturnDetailsProps) 
             </div>
           </Card>
 
-          {/* Original Shipping Address */}
           <Card className="p-6">
             <div className="flex items-center gap-2 mb-4">
               <IoLocationOutline className="text-lg text-neutral-400" />
@@ -184,7 +178,6 @@ export default function ReturnDetails({ returnId, onBack }: ReturnDetailsProps) 
             <p className="text-neutral-600 font-medium">{data.address}</p>
           </Card>
 
-          {/* Return Item */}
           <Card className="p-6">
             <div className="flex items-center gap-2 mb-6">
               <IoCubeOutline className="text-lg text-neutral-400" />
@@ -206,14 +199,13 @@ export default function ReturnDetails({ returnId, onBack }: ReturnDetailsProps) 
             </div>
           </Card>
 
-          {/* Return Reason */}
           <Card className="p-6">
             <h2 className="font-semibold text-lg text-neutral-900 mb-6">Return Reason</h2>
 
             <div className="space-y-6">
               <div>
                 <span className="text-sm font-medium text-neutral-500 mr-2">Reason Category</span>
-                <span className="px-3 py-1 bg-red-50 text-red-600 rounded-lg text-sm font-medium">
+                <span className="px-3 py-1 bg-red-50 text-red-600 rounded-lg text-sm font-semibold">
                   {data.reason.category}
                 </span>
               </div>
@@ -222,7 +214,7 @@ export default function ReturnDetails({ returnId, onBack }: ReturnDetailsProps) 
                 <label className="text-sm font-semibold text-neutral-700 block mb-2">
                   Customer Description
                 </label>
-                <div className="bg-neutral-50 p-4 rounded-xl text-neutral-700 text-sm">
+                <div className="bg-neutral-50 p-4 rounded-xl text-neutral-700 text-sm leading-relaxed">
                   {data.reason.description}
                 </div>
               </div>
@@ -237,7 +229,7 @@ export default function ReturnDetails({ returnId, onBack }: ReturnDetailsProps) 
                       key={i}
                       src={photo}
                       alt="Customer evidence"
-                      className="w-24 h-24 object-cover rounded-xl border border-neutral-200"
+                      className="w-24 h-24 object-cover rounded-xl border border-neutral-200 hover:border-mint-400 transition-colors cursor-pointer"
                     />
                   ))}
                 </div>
@@ -245,7 +237,6 @@ export default function ReturnDetails({ returnId, onBack }: ReturnDetailsProps) 
             </div>
           </Card>
 
-          {/* Return Shipping Info */}
           <Card className="p-6">
             <div className="flex items-center gap-2 mb-6">
               <FaTruck className="text-lg text-neutral-400" />
@@ -267,7 +258,7 @@ export default function ReturnDetails({ returnId, onBack }: ReturnDetailsProps) 
                     Status
                   </label>
                   <div className="mt-1">
-                    <span className="px-3 py-1 bg-green-50 text-green-700 rounded-full text-xs font-medium">
+                    <span className="px-3 py-1 bg-mint-50 text-mint-700 rounded-full text-xs font-semibold font-medium">
                       {data.shipping.status}
                     </span>
                   </div>
@@ -295,24 +286,21 @@ export default function ReturnDetails({ returnId, onBack }: ReturnDetailsProps) 
             </div>
           </Card>
 
-          {/* Goods Received Confirmation */}
-          <Card className="p-6 border-green-200 bg-green-50/30">
+          <Card className="p-6 border-mint-200 bg-mint-50/20">
             <div className="flex items-start gap-4">
-              <div className="p-2 bg-green-500 rounded-full text-white shrink-0">
+              <div className="p-2 bg-mint-500 rounded-full text-white shrink-0">
                 <IoCheckmarkCircle className="text-xl" />
               </div>
               <div>
-                <h2 className="font-semibold text-lg text-green-900">
-                  Goods Received Confirmation
-                </h2>
+                <h2 className="font-semibold text-lg text-mint-900">Goods Received Confirmation</h2>
                 <div className="mt-2 space-y-1">
-                  <p className="text-sm font-medium text-green-800">
+                  <p className="text-sm font-medium text-mint-800">
                     <span className="font-semibold">Status:</span> {data.goodsReceived.status}
                   </p>
-                  <p className="text-sm font-medium text-green-800">
+                  <p className="text-sm font-medium text-mint-800">
                     <span className="font-semibold">Received Date:</span> {data.goodsReceived.date}
                   </p>
-                  <p className="text-sm font-medium text-green-800">
+                  <p className="text-sm font-medium text-mint-800">
                     <span className="font-semibold">Received By:</span> {data.goodsReceived.by}
                   </p>
                 </div>
@@ -320,14 +308,13 @@ export default function ReturnDetails({ returnId, onBack }: ReturnDetailsProps) 
             </div>
           </Card>
 
-          {/* Lab Inspection Report */}
-          <Card className="p-6 border-2 border-blue-500 shadow-[0_0_0_4px_rgba(59,130,246,0.1)]">
+          <Card className="p-6 border-2 border-mint-500 shadow-[0_0_0_4px_rgba(74,215,176,0.1)]">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
-                <IoDocumentTextOutline className="text-xl text-blue-600" />
+                <IoDocumentTextOutline className="text-xl text-mint-600" />
                 <h2 className="font-semibold text-lg text-neutral-900">Lab Inspection Report</h2>
               </div>
-              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+              <span className="px-3 py-1 bg-mint-100 text-mint-700 rounded-full text-[10px] font-semibold uppercase tracking-wider">
                 Read-Only
               </span>
             </div>
@@ -354,7 +341,7 @@ export default function ReturnDetails({ returnId, onBack }: ReturnDetailsProps) 
                 <label className="text-xs font-medium text-neutral-400 uppercase tracking-wide block mb-2">
                   Defect Type
                 </label>
-                <span className="px-3 py-1 bg-red-100 text-red-700 rounded-lg text-sm font-medium">
+                <span className="px-3 py-1 bg-red-100 text-red-700 rounded-lg text-sm font-semibold">
                   {data.inspection.type}
                 </span>
               </div>
@@ -363,7 +350,7 @@ export default function ReturnDetails({ returnId, onBack }: ReturnDetailsProps) 
                 <label className="text-xs font-medium text-neutral-400 uppercase tracking-wide block mb-2">
                   Lab Finding
                 </label>
-                <div className="border border-neutral-200 bg-white p-4 rounded-xl text-sm text-neutral-700 leading-relaxed">
+                <div className="border border-neutral-200 bg-white p-4 rounded-xl text-sm text-neutral-700 leading-relaxed shadow-sm">
                   {data.inspection.finding}
                 </div>
               </div>
@@ -378,7 +365,7 @@ export default function ReturnDetails({ returnId, onBack }: ReturnDetailsProps) 
                       key={i}
                       src={photo}
                       alt="Lab evidence"
-                      className="w-24 h-24 object-cover rounded-xl border border-neutral-200"
+                      className="w-24 h-24 object-cover rounded-xl border border-neutral-200 hover:border-mint-400 transition-colors cursor-pointer"
                     />
                   ))}
                 </div>
@@ -387,9 +374,7 @@ export default function ReturnDetails({ returnId, onBack }: ReturnDetailsProps) 
           </Card>
         </div>
 
-        {/* Right Column */}
         <div className="space-y-6">
-          {/* Refund Calculation */}
           <Card className="p-6">
             <h2 className="font-semibold text-lg text-neutral-900 mb-6">Refund Calculation</h2>
 
@@ -410,7 +395,7 @@ export default function ReturnDetails({ returnId, onBack }: ReturnDetailsProps) 
 
             <div className="flex justify-between items-center py-4">
               <span className="font-semibold text-neutral-900">Total Refund</span>
-              <span className="font-bold text-2xl text-neutral-900">{data.refund.total}</span>
+              <span className="font-semibold text-2xl text-mint-600">{data.refund.total}</span>
             </div>
 
             <div className="pt-4 border-t border-neutral-100">
@@ -421,20 +406,19 @@ export default function ReturnDetails({ returnId, onBack }: ReturnDetailsProps) 
             </div>
           </Card>
 
-          {/* Refund Decision */}
           <Card className="p-6">
             <h2 className="font-semibold text-lg text-neutral-900 mb-6">Refund Decision</h2>
             <div className="space-y-3">
               <Button
                 isFullWidth
-                className="bg-green-600 hover:bg-green-700 text-white font-semibold h-12 rounded-xl"
+                className="bg-mint-600 hover:bg-mint-700 text-white font-semibold h-12 rounded-xl shadow-lg shadow-mint-100 transition-all hover:-translate-y-0.5"
                 leftIcon={<IoCheckmarkCircle size={20} />}
               >
                 Approve Refund
               </Button>
               <Button
                 isFullWidth
-                className="bg-red-600 hover:bg-red-700 text-white font-semibold h-12 rounded-xl"
+                className="bg-red-600 hover:bg-red-700 text-white font-semibold h-12 rounded-xl shadow-lg shadow-red-100 transition-all hover:-translate-y-0.5"
                 leftIcon={<IoCloseCircleOutline size={20} />}
               >
                 Reject Refund
@@ -442,13 +426,14 @@ export default function ReturnDetails({ returnId, onBack }: ReturnDetailsProps) 
             </div>
           </Card>
 
-          {/* Decision Guidelines */}
-          <Card className="p-5 bg-yellow-50 border-yellow-100">
-            <div className="flex items-center gap-2 mb-3 text-yellow-800">
+          <Card className="p-5 bg-amber-50 border-amber-100">
+            <div className="flex items-center gap-2 mb-3 text-amber-800">
               <IoAlertCircleOutline className="text-xl" />
-              <h3 className="font-semibold">Decision Guidelines</h3>
+              <h3 className="font-semibold uppercase tracking-wider text-xs">
+                Decision Guidelines
+              </h3>
             </div>
-            <ul className="text-xs space-y-2 text-yellow-800/80 list-disc pl-4 font-medium">
+            <ul className="text-xs space-y-2 text-amber-800/80 list-disc pl-4 font-medium">
               <li>Review lab inspection report carefully</li>
               <li>Manufacturing defects = Full refund</li>
               <li>Customer damage = Reject or partial refund</li>
@@ -456,33 +441,20 @@ export default function ReturnDetails({ returnId, onBack }: ReturnDetailsProps) 
             </ul>
           </Card>
 
-          {/* Timeline */}
           <Card className="p-6">
             <h2 className="font-semibold text-lg text-neutral-900 mb-6">Activity Timeline</h2>
             <div className="relative border-l-2 border-neutral-100 ml-3 space-y-8 py-2">
               {data.timeline.map((item) => (
-                <div key={item.id} className="relative pl-6">
+                <div key={item.id} className="relative pl-6 group">
                   <div
-                    className={cn(
-                      'absolute -left-[9px] top-1 w-4 h-4 rounded-full border-2 bg-white',
-                      item.active
-                        ? 'border-transparent bg-green-500'
-                        : 'border-yellow-400 bg-yellow-400'
-                      // The last screenshot uses Blue and Yellow dots.
-                      // Let's match the screenshot better:
-                      // Top ones are Green? No, actually:
-                      // Lab Inspection: Green dot
-                      // Goods Received: Green dot
-                      // Return Shipped: Blue dot
-                      // Return Requested: Yellow dot
-                    )}
+                    className="absolute -left-[9px] top-1 w-4 h-4 rounded-full border-2 bg-white transition-all group-hover:scale-125"
                     style={{
                       backgroundColor:
                         item.title.includes('Lab') || item.title.includes('Goods')
-                          ? '#22c55e'
+                          ? '#4ad7b0'
                           : item.title.includes('Shipped')
                             ? '#3b82f6'
-                            : '#eab308',
+                            : '#f59e0b',
                       borderColor: 'white'
                     }}
                   />

@@ -28,7 +28,7 @@ export function MenuItem({
 }: MenuItemProps) {
   const { sidebarCollapsed } = useLayoutStore()
   const hasActiveChild = Children.toArray(children).some(
-    (child) => isValidElement(child) && (child.props as any).active
+    (child) => isValidElement(child) && (child.props as { active?: boolean }).active
   )
 
   const [isOpen, setIsOpen] = useState(defaultIsOpen || hasActiveChild)

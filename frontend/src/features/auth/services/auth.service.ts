@@ -1,6 +1,6 @@
-import { authApi } from '@/api/modules/auth.api'
 import { STORAGE_KEYS } from '@/shared/constants/storage'
 import type { LoginRequest } from '@/shared/types'
+import { authApi } from './auth.api.legacy'
 
 export const authService = {
   async login(payload: LoginRequest) {
@@ -8,7 +8,7 @@ export const authService = {
     const response = await authApi.loginCustomer(payload)
 
     // Extract tokens from response
-    const { accessToken, refreshToken } = response as any
+    const { accessToken, refreshToken } = response
 
     if (accessToken) {
       localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken)

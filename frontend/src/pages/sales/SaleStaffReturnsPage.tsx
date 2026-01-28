@@ -39,9 +39,9 @@ export default function SaleStaffReturnsPage() {
             Orders
           </Link>
           <span className="text-neutral-300">/</span>
-          <span className="text-primary-500 font-bold">Returns Management</span>
+          <span className="text-primary-500 font-semibold">Returns Management</span>
         </div>
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Returns Management</h1>
+        <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">Returns Management</h1>
         <p className="text-gray-500 mt-1">Process customer returns and refunds.</p>
       </div>
 
@@ -60,7 +60,7 @@ export default function SaleStaffReturnsPage() {
             variant="solid"
             colorScheme="primary"
             leftIcon={<IoRefreshOutline />}
-            className="rounded-xl font-bold"
+            className="rounded-xl font-semibold"
           >
             Process New Return
           </Button>
@@ -70,85 +70,109 @@ export default function SaleStaffReturnsPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider align-middle">
+                <tr className="bg-white border-b border-neutral-100">
+                  <th className="pl-10 px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] uppercase tracking-widest align-middle">
                     Return ID
                   </th>
-                  <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider align-middle">
+                  <th className="px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] uppercase tracking-widest align-middle">
                     Original Order
                   </th>
-                  <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider align-middle">
+                  <th className="px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] uppercase tracking-widest align-middle">
                     Customer
                   </th>
-                  <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider align-middle">
+                  <th className="px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] uppercase tracking-widest align-middle">
                     Reason
                   </th>
-                  <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider text-center align-middle">
+                  <th className="px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] uppercase tracking-widest text-center align-middle">
                     Status
                   </th>
-                  <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider align-middle">
+                  <th className="px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] uppercase tracking-widest align-middle">
                     Date
                   </th>
-                  <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider text-center align-middle">
+                  <th className="pr-10 px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] uppercase tracking-widest text-right align-middle">
                     Action
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 bg-white">
-                <tr className="hover:bg-gray-50/50">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">#RET-8821</td>
-                  <td className="px-6 py-4 text-sm text-blue-600">#ORD-2023-098</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">Michael Scott</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">Defective Frame</td>
-                  <td className="px-6 py-4 align-middle">
+              <tbody className="divide-y divide-neutral-50 bg-white">
+                <tr
+                  className="hover:bg-emerald-50/30 cursor-pointer group transition-all"
+                  onClick={() => setSelectedReturnId('RET-8821')}
+                >
+                  <td className="pl-10 px-6 py-6 text-sm font-medium text-slate-900 group-hover:text-emerald-600 transition-colors align-middle">
+                    #RET-8821
+                  </td>
+                  <td className="px-6 py-6 text-sm font-medium text-blue-600/80 align-middle">
+                    #ORD-2023-098
+                  </td>
+                  <td className="px-6 py-6 align-middle">
+                    <div className="text-sm font-semibold text-[#3d4465]">Michael Scott</div>
+                    <div className="text-[11px] text-[#a4a9c1] font-medium">
+                      michael.s@example.com
+                    </div>
+                  </td>
+                  <td className="px-6 py-6 text-sm font-medium text-gray-500 align-middle">
+                    Defective Frame
+                  </td>
+                  <td className="px-6 py-6 align-middle">
                     <div className="flex justify-center">
-                      <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-orange-100 text-orange-600 whitespace-nowrap">
+                      <span className="px-4 py-1.5 rounded-full text-[9px] font-semibold uppercase tracking-widest bg-white text-orange-600 border border-orange-100 shadow-sm">
                         Pending
                       </span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">Oct 23, 2023</td>
-                  <td className="px-6 py-4 text-center align-middle">
-                    <div className="flex items-center justify-center">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        colorScheme="primary"
-                        className="p-2 h-8 w-8 text-primary-500"
-                        title="Details"
-                        onClick={() => setSelectedReturnId('RET-8821')}
-                      >
-                        <IoChevronForward size={18} />
-                      </Button>
-                    </div>
+                  <td className="px-6 py-6 align-middle">
+                    <div className="text-sm font-medium text-[#3d4465]">Oct 23, 2023</div>
+                  </td>
+                  <td className="pr-10 px-6 py-6 text-right align-middle">
+                    <button
+                      className="text-neutral-300 hover:text-emerald-500 hover:bg-emerald-50 transition-all p-2 rounded-xl"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setSelectedReturnId('RET-8821')
+                      }}
+                    >
+                      <IoChevronForward size={18} />
+                    </button>
                   </td>
                 </tr>
-                <tr className="hover:bg-gray-50/50">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">#RET-8819</td>
-                  <td className="px-6 py-4 text-sm text-blue-600">#ORD-2023-012</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">Pam Beesly</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">Wrong Size</td>
-                  <td className="px-6 py-4 align-middle">
+                <tr
+                  className="hover:bg-emerald-50/30 cursor-pointer group transition-all"
+                  onClick={() => setSelectedReturnId('RET-8819')}
+                >
+                  <td className="pl-10 px-6 py-6 text-sm font-medium text-slate-900 group-hover:text-emerald-600 transition-colors align-middle">
+                    #RET-8819
+                  </td>
+                  <td className="px-6 py-6 text-sm font-medium text-blue-600/80 align-middle">
+                    #ORD-2023-012
+                  </td>
+                  <td className="px-6 py-6 align-middle">
+                    <div className="text-sm font-semibold text-[#3d4465]">Pam Beesly</div>
+                    <div className="text-[11px] text-[#a4a9c1] font-medium">pam.b@example.com</div>
+                  </td>
+                  <td className="px-6 py-6 text-sm font-medium text-gray-500 align-middle">
+                    Wrong Size
+                  </td>
+                  <td className="px-6 py-6 align-middle">
                     <div className="flex justify-center">
-                      <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-600 whitespace-nowrap">
+                      <span className="px-4 py-1.5 rounded-full text-[9px] font-semibold uppercase tracking-widest bg-white text-emerald-600 border border-emerald-100 shadow-sm">
                         Approved
                       </span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500 align-middle">Oct 23, 2023</td>
-                  <td className="px-6 py-4 text-center align-middle">
-                    <div className="flex items-center justify-center">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        colorScheme="neutral"
-                        className="p-2 h-8 w-8 text-neutral-400 hover:text-primary-500"
-                        title="Details"
-                        onClick={() => setSelectedReturnId('RET-8819')}
-                      >
-                        <IoChevronForward size={18} />
-                      </Button>
-                    </div>
+                  <td className="px-6 py-6 align-middle">
+                    <div className="text-sm font-medium text-[#3d4465]">Oct 23, 2023</div>
+                  </td>
+                  <td className="pr-10 px-6 py-6 text-right align-middle">
+                    <button
+                      className="text-neutral-300 hover:text-emerald-500 hover:bg-emerald-50 transition-all p-2 rounded-xl"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setSelectedReturnId('RET-8819')
+                      }}
+                    >
+                      <IoChevronForward size={18} />
+                    </button>
                   </td>
                 </tr>
               </tbody>
@@ -169,7 +193,7 @@ export default function SaleStaffReturnsPage() {
                 variant="solid"
                 colorScheme="primary"
                 size="sm"
-                className="min-w-[32px] px-2 font-bold"
+                className="min-w-[32px] px-2 font-semibold"
               >
                 1
               </Button>

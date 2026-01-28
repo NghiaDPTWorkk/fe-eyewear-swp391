@@ -33,8 +33,10 @@ interface OrderTableProps {
 
 const getOrderTypeStyles = (type: string) => {
   switch (type) {
+    case 'Regular':
+    case 'Normal':
     case 'Đơn Thường':
-      return 'bg-emerald-50 text-emerald-600'
+      return 'bg-mint-50 text-mint-700'
     case 'Pre-order':
       return 'bg-amber-50 text-amber-600'
     case 'Prescription':
@@ -54,54 +56,54 @@ export default function OrderTable({ columns, hiddenColumns = [], filterType }: 
   const orders: Order[] = [
     {
       id: 'ORD-001',
-      orderType: 'Đơn Thường',
-      customer: 'Nguyễn Văn A',
+      orderType: 'Regular',
+      customer: 'Van A Nguyen',
       item: 'SKU-001',
-      waitingFor: 'Tròng Chemi 5.5',
+      waitingFor: 'Chemi 5.5 Lens',
       currentStatus: 'Processing',
       timeElapsed: '2h 15m',
-      statusColor: 'bg-blue-100 text-blue-600',
+      statusColor: 'bg-blue-100 text-blue-700',
       isNextActive: true
     },
     {
       id: 'ORD-002',
       orderType: 'Pre-order',
-      customer: 'Trần Thị B',
+      customer: 'Thi B Tran',
       item: 'SKU-001',
-      waitingFor: 'Gọng Titan',
+      waitingFor: 'Titan Frame',
       currentStatus: 'Lens Edging & Mounting',
       timeElapsed: '3h 45m',
-      statusColor: 'bg-purple-100 text-purple-600',
+      statusColor: 'bg-purple-100 text-purple-700',
       isNextActive: false
     },
     {
       id: 'PRE-003',
       orderType: 'Pre-order',
-      customer: 'Lê Văn C',
+      customer: 'Van C Le',
       item: 'SKU-001',
       currentStatus: 'Awaiting Stock',
       timeElapsed: '5d 2h',
-      statusColor: 'bg-orange-100 text-orange-600',
+      statusColor: 'bg-orange-100 text-orange-700',
       isNextActive: true
     },
     {
       id: 'ORD-004',
       orderType: 'Prescription',
-      customer: 'Phạm Thị D',
+      customer: 'Thi D Pham',
       item: 'SKU-001',
       currentStatus: 'Pending QC',
       timeElapsed: '45m',
-      statusColor: 'bg-gray-100 text-gray-600',
+      statusColor: 'bg-gray-100 text-gray-700',
       isNextActive: true
     },
     {
       id: 'ORD-005',
-      orderType: 'Đơn Thường',
-      customer: 'Hoàng Văn E',
+      orderType: 'Regular',
+      customer: 'Van E Hoang',
       item: 'SKU-001',
       currentStatus: 'Packed',
       timeElapsed: '1h 30m',
-      statusColor: 'bg-blue-100 text-blue-600',
+      statusColor: 'bg-mint-100 text-mint-700',
       isNextActive: true
     }
   ]
@@ -112,22 +114,27 @@ export default function OrderTable({ columns, hiddenColumns = [], filterType }: 
 
   const defaultColumns: Column<Order>[] = [
     {
-      header: 'MÃ ĐƠN',
+      header: 'ORDER ID',
       render: (order) => (
         <div>
-          <div>{order.id}</div>
-          <div className="w-12 h-1.5 bg-gray-200 rounded-full mt-1">
-            <div className="bg-emerald-400 h-full rounded-full w-1/2"></div>
+          <div
+            className="font-bold text-neutral-900 transition-colors hover:text-mint-600 cursor-pointer"
+            onClick={() => handleViewOrder(order.id)}
+          >
+            {order.id}
+          </div>
+          <div className="w-12 h-1.5 bg-gray-200 rounded-full mt-1 overflow-hidden">
+            <div className="bg-mint-400 h-full rounded-full w-1/2"></div>
           </div>
         </div>
       ),
       className: 'font-medium'
     },
     {
-      header: 'LOẠI ĐƠN',
+      header: 'TYPE',
       render: (order) => (
         <span
-          className={`px-3 py-1 rounded-md text-xs font-medium whitespace-nowrap ${getOrderTypeStyles(
+          className={`px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider whitespace-nowrap ${getOrderTypeStyles(
             order.orderType
           )}`}
         >
@@ -137,7 +144,7 @@ export default function OrderTable({ columns, hiddenColumns = [], filterType }: 
     },
     {
       header: 'CUSTOMER',
-      render: (order) => order.customer
+      render: (order) => <span className="font-medium text-neutral-900">{order.customer}</span>
     },
     {
       header: 'ITEMS',
@@ -147,12 +154,14 @@ export default function OrderTable({ columns, hiddenColumns = [], filterType }: 
     {
       header: 'WAITING FOR',
       render: (order) => order.waitingFor || '-',
-      className: 'text-purple-600 font-medium'
+      className: 'text-mint-700 font-medium'
     },
     {
-      header: 'TRẠNG THÁI',
+      header: 'STATUS',
       render: (order) => (
-        <span className={`px-3 py-1 rounded-md text-xs font-medium ${order.statusColor}`}>
+        <span
+          className={`px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider whitespace-nowrap ${order.statusColor}`}
+        >
           {order.currentStatus}
         </span>
       )
@@ -160,7 +169,7 @@ export default function OrderTable({ columns, hiddenColumns = [], filterType }: 
     {
       header: 'ORDER AT',
       render: (order) => (
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 text-neutral-500">
           <IoTimeOutline />
           {order.timeElapsed}
         </div>
@@ -176,7 +185,7 @@ export default function OrderTable({ columns, hiddenColumns = [], filterType }: 
             variant="ghost"
             size="sm"
             colorScheme="secondary"
-            className="p-2"
+            className="p-2 hover:bg-mint-50 hover:text-mint-600 transition-all rounded-lg"
             onClick={() => handleViewOrder(order.id)}
           >
             <IoEyeOutline size={20} />
@@ -185,7 +194,7 @@ export default function OrderTable({ columns, hiddenColumns = [], filterType }: 
             variant="solid"
             colorScheme="primary"
             size="sm"
-            className="text-xs"
+            className="text-xs font-bold rounded-xl px-4 hover:shadow-lg hover:shadow-mint-100 transition-all active:scale-95"
             isDisabled={!order.isNextActive}
             rightIcon={<IoChevronForward />}
             onClick={() => handleViewOrder(order.id)}
@@ -202,7 +211,7 @@ export default function OrderTable({ columns, hiddenColumns = [], filterType }: 
   )
 
   return (
-    <div className="overflow-x-auto bg-white rounded-lg shadow">
+    <div className="overflow-x-auto bg-white rounded-lg shadow-sm border border-neutral-100">
       <table className="w-full text-left border-collapse">
         <OrderHeaderTable columns={activeColumns} />
         <OrderList orders={filteredOrders} columns={activeColumns} />

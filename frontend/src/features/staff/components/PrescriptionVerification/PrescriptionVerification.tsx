@@ -90,7 +90,7 @@ export default function PrescriptionVerification({
             <div className="flex items-start gap-3">
               <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1.5 ring-2 ring-emerald-100" />
               <div>
-                <div className="font-bold text-emerald-900 text-sm">{orderData.id}</div>
+                <div className="font-semibold text-emerald-900 text-sm">{orderData.id}</div>
                 <div className="text-xs text-emerald-600 font-medium mt-0.5">
                   {orderData.customer}
                 </div>
@@ -183,154 +183,175 @@ export default function PrescriptionVerification({
 
           {/* Data Entry Form */}
           <Card className="p-0 border border-neutral-200 overflow-hidden shadow-sm">
-            <div className="p-4 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center border border-emerald-200">
-                  <IoInformationCircleOutline className="text-lg" />
+            <div className="p-5 bg-white border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100/50 shadow-sm">
+                  <IoInformationCircleOutline size={24} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900 border-none">Transcription Data</h3>
-                  <p className="text-[10px] text-gray-500">
-                    Transcribe values accurately from the image above
+                  <h3 className="text-lg font-semibold text-gray-900 leading-tight">
+                    Transcription Data
+                  </h3>
+                  <p className="text-xs font-medium text-gray-400 mt-0.5">
+                    Accurately transcribe prescription details
                   </p>
                 </div>
               </div>
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" className="text-xs h-8">
+              <div className="flex gap-2 w-full sm:w-auto">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="flex-1 sm:flex-none text-[11px] h-10 font-semibold border-emerald-100 text-emerald-700 bg-white hover:bg-emerald-50 rounded-xl transition-all"
+                >
                   Copy Previous
                 </Button>
-                <Button size="sm" variant="outline" className="text-xs h-8">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="flex-1 sm:flex-none text-[11px] h-10 font-semibold border-gray-100 text-gray-400 bg-white hover:bg-gray-50 rounded-xl transition-all"
+                >
                   Clear Form
                 </Button>
               </div>
             </div>
 
-            <div className="p-6 bg-white space-y-8">
+            <div className="p-6 bg-white space-y-6">
               {/* Right Eye (OD) */}
-              <div className="bg-emerald-50/30 p-5 rounded-2xl border border-emerald-100/50">
-                <h4 className="font-bold text-sm text-emerald-800 mb-4 flex items-center gap-2">
-                  <IoEyeOutline /> Right Eye (OD)
+              <div className="bg-emerald-50/20 p-6 rounded-2xl border border-emerald-100/50">
+                <h4 className="font-semibold text-sm text-emerald-800 mb-5 flex items-center gap-2">
+                  <IoEyeOutline size={18} /> Right Eye (OD)
                 </h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-emerald-700/70 uppercase tracking-wider">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-semibold text-emerald-700 uppercase tracking-widest pl-1">
                       SPH
                     </label>
                     <Input
                       defaultValue="-2.00"
-                      className="bg-white border-emerald-200 focus:border-emerald-500 font-semibold text-emerald-900 text-center"
+                      className="bg-white border-emerald-200 focus:border-emerald-500 font-semibold text-emerald-900 text-center h-11"
                     />
                   </div>
-                  <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-emerald-700/70 uppercase tracking-wider">
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-semibold text-emerald-700 uppercase tracking-widest pl-1">
                       CYL
                     </label>
                     <Input
                       defaultValue="-0.50"
-                      className="bg-white border-emerald-200 focus:border-emerald-500 font-semibold text-emerald-900 text-center"
+                      className="bg-white border-emerald-200 focus:border-emerald-500 font-semibold text-emerald-900 text-center h-11"
                     />
                   </div>
-                  <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-emerald-700/70 uppercase tracking-wider">
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-semibold text-emerald-700 uppercase tracking-widest pl-1">
                       AXIS
                     </label>
                     <Input
                       defaultValue="180"
-                      className="bg-white border-emerald-200 focus:border-emerald-500 font-semibold text-emerald-900 text-center"
+                      className="bg-white border-emerald-200 focus:border-emerald-500 font-semibold text-emerald-900 text-center h-11"
                     />
                   </div>
-                  <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-emerald-700/70 uppercase tracking-wider">
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-semibold text-emerald-700 uppercase tracking-widest pl-1">
                       ADD
                     </label>
                     <Input
                       defaultValue="+1.50"
-                      className="bg-white border-emerald-200 focus:border-emerald-500 font-semibold text-emerald-900 text-center"
+                      className="bg-white border-emerald-200 focus:border-emerald-500 font-semibold text-emerald-900 text-center h-11"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Left Eye (OS) */}
-              <div className="bg-gray-50 p-5 rounded-2xl border border-gray-100">
-                <h4 className="font-bold text-sm text-gray-700 mb-4 flex items-center gap-2">
-                  <IoEyeOutline /> Left Eye (OS)
+              <div className="bg-neutral-50/50 p-6 rounded-2xl border border-neutral-100">
+                <h4 className="font-semibold text-sm text-neutral-700 mb-5 flex items-center gap-2">
+                  <IoEyeOutline size={18} /> Left Eye (OS)
                 </h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest pl-1">
                       SPH
                     </label>
                     <Input
                       defaultValue="-2.25"
-                      className="bg-white border-gray-200 font-medium text-gray-900 text-center"
+                      className="bg-white border-neutral-200 font-semibold text-neutral-900 text-center h-11"
                     />
                   </div>
-                  <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest pl-1">
                       CYL
                     </label>
                     <Input
                       defaultValue="-0.75"
-                      className="bg-white border-gray-200 font-medium text-gray-900 text-center"
+                      className="bg-white border-neutral-200 font-semibold text-neutral-900 text-center h-11"
                     />
                   </div>
-                  <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest pl-1">
                       AXIS
                     </label>
                     <Input
                       defaultValue="170"
-                      className="bg-white border-gray-200 font-medium text-gray-900 text-center"
+                      className="bg-white border-neutral-200 font-semibold text-neutral-900 text-center h-11"
                     />
                   </div>
-                  <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest pl-1">
                       ADD
                     </label>
                     <Input
                       defaultValue="+1.50"
-                      className="bg-white border-gray-200 font-medium text-gray-900 text-center"
+                      className="bg-white border-neutral-200 font-semibold text-neutral-900 text-center h-11"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* PD & Notes Row */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block mb-2">
+              {/* PD & Notes Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start pt-2">
+                {/* PD Section */}
+                <div className="space-y-4">
+                  <label className="text-xs font-semibold text-neutral-500 uppercase tracking-widest pl-1 block">
                     Pupillary Distance (PD)
                   </label>
-                  <div className="flex gap-2">
-                    <Input
-                      defaultValue="31.5"
-                      placeholder="R"
-                      className="font-semibold text-center border-gray-300"
-                    />
-                    <Input
-                      defaultValue="31.5"
-                      placeholder="L"
-                      className="font-semibold text-center border-gray-300"
-                    />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="relative">
+                      <Input
+                        defaultValue="31.5"
+                        className="font-semibold text-center border-neutral-200 h-12 pr-8 rounded-xl focus:border-emerald-500 focus:ring-emerald-500/10"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-extrabold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md border border-emerald-100">
+                        R
+                      </span>
+                    </div>
+                    <div className="relative">
+                      <Input
+                        defaultValue="31.5"
+                        className="font-semibold text-center border-neutral-200 h-12 pr-8 rounded-xl focus:border-emerald-500 focus:ring-emerald-500/10"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-extrabold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md border border-emerald-100">
+                        L
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block mb-2">
+
+                {/* Notes Section */}
+                <div className="space-y-4">
+                  <label className="text-xs font-semibold text-neutral-500 uppercase tracking-widest pl-1 block">
                     Notes
                   </label>
                   <textarea
-                    className="w-full h-[42px] p-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-sm resize-none bg-gray-50/50"
-                    placeholder="Special instructions..."
+                    className="w-full h-12 p-3 rounded-xl border border-neutral-200 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 text-sm font-medium resize-none bg-neutral-50/20 transition-all placeholder:text-neutral-300"
+                    placeholder="Enter special instructions for lab technician..."
                   ></textarea>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gray-50 p-6 flex gap-3 border-t border-gray-100">
+            <div className="bg-neutral-50/80 p-6 flex gap-4 border-t border-neutral-100">
               <Button
                 isFullWidth
-                className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold h-12 rounded-xl shadow-lg shadow-emerald-200"
+                className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold h-12 rounded-xl shadow-md shadow-emerald-100 transition-all active:scale-95 border-none"
                 leftIcon={<IoCheckmark size={20} />}
               >
                 Verify & Submit to Lab
@@ -338,7 +359,7 @@ export default function PrescriptionVerification({
               <Button
                 isFullWidth
                 variant="outline"
-                className="border-neutral-200 text-neutral-600 hover:text-red-600 hover:bg-red-50 hover:border-red-100 font-semibold h-12 rounded-xl"
+                className="bg-white border-neutral-200 text-neutral-600 hover:text-red-600 hover:bg-neutral-50 font-semibold h-12 rounded-xl transition-all active:scale-95 translate-y-0"
                 leftIcon={<IoClose size={20} />}
               >
                 Reject Order
@@ -352,7 +373,7 @@ export default function PrescriptionVerification({
           {/* Order Details Card */}
           <Card className="p-5 border border-neutral-200 shadow-sm">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-gray-900 text-sm">Order Details</h3>
+              <h3 className="font-semibold text-gray-900 text-sm">Order Details</h3>
               <button className="text-emerald-600 text-xs font-semibold hover:underline">
                 Edit
               </button>
@@ -393,7 +414,7 @@ export default function PrescriptionVerification({
           {/* Customer Communication Hub */}
           <Card className="p-0 border border-neutral-200 shadow-sm overflow-hidden bg-white">
             <div className="p-4 bg-white border-b border-gray-100 flex justify-between items-center">
-              <h3 className="font-bold text-gray-900 text-sm flex items-center gap-2">
+              <h3 className="font-semibold text-gray-900 text-sm flex items-center gap-2">
                 <IoChatbubblesOutline className="text-emerald-500" /> Communication
               </h3>
               <div className="flex gap-1">
@@ -438,7 +459,7 @@ export default function PrescriptionVerification({
 
                 {/* Outgoing Message */}
                 <div className="flex gap-2 items-start max-w-[90%] ml-auto flex-row-reverse">
-                  <div className="w-6 h-6 rounded-full bg-emerald-100 shrink-0 flex items-center justify-center text-[10px] font-bold text-emerald-600">
+                  <div className="w-6 h-6 rounded-full bg-emerald-100 shrink-0 flex items-center justify-center text-[10px] font-semibold text-emerald-600">
                     You
                   </div>
                   <div className="text-right">
@@ -499,7 +520,7 @@ export default function PrescriptionVerification({
           {/* Laboratory Operations Channel */}
           <Card className="p-0 border border-neutral-200 shadow-sm overflow-hidden">
             <div className="p-4 bg-emerald-50/50 border-b border-emerald-100 flex justify-between items-center">
-              <h3 className="font-bold text-emerald-900 text-sm flex items-center gap-2">
+              <h3 className="font-semibold text-emerald-900 text-sm flex items-center gap-2">
                 <IoConstructOutline /> Lab Operations
               </h3>
               <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
@@ -511,15 +532,15 @@ export default function PrescriptionVerification({
                 <div className="flex gap-2 items-start">
                   <IoAlertCircleOutline className="text-amber-600 mt-0.5 shrink-0" />
                   <div>
-                    <p className="text-xs font-bold text-amber-800">Lens Stock Warning</p>
+                    <p className="text-xs font-semibold text-amber-800">Lens Stock Warning</p>
                     <p className="text-[11px] text-amber-700 leading-snug mt-1">
                       High index 1.74 stock low. Estimated delay: 2 days. Confirm proceed?
                     </p>
                     <div className="flex gap-2 mt-2">
-                      <button className="text-[10px] font-bold bg-white border border-amber-200 text-amber-700 px-2 py-1 rounded hover:bg-amber-50">
+                      <button className="text-[10px] font-semibold bg-white border border-amber-200 text-amber-700 px-2 py-1 rounded hover:bg-amber-50">
                         Cancel
                       </button>
-                      <button className="text-[10px] font-bold bg-amber-600 text-white px-2 py-1 rounded hover:bg-amber-700">
+                      <button className="text-[10px] font-semibold bg-amber-600 text-white px-2 py-1 rounded hover:bg-amber-700">
                         Confirm Proceed
                       </button>
                     </div>
@@ -536,7 +557,7 @@ export default function PrescriptionVerification({
                 </div>
                 <div className="pl-4 relative">
                   <div className="absolute -left-[5px] top-1 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white shadow-sm ring-2 ring-emerald-50"></div>
-                  <p className="text-xs font-bold text-gray-800">Data Transcription</p>
+                  <p className="text-xs font-semibold text-gray-800">Data Transcription</p>
                   <p className="text-[10px] text-gray-500">Started 5m ago by You</p>
                 </div>
               </div>
@@ -551,7 +572,7 @@ export default function PrescriptionVerification({
 
           {/* Status Override Panel */}
           <Card className="p-5 border border-neutral-200 shadow-sm bg-gray-50">
-            <h3 className="font-bold text-gray-900 text-sm mb-3">Status Override</h3>
+            <h3 className="font-semibold text-gray-900 text-sm mb-3">Status Override</h3>
             <p className="text-[11px] text-gray-500 mb-3">
               Manually update status if automation fails or for special cases.
             </p>

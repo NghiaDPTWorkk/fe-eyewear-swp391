@@ -15,10 +15,11 @@ export interface ProductFiltersProps {
   priceRanges: PriceRange[]
   selectedPriceRanges: string[]
   onPriceRangeChange: (rangeIds: string[]) => void
+  onCustomPriceApply?: (min: number | null, max: number | null) => void
+  priceResetKey?: number
   colors: ColorOption[]
   selectedColors: string[]
   onColorChange: (colorIds: string[]) => void
-  onReset?: () => void
   className?: string
 }
 
@@ -29,10 +30,11 @@ export function ProductFilters({
   priceRanges,
   selectedPriceRanges,
   onPriceRangeChange,
+  onCustomPriceApply,
+  priceResetKey,
   colors,
   selectedColors,
   onColorChange,
-  onReset,
   className
 }: ProductFiltersProps) {
   const handleCategoryClick = (categoryId: string) => {
@@ -43,66 +45,62 @@ export function ProductFilters({
   }
 
   return (
-    <div className={cn('flex flex-col gap-6', className)}>
+    <div className={cn('flex flex-col gap-4', className)}>
       {/* Filters Section */}
-      <div className="bg-white rounded-2xl border-2 border-mint-500 p-4">
+      <div className="bg-mint-200 rounded-2xl border-2 border-mint-500 p-4">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-primary-500 font-semibold text-lg">Filters</h2>
-          {onReset && (
-            <button
-              onClick={onReset}
-              className="text-primary-500 text-sm font-medium hover:text-primary-600 transition-colors"
-            >
-              reset
-            </button>
-          )}
+          <h2 className="text-mint-1200 font-semibold text-lg">Filters</h2>
         </div>
 
         <div className="space-y-0">
-          <FilterSection title="Brand">
+          {/* Brand */}
+          <FilterSection title="Brand" defaultExpanded>
             <div className="space-y-2">
-              {/* Placeholder for brand options */}
-              <p className="text-gray-eyewear text-sm">No brands available</p>
+              <p className="text-gray-eyewear text-sm">Coming soon</p>
             </div>
           </FilterSection>
 
-          <FilterSection title="Gender">
+          {/* Gender */}
+          <FilterSection title="Gender" defaultExpanded>
             <div className="space-y-2">
               {categories.map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => handleCategoryClick(category.id)}
-                  className={cn(
-                    'w-full text-left px-2 py-1.5 rounded text-sm transition-colors',
-                    selectedCategories.includes(category.id)
-                      ? 'bg-primary-100 text-primary-700 font-medium'
-                      : 'text-gray-eyewear hover:bg-mint-200'
-                  )}
-                >
-                  {category.name}
-                </button>
+                <label key={category.id} className="flex items-center gap-2 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={selectedCategories.includes(category.id)}
+                    onChange={() => handleCategoryClick(category.id)}
+                    className="w-4 h-4 rounded border-mint-500 text-primary-500 focus:ring-primary-500 cursor-pointer"
+                  />
+                  <span className="text-sm text-mint-1200 group-hover:text-primary-500 transition-colors">
+                    {category.name}
+                  </span>
+                </label>
               ))}
             </div>
           </FilterSection>
 
+          {/* Material */}
           <FilterSection title="Material">
             <div className="space-y-2">
-              <p className="text-gray-eyewear text-sm">No materials available</p>
+              <p className="text-gray-eyewear text-sm">Coming soon</p>
             </div>
           </FilterSection>
 
+          {/* Shape */}
           <FilterSection title="Shape">
             <div className="space-y-2">
-              <p className="text-gray-eyewear text-sm">No shapes available</p>
+              <p className="text-gray-eyewear text-sm">Coming soon</p>
             </div>
           </FilterSection>
 
+          {/* Occasion */}
           <FilterSection title="Occasion">
             <div className="space-y-2">
-              <p className="text-gray-eyewear text-sm">No occasions available</p>
+              <p className="text-gray-eyewear text-sm">Coming soon</p>
             </div>
           </FilterSection>
 
+          {/* Best Seller */}
           <FilterSection title="Best Seller">
             <div className="space-y-2">
               <p className="text-gray-eyewear text-sm">Coming soon</p>
@@ -112,16 +110,18 @@ export function ProductFilters({
       </div>
 
       {/* Price Range Section */}
-      <div className="bg-white rounded-2xl border-2 border-mint-500 p-4">
+      <div className="bg-mint-200 rounded-2xl border-2 border-mint-500 p-4">
         <PriceRangeFilter
+          key={priceResetKey}
           ranges={priceRanges}
           selectedRanges={selectedPriceRanges}
           onRangeChange={onPriceRangeChange}
+          onCustomRangeApply={onCustomPriceApply}
         />
       </div>
 
       {/* Color Section */}
-      <div className="bg-white rounded-2xl border-2 border-mint-500 p-4">
+      <div className="bg-mint-200 rounded-2xl border-2 border-mint-500 p-4">
         <ColorFilter
           colors={colors}
           selectedColors={selectedColors}

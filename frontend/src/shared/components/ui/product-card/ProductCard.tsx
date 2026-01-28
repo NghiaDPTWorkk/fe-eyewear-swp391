@@ -1,24 +1,30 @@
-import { Card, Button, PriceTag } from '@/components'
+import { Button } from '@/components'
 import { cn } from '@/lib/utils'
+import { Heart, ShoppingCart, Glasses } from 'lucide-react'
 
 export interface ProductCardProps {
   id: string
   name: string
-  image: string
+  brand?: string
+  image?: string
   price: number
   discountPrice?: number
-  rating?: number
+  salePercent?: number
   onAddToCart?: (productId: string) => void
+  onAddToWishlist?: (productId: string) => void
   className?: string
 }
 
 export function ProductCard({
   id,
   name,
+  brand,
   image,
   price,
   discountPrice,
+  salePercent,
   onAddToCart,
+  onAddToWishlist,
   className
 }: ProductCardProps) {
   const handleAddToCart = () => {
@@ -27,44 +33,82 @@ export function ProductCard({
     }
   }
 
+  const handleAddToWishlist = () => {
+    if (onAddToWishlist) {
+      onAddToWishlist(id)
+    }
+  }
+
+  const hasSale = salePercent && salePercent > 0
+  const finalPrice = discountPrice || price
+
   return (
-    <Card
+    <div
       className={cn(
-        'group overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1',
-        'relative',
+        'bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group relative',
         className
       )}
     >
-      {/* Product Image */}
-      <div className="relative aspect-square overflow-hidden bg-mint-200">
-        <img
-          src={image}
-          alt={name}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-        />
-        {discountPrice && discountPrice < price && (
-          <div className="absolute top-3 left-3 bg-primary-500 text-white px-2.5 py-1 rounded-md text-xs font-bold">
-            -{Math.round(((price - discountPrice) / price) * 100)}%
-          </div>
-        )}
+      {/* Sale Badge - Top left corner with opacity */}
+      {hasSale && (
+        <div className="absolute top-0 left-0 z-10 bg-primary-500/90 text-white px-3 py-1.5 rounded-br-2xl text-xs font-bold shadow-lg">
+          -{salePercent}%
+        </div>
+      )}
 
-        {/* Product Info Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 bg-white p-3">
-          <h3 className="text-mint-1200 font-semibold text-sm mb-1 line-clamp-1">{name}</h3>
-          <div className="flex items-center justify-between">
-            <PriceTag price={price} discountPrice={discountPrice} size="sm" />
-            <Button
-              variant="solid"
-              colorScheme="primary"
-              size="sm"
-              onClick={handleAddToCart}
-              className="shrink-0"
-            >
-              Add
-            </Button>
+      {/* Wishlist Button */}
+      <button
+        onClick={handleAddToWishlist}
+        className="absolute top-3 right-3 z-10 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-white hover:scale-110"
+        aria-label="Add to wishlist"
+      >
+        <Heart className="w-4 h-4 text-gray-eyewear hover:text-primary-500 transition-colors" />
+      </button>
+
+      {/* Product Image - Full width, no padding */}
+      <div className="aspect-square bg-gradient-to-br from-mint-100 to-mint-200 flex items-center justify-center overflow-hidden relative">
+        {image ? (
+          <img
+            src={image}
+            alt={name}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+          />
+        ) : (
+          <Glasses className="w-32 h-32 text-primary-500 opacity-60 group-hover:opacity-80 transition-opacity" />
+        )}
+      </div>
+
+      {/* Product Info */}
+      <div className="p-5">
+        {brand && (
+          <p className="text-xs text-primary-500 font-semibold mb-1 uppercase tracking-wide">
+            {brand}
+          </p>
+        )}
+        {/* Fixed height for title to prevent layout shift */}
+        <h3 className="font-bold text-mint-1200 mb-3 line-clamp-2 text-lg min-h-[3.5rem]">
+          {name}
+        </h3>
+
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col">
+            {hasSale && (
+              <span className="text-xs text-gray-eyewear line-through">
+                ${price.toLocaleString()}
+              </span>
+            )}
+            <span className="text-primary-500 font-bold text-xl">
+              ${finalPrice.toLocaleString()}
+            </span>
           </div>
+          <Button
+            onClick={handleAddToCart}
+            className="w-12 h-12 bg-primary-500 text-white rounded-full flex items-center justify-center hover:bg-primary-600 transition-all hover:scale-110 shadow-md"
+          >
+            <ShoppingCart className="w-6 h-6" />
+          </Button>
         </div>
       </div>
-    </Card>
+    </div>
   )
 }

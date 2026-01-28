@@ -1,17 +1,32 @@
 import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
-import { useGetProductWithPagination } from '@/shared/hooks/products/useGetProductWithPagination'
+import { useGetProductWithType } from '@/shared/hooks/products/useGetProductWithType'
 import { ProductFilters } from '@/shared/components/ui/product-filters'
 import { FilterTags, type FilterTag } from '@/shared/components/ui/filter-tags'
 import { ProductCard } from '@/shared/components/ui/product-card'
 
 import { ArrowRight } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
 export const CustomerProductPage = () => {
+  const location = useLocation()
   const [page, setPage] = useState(1)
   const limit = 12
 
-  // Filter states
+  const productType = useMemo(() => {
+    const path = location.pathname
+    if (path === '/eyeglasses') return 'frame'
+    if (path === '/sunglasses') return 'sunglass'
+    if (path === '/lenses') return 'lens'
+    return null
+  }, [location.pathname])
+
+  const [prevType, setPrevType] = useState(productType)
+  if (productType !== prevType) {
+    setPrevType(productType)
+    setPage(1)
+  }
+
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [selectedPriceRanges, setSelectedPriceRanges] = useState<string[]>([])
   const [selectedColors, setSelectedColors] = useState<string[]>([])
@@ -21,10 +36,12 @@ export const CustomerProductPage = () => {
   }>({ min: null, max: null })
   const [priceResetKey, setPriceResetKey] = useState(0)
 
-  const { products, loading, error, totalPages, currentPage } = useGetProductWithPagination(
-    page,
-    limit
-  )
+  // Use appropriate hook based on product type
+  // const allProductsData = useGetProductWithPagination(page, limit)
+  const typedProductsData = useGetProductWithType(page, limit, productType || '')
+
+  // Select the appropriate data source
+  const { products, loading, error, totalPages, currentPage } = typedProductsData
 
   const canPrev = useMemo(() => currentPage > 1, [currentPage])
   const canNext = useMemo(() => currentPage < totalPages, [currentPage, totalPages])

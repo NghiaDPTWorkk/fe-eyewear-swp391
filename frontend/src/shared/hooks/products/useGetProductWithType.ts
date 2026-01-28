@@ -12,13 +12,6 @@ interface UseGetProductWithTypeReturn {
   refetch: () => void
 }
 
-/**
- * Custom hook to fetch products filtered by type with pagination
- * @param page - Current page number
- * @param limit - Number of items per page
- * @param type - Product type filter (e.g., 'sunglass', 'eyeglass')
- * @returns Products data, loading state, error, pagination info, and refetch function
- */
 export const useGetProductWithType = (
   page: number,
   limit: number,
@@ -39,7 +32,6 @@ export const useGetProductWithType = (
       const apiResponse = await productService.getProductsByType(page, limit, type)
 
       if (apiResponse.success) {
-        // Backend returns data.productList, not data.data
         const productData = apiResponse.data as any
         setProducts(productData.productList || [])
         setTotal(productData.total || 0)

@@ -26,5 +26,19 @@ export const productService = {
     return httpClient.get<ApiResponse<ProductListData>>(
       ENDPOINTS.PRODUCTS.SEARCH(page, limit, search)
     )
+  },
+
+  //get product by category
+  /**
+   *
+   * @param page so trang
+   * @param limit item cua moi trang
+   * @param category danh mục
+   * @returns
+   */
+  getProductsByType(page: number, limit: number, type: string) {
+    return httpClient.get<ApiResponse<ProductListData>>(
+      ENDPOINTS.PRODUCTS.COMMON_GET_BY_TYPE(page, limit, type)
+    )
   }
 }

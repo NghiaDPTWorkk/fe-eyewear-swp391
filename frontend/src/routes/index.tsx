@@ -136,6 +136,30 @@ export const router = createBrowserRouter([
     )
   },
   {
+    path: '/eyeglasses',
+    element: (
+      <LazyPage>
+        <CustomerProductPage />
+      </LazyPage>
+    )
+  },
+  {
+    path: '/sunglasses',
+    element: (
+      <LazyPage>
+        <CustomerProductPage />
+      </LazyPage>
+    )
+  },
+  {
+    path: '/lenses',
+    element: (
+      <LazyPage>
+        <CustomerProductPage />
+      </LazyPage>
+    )
+  },
+  {
     path: '/admin/login',
     element: (
       <LazyPage>

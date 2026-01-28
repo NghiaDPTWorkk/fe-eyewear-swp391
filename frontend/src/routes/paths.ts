@@ -6,7 +6,10 @@ export const PATHS = {
   },
   PRODUCT: {
     LIST: '/products',
-    DETAIL: (id: string) => `/products/${id}`
+    DETAIL: (id: string) => `/products/${id}`,
+    EYEGLASSES: '/products/eyeglasses',
+    SUNGLASSES: '/products/sunglasses',
+    LENSES: '/products/lenses'
   },
   CART: '/cart',
   ADMIN: {

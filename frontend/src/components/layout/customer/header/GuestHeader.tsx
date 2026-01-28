@@ -61,47 +61,47 @@ export default function GuestHeader() {
               ></span>
             </button>
             <button
-              onClick={() => navigate('/products')}
+              onClick={() => navigate('/eyeglasses')}
               className={`${
-                isActive('/products')
+                isActive('/eyeglasses')
                   ? 'text-mint-1200 font-semibold'
                   : 'text-gray-eyewear font-medium'
               } hover:text-primary-500 transition-all relative group cursor-pointer`}
             >
-              Products
+              Eyeglasses
               <span
                 className={`absolute bottom-0 left-0 w-full h-0.5 bg-primary-500 transform ${
-                  isActive('/products') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                  isActive('/eyeglasses') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
                 } transition-transform`}
               ></span>
             </button>
             <button
-              onClick={() => navigate('/about')}
+              onClick={() => navigate('/sunglasses')}
               className={`${
-                isActive('/about')
+                isActive('/sunglasses')
                   ? 'text-mint-1200 font-semibold'
                   : 'text-gray-eyewear font-medium'
               } hover:text-primary-500 transition-all relative group cursor-pointer`}
             >
-              About
+              Sunglasses
               <span
                 className={`absolute bottom-0 left-0 w-full h-0.5 bg-primary-500 transform ${
-                  isActive('/about') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                  isActive('/sunglasses') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
                 } transition-transform`}
               ></span>
             </button>
             <button
-              onClick={() => navigate('/contact')}
+              onClick={() => navigate('/lenses')}
               className={`${
-                isActive('/contact')
+                isActive('/lenses')
                   ? 'text-mint-1200 font-semibold'
                   : 'text-gray-eyewear font-medium'
               } hover:text-primary-500 transition-all relative group cursor-pointer`}
             >
-              Contact
+              Lenses
               <span
                 className={`absolute bottom-0 left-0 w-full h-0.5 bg-primary-500 transform ${
-                  isActive('/contact') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                  isActive('/lenses') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
                 } transition-transform`}
               ></span>
             </button>

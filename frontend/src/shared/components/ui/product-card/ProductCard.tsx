@@ -40,7 +40,7 @@ export function ProductCard({
   }
 
   const hasSale = salePercent && salePercent > 0
-  const finalPrice = discountPrice || price
+  const finalPrice = discountPrice || price || 0
 
   return (
     <div

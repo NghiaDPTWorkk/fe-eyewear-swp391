@@ -131,3 +131,5 @@ export function MenuItem({
     </div>
   )
 }
+
+export { menuItemVariants }

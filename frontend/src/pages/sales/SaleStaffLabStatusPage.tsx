@@ -72,13 +72,13 @@ export default function SaleStaffLabStatusPage() {
             Dashboard
           </Link>
           <span className="text-neutral-300">/</span>
-          <span className="text-primary-500 font-semibold">Lab Status Tracking</span>
+          <span className="text-primary-500 font-bold">Lab Status Tracking</span>
         </div>
       </div>
 
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Lab Status Tracking</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Lab Status Tracking</h1>
           <p className="text-sm text-neutral-500 mt-1">
             Monitor production stages, urgent requests, and lens specifications.
           </p>
@@ -109,7 +109,7 @@ export default function SaleStaffLabStatusPage() {
             variant="solid"
             colorScheme="primary"
             leftIcon={<IoRefresh />}
-            className="rounded-xl font-semibold px-4"
+            className="rounded-xl font-bold px-4"
           >
             Refresh
           </Button>
@@ -121,10 +121,10 @@ export default function SaleStaffLabStatusPage() {
         <div className="col-span-12 lg:col-span-3 space-y-4">
           <Card className="p-4 border border-neutral-100 flex items-center justify-between">
             <div>
-              <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider">
+              <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
                 In Production
               </p>
-              <h3 className="text-2xl font-semibold text-neutral-900 mt-1">42</h3>
+              <h3 className="text-2xl font-bold text-neutral-900 mt-1">42</h3>
             </div>
             <div className="p-2 bg-blue-50 text-blue-500 rounded-lg">
               <IoFlaskOutline size={20} />
@@ -132,10 +132,10 @@ export default function SaleStaffLabStatusPage() {
           </Card>
           <Card className="p-4 border border-neutral-100 flex items-center justify-between">
             <div>
-              <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider">
+              <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
                 Urgent / Late
               </p>
-              <h3 className="text-2xl font-semibold text-neutral-900 mt-1">8</h3>
+              <h3 className="text-2xl font-bold text-neutral-900 mt-1">8</h3>
             </div>
             <div className="p-2 bg-red-50 text-red-500 rounded-lg">
               <IoWarningOutline size={20} />
@@ -143,10 +143,10 @@ export default function SaleStaffLabStatusPage() {
           </Card>
           <Card className="p-4 border border-neutral-100 flex items-center justify-between">
             <div>
-              <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider">
+              <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
                 Ready for QC
               </p>
-              <h3 className="text-2xl font-semibold text-neutral-900 mt-1">12</h3>
+              <h3 className="text-2xl font-bold text-neutral-900 mt-1">12</h3>
             </div>
             <div className="p-2 bg-emerald-50 text-emerald-500 rounded-lg">
               <IoCheckmarkCircleOutline size={20} />
@@ -161,14 +161,14 @@ export default function SaleStaffLabStatusPage() {
               <div className="p-1 bg-emerald-100 text-emerald-600 rounded">
                 <IoCheckmarkCircleOutline size={16} />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-bold text-gray-900">
                 Lens Specifications{' '}
                 <span className="ml-2 px-2 py-0.5 bg-neutral-100 text-neutral-500 text-[10px] rounded uppercase tracking-wider">
                   Selected: #ORD-7352
                 </span>
               </h3>
             </div>
-            <span className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider italic">
+            <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider italic">
               Read-Only View
             </span>
           </div>
@@ -176,7 +176,7 @@ export default function SaleStaffLabStatusPage() {
           <div className="grid grid-cols-4 gap-8">
             <div className="col-span-2 space-y-4">
               <div>
-                <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider mb-2">
+                <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-2">
                   Lens Type
                 </p>
                 <div className="px-3 py-2 bg-neutral-50 rounded-lg text-sm font-medium text-neutral-800">
@@ -184,7 +184,7 @@ export default function SaleStaffLabStatusPage() {
                 </div>
               </div>
               <div>
-                <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider mb-2">
+                <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-2">
                   Material
                 </p>
                 <div className="px-3 py-2 bg-neutral-50 rounded-lg text-sm font-medium text-neutral-800">
@@ -195,40 +195,40 @@ export default function SaleStaffLabStatusPage() {
 
             <div className="col-span-1 border-x border-neutral-100 px-6 space-y-4">
               <div>
-                <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider mb-2 text-center">
+                <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-2 text-center">
                   Sphere (SPH)
                 </p>
                 <div className="flex gap-2 justify-center">
                   <div className="text-center">
-                    <span className="text-[10px] text-neutral-400 uppercase font-semibold tracking-wider">
+                    <span className="text-[10px] text-neutral-400 uppercase font-bold tracking-wider">
                       OD
                     </span>
-                    <div className="text-sm font-semibold text-neutral-900">-2.50</div>
+                    <div className="text-sm font-bold text-neutral-900">-2.50</div>
                   </div>
                   <div className="text-center">
-                    <span className="text-[10px] text-neutral-400 uppercase font-semibold tracking-wider">
+                    <span className="text-[10px] text-neutral-400 uppercase font-bold tracking-wider">
                       OS
                     </span>
-                    <div className="text-sm font-semibold text-neutral-900">-2.75</div>
+                    <div className="text-sm font-bold text-neutral-900">-2.75</div>
                   </div>
                 </div>
               </div>
               <div>
-                <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider mb-2 text-center">
+                <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-2 text-center">
                   Cylinder (CYL)
                 </p>
                 <div className="flex gap-2 justify-center">
                   <div className="text-center">
-                    <span className="text-[10px] text-neutral-400 uppercase font-semibold tracking-wider">
+                    <span className="text-[10px] text-neutral-400 uppercase font-bold tracking-wider">
                       OD
                     </span>
-                    <div className="text-sm font-semibold text-neutral-900">-0.50</div>
+                    <div className="text-sm font-bold text-neutral-900">-0.50</div>
                   </div>
                   <div className="text-center">
-                    <span className="text-[10px] text-neutral-400 uppercase font-semibold tracking-wider">
+                    <span className="text-[10px] text-neutral-400 uppercase font-bold tracking-wider">
                       OS
                     </span>
-                    <div className="text-sm font-semibold text-neutral-900">-0.75</div>
+                    <div className="text-sm font-bold text-neutral-900">-0.75</div>
                   </div>
                 </div>
               </div>
@@ -236,7 +236,7 @@ export default function SaleStaffLabStatusPage() {
 
             <div className="col-span-1 space-y-4">
               <div>
-                <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider mb-2">
+                <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-2">
                   Lab Notes
                 </p>
                 <div className="p-3 bg-amber-50 rounded-lg text-[11px] font-medium text-amber-800 leading-relaxed border border-amber-100">
@@ -245,14 +245,14 @@ export default function SaleStaffLabStatusPage() {
                 </div>
               </div>
               <div>
-                <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider mb-2">
+                <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-2">
                   Coating
                 </p>
                 <div className="flex flex-wrap gap-1.5">
-                  <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-semibold rounded uppercase tracking-wider">
+                  <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-bold rounded uppercase tracking-wider">
                     Anti-Reflective
                   </span>
-                  <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-semibold rounded uppercase tracking-wider">
+                  <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-bold rounded uppercase tracking-wider">
                     Blue Light Filter
                   </span>
                 </div>
@@ -264,12 +264,12 @@ export default function SaleStaffLabStatusPage() {
 
       <Card className="p-0 overflow-hidden border border-neutral-100 shadow-sm rounded-2xl">
         <div className="px-8 py-5 border-b border-neutral-100 flex justify-between items-center bg-white">
-          <h3 className="text-[11px] font-semibold text-[#a4a9c1] uppercase tracking-widest">
+          <h3 className="text-[11px] font-bold text-[#a4a9c1] uppercase tracking-widest">
             Active Lab Orders
           </h3>
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-[#f97316]"></span>
-            <span className="text-[11px] font-semibold text-[#a4a9c1] uppercase tracking-widest">
+            <span className="text-[11px] font-bold text-[#a4a9c1] uppercase tracking-widest">
               Urgency Requested
             </span>
           </div>
@@ -278,96 +278,71 @@ export default function SaleStaffLabStatusPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-white border-b border-neutral-100">
-                <th className="pl-10 px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] uppercase tracking-widest align-middle">
+              <tr className="bg-[#fcfdfe] border-b border-neutral-50 px-8">
+                <th className="pl-10 px-6 py-5 text-[10px] font-bold text-[#a4a9c1] uppercase tracking-widest">
                   Order ID
                 </th>
-                <th className="px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] uppercase tracking-widest align-middle">
+                <th className="px-6 py-5 text-[10px] font-bold text-[#a4a9c1] uppercase tracking-widest">
                   Lens Type
                 </th>
-                <th className="px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] uppercase tracking-widest text-center align-middle">
+                <th className="px-6 py-5 text-[10px] font-bold text-[#a4a9c1] uppercase tracking-widest">
                   Lab Station
                 </th>
-                <th className="px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] uppercase tracking-widest text-center align-middle">
+                <th className="px-6 py-5 text-[10px] font-bold text-[#a4a9c1] uppercase tracking-widest">
                   Progress
                 </th>
-                <th className="px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] uppercase tracking-widest text-center align-middle">
+                <th className="px-6 py-5 text-[10px] font-bold text-[#a4a9c1] uppercase tracking-widest">
                   Time in Stn.
                 </th>
-                <th className="px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] uppercase tracking-widest text-center align-middle">
+                <th className="px-6 py-5 text-[10px] font-bold text-[#a4a9c1] uppercase tracking-widest">
                   Urgency
                 </th>
-                <th className="pr-10 px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] uppercase tracking-widest text-right align-middle">
+                <th className="pr-10 px-6 py-5 text-[10px] font-bold text-[#a4a9c1] uppercase tracking-widest text-right">
                   Action
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-50 bg-white">
+            <tbody className="divide-y divide-neutral-50">
               {labOrders.map((order, idx) => (
-                <tr
-                  key={idx}
-                  className="hover:bg-emerald-50/30 transition-all cursor-pointer group"
-                  onClick={() => console.warn('Selecting order:', order.id)}
-                >
-                  <td className="pl-10 px-6 py-6 align-middle">
-                    <div className="text-sm font-medium text-emerald-500 group-hover:text-emerald-600 transition-colors">
-                      {order.id}
-                    </div>
-                    <div className="text-[11px] text-[#a4a9c1] font-medium">
-                      Progressive Digital
-                    </div>
+                <tr key={idx} className="hover:bg-neutral-50/20 transition-colors">
+                  <td className="pl-10 px-6 py-6 text-sm font-bold text-[#3d4465]">{order.id}</td>
+                  <td className="px-6 py-6">
+                    <div className="text-sm font-bold text-[#3d4465] mb-0.5">{order.type}</div>
+                    <div className="text-[11px] text-[#a4a9c1] font-medium">{order.material}</div>
                   </td>
                   <td className="px-6 py-6">
-                    <div className="text-sm font-semibold text-[#3d4465] mb-0.5 group-hover:text-emerald-700 transition-colors">
-                      {order.type}
-                    </div>
-                    <div className="text-[11px] text-[#a4a9c1] font-medium uppercase tracking-wider">
-                      {order.material}
-                    </div>
-                  </td>
-                  <td className="px-6 py-6 text-center">
                     <span
-                      className={`inline-flex items-center justify-center px-4 py-1.5 rounded-full text-[9px] font-semibold uppercase tracking-widest border shadow-sm bg-white ${order.stationColor.replace('bg-', 'text-').replace('text-', 'border-')}`}
+                      className={`inline-flex items-center justify-center px-4 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider border ${order.stationColor.replace('bg-', 'bg-opacity-50 border-').replace('text-', 'border-opacity-30 text-')}`}
                     >
                       {order.station}
                     </span>
                   </td>
-                  <td className="px-6 py-6 text-center">
-                    <div className="flex items-center justify-center gap-4">
-                      <div className="w-24 h-2 bg-neutral-100 rounded-full overflow-hidden">
+                  <td className="px-6 py-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-24 h-1.5 bg-neutral-100 rounded-full overflow-hidden">
                         <div
-                          className={`h-full transition-all duration-1000 ${order.progressColor}`}
+                          className={`h-full ${order.progressColor}`}
                           style={{ width: `${order.progress}%` }}
                         ></div>
                       </div>
-                      <span className="text-[11px] font-semibold text-[#3d4465]">
-                        {order.progress}%
-                      </span>
+                      <span className="text-xs font-bold text-[#3d4465]">{order.progress}%</span>
                     </div>
                   </td>
                   <td
-                    className={`px-6 py-6 text-sm font-medium text-center ${order.urgency === 'Late' ? 'text-red-500' : 'text-[#3d4465]'}`}
+                    className={`px-6 py-6 text-xs font-bold ${order.urgency === 'Late' ? 'text-red-500' : 'text-[#3d4465]'}`}
                   >
                     {order.time}
                   </td>
-                  <td className="px-6 py-6 text-center">
-                    <div className="flex justify-center">
-                      <span
-                        className={`px-3 py-1.5 rounded-lg text-[9px] font-semibold uppercase tracking-widest shadow-sm bg-white ${order.urgencyColor.replace('bg-', 'text-').replace('text-', 'border-')}`}
-                      >
-                        {order.urgency}
-                      </span>
-                    </div>
+                  <td className="px-6 py-6">
+                    <span
+                      className={`px-3 py-1 rounded-md text-[9px] font-bold uppercase tracking-wider ${order.urgencyColor}`}
+                    >
+                      {order.urgency}
+                    </span>
                   </td>
                   <td className="pr-10 px-6 py-6 text-right">
-                    <button
-                      className="text-neutral-300 hover:text-emerald-500 hover:bg-emerald-50 transition-all p-2 rounded-xl"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        console.warn('Action clicked for:', order.id)
-                      }}
-                    >
-                      <IoChevronForward size={18} />
+                    <button className="text-emerald-400 hover:text-emerald-500 transition-colors p-2">
+                      <IoChevronForward size={20} />
                     </button>
                   </td>
                 </tr>
@@ -376,13 +351,13 @@ export default function SaleStaffLabStatusPage() {
           </table>
         </div>
 
-        <div className="px-10 py-6 flex justify-between items-center text-xs font-semibold text-[#a4a9c1] bg-white border-t border-neutral-100">
+        <div className="px-10 py-6 flex justify-between items-center text-xs font-bold text-[#a4a9c1] bg-white border-t border-neutral-100">
           <span className="opacity-70">Showing 1 to 4 of 42 active orders</span>
           <div className="flex gap-3">
-            <button className="px-6 py-2 border border-neutral-200 rounded-lg text-sm font-semibold text-[#3d4465] hover:bg-neutral-50 transition-colors bg-white">
+            <button className="px-6 py-2 border border-neutral-200 rounded-lg text-sm font-bold text-[#3d4465] hover:bg-neutral-50 transition-colors bg-white">
               Previous
             </button>
-            <button className="px-6 py-2 border border-neutral-200 rounded-lg text-sm font-semibold text-[#3d4465] hover:bg-neutral-50 transition-colors bg-white">
+            <button className="px-6 py-2 border border-neutral-200 rounded-lg text-sm font-bold text-[#3d4465] hover:bg-neutral-50 transition-colors bg-white">
               Next
             </button>
           </div>

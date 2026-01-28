@@ -124,7 +124,7 @@ export default function SaleStaffProductPage() {
             <Button
               colorScheme="primary"
               leftIcon={<IoAdd />}
-              className="rounded-xl text-sm h-11 px-6 font-bold bg-[#63b38e] hover:bg-[#52a67f] border-none shadow-sm"
+              className="rounded-xl text-sm h-11 px-6 font-bold bg-[#6EE7B7] hover:bg-[#5CD6A6] border-none shadow-sm"
             >
               Add Product
             </Button>

@@ -60,8 +60,20 @@ const SaleStaffPreOrdersPage = lazy(() =>
   import('@/pages/sales/SaleStaffPreOrdersPage').then((m) => ({ default: m.default }))
 )
 
+const SaleStaffLiveMapPage = lazy(() =>
+  import('@/pages/sales/SaleStaffLiveMapPage').then((m) => ({ default: m.default }))
+)
+
 const SaleStaffReturnsPage = lazy(() =>
   import('@/pages/sales/SaleStaffReturnsPage').then((m) => ({ default: m.default }))
+)
+
+const SaleStaffSettingsPage = lazy(() =>
+  import('@/pages/sales/SaleStaffSettingsPage').then((m) => ({ default: m.default }))
+)
+
+const SaleStaffSupportPage = lazy(() =>
+  import('@/pages/sales/SaleStaffSupportPage').then((m) => ({ default: m.default }))
 )
 
 const OperationLayout = lazy(() =>
@@ -190,6 +202,18 @@ export const router = createBrowserRouter([
       {
         path: 'lab-status',
         element: <SaleStaffLabStatusPage />
+      },
+      {
+        path: 'live-map/:trackingId',
+        element: <SaleStaffLiveMapPage />
+      },
+      {
+        path: 'settings',
+        element: <SaleStaffSettingsPage />
+      },
+      {
+        path: 'support',
+        element: <SaleStaffSupportPage />
       }
     ]
   },
@@ -236,6 +260,14 @@ export const router = createBrowserRouter([
       {
         path: 'delivery-orders',
         element: <OperationDeliveryPage />
+      },
+      {
+        path: 'settings',
+        element: <SaleStaffSettingsPage />
+      },
+      {
+        path: 'support',
+        element: <SaleStaffSupportPage />
       }
     ]
   },

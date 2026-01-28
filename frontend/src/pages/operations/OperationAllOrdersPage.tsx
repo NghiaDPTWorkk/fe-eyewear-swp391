@@ -9,7 +9,7 @@ export default function OperationAllOrdersPage() {
   const filterButtons = [
     { label: 'All', count: 5, value: 'all' },
     { label: 'Pre-order', count: 2, value: 'Pre-order' },
-    { label: 'Normal', count: 2, value: 'Đơn Thường' },
+    { label: 'Regular', count: 2, value: 'Regular' },
     { label: 'Prescription', count: 1, value: 'Prescription' }
   ]
 

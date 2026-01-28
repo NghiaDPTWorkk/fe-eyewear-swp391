@@ -5,15 +5,28 @@ interface OrderListProps {
   orders: Order[]
   columns: Column<Order>[]
   role?: 'sales' | 'operation'
+  onRowClick?: (orderId: string) => void
 }
 
-export default function OrderList({ orders, columns, role = 'operation' }: OrderListProps) {
+export default function OrderList({
+  orders,
+  columns,
+  role = 'operation',
+  onRowClick
+}: OrderListProps) {
   const isSales = role === 'sales'
 
   return (
     <tbody className="divide-y divide-neutral-50">
       {orders.map((order, orderIndex) => (
-        <tr key={orderIndex} className="group hover:bg-neutral-50/50 transition-colors">
+        <tr
+          key={orderIndex}
+          className={cn(
+            'group hover:bg-neutral-50/50 transition-colors',
+            onRowClick && 'cursor-pointer'
+          )}
+          onClick={() => onRowClick?.(order.id)}
+        >
           {columns.map((col, colIndex) => (
             <td
               key={colIndex}

@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Container, Button, Card } from '@/components'
 import { OrderTable, FilterButtonList } from '@/components/staff'
+import OrderDetail from '@/features/staff/components/OrderDetail/OrderDetail'
+import OrderDetailsDrawer from '@/features/staff/components/OrderDetailsDrawer/OrderDetailsDrawer'
 import {
   IoSearchOutline,
   IoFilter,
@@ -13,6 +15,21 @@ import {
 
 export default function SaleStaffOrderPage() {
   const [filter, setFilter] = useState('All Orders')
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [viewFullId, setViewFullId] = useState<string | null>(null)
+
+  const handleOpenDrawer = (id: string) => {
+    setSelectedOrderId(id)
+    setIsDrawerOpen(true)
+  }
+
+  const handleViewFullDetails = () => {
+    if (selectedOrderId) {
+      setViewFullId(selectedOrderId)
+      setIsDrawerOpen(false)
+    }
+  }
 
   const filterButtons = [
     { label: 'All Orders', count: 128, value: 'All Orders' },
@@ -21,6 +38,14 @@ export default function SaleStaffOrderPage() {
     { label: 'Ready for Pickup', count: 4, value: 'Ready for Pickup' },
     { label: 'Completed', count: 0, value: 'Completed' }
   ]
+
+  if (viewFullId) {
+    return (
+      <Container>
+        <OrderDetail orderId={viewFullId} onBack={() => setViewFullId(null)} />
+      </Container>
+    )
+  }
 
   return (
     <Container>
@@ -81,7 +106,7 @@ export default function SaleStaffOrderPage() {
 
         {/* Table Card */}
         <Card className="p-0 overflow-hidden border border-neutral-200 shadow-sm">
-          <OrderTable role="sales" />
+          <OrderTable role="sales" onRowClick={handleOpenDrawer} />
         </Card>
 
         {/* Pagination placeholder (OrderTable might handle it or we add below) */}
@@ -132,6 +157,13 @@ export default function SaleStaffOrderPage() {
           </div>
         </div>
       </div>
+
+      <OrderDetailsDrawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        orderId={selectedOrderId}
+        onViewFullDetails={handleViewFullDetails}
+      />
     </Container>
   )
 }

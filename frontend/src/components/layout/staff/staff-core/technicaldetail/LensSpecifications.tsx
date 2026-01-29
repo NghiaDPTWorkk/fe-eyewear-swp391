@@ -25,20 +25,18 @@ const LensSpecifications = ({ prescription, details }: LensSpecificationsProps) 
         <table className="w-full">
           <thead>
             <tr className="border-neutral-200">
-              <th className="px-4 py-3 text-left text-xs font-medium text-neutral-600">Mắt</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-neutral-600">Eye</th>
               <th className="px-4 py-3 text-center text-xs font-medium text-neutral-600">
-                Độ Cầu (SPH)
+                Sphere (SPH)
               </th>
               <th className="px-4 py-3 text-center text-xs font-medium text-neutral-600">
-                Độ Trụ (CYL)
+                Cylinder (CYL)
               </th>
+              <th className="px-4 py-3 text-center text-xs font-medium text-neutral-600">AXIS</th>
+              <th className="px-4 py-3 text-center text-xs font-medium text-neutral-600">Prism</th>
               <th className="px-4 py-3 text-center text-xs font-medium text-neutral-600">
-                Trục (AXIS)
+                Addition
               </th>
-              <th className="px-4 py-3 text-center text-xs font-medium text-neutral-600">
-                Lăng Kính
-              </th>
-              <th className="px-4 py-3 text-center text-xs font-medium text-neutral-600">Độ Add</th>
             </tr>
           </thead>
           <tbody>

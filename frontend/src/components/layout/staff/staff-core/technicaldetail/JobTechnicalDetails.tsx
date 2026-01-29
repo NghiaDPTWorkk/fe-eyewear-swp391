@@ -1,5 +1,5 @@
 import FrameSpecifications from './FrameSpecifications'
-import LensSpecifications from './LenSpecifications'
+import LensSpecifications from './LensSpecifications'
 
 interface PrescriptionItem {
   eye: string
@@ -35,13 +35,13 @@ const JobTechnicalDetails = ({ lensData, frameData }: JobTechnicalDetailsProps) 
     <div className="space-y-6">
       {/* Lens Specifications Section */}
       <section className="bg-white rounded-lg shadow-sm p-6 border border-neutral-200">
-        <h2 className="text-mint-900 font-semibold text-base mb-4">Thông Số Tròng Kính</h2>
+        <h2 className="text-mint-900 font-semibold text-base mb-4">Lens Specification</h2>
         <LensSpecifications prescription={lensData.prescription} details={lensData.additional} />
       </section>
 
       {/* Frame Specifications Section */}
       <section className="bg-white rounded-lg shadow-sm p-6 border border-neutral-200">
-        <h2 className="text-mint-900 font-semibold text-base mb-4">Thông Tin Gọng Kính</h2>
+        <h2 className="text-mint-900 font-semibold text-base mb-4">Frame Specification</h2>
         <FrameSpecifications
           data={frameData}
           imageSrc="https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&q=80&w=800"

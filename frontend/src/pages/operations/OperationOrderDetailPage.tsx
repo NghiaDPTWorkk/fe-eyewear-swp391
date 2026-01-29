@@ -18,8 +18,8 @@ export default function OperationOrderDetailPage() {
   // TẤT CẢ MOCK DATA NẰM Ở ĐÂY
   const lensData = {
     prescription: [
-      { eye: 'Mắt Phải (OD)', sph: '-6.50', cyl: '-1.50', axis: '0°', prism: '-', add: '-' },
-      { eye: 'Mắt Trái (OS)', sph: '-6.50', cyl: '-1.50', axis: '0°', prism: '-', add: '-' }
+      { eye: 'Right Eye (OD)', sph: '-6.50', cyl: '-1.50', axis: '0°', prism: '-', add: '-' },
+      { eye: 'Left Eye (OS)', sph: '-6.50', cyl: '-1.50', axis: '0°', prism: '-', add: '-' }
     ],
     additional: [
       { label: 'Loại Tròng', value: 'Single Vision' },
@@ -28,10 +28,10 @@ export default function OperationOrderDetailPage() {
   }
 
   const frameData = [
-    { label: 'Mã Gọng', value: 'RB-AV-001' },
-    { label: 'Thương Hiệu', value: 'Ray-Ban' },
-    { label: 'Chất Liệu', value: 'Metal Titanium' },
-    { label: 'Màu Sắc', value: 'Gold' }
+    { label: 'Frame Code', value: 'RB-AV-001' },
+    { label: 'Brand', value: 'Ray-Ban' },
+    { label: 'Material', value: 'Metal Titanium' },
+    { label: 'Color', value: 'Gold' }
   ]
   return (
     <Container>
@@ -127,7 +127,7 @@ export default function OperationOrderDetailPage() {
           className="px-6 py-3 bg-mint-900 hover:bg-mint-700 text-white rounded-lg font-medium transition-colors shadow-sm"
           onClick={() => navigate(PATHS.OPERATIONSTAFF.PACKING_PROCESS(orderId || ''))}
         >
-          Bắt đầu xử lý
+          Start Processing
         </Button>
       </div>
     </Container>

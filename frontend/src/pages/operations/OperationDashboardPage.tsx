@@ -1,12 +1,16 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Container, MetricCard } from '@/components'
 import { OrderTable } from '@/components/staff'
+import { Pagination } from '@/shared/components/ui/pagination'
+import { useGetProductWithPagination } from '@/shared/hooks/products/useGetProductWithPagination'
 import {
   IoClipboardOutline,
   IoFlagOutline,
   IoTicketOutline,
   IoWalletOutline
 } from 'react-icons/io5'
+
 const METRICS = [
   {
     title: 'Pending Orders',
@@ -63,6 +67,24 @@ function DashboardMetrics() {
 }
 
 export default function OperationDashboardPage() {
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 5
+
+  const { products, total, totalPages} = useGetProductWithPagination(currentPage, itemsPerPage)
+  
+  // Mapping StandardProduct to Order structure for the table
+  const mappedOrders = products.map((product: any) => ({
+    id: product.id || product._id || product.skuBase,
+    orderType: product.type === 'sunglass' ? 'Kính mát' : (product.type === 'frame' ? 'Gọng kính' : 'Tròng kính'), // Simple mapping
+    customer: 'Khách vãng lai', // Mock data as Product API doesn't have customer info
+    item: product.nameBase,
+    waitingFor: '-',
+    currentStatus: 'Processing',
+    timeElapsed: 'Just now',
+    statusColor: 'bg-blue-100 text-blue-600',
+    isNextActive: true
+  }))
+
   return (
     <Container>
       <div className="mb-8">
@@ -83,7 +105,21 @@ export default function OperationDashboardPage() {
         </div>
       </div>
 
-      <OrderTable hiddenColumns={['WAITING FOR']} role="operation" />
+      <OrderTable
+        hiddenColumns={['WAITING FOR']}
+        role="operation"
+        orders={mappedOrders}
+      />
+
+      <div className="mt-6">
+        <Pagination
+          currentPage={currentPage}
+          totalItems={total}
+          itemsPerPage={itemsPerPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      </div>
     </Container>
   )
 }

@@ -1,97 +1,46 @@
-import { Button } from '@/components'
+import { IoArrowForward } from 'react-icons/io5'
 import { cn } from '@/lib/utils'
 
 export interface PaginationProps {
   currentPage: number
   totalPages: number
   onPageChange: (page: number) => void
-  onLoadMore?: () => void
-  showLoadMore?: boolean
   className?: string
+  totalItems?: number
+  itemsPerPage?: number
 }
 
-export function Pagination({
-  currentPage,
-  totalPages,
-  onPageChange,
-  onLoadMore,
-  showLoadMore = false,
-  className
-}: PaginationProps) {
-  const getPageNumbers = () => {
-    const pages: (number | string)[] = []
-    const maxVisible = 5
-
-    if (totalPages <= maxVisible) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i)
-      }
-    } else {
-      if (currentPage <= 3) {
-        for (let i = 1; i <= 4; i++) {
-          pages.push(i)
-        }
-        pages.push('...')
-        pages.push(totalPages)
-      } else if (currentPage >= totalPages - 2) {
-        pages.push(1)
-        pages.push('...')
-        for (let i = totalPages - 3; i <= totalPages; i++) {
-          pages.push(i)
-        }
-      } else {
-        pages.push(1)
-        pages.push('...')
-        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
-          pages.push(i)
-        }
-        pages.push('...')
-        pages.push(totalPages)
-      }
-    }
-
-    return pages
-  }
+export function Pagination({ currentPage, totalPages, onPageChange, className }: PaginationProps) {
+  const canPrev = currentPage > 1
+  const canNext = currentPage < totalPages
 
   return (
-    <div className={cn('flex flex-col items-center gap-4', className)}>
-      {/* Page Numbers */}
-      <div className="flex items-center gap-2">
-        {getPageNumbers().map((page, index) => {
-          if (page === '...') {
-            return (
-              <span key={`ellipsis-${index}`} className="px-2 text-neutral-400">
-                ...
-              </span>
-            )
-          }
+    <div className={cn('flex items-center justify-center gap-4 py-4', className)}>
+      <button
+        className="px-4 py-2 rounded-xl border-2 border-mint-300 bg-white text-mint-1200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-mint-200 transition-all"
+        disabled={!canPrev}
+        onClick={() => onPageChange(currentPage - 1)}
+      >
+        Prev
+      </button>
 
-          const pageNum = page as number
-          const isActive = pageNum === currentPage
-
-          return (
-            <button
-              key={pageNum}
-              onClick={() => onPageChange(pageNum)}
-              className={cn(
-                'w-8 h-8 rounded-md text-sm font-medium transition-colors',
-                isActive
-                  ? 'bg-primary-500 text-white'
-                  : 'bg-white text-mint-1200 border border-neutral-300 hover:bg-primary-50'
-              )}
-            >
-              {pageNum}
-            </button>
-          )
-        })}
+      <div className="text-sm text-gray-eyewear">
+        Page <span className="font-semibold text-mint-1200">{currentPage}</span> /{' '}
+        <span className="font-semibold text-mint-1200">{totalPages || 1}</span>
       </div>
 
-      {/* Load More Button */}
-      {showLoadMore && currentPage < totalPages && (
-        <Button variant="outline" colorScheme="primary" size="md" onClick={onLoadMore}>
-          Load More
-        </Button>
-      )}
+      <button
+        className="px-4 py-2 rounded-xl border-2 border-mint-300 bg-white text-mint-1200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-mint-200 transition-all inline-flex items-center gap-2"
+        disabled={!canNext}
+        onClick={() => onPageChange(currentPage + 1)}
+      >
+        Next
+        <ArrowRight className="w-4 h-4" />
+      </button>
     </div>
   )
+}
+
+function ArrowRight({ className }: { className?: string }) {
+  return <IoArrowForward className={className} />
 }

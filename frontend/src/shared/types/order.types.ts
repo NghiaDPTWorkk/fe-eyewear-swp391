@@ -53,6 +53,17 @@ export interface Order {
   updatedAt: Date
   deletedAt?: Date | null
 }
+export interface OrderTableRow {
+  id: string
+  orderType: string
+  customer: string
+  item: string
+  waitingFor?: string
+  currentStatus: string
+  timeElapsed: string
+  statusColor: string
+  isNextActive: boolean
+}
 
 export interface Invoice {
   _id: string

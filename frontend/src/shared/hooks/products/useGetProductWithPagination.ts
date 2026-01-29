@@ -31,10 +31,12 @@ export const useGetProductWithPagination = (
       const apiResponse = await productService.getProducts(page, limit)
 
       if (apiResponse.success) {
-        setProducts(apiResponse.data.productList)
-        setTotal(apiResponse.data.pagination.total)
-        setTotalPages(apiResponse.data.pagination.totalPages)
-        setCurrentPage(apiResponse.data.pagination.page)
+        // Backend returns data.productList, not data.data
+        const productData = apiResponse.data as any
+        setProducts(productData.productList || [])
+        setTotal(productData.pagination?.total || productData.total || 0)
+        setTotalPages(productData.pagination?.totalPages || productData.totalPages || 0)
+        setCurrentPage(productData.pagination?.page || productData.page || page)
       }
     } catch (err) {
       setError(err)

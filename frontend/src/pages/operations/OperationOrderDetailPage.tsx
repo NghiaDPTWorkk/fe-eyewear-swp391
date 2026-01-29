@@ -10,7 +10,7 @@ import { ProcessTracker } from '@/components/layout/staff/staff-core/processtrac
 export default function OperationOrderDetailPage() {
   const { orderId } = useParams<{ orderId: string }>()
   const navigate = useNavigate()
-  // TẤT CẢ MOCK DATA NẰM Ở ĐÂY
+  // MOCK DATA NẰM Ở ĐÂY
   const lensData = {
     prescription: [
       { eye: 'Right Eye (OD)', sph: '-6.50', cyl: '-1.50', axis: '0°', prism: '-', add: '-' },

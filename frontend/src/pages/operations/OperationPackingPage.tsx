@@ -4,24 +4,31 @@ import { Container } from '@/components'
 import { OrderTable } from '@/components/staff'
 import { Pagination } from '@/shared/components/ui/pagination'
 import { useGetProductWithPagination } from '@/shared/hooks/products/useGetProductWithPagination'
+import type { Product } from '@/shared/types'
 
 export default function OperationPackingPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 5
-  
-  const { products, total, totalPages, loading, refetch } = useGetProductWithPagination(currentPage, itemsPerPage)
 
-  const mappedOrders = products.map((product: any) => ({
-    id: product.id || product._id || product.skuBase,
-    orderType: product.type === 'sunglass' ? 'Kính mát' : (product.type === 'frame' ? 'Gọng kính' : 'Tròng kính'),
-    customer: 'Khách hàng',
-    item: product.nameBase,
-    waitingFor: '-',
-    currentStatus: 'Packing', // Mock status for this page
-    timeElapsed: '1h 30m',
-    statusColor: 'bg-purple-100 text-purple-600',
-    isNextActive: true 
-  }))
+  const { products, total, totalPages } = useGetProductWithPagination(currentPage, itemsPerPage)
+
+  // Use Product union type with type guard
+  const mappedOrders = products.map((product: Product) => {
+    const productId = 'id' in product ? product.id : product._id
+
+    return {
+      id: productId || product.skuBase,
+      orderType:
+        product.type === 'sunglass' ? 'Kính mát' : product.type === 'frame' ? 'Frame' : 'Lens',
+      customer: 'Khách hàng',
+      item: product.nameBase,
+      waitingFor: '-',
+      currentStatus: 'Packing',
+      timeElapsed: '1h 30m',
+      statusColor: 'bg-purple-100 text-purple-600',
+      isNextActive: true
+    }
+  })
 
   return (
     <Container>
@@ -39,10 +46,7 @@ export default function OperationPackingPage() {
         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Packing Station</h1>
       </div>
 
-      <OrderTable 
-        hiddenColumns={['WAITING FOR']} 
-        orders={mappedOrders}
-      />
+      <OrderTable hiddenColumns={['WAITING FOR']} orders={mappedOrders} />
 
       <div className="mt-6">
         <Pagination

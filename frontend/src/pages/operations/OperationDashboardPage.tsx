@@ -10,6 +10,8 @@ import {
   IoTicketOutline,
   IoWalletOutline
 } from 'react-icons/io5'
+import type { Product } from '@/shared/types'
+// import {  } from '@/shared/types'
 
 const METRICS = [
   {
@@ -70,20 +72,29 @@ export default function OperationDashboardPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 5
 
-  const { products, total, totalPages} = useGetProductWithPagination(currentPage, itemsPerPage)
-  
+  const { products, total, totalPages } = useGetProductWithPagination(currentPage, itemsPerPage)
+
   // Mapping StandardProduct to Order structure for the table
-  const mappedOrders = products.map((product: any) => ({
-    id: product.id || product._id || product.skuBase,
-    orderType: product.type === 'sunglass' ? 'Kính mát' : (product.type === 'frame' ? 'Gọng kính' : 'Tròng kính'), // Simple mapping
-    customer: 'Khách vãng lai', // Mock data as Product API doesn't have customer info
-    item: product.nameBase,
-    waitingFor: '-',
-    currentStatus: 'Processing',
-    timeElapsed: 'Just now',
-    statusColor: 'bg-blue-100 text-blue-600',
-    isNextActive: true
-  }))
+  const mappedOrders = products.map((product: Product) => {
+    const productId = 'id' in product ? product.id : product._id
+
+    return {
+      id: productId || product.skuBase,
+      orderType:
+        product.type === 'sunglass'
+          ? 'Kính mát'
+          : product.type === 'frame'
+            ? 'Gọng kính'
+            : 'Tròng kính', // Simple mapping
+      customer: 'Khách vãng lai', // Mock data as Product API doesn't have customer info
+      item: product.nameBase,
+      waitingFor: '-',
+      currentStatus: 'Processing',
+      timeElapsed: 'Just now',
+      statusColor: 'bg-blue-100 text-blue-600',
+      isNextActive: true
+    }
+  })
 
   return (
     <Container>
@@ -105,11 +116,7 @@ export default function OperationDashboardPage() {
         </div>
       </div>
 
-      <OrderTable
-        hiddenColumns={['WAITING FOR']}
-        role="operation"
-        orders={mappedOrders}
-      />
+      <OrderTable hiddenColumns={['WAITING FOR']} role="operation" orders={mappedOrders} />
 
       <div className="mt-6">
         <Pagination

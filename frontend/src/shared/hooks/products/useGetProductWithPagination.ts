@@ -33,7 +33,7 @@ export const useGetProductWithPagination = (
       if (apiResponse.success) {
         // Backend returns data.productList, not data.data
         const productData = apiResponse.data as any
-        setProducts(productData.productList || [])
+        setProducts(productData.productList || productData.data || productData.items || [])
         setTotal(productData.pagination?.total || productData.total || 0)
         setTotalPages(productData.pagination?.totalPages || productData.totalPages || 0)
         setCurrentPage(productData.pagination?.page || productData.page || page)

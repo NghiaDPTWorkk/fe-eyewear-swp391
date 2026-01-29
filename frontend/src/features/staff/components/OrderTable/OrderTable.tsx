@@ -10,21 +10,19 @@ import type { OrderTableRow } from '@/shared/types'
 
 export type Order = OrderTableRow
 
-
-
 export interface Column<T> {
-  header: string | ReactNode // Tiêu đề cột (Text hoặc Component)
-  render: (item: T) => ReactNode // Hàm hiển thị dữ liệu cho từng dòng
+  header: string | ReactNode
+  render: (item: T) => ReactNode
   className?: string // Class cho td á
   headerClassName?: string // Class cho th
 }
 
 interface OrderTableProps {
-  columns?: Column<Order>[] // Mảng các cột
+  columns?: Column<Order>[] // Mảng các cột | thuộc tính
   hiddenColumns?: string[] // Mảng các header cột muốn ẩn
-  filterType?: string // Loại đơn muốn lọc
-  role?: 'sales' | 'operation' // Phân biệt vai trò để hiển thị UI khác nhau
-  orders?: Order[] // Dữ liệu đơn hàng từ API
+  filterType?: string
+  role?: 'sales' | 'operation'
+  orders?: Order[]
 }
 
 const getOrderTypeStyles = (type: string, role: string) => {
@@ -40,7 +38,6 @@ const getOrderTypeStyles = (type: string, role: string) => {
         return 'bg-neutral-50 text-neutral-600'
     }
   } else {
-    // Original styles for operations from reference
     switch (type) {
       case 'Normal':
         return 'bg-emerald-50 text-emerald-600'
@@ -59,7 +56,7 @@ export default function OrderTable({
   hiddenColumns = [],
   filterType,
   role = 'operation',
-  orders = [] // Default to empty if not provided, allowing parent to control data
+  orders = []
 }: OrderTableProps) {
   const isSales = role === 'sales'
   const navigate = useNavigate()
@@ -69,7 +66,7 @@ export default function OrderTable({
   }
 
   const filteredOrders = filterType
-    ? orders.filter((order) => order.orderType === filterType)
+    ? orders.filter((order) => order.orderType?.toLowerCase() === filterType.toLowerCase())
     : orders
 
   const defaultColumns: Column<Order>[] = [

@@ -10,6 +10,8 @@ import {
   IoCarOutline
 } from 'react-icons/io5'
 
+import { Button } from '@/shared/components/ui/button'
+
 export default function OperationOrderDetailPage() {
   const { orderId } = useParams<{ orderId: string }>()
   const navigate = useNavigate()
@@ -121,12 +123,12 @@ export default function OperationOrderDetailPage() {
 
       {/* Action Button */}
       <div className="flex justify-end gap-3 mt-4">
-        <button
+        <Button
           className="px-6 py-3 bg-mint-900 hover:bg-mint-700 text-white rounded-lg font-medium transition-colors shadow-sm"
           onClick={() => navigate(PATHS.OPERATIONSTAFF.PACKING_PROCESS(orderId || ''))}
         >
           Bắt đầu xử lý
-        </button>
+        </Button>
       </div>
     </Container>
   )

@@ -32,19 +32,20 @@ interface JobTechnicalDetailsProps {
 
 const JobTechnicalDetails = ({ lensData, frameData }: JobTechnicalDetailsProps) => {
   return (
-    <div className="p-6 bg-white space-y-10">
-      <section>
-        <h2 className="text-emerald-700 font-bold text-lg mb-4">Thông Số Tròng Kính</h2>
-        {/* Truyền data xuống cho con Lens */}
+    <div className="space-y-6">
+      {/* Lens Specifications Section */}
+      <section className="bg-white rounded-lg shadow-sm p-6 border border-neutral-200">
+        <h2 className="text-mint-900 font-semibold text-base mb-4">Thông Số Tròng Kính</h2>
         <LensSpecifications prescription={lensData.prescription} details={lensData.additional} />
       </section>
 
-      <div className="border-t border-gray-100" />
-
-      <section>
-        <h2 className="text-emerald-700 font-bold text-lg mb-4">Thông Tin Gọng Kính</h2>
-        {/* Truyền data xuống cho con Frame */}
-        <FrameSpecifications data={frameData} imageSrc="https://v-eyewear.com/path-to-frame.png" />
+      {/* Frame Specifications Section */}
+      <section className="bg-white rounded-lg shadow-sm p-6 border border-neutral-200">
+        <h2 className="text-mint-900 font-semibold text-base mb-4">Thông Tin Gọng Kính</h2>
+        <FrameSpecifications
+          data={frameData}
+          imageSrc="https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&q=80&w=800"
+        />
       </section>
     </div>
   )

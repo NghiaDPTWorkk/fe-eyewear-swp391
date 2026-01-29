@@ -120,7 +120,7 @@ export default function OperationOrderDetailPage() {
       <JobTechnicalDetails lensData={lensData} frameData={frameData} />
 
       {/* Action Button */}
-      <div className="flex justify-end gap-3">
+      <div className="flex justify-end gap-3 mt-4">
         <button
           className="px-6 py-3 bg-mint-900 hover:bg-mint-700 text-white rounded-lg font-medium transition-colors shadow-sm"
           onClick={() => navigate(PATHS.OPERATIONSTAFF.PACKING_PROCESS(orderId || ''))}

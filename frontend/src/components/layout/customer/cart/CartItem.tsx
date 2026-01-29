@@ -1,0 +1,191 @@
+import { Minus, Plus, ChevronDown, ChevronUp } from 'lucide-react'
+import { useState } from 'react'
+import type { CartItem as CartItemType } from '@/shared/types'
+import { useCartStore } from '@/store/cart.store'
+import { Checkbox, Card } from '@/shared/components/ui'
+
+interface CartItemProps {
+  item: CartItemType
+}
+
+export const CartItem = ({ item }: CartItemProps) => {
+  const { updateQuantity, removeItem, toggleSelection } = useCartStore()
+  const [isLensesOpen, setIsLensesOpen] = useState(false)
+  const [hasProtectionPlan, setHasProtectionPlan] = useState(false)
+
+  // Mock data to match design
+  const hasPromo = true
+  const promoDiscount = '30% off frame'
+  const originalPrice = item.price / 0.7 // Mocking an original price
+
+  return (
+    <Card className="p-8 border-mint-300/50 relative group bg-white hover:shadow-md transition-shadow">
+      <div className="flex flex-col md:flex-row gap-8">
+        {/* Selection Checkbox and Image Container */}
+        <div className="flex items-start gap-6">
+          <div className="pt-16">
+            <Checkbox
+              isChecked={item.selected ?? true}
+              onCheckedChange={() => toggleSelection(item.product_id)}
+              id={`select-${item.product_id}`}
+            />
+          </div>
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-48 h-48 bg-[#F8F9FA] rounded-lg overflow-hidden flex items-center justify-center border border-gray-100 p-4">
+              <img
+                src={item.image}
+                alt={item.name}
+                className="w-full h-full object-contain mix-blend-multiply"
+              />
+            </div>
+            <button
+              onClick={() => removeItem(item.product_id)}
+              className="text-xs font-medium text-gray-400 hover:text-red-500 transition-colors underline"
+            >
+              Remove
+            </button>
+          </div>
+        </div>
+
+        {/* Product Details */}
+        <div className="flex-grow pt-2">
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <div className="flex items-center gap-3 mb-1">
+                <h3 className="text-2xl font-bold text-[#000000] tracking-tight">{item.name}</h3>
+                {hasPromo && (
+                  <span className="px-2 py-1 bg-[#FEE2E2] text-[#EF4444] rounded text-[10px] font-bold uppercase tracking-wider">
+                    30% OFF
+                  </span>
+                )}
+              </div>
+              <p className="text-sm text-gray-400 tracking-widest uppercase mb-4">
+                {(item.product_id || 'N/A').toString().toUpperCase()}
+              </p>
+            </div>
+
+            <div className="text-right">
+              <p className="text-sm text-gray-300 line-through mb-1">
+                ${originalPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              </p>
+              <p className="text-xl font-bold text-[#000000]">
+                ${item.price.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              </p>
+            </div>
+          </div>
+
+          {/* Collapsible Lenses Section */}
+          <div className="mb-8">
+            <button
+              onClick={() => setIsLensesOpen(!isLensesOpen)}
+              className="flex items-center gap-2 text-base font-bold text-[#4F8B8B] hover:text-[#3D6E6E] transition-colors mb-4"
+            >
+              Your lenses
+              {isLensesOpen ? (
+                <ChevronUp className="w-4 h-4" />
+              ) : (
+                <ChevronDown className="w-4 h-4" />
+              )}
+            </button>
+
+            {isLensesOpen && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-3 mb-6 animate-in fade-in slide-in-from-top-2 duration-300">
+                {[
+                  { label: 'Use', value: 'Non-prescription lenses' },
+                  { label: 'Lens brand', value: 'Glasses.com lenses' },
+                  { label: 'Treatment', value: 'No treatment' },
+                  { label: 'Lens type', value: 'Clear lenses' },
+                  { label: 'Thickness', value: 'Thin lenses' },
+                  {
+                    label: 'Finishings',
+                    value:
+                      'Cleanshield® anti-reflective & anti-smudge coating, Scratch resistant, UV protection'
+                  }
+                ].map((spec, i) => (
+                  <div key={i} className="flex justify-between gap-4 py-0.5">
+                    <span className="text-sm text-gray-400 whitespace-nowrap">{spec.label}</span>
+                    <span className="text-sm text-[#000000] font-bold text-right">
+                      {spec.value}
+                    </span>
+                  </div>
+                ))}
+                <div className="md:col-span-2 flex justify-end mt-4">
+                  <button className="text-xs font-bold text-[#4F8B8B] hover:underline uppercase tracking-widest">
+                    Edit
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div className="flex items-center gap-3 mt-4">
+              <Checkbox
+                isChecked={hasProtectionPlan}
+                onCheckedChange={setHasProtectionPlan}
+                id={`protection-${item.product_id}`}
+              />
+              <label
+                htmlFor={`protection-${item.product_id}`}
+                className="text-sm text-gray-600 font-medium cursor-pointer"
+              >
+                Add{' '}
+                <span className="font-bold underline text-[#000000]">Glasses Protection Plan</span>{' '}
+                ($24.99)
+              </label>
+            </div>
+          </div>
+
+          {/* Promo Section */}
+          <div className="space-y-2 py-6 border-t border-gray-100">
+            <div className="flex justify-between items-center">
+              <span className="text-base font-bold text-[#20B2AA]">Promo applied:</span>
+              <span className="text-base font-bold text-[#20B2AA]">{promoDiscount}</span>
+            </div>
+            {isLensesOpen && (
+              <div className="flex justify-end">
+                <span className="text-base font-bold text-[#20B2AA]">Lens Discount</span>
+              </div>
+            )}
+          </div>
+
+          {/* Item Subtotal Area */}
+          <div className="flex justify-between items-center pt-8 border-t border-gray-200">
+            <span className="text-base font-bold text-gray-500 uppercase tracking-widest">
+              SUBTOTAL
+            </span>
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-gray-300 line-through">
+                $
+                {(originalPrice * item.quantity).toLocaleString('en-US', {
+                  minimumFractionDigits: 2
+                })}
+              </span>
+              <span className="text-xl font-bold text-[#000000]">
+                $
+                {(item.price * item.quantity).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              </span>
+            </div>
+          </div>
+
+          {/* Quantity Selector (Invisible but functional) */}
+          <div className="absolute top-8 right-8 flex items-center gap-3 bg-gray-50 rounded-lg p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button
+              onClick={() => updateQuantity(item.product_id, Math.max(1, item.quantity - 1))}
+              className="p-1 hover:bg-white rounded transition-colors text-gray-600"
+            >
+              <Minus className="w-3 h-3" />
+            </button>
+            <span className="text-xs font-bold text-gray-800 min-w-[20px] text-center">
+              {item.quantity}
+            </span>
+            <button
+              onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
+              className="p-1 hover:bg-white rounded transition-colors text-gray-600"
+            >
+              <Plus className="w-3 h-3" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </Card>
+  )
+}

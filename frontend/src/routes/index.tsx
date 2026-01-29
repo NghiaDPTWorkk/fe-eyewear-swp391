@@ -2,7 +2,7 @@ import { lazy } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { LazyPage } from '@/pages/LazyPage'
 import { RegisterPage } from '@/pages/auth/customer/RegisterPage'
-import { ProductDetailPage } from '@/pages/customer'
+import { ProductDetailPage, CartPage } from '@/pages/customer'
 
 const LoginPage = lazy(() =>
   import('@/pages/auth/customer/CustomerLoginPage').then((m) => ({ default: m.CustomerLoginPage }))
@@ -145,6 +145,14 @@ export const router = createBrowserRouter([
     )
   },
   {
+    path: '/cart',
+    element: (
+      <LazyPage>
+        <CartPage />
+      </LazyPage>
+    )
+  },
+  {
     path: '/eyeglasses',
     element: (
       <LazyPage>
@@ -165,6 +173,14 @@ export const router = createBrowserRouter([
     element: (
       <LazyPage>
         <CustomerProductPage />
+      </LazyPage>
+    )
+  },
+  {
+    path: '/cart',
+    element: (
+      <LazyPage>
+        <CartPage />
       </LazyPage>
     )
   },

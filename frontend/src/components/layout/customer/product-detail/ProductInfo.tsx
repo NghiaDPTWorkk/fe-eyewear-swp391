@@ -10,6 +10,8 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import type { Product } from '@/shared/types/product.types'
+import { useCartStore } from '@/store/cart.store'
+import { toast } from 'react-hot-toast'
 
 interface ProductInfoProps {
   product: Product
@@ -18,6 +20,32 @@ interface ProductInfoProps {
 export const ProductInfo = ({ product }: ProductInfoProps) => {
   const [selectedColor, setSelectedColor] = useState('Sage Mist')
   const [selectedSize, setSelectedSize] = useState('Medium')
+  const addItem = useCartStore((state) => state.addItem)
+
+  const handleAddToCart = () => {
+    const productAny = product as any
+    const defaultVariant =
+      productAny.variants?.find((v: any) => v.isDefault) || productAny.variants?.[0]
+
+    const price =
+      productAny.defaultVariantFinalPrice ||
+      defaultVariant?.finalPrice ||
+      productAny.defaultVariantPrice ||
+      defaultVariant?.price ||
+      0
+    const id = productAny._id || productAny.id || productAny.skuBase || 'unknown'
+
+    addItem({
+      product_id: id,
+      name: product.nameBase,
+      price: price,
+      quantity: 1,
+      image: productAny.defaultVariantImage || productAny.imageUrl || productAny.images?.[0] || '',
+      addAt: new Date()
+    })
+
+    toast.success(`${product.nameBase} added to cart!`)
+  }
 
   // Mock data for colors and sizes since they might not be in the base product type yet
   const colors = [
@@ -127,7 +155,10 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
 
       {/* Action Buttons */}
       <div className="flex flex-col gap-4 mb-8">
-        <button className="w-full py-5 bg-primary-500 text-white font-bold rounded-2xl hover:bg-primary-600 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3">
+        <button
+          onClick={handleAddToCart}
+          className="w-full py-5 bg-primary-500 text-white font-bold rounded-2xl hover:bg-primary-600 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3"
+        >
           <ShoppingCart className="w-6 h-6" />
           Add to Cart
         </button>

@@ -7,10 +7,13 @@ import { ProductCard } from '@/shared/components/ui/product-card'
 import { ArrowRight } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useCartStore } from '@/store/cart.store'
+import toast from 'react-hot-toast'
 
 export const CustomerProductPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
+  const { addItem } = useCartStore()
   const [page, setPage] = useState(1)
   const limit = 12
 
@@ -197,10 +200,23 @@ export const CustomerProductPage = () => {
                         salePercent={salePercent}
                         onClick={(id) => navigate(`/products/${id}`)}
                         onAddToCart={() => {
-                          /* TODO: Implement add to cart */
+                          const id =
+                            productAny.id ||
+                            productAny._id ||
+                            productAny.skuBase ||
+                            `product-${index}`
+                          addItem({
+                            product_id: id,
+                            name: product.nameBase,
+                            price: currentPrice,
+                            quantity: 1,
+                            image: productAny.defaultVariantImage || '',
+                            addAt: new Date()
+                          })
+                          toast.success('Added to bag!')
                         }}
                         onAddToWishlist={() => {
-                          /* TODO: Implement add to wishlist */
+                          toast.success('Added to wishlist!')
                         }}
                       />
                     )

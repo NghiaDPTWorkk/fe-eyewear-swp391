@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query'
 import type { LoginRequest, LoginResponse } from '@/shared/types'
 import { useNavigate } from 'react-router-dom'
 import { authApi } from '../services/auth.api.legacy'
+import toast from 'react-hot-toast'
 
 export const useLogin = (role: 'customer' | 'staff' = 'customer') => {
   const navigate = useNavigate()
@@ -24,6 +25,7 @@ export const useLogin = (role: 'customer' | 'staff' = 'customer') => {
       }
     },
     onError: (error: any) => {
+      toast.error(error.message || 'Login failed. Please try again.')
       console.error('Login failed', error)
     }
   })

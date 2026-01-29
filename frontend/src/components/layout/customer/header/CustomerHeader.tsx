@@ -3,12 +3,14 @@ import { Input } from '@/components'
 import { Search, ShoppingCart, User, X, Glasses, Heart } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { useCartStore } from '@/store/cart.store'
 
 export default function CustomerHeader() {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
   const location = useLocation()
+  const totalItems = useCartStore((state) => state.totalItems)
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -163,11 +165,14 @@ export default function CustomerHeader() {
             <button
               className="p-2 hover:bg-mint-200 rounded-full transition-all relative group"
               aria-label="Shopping Cart"
+              onClick={() => navigate('/cart')}
             >
               <ShoppingCart className="w-5 h-5 text-gray-eyewear group-hover:text-primary-500 transition-colors" />
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary-500 text-white text-xs rounded-full flex items-center justify-center font-semibold shadow-md">
-                0
-              </span>
+              {totalItems() > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary-500 text-white text-xs rounded-full flex items-center justify-center font-semibold shadow-md">
+                  {totalItems()}
+                </span>
+              )}
             </button>
             <button
               className="p-2 hover:bg-mint-200 rounded-full transition-all group"

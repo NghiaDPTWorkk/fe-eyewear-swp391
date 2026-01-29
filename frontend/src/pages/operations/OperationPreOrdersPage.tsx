@@ -3,34 +3,25 @@ import { Link } from 'react-router-dom'
 import { Container } from '@/components'
 import { OrderTable } from '@/components/staff'
 import { Pagination } from '@/shared/components/ui/pagination'
-import { useGetProductWithType } from '@/shared/hooks/products/useGetProductWithType'
-import type { Product } from '@/shared/types'
+import { useGetOrderWithType } from '@/shared/hooks/orders/useGetOrderWithType'
 
 export default function OperationPreOrdersPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 5
 
-  const { products, total, totalPages } = useGetProductWithType(
-    currentPage,
-    itemsPerPage,
-    'Pre-order'
-  )
+  const { orders, total, totalPages } = useGetOrderWithType(currentPage, itemsPerPage, 'Pre-order')
 
-  const mappedOrders = products.map((product: Product) => {
-    const productId = 'id' in product ? product.id : product._id
-
-    return {
-      id: productId || product.skuBase,
-      orderType: 'Pre-order',
-      customer: 'Khách hàng',
-      item: product.nameBase,
-      waitingFor: '-',
-      currentStatus: 'Pending',
-      timeElapsed: '2h',
-      statusColor: 'bg-amber-50 text-amber-600',
-      isNextActive: true
-    }
-  })
+  const mappedOrders = orders.map((order: any) => ({
+    id: order._id || order.id,
+    orderType: 'Pre-order',
+    customer: order.customerInfo?.fullName || 'Khách hàng',
+    item: `Order #${(order._id || order.id)?.slice(-6) || '...'}`,
+    waitingFor: '-',
+    currentStatus: order.status || 'Pending',
+    timeElapsed: '2h',
+    statusColor: 'bg-amber-50 text-amber-600',
+    isNextActive: true
+  }))
 
   return (
     <Container>

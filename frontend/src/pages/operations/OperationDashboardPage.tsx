@@ -3,14 +3,14 @@ import { Link } from 'react-router-dom'
 import { Container, MetricCard } from '@/components'
 import { OrderTable } from '@/components/staff'
 import { Pagination } from '@/shared/components/ui/pagination'
-import { useGetProductWithPagination } from '@/shared/hooks/products/useGetProductWithPagination'
+import { useGetOrderWithPagination } from '@/shared/hooks/orders/useGetOrderWithPagination'
 import {
   IoClipboardOutline,
   IoFlagOutline,
   IoTicketOutline,
   IoWalletOutline
 } from 'react-icons/io5'
-import type { Product } from '@/shared/types'
+// import type { Product } from '@/shared/types'
 // import {  } from '@/shared/types'
 
 const METRICS = [
@@ -72,29 +72,20 @@ export default function OperationDashboardPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 5
 
-  const { products, total, totalPages } = useGetProductWithPagination(currentPage, itemsPerPage)
+  const { orders, total, totalPages } = useGetOrderWithPagination(currentPage, itemsPerPage)
 
-  // Mapping StandardProduct to Order structure for the table
-  const mappedOrders = products.map((product: Product) => {
-    const productId = 'id' in product ? product.id : product._id
-
-    return {
-      id: productId || product.skuBase,
-      orderType:
-        product.type === 'sunglass'
-          ? 'Kính mát'
-          : product.type === 'frame'
-            ? 'Gọng kính'
-            : 'Tròng kính', // Simple mapping
-      customer: 'Khách vãng lai', // Mock data as Product API doesn't have customer info
-      item: product.nameBase,
-      waitingFor: '-',
-      currentStatus: 'Processing',
-      timeElapsed: 'Just now',
-      statusColor: 'bg-blue-100 text-blue-600',
-      isNextActive: true
-    }
-  })
+  // Mapping Backend Order to UI OrderTableRow
+  const mappedOrders = orders.map((order: any) => ({
+    id: order._id || order.id,
+    orderType: order.type,
+    customer: order.customerInfo?.fullName || 'Khách vãng lai',
+    item: `Order #${(order._id || order.id)?.slice(-6) || '...'}`,
+    waitingFor: '-',
+    currentStatus: order.status,
+    timeElapsed: 'Just now',
+    statusColor: 'bg-blue-100 text-blue-600',
+    isNextActive: true
+  }))
 
   return (
     <Container>

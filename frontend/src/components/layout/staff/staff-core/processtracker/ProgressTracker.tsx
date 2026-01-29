@@ -5,31 +5,31 @@ import ProgressTrackerItem from './ProgressTrackerItem'
 const STEPS = [
   {
     icon: <IoTimeOutline size={24} className="text-white" />,
-    label: 'Chờ xử lý',
+    label: 'Pending',
     isActive: true, // Example logic based on original hardcoded values
     isCompleted: true
   },
   {
     icon: <IoConstructOutline size={24} className="text-white" />,
-    label: 'Đang xử lý',
+    label: 'Processing',
     isActive: true,
     isCompleted: false
   },
   {
     icon: <IoCubeOutline size={24} className="text-gray-400" />,
-    label: 'Đóng gói',
+    label: 'Packaging',
     isActive: false,
     isCompleted: false
   },
   {
     icon: <IoCubeOutline size={24} className="text-gray-400" />,
-    label: 'Chờ lấy',
+    label: 'Ready for Pickup',
     isActive: false,
     isCompleted: false
   },
   {
     icon: <IoCarOutline size={24} className="text-gray-400" />,
-    label: 'Vận chuyển',
+    label: 'Shipping',
     isActive: false,
     isCompleted: false
   }
@@ -38,7 +38,7 @@ const STEPS = [
 export default function ProgressTracker() {
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border border-mint-200">
-      <h2 className="text-lg font-semibold text-mint-900 mb-6">Tiến độ đơn hàng</h2>
+      <h2 className="text-lg font-semibold text-mint-900 mb-6">Order Progress</h2>
       <div className="flex items-center justify-between">
         {STEPS.map((step, index) => (
           <React.Fragment key={index}>

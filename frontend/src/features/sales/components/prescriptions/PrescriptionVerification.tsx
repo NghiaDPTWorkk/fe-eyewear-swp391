@@ -4,13 +4,16 @@ import {
   IoInformationCircleOutline,
   IoCheckmark,
   IoClose,
+  IoAlertCircleOutline,
   IoAdd,
   IoRemove,
   IoRefresh,
   IoEyeOutline,
   IoCalendarOutline,
   IoPersonOutline,
+  IoMailOutline,
   IoGlassesOutline,
+  IoConstructOutline,
   IoCallOutline,
   IoChatbubblesOutline,
   IoSend,
@@ -466,6 +469,85 @@ export default function PrescriptionVerification({
                   <IoVideocamOutline />
                 </button>
               </div>
+            </div>
+          </Card>
+
+          {/* Laboratory Operations Channel */}
+          <Card className="p-0 border border-neutral-200 shadow-sm overflow-hidden">
+            <div className="p-4 bg-emerald-50/50 border-b border-emerald-100 flex justify-between items-center">
+              <h3 className="font-semibold text-emerald-900 text-sm flex items-center gap-2">
+                <IoConstructOutline /> Lab Operations
+              </h3>
+              <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+            </div>
+
+            <div className="p-4 space-y-4">
+              {/* Alert Item */}
+              <div className="bg-amber-50 rounded-lg p-3 border border-amber-100">
+                <div className="flex gap-2 items-start">
+                  <IoAlertCircleOutline className="text-amber-600 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-xs font-semibold text-amber-800">Lens Stock Warning</p>
+                    <p className="text-[11px] text-amber-700 leading-snug mt-1">
+                      High index 1.74 stock low. Estimated delay: 2 days. Confirm proceed?
+                    </p>
+                    <div className="flex gap-2 mt-2">
+                      <button className="text-[10px] font-semibold bg-white border border-amber-200 text-amber-700 px-2 py-1 rounded hover:bg-amber-50">
+                        Cancel
+                      </button>
+                      <button className="text-[10px] font-semibold bg-amber-600 text-white px-2 py-1 rounded hover:bg-amber-700">
+                        Confirm Proceed
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Status Timeline */}
+              <div className="relative border-l border-gray-200 ml-1.5 space-y-5 py-2">
+                <div className="pl-4 relative">
+                  <div className="absolute -left-[5px] top-1 w-2.5 h-2.5 rounded-full bg-gray-200 border-2 border-white"></div>
+                  <p className="text-xs text-gray-500">Technician Review</p>
+                  <p className="text-[10px] text-gray-400">Pending assignment</p>
+                </div>
+                <div className="pl-4 relative">
+                  <div className="absolute -left-[5px] top-1 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white shadow-sm ring-2 ring-emerald-50"></div>
+                  <p className="text-xs font-semibold text-gray-800">Data Transcription</p>
+                  <p className="text-[10px] text-gray-500">Started 5m ago by You</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-3 bg-gray-50 border-t border-gray-100 text-center">
+              <button className="text-xs font-semibold text-emerald-600 flex items-center justify-center gap-1 hover:underline">
+                <IoMailOutline /> Contact Lab Manager
+              </button>
+            </div>
+          </Card>
+
+          {/* Status Override Panel */}
+          <Card className="p-5 border border-neutral-200 shadow-sm bg-gray-50">
+            <h3 className="font-semibold text-gray-900 text-sm mb-3">Status Override</h3>
+            <p className="text-[11px] text-gray-500 mb-3">
+              Manually update status if automation fails or for special cases.
+            </p>
+            <div className="space-y-2">
+              <Button
+                isFullWidth
+                size="sm"
+                variant="outline"
+                className="bg-white justify-start text-xs border-gray-300"
+              >
+                Mark as On Hold
+              </Button>
+              <Button
+                isFullWidth
+                size="sm"
+                variant="outline"
+                className="bg-white justify-start text-xs border-gray-300"
+              >
+                Escalate to Manager
+              </Button>
             </div>
           </Card>
         </div>

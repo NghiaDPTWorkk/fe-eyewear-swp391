@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import { Container, Button } from '@/components'
-import { Input } from '@/shared/components/ui/input/Input'
+import { Container, Button, Input } from '@/components'
 import { IoCameraOutline } from 'react-icons/io5'
 
 export default function StaffSettingPage() {

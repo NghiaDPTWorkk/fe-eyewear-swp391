@@ -1,18 +1,78 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
+import { PATHS } from '@/routes/paths'
 import { Container, Button, Card } from '@/components'
+import { OrderTable } from '@/components/staff'
+import { OrderDetailsDrawer } from '@/features/sales/components/orders'
 import {
   IoFilter,
   IoAdd,
   IoFlaskOutline,
   IoSync,
   IoCheckmarkDoneCircleOutline,
-  IoCheckboxOutline,
-  IoChevronBackOutline,
-  IoChevronForwardOutline,
-  IoChevronForward
+  IoCheckboxOutline
 } from 'react-icons/io5'
 
+import type { OrderTableRow } from '@/shared/types'
+
+const MOCK_PRESCRIPTION_ORDERS: OrderTableRow[] = [
+  {
+    id: 'ORD-7352',
+    orderType: 'Prescription',
+    customer: 'Leslie Alexander',
+    customerPhone: '+1 (555) 123-4567',
+    item: 'Ray-Ban Aviator',
+    waitingFor: 'Lens Grinding',
+    currentStatus: 'In Production',
+    timeElapsed: '2h 15m',
+    statusColor: 'bg-blue-100 text-blue-700',
+    isNextActive: true,
+    isApproved: false,
+    customerId: 'CUST-001'
+  },
+  {
+    id: 'ORD-7349',
+    orderType: 'Prescription',
+    customer: 'Lindsay Walton',
+    customerPhone: '+1 (555) 246-8135',
+    item: 'Prada PR 17WS',
+    waitingFor: 'Rx Verification',
+    currentStatus: 'Pending',
+    timeElapsed: '45m',
+    statusColor: 'bg-neutral-100 text-neutral-700',
+    isNextActive: true,
+    isApproved: true,
+    customerId: 'CUST-004'
+  }
+]
+
 export default function SaleStaffPrescriptionPage() {
+  const navigate = useNavigate()
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
+  const [selectedOrder, setSelectedOrder] = useState<any>(null)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+
+  const handleOpenDrawer = (id: string, order?: any) => {
+    setSelectedOrderId(id)
+    setSelectedOrder(order)
+    setIsDrawerOpen(true)
+  }
+
+  const handleReviewRx = (id: string) => {
+    navigate(PATHS.SALESTAFF.VERIFY_RX(id))
+  }
+
+  const handleViewFullDetails = () => {
+    if (selectedOrderId) {
+      navigate(PATHS.SALESTAFF.VERIFY_RX(selectedOrderId))
+      setIsDrawerOpen(false)
+    }
+  }
+
+  const handleNotifyCustomer = (customerId: string) => {
+    navigate(`${PATHS.SALESTAFF.CUSTOMERS}?customerId=${customerId}`)
+  }
+
   return (
     <Container>
       <div className="mb-8">
@@ -31,79 +91,75 @@ export default function SaleStaffPrescriptionPage() {
             Orders
           </Link>
           <span className="text-neutral-300">/</span>
-          <span className="text-primary-500 font-bold">Prescription Management</span>
+          <span className="text-primary-500 font-semibold">Prescription Management</span>
         </div>
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Prescription Orders</h1>
+        <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">Prescription Orders</h1>
         <p className="text-gray-500 mt-1">Manage technical lens details and fabrication status.</p>
       </div>
 
-      {/* Metric Cards - Custom for Rx - Moved Up */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <Card className="p-5 border border-neutral-100 flex flex-col justify-between">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-xs font-bold text-neutral-400 uppercase tracking-wider">
+              <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
                 Pending Lab
               </p>
-              <h3 className="text-3xl font-bold text-neutral-900 mt-2">12</h3>
+              <h3 className="text-3xl font-semibold text-neutral-900 mt-2">12</h3>
             </div>
             <div className="p-2 bg-orange-50 rounded-lg text-orange-500">
-              <IoFlaskOutline className="text-xl" />
+              <IoFlaskOutline size={20} />
             </div>
           </div>
         </Card>
-
         <Card className="p-5 border border-neutral-100 flex flex-col justify-between">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-xs font-bold text-neutral-400 uppercase tracking-wider">
+              <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
                 In Grinding
               </p>
-              <h3 className="text-3xl font-bold text-neutral-900 mt-2">8</h3>
+              <h3 className="text-3xl font-semibold text-neutral-900 mt-2">8</h3>
             </div>
             <div className="p-2 bg-blue-50 rounded-lg text-blue-500">
-              <IoSync className="text-xl" />
+              <IoSync size={20} />
             </div>
           </div>
         </Card>
-
         <Card className="p-5 border border-neutral-100 flex flex-col justify-between">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-xs font-bold text-neutral-400 uppercase tracking-wider">
+              <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
                 Ready for QA
               </p>
-              <h3 className="text-3xl font-bold text-neutral-900 mt-2">5</h3>
+              <h3 className="text-3xl font-semibold text-neutral-900 mt-2">5</h3>
             </div>
             <div className="p-2 bg-purple-50 rounded-lg text-purple-500">
-              <IoCheckboxOutline className="text-xl" />
+              <IoCheckboxOutline size={20} />
             </div>
           </div>
         </Card>
-
         <Card className="p-5 border border-neutral-100 flex flex-col justify-between">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-xs font-bold text-neutral-400 uppercase tracking-wider">
+              <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
                 Completed Today
               </p>
-              <h3 className="text-3xl font-bold text-neutral-900 mt-2">24</h3>
+              <h3 className="text-3xl font-semibold text-neutral-900 mt-2">24</h3>
             </div>
             <div className="p-2 bg-emerald-50 rounded-lg text-emerald-500">
-              <IoCheckmarkDoneCircleOutline className="text-xl" />
+              <IoCheckmarkDoneCircleOutline size={20} />
             </div>
           </div>
         </Card>
       </div>
 
-      <div className="mb-4 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
-        <div className="flex-1 max-w-xl w-full">{/* Add search here if needed */}</div>
+      <div className="mb-6 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+        <div className="flex-1 max-w-xl w-full"></div>
         <div className="flex gap-3 justify-end w-full md:w-auto">
           <Button
             variant="outline"
             colorScheme="neutral"
             leftIcon={<IoFilter />}
-            className="rounded-xl font-bold border-neutral-200"
+            className="rounded-xl font-semibold"
           >
             Filter
           </Button>
@@ -111,7 +167,7 @@ export default function SaleStaffPrescriptionPage() {
             variant="solid"
             colorScheme="primary"
             leftIcon={<IoAdd />}
-            className="rounded-xl font-bold"
+            className="rounded-xl font-semibold"
           >
             New Order
           </Button>
@@ -119,194 +175,24 @@ export default function SaleStaffPrescriptionPage() {
       </div>
 
       <Card className="p-0 overflow-hidden border border-neutral-200 shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider w-64 align-middle">
-                  Order Info
-                </th>
-                <th className="px-2 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider text-center align-middle">
-                  Date
-                </th>
-                <th
-                  className="px-2 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider text-center align-middle"
-                  colSpan={3}
-                >
-                  Right Eye (OD)
-                  <br />
-                  <span className="text-[9px] font-normal lowercase tracking-normal">
-                    SPH | CYL | AXIS
-                  </span>
-                </th>
-                <th
-                  className="px-2 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider text-center align-middle"
-                  colSpan={3}
-                >
-                  Left Eye (OS)
-                  <br />
-                  <span className="text-[9px] font-normal lowercase tracking-normal">
-                    SPH | CYL | AXIS
-                  </span>
-                </th>
-                <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider align-middle">
-                  Lens Type
-                </th>
-                <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider text-center align-middle">
-                  Lab Status
-                </th>
-                <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-wider text-right align-middle">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 bg-white">
-              <tr className="hover:bg-gray-50/50">
-                <td className="px-6 py-4 align-middle">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">
-                      JD
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-gray-900 leading-tight">John Doe</div>
-                      <div className="text-[11px] text-gray-400 font-medium">#ORD-2023-001</div>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-2 py-4 text-sm text-center font-medium text-gray-500 align-middle">
-                  Oct 24, 2023
-                </td>
-                <td className="px-2 py-4 text-sm text-center font-bold text-neutral-900 align-middle">
-                  -2.25
-                </td>
-                <td className="px-2 py-4 text-sm text-center font-medium text-neutral-500 align-middle">
-                  -0.50
-                </td>
-                <td className="px-2 py-4 text-sm text-center font-medium text-neutral-500 align-middle">
-                  180
-                </td>
-
-                <td className="px-2 py-4 text-sm text-center font-bold text-neutral-900 align-middle">
-                  -2.50
-                </td>
-                <td className="px-2 py-4 text-sm text-center font-medium text-neutral-500 align-middle">
-                  -0.75
-                </td>
-                <td className="px-2 py-4 text-sm text-center font-medium text-neutral-500 align-middle">
-                  175
-                </td>
-
-                <td className="px-6 py-4 align-middle">
-                  <div className="text-sm font-bold text-gray-900">Progressive</div>
-                  <div className="text-[11px] text-gray-400 font-medium">High Index 1.67</div>
-                </td>
-                <td className="px-6 py-4 text-center align-middle">
-                  <span className="px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-orange-100 text-orange-600 whitespace-nowrap">
-                    Grinding
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-right align-middle">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    colorScheme="primary"
-                    className="p-2 h-8 w-8 text-primary-500 float-right"
-                  >
-                    <IoChevronForward size={18} />
-                  </Button>
-                </td>
-              </tr>
-
-              <tr className="hover:bg-gray-50/50">
-                <td className="px-6 py-4 align-middle">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center text-xs font-bold">
-                      AS
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-gray-900 leading-tight">
-                        Alice Smith
-                      </div>
-                      <div className="text-[11px] text-gray-400 font-medium">#ORD-2023-004</div>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-2 py-4 text-sm text-center font-medium text-gray-500 align-middle">
-                  Oct 23, 2023
-                </td>
-                <td className="px-2 py-4 text-sm text-center font-bold text-neutral-900 align-middle">
-                  +1.00
-                </td>
-                <td className="px-2 py-4 text-sm text-center font-medium text-neutral-500 align-middle">
-                  0.00
-                </td>
-                <td className="px-2 py-4 text-sm text-center font-medium text-neutral-500 align-middle">
-                  0
-                </td>
-
-                <td className="px-2 py-4 text-sm text-center font-bold text-neutral-900 align-middle">
-                  +1.25
-                </td>
-                <td className="px-2 py-4 text-sm text-center font-medium text-neutral-500 align-middle">
-                  -0.25
-                </td>
-                <td className="px-2 py-4 text-sm text-center font-medium text-neutral-500 align-middle">
-                  90
-                </td>
-
-                <td className="px-6 py-4 align-middle">
-                  <div className="text-sm font-bold text-gray-900">Single Vision</div>
-                  <div className="text-[11px] text-gray-400 font-medium">Polycarbonate</div>
-                </td>
-                <td className="px-6 py-4 text-center align-middle">
-                  <span className="px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-600 whitespace-nowrap">
-                    Coating
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-right align-middle">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    colorScheme="primary"
-                    className="p-2 h-8 w-8 text-primary-500 float-right"
-                  >
-                    <IoChevronForward size={18} />
-                  </Button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div className="p-4 border-t border-gray-100 flex justify-between items-center text-sm text-gray-500">
-          <span>Showing 1 to 5 of 48 results</span>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              colorScheme="neutral"
-              size="sm"
-              className="px-2 border-neutral-200"
-            >
-              <IoChevronBackOutline />
-            </Button>
-            <Button
-              variant="solid"
-              colorScheme="primary"
-              size="sm"
-              className="min-w-[32px] px-2 font-bold"
-            >
-              1
-            </Button>
-            <Button
-              variant="outline"
-              colorScheme="neutral"
-              size="sm"
-              className="px-2 border-neutral-200"
-            >
-              <IoChevronForwardOutline />
-            </Button>
-          </div>
-        </div>
+        <OrderTable
+          role="sales"
+          orders={MOCK_PRESCRIPTION_ORDERS}
+          onRowClick={handleOpenDrawer}
+          onReviewRx={handleReviewRx}
+          onNotifyCustomer={handleNotifyCustomer}
+        />
       </Card>
+
+      <OrderDetailsDrawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        orderId={selectedOrderId}
+        orderType="Prescription"
+        isApproved={selectedOrder?.isApproved}
+        onViewFullDetails={handleViewFullDetails}
+        onNotifyCustomer={handleNotifyCustomer}
+      />
     </Container>
   )
 }

@@ -15,16 +15,7 @@ export default function OrderList({ orders, columns, role = 'operation' }: Order
       {orders.map((order, orderIndex) => (
         <tr key={orderIndex} className="group hover:bg-neutral-50/50 transition-colors">
           {columns.map((col, colIndex) => (
-            <td
-              key={colIndex}
-              className={cn(
-                'px-4 py-4 text-sm text-gray-600',
-                col.header === 'ACTION' || (isSales && col.header === 'ORDER ID')
-                  ? 'text-center'
-                  : '',
-                col.className
-              )}
-            >
+            <td key={colIndex} className={cn('px-0 py-4 text-sm text-gray-600', col.className)}>
               {col.render(order)}
             </td>
           ))}

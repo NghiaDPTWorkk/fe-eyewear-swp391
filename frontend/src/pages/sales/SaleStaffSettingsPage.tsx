@@ -4,7 +4,12 @@ import {
   IoNotificationsOutline,
   IoWarningOutline,
   IoSaveOutline,
-  IoEyeOutline
+  IoEyeOutline,
+  IoStorefrontOutline,
+  IoCalendarOutline,
+  IoTimeOutline,
+  IoGlobeOutline,
+  IoTrashOutline
 } from 'react-icons/io5'
 
 export default function SaleStaffSettingsPage() {

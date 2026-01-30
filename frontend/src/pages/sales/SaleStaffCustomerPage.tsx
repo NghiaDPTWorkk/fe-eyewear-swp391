@@ -12,7 +12,7 @@ import {
   IoInformationCircleOutline
 } from 'react-icons/io5'
 import { cn } from '@/lib/utils'
-import CustomerCommunicationDrawer from '@/features/staff/components/CustomerCommunicationDrawer/CustomerCommunicationDrawer'
+import { CustomerCommunicationDrawer } from '@/features/sales/components/customer'
 
 interface Customer {
   id: string

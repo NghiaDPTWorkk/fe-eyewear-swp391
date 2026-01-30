@@ -3,7 +3,7 @@
  * Displays urgent orders requiring immediate attention
  */
 import { Card } from '@/shared/components/ui/card'
-import { OrderTable } from '../orders'
+import { OrderTable } from '@/features/sales/components/orders'
 import { IoFilter, IoAdd } from 'react-icons/io5'
 
 interface UrgentOrdersTableProps {

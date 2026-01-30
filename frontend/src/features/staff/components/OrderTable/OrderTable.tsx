@@ -1,10 +1,17 @@
-import type { ReactNode } from 'react'
+import React, { type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import OrderHeaderTable from './OrderHeaderTable'
 import OrderList from './OrderList'
-import { Button } from '@/components'
-import { IoTimeOutline, IoChevronForward, IoEyeOutline } from 'react-icons/io5'
+import { Button, IconButton } from '@/shared/components/ui'
+import {
+  IoTimeOutline,
+  IoChevronForward,
+  IoEyeOutline,
+  IoGlassesOutline,
+  IoChatbubbleEllipsesOutline,
+  IoCheckmarkCircleOutline
+} from 'react-icons/io5'
 import { PATHS } from '@/routes/paths'
 import type { OrderTableRow } from '@/shared/types'
 
@@ -23,6 +30,9 @@ interface OrderTableProps {
   filterType?: string
   role?: 'sales' | 'operation'
   orders?: Order[]
+  onRowClick?: (id: string, order?: Order) => void
+  onReviewRx?: (id: string) => void
+  onNotifyCustomer?: (customerId: string) => void
 }
 
 const getOrderTypeStyles = (type: string, role: string) => {
@@ -56,13 +66,20 @@ export default function OrderTable({
   hiddenColumns = [],
   filterType,
   role = 'operation',
-  orders = []
+  orders = [],
+  onRowClick,
+  onReviewRx,
+  onNotifyCustomer
 }: OrderTableProps) {
   const isSales = role === 'sales'
   const navigate = useNavigate()
 
-  const handleViewOrder = (orderId: string) => {
-    navigate(PATHS.OPERATIONSTAFF.ORDER_DETAIL(orderId))
+  const handleViewOrder = (orderId: string, order?: Order) => {
+    if (onRowClick) {
+      onRowClick(orderId, order)
+    } else {
+      navigate(PATHS.OPERATIONSTAFF.ORDER_DETAIL(orderId))
+    }
   }
 
   const filteredOrders = filterType
@@ -79,7 +96,7 @@ export default function OrderTable({
           className="text-sm font-semibold text-emerald-500 cursor-pointer hover:text-emerald-600 transition-colors inline-block"
           onClick={(e) => {
             e.stopPropagation()
-            handleViewOrder(order.id)
+            handleViewOrder(order.id, order)
           }}
         >
           {order.id}
@@ -218,9 +235,9 @@ export default function OrderTable({
                   colorScheme="primary"
                   size="sm"
                   className="text-slate-600 hover:bg-slate-100"
-                  onClick={(e) => {
+                  onClick={(e: React.MouseEvent) => {
                     e.stopPropagation()
-                    handleViewOrder(order.id)
+                    handleViewOrder(order.id, order)
                   }}
                 />
               </div>
@@ -236,7 +253,7 @@ export default function OrderTable({
                     colorScheme="secondary"
                     size="sm"
                     className="text-blue-500 hover:bg-blue-50"
-                    onClick={(e) => {
+                    onClick={(e: React.MouseEvent) => {
                       e.stopPropagation()
                       onNotifyCustomer?.(order.customerId)
                     }}
@@ -257,7 +274,7 @@ export default function OrderTable({
                     colorScheme="primary"
                     size="sm"
                     className="text-emerald-500 hover:text-emerald-600 hover:bg-emerald-50"
-                    onClick={(e) => {
+                    onClick={(e: React.MouseEvent) => {
                       e.stopPropagation()
                       onReviewRx?.(order.id)
                     }}

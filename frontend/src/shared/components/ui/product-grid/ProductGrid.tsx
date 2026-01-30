@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { ProductCard } from '../product-card'
+import { ProductCard } from '@/shared/components/ui/product-card'
 
 export interface Product {
   id: string

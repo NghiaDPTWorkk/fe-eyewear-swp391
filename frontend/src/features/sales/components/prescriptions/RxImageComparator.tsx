@@ -14,11 +14,11 @@
  * ─────────────────────────────────────────────────────────────────────────────
  */
 import { useState } from 'react'
-import { Button, Input } from '@/components'
+import { Button, Input } from '@/shared/components/ui'
 import { IoArrowBack, IoCheckmark, IoClose } from 'react-icons/io5'
 import RxImageViewer from './RxImageViewer'
 import RxDataPanel from './RxDataPanel'
-import { TYPOGRAPHY } from '../../constants/saleStaffDesignSystem'
+import { TYPOGRAPHY } from '@/features/sales/constants'
 
 interface RxValues {
   sph: string

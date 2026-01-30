@@ -3,7 +3,7 @@
  * Consistent status indicator for orders across all SaleStaff pages.
  */
 import { cn } from '@/lib/utils'
-import { COLORS, STYLES } from '../../constants/saleStaffDesignSystem'
+import { COLORS, STYLES } from '@/features/sales/constants'
 
 type StatusType = 'pending' | 'processing' | 'completed' | 'rejected' | 'delayed' | 'arrived'
 

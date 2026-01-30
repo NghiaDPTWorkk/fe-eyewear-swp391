@@ -65,7 +65,7 @@ const SaleStaffSettingsPage = lazy(() =>
 )
 
 const SaleStaffSupportPage = lazy(() =>
-  import('@/pages/sales/SaleStaffSupportPage').then((m) => ({ default: m.default }))
+  import('@/pages/StaffSupportPage').then((m) => ({ default: m.default }))
 )
 const SaleStaffRxVerificationPage = lazy(() =>
   import('@/pages/sales/SaleStaffRxVerificationPage').then((m) => ({ default: m.default }))

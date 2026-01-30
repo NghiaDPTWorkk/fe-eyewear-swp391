@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { PATHS } from '@/routes/paths'
 import { Container, Button, Card } from '@/components'
-import { OrderTable, OrderDetailsDrawer } from '@/features/sales/components/orders'
-import type { Order } from '@/features/sales/components/orders/OrderTable'
+import { OrderTable } from '@/components/staff'
+import OrderDetailsDrawer from '@/features/staff/components/OrderDetailsDrawer/OrderDetailsDrawer'
 import {
   IoFilter,
   IoAdd,
@@ -12,37 +12,6 @@ import {
   IoCheckmarkDoneCircleOutline,
   IoCheckboxOutline
 } from 'react-icons/io5'
-
-const MOCK_PRESCRIPTION_ORDERS: Order[] = [
-  {
-    id: 'ORD-7352',
-    orderType: 'Prescription',
-    customer: 'Leslie Alexander',
-    customerPhone: '+1 (555) 123-4567',
-    item: 'Ray-Ban Aviator',
-    waitingFor: 'Lens Grinding',
-    currentStatus: 'In Production',
-    timeElapsed: '2h 15m',
-    statusColor: 'bg-blue-100 text-blue-700',
-    isNextActive: true,
-    isApproved: false,
-    customerId: 'CUST-001'
-  },
-  {
-    id: 'ORD-7349',
-    orderType: 'Prescription',
-    customer: 'Lindsay Walton',
-    customerPhone: '+1 (555) 246-8135',
-    item: 'Prada PR 17WS',
-    waitingFor: 'Rx Verification',
-    currentStatus: 'Pending',
-    timeElapsed: '45m',
-    statusColor: 'bg-neutral-100 text-neutral-700',
-    isNextActive: true,
-    isApproved: true,
-    customerId: 'CUST-004'
-  }
-]
 
 export default function SaleStaffPrescriptionPage() {
   const navigate = useNavigate()
@@ -175,10 +144,10 @@ export default function SaleStaffPrescriptionPage() {
       <Card className="p-0 overflow-hidden border border-neutral-200 shadow-sm">
         <OrderTable
           role="sales"
-          orders={MOCK_PRESCRIPTION_ORDERS}
           onRowClick={handleOpenDrawer}
           onReviewRx={handleReviewRx}
           onNotifyCustomer={handleNotifyCustomer}
+          filterType="Prescription"
         />
       </Card>
 

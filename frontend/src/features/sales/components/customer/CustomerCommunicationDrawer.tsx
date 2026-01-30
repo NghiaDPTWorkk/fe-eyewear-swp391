@@ -14,7 +14,6 @@ interface CustomerCommunicationDrawerProps {
   onClose: () => void
   customer: Customer | null
   variant?: 'overlay' | 'inline'
-  hideHeader?: boolean
 }
 
 const ORDER_HISTORY = [
@@ -48,8 +47,7 @@ export default function CustomerCommunicationDrawer({
   isOpen,
   onClose,
   customer,
-  variant = 'overlay',
-  hideHeader = false
+  variant = 'overlay'
 }: CustomerCommunicationDrawerProps) {
   const [activeTab, setActiveTab] = useState<'chat' | 'orders'>('chat')
 
@@ -59,29 +57,27 @@ export default function CustomerCommunicationDrawer({
     <div
       className={`relative w-full max-w-md bg-white h-full flex flex-col ${variant === 'overlay' ? 'shadow-2xl animate-in slide-in-from-right duration-300' : 'border-l border-neutral-200'}`}
     >
-      {!hideHeader && (
-        <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-white shrink-0 z-10">
-          <div className="flex items-center gap-3">
-            <img
-              src={customer.avatar}
-              alt={customer.name}
-              className="w-10 h-10 rounded-full object-cover border border-gray-200"
-            />
-            <div>
-              <h3 className="font-semibold text-gray-900">{customer.name}</h3>
-              <p className="text-xs text-mint-500 font-medium flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-mint-500"></span> Online
-              </p>
-            </div>
+      <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-white shrink-0 z-10">
+        <div className="flex items-center gap-3">
+          <img
+            src={customer.avatar}
+            alt={customer.name}
+            className="w-10 h-10 rounded-full object-cover border border-gray-200"
+          />
+          <div>
+            <h3 className="font-semibold text-gray-900">{customer.name}</h3>
+            <p className="text-xs text-mint-500 font-medium flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-mint-500"></span> Online
+            </p>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-mint-50 rounded-full text-gray-400 hover:text-mint-600 transition-all active:scale-95"
-          >
-            <IoClose size={24} />
-          </button>
         </div>
-      )}
+        <button
+          onClick={onClose}
+          className="p-2 hover:bg-mint-50 rounded-full text-gray-400 hover:text-mint-600 transition-all active:scale-95"
+        >
+          <IoClose size={24} />
+        </button>
+      </div>
 
       <div className="flex border-b border-gray-100 shrink-0">
         <button

@@ -1,6 +1,6 @@
-import { useParams, useNavigate } from 'react-router-dom'
 import { Container } from '@/components'
-import { OrderDetail } from '@/features/sales/components/orders'
+import OrderDetail from '@/features/staff/components/OrderDetail/OrderDetail'
+import { useNavigate, useParams } from 'react-router-dom'
 
 export default function PreOrderDetailPage() {
   const { orderId } = useParams<{ orderId: string }>()

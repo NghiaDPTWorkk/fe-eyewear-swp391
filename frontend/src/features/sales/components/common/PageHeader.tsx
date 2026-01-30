@@ -3,7 +3,7 @@
  * Consistent header with breadcrumb navigation for all SaleStaff pages.
  */
 import { Link } from 'react-router-dom'
-import { TYPOGRAPHY, STYLES } from '@/features/sales/constants'
+import { TYPOGRAPHY, STYLES } from '../../constants/saleStaffDesignSystem'
 
 interface BreadcrumbItem {
   label: string

@@ -2,10 +2,11 @@
  * PreOrderTable Component
  * Table displaying pre-orders with status and actions.
  */
-import { Card, Button } from '@/shared/components/ui'
+import { Card, Button } from '@/components'
 import { IoGlassesOutline, IoChevronForward } from 'react-icons/io5'
-import { StatusBadge, Pagination } from '@/features/sales/components/common'
-import { TYPOGRAPHY } from '@/features/sales/constants'
+import StatusBadge from '../common/StatusBadge'
+import Pagination from '../common/Pagination'
+import { TYPOGRAPHY } from '../../constants/saleStaffDesignSystem'
 
 // Mock data
 const PRE_ORDERS = [

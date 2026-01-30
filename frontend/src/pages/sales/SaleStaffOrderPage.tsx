@@ -3,8 +3,8 @@ import { useNavigate, Link } from 'react-router-dom'
 import { PATHS } from '@/routes/paths'
 import { cn } from '@/lib/utils'
 import { Container, Button, Card } from '@/components'
-import { OrderTable, OrderDetailsDrawer } from '@/features/sales/components/orders'
-import type { Order } from '@/features/sales/components/orders/OrderTable'
+import { OrderTable } from '@/components/staff'
+import OrderDetailsDrawer from '@/features/staff/components/OrderDetailsDrawer/OrderDetailsDrawer'
 import {
   IoSearchOutline,
   IoFilter,
@@ -14,84 +14,12 @@ import {
   IoChevronForwardOutline
 } from 'react-icons/io5'
 
-const MOCK_ORDERS: Order[] = [
-  {
-    id: 'ORD-7352',
-    orderType: 'Prescription',
-    customer: 'Leslie Alexander',
-    customerPhone: '+1 (555) 123-4567',
-    item: 'Ray-Ban Aviator',
-    waitingFor: 'Lens Grinding',
-    currentStatus: 'In Production',
-    timeElapsed: '2h 15m',
-    statusColor: 'bg-blue-100 text-blue-700',
-    isNextActive: true,
-    isApproved: false,
-    customerId: 'CUST-001'
-  },
-  {
-    id: 'ORD-7351',
-    orderType: 'Regular',
-    customer: 'Michael Foster',
-    customerPhone: '+1 (555) 987-6543',
-    item: 'Oakley Holbrook',
-    currentStatus: 'Packed',
-    timeElapsed: '4h 30m',
-    statusColor: 'bg-emerald-100 text-emerald-700',
-    isNextActive: true,
-    customerId: 'CUST-002'
-  },
-  {
-    id: 'ORD-7350',
-    orderType: 'Pre-order',
-    customer: 'Dries Vincent',
-    customerPhone: '+1 (555) 456-7890',
-    item: 'Gucci GG0061S',
-    waitingFor: 'Supplier Shipment',
-    currentStatus: 'Awaiting Stock',
-    timeElapsed: '2d 5h',
-    statusColor: 'bg-amber-100 text-amber-700',
-    isNextActive: false,
-    customerId: 'CUST-003'
-  },
-  {
-    id: 'ORD-7349',
-    orderType: 'Prescription',
-    customer: 'Lindsay Walton',
-    customerPhone: '+1 (555) 246-8135',
-    item: 'Prada PR 17WS',
-    waitingFor: 'Rx Verification',
-    currentStatus: 'Pending',
-    timeElapsed: '45m',
-    statusColor: 'bg-neutral-100 text-neutral-700',
-    isNextActive: true,
-    isApproved: true,
-    customerId: 'CUST-004'
-  },
-  {
-    id: 'ORD-7348',
-    orderType: 'Regular',
-    customer: 'Courtney Henry',
-    customerPhone: '+1 (555) 135-7924',
-    item: 'Tom Ford FT0522',
-    currentStatus: 'Completed',
-    timeElapsed: '1d 2h',
-    statusColor: 'bg-emerald-100 text-emerald-700',
-    isNextActive: false,
-    customerId: 'CUST-005'
-  }
-]
-
 export default function SaleStaffOrderPage() {
   const [filter, setFilter] = useState('All')
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
   const [selectedOrder, setSelectedOrder] = useState<any>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
-
-  // Filter orders based on the selected type
-  const orders =
-    filter === 'All' ? MOCK_ORDERS : MOCK_ORDERS.filter((order) => order.orderType === filter)
 
   const handleOpenDrawer = (id: string, order?: any) => {
     if (order?.orderType === 'Prescription') {
@@ -228,10 +156,10 @@ export default function SaleStaffOrderPage() {
         <Card className="p-0 overflow-hidden border border-neutral-200 shadow-sm">
           <OrderTable
             role="sales"
-            orders={orders}
             onRowClick={handleOpenDrawer}
             onReviewRx={handleReviewRx}
             onNotifyCustomer={handleNotifyCustomer}
+            filterType={filter === 'All' ? undefined : filter}
           />
         </Card>
 

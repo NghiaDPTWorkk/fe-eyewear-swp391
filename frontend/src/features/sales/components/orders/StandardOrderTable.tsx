@@ -3,10 +3,11 @@
  * Table for displaying standard orders that auto-forward to Packaging.
  * No manual confirmation needed - shows "Ready for Packaging" status.
  */
-import { Card, Button } from '@/shared/components/ui'
+import { Card, Button } from '@/components'
 import { IoChevronForward, IoGlassesOutline } from 'react-icons/io5'
-import { Pagination, OrderStatusIndicator } from '@/features/sales/components/common'
-import { TYPOGRAPHY } from '@/features/sales/constants'
+import Pagination from '../common/Pagination'
+import OrderStatusIndicator from '../common/OrderStatusIndicator'
+import { TYPOGRAPHY } from '../../constants/saleStaffDesignSystem'
 
 // Mock data for standard orders
 const STANDARD_ORDERS = [

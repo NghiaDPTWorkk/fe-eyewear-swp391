@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { PATHS } from '@/routes/paths'
 import { Container, Button, Card } from '@/components'
-import { OrderTable, OrderDetailsDrawer } from '@/features/sales/components/orders'
-import type { Order } from '@/features/sales/components/orders/OrderTable'
+import { OrderTable } from '@/components/staff'
+import OrderDetailsDrawer from '@/features/staff/components/OrderDetailsDrawer/OrderDetailsDrawer'
 import {
   IoCloudDownloadOutline,
   IoAdd,
@@ -12,22 +12,6 @@ import {
   IoCalendarOutline,
   IoWalletOutline
 } from 'react-icons/io5'
-
-const MOCK_PRE_ORDERS: Order[] = [
-  {
-    id: 'ORD-7350',
-    orderType: 'Pre-order',
-    customer: 'Dries Vincent',
-    customerPhone: '+1 (555) 456-7890',
-    item: 'Gucci GG0061S',
-    waitingFor: 'Supplier Shipment',
-    currentStatus: 'Awaiting Stock',
-    timeElapsed: '2d 5h',
-    statusColor: 'bg-amber-100 text-amber-700',
-    isNextActive: false,
-    customerId: 'CUST-003'
-  }
-]
 
 export default function SaleStaffPreOrdersPage() {
   const navigate = useNavigate()
@@ -151,8 +135,8 @@ export default function SaleStaffPreOrdersPage() {
       <Card className="p-0 overflow-hidden border border-neutral-200 shadow-sm">
         <OrderTable
           role="sales"
-          orders={MOCK_PRE_ORDERS}
           onRowClick={handleOpenDrawer}
+          filterType="Pre-order"
           onNotifyCustomer={handleNotifyCustomer}
         />
       </Card>

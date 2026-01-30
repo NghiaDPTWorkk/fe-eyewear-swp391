@@ -77,7 +77,7 @@ export function MenuItem({
           {badge && (
             <span
               className={cn(
-                'px-2 py-0.5 text-xs rounded-md font-semibold shrink-0 min-w-[28px] text-center',
+                'px-2 py-0.5 text-xs rounded-full font-semibold shrink-0 min-w-[28px] text-center',
                 badgeVariant === 'primary' && 'bg-primary-100 text-primary-700',
                 badgeVariant === 'danger' && 'bg-red-100 text-red-700',
                 badgeVariant === 'default' && 'bg-gray-100 text-gray-700'

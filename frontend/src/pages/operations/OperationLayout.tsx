@@ -73,18 +73,8 @@ export default function OperationLayout() {
       </SidebarStaff.MenuSection>
 
       <SidebarStaff.MenuSection label="TOOLS">
-        <SidebarStaff.MenuItem
-          icon={<IoSettingsOutline />}
-          label="Settings"
-          active={location.pathname === '/operationstaff/settings'}
-          onClick={() => navigate('/operationstaff/settings')}
-        />
-        <SidebarStaff.MenuItem
-          icon={<IoHelpCircleOutline />}
-          label="Support"
-          active={location.pathname === '/operationstaff/support'}
-          onClick={() => navigate('/operationstaff/support')}
-        />
+        <SidebarStaff.MenuItem icon={<IoSettingsOutline />} label="Settings" />
+        <SidebarStaff.MenuItem icon={<IoHelpCircleOutline />} label="Support" />
         <ThemeToggle />
       </SidebarStaff.MenuSection>
     </SidebarStaff>

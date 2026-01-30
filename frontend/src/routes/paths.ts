@@ -13,12 +13,7 @@ export const PATHS = {
     DASHBOARD: '/admin/dashboard'
   },
   SALESTAFF: {
-    DASHBOARD: '/salestaff/dashboard',
-    CUSTOMERS: '/salestaff/customers',
-    PRESCRIPTION_ORDERS: '/salestaff/orders/prescription-orders',
-    VERIFY_RX: (orderId: string) => `/salestaff/orders/${orderId}/verify-rx`,
-    REGULAR_DETAIL: (orderId: string) => `/salestaff/orders/${orderId}/regular`,
-    PRE_ORDER_DETAIL: (orderId: string) => `/salestaff/orders/${orderId}/pre-order`
+    DASHBOARD: '/salestaff/dashboard'
   },
   OPERATIONSTAFF: {
     DASHBOARD: '/operationstaff/dashboard',

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
-import { Card } from '@/shared/components/ui/card'
+import { Card } from '../card'
 
 export interface MetricCardProps {
   label: string

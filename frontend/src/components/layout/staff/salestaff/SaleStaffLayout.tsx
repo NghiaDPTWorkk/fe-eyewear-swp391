@@ -9,6 +9,7 @@ import {
 import {
   IoGrid,
   IoReceipt,
+  IoCube,
   IoPeople,
   IoFlask,
   IoSettings,
@@ -76,7 +77,12 @@ export default function SaleStaffLayout() {
             active={location.pathname === '/salestaff/orders/returns'}
           />
         </SidebarStaff.MenuItem>
-
+        <SidebarStaff.MenuItem
+          icon={<IoCube />}
+          label="Products"
+          to="/salestaff/products"
+          active={location.pathname === '/salestaff/products'}
+        />
         <SidebarStaff.MenuItem
           icon={<IoPeople />}
           label="Customers"

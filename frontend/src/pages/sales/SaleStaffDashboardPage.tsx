@@ -1,11 +1,7 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { PATHS } from '@/routes/paths'
-import { cn } from '@/lib/utils'
 import { Container } from '@/shared/components/ui/container'
 import { MetricCard } from '@/shared/components/ui/metric-card'
 import { Card } from '@/shared/components/ui/card'
-import { OrderTable } from '@/components/staff'
+import OrderTable from '@/features/staff/components/OrderTable/OrderTable'
 import {
   IoClipboardOutline,
   IoWalletOutline,
@@ -198,67 +194,7 @@ function OrderStatusChart() {
   )
 }
 
-// --- Main Page Component ---
-import { OrderDetailsDrawer } from '@/features/sales/components/orders'
-import type { OrderTableRow as Order } from '@/shared/types'
-
-const MOCK_URGENT_ORDERS: Order[] = [
-  {
-    id: 'ORD-7352',
-    orderType: 'Prescription',
-    customer: 'Leslie Alexander',
-    customerPhone: '+1 (555) 123-4567',
-    item: 'Ray-Ban Aviator',
-    waitingFor: 'Lens Grinding',
-    currentStatus: 'In Production',
-    timeElapsed: '2h 15m',
-    statusColor: 'bg-blue-100 text-blue-700',
-    isNextActive: true,
-    isApproved: false,
-    customerId: 'CUST-001'
-  },
-  {
-    id: 'ORD-7349',
-    orderType: 'Prescription',
-    customer: 'Lindsay Walton',
-    customerPhone: '+1 (555) 246-8135',
-    item: 'Prada PR 17WS',
-    waitingFor: 'Rx Verification',
-    currentStatus: 'Pending',
-    timeElapsed: '45m',
-    statusColor: 'bg-neutral-100 text-neutral-700',
-    isNextActive: true,
-    isApproved: true,
-    customerId: 'CUST-004'
-  }
-]
-
-function UrgentOrdersTable({
-  onRowClick,
-  onReviewRx,
-  onNotifyCustomer,
-  currentFilter,
-  onFilterChange
-}: {
-  onRowClick: (id: string, order?: Order) => void
-  onReviewRx: (id: string) => void
-  onNotifyCustomer: (id: string) => void
-  currentFilter: string
-  onFilterChange: (filter: string) => void
-}) {
-  const [isFilterOpen, setIsFilterOpen] = useState(false)
-  const filterOptions = [
-    { label: 'All Orders', value: 'All' },
-    { label: 'Prescription', value: 'Prescription' },
-    { label: 'Pre-order', value: 'Pre-order' },
-    { label: 'Regular', value: 'Regular' }
-  ]
-
-  const filteredOrders =
-    currentFilter === 'All'
-      ? MOCK_URGENT_ORDERS
-      : MOCK_URGENT_ORDERS.filter((order) => order.orderType === currentFilter)
-
+function UrgentOrdersTable() {
   return (
     <Card className="p-6">
       <div className="flex items-center justify-between mb-6">
@@ -267,61 +203,16 @@ function UrgentOrdersTable({
           <p className="text-sm text-gray-500">Orders requiring immediate attention.</p>
         </div>
         <div className="flex gap-3">
-          <div className="relative">
-            <button
-              onClick={() => setIsFilterOpen(!isFilterOpen)}
-              className={cn(
-                'flex items-center gap-2 px-3 py-2 border border-gray-200 rounded-lg text-sm font-medium transition-all min-w-[160px] justify-between',
-                isFilterOpen
-                  ? 'bg-primary-50 border-primary-500 text-primary-600'
-                  : 'text-gray-600 hover:bg-gray-50'
-              )}
-            >
-              <div className="flex items-center gap-2">
-                <IoFilter /> Filter: {currentFilter}
-              </div>
-            </button>
-
-            {isFilterOpen && (
-              <>
-                <div className="fixed inset-0 z-10" onClick={() => setIsFilterOpen(false)} />
-                <div className="absolute top-full mt-2 right-0 w-48 z-20 bg-white p-2 rounded-xl shadow-xl border border-gray-100 animate-in fade-in slide-in-from-top-2 duration-200">
-                  <div className="space-y-1">
-                    {filterOptions.map((opt) => (
-                      <button
-                        key={opt.value}
-                        className={cn(
-                          'w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all text-left',
-                          currentFilter === opt.value
-                            ? 'bg-primary-50 text-primary-600 font-semibold'
-                            : 'text-gray-600 hover:bg-gray-50'
-                        )}
-                        onClick={() => {
-                          onFilterChange(opt.value)
-                          setIsFilterOpen(false)
-                        }}
-                      >
-                        {opt.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
+          <button className="flex items-center gap-2 px-3 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50">
+            <IoFilter /> Filter
+          </button>
           <button className="flex items-center gap-2 px-3 py-2 bg-emerald-500 text-white rounded-lg text-sm font-medium hover:bg-emerald-600 shadow-sm shadow-emerald-200">
             <IoAdd /> New Order
           </button>
         </div>
       </div>
 
-      <OrderTable
-        role="sales"
-        orders={filteredOrders}
-        onRowClick={onRowClick}
-        onReviewRx={onReviewRx}
-        onNotifyCustomer={onNotifyCustomer}
-      />
+      <OrderTable role="sales" />
     </Card>
   )
 }
@@ -329,47 +220,6 @@ function UrgentOrdersTable({
 // --- Main Page Component ---
 
 export default function SaleStaffDashboardPage() {
-  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [filter, setFilter] = useState('All')
-
-  const handleOpenDrawer = (id: string, order?: Order) => {
-    if (order?.orderType === 'Prescription') {
-      setSelectedOrderId(id)
-      setSelectedOrder(order)
-      setIsDrawerOpen(true)
-    } else if (order?.orderType === 'Pre-order') {
-      navigate(PATHS.SALESTAFF.PRE_ORDER_DETAIL(id))
-    } else {
-      navigate(PATHS.SALESTAFF.REGULAR_DETAIL(id))
-    }
-  }
-
-  const handleViewFullDetails = () => {
-    if (selectedOrderId && selectedOrder) {
-      if (selectedOrder.orderType === 'Prescription') {
-        navigate(PATHS.SALESTAFF.VERIFY_RX(selectedOrderId))
-      } else if (selectedOrder.orderType === 'Pre-order') {
-        navigate(PATHS.SALESTAFF.PRE_ORDER_DETAIL(selectedOrderId))
-      } else {
-        navigate(PATHS.SALESTAFF.REGULAR_DETAIL(selectedOrderId))
-      }
-      setIsDrawerOpen(false)
-    }
-  }
-
-  const navigate = useNavigate()
-  const handleReviewRx = (id: string) => {
-    navigate(PATHS.SALESTAFF.VERIFY_RX(id))
-  }
-
-  const handleNotifyCustomer = (customerId: string) => {
-    navigate(`${PATHS.SALESTAFF.CUSTOMERS}?customerId=${customerId}`)
-  }
-
-  if (!METRICS.length) return null
-
   return (
     <Container>
       <div className="mb-8">
@@ -393,23 +243,7 @@ export default function SaleStaffDashboardPage() {
         </div>
       </div>
 
-      <UrgentOrdersTable
-        onRowClick={handleOpenDrawer}
-        onReviewRx={handleReviewRx}
-        onNotifyCustomer={handleNotifyCustomer}
-        currentFilter={filter}
-        onFilterChange={setFilter}
-      />
-
-      <OrderDetailsDrawer
-        isOpen={isDrawerOpen}
-        onClose={() => setIsDrawerOpen(false)}
-        orderId={selectedOrderId}
-        orderType={selectedOrder?.orderType}
-        isApproved={selectedOrder?.isApproved}
-        onViewFullDetails={handleViewFullDetails}
-        onNotifyCustomer={handleNotifyCustomer}
-      />
+      <UrgentOrdersTable />
     </Container>
   )
 }

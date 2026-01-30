@@ -1,31 +1,40 @@
-/**
- * Authentication request and response types
- * Matches backend API structure
- */
+import type { ApiResponse } from '@/shared/types'
+import type { User } from '../../../shared/types/user.types'
 
 export interface LoginRequest {
   email: string
-  password: string
+  password?: string
+  googleId?: string
+}
+
+interface LoginResponseData {
+  accessToken: string
+  refreshToken?: string
+  user?: User
 }
 
 export interface RegisterRequest {
-  name: string
   email: string
-  password: string
-  phone: string
-  gender: 'F' | 'M' | 'N'
+  password?: string
+  fullName: string
+  phone?: string
+  googleId?: string
+  avatar?: string
 }
 
-export interface AuthResponse {
-  token: string
-  user: {
-    _id: string
-    name: string
-    email: string
-    phone: string
-    gender: 'F' | 'M' | 'N'
-  }
+export interface RegisterResponse {
+  accessToken: string
+  refreshToken: string
+  user: User
 }
 
-// Alias for backward compatibility
-export type LoginResponse = AuthResponse
+export interface RefreshTokenRequest {
+  refreshToken: string
+}
+
+export interface RefreshTokenResponse {
+  accessToken: string
+  refreshToken: string
+}
+
+export type LoginResponse = ApiResponse<LoginResponseData>

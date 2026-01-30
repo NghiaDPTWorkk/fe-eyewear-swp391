@@ -21,20 +21,21 @@ export default tseslint.config(
     rules: {
       // React Hooks
       ...reactHooks.configs.recommended.rules,
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
 
-      // 1. TẮT lỗi Refresh (đã chỉnh từ warn -> off)
-      'react-refresh/only-export-components': 'off',
-
-      // 2. CHUYỂN lỗi biến không sử dụng thành cảnh báo nhẹ (để không bị đỏ file)
-      '@typescript-eslint/no-unused-vars': 'off',
-
-      // 3. TẮT cảnh báo 'any' (đã chỉnh từ warn -> off)
-      '@typescript-eslint/no-explicit-any': 'off',
-
+      // TypeScript
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_'
+        }
+      ],
+      '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/consistent-type-imports': 'error',
 
       // General
-      'no-console': 'off', // Tắt luôn cho đỡ vướng
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
       'no-debugger': 'error',
       'no-var': 'error',
       'prefer-const': 'error',
@@ -44,9 +45,7 @@ export default tseslint.config(
       // Code Style
       'no-multiple-empty-lines': ['error', { max: 1 }],
       'no-trailing-spaces': 'error',
-
-      // 4. TẮT giới hạn số dòng file (đã chỉnh từ warn -> off)
-      'max-lines': 'off'
+      'max-lines': ['warn', { max: 250, skipBlankLines: true, skipComments: true }]
     }
   },
   {

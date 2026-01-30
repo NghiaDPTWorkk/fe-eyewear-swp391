@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query'
 import type { LoginRequest, LoginResponse } from '@/shared/types'
 import { useNavigate } from 'react-router-dom'
-import { authApi } from '../services/auth.api.legacy'
+import { authApi } from '@/features/auth/services/auth.api.legacy'
 
 export const useLogin = (role: 'customer' | 'staff' = 'customer') => {
   const navigate = useNavigate()

@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import React, { type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import OrderHeaderTable from './OrderHeaderTable'
@@ -162,7 +162,7 @@ export default function OrderTable({
           className="text-sm font-semibold text-emerald-500 cursor-pointer hover:text-emerald-600 transition-colors inline-block"
           onClick={(e) => {
             e.stopPropagation()
-            handleViewOrder(order.id)
+            handleViewOrder(order.id, order)
           }}
         >
           {order.id}
@@ -301,9 +301,9 @@ export default function OrderTable({
                   colorScheme="primary"
                   size="sm"
                   className="text-slate-600 hover:bg-slate-100"
-                  onClick={(e) => {
+                  onClick={(e: React.MouseEvent) => {
                     e.stopPropagation()
-                    handleViewOrder(order.id)
+                    handleViewOrder(order.id, order)
                   }}
                 />
               </div>
@@ -319,7 +319,7 @@ export default function OrderTable({
                     colorScheme="secondary"
                     size="sm"
                     className="text-blue-500 hover:bg-blue-50"
-                    onClick={(e) => {
+                    onClick={(e: React.MouseEvent) => {
                       e.stopPropagation()
                       onNotifyCustomer?.(order.customerId)
                     }}
@@ -340,7 +340,7 @@ export default function OrderTable({
                     colorScheme="primary"
                     size="sm"
                     className="text-emerald-500 hover:text-emerald-600 hover:bg-emerald-50"
-                    onClick={(e) => {
+                    onClick={(e: React.MouseEvent) => {
                       e.stopPropagation()
                       onReviewRx?.(order.id)
                     }}

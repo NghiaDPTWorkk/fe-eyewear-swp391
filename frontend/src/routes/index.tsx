@@ -33,19 +33,19 @@ const SaleStaffLayout = lazy(() =>
 )
 
 const SaleStaffDashboardPage = lazy(() =>
-  import('@/pages/sales/SaleStaffDashboardPage').then((m) => ({ default: m.default }))
+  import('@/pages/sales').then((m) => ({ default: m.SaleStaffDashboardPage }))
 )
 
 const SaleStaffOrderPage = lazy(() =>
-  import('@/pages/sales/SaleStaffOrderPage').then((m) => ({ default: m.default }))
+  import('@/pages/sales').then((m) => ({ default: m.SaleStaffOrderPage }))
 )
 
 const SaleStaffCustomerPage = lazy(() =>
-  import('@/pages/sales/SaleStaffCustomerPage').then((m) => ({ default: m.default }))
+  import('@/pages/sales').then((m) => ({ default: m.SaleStaffCustomerPage }))
 )
 
 const SaleStaffLabStatusPage = lazy(() =>
-  import('@/pages/sales/SaleStaffLabStatusPage').then((m) => ({ default: m.default }))
+  import('@/pages/sales').then((m) => ({ default: m.SaleStaffLabStatusPage }))
 )
 
 const SaleStaffPrescriptionPage = lazy(() =>
@@ -61,26 +61,26 @@ const SaleStaffLiveMapPage = lazy(() =>
 )
 
 const SaleStaffReturnsPage = lazy(() =>
-  import('@/pages/sales/SaleStaffReturnsPage').then((m) => ({ default: m.default }))
+  import('@/pages/sales').then((m) => ({ default: m.SaleStaffReturnsPage }))
 )
 
 const SaleStaffSettingsPage = lazy(() =>
-  import('@/pages/sales/SaleStaffSettingsPage').then((m) => ({ default: m.default }))
+  import('@/pages/sales').then((m) => ({ default: m.SaleStaffSettingsPage }))
 )
 
 const SaleStaffSupportPage = lazy(() =>
-  import('@/pages/sales/SaleStaffSupportPage').then((m) => ({ default: m.default }))
+  import('@/pages/StaffSupportPage').then((m) => ({ default: m.default }))
 )
 const SaleStaffRxVerificationPage = lazy(() =>
-  import('@/pages/sales/SaleStaffRxVerificationPage').then((m) => ({ default: m.default }))
+  import('@/pages/sales').then((m) => ({ default: m.SaleStaffRxVerificationPage }))
 )
 
 const RegularOrderDetailPage = lazy(() =>
-  import('@/pages/sales/RegularOrderDetailPage').then((m) => ({ default: m.default }))
+  import('@/pages/sales').then((m) => ({ default: m.RegularOrderDetailPage }))
 )
 
 const PreOrderDetailPage = lazy(() =>
-  import('@/pages/sales/PreOrderDetailPage').then((m) => ({ default: m.default }))
+  import('@/pages/sales').then((m) => ({ default: m.PreOrderDetailPage }))
 )
 
 const OperationLayout = lazy(() =>

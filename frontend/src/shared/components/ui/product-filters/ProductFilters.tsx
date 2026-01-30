@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
-import { PriceRangeFilter, type PriceRange } from '../price-range-filter'
-import { ColorFilter, type ColorOption } from '../color-filter'
-import { FilterSection } from '../filter-section'
+import { PriceRangeFilter, type PriceRange } from '@/shared/components/ui/price-range-filter'
+import { ColorFilter, type ColorOption } from '@/shared/components/ui/color-filter'
+import { FilterSection } from '@/shared/components/ui/filter-section'
 
 export interface Category {
   id: string

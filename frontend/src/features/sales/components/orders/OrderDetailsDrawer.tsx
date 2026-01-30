@@ -15,14 +15,20 @@ interface OrderDetailsDrawerProps {
   isOpen: boolean
   onClose: () => void
   orderId: string | null
+  orderType?: string
+  isApproved?: boolean
   onViewFullDetails?: () => void
+  onNotifyCustomer?: (customerId: string) => void
 }
 
 export default function OrderDetailsDrawer({
   isOpen,
   onClose,
   orderId,
-  onViewFullDetails
+  orderType,
+  isApproved,
+  onViewFullDetails,
+  onNotifyCustomer
 }: OrderDetailsDrawerProps) {
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false)
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null)

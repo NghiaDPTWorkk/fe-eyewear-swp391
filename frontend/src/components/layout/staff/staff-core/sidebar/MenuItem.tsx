@@ -9,6 +9,8 @@ interface MenuItemProps {
   label: string
   to?: string
   active?: boolean
+  badge?: string
+  badgeVariant?: 'default' | 'primary' | 'danger'
   hasDropdown?: boolean
   children?: ReactNode
   onClick?: () => void
@@ -21,6 +23,8 @@ export function MenuItem({
   label,
   to,
   active,
+  badge,
+  badgeVariant = 'primary',
   hasDropdown,
   children,
   onClick,
@@ -70,6 +74,18 @@ export function MenuItem({
           <span className="flex-1 text-left truncate transition-opacity duration-300 font-medium">
             {label}
           </span>
+          {badge && (
+            <span
+              className={cn(
+                'px-2 py-0.5 text-xs rounded-md font-semibold shrink-0 min-w-[28px] text-center',
+                badgeVariant === 'primary' && 'bg-primary-100 text-primary-700',
+                badgeVariant === 'danger' && 'bg-red-100 text-red-700',
+                badgeVariant === 'default' && 'bg-gray-100 text-gray-700'
+              )}
+            >
+              {badge}
+            </span>
+          )}
           {hasDropdown && (
             <FiChevronDown
               className={cn(

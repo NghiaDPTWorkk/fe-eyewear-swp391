@@ -1,14 +1,18 @@
 import Header from '@/shared/components/ui/header/Header'
 import { Input } from '@/components'
-import { Search, ShoppingCart, User, X, Glasses, Heart } from 'lucide-react'
+import { Search, ShoppingCart, User, X, Glasses, Heart, LogOut } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { useCartStore, useAuthStore } from '@/store'
 
 export default function CustomerHeader() {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
   const location = useLocation()
+  const totalItems = useCartStore((state) => state.totalItems)
+  const clearCart = useCartStore((state) => state.clearCart)
+  const { isAuthenticated, user, logout } = useAuthStore()
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -61,47 +65,49 @@ export default function CustomerHeader() {
               ></span>
             </button>
             <button
-              onClick={() => navigate('/products')}
+              onClick={() => navigate('/eyeglasses')}
               className={`${
-                isActive('/products')
+                isActive('/eyeglasses') || isActive('/products')
                   ? 'text-mint-1200 font-semibold'
                   : 'text-gray-eyewear font-medium'
               } hover:text-primary-500 transition-all relative group cursor-pointer`}
             >
-              Products
+              Eyeglasses
               <span
                 className={`absolute bottom-0 left-0 w-full h-0.5 bg-primary-500 transform ${
-                  isActive('/products') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                  isActive('/eyeglasses') || isActive('/products')
+                    ? 'scale-x-100'
+                    : 'scale-x-0 group-hover:scale-x-100'
                 } transition-transform`}
               ></span>
             </button>
             <button
-              onClick={() => navigate('/about')}
+              onClick={() => navigate('/sunglasses')}
               className={`${
-                isActive('/about')
+                isActive('/sunglasses')
                   ? 'text-mint-1200 font-semibold'
                   : 'text-gray-eyewear font-medium'
               } hover:text-primary-500 transition-all relative group cursor-pointer`}
             >
-              About
+              Sunglasses
               <span
                 className={`absolute bottom-0 left-0 w-full h-0.5 bg-primary-500 transform ${
-                  isActive('/about') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                  isActive('/sunglasses') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
                 } transition-transform`}
               ></span>
             </button>
             <button
-              onClick={() => navigate('/contact')}
+              onClick={() => navigate('/lenses')}
               className={`${
-                isActive('/contact')
+                isActive('/lenses')
                   ? 'text-mint-1200 font-semibold'
                   : 'text-gray-eyewear font-medium'
               } hover:text-primary-500 transition-all relative group cursor-pointer`}
             >
-              Contact
+              Lenses
               <span
                 className={`absolute bottom-0 left-0 w-full h-0.5 bg-primary-500 transform ${
-                  isActive('/contact') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                  isActive('/lenses') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
                 } transition-transform`}
               ></span>
             </button>
@@ -161,18 +167,50 @@ export default function CustomerHeader() {
             <button
               className="p-2 hover:bg-mint-200 rounded-full transition-all relative group"
               aria-label="Shopping Cart"
+              onClick={() => navigate('/cart')}
             >
               <ShoppingCart className="w-5 h-5 text-gray-eyewear group-hover:text-primary-500 transition-colors" />
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary-500 text-white text-xs rounded-full flex items-center justify-center font-semibold shadow-md">
-                0
-              </span>
+              {totalItems() > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary-500 text-white text-xs rounded-full flex items-center justify-center font-semibold shadow-md">
+                  {totalItems()}
+                </span>
+              )}
             </button>
-            <button
-              className="p-2 hover:bg-mint-200 rounded-full transition-all group"
-              aria-label="User Profile"
-            >
-              <User className="w-5 h-5 text-gray-eyewear group-hover:text-primary-500 transition-colors" />
-            </button>
+            {isAuthenticated || !!localStorage.getItem('accessToken') ? (
+              <div className="flex items-center gap-2">
+                <button
+                  className="p-2 hover:bg-mint-200 rounded-full transition-all group flex items-center gap-2"
+                  aria-label="User Profile"
+                  onClick={() => navigate('/profile')}
+                >
+                  <User className="w-5 h-5 text-gray-eyewear group-hover:text-primary-500 transition-colors" />
+                  <span className="text-sm font-medium text-gray-eyewear hidden md:block">
+                    {user?.name || 'User'}
+                  </span>
+                </button>
+                <button
+                  className="p-2 hover:bg-red-50 rounded-full transition-all group"
+                  aria-label="Logout"
+                  onClick={() => {
+                    logout()
+                    clearCart()
+                    localStorage.removeItem('accessToken')
+                    navigate('/')
+                  }}
+                >
+                  <LogOut className="w-5 h-5 text-gray-eyewear group-hover:text-red-500 transition-colors" />
+                </button>
+              </div>
+            ) : (
+              <button
+                className="p-2 hover:bg-mint-200 rounded-full transition-all group flex items-center gap-2"
+                aria-label="Login"
+                onClick={() => navigate('/login')}
+              >
+                <User className="w-5 h-5 text-gray-eyewear group-hover:text-primary-500 transition-colors" />
+                <span className="text-sm font-medium text-gray-eyewear hidden md:block">Login</span>
+              </button>
+            )}
           </div>
         ) : null
       }

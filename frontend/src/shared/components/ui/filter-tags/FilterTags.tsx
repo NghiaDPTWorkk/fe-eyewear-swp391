@@ -1,5 +1,6 @@
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Button } from '../button'
 
 export interface FilterTag {
   id: string
@@ -22,22 +23,20 @@ export function FilterTags({ tags, onRemoveTag, onClearAll, className }: FilterT
   return (
     <div className={cn('flex items-center gap-2 flex-wrap', className)}>
       {tags.map((tag) => (
-        <button
+        <Button
           key={tag.id}
           onClick={() => onRemoveTag(tag.id)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary-500 text-white rounded-full text-sm font-medium hover:bg-primary-600 transition-colors group"
+          variant="ghost"
+          size="sm"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-mint-300 text-mint-1200 rounded-lg text-sm font-medium hover:bg-mint-400 transition-colors group"
         >
           <span>{tag.label}</span>
-          <X className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
-        </button>
+          <X className="w-3.5 h-3.5 text-primary-500 group-hover:scale-110 transition-transform" />
+        </Button>
       ))}
-
-      <button
-        onClick={onClearAll}
-        className="text-primary-500 text-sm font-medium hover:text-primary-600 transition-colors underline"
-      >
+      <Button variant="outline" size="sm" onClick={onClearAll}>
         Clear all
-      </button>
+      </Button>
     </div>
   )
 }

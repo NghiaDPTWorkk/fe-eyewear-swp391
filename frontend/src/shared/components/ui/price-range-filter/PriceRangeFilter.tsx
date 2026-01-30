@@ -13,25 +13,26 @@ export interface PriceRangeFilterProps {
   ranges: PriceRange[]
   selectedRanges: string[]
   onRangeChange: (rangeIds: string[]) => void
+  onCustomRangeApply?: (min: number | null, max: number | null) => void
   className?: string
 }
 
-export function PriceRangeFilter({ className }: PriceRangeFilterProps) {
+export function PriceRangeFilter({ onCustomRangeApply, className }: PriceRangeFilterProps) {
   const [minPrice, setMinPrice] = useState<string>('')
   const [maxPrice, setMaxPrice] = useState<string>('')
 
   const handleApply = () => {
-    // You can implement custom logic here to handle the price range
-    // For now, we'll just log the values
-    console.log('Applying price range:', { min: minPrice, max: maxPrice })
+    const min = minPrice ? parseFloat(minPrice) : null
+    const max = maxPrice ? parseFloat(maxPrice) : null
 
-    // Optional: Clear the selection or trigger a filter update
-    // onRangeChange([]) // This would clear any previous selections
+    if (onCustomRangeApply) {
+      onCustomRangeApply(min, max)
+    }
   }
 
   return (
     <div className={cn('flex flex-col gap-3', className)}>
-      <h3 className="text-primary-500 font-semibold text-lg">Price Range</h3>
+      <h3 className="text-primary-1200 font-semibold text-lg">Price Range</h3>
 
       <div className="flex gap-2">
         <Input

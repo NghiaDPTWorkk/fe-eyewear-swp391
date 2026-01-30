@@ -1,6 +1,6 @@
 import { ENDPOINTS, httpClient } from '@/api'
 import type { ApiResponse } from '@/shared/types/response.types'
-import type { ProductListData } from '@/shared/types/product.types'
+import type { ProductListData, ProductDetailApiResponse } from '@/shared/types/product.types'
 
 export const productService = {
   //get all product and pagination
@@ -26,5 +26,28 @@ export const productService = {
     return httpClient.get<ApiResponse<ProductListData>>(
       ENDPOINTS.PRODUCTS.SEARCH(page, limit, search)
     )
+  },
+
+  //get product by category
+  /**
+   *
+   * @param page so trang
+   * @param limit item cua moi trang
+   * @param category danh mục
+   * @returns
+   */
+  getProductsByType(page: number, limit: number, type: string) {
+    return httpClient.get<ApiResponse<ProductListData>>(
+      ENDPOINTS.PRODUCTS.COMMON_GET_BY_TYPE(page, limit, type)
+    )
+  },
+
+  //get product detail
+  /**
+   * @param id product id
+   * @returns
+   */
+  getProductDetail(id: string) {
+    return httpClient.get<ProductDetailApiResponse>(ENDPOINTS.PRODUCTS.DETAIL(id))
   }
 }

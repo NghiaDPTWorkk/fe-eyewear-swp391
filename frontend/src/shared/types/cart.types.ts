@@ -1,7 +1,11 @@
 export interface CartItem {
   product_id: string // SKU
   quantity: number
+  name: string
+  price: number
+  image: string
   addAt: Date
+  selected?: boolean
 }
 
 export interface Cart {

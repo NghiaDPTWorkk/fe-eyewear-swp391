@@ -87,7 +87,7 @@ export default function SaleStaffProductPage() {
           Dashboard
         </Link>
         <span className="text-neutral-300">/</span>
-        <span className="text-primary-500 font-bold">Product Management</span>
+        <span className="text-primary-500 font-semibold">Product Management</span>
       </div>
 
       {/* Metrics Row */}
@@ -96,9 +96,9 @@ export default function SaleStaffProductPage() {
           <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm border-none">
             <div className="text-sm font-medium text-neutral-500 mb-4">{m.title}</div>
             <div className="flex items-center gap-3 mb-2">
-              <span className="text-3xl font-bold text-neutral-800">{m.value}</span>
+              <span className="text-3xl font-semibold text-neutral-800">{m.value}</span>
               <span
-                className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${m.trendColor || 'text-emerald-500 bg-emerald-50'}`}
+                className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${m.trendColor || 'text-emerald-500 bg-emerald-50'}`}
               >
                 {m.trend}
               </span>
@@ -112,19 +112,19 @@ export default function SaleStaffProductPage() {
       <div className="bg-white rounded-[32px] shadow-sm overflow-hidden min-h-[600px] border-none">
         {/* Header Bar */}
         <div className="px-10 py-8 flex flex-col md:flex-row justify-between items-center gap-4 bg-white">
-          <h2 className="text-2xl font-bold text-[#0a1d37]">Product List</h2>
+          <h2 className="text-2xl font-semibold text-[#0a1d37]">Product List</h2>
           <div className="flex items-center gap-4">
             <Button
               variant="outline"
               leftIcon={<IoFilterOutline />}
-              className="rounded-xl text-sm border-neutral-100 h-11 px-6 font-bold text-[#3d4465] hover:bg-neutral-50 transition-colors"
+              className="rounded-xl text-sm border-neutral-100 h-11 px-6 font-semibold text-[#3d4465] hover:bg-neutral-50 transition-colors"
             >
               Filter
             </Button>
             <Button
               colorScheme="primary"
               leftIcon={<IoAdd />}
-              className="rounded-xl text-sm h-11 px-6 font-bold bg-[#63b38e] hover:bg-[#52a67f] border-none shadow-sm"
+              className="rounded-xl text-sm h-11 px-6 font-semibold bg-[#6EE7B7] hover:bg-[#5CD6A6] border-none shadow-sm"
             >
               Add Product
             </Button>

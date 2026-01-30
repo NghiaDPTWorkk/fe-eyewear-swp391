@@ -40,10 +40,6 @@ const SaleStaffOrderPage = lazy(() =>
   import('@/pages/sales/SaleStaffOrderPage').then((m) => ({ default: m.default }))
 )
 
-const SaleStaffProductPage = lazy(() =>
-  import('@/pages/sales/SaleStaffProductPage').then((m) => ({ default: m.default }))
-)
-
 const SaleStaffCustomerPage = lazy(() =>
   import('@/pages/sales/SaleStaffCustomerPage').then((m) => ({ default: m.default }))
 )
@@ -62,6 +58,25 @@ const SaleStaffPreOrdersPage = lazy(() =>
 
 const SaleStaffReturnsPage = lazy(() =>
   import('@/pages/sales/SaleStaffReturnsPage').then((m) => ({ default: m.default }))
+)
+
+const SaleStaffSettingsPage = lazy(() =>
+  import('@/pages/sales/SaleStaffSettingsPage').then((m) => ({ default: m.default }))
+)
+
+const SaleStaffSupportPage = lazy(() =>
+  import('@/pages/sales/SaleStaffSupportPage').then((m) => ({ default: m.default }))
+)
+const SaleStaffRxVerificationPage = lazy(() =>
+  import('@/pages/sales/SaleStaffRxVerificationPage').then((m) => ({ default: m.default }))
+)
+
+const RegularOrderDetailPage = lazy(() =>
+  import('@/pages/sales/RegularOrderDetailPage').then((m) => ({ default: m.default }))
+)
+
+const PreOrderDetailPage = lazy(() =>
+  import('@/pages/sales/PreOrderDetailPage').then((m) => ({ default: m.default }))
 )
 
 const OperationLayout = lazy(() =>
@@ -184,9 +199,19 @@ export const router = createBrowserRouter([
         element: <SaleStaffReturnsPage />
       },
       {
-        path: 'products',
-        element: <SaleStaffProductPage />
+        path: 'orders/:orderId/verify-rx',
+        element: <SaleStaffRxVerificationPage />
       },
+
+      {
+        path: 'orders/:orderId/regular',
+        element: <RegularOrderDetailPage />
+      },
+      {
+        path: 'orders/:orderId/pre-order',
+        element: <PreOrderDetailPage />
+      },
+
       {
         path: 'customers',
         element: <SaleStaffCustomerPage />

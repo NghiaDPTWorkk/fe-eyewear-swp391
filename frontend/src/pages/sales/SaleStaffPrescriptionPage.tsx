@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { PATHS } from '@/routes/paths'
 import { Container, Button, Card } from '@/components'
-import { OrderTable } from '@/components/staff'
-import { OrderDetailsDrawer } from '@/features/sales/components/orders'
+import { OrderTable, OrderDetailsDrawer } from '@/features/sales/components/orders'
+import type { Order } from '@/features/sales/components/orders/OrderTable'
 import {
   IoFilter,
   IoAdd,
@@ -13,9 +13,7 @@ import {
   IoCheckboxOutline
 } from 'react-icons/io5'
 
-import type { OrderTableRow } from '@/shared/types'
-
-const MOCK_PRESCRIPTION_ORDERS: OrderTableRow[] = [
+const MOCK_PRESCRIPTION_ORDERS: Order[] = [
   {
     id: 'ORD-7352',
     orderType: 'Prescription',

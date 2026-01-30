@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { PATHS } from '@/routes/paths'
 import { Container, Button, Card } from '@/components'
-import { OrderTable } from '@/components/staff'
-import { OrderDetailsDrawer } from '@/features/sales/components/orders'
+import { OrderTable, OrderDetailsDrawer } from '@/features/sales/components/orders'
+import type { Order } from '@/features/sales/components/orders/OrderTable'
 import {
   IoCloudDownloadOutline,
   IoAdd,
@@ -13,9 +13,7 @@ import {
   IoWalletOutline
 } from 'react-icons/io5'
 
-import type { OrderTableRow } from '@/shared/types'
-
-const MOCK_PRE_ORDERS: OrderTableRow[] = [
+const MOCK_PRE_ORDERS: Order[] = [
   {
     id: 'ORD-7350',
     orderType: 'Pre-order',

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Container, Button, Card } from '@/components'
-import ReturnDetails from '@/features/staff/components/ReturnDetails/ReturnDetails'
+import { ReturnDetails } from '@/features/sales/components/returns'
 import {
   IoSearchOutline,
   IoRefreshOutline,

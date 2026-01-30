@@ -1,11 +1,12 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { PATHS } from '@/routes/paths'
 import { cn } from '@/lib/utils'
 import { Container } from '@/shared/components/ui/container'
 import { MetricCard } from '@/shared/components/ui/metric-card'
 import { Card } from '@/shared/components/ui/card'
-import { OrderTable } from '@/components/staff'
+import { OrderTable, OrderDetailsDrawer } from '@/features/sales/components/orders'
+import type { Order } from '@/features/sales/components/orders/OrderTable'
 import {
   IoClipboardOutline,
   IoWalletOutline,
@@ -215,8 +216,6 @@ function OrderStatusChart() {
 }
 
 // --- Main Page Component ---
-import { OrderDetailsDrawer } from '@/features/sales/components/orders'
-import type { OrderTableRow as Order } from '@/shared/types'
 
 const MOCK_URGENT_ORDERS: Order[] = [
   {

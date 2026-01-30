@@ -5,7 +5,7 @@ interface OrderListProps {
   orders: Order[]
   columns: Column<Order>[]
   role?: 'sales' | 'operation'
-  onRowClick?: (orderId: string) => void
+  onRowClick?: (orderId: string, order?: Order) => void
 }
 
 export default function OrderList({
@@ -25,7 +25,7 @@ export default function OrderList({
             'group hover:bg-neutral-50/50 transition-colors',
             onRowClick && 'cursor-pointer'
           )}
-          onClick={() => onRowClick?.(order.id)}
+          onClick={() => onRowClick?.(order.id, order)}
         >
           {columns.map((col, colIndex) => (
             <td

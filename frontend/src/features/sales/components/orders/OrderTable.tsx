@@ -1,23 +1,35 @@
-import type { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import OrderHeaderTable from './OrderHeaderTable'
 import OrderList from './OrderList'
-import { IoGlassesOutline } from 'react-icons/io5'
+import {
+  IoGlassesOutline,
+  IoChatbubbleEllipsesOutline,
+  IoEyeOutline,
+  IoCheckmarkCircleOutline
+} from 'react-icons/io5'
 import { PATHS } from '@/routes/paths'
+import { IconButton } from '@/shared/components/ui/icon-button'
 
+/**
+ * Enhanced Order interface for the Sales Staff table view
+ */
 export interface Order {
   id: string
-  orderType: string
+  orderType: 'Regular' | 'Pre-order' | 'Prescription'
   customer: string
+  customerId: string
+  customerPhone?: string
   item: string
   waitingFor?: string
   currentStatus: string
-  prescriptionStatus?: 'PENDING_CONFIRMATION' | 'CONFIRMED' | 'REJECTED'
   timeElapsed: string
-  createdAt?: string
   statusColor: string
   isNextActive: boolean
+  isApproved?: boolean
+  isStockAvailable?: boolean
+  prescriptionStatus?: 'PENDING_CONFIRMATION' | 'CONFIRMED' | 'REJECTED'
 }
 
 export interface Column<T> {
@@ -32,175 +44,173 @@ interface OrderTableProps {
   hiddenColumns?: string[]
   filterType?: string
   role?: 'sales' | 'operation'
-  onRowClick?: (orderId: string) => void
-  onConfirmPrescription?: (orderId: string) => void
+  orders?: Order[]
+  onRowClick?: (orderId: string, order?: Order) => void
+  onNotifyCustomer?: (customerId: string) => void
+  onReviewRx?: (orderId: string) => void
 }
 
 export default function OrderTable({
   columns,
   hiddenColumns = [],
   filterType,
-  role = 'operation',
+  role = 'sales',
+  orders: providedOrders,
   onRowClick,
-  onConfirmPrescription
+  onNotifyCustomer,
+  onReviewRx
 }: OrderTableProps) {
   const navigate = useNavigate()
 
-  const handleViewOrder = (orderId: string) => {
-    if (onRowClick) {
-      onRowClick(orderId)
-    } else {
-      navigate(PATHS.OPERATIONSTAFF.ORDER_DETAIL(orderId))
-    }
-  }
-
-  const orders: Order[] = [
+  // Default mock data if no orders are provided
+  const defaultOrders: Order[] = [
     {
-      id: 'ORD-001',
-      orderType: 'Regular',
-      customer: 'Van A Nguyen',
-      item: 'SKU-001',
-      waitingFor: 'Chemi 5.5 Lens',
-      currentStatus: 'Processing',
+      id: 'ORD-7352',
+      orderType: 'Prescription',
+      customer: 'Leslie Alexander',
+      customerId: 'CUST-001',
+      customerPhone: '+1 (555) 123-4567',
+      item: 'Ray-Ban Aviator',
+      waitingFor: 'Lens Grinding',
+      currentStatus: 'In Production',
       timeElapsed: '2h 15m',
       statusColor: 'bg-blue-100 text-blue-700',
-      isNextActive: true
+      isNextActive: true,
+      isApproved: false
     },
     {
-      id: 'ORD-002',
-      orderType: 'Pre-order',
-      customer: 'Thi B Tran',
-      item: 'SKU-001',
-      waitingFor: 'Titan Frame',
-      currentStatus: 'Lens Edging',
-      timeElapsed: '3h 45m',
-      statusColor: 'bg-purple-100 text-purple-700',
-      isNextActive: false
-    },
-    {
-      id: 'PRE-003',
-      orderType: 'Pre-order',
-      customer: 'Van C Le',
-      item: 'SKU-001',
-      currentStatus: 'Awaiting Stock',
-      timeElapsed: '5d 2h',
-      statusColor: 'bg-orange-100 text-orange-700',
-      isNextActive: true
-    },
-    {
-      id: 'ORD-004',
-      orderType: 'Prescription',
-      customer: 'Thi D Pham',
-      item: 'SKU-001',
-      prescriptionStatus: 'PENDING_CONFIRMATION',
-      currentStatus: 'Pending QC',
-      timeElapsed: '45m',
-      statusColor: 'bg-gray-100 text-gray-700',
-      isNextActive: true
-    },
-    {
-      id: 'ORD-005',
+      id: 'ORD-7351',
       orderType: 'Regular',
-      customer: 'Van E Hoang',
-      item: 'SKU-001',
+      customer: 'Michael Foster',
+      customerId: 'CUST-002',
+      customerPhone: '+1 (555) 987-6543',
+      item: 'Oakley Holbrook',
       currentStatus: 'Packed',
-      timeElapsed: '1h 30m',
-      statusColor: 'bg-mint-100 text-mint-700',
+      timeElapsed: '4h 30m',
+      statusColor: 'bg-emerald-100 text-emerald-700',
       isNextActive: true
+    },
+    {
+      id: 'ORD-7350',
+      orderType: 'Pre-order',
+      customer: 'Dries Vincent',
+      customerId: 'CUST-003',
+      customerPhone: '+1 (555) 456-7890',
+      item: 'Gucci GG0061S',
+      waitingFor: 'Supplier Shipment',
+      currentStatus: 'Awaiting Stock',
+      timeElapsed: '2d 5h',
+      statusColor: 'bg-amber-100 text-amber-700',
+      isNextActive: false,
+      isStockAvailable: false
     }
   ]
 
-  const filteredOrders = filterType
-    ? orders.filter((order) => order.orderType === filterType)
-    : orders
+  const data = providedOrders || defaultOrders
 
-  const defaultColumns: Column<Order>[] = [
+  const filteredOrders = filterType
+    ? data.filter((order) => order.orderType === filterType || filterType === 'All')
+    : data
+
+  const handleViewOrder = (orderId: string) => {
+    const order = data.find((o) => o.id === orderId)
+    if (!order) return
+
+    if (role === 'sales') {
+      if (order.orderType === 'Prescription') {
+        onRowClick?.(orderId, order)
+      } else if (order.orderType === 'Pre-order') {
+        navigate(PATHS.SALESTAFF.PRE_ORDER_DETAIL(orderId))
+      } else {
+        navigate(PATHS.SALESTAFF.REGULAR_DETAIL(orderId))
+      }
+    } else {
+      if (onRowClick) {
+        onRowClick(orderId, order)
+      } else {
+        navigate(PATHS.OPERATIONSTAFF.ORDER_DETAIL(orderId))
+      }
+    }
+  }
+
+  const salesColumns: Column<Order>[] = [
     {
-      header: 'SKU / PRODUCT',
-      render: (order) => (
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-emerald-50 rounded-xl border border-emerald-100/50 flex items-center justify-center text-emerald-600 shrink-0">
-            <IoGlassesOutline size={20} />
-          </div>
-          <div>
-            <div className="text-sm font-semibold text-[#3d4465]">{order.item}</div>
-            <div className="text-[11px] text-[#a4a9c1] font-medium">Ray-Ban Aviator Gold</div>
-          </div>
-        </div>
-      ),
-      className: 'pl-10 px-6 py-6'
-    },
-    {
-      header: 'ORDER ID',
+      header: 'Order ID',
+      headerClassName: 'px-4 text-center w-[120px]',
+      className: 'px-4 py-6 text-center',
       render: (order) => (
         <div
-          className="text-sm font-medium text-emerald-500 cursor-pointer hover:text-emerald-600 transition-colors"
-          onClick={() => handleViewOrder(order.id)}
+          className="text-sm font-semibold text-emerald-500 cursor-pointer hover:text-emerald-600 transition-colors inline-block"
+          onClick={(e) => {
+            e.stopPropagation()
+            handleViewOrder(order.id)
+          }}
         >
           {order.id}
         </div>
-      ),
-      headerClassName: 'text-center',
-      className: 'text-center px-6 py-6'
+      )
     },
     {
-      header: 'CUSTOMER',
+      header: 'SKU / Product',
+      headerClassName: 'px-6 text-center w-[220px]',
+      className: 'px-6 py-6 text-center',
       render: (order) => (
-        <div>
-          <div className="text-sm font-semibold text-[#3d4465]">{order.customer}</div>
-          <div className="text-[11px] text-[#a4a9c1] font-medium">+1 (555) 012-3456</div>
+        <div className="flex items-center gap-3 justify-center min-w-0">
+          <div className="w-10 h-10 bg-emerald-50 rounded-xl border border-emerald-100/50 flex items-center justify-center text-emerald-600 shrink-0">
+            <IoGlassesOutline size={20} />
+          </div>
+          <div className="min-w-0 flex-1 text-left">
+            <div className="text-sm font-semibold text-[#3d4465] truncate">{order.item}</div>
+            <div className="text-[11px] text-[#a4a9c1] font-medium truncate">
+              Eyewear Collection
+            </div>
+          </div>
         </div>
-      ),
-      className: 'px-6 py-6'
+      )
     },
     {
-      header: 'PRESCRIPTION STATUS',
-      render: (order) => {
-        if (order.orderType !== 'Prescription') return <span className="text-neutral-400">—</span>
-
-        const statusConfig = {
-          PENDING_CONFIRMATION: {
-            label: 'Needs Confirmation',
-            className: 'bg-orange-50 text-orange-700 border-orange-200',
-            showDot: true
-          },
-          CONFIRMED: {
-            label: 'Confirmed',
-            className: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-            showDot: false
-          },
-          REJECTED: {
-            label: 'Rejected',
-            className: 'bg-red-50 text-red-700 border-red-200',
-            showDot: false
-          }
-        }
-
-        const config = order.prescriptionStatus ? statusConfig[order.prescriptionStatus] : null
-
-        if (!config) return <span className="text-neutral-400">—</span>
-
-        return (
-          <span
-            className={cn(
-              'inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider whitespace-nowrap border',
-              config.className
-            )}
-          >
-            {config.showDot && <span className="w-1.5 h-1.5 bg-orange-500 rounded-full" />}
-            {config.label}
-          </span>
-        )
-      },
-      className: 'px-6 py-6'
+      header: 'Customer',
+      headerClassName: 'px-4 text-center w-[200px]',
+      className: 'px-4 py-6 text-center',
+      render: (order) => (
+        <div className="text-center min-w-0">
+          <div className="text-sm font-semibold text-[#3d4465] truncate">{order.customer}</div>
+          <div className="text-[11px] text-[#a4a9c1] font-medium whitespace-nowrap">
+            {order.customerPhone}
+          </div>
+        </div>
+      )
     },
     {
-      header: 'LAB STATUS',
+      header: 'Type',
+      headerClassName: 'px-4 text-center',
+      className: 'px-4 py-6 text-center',
       render: (order) => (
         <div className="flex justify-center">
           <span
             className={cn(
-              'px-4 py-1.5 rounded-full text-[9px] font-semibold uppercase tracking-widest border shadow-sm bg-white',
+              'px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider',
+              order.orderType === 'Prescription'
+                ? 'bg-blue-50 text-blue-600 border border-blue-100'
+                : order.orderType === 'Pre-order'
+                  ? 'bg-amber-50 text-amber-600 border border-amber-100'
+                  : 'bg-neutral-50 text-neutral-500 border border-neutral-100'
+            )}
+          >
+            {order.orderType}
+          </span>
+        </div>
+      )
+    },
+    {
+      header: 'Status',
+      headerClassName: 'px-4 text-center',
+      className: 'px-4 py-6 text-center',
+      render: (order) => (
+        <div className="flex justify-center">
+          <span
+            className={cn(
+              'px-4 py-1.5 rounded-full text-[9px] font-semibold uppercase tracking-widest border bg-white',
               order.statusColor.includes('blue')
                 ? 'text-blue-600 border-blue-100 bg-blue-50/30'
                 : order.statusColor.includes('emerald') || order.statusColor.includes('mint')
@@ -213,29 +223,58 @@ export default function OrderTable({
             {order.currentStatus}
           </span>
         </div>
-      ),
-      headerClassName: 'text-center',
-      className: 'text-center px-6 py-6'
+      )
     },
     {
-      header: 'ACTIONS',
-      headerClassName: 'text-right pr-10',
-      className: 'text-right pr-10 py-6',
+      header: 'Actions',
+      headerClassName: 'px-4 text-center w-[140px]',
+      className: 'px-4 py-6 text-center',
       render: (order) => {
-        const needsConfirmation =
-          role === 'sales' &&
-          order.orderType === 'Prescription' &&
-          order.prescriptionStatus === 'PENDING_CONFIRMATION'
+        const isPrescription = order.orderType === 'Prescription'
+        const isNotApproved = isPrescription && !order.isApproved
+        const isRegular = order.orderType === 'Regular'
 
         return (
-          <div className="flex items-center justify-end gap-2">
-            {needsConfirmation && (
-              <button
-                className="bg-emerald-500 text-white text-[10px] font-bold uppercase tracking-widest px-4 py-2 rounded-xl hover:bg-emerald-600 transition-all shadow-sm shadow-emerald-100"
-                onClick={() => onConfirmPrescription?.(order.id)}
-              >
-                Confirm
-              </button>
+          <div className="flex justify-center items-center gap-1">
+            <IconButton
+              icon={<IoEyeOutline size={18} />}
+              title="View Details"
+              aria-label="View Details"
+              variant="ghost"
+              size="sm"
+              className="text-slate-400 hover:text-emerald-500 hover:bg-emerald-50 transition-all"
+              onClick={(e) => {
+                e.stopPropagation()
+                handleViewOrder(order.id)
+              }}
+            />
+            {!isRegular && (
+              <IconButton
+                icon={<IoChatbubbleEllipsesOutline size={18} />}
+                title="Chat with Customer"
+                aria-label="Chat"
+                variant="ghost"
+                size="sm"
+                className="text-slate-400 hover:text-blue-500 hover:bg-blue-50 transition-all"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onNotifyCustomer?.(order.customerId)
+                }}
+              />
+            )}
+            {isNotApproved && (
+              <IconButton
+                icon={<IoCheckmarkCircleOutline size={18} />}
+                title="Verify Prescription"
+                aria-label="Verify"
+                variant="ghost"
+                size="sm"
+                className="text-slate-400 hover:text-orange-500 hover:bg-orange-50 transition-all"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onReviewRx?.(order.id)
+                }}
+              />
             )}
           </div>
         )
@@ -243,21 +282,23 @@ export default function OrderTable({
     }
   ]
 
-  const activeColumns = (columns || defaultColumns).filter(
+  const activeColumns = (columns || salesColumns).filter(
     (col) => !hiddenColumns.includes(col.header as string)
   )
 
   return (
-    <div className="overflow-x-auto bg-white rounded-lg shadow-sm border border-neutral-100">
-      <table className="w-full text-left border-collapse">
-        <OrderHeaderTable columns={activeColumns} role={role} />
-        <OrderList
-          orders={filteredOrders}
-          columns={activeColumns}
-          role={role}
-          onRowClick={handleViewOrder}
-        />
-      </table>
+    <div className="w-full overflow-hidden bg-white">
+      <div className="w-full overflow-x-auto no-scrollbar">
+        <table className="w-full text-left border-collapse min-w-[1000px]">
+          <OrderHeaderTable columns={activeColumns} role={role} />
+          <OrderList
+            orders={filteredOrders}
+            columns={activeColumns}
+            role={role}
+            onRowClick={handleViewOrder}
+          />
+        </table>
+      </div>
     </div>
   )
 }

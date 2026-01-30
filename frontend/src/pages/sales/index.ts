@@ -7,3 +7,4 @@ export { default as SaleStaffPrescriptionPage } from './SaleStaffPrescriptionPag
 export { default as SaleStaffPreOrdersPage } from './SaleStaffPreOrdersPage'
 export { default as SaleStaffReturnsPage } from './SaleStaffReturnsPage'
 export { default as SaleStaffSettingsPage } from './SaleStaffSettingsPage'
+export { default as SaleStaffSupportPage } from './SaleStaffSupportPage'

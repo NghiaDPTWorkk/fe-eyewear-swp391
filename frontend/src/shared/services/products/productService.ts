@@ -26,11 +26,5 @@ export const productService = {
     return httpClient.get<ApiResponse<ProductListData>>(
       ENDPOINTS.PRODUCTS.SEARCH(page, limit, search)
     )
-  },
-
-  getProductsByType(page: number, limit: number, type: string) {
-    return httpClient.get<ApiResponse<ProductListData>>(
-      ENDPOINTS.PRODUCTS.COMMON_GET_BY_TYPE(page, limit, type)
-    )
   }
 }

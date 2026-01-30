@@ -3,52 +3,47 @@ import { useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import OrderHeaderTable from './OrderHeaderTable'
 import OrderList from './OrderList'
-import { Button } from '@/components'
-import { IoTimeOutline, IoChevronForward, IoEyeOutline } from 'react-icons/io5'
+import {
+  IoChevronForward,
+  IoGlassesOutline,
+  IoChatbubbleEllipsesOutline,
+  IoEyeOutline,
+  IoCheckmarkCircleOutline
+} from 'react-icons/io5'
 import { PATHS } from '@/routes/paths'
-import type { OrderTableRow } from '@/shared/types'
+import { IconButton } from '@/shared/components/ui/icon-button'
 
-export type Order = OrderTableRow
+export interface Order {
+  id: string
+  orderType: 'Regular' | 'Pre-order' | 'Prescription'
+  customer: string
+  customerId: string
+  customerPhone?: string
+  item: string
+  waitingFor?: string
+  currentStatus: string
+  timeElapsed: string
+  statusColor: string
+  isNextActive: boolean
+  isApproved?: boolean
+  isStockAvailable?: boolean
+}
 
 export interface Column<T> {
   header: string | ReactNode
   render: (item: T) => ReactNode
-  className?: string // Class cho td á
-  headerClassName?: string // Class cho th
+  className?: string
+  headerClassName?: string
 }
 
 interface OrderTableProps {
-  columns?: Column<Order>[] // Mảng các cột | thuộc tính
-  hiddenColumns?: string[] // Mảng các header cột muốn ẩn
+  columns?: Column<Order>[]
+  hiddenColumns?: string[]
   filterType?: string
   role?: 'sales' | 'operation'
-  orders?: Order[]
-}
-
-const getOrderTypeStyles = (type: string, role: string) => {
-  if (role === 'sales') {
-    switch (type) {
-      case 'Normal':
-        return 'bg-emerald-50 text-emerald-600'
-      case 'Pre-order':
-        return 'bg-amber-50 text-amber-600'
-      case 'Prescription':
-        return 'bg-indigo-50 text-indigo-600'
-      default:
-        return 'bg-neutral-50 text-neutral-600'
-    }
-  } else {
-    switch (type) {
-      case 'Normal':
-        return 'bg-emerald-50 text-emerald-600'
-      case 'Pre-order':
-        return 'bg-amber-50 text-amber-600'
-      case 'Prescription':
-        return 'bg-indigo-50 text-indigo-600'
-      default:
-        return 'bg-neutral-50 text-neutral-600'
-    }
-  }
+  onRowClick?: (orderId: string, order?: Order) => void
+  onNotifyCustomer?: (orderId: string) => void
+  onReviewRx?: (orderId: string) => void
 }
 
 export default function OrderTable({
@@ -56,17 +51,105 @@ export default function OrderTable({
   hiddenColumns = [],
   filterType,
   role = 'operation',
-  orders = []
+  onRowClick,
+  onNotifyCustomer,
+  onReviewRx
 }: OrderTableProps) {
-  const isSales = role === 'sales'
   const navigate = useNavigate()
 
   const handleViewOrder = (orderId: string) => {
-    navigate(PATHS.OPERATIONSTAFF.ORDER_DETAIL(orderId))
+    const order = orders.find((o) => o.id === orderId)
+    if (!order) return
+
+    if (role === 'sales') {
+      // Sales role: Open drawer for Prescription, navigate for others
+      if (order.orderType === 'Prescription') {
+        onRowClick?.(orderId, order)
+      } else if (order.orderType === 'Pre-order') {
+        navigate(PATHS.SALESTAFF.PRE_ORDER_DETAIL(orderId))
+      } else {
+        navigate(PATHS.SALESTAFF.REGULAR_DETAIL(orderId))
+      }
+    } else {
+      if (onRowClick) {
+        onRowClick(orderId, order)
+      } else {
+        navigate(PATHS.OPERATIONSTAFF.ORDER_DETAIL(orderId))
+      }
+    }
   }
 
+  const orders: Order[] = [
+    {
+      id: 'ORD-001',
+      orderType: 'Prescription',
+      customer: 'Van A Nguyen',
+      customerId: 'c1',
+      customerPhone: '+1 (555) 012-3456',
+      item: 'SKU-001',
+      waitingFor: 'Chemi 5.5 Lens',
+      currentStatus: 'Processing',
+      timeElapsed: '2h 15m',
+      statusColor: 'bg-blue-100 text-blue-700',
+      isNextActive: true,
+      isApproved: false
+    },
+    {
+      id: 'ORD-002',
+      orderType: 'Pre-order',
+      customer: 'Thi B Tran',
+      customerId: 'c2',
+      customerPhone: '+1 (555) 012-3456',
+      item: 'SKU-001',
+      waitingFor: 'Titan Frame',
+      currentStatus: 'Lens Edging',
+      timeElapsed: '3h 45m',
+      statusColor: 'bg-purple-100 text-purple-700',
+      isNextActive: false,
+      isStockAvailable: true
+    },
+    {
+      id: 'PRE-003',
+      orderType: 'Pre-order',
+      customer: 'Van C Le',
+      customerId: 'c3',
+      customerPhone: '+1 (555) 012-3456',
+      item: 'SKU-001',
+      currentStatus: 'Awaiting Stock',
+      timeElapsed: '5d 2h',
+      statusColor: 'bg-orange-100 text-orange-700',
+      isNextActive: true,
+      isStockAvailable: false
+    },
+    {
+      id: 'ORD-004',
+      orderType: 'Prescription',
+      customer: 'Thi D Pham',
+      customerId: 'c1',
+      customerPhone: '+1 (555) 012-3456',
+      item: 'SKU-001',
+      currentStatus: 'Pending QC',
+      timeElapsed: '45m',
+      statusColor: 'bg-gray-100 text-gray-700',
+      isNextActive: true,
+      isApproved: true
+    },
+    {
+      id: 'ORD-005',
+      orderType: 'Regular',
+      customer: 'Van E Hoang',
+      customerId: 'c2',
+      customerPhone: '+1 (555) 012-3456',
+      item: 'SKU-001',
+      currentStatus: 'Packed',
+      timeElapsed: '1h 30m',
+      statusColor: 'bg-mint-100 text-mint-700',
+      isNextActive: true
+    }
+  ]
+
   const filteredOrders = filterType
-    ? orders.filter((order) => order.orderType?.toLowerCase() === filterType.toLowerCase())
+    ? orders.filter((order) => order.orderType === filterType)
     : orders
 
   const salesColumns: Column<Order>[] = [
@@ -275,127 +358,101 @@ export default function OrderTable({
 
   const defaultColumns: Column<Order>[] = [
     {
-      header: 'ORDER ID',
+      header: 'SKU / PRODUCT',
+      headerClassName: 'px-4 text-center',
+      className: 'px-4 py-6 text-center',
       render: (order) => (
-        <div className={isSales ? 'flex flex-col items-center' : ''}>
-          <div
-            className={cn('font-bold text-neutral-900 cursor-pointer', !isSales && 'font-medium')}
-            onClick={() => handleViewOrder(order.id)}
-          >
-            {order.id}
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-emerald-50 rounded-xl border border-emerald-100/50 flex items-center justify-center text-emerald-600 shrink-0">
+            <IoGlassesOutline size={20} />
           </div>
-          <div
-            className={cn(
-              'w-12 mt-1 rounded-full overflow-hidden',
-              isSales ? 'h-1 bg-neutral-100' : 'h-1.5 bg-gray-200'
-            )}
-          >
-            <div className="bg-emerald-400 h-full w-1/2 rounded-full"></div>
+          <div>
+            <div className="text-sm font-semibold text-[#3d4465]">{order.item}</div>
+            <div className="text-[11px] text-[#a4a9c1] font-medium">Ray-Ban Aviator Gold</div>
           </div>
         </div>
-      ),
-      headerClassName: isSales ? 'text-center' : '',
-      className: isSales ? 'font-medium text-center' : 'font-medium'
+      )
     },
     {
-      header: 'TYPE',
+      header: 'ORDER ID',
+      headerClassName: 'px-4 text-center',
+      className: 'px-4 py-6 text-center',
       render: (order) => (
-        <span
-          className={cn(
-            'whitespace-nowrap font-bold uppercase tracking-wider',
-            isSales
-              ? 'px-3 py-1 rounded-full text-[10px]'
-              : 'px-3 py-1 rounded-md text-xs font-medium',
-            getOrderTypeStyles(order.orderType, role)
-          )}
+        <div
+          className="text-sm font-medium text-emerald-500 cursor-pointer hover:text-emerald-600 transition-colors"
+          onClick={() => handleViewOrder(order.id)}
         >
-          {order.orderType}
-        </span>
-      ),
-      headerClassName: isSales ? 'text-center' : '',
-      className: isSales ? 'text-center' : ''
+          {order.id}
+        </div>
+      )
     },
     {
       header: 'CUSTOMER',
       headerClassName: 'px-4 text-center',
       className: 'px-4 py-6 text-center',
       render: (order) => (
-        <div className={cn('text-neutral-900', isSales ? 'font-medium' : '')}>{order.customer}</div>
+        <div>
+          <div className="text-sm font-semibold text-[#3d4465]">{order.customer}</div>
+          <div className="text-[11px] text-[#a4a9c1] font-medium">+1 (555) 012-3456</div>
+        </div>
       )
     },
     {
-      header: 'ITEMS',
-      render: (order) => order.item,
-      className: isSales ? 'text-neutral-400 font-medium text-center' : 'text-gray-400',
-      headerClassName: isSales ? 'text-center' : ''
-    },
-    {
-      header: 'WAITING FOR',
-      render: (order) => order.waitingFor || '-',
-      className: 'text-purple-600 font-medium text-center',
-      headerClassName: 'text-center'
-    },
-    {
-      header: 'STATUS',
-      render: (order) => (
-        <span
-          className={cn(
-            'font-bold uppercase tracking-wider whitespace-nowrap',
-            isSales
-              ? 'px-3 py-1 rounded-full text-[10px]'
-              : 'px-3 py-1 rounded-md text-xs font-medium',
-            order.statusColor
-          )}
-        >
-          {order.currentStatus}
-        </span>
-      ),
-      headerClassName: 'text-center',
-      className: 'text-center'
-    },
-    {
-      header: 'ORDER AT',
-      render: (order) => (
-        <div className={`flex items-center gap-1.5 ${isSales ? 'justify-center' : ''}`}>
-          <IoTimeOutline className={isSales ? 'text-neutral-400' : ''} />
-          <span className={isSales ? 'text-neutral-500' : ''}>{order.timeElapsed}</span>
+      header: 'LENS DETAILS',
+      headerClassName: 'px-4 text-center',
+      className: 'px-4 py-6 text-center',
+      render: () => (
+        <div>
+          <div className="text-sm font-semibold text-[#3d4465]">Progressive</div>
+          <div className="text-[10px] text-[#a4a9c1] font-medium uppercase tracking-widest">
+            HIGH INDEX 1.67
+          </div>
         </div>
-      ),
-      headerClassName: isSales ? 'text-center' : '',
-      className: isSales ? 'text-center' : 'text-gray-500'
+      )
     },
     {
-      header: 'ACTION',
-      headerClassName: 'text-center w-32',
+      header: 'DATE',
+      headerClassName: 'px-4 text-center',
+      className: 'px-4 py-6 text-center',
+      render: () => <div className="text-sm font-medium text-[#3d4465]">Oct 24, 2023</div>
+    },
+    {
+      header: 'LAB STATUS',
+      headerClassName: 'px-4 text-center',
+      className: 'px-4 py-6 text-center',
       render: (order) => (
-        <div className={`flex items-center justify-center gap-3`}>
-          {!isSales && (
-            <Button
-              variant="ghost"
-              size="sm"
-              colorScheme="secondary"
-              className="p-2"
-              onClick={() => handleViewOrder(order.id)}
-            >
-              <IoEyeOutline size={20} />
-            </Button>
-          )}
-          <Button
-            variant={isSales ? 'ghost' : 'solid'}
-            colorScheme="primary"
-            size="sm"
-            className={
-              isSales ? 'p-2 h-8 w-8 text-primary-500' : 'text-xs rounded-xl h-8 px-4 font-bold'
-            }
-            isDisabled={!order.isNextActive}
-            title={isSales ? 'Details' : 'Next'}
-            rightIcon={!isSales ? <IoChevronForward /> : undefined}
-            onClick={() => handleViewOrder(order.id)}
+        <div className="flex justify-center">
+          <span
+            className={cn(
+              'px-4 py-1.5 rounded-full text-[9px] font-semibold uppercase tracking-widest border shadow-sm bg-white',
+              order.statusColor.includes('blue')
+                ? 'text-blue-600 border-blue-100 bg-blue-50/30'
+                : order.statusColor.includes('emerald') || order.statusColor.includes('mint')
+                  ? 'text-emerald-600 border-emerald-100 bg-emerald-50/30'
+                  : order.statusColor.includes('amber') || order.statusColor.includes('orange')
+                    ? 'text-amber-600 border-amber-100 bg-amber-50/30'
+                    : 'text-neutral-500 border-neutral-100'
+            )}
           >
-            {isSales && <IoChevronForward size={18} />}
-            {!isSales && 'Next'}
-          </Button>
+            {order.currentStatus}
+          </span>
         </div>
+      )
+    },
+    {
+      header: 'ACTIONS',
+      headerClassName: 'pr-10 text-right',
+      className: 'pr-10 py-6 text-right',
+      render: (order) => (
+        <button
+          className="text-neutral-300 hover:text-emerald-500 hover:bg-emerald-50 transition-all p-2 rounded-xl"
+          onClick={(e) => {
+            e.stopPropagation()
+            handleViewOrder(order.id)
+          }}
+        >
+          <IoChevronForward size={18} />
+        </button>
       )
     }
   ]
@@ -405,11 +462,13 @@ export default function OrderTable({
   )
 
   return (
-    <div className="overflow-x-auto bg-white rounded-lg shadow">
-      <table className="w-full text-left border-collapse">
-        <OrderHeaderTable columns={activeColumns} role={role} />
-        <OrderList orders={filteredOrders} columns={activeColumns} role={role} />
-      </table>
+    <div className="w-full overflow-hidden bg-white">
+      <div className="w-full overflow-x-auto no-scrollbar scroll-smooth">
+        <table className="w-full text-left border-collapse min-w-[1000px] table-fixed">
+          <OrderHeaderTable columns={activeColumns} role={role} />
+          <OrderList orders={filteredOrders} columns={activeColumns} onRowClick={handleViewOrder} />
+        </table>
+      </div>
     </div>
   )
 }

@@ -5,5 +5,15 @@ interface LazyPageProps {
 }
 
 export function LazyPage({ children }: LazyPageProps) {
-  return <Suspense fallback={<div>Đang tải trang...</div>}>{children}</Suspense>
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen text-mint-600 font-medium">
+          Loading page...
+        </div>
+      }
+    >
+      {children}
+    </Suspense>
+  )
 }

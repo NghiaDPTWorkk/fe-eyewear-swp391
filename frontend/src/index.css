@@ -1,30 +1,33 @@
 @import 'tailwindcss';
 
-/* Custom theme configuration for Eyewear Project */
 @theme {
-  /* ===== MINT COLORS (Brand) ===== */
-  --color-mint-200: #f6fffb;
-  --color-mint-300: #d4ede5;
-  --color-mint-500: #7fe3c7;
-  --color-mint-700: #4ad7b0;
-  --color-mint-900: #2aa57f;
-  --color-mint-1200: #043026; /* dùng cho tiêu đề hoặc văn bản đậm màu */
-  --color-gray-eyewear: #5b6b66; /* text chữ nhỏ kiểu z */
+  /* Brand Mint Colors */
+  --color-mint-50: #f6fffb;
+  --color-mint-100: #e6f9f4;
+  --color-mint-200: #d4ede5;
+  --color-mint-300: #a8e0d1;
+  --color-mint-400: #7fe3c7;
+  --color-mint-500: #4ad7b0;
+  --color-mint-600: #3bc19d;
+  --color-mint-700: #2aa57f;
+  --color-mint-800: #228a6a;
+  --color-mint-900: #1a6d53;
+  --color-mint-950: #043026;
 
-  /* ===== PRIMARY COLORS (Mint Green - Main Actions) ===== */
-  --color-primary-50: #f6fffb; /* same as mint-200 */
-  --color-primary-100: #e6f9f4;
-  --color-primary-200: #d4ede5; /* same as mint-300 */
-  --color-primary-300: #a8e0d1;
-  --color-primary-400: #7fe3c7; /* same as mint-500 */
-  --color-primary-500: #4ad7b0; /* same as mint-700 - main brand color */
-  --color-primary-600: #3bc19d;
-  --color-primary-700: #2aa57f; /* same as mint-900 */
-  --color-primary-800: #228a6a;
-  --color-primary-900: #1a6d53;
-  --color-primary-950: #043026; /* same as mint-1200 */
+  /* Primary Brand Aliases */
+  --color-primary-50: var(--color-mint-50);
+  --color-primary-100: var(--color-mint-100);
+  --color-primary-200: var(--color-mint-200);
+  --color-primary-300: var(--color-mint-300);
+  --color-primary-400: var(--color-mint-400);
+  --color-primary-500: var(--color-mint-500);
+  --color-primary-600: var(--color-mint-600);
+  --color-primary-700: var(--color-mint-700);
+  --color-primary-800: var(--color-mint-800);
+  --color-primary-900: var(--color-mint-900);
+  --color-primary-950: var(--color-mint-950);
 
-  /* ===== SECONDARY COLORS (Blue - Dashboard & Charts) ===== */
+  /* Secondary Colors (Blue) */
   --color-secondary-50: #eff6ff;
   --color-secondary-100: #dbeafe;
   --color-secondary-200: #bfdbfe;
@@ -37,7 +40,7 @@
   --color-secondary-900: #1e3a8a;
   --color-secondary-950: #172554;
 
-  /* ===== DANGER COLORS (Red - Errors & Warnings) ===== */
+  /* Danger Colors (Red) */
   --color-danger-50: #fef2f2;
   --color-danger-100: #fee2e2;
   --color-danger-200: #fecaca;
@@ -50,7 +53,7 @@
   --color-danger-900: #7f1d1d;
   --color-danger-950: #450a0a;
 
-  /* ===== NEUTRAL COLORS (Gray - Borders & Backgrounds) ===== */
+  /* Neutral Colors (Gray) */
   --color-neutral-50: #f9fafb;
   --color-neutral-100: #f3f4f6;
   --color-neutral-200: #e5e7eb;
@@ -63,19 +66,18 @@
   --color-neutral-900: #111827;
   --color-neutral-950: #030712;
 
-  /* ===== TYPOGRAPHY ===== */
+  /* Typography */
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-heading: 'Outfit', system-ui, sans-serif;
 
-  /* ===== SPACING ===== */
+  /* Spacing */
   --spacing-18: 4.5rem;
   --spacing-88: 22rem;
 
-  /* ===== BORDER RADIUS ===== */
+  /* Border Radius */
   --radius-4xl: 2rem;
 }
 
-/* Base styles */
 @layer base {
   * {
     box-sizing: border-box;
@@ -87,17 +89,23 @@
 
   body {
     font-family: var(--font-sans);
-    color: var(--color-mint-1200);
-    background-color: var(--color-mint-200); /* Ví dụ đặt nền mặc định là mint-200 */
+    color: var(--color-mint-950);
+    background-color: var(--color-mint-50);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-}
-.caret-transparent {
-  caret-color: transparent;
 }
 
 #root {
   background-color: white;
   min-height: 100vh;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

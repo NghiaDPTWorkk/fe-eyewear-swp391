@@ -17,7 +17,7 @@ export function StaffMainLayout({
   headerLeft,
   headerRight,
   headerContainerWidth = '100%',
-  mainClassName = 'p-4 md:p-8 bg-neutral-50'
+  mainClassName = 'p-4 md:p-6 bg-neutral-50'
 }: StaffMainLayoutProps) {
   const { sidebarCollapsed, toggleSidebar } = useLayoutStore()
 
@@ -25,7 +25,6 @@ export function StaffMainLayout({
     <div className="flex h-screen bg-white">
       {sidebar}
 
-      {/* Mobile Overlay */}
       {!sidebarCollapsed && (
         <div
           className="fixed inset-0 bg-neutral-900/40 z-40 lg:hidden animate-in fade-in duration-200"

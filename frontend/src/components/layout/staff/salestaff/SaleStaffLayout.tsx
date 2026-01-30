@@ -33,9 +33,9 @@ export default function SaleStaffLayout() {
       storeIcon={<IoStorefront />}
       userWidget={
         <UserWidgetWithLogout
-          userInitials="SL"
-          userName="Dr. Sarah L."
-          userRole="Head Optometrist"
+          userInitials="AM"
+          userName="Anna Morgan"
+          userRole="Operations Manager"
         />
       }
     >
@@ -92,8 +92,18 @@ export default function SaleStaffLayout() {
       </SidebarStaff.MenuSection>
 
       <SidebarStaff.MenuSection label="TOOLS">
-        <SidebarStaff.MenuItem icon={<IoSettings />} label="Settings" to="/salestaff/settings" />
-        <SidebarStaff.MenuItem icon={<IoHelpCircle />} label="Support" to="/salestaff/support" />
+        <SidebarStaff.MenuItem
+          icon={<IoSettings />}
+          label="Settings"
+          to="/salestaff/settings"
+          active={location.pathname === '/salestaff/settings'}
+        />
+        <SidebarStaff.MenuItem
+          icon={<IoHelpCircle />}
+          label="Support"
+          to="/salestaff/support"
+          active={location.pathname === '/salestaff/support'}
+        />
         <ThemeToggle />
       </SidebarStaff.MenuSection>
     </SidebarStaff>
@@ -104,7 +114,7 @@ export default function SaleStaffLayout() {
       sidebar={sidebar}
       headerLeft={<NavSearch />}
       headerRight={<NavActions />}
-      mainClassName="p-4 md:p-8 bg-neutral-50"
+      mainClassName="p-4 md:p-6 bg-neutral-50"
     />
   )
 }

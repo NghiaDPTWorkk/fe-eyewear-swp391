@@ -1,10 +1,9 @@
 import type { ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
-import OrderHeaderTable from './OrderHeaderTable'
-import OrderList from './OrderList'
 import { Button } from '@/components'
 import { IoTimeOutline, IoEyeOutline, IoChevronForward } from 'react-icons/io5'
 import { PATHS } from '@/routes/paths'
+import { OrderHeaderTable, OrderList } from '@/features/sales/components/orders'
 
 export interface Order {
   id: string
@@ -13,7 +12,9 @@ export interface Order {
   item: string
   waitingFor?: string
   currentStatus: string
+  prescriptionStatus?: 'PENDING_CONFIRMATION' | 'CONFIRMED' | 'REJECTED'
   timeElapsed: string
+  createdAt: string // For sorting
   statusColor: string
   isNextActive: boolean
 }
@@ -29,6 +30,9 @@ interface OrderTableProps {
   columns?: Column<Order>[]
   hiddenColumns?: string[]
   filterType?: string
+  role?: 'sales' | 'operations'
+  onConfirmPrescription?: (orderId: string) => void
+  onRowClick?: (orderId: string) => void
 }
 
 const getOrderTypeStyles = (type: string) => {
@@ -46,71 +50,95 @@ const getOrderTypeStyles = (type: string) => {
   }
 }
 
-export default function OrderTable({ columns, hiddenColumns = [], filterType }: OrderTableProps) {
+const MOCK_ORDERS: Order[] = [
+  {
+    id: 'ORD-001',
+    orderType: 'Prescription',
+    customer: 'Van A Nguyen',
+    item: 'Ray-Ban Aviator',
+    prescriptionStatus: 'PENDING_CONFIRMATION',
+    currentStatus: 'Pending',
+    timeElapsed: '2 mins ago',
+    createdAt: new Date(Date.now() - 2 * 60 * 1000).toISOString(),
+    statusColor: 'bg-orange-100 text-orange-700',
+    isNextActive: true
+  },
+  {
+    id: 'ORD-002',
+    orderType: 'Regular',
+    customer: 'Thi B Tran',
+    item: 'Oakley Holbrook',
+    currentStatus: 'In Production',
+    timeElapsed: '1 hour ago',
+    createdAt: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
+    statusColor: 'bg-blue-100 text-blue-700',
+    isNextActive: false
+  },
+  {
+    id: 'ORD-003',
+    orderType: 'Prescription',
+    customer: 'Van C Le',
+    item: 'Progressive Lenses',
+    prescriptionStatus: 'CONFIRMED',
+    currentStatus: 'Ready',
+    timeElapsed: 'Today 10:30 AM',
+    createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+    statusColor: 'bg-mint-100 text-mint-700',
+    isNextActive: true
+  },
+  {
+    id: 'ORD-004',
+    orderType: 'Prescription',
+    customer: 'Thi D Pham',
+    item: 'Bifocal Glasses',
+    prescriptionStatus: 'PENDING_CONFIRMATION',
+    currentStatus: 'Pending',
+    timeElapsed: 'Today 9:15 AM',
+    createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+    statusColor: 'bg-orange-100 text-orange-700',
+    isNextActive: true
+  },
+  {
+    id: 'ORD-005',
+    orderType: 'Regular',
+    customer: 'Van E Hoang',
+    item: 'Sunglasses',
+    currentStatus: 'Completed',
+    timeElapsed: 'Yesterday 5:00 PM',
+    createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+    statusColor: 'bg-emerald-100 text-emerald-700',
+    isNextActive: false
+  }
+]
+
+export default function OrderTable({
+  columns,
+  hiddenColumns = [],
+  filterType,
+  role = 'operations',
+  onConfirmPrescription,
+  onRowClick
+}: OrderTableProps) {
   const navigate = useNavigate()
 
   const handleViewOrder = (orderId: string) => {
-    navigate(PATHS.OPERATIONSTAFF.ORDER_DETAIL(orderId))
+    if (onRowClick) {
+      onRowClick(orderId)
+    } else {
+      navigate(PATHS.OPERATIONSTAFF.ORDER_DETAIL(orderId))
+    }
   }
 
-  const orders: Order[] = [
-    {
-      id: 'ORD-001',
-      orderType: 'Regular',
-      customer: 'Van A Nguyen',
-      item: 'SKU-001',
-      waitingFor: 'Chemi 5.5 Lens',
-      currentStatus: 'Processing',
-      timeElapsed: '2h 15m',
-      statusColor: 'bg-blue-100 text-blue-700',
-      isNextActive: true
-    },
-    {
-      id: 'ORD-002',
-      orderType: 'Pre-order',
-      customer: 'Thi B Tran',
-      item: 'SKU-001',
-      waitingFor: 'Titan Frame',
-      currentStatus: 'Lens Edging & Mounting',
-      timeElapsed: '3h 45m',
-      statusColor: 'bg-purple-100 text-purple-700',
-      isNextActive: false
-    },
-    {
-      id: 'PRE-003',
-      orderType: 'Pre-order',
-      customer: 'Van C Le',
-      item: 'SKU-001',
-      currentStatus: 'Awaiting Stock',
-      timeElapsed: '5d 2h',
-      statusColor: 'bg-orange-100 text-orange-700',
-      isNextActive: true
-    },
-    {
-      id: 'ORD-004',
-      orderType: 'Prescription',
-      customer: 'Thi D Pham',
-      item: 'SKU-001',
-      currentStatus: 'Pending QC',
-      timeElapsed: '45m',
-      statusColor: 'bg-gray-100 text-gray-700',
-      isNextActive: true
-    },
-    {
-      id: 'ORD-005',
-      orderType: 'Regular',
-      customer: 'Van E Hoang',
-      item: 'SKU-001',
-      currentStatus: 'Packed',
-      timeElapsed: '1h 30m',
-      statusColor: 'bg-mint-100 text-mint-700',
-      isNextActive: true
-    }
-  ]
+  const orders = MOCK_ORDERS
+
+  // Sort by creation time (newest first)
+  const sortedOrders = [...orders].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  )
 
   const filteredOrders = filterType
-    ? orders.filter((order) => order.orderType === filterType)
-    : orders
+    ? sortedOrders.filter((order) => order.orderType === filterType)
+    : sortedOrders
 
   const defaultColumns: Column<Order>[] = [
     {
@@ -167,7 +195,44 @@ export default function OrderTable({ columns, hiddenColumns = [], filterType }: 
       )
     },
     {
-      header: 'ORDER AT',
+      header: 'PRESCRIPTION STATUS',
+      render: (order) => {
+        if (order.orderType !== 'Prescription') return <span className="text-neutral-400">—</span>
+
+        const statusConfig = {
+          PENDING_CONFIRMATION: {
+            label: 'Needs Confirmation',
+            className: 'bg-orange-50 text-orange-700 border-orange-200',
+            showDot: true
+          },
+          CONFIRMED: {
+            label: 'Confirmed',
+            className: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+            showDot: false
+          },
+          REJECTED: {
+            label: 'Rejected',
+            className: 'bg-red-50 text-red-700 border-red-200',
+            showDot: false
+          }
+        }
+
+        const config = order.prescriptionStatus ? statusConfig[order.prescriptionStatus] : null
+
+        if (!config) return <span className="text-neutral-400">—</span>
+
+        return (
+          <span
+            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider whitespace-nowrap border ${config.className}`}
+          >
+            {config.showDot && <span className="w-1.5 h-1.5 bg-orange-500 rounded-full" />}
+            {config.label}
+          </span>
+        )
+      }
+    },
+    {
+      header: 'CREATED AT',
       render: (order) => (
         <div className="flex items-center gap-1.5 text-neutral-500">
           <IoTimeOutline />
@@ -179,30 +244,49 @@ export default function OrderTable({ columns, hiddenColumns = [], filterType }: 
     {
       header: 'ACTION',
       headerClassName: 'text-center',
-      render: (order) => (
-        <div className="flex items-center justify-center gap-3">
-          <Button
-            variant="ghost"
-            size="sm"
-            colorScheme="secondary"
-            className="p-2 hover:bg-mint-50 hover:text-mint-600 transition-all rounded-lg"
-            onClick={() => handleViewOrder(order.id)}
-          >
-            <IoEyeOutline size={20} />
-          </Button>
-          <Button
-            variant="solid"
-            colorScheme="primary"
-            size="sm"
-            className="text-xs font-bold rounded-xl px-4 hover:shadow-lg hover:shadow-mint-100 transition-all active:scale-95"
-            isDisabled={!order.isNextActive}
-            rightIcon={<IoChevronForward />}
-            onClick={() => handleViewOrder(order.id)}
-          >
-            Next
-          </Button>
-        </div>
-      )
+      render: (order) => {
+        const needsConfirmation =
+          role === 'sales' &&
+          order.orderType === 'Prescription' &&
+          order.prescriptionStatus === 'PENDING_CONFIRMATION'
+
+        return (
+          <div className="flex items-center justify-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              colorScheme="secondary"
+              className="p-2 hover:bg-mint-50 hover:text-mint-600 transition-all rounded-lg"
+              onClick={() => handleViewOrder(order.id)}
+            >
+              <IoEyeOutline size={20} />
+            </Button>
+            {needsConfirmation ? (
+              <Button
+                variant="solid"
+                colorScheme="primary"
+                size="sm"
+                className="text-xs font-bold rounded-xl px-4 hover:shadow-lg hover:shadow-mint-100 transition-all active:scale-95 border-none"
+                onClick={() => onConfirmPrescription?.(order.id)}
+              >
+                Confirm
+              </Button>
+            ) : (
+              <Button
+                variant="solid"
+                colorScheme="primary"
+                size="sm"
+                className="text-xs font-bold rounded-xl px-4 hover:shadow-lg hover:shadow-mint-100 transition-all active:scale-95"
+                isDisabled={!order.isNextActive}
+                rightIcon={<IoChevronForward />}
+                onClick={() => handleViewOrder(order.id)}
+              >
+                Next
+              </Button>
+            )}
+          </div>
+        )
+      }
     }
   ]
 

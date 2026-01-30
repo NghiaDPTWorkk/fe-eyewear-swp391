@@ -1,6 +1,7 @@
 import { IoClose, IoSend, IoCheckmarkDoneOutline, IoWarningOutline } from 'react-icons/io5'
 import { Card, Button } from '@/components'
 import { useState } from 'react'
+import { cn } from '@/lib/utils'
 
 interface Customer {
   name: string
@@ -14,6 +15,7 @@ interface CustomerCommunicationDrawerProps {
   onClose: () => void
   customer: Customer | null
   variant?: 'overlay' | 'inline'
+  hideHeader?: boolean
 }
 
 const ORDER_HISTORY = [
@@ -47,7 +49,8 @@ export default function CustomerCommunicationDrawer({
   isOpen,
   onClose,
   customer,
-  variant = 'overlay'
+  variant = 'overlay',
+  hideHeader = false
 }: CustomerCommunicationDrawerProps) {
   const [activeTab, setActiveTab] = useState<'chat' | 'orders'>('chat')
 
@@ -55,44 +58,53 @@ export default function CustomerCommunicationDrawer({
 
   const DrawerContent = (
     <div
-      className={`relative w-full max-w-md bg-white h-full flex flex-col ${variant === 'overlay' ? 'shadow-2xl animate-in slide-in-from-right duration-300' : 'border-l border-neutral-200'}`}
+      className={cn(
+        'relative w-full bg-white h-full flex flex-col',
+        variant === 'overlay'
+          ? 'max-w-md shadow-2xl animate-in slide-in-from-right duration-300'
+          : 'border-l border-neutral-200'
+      )}
     >
-      <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-white shrink-0 z-10">
-        <div className="flex items-center gap-3">
-          <img
-            src={customer.avatar}
-            alt={customer.name}
-            className="w-10 h-10 rounded-full object-cover border border-gray-200"
-          />
-          <div>
-            <h3 className="font-semibold text-gray-900">{customer.name}</h3>
-            <p className="text-xs text-mint-500 font-medium flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-mint-500"></span> Online
-            </p>
+      {!hideHeader && (
+        <>
+          <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-white shrink-0 z-10">
+            <div className="flex items-center gap-3">
+              <img
+                src={customer.avatar}
+                alt={customer.name}
+                className="w-10 h-10 rounded-full object-cover border border-gray-200"
+              />
+              <div>
+                <h3 className="font-semibold text-gray-900">{customer.name}</h3>
+                <p className="text-xs text-mint-500 font-medium flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-mint-500"></span> Online
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-mint-50 rounded-full text-gray-400 hover:text-mint-600 transition-all active:scale-95"
+            >
+              <IoClose size={24} />
+            </button>
           </div>
-        </div>
-        <button
-          onClick={onClose}
-          className="p-2 hover:bg-mint-50 rounded-full text-gray-400 hover:text-mint-600 transition-all active:scale-95"
-        >
-          <IoClose size={24} />
-        </button>
-      </div>
 
-      <div className="flex border-b border-gray-100 shrink-0">
-        <button
-          onClick={() => setActiveTab('chat')}
-          className={`flex-1 py-3 text-sm font-semibold transition-all border-b-2 ${activeTab === 'chat' ? 'border-mint-500 text-mint-600' : 'border-transparent text-gray-500 hover:text-mint-600'}`}
-        >
-          Messages
-        </button>
-        <button
-          onClick={() => setActiveTab('orders')}
-          className={`flex-1 py-3 text-sm font-semibold transition-all border-b-2 ${activeTab === 'orders' ? 'border-mint-500 text-mint-600' : 'border-transparent text-gray-500 hover:text-mint-600'}`}
-        >
-          Active Orders
-        </button>
-      </div>
+          <div className="flex border-b border-gray-100 shrink-0">
+            <button
+              onClick={() => setActiveTab('chat')}
+              className={`flex-1 py-3 text-sm font-semibold transition-all border-b-2 ${activeTab === 'chat' ? 'border-mint-500 text-mint-600' : 'border-transparent text-gray-500 hover:text-mint-600'}`}
+            >
+              Messages
+            </button>
+            <button
+              onClick={() => setActiveTab('orders')}
+              className={`flex-1 py-3 text-sm font-semibold transition-all border-b-2 ${activeTab === 'orders' ? 'border-mint-500 text-mint-600' : 'border-transparent text-gray-500 hover:text-mint-600'}`}
+            >
+              Active Orders
+            </button>
+          </div>
+        </>
+      )}
 
       <div className="flex-1 overflow-hidden relative bg-gray-50">
         {activeTab === 'chat' && (

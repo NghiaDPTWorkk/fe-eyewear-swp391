@@ -12,7 +12,7 @@ import {
   IoCubeOutline,
   IoWalletOutline,
   IoPersonOutline,
-  IoArrowBack,
+  IoArrowBackOutline,
   IoAirplaneOutline,
   IoBusinessOutline,
   IoStorefrontOutline
@@ -132,16 +132,19 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
         <div className="flex items-center gap-6">
           <button
             onClick={onBack}
-            className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all duration-200 group cursor-pointer"
+            className="p-2.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all duration-200 group cursor-pointer shadow-sm hover:shadow"
           >
-            <IoArrowBack size={24} className="group-hover:-translate-x-0.5 transition-transform" />
+            <IoArrowBackOutline
+              size={22}
+              className="group-hover:-translate-x-1 transition-transform duration-200"
+            />
           </button>
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-4">
-              <h1 className="text-4xl font-extrabold text-[#0f172a] tracking-tight">
+              <h1 className="text-3xl font-semibold text-neutral-900 tracking-tight">
                 Order #{order.id}
               </h1>
-              <span className="px-5 py-2 bg-[#dcfce7] text-[#15803d] text-[11px] font-bold uppercase tracking-widest rounded-full border border-[#bbf7d0] cursor-pointer shadow-sm">
+              <span className="px-5 py-2 bg-[#dcfce7] text-[#15803d] text-[10px] font-semibold uppercase tracking-widest rounded-full border border-[#bbf7d0] cursor-pointer">
                 {order.status}
               </span>
             </div>
@@ -161,13 +164,13 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
         <div className="flex gap-4">
           <Button
             variant="outline"
-            className="border-slate-200 text-slate-600 bg-white hover:bg-slate-50 hover:text-slate-900 font-bold rounded-2xl px-6 h-12 transition-all border-2"
+            className="border-slate-200 text-slate-600 bg-white hover:bg-slate-50 hover:text-slate-900 font-semibold rounded-2xl px-6 h-12 transition-all border-2"
             leftIcon={<IoPrintOutline size={20} />}
           >
             Invoice
           </Button>
           <Button
-            className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold shadow-lg shadow-emerald-100/50 border-none rounded-2xl px-6 h-12 transition-all active:scale-95"
+            className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-2xl px-6 h-12 transition-all active:scale-95 border-none"
             leftIcon={<IoPencilOutline size={20} />}
           >
             Update Status
@@ -181,7 +184,7 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
           {/* Order Items Card */}
           <Card className="overflow-hidden border border-neutral-100 shadow-sm rounded-2xl">
             <div className="p-6 border-b border-gray-50 bg-gray-50/30 flex justify-between items-center">
-              <h2 className="text-lg font-medium text-gray-800">Order Items</h2>
+              <h2 className="text-lg font-semibold text-gray-800">Order Items</h2>
               <span className="text-sm text-emerald-600 font-medium cursor-pointer hover:underline">
                 Download Specs
               </span>
@@ -296,8 +299,8 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
                   <span className="text-gray-900 font-medium">{order.tax}</span>
                 </div>
                 <div className="border-t border-gray-200 my-2 pt-3 flex justify-between items-center">
-                  <span className="text-gray-900 font-semibold text-base">Total Due</span>
-                  <span className="text-emerald-600 font-semibold text-xl">{order.total}</span>
+                  <span className="text-gray-900 font-medium text-base">Total Due</span>
+                  <span className="text-emerald-600 font-bold text-xl">{order.total}</span>
                 </div>
               </div>
             </div>

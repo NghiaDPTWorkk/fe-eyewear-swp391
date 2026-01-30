@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import {
   IoClose,
   IoCheckmarkCircle,
-  IoArrowBack,
+  IoArrowBackOutline,
   IoRadioButtonOn,
   IoRadioButtonOff,
   IoAlertCircleOutline
@@ -15,14 +15,20 @@ interface OrderDetailsDrawerProps {
   isOpen: boolean
   onClose: () => void
   orderId: string | null
+  orderType?: 'Regular' | 'Pre-order' | 'Prescription'
+  isApproved?: boolean
   onViewFullDetails?: () => void
+  onNotifyCustomer?: (orderId: string) => void
 }
 
 export default function OrderDetailsDrawer({
   isOpen,
   onClose,
   orderId,
-  onViewFullDetails
+  orderType,
+  isApproved,
+  onViewFullDetails,
+  onNotifyCustomer
 }: OrderDetailsDrawerProps) {
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false)
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null)
@@ -50,6 +56,8 @@ export default function OrderDetailsDrawer({
   const orderData = {
     id: orderId || 'ORD-2024-1234',
     status: 'In Production',
+    isPrescription: orderType === 'Prescription',
+    isApproved: isApproved,
     customer: {
       name: 'John Smith',
       email: 'john.smith@email.com',
@@ -59,6 +67,12 @@ export default function OrderDetailsDrawer({
       name: 'Progressive Lenses',
       qty: 1,
       price: 450.0
+    },
+    prescription: {
+      od: { sph: '+2.50', cyl: '-0.75', axis: '180', add: '+2.00' },
+      os: { sph: '+2.25', cyl: '-0.50', axis: '175', add: '+2.00' },
+      pd: '64mm',
+      lensType: 'Progressive High Index 1.67'
     },
     timeline: [
       { label: 'Order Placed', time: '10:30 AM', date: 'Today', status: 'completed' },
@@ -77,11 +91,6 @@ export default function OrderDetailsDrawer({
     { label: 'Delivered', color: 'bg-[#f3f4f6] text-[#374151] border-[#e5e7eb]' },
     { label: 'On Hold', color: 'bg-[#fee2e2] text-[#b91c1c] border-[#fecaca]' }
   ]
-
-  const handleUpdateClick = () => {
-    setSelectedStatus(orderData.status)
-    setIsUpdatingStatus(true)
-  }
 
   const handleConfirmUpdate = () => {
     // In real app, call API
@@ -109,14 +118,33 @@ export default function OrderDetailsDrawer({
           )}
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-6 pb-4">
-            <div>
-              <h2 className="text-2xl font-bold text-[#0f172a] tracking-tight">Order Details</h2>
-              <p className="text-slate-400 text-base mt-1 font-medium">{orderData.id}</p>
+          <div className="flex items-center justify-between p-6 pb-4 border-b border-gray-50 bg-gray-50/10">
+            <div className="flex-1">
+              <div className="flex items-center justify-between mb-2">
+                <span
+                  className={cn(
+                    'px-2.5 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wider',
+                    orderType === 'Pre-order'
+                      ? 'bg-amber-50 text-amber-600 border border-amber-100'
+                      : orderType === 'Prescription'
+                        ? 'bg-blue-50 text-blue-600 border border-blue-100'
+                        : 'bg-neutral-50 text-neutral-500 border border-neutral-100'
+                  )}
+                >
+                  {orderType} Order
+                </span>
+                <span className="inline-block px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-bold uppercase tracking-widest rounded-full border border-emerald-100 shadow-sm">
+                  {orderData.status}
+                </span>
+              </div>
+              <h2 className="text-2xl font-semibold text-[#0f172a] tracking-tight">
+                Order Details
+              </h2>
+              <p className="text-slate-400 text-sm font-medium mt-1">{orderData.id}</p>
             </div>
             <button
               onClick={onClose}
-              className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-all"
+              className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-all ml-4"
             >
               <IoClose size={24} />
             </button>
@@ -124,15 +152,87 @@ export default function OrderDetailsDrawer({
 
           {/* Scrollable Content */}
           <div className="flex-1 overflow-y-auto min-h-0 px-6 py-2 space-y-8 scrollbar-thin scrollbar-thumb-gray-200">
-            {/* Status Section */}
-            <div className="space-y-3">
-              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-widest">
-                STATUS
-              </h3>
-              <span className="inline-block px-6 py-2 bg-[#dcfce7] text-[#15803d] text-[11px] font-bold uppercase tracking-widest rounded-full border border-[#bbf7d0] cursor-pointer shadow-sm">
-                {orderData.status}
-              </span>
-            </div>
+            {/* Order Status & Type Section */}
+
+            {/* Prescription Summary Section */}
+            {orderData.isPrescription && (
+              <div className="space-y-3 pt-2">
+                <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-widest">
+                  Prescription Summary
+                </h3>
+                <div className="bg-emerald-50/30 border border-emerald-100/50 rounded-2xl overflow-hidden shadow-sm">
+                  <table className="w-full text-[11px] border-collapse">
+                    <thead>
+                      <tr className="bg-emerald-100/30 text-emerald-700 font-bold uppercase tracking-tight">
+                        <th className="py-2 px-3 text-left">Eye</th>
+                        <th className="py-2 px-1 text-center font-bold">SPH</th>
+                        <th className="py-2 px-1 text-center font-bold">CYL</th>
+                        <th className="py-2 px-1 text-center font-bold">AXIS</th>
+                        <th className="py-2 px-1 text-center font-bold">ADD</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-emerald-100/30">
+                      <tr>
+                        <td className="py-2 px-3 font-bold text-gray-700">OD (Right)</td>
+                        <td className="py-2 px-1 text-center text-gray-600 font-medium">
+                          {orderData.prescription.od.sph}
+                        </td>
+                        <td className="py-2 px-1 text-center text-gray-600">
+                          {orderData.prescription.od.cyl}
+                        </td>
+                        <td className="py-2 px-1 text-center text-gray-600">
+                          {orderData.prescription.od.axis}
+                        </td>
+                        <td className="py-2 px-1 text-center text-gray-600">
+                          {orderData.prescription.od.add}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="py-2 px-3 font-bold text-gray-700">OS (Left)</td>
+                        <td className="py-2 px-1 text-center text-gray-600 font-medium">
+                          {orderData.prescription.os.sph}
+                        </td>
+                        <td className="py-2 px-1 text-center text-gray-600">
+                          {orderData.prescription.os.cyl}
+                        </td>
+                        <td className="py-2 px-1 text-center text-gray-600">
+                          {orderData.prescription.os.axis}
+                        </td>
+                        <td className="py-2 px-1 text-center text-gray-600">
+                          {orderData.prescription.os.add}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div className="p-3 bg-white/50 border-t border-emerald-100/30 flex justify-between items-center text-[11px]">
+                    <span className="text-gray-500 font-medium uppercase tracking-wider">
+                      PD (Dist)
+                    </span>
+                    <span className="text-emerald-700 font-bold">{orderData.prescription.pd}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Prescription Warning (Business Rule) */}
+            {orderData.isPrescription && (
+              <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl flex gap-3 items-start animate-pulse">
+                <IoAlertCircleOutline className="text-amber-500 shrink-0 mt-0.5" size={20} />
+                <div>
+                  <p className="text-sm font-semibold text-amber-900">High Prescription Warning</p>
+                  <p className="text-xs text-amber-700 mt-1 leading-relaxed">
+                    This order has SPH {'>'} 4.00. Please advise the customer to use high-index
+                    lenses (1.67 or 1.74) for better weight and aesthetics.
+                  </p>
+                  <button
+                    className="mt-2 text-xs font-semibold text-amber-600 hover:text-amber-700 underline underline-offset-2"
+                    onClick={() => orderId && onNotifyCustomer?.(orderId)}
+                  >
+                    Send advice via Chat
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Customer Info */}
             <div className="space-y-3">
@@ -184,7 +284,7 @@ export default function OrderDetailsDrawer({
 
             {/* Order Timeline */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">
+              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-widest">
                 Order Timeline
               </h3>
               <div className="relative pl-2 space-y-6">
@@ -235,21 +335,24 @@ export default function OrderDetailsDrawer({
           </div>
 
           {/* Footer Actions */}
-          <div className="p-6 pt-4 border-t border-gray-50 flex gap-4 bg-white">
+          <div className="p-6 pt-4 border-t border-gray-50 flex flex-col gap-3 bg-white">
             <Button
-              className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-100/50 font-semibold rounded-2xl h-12 transition-all active:scale-95 border-none"
-              size="lg"
-              onClick={handleUpdateClick}
-            >
-              Update Status
-            </Button>
-            <Button
-              variant="outline"
-              className="flex-1 border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold rounded-2xl h-12 transition-all active:scale-95"
+              className={cn(
+                'w-full h-14 font-semibold rounded-2xl transition-all active:scale-[0.98] border-none text-sm group shadow-lg',
+                orderType === 'Prescription' && !isApproved
+                  ? 'bg-mint-600 hover:bg-mint-700 text-white shadow-mint-100'
+                  : 'bg-mint-600 hover:bg-mint-700 text-white shadow-mint-100'
+              )}
               size="lg"
               onClick={onViewFullDetails}
             >
-              View Full Details
+              {orderType === 'Prescription' && !isApproved
+                ? '✓ Verify Prescription'
+                : orderType === 'Prescription'
+                  ? 'View Prescription Details'
+                  : orderType === 'Pre-order'
+                    ? 'View Pre-order Details'
+                    : 'View Order Details'}
             </Button>
           </div>
         </div>
@@ -269,7 +372,7 @@ export default function OrderDetailsDrawer({
               onClick={() => setIsUpdatingStatus(false)}
               className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all cursor-pointer group"
             >
-              <IoArrowBack
+              <IoArrowBackOutline
                 size={22}
                 className="group-hover:-translate-x-0.5 transition-transform"
               />
@@ -321,7 +424,7 @@ export default function OrderDetailsDrawer({
                       >
                         {option.label}
                         {isCurrentStatus && (
-                          <span className="ml-2 text-[10px] font-bold text-[#15803d] bg-[#dcfce7] px-2.5 py-1 rounded-full border border-[#bbf7d0]">
+                          <span className="ml-2 text-[10px] font-semibold text-[#15803d] bg-[#dcfce7] px-2.5 py-1 rounded-full border border-[#bbf7d0]">
                             Current
                           </span>
                         )}

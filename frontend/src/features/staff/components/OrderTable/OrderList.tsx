@@ -4,18 +4,10 @@ import type { Column, Order } from './OrderTable'
 interface OrderListProps {
   orders: Order[]
   columns: Column<Order>[]
-  role?: 'sales' | 'operation'
-  onRowClick?: (orderId: string) => void
+  onRowClick?: (orderId: string, order?: Order) => void
 }
 
-export default function OrderList({
-  orders,
-  columns,
-  role = 'operation',
-  onRowClick
-}: OrderListProps) {
-  const isSales = role === 'sales'
-
+export default function OrderList({ orders, columns, onRowClick }: OrderListProps) {
   return (
     <tbody className="divide-y divide-neutral-50">
       {orders.map((order, orderIndex) => (
@@ -25,19 +17,10 @@ export default function OrderList({
             'group hover:bg-neutral-50/50 transition-colors',
             onRowClick && 'cursor-pointer'
           )}
-          onClick={() => onRowClick?.(order.id)}
+          onClick={() => onRowClick?.(order.id, order)}
         >
           {columns.map((col, colIndex) => (
-            <td
-              key={colIndex}
-              className={cn(
-                'px-4 py-4 text-sm text-gray-600',
-                col.header === 'ACTION' || (isSales && col.header === 'ORDER ID')
-                  ? 'text-center'
-                  : '',
-                col.className
-              )}
-            >
+            <td key={colIndex} className={cn('px-0 py-4 text-sm text-gray-600', col.className)}>
               {col.render(order)}
             </td>
           ))}

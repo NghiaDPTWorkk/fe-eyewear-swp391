@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import {
-  IoArrowBack,
+  IoArrowBackOutline,
   IoInformationCircleOutline,
   IoCheckmark,
   IoClose,
@@ -53,7 +53,7 @@ export default function PrescriptionVerification({
             onClick={onBack}
             className="group p-2.5 bg-white border border-gray-200/60 hover:border-emerald-200 hover:bg-emerald-50/30 rounded-xl shadow-sm hover:shadow hover:scale-105 transition-all duration-200 mr-2 flex items-center justify-center"
           >
-            <IoArrowBack
+            <IoArrowBackOutline
               size={22}
               className="text-gray-400 group-hover:text-emerald-600 transition-colors duration-200"
             />
@@ -75,60 +75,6 @@ export default function PrescriptionVerification({
           </div>
         </div>
       </div>
-
-      {/* Pending Queue */}
-      <Card className="p-6 border border-neutral-200">
-        <h3 className="text-sm font-semibold text-gray-900 mb-4 uppercase tracking-wider">
-          Pending Queue
-        </h3>
-        <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-200">
-          {/* Active Item */}
-          <div className="min-w-[200px] p-3 rounded-xl border border-emerald-500 bg-emerald-50/20 cursor-pointer shadow-sm relative group">
-            <div className="absolute top-3 right-3 text-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity">
-              <IoCheckmark />
-            </div>
-            <div className="flex items-start gap-3">
-              <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1.5 ring-2 ring-emerald-100" />
-              <div>
-                <div className="font-semibold text-emerald-900 text-sm">{orderData.id}</div>
-                <div className="text-xs text-emerald-600 font-medium mt-0.5">
-                  {orderData.customer}
-                </div>
-                <div className="text-[10px] text-emerald-600/70 mt-1 font-mono">
-                  Submitted: 10:30 AM
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Other Items */}
-          <div className="min-w-[200px] p-3 rounded-xl border border-neutral-200 hover:border-emerald-200 cursor-pointer transition-colors bg-white hover:bg-gray-50 group">
-            <div className="flex items-start gap-3">
-              <div className="w-2.5 h-2.5 rounded-full bg-orange-400 mt-1.5 ring-2 ring-orange-100" />
-              <div>
-                <div className="font-semibold text-gray-700 text-sm group-hover:text-emerald-700">
-                  RX-1235
-                </div>
-                <div className="text-xs text-gray-400 font-medium mt-0.5">Jane Doe</div>
-                <div className="text-[10px] text-gray-400 mt-1 font-mono">Submitted: 11:15 AM</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="min-w-[200px] p-3 rounded-xl border border-neutral-200 hover:border-emerald-200 cursor-pointer transition-colors bg-white hover:bg-gray-50 group">
-            <div className="flex items-start gap-3">
-              <div className="w-2.5 h-2.5 rounded-full bg-blue-400 mt-1.5 ring-2 ring-blue-100" />
-              <div>
-                <div className="font-semibold text-gray-700 text-sm group-hover:text-emerald-700">
-                  RX-1236
-                </div>
-                <div className="text-xs text-gray-400 font-medium mt-0.5">Mike Johnson</div>
-                <div className="text-[10px] text-gray-400 mt-1 font-mono">Submitted: 11:45 AM</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Card>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Left Column (Main Content): Image & Data Entry */}
@@ -319,7 +265,7 @@ export default function PrescriptionVerification({
                         defaultValue="31.5"
                         className="font-semibold text-center border-neutral-200 h-12 pr-8 rounded-xl focus:border-emerald-500 focus:ring-emerald-500/10"
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-extrabold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md border border-emerald-100">
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md border border-emerald-100">
                         R
                       </span>
                     </div>
@@ -328,7 +274,7 @@ export default function PrescriptionVerification({
                         defaultValue="31.5"
                         className="font-semibold text-center border-neutral-200 h-12 pr-8 rounded-xl focus:border-emerald-500 focus:ring-emerald-500/10"
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-extrabold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md border border-emerald-100">
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md border border-emerald-100">
                         L
                       </span>
                     </div>
@@ -480,9 +426,9 @@ export default function PrescriptionVerification({
                       placeholder="Type a message..."
                       className="w-full pl-3 pr-8 py-2 rounded-full border border-gray-200 text-xs focus:outline-none focus:border-emerald-300 focus:ring-2 focus:ring-emerald-100 transition-all"
                     />
-                    <button className="absolute right-2 top-1.5 text-gray-400 hover:text-gray-600">
+                    <Button className="absolute right-2 top-1.5 text-gray-400 hover:text-gray-600">
                       <IoMicOutline size={14} />
-                    </button>
+                    </Button>
                   </div>
                   <button className="p-2 bg-emerald-500 text-white rounded-full hover:bg-emerald-600 shadow-sm transition-transform active:scale-95">
                     <IoSend size={14} />
@@ -491,9 +437,9 @@ export default function PrescriptionVerification({
               </div>
             </div>
 
-            {/* Call Overlay (Hidden by default, shown here for structure if tabs were interactive) - 
-                    In a real app, this would toggle. For this visual, I'll just leave the chat view active 
-                    or maybe add a small 'Quick Call' header at bottom. 
+            {/* Call Overlay (Hidden by default, shown here for structure if tabs were interactive) -
+                    In a real app, this would toggle. For this visual, I'll just leave the chat view active
+                    or maybe add a small 'Quick Call' header at bottom.
                 */}
             <div className="p-3 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
               <div className="flex items-center gap-2">

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
-  IoArrowBack,
+  IoArrowBackOutline,
   IoLocation,
   IoCube,
   IoAirplane,
@@ -61,7 +61,7 @@ export default function SaleStaffLiveMapPage() {
           {/* Landmarks mock locations */}
           <div className="absolute left-[200px] top-[500px] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
             <div className="w-4 h-4 rounded-full bg-gray-800 border-2 border-white shadow-lg"></div>
-            <span className="mt-1 text-xs font-bold text-gray-700 bg-white/80 px-2 py-0.5 rounded shadow-sm">
+            <span className="mt-1 text-xs font-semibold text-gray-700 bg-white/80 px-2 py-0.5 rounded shadow-sm">
               Milan (IT)
             </span>
           </div>
@@ -70,7 +70,7 @@ export default function SaleStaffLiveMapPage() {
             <div className="w-8 h-8 rounded-full bg-emerald-600 border-4 border-white shadow-xl flex items-center justify-center text-white">
               <IoLocation />
             </div>
-            <span className="mt-2 text-xs font-bold text-emerald-800 bg-white/90 px-3 py-1 rounded-full shadow-md">
+            <span className="mt-2 text-xs font-semibold text-emerald-800 bg-white/90 px-3 py-1 rounded-full shadow-md">
               Ho Chi Minh City
             </span>
           </div>
@@ -85,10 +85,10 @@ export default function SaleStaffLiveMapPage() {
               onClick={() => navigate(-1)}
               className="p-2 hover:bg-gray-100 rounded-full transition"
             >
-              <IoArrowBack size={24} className="text-gray-700" />
+              <IoArrowBackOutline size={24} className="text-gray-700" />
             </button>
             <div>
-              <h1 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+              <h1 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                 <IoAirplane className="text-emerald-500" /> Live Shipment Tracking
               </h1>
               <p className="text-sm text-gray-500">
@@ -104,7 +104,7 @@ export default function SaleStaffLiveMapPage() {
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
                 Estimated Arrival
               </p>
-              <p className="text-xl font-bold text-emerald-600">{eta}</p>
+              <p className="text-xl font-semibold text-emerald-600">{eta}</p>
             </div>
             <div className="h-10 w-px bg-gray-200 hidden md:block"></div>
             <Button className="bg-gray-900 text-white hover:bg-gray-800">Contact Support</Button>
@@ -119,7 +119,7 @@ export default function SaleStaffLiveMapPage() {
           <Card className="col-span-2 p-6 rounded-2xl shadow-xl border-0 bg-white/95 backdrop-blur-sm">
             <div className="flex justify-between items-start mb-6">
               <div>
-                <h2 className="text-lg font-bold text-gray-900">In Transit - On Schedule</h2>
+                <h2 className="text-lg font-semibold text-gray-900">In Transit - On Schedule</h2>
                 <p className="text-sm text-emerald-600 font-medium">
                   Arrived at Sort Facility - Tan Son Nhat Airport
                 </p>
@@ -147,19 +147,19 @@ export default function SaleStaffLiveMapPage() {
             <div className="grid grid-cols-4 gap-2">
               <div className="flex flex-col gap-2">
                 <div className="h-1 w-full bg-emerald-500 rounded-full"></div>
-                <span className="text-xs font-bold text-gray-900">Order Placed</span>
+                <span className="text-xs font-semibold text-gray-900">Order Placed</span>
                 <span className="text-[10px] text-gray-400">Oct 22, 09:00</span>
               </div>
               <div className="flex flex-col gap-2">
                 <div className="h-1 w-full bg-emerald-500 rounded-full"></div>
-                <span className="text-xs font-bold text-gray-900">Exported</span>
+                <span className="text-xs font-semibold text-gray-900">Exported</span>
                 <span className="text-[10px] text-gray-400">Oct 23, 16:20</span>
               </div>
               <div className="flex flex-col gap-2">
                 <div className="h-1 w-full bg-emerald-500 rounded-full relative overflow-hidden">
                   <div className="absolute inset-0 bg-white/30 animate-shimmer"></div>
                 </div>
-                <span className="text-xs font-bold text-emerald-600">Importing</span>
+                <span className="text-xs font-semibold text-emerald-600">Importing</span>
                 <span className="text-[10px] text-emerald-500 font-medium">In Progress...</span>
               </div>
               <div className="flex flex-col gap-2">
@@ -173,7 +173,7 @@ export default function SaleStaffLiveMapPage() {
           {/* Courier Info Card */}
           <Card className="p-6 rounded-2xl shadow-xl border-0 bg-white/95 backdrop-blur-sm flex flex-col justify-between">
             <div>
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">
+              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">
                 Courier Information
               </h3>
               <div className="flex items-center gap-4 mb-6">
@@ -185,8 +185,8 @@ export default function SaleStaffLiveMapPage() {
                   />
                 </div>
                 <div>
-                  <h4 className="text-lg font-bold text-gray-900">DHL Express</h4>
-                  <div className="flex gap-1 text-xs text-yellow-600 font-bold bg-yellow-50 px-2 py-0.5 rounded-full w-fit">
+                  <h4 className="text-lg font-semibold text-gray-900">DHL Express</h4>
+                  <div className="flex gap-1 text-xs text-yellow-600 font-semibold bg-yellow-50 px-2 py-0.5 rounded-full w-fit">
                     <IoInformationCircle size={14} /> Global Priority
                   </div>
                 </div>

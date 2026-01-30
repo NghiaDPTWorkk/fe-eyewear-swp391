@@ -16,11 +16,8 @@ export default function OrderHeaderTable({ columns, role = 'operation' }: OrderH
           <th
             key={index}
             className={cn(
-              'px-6 py-5 text-[10px] font-semibold uppercase tracking-widest',
+              'px-0 py-5 text-[10px] font-bold uppercase tracking-widest text-center',
               isSales ? 'text-[#a4a9c1]' : 'text-neutral-500 tracking-wider text-[11px]',
-              col.header === 'ACTION' || (isSales && col.header === 'ORDER ID')
-                ? 'text-center'
-                : '',
               col.headerClassName
             )}
           >

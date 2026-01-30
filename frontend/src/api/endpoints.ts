@@ -8,7 +8,7 @@ export const ENDPOINTS = {
     REGISTER: '/auth/register',
     LOGOUT: '/auth/logout',
     REFRESH_TOKEN: '/auth/refresh',
-    PROFILE: '/auth/profile'
+    PROFILE: '/customer'
   },
 
   // Products

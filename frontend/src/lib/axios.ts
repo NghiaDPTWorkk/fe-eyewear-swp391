@@ -16,10 +16,11 @@ apiClient.interceptors.request.use(
     const deviceId = getOrCreateDeviceId()
     const token = localStorage.getItem('access_token')
     config.headers['x-device-id'] = deviceId
-    const authRoutes = ['/auth/login', '/admin/auth/login']
-    const isAuthRequest = authRoutes.some((route) => config.url?.includes(route))
 
-    if (token && !isAuthRequest) {
+    const publicRoutes = ['/auth/login', '/admin/auth/login', '/products']
+    const isPublicRoute = publicRoutes.some((route) => config.url?.includes(route))
+
+    if (token && !isPublicRoute) {
       config.headers.Authorization = `Bearer ${token}`
     }
 

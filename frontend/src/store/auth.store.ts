@@ -1,5 +1,6 @@
 import type { User } from '@/shared/types'
 import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
 
 interface AuthState {
   user: User | null
@@ -7,19 +8,27 @@ interface AuthState {
   isAuthenticated: boolean
   isLoading: boolean
   setUser: (user: User | null) => void
-  setToken: (token: string) => void
+  setToken: (token: string | null) => void
   logout: () => void
   setLoading: (loading: boolean) => void
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  accessToken: null,
-  isAuthenticated: false,
-  isLoading: false,
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      user: null,
+      accessToken: null,
+      isAuthenticated: false,
+      isLoading: false,
 
-  setUser: (user) => set({ user, isAuthenticated: !!user }),
-  setToken: (token) => set({ accessToken: token }),
-  logout: () => set({ user: null, accessToken: null, isAuthenticated: false }),
-  setLoading: (loading) => set({ isLoading: loading })
-}))
+      setUser: (user) => set({ user }),
+      setToken: (token) => set({ accessToken: token, isAuthenticated: !!token }),
+      logout: () => set({ user: null, accessToken: null, isAuthenticated: false }),
+      setLoading: (loading) => set({ isLoading: loading })
+    }),
+    {
+      name: 'auth-storage',
+      storage: createJSONStorage(() => localStorage)
+    }
+  )
+)

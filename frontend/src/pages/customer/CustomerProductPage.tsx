@@ -7,13 +7,14 @@ import { ProductCard } from '@/shared/components/ui/product-card'
 import { ArrowRight } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useCartStore } from '@/store/cart.store'
+import { useAuthStore, useCartStore } from '@/store'
 import toast from 'react-hot-toast'
 
 export const CustomerProductPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { addItem } = useCartStore()
+  const { isAuthenticated } = useAuthStore()
   const [page, setPage] = useState(1)
   const limit = 12
 
@@ -40,7 +41,6 @@ export const CustomerProductPage = () => {
   }>({ min: null, max: null })
   const [priceResetKey, setPriceResetKey] = useState(0)
 
-  // Use appropriate hook based on product type
   // const allProductsData = useGetProductWithPagination(page, limit)
   const typedProductsData = useGetProductWithType(page, limit, productType || '')
 
@@ -200,6 +200,12 @@ export const CustomerProductPage = () => {
                         salePercent={salePercent}
                         onClick={(id) => navigate(`/products/${id}`)}
                         onAddToCart={() => {
+                          const isAuth = isAuthenticated || !!localStorage.getItem('accessToken')
+                          if (!isAuth) {
+                            toast.error('Please login to add items to cart')
+                            navigate('/login')
+                            return
+                          }
                           const id =
                             productAny.id ||
                             productAny._id ||
@@ -216,6 +222,12 @@ export const CustomerProductPage = () => {
                           toast.success('Added to bag!')
                         }}
                         onAddToWishlist={() => {
+                          const isAuth = isAuthenticated || !!localStorage.getItem('accessToken')
+                          if (!isAuth) {
+                            toast.error('Please login to add items to wishlist')
+                            navigate('/login')
+                            return
+                          }
                           toast.success('Added to wishlist!')
                         }}
                       />

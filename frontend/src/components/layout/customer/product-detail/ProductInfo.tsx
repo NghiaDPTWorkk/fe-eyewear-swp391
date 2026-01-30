@@ -10,8 +10,9 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import type { Product } from '@/shared/types/product.types'
-import { useCartStore } from '@/store/cart.store'
+import { useCartStore, useAuthStore } from '@/store'
 import { toast } from 'react-hot-toast'
+import { useNavigate } from 'react-router-dom'
 
 interface ProductInfoProps {
   product: Product
@@ -21,8 +22,16 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
   const [selectedColor, setSelectedColor] = useState('Sage Mist')
   const [selectedSize, setSelectedSize] = useState('Medium')
   const addItem = useCartStore((state) => state.addItem)
+  const { isAuthenticated } = useAuthStore()
+  const navigate = useNavigate()
 
   const handleAddToCart = () => {
+    const isAuth = isAuthenticated || !!localStorage.getItem('accessToken')
+    if (!isAuth) {
+      toast.error('Please login to add items to cart')
+      navigate('/login')
+      return
+    }
     const productAny = product as any
     const defaultVariant =
       productAny.variants?.find((v: any) => v.isDefault) || productAny.variants?.[0]
@@ -76,7 +85,19 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
         <span className="px-3 py-1 bg-primary-100 text-primary-600 rounded-full text-xs font-bold uppercase tracking-wider">
           New Arrival
         </span>
-        <button className="flex items-center gap-2 text-gray-eyewear hover:text-primary-500 transition-colors group">
+        <button
+          onClick={() => {
+            const isAuth =
+              useAuthStore.getState().isAuthenticated || !!localStorage.getItem('accessToken')
+            if (!isAuth) {
+              toast.error('Please login to add items to wishlist')
+              navigate('/login')
+              return
+            }
+            toast.success('Added to wishlist!')
+          }}
+          className="flex items-center gap-2 text-gray-eyewear hover:text-primary-500 transition-colors group"
+        >
           <Heart className="w-5 h-5 group-hover:fill-primary-500" />
           <span className="text-sm font-medium">Wishlist</span>
         </button>

@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { PATHS } from '@/routes/paths'
@@ -5,7 +6,10 @@ import { cn } from '@/lib/utils'
 import { Container } from '@/shared/components/ui/container'
 import { MetricCard } from '@/shared/components/ui/metric-card'
 import { Card } from '@/shared/components/ui/card'
-import { OrderTable } from '@/components/staff'
+import SaleStaffOrderTable, {
+  type Order
+} from '@/features/sales/components/SaleStaffOrderTable/SaleStaffOrderTable'
+import SaleStaffOrderDetailsDrawer from '@/features/sales/components/SaleStaffOrderDetailsDrawer/SaleStaffOrderDetailsDrawer'
 import {
   IoClipboardOutline,
   IoWalletOutline,
@@ -215,19 +219,13 @@ function OrderStatusChart() {
 }
 
 // --- Main Page Component ---
-import OrderDetailsDrawer from '@/features/staff/components/OrderDetailsDrawer/OrderDetailsDrawer'
-import type { Order } from '@/features/staff/components/OrderTable/OrderTable'
 
 function UrgentOrdersTable({
   onRowClick,
-  onReviewRx,
-  onNotifyCustomer,
   currentFilter,
   onFilterChange
 }: {
   onRowClick: (id: string, order?: Order) => void
-  onReviewRx: (id: string) => void
-  onNotifyCustomer: (id: string) => void
   currentFilter: string
   onFilterChange: (filter: string) => void
 }) {
@@ -295,11 +293,8 @@ function UrgentOrdersTable({
         </div>
       </div>
 
-      <OrderTable
-        role="sales"
+      <SaleStaffOrderTable
         onRowClick={onRowClick}
-        onReviewRx={onReviewRx}
-        onNotifyCustomer={onNotifyCustomer}
         filterType={currentFilter === 'All' ? undefined : currentFilter}
       />
     </Card>
@@ -338,13 +333,6 @@ export default function SaleStaffDashboardPage() {
   }
 
   const navigate = useNavigate()
-  const handleReviewRx = (id: string) => {
-    navigate(PATHS.SALESTAFF.VERIFY_RX(id))
-  }
-
-  const handleNotifyCustomer = (customerId: string) => {
-    navigate(`${PATHS.SALESTAFF.CUSTOMERS}?customerId=${customerId}`)
-  }
 
   if (!METRICS.length) return null
 
@@ -373,20 +361,17 @@ export default function SaleStaffDashboardPage() {
 
       <UrgentOrdersTable
         onRowClick={handleOpenDrawer}
-        onReviewRx={handleReviewRx}
-        onNotifyCustomer={handleNotifyCustomer}
         currentFilter={filter}
         onFilterChange={setFilter}
       />
 
-      <OrderDetailsDrawer
+      <SaleStaffOrderDetailsDrawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
         orderId={selectedOrderId}
         orderType={selectedOrder?.orderType}
         isApproved={selectedOrder?.isApproved}
         onViewFullDetails={handleViewFullDetails}
-        onNotifyCustomer={handleNotifyCustomer}
       />
     </Container>
   )

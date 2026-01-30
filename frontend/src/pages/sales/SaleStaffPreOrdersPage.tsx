@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { PATHS } from '@/routes/paths'
 import { Container, Button, Card } from '@/components'
-import { OrderTable } from '@/components/staff'
-import OrderDetailsDrawer from '@/features/staff/components/OrderDetailsDrawer/OrderDetailsDrawer'
+import SaleStaffOrderTable from '@/features/sales/components/SaleStaffOrderTable/SaleStaffOrderTable'
+import SaleStaffOrderDetailsDrawer from '@/features/sales/components/SaleStaffOrderDetailsDrawer/SaleStaffOrderDetailsDrawer'
 import {
   IoCloudDownloadOutline,
   IoAdd,
@@ -28,10 +28,6 @@ export default function SaleStaffPreOrdersPage() {
       navigate(PATHS.SALESTAFF.PRE_ORDER_DETAIL(selectedOrderId))
       setIsDrawerOpen(false)
     }
-  }
-
-  const handleNotifyCustomer = (customerId: string) => {
-    navigate(`${PATHS.SALESTAFF.CUSTOMERS}?customerId=${customerId}`)
   }
 
   return (
@@ -133,21 +129,15 @@ export default function SaleStaffPreOrdersPage() {
       </div>
 
       <Card className="p-0 overflow-hidden border border-neutral-200 shadow-sm">
-        <OrderTable
-          role="sales"
-          onRowClick={handleOpenDrawer}
-          filterType="Pre-order"
-          onNotifyCustomer={handleNotifyCustomer}
-        />
+        <SaleStaffOrderTable onRowClick={handleOpenDrawer} filterType="Pre-order" />
       </Card>
 
-      <OrderDetailsDrawer
+      <SaleStaffOrderDetailsDrawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
         orderId={selectedOrderId}
         orderType="Pre-order"
         onViewFullDetails={handleViewFullDetails}
-        onNotifyCustomer={handleNotifyCustomer}
       />
     </Container>
   )

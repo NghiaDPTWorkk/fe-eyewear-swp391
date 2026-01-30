@@ -4,23 +4,27 @@ import type { Column, Order } from './OrderTable'
 interface OrderListProps {
   orders: Order[]
   columns: Column<Order>[]
-  onRowClick?: (orderId: string, order?: Order) => void
+  role?: 'sales' | 'operation'
 }
 
-export default function OrderList({ orders, columns, onRowClick }: OrderListProps) {
+export default function OrderList({ orders, columns, role = 'operation' }: OrderListProps) {
+  const isSales = role === 'sales'
+
   return (
     <tbody className="divide-y divide-neutral-50">
       {orders.map((order, orderIndex) => (
-        <tr
-          key={orderIndex}
-          className={cn(
-            'group hover:bg-neutral-50/50 transition-colors',
-            onRowClick && 'cursor-pointer'
-          )}
-          onClick={() => onRowClick?.(order.id, order)}
-        >
+        <tr key={orderIndex} className="group hover:bg-neutral-50/50 transition-colors">
           {columns.map((col, colIndex) => (
-            <td key={colIndex} className={cn('px-0 py-4 text-sm text-gray-600', col.className)}>
+            <td
+              key={colIndex}
+              className={cn(
+                'px-4 py-4 text-sm text-gray-600',
+                col.header === 'ACTION' || (isSales && col.header === 'ORDER ID')
+                  ? 'text-center'
+                  : '',
+                col.className
+              )}
+            >
               {col.render(order)}
             </td>
           ))}

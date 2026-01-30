@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { Container } from '@/components'
-import OrderDetail from '@/features/staff/components/OrderDetail/OrderDetail'
+import SaleStaffOrderDetail from '@/features/sales/components/SaleStaffOrderDetail/SaleStaffOrderDetail'
 
 export default function RegularOrderDetailPage() {
   const { orderId } = useParams<{ orderId: string }>()
@@ -10,7 +10,7 @@ export default function RegularOrderDetailPage() {
 
   return (
     <Container>
-      <OrderDetail orderId={orderId} onBack={() => navigate(-1)} />
+      <SaleStaffOrderDetail orderId={orderId} onBack={() => navigate(-1)} />
     </Container>
   )
 }

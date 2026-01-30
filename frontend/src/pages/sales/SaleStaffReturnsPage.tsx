@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Container, Button, Card } from '@/components'
-import ReturnDetails from '@/features/staff/components/ReturnDetails/ReturnDetails'
+import SaleStaffReturnDetails from '@/features/sales/components/SaleStaffReturnDetails/SaleStaffReturnDetails'
 import {
   IoSearchOutline,
   IoRefreshOutline,
@@ -16,7 +16,10 @@ export default function SaleStaffReturnsPage() {
   if (selectedReturnId) {
     return (
       <Container>
-        <ReturnDetails returnId={selectedReturnId} onBack={() => setSelectedReturnId(null)} />
+        <SaleStaffReturnDetails
+          returnId={selectedReturnId}
+          onBack={() => setSelectedReturnId(null)}
+        />
       </Container>
     )
   }

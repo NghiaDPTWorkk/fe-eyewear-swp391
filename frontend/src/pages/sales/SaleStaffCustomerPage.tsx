@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Card, Container } from '@/shared/components/ui'
@@ -12,7 +13,7 @@ import {
   IoInformationCircleOutline
 } from 'react-icons/io5'
 import { cn } from '@/lib/utils'
-import CustomerCommunicationDrawer from '@/features/staff/components/CustomerCommunicationDrawer/CustomerCommunicationDrawer'
+import SaleStaffCustomerCommunicationDrawer from '@/features/sales/components/SaleStaffCustomerCommunicationDrawer/SaleStaffCustomerCommunicationDrawer'
 
 interface Customer {
   id: string
@@ -205,7 +206,7 @@ export default function SaleStaffCustomerPage() {
                 </header>
 
                 <div className="flex-1 overflow-hidden">
-                  <CustomerCommunicationDrawer
+                  <SaleStaffCustomerCommunicationDrawer
                     isOpen={true}
                     onClose={() => setSelectedCustomerId(null)}
                     customer={selectedCustomer}

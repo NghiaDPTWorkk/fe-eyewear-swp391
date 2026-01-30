@@ -1,5 +1,5 @@
 import { Container } from '@/components'
-import OrderDetail from '@/features/staff/components/OrderDetail/OrderDetail'
+import SaleStaffOrderDetail from '@/features/sales/components/SaleStaffOrderDetail/SaleStaffOrderDetail'
 import { useNavigate, useParams } from 'react-router-dom'
 
 export default function PreOrderDetailPage() {
@@ -10,7 +10,7 @@ export default function PreOrderDetailPage() {
 
   return (
     <Container>
-      <OrderDetail orderId={orderId} onBack={() => navigate(-1)} isPreOrder={true} />
+      <SaleStaffOrderDetail orderId={orderId} onBack={() => navigate(-1)} isPreOrder={true} />
     </Container>
   )
 }

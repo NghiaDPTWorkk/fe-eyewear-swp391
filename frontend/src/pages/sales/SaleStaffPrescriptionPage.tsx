@@ -2,8 +2,10 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { PATHS } from '@/routes/paths'
 import { Container, Button, Card } from '@/components'
-import { OrderTable } from '@/components/staff'
-import OrderDetailsDrawer from '@/features/staff/components/OrderDetailsDrawer/OrderDetailsDrawer'
+import SaleStaffOrderTable, {
+  type Order
+} from '@/features/sales/components/SaleStaffOrderTable/SaleStaffOrderTable'
+import SaleStaffOrderDetailsDrawer from '@/features/sales/components/SaleStaffOrderDetailsDrawer/SaleStaffOrderDetailsDrawer'
 import {
   IoFilter,
   IoAdd,
@@ -16,28 +18,13 @@ import {
 export default function SaleStaffPrescriptionPage() {
   const navigate = useNavigate()
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
-  const [selectedOrder, setSelectedOrder] = useState<any>(null)
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
-  const handleOpenDrawer = (id: string, order?: any) => {
+  const handleOpenDrawer = (id: string, order?: Order) => {
     setSelectedOrderId(id)
-    setSelectedOrder(order)
+    setSelectedOrder(order || null)
     setIsDrawerOpen(true)
-  }
-
-  const handleReviewRx = (id: string) => {
-    navigate(PATHS.SALESTAFF.VERIFY_RX(id))
-  }
-
-  const handleViewFullDetails = () => {
-    if (selectedOrderId) {
-      navigate(PATHS.SALESTAFF.VERIFY_RX(selectedOrderId))
-      setIsDrawerOpen(false)
-    }
-  }
-
-  const handleNotifyCustomer = (customerId: string) => {
-    navigate(`${PATHS.SALESTAFF.CUSTOMERS}?customerId=${customerId}`)
   }
 
   return (
@@ -142,23 +129,21 @@ export default function SaleStaffPrescriptionPage() {
       </div>
 
       <Card className="p-0 overflow-hidden border border-neutral-200 shadow-sm">
-        <OrderTable
-          role="sales"
-          onRowClick={handleOpenDrawer}
-          onReviewRx={handleReviewRx}
-          onNotifyCustomer={handleNotifyCustomer}
-          filterType="Prescription"
-        />
+        <SaleStaffOrderTable onRowClick={handleOpenDrawer} filterType="Prescription" />
       </Card>
 
-      <OrderDetailsDrawer
+      <SaleStaffOrderDetailsDrawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
         orderId={selectedOrderId}
         orderType="Prescription"
         isApproved={selectedOrder?.isApproved}
-        onViewFullDetails={handleViewFullDetails}
-        onNotifyCustomer={handleNotifyCustomer}
+        onViewFullDetails={() => {
+          if (selectedOrderId) {
+            navigate(PATHS.SALESTAFF.VERIFY_RX(selectedOrderId))
+            setIsDrawerOpen(false)
+          }
+        }}
       />
     </Container>
   )

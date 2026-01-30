@@ -3,8 +3,10 @@ import { useNavigate, Link } from 'react-router-dom'
 import { PATHS } from '@/routes/paths'
 import { cn } from '@/lib/utils'
 import { Container, Button, Card } from '@/components'
-import { OrderTable } from '@/components/staff'
-import OrderDetailsDrawer from '@/features/staff/components/OrderDetailsDrawer/OrderDetailsDrawer'
+import SaleStaffOrderTable, {
+  type Order
+} from '@/features/sales/components/SaleStaffOrderTable/SaleStaffOrderTable'
+import SaleStaffOrderDetailsDrawer from '@/features/sales/components/SaleStaffOrderDetailsDrawer/SaleStaffOrderDetailsDrawer'
 import {
   IoSearchOutline,
   IoFilter,
@@ -17,11 +19,11 @@ import {
 export default function SaleStaffOrderPage() {
   const [filter, setFilter] = useState('All')
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
-  const [selectedOrder, setSelectedOrder] = useState<any>(null)
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
 
-  const handleOpenDrawer = (id: string, order?: any) => {
+  const handleOpenDrawer = (id: string, order?: Order) => {
     if (order?.orderType === 'Prescription') {
       setSelectedOrderId(id)
       setSelectedOrder(order)
@@ -47,13 +49,6 @@ export default function SaleStaffOrderPage() {
   }
 
   const navigate = useNavigate()
-  const handleReviewRx = (id: string) => {
-    navigate(PATHS.SALESTAFF.VERIFY_RX(id))
-  }
-
-  const handleNotifyCustomer = (customerId: string) => {
-    navigate(`${PATHS.SALESTAFF.CUSTOMERS}?customerId=${customerId}`)
-  }
 
   const filterOptions = [
     { label: 'All Orders', value: 'All' },
@@ -154,11 +149,8 @@ export default function SaleStaffOrderPage() {
 
         {/* Table Card */}
         <Card className="p-0 overflow-hidden border border-neutral-200 shadow-sm">
-          <OrderTable
-            role="sales"
+          <SaleStaffOrderTable
             onRowClick={handleOpenDrawer}
-            onReviewRx={handleReviewRx}
-            onNotifyCustomer={handleNotifyCustomer}
             filterType={filter === 'All' ? undefined : filter}
           />
         </Card>
@@ -212,14 +204,13 @@ export default function SaleStaffOrderPage() {
         </div>
       </div>
 
-      <OrderDetailsDrawer
+      <SaleStaffOrderDetailsDrawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
         orderId={selectedOrderId}
         orderType={selectedOrder?.orderType}
         isApproved={selectedOrder?.isApproved}
         onViewFullDetails={handleViewFullDetails}
-        onNotifyCustomer={handleNotifyCustomer}
       />
     </Container>
   )

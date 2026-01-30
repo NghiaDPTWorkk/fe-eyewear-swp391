@@ -33,9 +33,9 @@ export default function OperationLayout() {
       }
       userWidget={
         <UserWidgetWithLogout
-          userInitials="AM"
-          userName="Anna Morgan"
-          userRole="Operations Manager"
+          userInitials="SL"
+          userName="Dr. Sarah L."
+          userRole="Head Optometrist"
         />
       }
     >
@@ -73,18 +73,8 @@ export default function OperationLayout() {
       </SidebarStaff.MenuSection>
 
       <SidebarStaff.MenuSection label="TOOLS">
-        <SidebarStaff.MenuItem
-          icon={<IoSettingsOutline />}
-          label="Settings"
-          to="/operationstaff/settings"
-          active={location.pathname === '/operationstaff/settings'}
-        />
-        <SidebarStaff.MenuItem
-          icon={<IoHelpCircleOutline />}
-          label="Support"
-          to="/operationstaff/support"
-          active={location.pathname === '/operationstaff/support'}
-        />
+        <SidebarStaff.MenuItem icon={<IoSettingsOutline />} label="Settings" />
+        <SidebarStaff.MenuItem icon={<IoHelpCircleOutline />} label="Support" />
         <ThemeToggle />
       </SidebarStaff.MenuSection>
     </SidebarStaff>
@@ -95,7 +85,7 @@ export default function OperationLayout() {
       sidebar={sidebar}
       headerLeft={<NavSearch placeholder="Search orders..." styleVariant="operation" />}
       headerRight={<NavActions />}
-      mainClassName="p-4 md:p-6 bg-mint-50"
+      mainClassName="p-4 md:p-8 bg-mint-200"
     />
   )
 }

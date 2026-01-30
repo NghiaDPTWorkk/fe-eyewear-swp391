@@ -7,8 +7,9 @@ import OrderDetailsDrawer from '@/features/staff/components/OrderDetailsDrawer/O
 import {
   IoCloudDownloadOutline,
   IoAdd,
-  IoHourglassOutline,
   IoWarningOutline,
+  IoHourglassOutline,
+  IoWalletOutline,
   IoCalendarOutline,
   IoWalletOutline
 } from 'react-icons/io5'
@@ -52,9 +53,9 @@ export default function SaleStaffPreOrdersPage() {
             Orders
           </Link>
           <span className="text-neutral-300">/</span>
-          <span className="text-primary-500 font-semibold">Pre-order Management</span>
+          <span className="text-primary-500 font-bold">Pre-order Management</span>
         </div>
-        <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">Pre-order Tracking</h1>
+        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Pre-order Tracking</h1>
         <p className="text-gray-500 mt-1">Manage outstanding orders and supplier ETA updates.</p>
       </div>
 
@@ -62,10 +63,10 @@ export default function SaleStaffPreOrdersPage() {
         <Card className="p-5 border border-neutral-100 flex flex-col justify-between">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
+              <p className="text-xs font-bold text-neutral-400 uppercase tracking-wider">
                 Pending Orders
               </p>
-              <h3 className="text-3xl font-semibold text-neutral-900 mt-2">142</h3>
+              <h3 className="text-3xl font-bold text-neutral-900 mt-2">142</h3>
             </div>
             <div className="p-2 bg-amber-50 rounded-lg text-amber-500">
               <IoHourglassOutline size={20} />
@@ -77,25 +78,25 @@ export default function SaleStaffPreOrdersPage() {
         <Card className="p-5 border border-neutral-100 flex flex-col justify-between">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
+              <p className="text-xs font-bold text-neutral-400 uppercase tracking-wider">
                 Overdue ETA
               </p>
-              <h3 className="text-3xl font-semibold text-neutral-900 mt-2">8</h3>
+              <h3 className="text-3xl font-bold text-neutral-900 mt-2">8</h3>
             </div>
             <div className="p-2 bg-red-50 rounded-lg text-red-500">
               <IoWarningOutline size={20} />
             </div>
           </div>
-          <div className="mt-4 text-xs font-semibold text-red-500">Action required</div>
+          <div className="mt-4 text-xs font-bold text-red-500">Action required</div>
         </Card>
 
         <Card className="p-5 border border-neutral-100 flex flex-col justify-between">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
+              <p className="text-xs font-bold text-neutral-400 uppercase tracking-wider">
                 Arriving Soon
               </p>
-              <h3 className="text-3xl font-semibold text-neutral-900 mt-2">24</h3>
+              <h3 className="text-3xl font-bold text-neutral-900 mt-2">24</h3>
             </div>
             <div className="p-2 bg-emerald-50 rounded-lg text-emerald-500">
               <IoCalendarOutline size={20} />
@@ -107,10 +108,10 @@ export default function SaleStaffPreOrdersPage() {
         <Card className="p-5 border border-neutral-100 flex flex-col justify-between">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
+              <p className="text-xs font-bold text-neutral-400 uppercase tracking-wider">
                 Total Deposits
               </p>
-              <h3 className="text-3xl font-semibold text-neutral-900 mt-2">$12,450</h3>
+              <h3 className="text-3xl font-bold text-neutral-900 mt-2">$12,450</h3>
             </div>
             <div className="p-2 bg-blue-50 rounded-lg text-blue-500">
               <IoWalletOutline size={20} />

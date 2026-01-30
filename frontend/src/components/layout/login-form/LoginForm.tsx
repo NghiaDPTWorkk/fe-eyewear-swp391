@@ -39,6 +39,7 @@ export const LoginForm = ({ role }: LoginFormProps) => {
     <form onSubmit={handleSubmit} className="w-full">
       <Divider className="mb-4" />
 
+      {/* Email Input */}
       <FormField label="Email" className="mb-4">
         <Input
           type="email"
@@ -60,6 +61,7 @@ export const LoginForm = ({ role }: LoginFormProps) => {
         />
       </FormField>
 
+      {/* Password Input */}
       <FormField label="Password" className="mb-4">
         <Input
           type={showPassword ? 'text' : 'password'}
@@ -70,10 +72,11 @@ export const LoginForm = ({ role }: LoginFormProps) => {
         />
       </FormField>
 
+      {/* Remember Me */}
       <div className="mb-6 flex items-center justify-between">
         <Checkbox
           isChecked={rememberMe}
-          onCheckedChange={setRememberMe}
+          onCheckedChange={setRememberMe} // Check lại component Checkbox của bạn nhận props gì
           label="Remember me"
           size="sm"
         />
@@ -82,6 +85,7 @@ export const LoginForm = ({ role }: LoginFormProps) => {
         </a>
       </div>
 
+      {/* Login Button */}
       <Button
         type="submit"
         variant="solid"
@@ -89,11 +93,13 @@ export const LoginForm = ({ role }: LoginFormProps) => {
         isFullWidth
         size="lg"
         className="mb-4"
+        // isLoading={isPending}
         disabled={isPending}
       >
         Log In
       </Button>
 
+      {/* Sign Up Link */}
       <p className="text-center text-sm text-gray-500">
         Don't have an account?{' '}
         <a href="/register" className="font-medium text-primary-600 hover:text-primary-700">

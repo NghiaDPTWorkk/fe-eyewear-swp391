@@ -55,14 +55,16 @@ export interface StandardProduct {
   totalVariants: number
   createdAt: string
 }
+
+export type StandardProductData = StandardProduct
 /**
  * Product discriminated union
  */
 export type Product =
+  | StandardProduct
   | (BaseProduct & { type: 'frame'; spec: FrameSpec })
   | (BaseProduct & { type: 'sunglass'; spec: FrameSpec })
   | (BaseProduct & { type: 'lens'; spec: LenSpec | null })
-  | StandardProduct
 
 /**
  * Product create request types

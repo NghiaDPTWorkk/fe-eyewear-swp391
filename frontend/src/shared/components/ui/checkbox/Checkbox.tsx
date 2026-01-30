@@ -104,3 +104,5 @@ export function Checkbox({
     </label>
   )
 }
+
+export { checkboxVariants, checkboxBoxVariants }

@@ -149,3 +149,5 @@ export function IconButton<E extends ElementType = 'button'>({
     </Component>
   )
 }
+
+export { iconButtonVariants }

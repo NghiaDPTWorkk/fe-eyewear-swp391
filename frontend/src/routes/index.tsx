@@ -56,10 +56,6 @@ const SaleStaffPreOrdersPage = lazy(() =>
   import('@/pages/sales/SaleStaffPreOrdersPage').then((m) => ({ default: m.default }))
 )
 
-const SaleStaffLiveMapPage = lazy(() =>
-  import('@/pages/sales/SaleStaffLiveMapPage').then((m) => ({ default: m.default }))
-)
-
 const SaleStaffReturnsPage = lazy(() =>
   import('@/pages/sales/SaleStaffReturnsPage').then((m) => ({ default: m.default }))
 )
@@ -105,10 +101,6 @@ const OperationAllOrdersPage = lazy(() =>
   import('@/pages/operations/OperationAllOrdersPage').then((m) => ({ default: m.default }))
 )
 
-const OperationDeliveryPage = lazy(() =>
-  import('@/pages/operations/OperationDeliveryPage').then((m) => ({ default: m.default }))
-)
-
 const OperationPackingPage = lazy(() =>
   import('@/pages/operations/OperationPackingPage').then((m) => ({ default: m.default }))
 )
@@ -119,6 +111,14 @@ const OrderDetailPage = lazy(() =>
 
 const OperationOrderPackingProcess = lazy(() =>
   import('@/pages/operations/OperationOrderPackingProcess').then((m) => ({ default: m.default }))
+)
+
+const StaffSettingPage = lazy(() =>
+  import('@/pages/StaffSettingPage').then((m) => ({ default: m.default }))
+)
+
+const StaffSupportPage = lazy(() =>
+  import('@/pages/StaffSupportPage').then((m) => ({ default: m.default }))
 )
 
 export const router = createBrowserRouter([
@@ -219,18 +219,6 @@ export const router = createBrowserRouter([
       {
         path: 'lab-status',
         element: <SaleStaffLabStatusPage />
-      },
-      {
-        path: 'live-map/:trackingId',
-        element: <SaleStaffLiveMapPage />
-      },
-      {
-        path: 'settings',
-        element: <SaleStaffSettingsPage />
-      },
-      {
-        path: 'support',
-        element: <SaleStaffSupportPage />
       }
     ]
   },
@@ -275,16 +263,12 @@ export const router = createBrowserRouter([
         element: <OperationOrderPackingProcess />
       },
       {
-        path: 'delivery-orders',
-        element: <OperationDeliveryPage />
-      },
-      {
         path: 'settings',
-        element: <SaleStaffSettingsPage />
+        element: <StaffSettingPage />
       },
       {
         path: 'support',
-        element: <SaleStaffSupportPage />
+        element: <StaffSupportPage />
       }
     ]
   },

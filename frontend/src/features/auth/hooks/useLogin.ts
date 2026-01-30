@@ -14,8 +14,8 @@ export const useLogin = (role: 'customer' | 'staff' = 'customer') => {
     },
     onSuccess: (response: LoginResponse) => {
       // httpClient already unwraps res.data, so response is the actual data
-      const token = response.accessToken
-      localStorage.setItem('accessToken', token)
+      const { accessToken } = response as any
+      localStorage.setItem('accessToken', accessToken)
 
       if (role === 'staff') {
         navigate('/admin/dashboard')
@@ -23,7 +23,7 @@ export const useLogin = (role: 'customer' | 'staff' = 'customer') => {
         navigate('/')
       }
     },
-    onError: (error: unknown) => {
+    onError: (error: any) => {
       console.error('Login failed', error)
     }
   })

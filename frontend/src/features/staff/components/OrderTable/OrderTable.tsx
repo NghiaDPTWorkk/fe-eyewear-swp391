@@ -6,32 +6,23 @@ import OrderList from './OrderList'
 import { Button } from '@/components'
 import { IoTimeOutline, IoChevronForward, IoEyeOutline } from 'react-icons/io5'
 import { PATHS } from '@/routes/paths'
+import type { OrderTableRow } from '@/shared/types'
 
-export interface Order {
-  id: string
-  orderType: string
-  customer: string
-  item: string
-  waitingFor?: string
-  currentStatus: string
-  timeElapsed: string
-  statusColor: string
-  isNextActive: boolean
-}
+export type Order = OrderTableRow
 
-// Định nghĩa cấu trúc 1 cột
 export interface Column<T> {
-  header: string | ReactNode // Tiêu đề cột (Text hoặc Component)
-  render: (item: T) => ReactNode // Hàm hiển thị dữ liệu cho từng dòng
+  header: string | ReactNode
+  render: (item: T) => ReactNode
   className?: string // Class cho td á
   headerClassName?: string // Class cho th
 }
 
 interface OrderTableProps {
-  columns?: Column<Order>[] // Mảng các cột
+  columns?: Column<Order>[] // Mảng các cột | thuộc tính
   hiddenColumns?: string[] // Mảng các header cột muốn ẩn
-  filterType?: string // Loại đơn muốn lọc
-  role?: 'sales' | 'operation' // Phân biệt vai trò để hiển thị UI khác nhau
+  filterType?: string
+  role?: 'sales' | 'operation'
+  orders?: Order[]
 }
 
 const getOrderTypeStyles = (type: string, role: string) => {
@@ -47,9 +38,8 @@ const getOrderTypeStyles = (type: string, role: string) => {
         return 'bg-neutral-50 text-neutral-600'
     }
   } else {
-    // Original styles for operations from reference
     switch (type) {
-      case 'Đơn Thường':
+      case 'Normal':
         return 'bg-emerald-50 text-emerald-600'
       case 'Pre-order':
         return 'bg-amber-50 text-amber-600'
@@ -65,7 +55,8 @@ export default function OrderTable({
   columns,
   hiddenColumns = [],
   filterType,
-  role = 'operation'
+  role = 'operation',
+  orders = []
 }: OrderTableProps) {
   const isSales = role === 'sales'
   const navigate = useNavigate()
@@ -74,63 +65,8 @@ export default function OrderTable({
     navigate(PATHS.OPERATIONSTAFF.ORDER_DETAIL(orderId))
   }
 
-  const orders: Order[] = [
-    {
-      id: 'ORD-001',
-      orderType: isSales ? 'Normal' : 'Đơn Thường',
-      customer: 'Nguyễn Văn A',
-      item: 'SKU-001',
-      waitingFor: isSales ? 'Lens Chemi 5.5' : 'Tròng Chemi 5.5',
-      currentStatus: 'Processing',
-      timeElapsed: '2h 15m',
-      statusColor: 'bg-blue-100 text-blue-600',
-      isNextActive: true
-    },
-    {
-      id: 'ORD-002',
-      orderType: 'Pre-order',
-      customer: 'Trần Thị B',
-      item: 'SKU-001',
-      waitingFor: isSales ? 'Titan Frames' : 'Gọng Titan',
-      currentStatus: isSales ? 'Lens Edging' : 'LENS EDGING & MOUNTING',
-      timeElapsed: '3h 45m',
-      statusColor: 'bg-purple-100 text-purple-600',
-      isNextActive: false
-    },
-    {
-      id: 'PRE-003',
-      orderType: 'Pre-order',
-      customer: 'Lê Văn C',
-      item: 'SKU-001',
-      currentStatus: isSales ? 'Awaiting Stock' : 'AWAITING STOCK',
-      timeElapsed: '5d 2h',
-      statusColor: 'bg-orange-100 text-orange-600',
-      isNextActive: true
-    },
-    {
-      id: 'ORD-004',
-      orderType: 'Prescription',
-      customer: 'Phạm Thị D',
-      item: 'SKU-001',
-      currentStatus: isSales ? 'Pending QC' : 'PENDING QC',
-      timeElapsed: '45m',
-      statusColor: 'bg-gray-100 text-gray-600',
-      isNextActive: true
-    },
-    {
-      id: 'ORD-005',
-      orderType: isSales ? 'Normal' : 'Đơn Thường',
-      customer: 'Hoàng Văn E',
-      item: 'SKU-001',
-      currentStatus: isSales ? 'Packed' : 'PACKED',
-      timeElapsed: '1h 30m',
-      statusColor: 'bg-blue-100 text-blue-600',
-      isNextActive: true
-    }
-  ]
-
   const filteredOrders = filterType
-    ? orders.filter((order) => order.orderType === filterType)
+    ? orders.filter((order) => order.orderType?.toLowerCase() === filterType.toLowerCase())
     : orders
 
   const defaultColumns: Column<Order>[] = [

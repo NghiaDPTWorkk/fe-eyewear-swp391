@@ -16,14 +16,31 @@ import {
 } from 'react-icons/io5'
 
 // --- Constants ---
-const METRICS = [
+interface Metric {
+  title: string
+  value: string
+  subValue?: string
+  icon: ReactNode
+  trend?: {
+    label: string
+    value: number
+    isPositive: boolean
+  }
+  progress?: {
+    value: number
+    colorClass: string
+  }
+  colorScheme: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info'
+}
+
+const METRICS: Metric[] = [
   {
     title: 'Pending Orders',
     value: '24',
     icon: <IoClipboardOutline className="text-2xl" />,
     trend: { label: 'from yesterday', value: 12, isPositive: true },
     progress: { value: 45, colorClass: 'bg-orange-500' },
-    colorScheme: 'warning' as const
+    colorScheme: 'warning'
   },
   {
     title: 'Daily Revenue',
@@ -31,7 +48,7 @@ const METRICS = [
     icon: <IoWalletOutline className="text-2xl" />,
     trend: { label: 'vs last week', value: 8.2, isPositive: true },
     progress: { value: 70, colorClass: 'bg-emerald-500' },
-    colorScheme: 'success' as const
+    colorScheme: 'success'
   },
   {
     title: 'Open Tickets',
@@ -39,16 +56,15 @@ const METRICS = [
     icon: <IoTicketOutline className="text-2xl" />,
     trend: { label: 'new today', value: -2, isPositive: false },
     progress: { value: 25, colorClass: 'bg-red-500' },
-    colorScheme: 'danger' as const
+    colorScheme: 'danger'
   },
   {
     title: 'Monthly Target',
     value: '85%',
     subValue: '$102k achieved',
     icon: <IoFlagOutline className="text-2xl" />,
-    trend: null,
     progress: { value: 85, colorClass: 'bg-blue-600' },
-    colorScheme: 'primary' as const
+    colorScheme: 'primary'
   }
 ]
 
@@ -78,7 +94,7 @@ function DashboardMetrics() {
           label={metric.title}
           value={metric.value}
           subValue={metric.subValue}
-          trend={metric.trend as any}
+          trend={metric.trend}
           icon={metric.icon}
           colorScheme={metric.colorScheme}
           progress={metric.progress}
@@ -93,7 +109,7 @@ function SalesChart() {
     <Card className="lg:col-span-2 p-6 flex flex-col">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h3 className="text-lg font-bold text-gray-900">Sales this year</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Sales this year</h3>
           <div className="flex gap-4 mt-2 text-sm text-gray-600">
             <LegendItem color="bg-emerald-400" label="Frames" />
             <LegendItem color="bg-blue-500" label="Lenses" />
@@ -153,7 +169,7 @@ function SalesChart() {
         {/* Floating Tooltip */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 bg-white p-3 rounded-xl shadow-lg border border-gray-100 animate-in fade-in zoom-in duration-500">
           <p className="text-xs text-gray-500">Average sale value</p>
-          <p className="text-xl font-bold text-emerald-500">$339,091</p>
+          <p className="text-xl font-semibold text-emerald-500">$339,091</p>
         </div>
 
         {/* X Axis */}
@@ -173,14 +189,14 @@ function OrderStatusChart() {
   return (
     <Card className="p-6 flex flex-col">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-lg font-bold text-gray-900">Order Status</h3>
+        <h3 className="text-lg font-semibold text-gray-900">Order Status</h3>
         <span className="text-gray-400 cursor-pointer">•••</span>
       </div>
 
       <div className="relative flex-1 min-h-62.5 flex items-center justify-center">
         <div className="w-56 h-56 rounded-full order-status-gradient">
           <div className="absolute inset-0 m-auto w-40 h-40 bg-white rounded-full flex flex-col items-center justify-center shadow-inner">
-            <span className="text-4xl font-bold text-gray-900">1,240</span>
+            <span className="text-4xl font-semibold text-gray-900">1,240</span>
             <span className="text-sm text-gray-500 font-medium">Total Orders</span>
           </div>
         </div>
@@ -263,7 +279,7 @@ function UrgentOrdersTable({
     <Card className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-lg font-bold text-gray-900">Urgent Orders</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Urgent Orders</h3>
           <p className="text-sm text-gray-500">Orders requiring immediate attention.</p>
         </div>
         <div className="flex gap-3">
@@ -326,8 +342,6 @@ function UrgentOrdersTable({
   )
 }
 
-// --- Main Page Component ---
-
 export default function SaleStaffDashboardPage() {
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
@@ -374,9 +388,9 @@ export default function SaleStaffDashboardPage() {
     <Container>
       <div className="mb-8">
         <div className="flex items-center gap-2 text-sm mb-2">
-          <span className="text-primary-500 font-bold">Dashboard</span>
+          <span className="text-primary-500 font-semibold">Dashboard</span>
         </div>
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Sales Overview</h1>
+        <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">Sales Overview</h1>
         <p className="text-gray-500 mt-1">
           Overview of store performance and daily sales operations.
         </p>

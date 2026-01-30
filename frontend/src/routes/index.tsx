@@ -56,6 +56,10 @@ const SaleStaffPreOrdersPage = lazy(() =>
   import('@/pages/sales').then((m) => ({ default: m.SaleStaffPreOrdersPage }))
 )
 
+const SaleStaffLiveMapPage = lazy(() =>
+  import('@/pages/sales/SaleStaffLiveMapPage').then((m) => ({ default: m.default }))
+)
+
 const SaleStaffReturnsPage = lazy(() =>
   import('@/pages/sales').then((m) => ({ default: m.SaleStaffReturnsPage }))
 )
@@ -101,6 +105,10 @@ const OperationAllOrdersPage = lazy(() =>
   import('@/pages/operations/OperationAllOrdersPage').then((m) => ({ default: m.default }))
 )
 
+const OperationDeliveryPage = lazy(() =>
+  import('@/pages/operations/OperationDeliveryPage').then((m) => ({ default: m.default }))
+)
+
 const OperationPackingPage = lazy(() =>
   import('@/pages/operations/OperationPackingPage').then((m) => ({ default: m.default }))
 )
@@ -111,14 +119,6 @@ const OrderDetailPage = lazy(() =>
 
 const OperationOrderPackingProcess = lazy(() =>
   import('@/pages/operations/OperationOrderPackingProcess').then((m) => ({ default: m.default }))
-)
-
-const StaffSettingPage = lazy(() =>
-  import('@/pages/StaffSettingPage').then((m) => ({ default: m.default }))
-)
-
-const StaffSupportPage = lazy(() =>
-  import('@/pages/StaffSupportPage').then((m) => ({ default: m.default }))
 )
 
 export const router = createBrowserRouter([
@@ -221,6 +221,10 @@ export const router = createBrowserRouter([
         element: <SaleStaffLabStatusPage />
       },
       {
+        path: 'live-map/:trackingId',
+        element: <SaleStaffLiveMapPage />
+      },
+      {
         path: 'settings',
         element: <SaleStaffSettingsPage />
       },
@@ -271,12 +275,16 @@ export const router = createBrowserRouter([
         element: <OperationOrderPackingProcess />
       },
       {
+        path: 'delivery-orders',
+        element: <OperationDeliveryPage />
+      },
+      {
         path: 'settings',
-        element: <StaffSettingPage />
+        element: <SaleStaffSettingsPage />
       },
       {
         path: 'support',
-        element: <StaffSupportPage />
+        element: <SaleStaffSupportPage />
       }
     ]
   },

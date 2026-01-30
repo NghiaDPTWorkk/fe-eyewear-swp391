@@ -1,117 +1,111 @@
 import { Container, Card, Button } from '@/components'
+import { Link } from 'react-router-dom'
 import {
-  IoSearchOutline,
-  IoNotificationsOutline,
   IoWarningOutline,
   IoSaveOutline,
   IoEyeOutline,
-  IoStorefrontOutline,
-  IoCalendarOutline,
-  IoTimeOutline,
+  IoLockClosedOutline,
+  IoTrashOutline,
   IoGlobeOutline,
-  IoTrashOutline
+  IoTimeOutline,
+  IoCalendarOutline,
+  IoStorefrontOutline
 } from 'react-icons/io5'
+import { useState } from 'react'
 
 export default function SaleStaffSettingsPage() {
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false)
+  const [showNewPassword, setShowNewPassword] = useState(false)
+
   return (
     <Container>
-      {/* Search Header */}
-      <div className="flex justify-between items-center mb-6">
-        <div className="relative w-full max-w-lg">
-          <IoSearchOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search orders, customers, products..."
-            className="w-full pl-10 pr-4 py-2 bg-white border border-neutral-200 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary-500/20"
-          />
-        </div>
-        <div className="flex items-center gap-4">
-          <IoNotificationsOutline size={20} className="text-neutral-400 cursor-pointer" />
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold">
-              AM
-            </div>
-            <div className="text-left">
-              <div className="text-xs font-bold text-neutral-900">Anna Morgan</div>
-              <div className="text-[10px] text-neutral-400 font-medium">Operations Manager</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-        <p className="text-sm text-neutral-500">Manage your account and preferences</p>
+        <div className="flex items-center gap-2 text-sm mb-2 font-medium">
+          <Link
+            to="/salestaff/dashboard"
+            className="text-neutral-400 hover:text-primary-500 transition-colors"
+          >
+            Home
+          </Link>
+          <span className="text-neutral-300">/</span>
+          <span className="text-primary-500 font-semibold">Settings</span>
+        </div>
+        <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">Settings</h1>
+        <p className="text-neutral-500 mt-1 font-medium">Manage your account and preferences</p>
       </div>
 
-      {/* Alert Banner */}
-      <div className="mb-6 p-4 bg-amber-50 border border-amber-100 rounded-xl flex gap-3">
-        <IoWarningOutline className="text-amber-500 mt-0.5" size={20} />
-        <div>
-          <h4 className="text-sm font-bold text-amber-800">Profile Update Approval Required</h4>
-          <p className="text-xs text-amber-700/80 mt-1 leading-relaxed">
-            All profile changes require <span className="font-bold">Admin or Manager approval</span>{' '}
-            before they take effect. Your updates will be submitted for review and you will be
-            notified once approved.
+      <div className="mb-8 p-5 bg-amber-50/50 border border-amber-100 rounded-2xl flex gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
+        <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+          <IoWarningOutline className="text-amber-600" size={20} />
+        </div>
+        <div className="flex-1">
+          <h4 className="text-sm font-semibold text-amber-900">Profile Update Approval Required</h4>
+          <p className="text-sm text-amber-800/70 mt-1 leading-relaxed">
+            All profile changes require{' '}
+            <span className="font-semibold text-amber-900">Admin or Manager approval</span> before
+            they take effect. Your updates will be submitted for review and you will be notified
+            once approved.
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-12 gap-6">
-        {/* Left Column - Forms */}
-        <div className="col-span-12 lg:col-span-8 space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Left Main Column */}
+        <div className="lg:col-span-8 space-y-8">
           {/* Profile Information */}
-          <Card className="p-6 border border-neutral-100 shadow-sm">
-            <h3 className="text-lg font-bold text-neutral-800 mb-6">Profile Information</h3>
-            <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
+          <Card className="p-8 border-none shadow-sm shadow-neutral-200/50">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-xl font-semibold text-neutral-900">Profile Information</h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest pl-1">
                   Full Name
                 </label>
                 <input
                   type="text"
                   defaultValue="Staff Name"
-                  className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium focus:outline-none focus:ring-1 focus:ring-primary-500/20"
+                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium text-neutral-900 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 focus:bg-white transition-all"
                 />
               </div>
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
+              <div className="space-y-2">
+                <label className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest pl-1">
                   Role
                 </label>
                 <input
                   type="text"
                   defaultValue="Operations Staff"
                   readOnly
-                  className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium text-neutral-400 cursor-not-allowed"
+                  className="w-full px-4 py-3 bg-neutral-100 border border-neutral-200 rounded-xl text-sm font-medium text-neutral-400 cursor-not-allowed"
                 />
               </div>
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
+              <div className="space-y-2">
+                <label className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest pl-1">
                   Email
                 </label>
                 <input
                   type="email"
                   defaultValue="staff@opspanel.com"
-                  className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium focus:outline-none focus:ring-1 focus:ring-primary-500/20"
+                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium text-neutral-900 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 focus:bg-white transition-all"
                 />
               </div>
-              <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
+              <div className="space-y-2">
+                <label className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest pl-1">
                   Phone
                 </label>
                 <input
                   type="text"
                   defaultValue="+1 (555) 123-4567"
-                  className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium focus:outline-none focus:ring-1 focus:ring-primary-500/20"
+                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium text-neutral-900 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 focus:bg-white transition-all"
                 />
               </div>
             </div>
-            <div className="mt-6 flex justify-end">
+            <div className="mt-8 flex justify-end">
               <Button
                 variant="solid"
                 colorScheme="primary"
-                leftIcon={<IoSaveOutline />}
-                className="rounded-xl font-bold px-6"
+                leftIcon={<IoSaveOutline size={18} />}
+                className="h-11 rounded-xl font-semibold px-6 bg-primary-500 hover:bg-primary-600 shadow-md shadow-primary-100 transition-all active:scale-95 border-none"
               >
                 Submit for Approval
               </Button>
@@ -119,85 +113,147 @@ export default function SaleStaffSettingsPage() {
           </Card>
 
           {/* Change Password */}
-          <Card className="p-6 border border-neutral-100 shadow-sm">
-            <h3 className="text-lg font-bold text-neutral-800 mb-6">Change Password</h3>
+          <Card className="p-8 border-none shadow-sm shadow-neutral-200/50">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center">
+                <IoLockClosedOutline className="text-neutral-500" size={20} />
+              </div>
+              <h3 className="text-xl font-semibold text-neutral-900">Change Password</h3>
+            </div>
             <div className="space-y-6">
-              <div className="p-4 bg-blue-50/50 rounded-xl border border-blue-50">
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
-                    Current Password
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="password"
-                      placeholder="Enter current password"
-                      className="w-full px-4 py-2.5 bg-white border border-neutral-100 rounded-xl text-sm font-medium focus:outline-none focus:ring-1 focus:ring-primary-500/20"
-                    />
-                    <IoEyeOutline className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 cursor-pointer" />
-                  </div>
+              <div className="space-y-2">
+                <label className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest pl-1">
+                  Current Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showCurrentPassword ? 'text' : 'password'}
+                    placeholder="Enter current password"
+                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium text-neutral-900 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 focus:bg-white transition-all"
+                  />
+                  <button
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-primary-600 transition-colors"
+                  >
+                    <IoEyeOutline size={18} />
+                  </button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest pl-1">
                     New Password
                   </label>
                   <div className="relative">
                     <input
-                      type="password"
+                      type={showNewPassword ? 'text' : 'password'}
                       placeholder="Enter new password"
-                      className="w-full px-4 py-2.5 bg-white border border-neutral-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-1 focus:ring-primary-500/20"
+                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium text-neutral-900 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 focus:bg-white transition-all"
                     />
-                    <IoEyeOutline className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 cursor-pointer" />
+                    <button
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-primary-600 transition-colors"
+                    >
+                      <IoEyeOutline size={18} />
+                    </button>
                   </div>
                 </div>
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
+                <div className="space-y-2">
+                  <label className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest pl-1">
                     Confirm New Password
                   </label>
                   <input
                     type="password"
                     placeholder="Confirm new password"
-                    className="w-full px-4 py-2.5 bg-white border border-neutral-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-1 focus:ring-primary-500/20"
+                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium text-neutral-900 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 focus:bg-white transition-all"
                   />
                 </div>
               </div>
 
-              <div className="p-3 bg-blue-50/30 rounded-lg text-[10px] font-medium text-blue-600 border border-blue-50">
+              <div className="p-4 bg-primary-50/50 rounded-xl text-xs font-medium text-primary-700 border border-primary-100 leading-relaxed">
                 Password must be at least 8 characters and include uppercase, lowercase, number, and
                 special character.
               </div>
             </div>
-            <div className="mt-6 flex justify-end">
-              <Button variant="solid" colorScheme="primary" className="rounded-xl font-bold px-6">
+            <div className="mt-8 flex justify-end">
+              <Button
+                variant="solid"
+                colorScheme="primary"
+                className="h-11 rounded-xl font-semibold px-8 bg-primary-500 hover:bg-primary-600 shadow-md shadow-primary-100 transition-all active:scale-95 border-none"
+              >
                 Update Password
               </Button>
             </div>
           </Card>
 
           {/* Notification Preferences */}
-          <Card className="p-6 border border-neutral-100 shadow-sm">
-            <h3 className="text-lg font-bold text-neutral-800 mb-6">Notification Preferences</h3>
-            <div className="space-y-4">
-              <h4 className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-4">
-                Email Notifications
-              </h4>
-              {['New Order Received', 'Return Request Submitted', 'Priority Order Alert'].map(
-                (pref) => (
-                  <div
-                    key={pref}
-                    className="flex justify-between items-center p-4 bg-neutral-50/50 rounded-xl border border-neutral-50"
-                  >
-                    <span className="text-sm font-bold text-neutral-700">{pref}</span>
-                    <input
-                      type="checkbox"
-                      defaultChecked
-                      className="w-4 h-4 rounded border-neutral-200 text-primary-600 focus:ring-primary-500"
-                    />
-                  </div>
-                )
-              )}
+          <Card className="p-8 border-none shadow-sm shadow-neutral-200/50">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-xl font-semibold text-neutral-900">Notification Preferences</h3>
+            </div>
+
+            <div className="space-y-8">
+              <div>
+                <h4 className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest mb-4 pl-1">
+                  Email Notifications
+                </h4>
+                <div className="space-y-3">
+                  {['New Order Received', 'Return Request Submitted', 'Priority Order Alert'].map(
+                    (pref) => (
+                      <label
+                        key={pref}
+                        className="flex justify-between items-center p-4 bg-neutral-50/50 rounded-xl border border-neutral-100 hover:border-primary-200 hover:bg-primary-50/20 transition-all cursor-pointer group"
+                      >
+                        <span className="text-sm font-semibold text-neutral-700 group-hover:text-neutral-900">
+                          {pref}
+                        </span>
+                        <input
+                          type="checkbox"
+                          defaultChecked
+                          className="w-5 h-5 rounded-lg border-neutral-300 text-primary-600 focus:ring-primary-500 transition-all cursor-pointer"
+                        />
+                      </label>
+                    )
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest mb-4 pl-1">
+                  Push Notifications
+                </h4>
+                <div className="space-y-3">
+                  {['New Order Received', 'Return Request Submitted', 'Priority Order Alert'].map(
+                    (pref, i) => (
+                      <label
+                        key={pref}
+                        className="flex justify-between items-center p-4 bg-neutral-50/50 rounded-xl border border-neutral-100 hover:border-primary-200 hover:bg-primary-50/20 transition-all cursor-pointer group"
+                      >
+                        <span className="text-sm font-semibold text-neutral-700 group-hover:text-neutral-900">
+                          {pref}
+                        </span>
+                        <input
+                          type="checkbox"
+                          defaultChecked={i !== 0}
+                          className="w-5 h-5 rounded-lg border-neutral-300 text-primary-600 focus:ring-primary-500 transition-all cursor-pointer"
+                        />
+                      </label>
+                    )
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 flex justify-end">
+              <Button
+                variant="solid"
+                colorScheme="primary"
+                leftIcon={<IoSaveOutline size={18} />}
+                className="h-11 rounded-xl font-semibold px-8 bg-primary-500 hover:bg-primary-600 shadow-md shadow-primary-100 transition-all active:scale-95 border-none"
+              >
+                Save Preferences
+              </Button>
             </div>
           </Card>
         </div>
@@ -291,7 +347,7 @@ export default function SaleStaffSettingsPage() {
             <h3 className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest mb-8">
               System
             </h3>
-            <div className="space-y-5">
+            <div className="space-y-6">
               <div className="space-y-2">
                 <label className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest pl-1">
                   Language

@@ -1,18 +1,12 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Container, MetricCard } from '@/components'
 import { OrderTable } from '@/components/staff'
-import { Pagination } from '@/shared/components/ui/pagination'
-import { useGetOrderWithPagination } from '@/shared/hooks/orders/useGetOrderWithPagination'
 import {
   IoClipboardOutline,
   IoFlagOutline,
   IoTicketOutline,
   IoWalletOutline
 } from 'react-icons/io5'
-// import type { Product } from '@/shared/types'
-// import {  } from '@/shared/types'
-
 const METRICS = [
   {
     title: 'Pending Orders',
@@ -69,24 +63,6 @@ function DashboardMetrics() {
 }
 
 export default function OperationDashboardPage() {
-  const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 5
-
-  const { orders, total, totalPages } = useGetOrderWithPagination(currentPage, itemsPerPage)
-
-  // Mapping Backend Order to UI OrderTableRow
-  const mappedOrders = orders.map((order: any) => ({
-    id: order._id || order.id,
-    orderType: order.type,
-    customer: order.customerInfo?.fullName || 'Khách vãng lai',
-    item: `Order #${(order._id || order.id)?.slice(-6) || '...'}`,
-    waitingFor: '-',
-    currentStatus: order.status,
-    timeElapsed: 'Just now',
-    statusColor: 'bg-blue-100 text-blue-600',
-    isNextActive: true
-  }))
-
   return (
     <Container>
       <div className="mb-8">
@@ -107,17 +83,7 @@ export default function OperationDashboardPage() {
         </div>
       </div>
 
-      <OrderTable hiddenColumns={['WAITING FOR']} role="operation" orders={mappedOrders} />
-
-      <div className="mt-6">
-        <Pagination
-          currentPage={currentPage}
-          totalItems={total}
-          itemsPerPage={itemsPerPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
-        />
-      </div>
+      <OrderTable hiddenColumns={['WAITING FOR']} role="operation" />
     </Container>
   )
 }

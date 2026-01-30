@@ -1,10 +1,5 @@
-import React from 'react'
 import StaffSupportPage from '../StaffSupportPage'
 
 export default function OperationSupportPage() {
-  return (
-    <div>
-      <StaffSupportPage />
-    </div>
-  )
+  return <StaffSupportPage homeUrl="/operationstaff/dashboard" />
 }

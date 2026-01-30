@@ -53,7 +53,7 @@ const SaleStaffPrescriptionPage = lazy(() =>
 )
 
 const SaleStaffPreOrdersPage = lazy(() =>
-  import('@/pages/sales/SaleStaffPreOrdersPage').then((m) => ({ default: m.default }))
+  import('@/pages/sales').then((m) => ({ default: m.SaleStaffPreOrdersPage }))
 )
 
 const SaleStaffLiveMapPage = lazy(() =>

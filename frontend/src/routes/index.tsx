@@ -1,9 +1,19 @@
 import { lazy } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { LazyPage } from '@/pages/LazyPage'
-import { RegisterPage } from '@/pages/auth/customer/RegisterPage'
-import { ProductDetailPage, CartPage } from '@/pages/customer'
-/* eslint-disable max-lines */
+import OperationCompleteOrdersPage from '@/pages/operations/OperationCompleteOrdersPage'
+import { OperationSettingPage, OperationSupportPage } from '@/pages/operations'
+
+const RegisterPage = lazy(() =>
+  import('@/pages/auth/customer/RegisterPage').then((m) => ({ default: m.RegisterPage }))
+)
+const ProductDetailPage = lazy(() =>
+  import('@/pages/customer/ProductDetailPage').then((m) => ({ default: m.ProductDetailPage }))
+)
+const CartPage = lazy(() =>
+  import('@/pages/customer/CartPage').then((m) => ({ default: m.CartPage }))
+)
+
 const LoginPage = lazy(() =>
   import('@/pages/auth/customer/CustomerLoginPage').then((m) => ({ default: m.CustomerLoginPage }))
 )
@@ -27,110 +37,53 @@ const NotFoundPage = lazy(() =>
 const CustomerProductPage = lazy(() =>
   import('@/pages/customer/CustomerProductPage').then((m) => ({ default: m.CustomerProductPage }))
 )
-const SaleStaffLayout = lazy(() =>
-  import('@/components/layout/staff/salestaff/SaleStaffLayout').then((m) => ({
-    default: m.default
-  }))
+const SaleStaffLayout = lazy(() => import('@/components/layout/staff/salestaff/SaleStaffLayout'))
+
+const SaleStaffDashboardPage = lazy(() => import('@/pages/sales/SaleStaffDashboardPage'))
+
+const SaleStaffOrderPage = lazy(() => import('@/pages/sales/SaleStaffOrderPage'))
+
+const SaleStaffCustomerPage = lazy(() => import('@/pages/sales/SaleStaffCustomerPage'))
+
+const SaleStaffLabStatusPage = lazy(() => import('@/pages/sales/SaleStaffLabStatusPage'))
+
+const SaleStaffPrescriptionPage = lazy(() => import('@/pages/sales/SaleStaffPrescriptionPage'))
+
+const SaleStaffPreOrdersPage = lazy(() => import('@/pages/sales/SaleStaffPreOrdersPage'))
+
+const SaleStaffLiveMapPage = lazy(() => import('@/pages/sales/SaleStaffLiveMapPage'))
+
+const SaleStaffReturnsPage = lazy(() => import('@/pages/sales/SaleStaffReturnsPage'))
+
+const SaleStaffSettingsPage = lazy(() => import('@/pages/sales/SaleStaffSettingsPage'))
+
+const SaleStaffSupportPage = lazy(() => import('@/pages/sales/SaleStaffSupportPage'))
+const SaleStaffRxVerificationPage = lazy(() => import('@/pages/sales/SaleStaffRxVerificationPage'))
+
+const RegularOrderDetailPage = lazy(() => import('@/pages/sales/RegularOrderDetailPage'))
+
+const PreOrderDetailPage = lazy(() => import('@/pages/sales/PreOrderDetailPage'))
+
+const OperationLayout = lazy(() => import('@/pages/operations/OperationLayout'))
+
+const OperationDashboardPage = lazy(() => import('@/pages/operations/OperationDashboardPage'))
+
+const OperationPrescriptionPage = lazy(() => import('@/pages/operations/OperationPrescriptionPage'))
+
+const OperationPreOrdersPage = lazy(() => import('@/pages/operations/OperationPreOrdersPage'))
+
+const OperationAllOrdersPage = lazy(() => import('@/pages/operations/OperationAllOrdersPage'))
+
+// const OperationDeliveryPage = lazy(() => import('@/pages/operations/OperationDeliveryPage'))
+
+const OperationPackingPage = lazy(() => import('@/pages/operations/OperationPackingPage'))
+
+const OrderDetailPage = lazy(() => import('@/pages/operations/OperationOrderDetailPage'))
+
+const OperationOrderPackingProcess = lazy(
+  () => import('@/pages/operations/OperationOrderPackingProcess')
 )
 
-const SaleStaffDashboardPage = lazy(() =>
-  import('@/pages/sales/SaleStaffDashboardPage').then((m) => ({ default: m.default }))
-)
-
-const SaleStaffOrderPage = lazy(() =>
-  import('@/pages/sales/SaleStaffOrderPage').then((m) => ({ default: m.default }))
-)
-
-const SaleStaffCustomerPage = lazy(() =>
-  import('@/pages/sales/SaleStaffCustomerPage').then((m) => ({ default: m.default }))
-)
-
-const SaleStaffLabStatusPage = lazy(() =>
-  import('@/pages/sales/SaleStaffLabStatusPage').then((m) => ({ default: m.default }))
-)
-
-const SaleStaffPrescriptionPage = lazy(() =>
-  import('@/pages/sales/SaleStaffPrescriptionPage').then((m) => ({ default: m.default }))
-)
-
-const SaleStaffPreOrdersPage = lazy(() =>
-  import('@/pages/sales/SaleStaffPreOrdersPage').then((m) => ({ default: m.default }))
-)
-
-const SaleStaffLiveMapPage = lazy(() =>
-  import('@/pages/sales/SaleStaffLiveMapPage').then((m) => ({ default: m.default }))
-)
-
-const SaleStaffReturnsPage = lazy(() =>
-  import('@/pages/sales/SaleStaffReturnsPage').then((m) => ({ default: m.default }))
-)
-
-const SaleStaffSettingsPage = lazy(() =>
-  import('@/pages/sales/SaleStaffSettingsPage').then((m) => ({ default: m.default }))
-)
-
-const SaleStaffSupportPage = lazy(() =>
-  import('@/pages/sales/SaleStaffSupportPage').then((m) => ({ default: m.default }))
-)
-const SaleStaffRxVerificationPage = lazy(() =>
-  import('@/pages/sales/SaleStaffRxVerificationPage').then((m) => ({ default: m.default }))
-)
-
-const RegularOrderDetailPage = lazy(() =>
-  import('@/pages/sales/RegularOrderDetailPage').then((m) => ({ default: m.default }))
-)
-
-const PreOrderDetailPage = lazy(() =>
-  import('@/pages/sales/PreOrderDetailPage').then((m) => ({ default: m.default }))
-)
-
-const OperationLayout = lazy(() =>
-  import('@/pages/operations/OperationLayout').then((m) => ({
-    default: m.default
-  }))
-)
-
-const OperationDashboardPage = lazy(() =>
-  import('@/pages/operations/OperationDashboardPage').then((m) => ({ default: m.default }))
-)
-
-const OperationPrescriptionPage = lazy(() =>
-  import('@/pages/operations/OperationPrescriptionPage').then((m) => ({ default: m.default }))
-)
-
-const OperationPreOrdersPage = lazy(() =>
-  import('@/pages/operations/OperationPreOrdersPage').then((m) => ({ default: m.default }))
-)
-
-const OperationAllOrdersPage = lazy(() =>
-  import('@/pages/operations/OperationAllOrdersPage').then((m) => ({ default: m.default }))
-)
-
-const OperationPackingPage = lazy(() =>
-  import('@/pages/operations/OperationPackingPage').then((m) => ({ default: m.default }))
-)
-
-const OrderDetailPage = lazy(() =>
-  import('@/pages/operations/OperationOrderDetailPage').then((m) => ({ default: m.default }))
-)
-
-const OperationOrderPackingProcess = lazy(() =>
-  import('@/pages/operations/OperationOrderPackingProcess').then((m) => ({ default: m.default }))
-)
-
-const OperationSettingPage = lazy(() =>
-  import('@/pages/operations/OperationSettingPage').then((m) => ({ default: m.default }))
-)
-
-const OperationSupportPage = lazy(() =>
-  import('@/pages/operations/OperationSupportPage').then((m) => ({ default: m.default }))
-)
-
-const OperationCompleteOrdersPage = lazy(() =>
-  import('@/pages/operations/OperationCompleteOrdersPage').then((m) => ({
-    default: m.default
-  }))
-)
 export const router = createBrowserRouter([
   {
     path: '/',

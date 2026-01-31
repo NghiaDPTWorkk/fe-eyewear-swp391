@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { PATHS } from '@/routes/paths'
 import { Container, Button, Card } from '@/components'
 import SaleStaffOrderTable from '@/features/sales/components/SaleStaffOrderTable/SaleStaffOrderTable'
-import SaleStaffOrderDetailsDrawer from '@/features/sales/components/SaleStaffOrderDetailsDrawer/SaleStaffOrderDetailsDrawer'
+import OrderDetailsDrawer from '@/features/sales/components/orders/OrderDetailsDrawer'
+import { useSalesStaffOrders } from '@/features/sales/hooks/useSalesStaffOrders'
 import {
   IoCloudDownloadOutline,
   IoAdd,
@@ -15,8 +16,15 @@ import {
 
 export default function SaleStaffPreOrdersPage() {
   const navigate = useNavigate()
+  const { orders, loading, fetchOrders } = useSalesStaffOrders()
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+
+  useEffect(() => {
+    fetchOrders()
+  }, [fetchOrders])
+
+  const pendingCount = orders.filter((o) => o.status === 'WAITING_ASSIGN').length
 
   const handleOpenDrawer = (id: string) => {
     setSelectedOrderId(id)
@@ -61,7 +69,9 @@ export default function SaleStaffPreOrdersPage() {
               <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
                 Pending Orders
               </p>
-              <h3 className="text-3xl font-semibold text-neutral-900 mt-2">142</h3>
+              <h3 className="text-3xl font-semibold text-neutral-900 mt-2">
+                {loading ? '...' : pendingCount}
+              </h3>
             </div>
             <div className="p-2 bg-amber-50 rounded-lg text-amber-500">
               <IoHourglassOutline size={20} />
@@ -129,14 +139,18 @@ export default function SaleStaffPreOrdersPage() {
       </div>
 
       <Card className="p-0 overflow-hidden border border-neutral-200 shadow-sm">
-        <SaleStaffOrderTable onRowClick={handleOpenDrawer} filterType="Pre-order" />
+        <SaleStaffOrderTable
+          orders={orders}
+          loading={loading}
+          onRowClick={handleOpenDrawer}
+          filterType="Pre-order"
+        />
       </Card>
 
-      <SaleStaffOrderDetailsDrawer
+      <OrderDetailsDrawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
         orderId={selectedOrderId}
-        orderType="Pre-order"
         onViewFullDetails={handleViewFullDetails}
       />
     </Container>

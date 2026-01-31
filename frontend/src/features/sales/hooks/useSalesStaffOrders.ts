@@ -27,6 +27,7 @@ export const useSalesStaffOrders = () => {
           id: o._id,
           status: frontendStatus,
           isPrescription: o.type?.includes('MANUFACTURING') || false,
+          orderType: o.type,
           invoice: o.invoice || (o.invoiceId ? { id: o.invoiceId, status: 'UNKNOWN' } : undefined),
           customerName: o.customerName || o.invoice?.fullName || 'Customer'
         }

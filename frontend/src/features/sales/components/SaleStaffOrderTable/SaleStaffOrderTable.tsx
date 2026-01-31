@@ -36,7 +36,12 @@ export interface Column<T> {
   headerClassName?: string
 }
 
+import { useLayoutStore } from '@/store/layout.store'
+import type { Order as SharedOrder } from '../../types'
+
 interface SaleStaffOrderTableProps {
+  orders?: SharedOrder[]
+  loading?: boolean
   columns?: Column<Order>[]
   hiddenColumns?: string[]
   filterType?: string
@@ -45,11 +50,9 @@ interface SaleStaffOrderTableProps {
   onReviewRx?: (orderId: string) => void
 }
 
-import { useLayoutStore } from '@/store/layout.store'
-
-// ... existing imports
-
 export default function SaleStaffOrderTable({
+  orders: externalOrders,
+  loading,
   columns,
   hiddenColumns = [],
   filterType,
@@ -60,6 +63,35 @@ export default function SaleStaffOrderTable({
   const navigate = useNavigate()
   const { sidebarCollapsed } = useLayoutStore()
 
+  const orders: Order[] = (externalOrders || []).map((o) => {
+    let type: 'Regular' | 'Pre-order' | 'Prescription' = 'Regular'
+    if (o.isPrescription) type = 'Prescription'
+    else if (o.orderType?.includes('PREORDER') || o.orderType === 'PRE-ORDER') type = 'Pre-order'
+
+    return {
+      id: o.id.toString(),
+      orderType: type,
+      customer: o.customerName || 'Customer',
+      customerId: (o.invoiceId || o.id).toString(),
+      customerPhone: '',
+      item: o.productName || 'Product',
+      currentStatus: o.status,
+      timeElapsed: 'Active',
+      statusColor:
+        o.status === 'COMPLETED' ? 'bg-mint-100 text-mint-700' : 'bg-blue-100 text-blue-700',
+      isNextActive: true,
+      isApproved: o.status !== 'WAITING_ASSIGN'
+    }
+  })
+
+  if (loading) {
+    return (
+      <div className="p-20 flex flex-col items-center justify-center text-gray-400 bg-white">
+        <div className="w-10 h-10 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin mb-4" />
+        <p className="text-sm font-medium animate-pulse">Loading orders...</p>
+      </div>
+    )
+  }
   const handleViewOrder = (orderId: string) => {
     // ... logic
     const order = orders.find((o) => o.id === orderId)
@@ -74,76 +106,6 @@ export default function SaleStaffOrderTable({
       navigate(PATHS.SALESTAFF.REGULAR_DETAIL(orderId))
     }
   }
-
-  const orders: Order[] = [
-    // ... (keep orders as is, no changes needed here, just context)
-    {
-      id: 'ORD-001',
-      orderType: 'Prescription',
-      customer: 'Van A Nguyen',
-      customerId: 'c1',
-      customerPhone: '+1 (555) 012-3456',
-      item: 'SKU-001',
-      waitingFor: 'Chemi 5.5 Lens',
-      currentStatus: 'Processing',
-      timeElapsed: '2h 15m',
-      statusColor: 'bg-blue-100 text-blue-700',
-      isNextActive: true,
-      isApproved: false
-    },
-    {
-      id: 'ORD-002',
-      orderType: 'Pre-order',
-      customer: 'Thi B Tran',
-      customerId: 'c2',
-      customerPhone: '+1 (555) 012-3456',
-      item: 'SKU-001',
-      waitingFor: 'Titan Frame',
-      currentStatus: 'Lens Edging',
-      timeElapsed: '3h 45m',
-      statusColor: 'bg-purple-100 text-purple-700',
-      isNextActive: false,
-      isStockAvailable: true
-    },
-    {
-      id: 'PRE-003',
-      orderType: 'Pre-order',
-      customer: 'Van C Le',
-      customerId: 'c3',
-      customerPhone: '+1 (555) 012-3456',
-      item: 'SKU-001',
-      currentStatus: 'Awaiting Stock',
-      timeElapsed: '5d 2h',
-      statusColor: 'bg-orange-100 text-orange-700',
-      isNextActive: true,
-      isStockAvailable: false
-    },
-    {
-      id: 'ORD-004',
-      orderType: 'Prescription',
-      customer: 'Thi D Pham',
-      customerId: 'c1',
-      customerPhone: '+1 (555) 012-3456',
-      item: 'SKU-001',
-      currentStatus: 'Pending QC',
-      timeElapsed: '45m',
-      statusColor: 'bg-gray-100 text-gray-700',
-      isNextActive: true,
-      isApproved: true
-    },
-    {
-      id: 'ORD-005',
-      orderType: 'Regular',
-      customer: 'Van E Hoang',
-      customerId: 'c2',
-      customerPhone: '+1 (555) 012-3456',
-      item: 'SKU-001',
-      currentStatus: 'Packed',
-      timeElapsed: '1h 30m',
-      statusColor: 'bg-mint-100 text-mint-700',
-      isNextActive: true
-    }
-  ]
 
   const filteredOrders = filterType
     ? orders.filter((order) => order.orderType === filterType)
@@ -294,7 +256,6 @@ export default function SaleStaffOrderTable({
         return (
           <div className="flex justify-center items-center">
             <div className="flex items-center justify-center gap-0 w-[120px]">
-              {/* Slot 1: View Details (Fixed Width 40px) */}
               <div className="w-10 flex justify-center">
                 <IconButton
                   icon={<IoEyeOutline size={18} />}
@@ -334,7 +295,7 @@ export default function SaleStaffOrderTable({
                     }}
                   />
                 ) : (
-                  <div className="w-[32px]" /> // Placeholder to keep alignment
+                  <div className="w-[32px]" />
                 )}
               </div>
 

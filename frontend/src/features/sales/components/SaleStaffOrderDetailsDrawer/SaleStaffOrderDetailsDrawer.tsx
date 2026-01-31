@@ -137,11 +137,18 @@ export default function SaleStaffOrderDetailsDrawer({
                 <span className="inline-block px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-bold uppercase tracking-widest rounded-full border border-emerald-100 shadow-sm">
                   {orderData.status}
                 </span>
+                {orderData.isPrescription && isApproved && (
+                  <span className="inline-block ml-2 px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold uppercase tracking-widest rounded-full border border-blue-100 shadow-sm">
+                    Verified
+                  </span>
+                )}
               </div>
               <h2 className="text-2xl font-semibold text-[#0f172a] tracking-tight">
                 Order Details
               </h2>
-              <p className="text-slate-400 text-sm font-medium mt-1">{orderData.id}</p>
+              <p className="text-slate-400 text-sm font-medium mt-1">
+                {orderData.id} {isApproved && '• Rx Verified'}
+              </p>
             </div>
             <button
               onClick={onClose}

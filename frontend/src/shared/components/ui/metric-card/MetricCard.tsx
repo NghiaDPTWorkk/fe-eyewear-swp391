@@ -84,7 +84,7 @@ export function MetricCard({
         </div>
       )}
 
-      {!progress && label.includes('Target') && subValue && (
+      {!progress && label?.includes('Target') && subValue && (
         <div className="mt-3 w-full bg-gray-100 rounded-full h-1.5">
           <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: '85%' }}></div>
         </div>

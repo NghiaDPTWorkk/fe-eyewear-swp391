@@ -13,13 +13,19 @@ import { Input } from '@/shared/components/ui'
 import { HiMenuAlt2 } from 'react-icons/hi'
 import { useLayoutStore } from '@/store/layout.store'
 
-interface NavSearchProps {
+export interface NavSearchProps {
   className?: string
+  inputContainerClassName?: string
   placeholder?: string
   styleVariant?: 'default' | 'operation'
 }
 
-export function NavSearch({ className, placeholder, styleVariant = 'default' }: NavSearchProps) {
+export function NavSearch({
+  className,
+  inputContainerClassName,
+  placeholder,
+  styleVariant = 'default'
+}: NavSearchProps) {
   const { toggleSidebar } = useLayoutStore()
 
   const inputStyles =
@@ -38,7 +44,7 @@ export function NavSearch({ className, placeholder, styleVariant = 'default' }: 
         <HiMenuAlt2 className="text-2xl" />
       </button>
 
-      <div className="max-w-lg flex-1 lg:pl-6">
+      <div className={cn('max-w-lg flex-1 lg:pl-6', inputContainerClassName)}>
         <Input
           placeholder={placeholder || 'Search orders, customers, or frames...'}
           size="md"

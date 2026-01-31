@@ -45,6 +45,10 @@ interface SaleStaffOrderTableProps {
   onReviewRx?: (orderId: string) => void
 }
 
+import { useLayoutStore } from '@/store/layout.store'
+
+// ... existing imports
+
 export default function SaleStaffOrderTable({
   columns,
   hiddenColumns = [],
@@ -54,8 +58,10 @@ export default function SaleStaffOrderTable({
   onReviewRx
 }: SaleStaffOrderTableProps) {
   const navigate = useNavigate()
+  const { sidebarCollapsed } = useLayoutStore()
 
   const handleViewOrder = (orderId: string) => {
+    // ... logic
     const order = orders.find((o) => o.id === orderId)
     if (!order) return
 
@@ -70,6 +76,7 @@ export default function SaleStaffOrderTable({
   }
 
   const orders: Order[] = [
+    // ... (keep orders as is, no changes needed here, just context)
     {
       id: 'ORD-001',
       orderType: 'Prescription',
@@ -192,8 +199,14 @@ export default function SaleStaffOrderTable({
     },
     {
       header: 'Type',
-      headerClassName: 'px-4 text-center',
-      className: 'px-4 py-6 text-center',
+      headerClassName: cn(
+        'px-4 text-center',
+        !sidebarCollapsed ? 'hidden 2xl:table-cell' : 'hidden lg:table-cell'
+      ),
+      className: cn(
+        'px-4 py-6 text-center',
+        !sidebarCollapsed ? 'hidden 2xl:table-cell' : 'hidden lg:table-cell'
+      ),
       render: (order) => (
         <div className="flex justify-center">
           <span
@@ -213,8 +226,14 @@ export default function SaleStaffOrderTable({
     },
     {
       header: 'Approved',
-      headerClassName: 'px-4 text-center',
-      className: 'px-4 py-6 text-center',
+      headerClassName: cn(
+        'px-4 text-center',
+        !sidebarCollapsed ? 'hidden 2xl:table-cell' : 'hidden lg:table-cell'
+      ),
+      className: cn(
+        'px-4 py-6 text-center',
+        !sidebarCollapsed ? 'hidden 2xl:table-cell' : 'hidden lg:table-cell'
+      ),
       render: (order) => {
         if (order.orderType !== 'Prescription') {
           return (

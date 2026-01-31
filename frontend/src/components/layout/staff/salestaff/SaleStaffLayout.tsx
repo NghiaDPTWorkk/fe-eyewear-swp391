@@ -112,9 +112,10 @@ export default function SaleStaffLayout() {
   return (
     <StaffMainLayout
       sidebar={sidebar}
-      headerLeft={<NavSearch />}
+      headerLeft={<NavSearch inputContainerClassName="lg:pl-0" />}
       headerRight={<NavActions />}
       mainClassName="p-4 md:p-6 bg-neutral-50"
+      headerClassName="px-4 md:px-6"
     />
   )
 }

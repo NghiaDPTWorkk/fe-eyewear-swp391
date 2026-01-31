@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { Container } from '@/components'
 import { OrderTable, FilterButtonList } from '@/components/staff'
+import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 
 export default function OperationAllOrdersPage() {
   const [filter, setFilter] = useState('all')
@@ -16,16 +16,7 @@ export default function OperationAllOrdersPage() {
   return (
     <Container>
       <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm mb-2 font-medium">
-          <Link
-            to="/operationstaff/dashboard"
-            className="text-neutral-400 hover:text-primary-500 transition-colors"
-          >
-            Dashboard
-          </Link>
-          <span className="text-neutral-300">/</span>
-          <span className="text-primary-500 font-bold">All Orders</span>
-        </div>
+        <BreadcrumbPath paths={['Dashboard', 'All Orders']} />
         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Order List</h1>
         <p className="text-gray-500 mt-1">Manage the entire database of orders in the system.</p>
       </div>

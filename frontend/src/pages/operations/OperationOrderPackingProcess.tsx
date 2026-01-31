@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { Container } from '@/components'
 import { PATHS } from '@/routes/paths'
 import {
@@ -10,6 +10,7 @@ import {
   IoCarOutline
 } from 'react-icons/io5'
 import { ProcessTracker } from '@/components/layout/staff/staff-core/processtracker'
+import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 
 const PACKING_ITEMS = [
   'Lenses (pair)',
@@ -43,17 +44,7 @@ export default function OperationOrderPackingProcess() {
   return (
     <Container>
       {/* Breadcrumb Path */}
-      <div className="flex items-center gap-2 text-sm mb-2 font-medium">
-        <Link
-          to="/operationstaff/dashboard"
-          className="text-neutral-400 hover:text-primary-500 transition-colors"
-        >
-          Dashboard
-        </Link>
-        <span className="text-neutral-300">/</span>
-        <span className="text-primary-500 font-bold">Packing Station</span>
-      </div>
-
+      <BreadcrumbPath paths={['Dashboard', 'Packing Station']} />
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-5">

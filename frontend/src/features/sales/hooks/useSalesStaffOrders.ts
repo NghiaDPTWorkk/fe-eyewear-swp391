@@ -11,12 +11,28 @@ export const useSalesStaffOrders = () => {
     setLoading(true)
     setError(null)
     try {
-      const response = await httpClient.get<any>('/api/v1/orders')
-      const data = response.data || []
-      const deposited = Array.isArray(data)
-        ? data.filter((o) => o.invoice?.status === 'DEPOSITED')
-        : []
-      setOrders(deposited)
+      const response = await httpClient.get<any>('/admin/orders')
+
+      const rawData = response.data?.orders?.data || response.data?.data || []
+
+      const mappedOrders: Order[] = (Array.isArray(rawData) ? rawData : []).map((o: any) => {
+        let frontendStatus = o.status
+        if (o.status === 'PENDING') frontendStatus = 'WAITING_ASSIGN'
+        else if (['MAKING', 'PACKAGING', 'ASSIGNED'].includes(o.status))
+          frontendStatus = 'PROCESSING'
+        else if (o.status === 'COMPLETE') frontendStatus = 'COMPLETED'
+
+        return {
+          ...o,
+          id: o._id,
+          status: frontendStatus,
+          isPrescription: o.type?.includes('MANUFACTURING') || false,
+          invoice: o.invoice || (o.invoiceId ? { id: o.invoiceId, status: 'UNKNOWN' } : undefined),
+          customerName: o.customerName || o.invoice?.fullName || 'Customer'
+        }
+      })
+
+      setOrders(mappedOrders)
     } catch (err: any) {
       setError(err.message || 'Failed to fetch orders')
     } finally {
@@ -27,8 +43,13 @@ export const useSalesStaffOrders = () => {
   const fetchOrderDetail = useCallback(async (orderId: string | number) => {
     setLoading(true)
     try {
-      const response = await httpClient.get<any>(`/api/v1/orders/${orderId}`)
-      return response.data
+      // Correct endpoint: /orders/:id (apiClient adds /api/v1)
+      const response = await httpClient.get<any>(`/orders/${orderId}`)
+      const data = response.data?.data || response.data
+      return {
+        ...data,
+        id: data._id
+      }
     } catch (err: any) {
       setError(err.message || 'Failed to fetch order detail')
       return null
@@ -37,7 +58,6 @@ export const useSalesStaffOrders = () => {
     }
   }, [])
 
-  // Classify for Prescription page
   const rxOrders = orders.filter(
     (o) => o.isPrescription && (o.status === 'WAITING_ASSIGN' || o.status === 'PROCESSING')
   )

@@ -50,7 +50,7 @@ const SaleStaffLabStatusPage = lazy(() =>
 )
 
 const SaleStaffPrescriptionPage = lazy(() =>
-  import('@/pages/sales').then((m) => ({ default: m.SaleStaffPrescriptionPage }))
+  import('@/pages/sales/SaleStaffPrescriptionPage').then((m) => ({ default: m.default }))
 )
 
 const SaleStaffPreOrdersPage = lazy(() =>

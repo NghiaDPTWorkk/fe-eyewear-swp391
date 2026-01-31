@@ -10,7 +10,7 @@ export const useSalesStaffAction = () => {
     setProcessing(true)
     setError(null)
     try {
-      await httpClient.patch(`/api/v1/orders/${orderId}`, { lensParameter })
+      await httpClient.patch(`/orders/${orderId}`, { lensParameter })
       return true
     } catch (err: any) {
       setError(err.message || 'Verification failed')
@@ -24,7 +24,7 @@ export const useSalesStaffAction = () => {
     setProcessing(true)
     setError(null)
     try {
-      await httpClient.patch(`/api/v1/invoices/${invoiceId}/cancel`)
+      await httpClient.patch(`/invoices/${invoiceId}/cancel`)
       return true
     } catch (err: any) {
       setError(err.message || 'Rejection failed')

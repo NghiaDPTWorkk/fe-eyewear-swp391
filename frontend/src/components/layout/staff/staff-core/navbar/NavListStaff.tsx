@@ -16,7 +16,7 @@ import { useLayoutStore } from '@/store/layout.store'
 interface NavSearchProps {
   className?: string
   placeholder?: string
-  styleVariant?: 'default' | 'operation'
+  styleVariant?: 'default' | 'operation' | 'manager'
 }
 
 export function NavSearch({ className, placeholder, styleVariant = 'default' }: NavSearchProps) {
@@ -25,9 +25,16 @@ export function NavSearch({ className, placeholder, styleVariant = 'default' }: 
   const inputStyles =
     styleVariant === 'operation'
       ? 'bg-mint-200 border-mint-500 rounded-xl'
-      : 'bg-neutral-50 border-neutral-100 rounded-xl'
+      : styleVariant === 'manager'
+        ? 'bg-blue-50 border-blue-200 rounded-xl'
+        : 'bg-neutral-50 border-neutral-100 rounded-xl'
 
-  const iconColor = styleVariant === 'operation' ? 'text-mint-700' : 'text-neutral-400'
+  const iconColor =
+    styleVariant === 'operation'
+      ? 'text-mint-700'
+      : styleVariant === 'manager'
+        ? 'text-blue-700'
+        : 'text-neutral-400'
 
   return (
     <div className={cn('flex items-center gap-3 w-full pr-2', className)}>

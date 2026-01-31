@@ -23,5 +23,6 @@ export interface Order {
   productName?: string
   customerName?: string
   isPrescription?: boolean
+  orderType?: string
   description?: string
 }

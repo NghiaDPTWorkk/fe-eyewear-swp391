@@ -11,7 +11,7 @@ export const useSalesStaffInvoices = () => {
     setLoading(true)
     setError(null)
     try {
-      const response = await httpClient.get<any>('/api/v1/invoices')
+      const response = await httpClient.get<any>('/invoices')
       const data = response.data?.data?.data || response.data?.data || []
       const deposited = Array.isArray(data)
         ? data.filter((inv: Invoice) => inv.status === 'DEPOSITED')

@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 import { useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { Container } from '@/components'
@@ -8,10 +7,9 @@ import {
   IoBarcodeOutline,
   IoPrintOutline,
   IoCubeOutline,
-  IoCarOutline,
-  IoConstructOutline,
-  IoTimeOutline
+  IoCarOutline
 } from 'react-icons/io5'
+import { ProcessTracker } from '@/components/layout/staff/staff-core/processtracker'
 
 const PACKING_ITEMS = [
   'Lenses (pair)',
@@ -79,46 +77,8 @@ export default function OperationOrderPackingProcess() {
         </span>
       </div>
 
-      {/* Stepper */}
-      <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border border-mint-200">
-        <h2 className="text-lg font-semibold text-mint-900 mb-6">Tiến độ đơn hàng</h2>
-        <div className="flex items-center justify-between">
-          <div className="flex flex-col items-center flex-1">
-            <div className="w-12 h-12 rounded-full bg-mint-500 flex items-center justify-center mb-2">
-              <IoTimeOutline size={24} className="text-white" />
-            </div>
-            <span className="text-xs text-gray-600 text-center font-medium">Chờ xử lý</span>
-          </div>
-          <div className="flex-1 h-0.5 bg-gray-200 -mx-2"></div>
-          <div className="flex flex-col items-center flex-1">
-            <div className="w-12 h-12 rounded-full bg-mint-500 flex items-center justify-center mb-2">
-              <IoConstructOutline size={24} className="text-white" />
-            </div>
-            <span className="text-xs text-gray-600 text-center font-medium">Đang xử lý</span>
-          </div>
-          <div className="flex-1 h-0.5 bg-gray-200 -mx-2"></div>
-          <div className="flex flex-col items-center flex-1">
-            <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-2">
-              <IoCubeOutline size={24} className="text-gray-400" />
-            </div>
-            <span className="text-xs text-gray-400 text-center">Đóng gói</span>
-          </div>
-          <div className="flex-1 h-0.5 bg-gray-200 -mx-2"></div>
-          <div className="flex flex-col items-center flex-1">
-            <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-2">
-              <IoCubeOutline size={24} className="text-gray-400" />
-            </div>
-            <span className="text-xs text-gray-400 text-center">Chờ lấy</span>
-          </div>
-          <div className="flex-1 h-0.5 bg-gray-200 -mx-2"></div>
-          <div className="flex flex-col items-center flex-1">
-            <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-2">
-              <IoCarOutline size={24} className="text-gray-400" />
-            </div>
-            <span className="text-xs text-gray-400 text-center">Vận chuyển</span>
-          </div>
-        </div>
-      </div>
+      {/* Progress Tracker */}
+      <ProcessTracker />
 
       <div className="grid grid-cols-12 gap-6">
         {/* Left Column */}

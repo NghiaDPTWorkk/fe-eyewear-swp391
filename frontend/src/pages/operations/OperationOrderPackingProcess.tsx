@@ -45,7 +45,7 @@ export default function OperationOrderPackingProcess() {
   return (
     <Container>
       {/* Breadcrumb Path */}
-      <div className="flex items-center gap-2 text-sm pt-8 mb-6 font-medium">
+      <div className="flex items-center gap-2 text-sm mb-2 font-medium">
         <Link
           to="/operationstaff/dashboard"
           className="text-neutral-400 hover:text-primary-500 transition-colors"

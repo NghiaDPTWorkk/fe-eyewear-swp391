@@ -15,7 +15,7 @@ export default function OperationCompleteOrdersPage() {
             Dashboard
           </Link>
           <span className="text-neutral-300">/</span>
-          <span className="text-primary-500 font-bold">Logistics Waiting Station</span>
+          <span className="text-primary-500 font-bold">Complete Orders</span>
         </div>
         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Complete Order Tracking</h1>
       </div>

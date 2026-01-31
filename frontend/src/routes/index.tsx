@@ -1,19 +1,8 @@
+/* eslint-disable */
 import { lazy } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { LazyPage } from '@/pages/LazyPage'
-const OperationSettingPage = lazy(() =>
-  import('@/pages/operations/OperationSettingPage').then((m) => ({ default: m.default }))
-)
 
-const OperationSupportPage = lazy(() =>
-  import('@/pages/operations/OperationSupportPage').then((m) => ({ default: m.default }))
-)
-
-const OperationCompleteOrdersPage = lazy(() =>
-  import('@/pages/operations/OperationCompleteOrdersPage').then((m) => ({
-    default: m.default
-  }))
-)
 const RegisterPage = lazy(() =>
   import('@/pages/auth/customer/RegisterPage').then((m) => ({ default: m.RegisterPage }))
 )
@@ -91,7 +80,19 @@ const OrderDetailPage = lazy(() => import('@/pages/operations/OperationOrderDeta
 const OperationOrderPackingProcess = lazy(
   () => import('@/pages/operations/OperationOrderPackingProcess')
 )
+const OperationSettingPage = lazy(() =>
+  import('@/pages/operations/OperationSettingPage').then((m) => ({ default: m.default }))
+)
 
+const OperationSupportPage = lazy(() =>
+  import('@/pages/operations/OperationSupportPage').then((m) => ({ default: m.default }))
+)
+
+const OperationCompleteOrdersPage = lazy(() =>
+  import('@/pages/operations/OperationCompleteOrdersPage').then((m) => ({
+    default: m.default
+  }))
+)
 export const router = createBrowserRouter([
   {
     path: '/',

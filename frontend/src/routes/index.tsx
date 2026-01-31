@@ -3,7 +3,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { LazyPage } from '@/pages/LazyPage'
 import { RegisterPage } from '@/pages/auth/customer/RegisterPage'
 import { ProductDetailPage, CartPage } from '@/pages/customer'
-
+/* eslint-disable max-lines */
 const LoginPage = lazy(() =>
   import('@/pages/auth/customer/CustomerLoginPage').then((m) => ({ default: m.CustomerLoginPage }))
 )
@@ -106,10 +106,6 @@ const OperationAllOrdersPage = lazy(() =>
   import('@/pages/operations/OperationAllOrdersPage').then((m) => ({ default: m.default }))
 )
 
-const OperationDeliveryPage = lazy(() =>
-  import('@/pages/operations/OperationDeliveryPage').then((m) => ({ default: m.default }))
-)
-
 const OperationPackingPage = lazy(() =>
   import('@/pages/operations/OperationPackingPage').then((m) => ({ default: m.default }))
 )
@@ -122,6 +118,19 @@ const OperationOrderPackingProcess = lazy(() =>
   import('@/pages/operations/OperationOrderPackingProcess').then((m) => ({ default: m.default }))
 )
 
+const OperationSettingPage = lazy(() =>
+  import('@/pages/operations/OperationSettingPage').then((m) => ({ default: m.default }))
+)
+
+const OperationSupportPage = lazy(() =>
+  import('@/pages/operations/OperationSupportPage').then((m) => ({ default: m.default }))
+)
+
+const OperationCompleteOrdersPage = lazy(() =>
+  import('@/pages/operations/OperationCompleteOrdersPage').then((m) => ({
+    default: m.default
+  }))
+)
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -196,14 +205,6 @@ export const router = createBrowserRouter([
     )
   },
   {
-    path: '/cart',
-    element: (
-      <LazyPage>
-        <CartPage />
-      </LazyPage>
-    )
-  },
-  {
     path: '/admin/login',
     element: (
       <LazyPage>
@@ -229,57 +230,109 @@ export const router = createBrowserRouter([
     children: [
       {
         path: 'dashboard',
-        element: <SaleStaffDashboardPage />
+        element: (
+          <LazyPage>
+            <SaleStaffDashboardPage />
+          </LazyPage>
+        )
       },
       {
         path: 'orders',
-        element: <SaleStaffOrderPage />
+        element: (
+          <LazyPage>
+            <SaleStaffOrderPage />
+          </LazyPage>
+        )
       },
       {
         path: 'orders/prescription-orders',
-        element: <SaleStaffPrescriptionPage />
+        element: (
+          <LazyPage>
+            <SaleStaffPrescriptionPage />
+          </LazyPage>
+        )
       },
       {
         path: 'orders/pre-orders',
-        element: <SaleStaffPreOrdersPage />
+        element: (
+          <LazyPage>
+            <SaleStaffPreOrdersPage />
+          </LazyPage>
+        )
       },
       {
         path: 'orders/returns',
-        element: <SaleStaffReturnsPage />
+        element: (
+          <LazyPage>
+            <SaleStaffReturnsPage />
+          </LazyPage>
+        )
       },
       {
         path: 'orders/:orderId/verify-rx',
-        element: <SaleStaffRxVerificationPage />
+        element: (
+          <LazyPage>
+            <SaleStaffRxVerificationPage />
+          </LazyPage>
+        )
       },
 
       {
         path: 'orders/:orderId/regular',
-        element: <RegularOrderDetailPage />
+        element: (
+          <LazyPage>
+            <RegularOrderDetailPage />
+          </LazyPage>
+        )
       },
       {
         path: 'orders/:orderId/pre-order',
-        element: <PreOrderDetailPage />
+        element: (
+          <LazyPage>
+            <PreOrderDetailPage />
+          </LazyPage>
+        )
       },
 
       {
         path: 'customers',
-        element: <SaleStaffCustomerPage />
+        element: (
+          <LazyPage>
+            <SaleStaffCustomerPage />
+          </LazyPage>
+        )
       },
       {
         path: 'lab-status',
-        element: <SaleStaffLabStatusPage />
+        element: (
+          <LazyPage>
+            <SaleStaffLabStatusPage />
+          </LazyPage>
+        )
       },
       {
         path: 'live-map/:trackingId',
-        element: <SaleStaffLiveMapPage />
+        element: (
+          <LazyPage>
+            <SaleStaffLiveMapPage />
+          </LazyPage>
+        )
       },
       {
         path: 'settings',
-        element: <SaleStaffSettingsPage />
+        element: (
+          <LazyPage>
+            <SaleStaffSettingsPage />
+          </LazyPage>
+        )
       },
       {
         path: 'support',
-        element: <SaleStaffSupportPage />
+        element: (
+          <LazyPage>
+            <SaleStaffSupportPage />
+          </LazyPage>
+        )
       }
     ]
   },
@@ -297,43 +350,83 @@ export const router = createBrowserRouter([
       },
       {
         path: 'dashboard',
-        element: <OperationDashboardPage />
+        element: (
+          <LazyPage>
+            <OperationDashboardPage />
+          </LazyPage>
+        )
       },
       {
         path: 'all',
-        element: <OperationAllOrdersPage />
+        element: (
+          <LazyPage>
+            <OperationAllOrdersPage />
+          </LazyPage>
+        )
       },
       {
         path: 'prescription-orders',
-        element: <OperationPrescriptionPage />
+        element: (
+          <LazyPage>
+            <OperationPrescriptionPage />
+          </LazyPage>
+        )
       },
       {
         path: 'pre-orders',
-        element: <OperationPreOrdersPage />
+        element: (
+          <LazyPage>
+            <OperationPreOrdersPage />
+          </LazyPage>
+        )
       },
       {
         path: 'packing',
-        element: <OperationPackingPage />
+        element: (
+          <LazyPage>
+            <OperationPackingPage />
+          </LazyPage>
+        )
       },
       {
         path: 'orders/:orderId',
-        element: <OrderDetailPage />
+        element: (
+          <LazyPage>
+            <OrderDetailPage />
+          </LazyPage>
+        )
       },
       {
         path: 'orders/:orderId/process',
-        element: <OperationOrderPackingProcess />
+        element: (
+          <LazyPage>
+            <OperationOrderPackingProcess />
+          </LazyPage>
+        )
       },
       {
-        path: 'delivery-orders',
-        element: <OperationDeliveryPage />
+        path: 'packed-success',
+        element: (
+          <LazyPage>
+            <OperationCompleteOrdersPage />
+          </LazyPage>
+        )
       },
       {
         path: 'settings',
-        element: <SaleStaffSettingsPage />
+        element: (
+          <LazyPage>
+            <OperationSettingPage />
+          </LazyPage>
+        )
       },
       {
         path: 'support',
-        element: <SaleStaffSupportPage />
+        element: (
+          <LazyPage>
+            <OperationSupportPage />
+          </LazyPage>
+        )
       }
     ]
   },

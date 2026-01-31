@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layout/StaffMainLayout'
 import {
@@ -16,10 +17,25 @@ import {
   IoBuildOutline
 } from 'react-icons/io5'
 import { FaBoxesPacking } from 'react-icons/fa6'
+import { useOrderCountStore } from '@/store'
+import { AiOutlineFileDone } from 'react-icons/ai'
 
 export default function OperationLayout() {
   const location = useLocation()
   const navigate = useNavigate()
+  const { counts, initializeCounts } = useOrderCountStore()
+
+  // Mock orders data (giống trong OrderTable)
+  const mockOrders = [
+    { orderType: 'Đơn Thường' },
+    { orderType: 'Pre-order' },
+    { orderType: 'Prescription' }
+  ]
+
+  // Initialize counts khi component mount
+  useEffect(() => {
+    initializeCounts(mockOrders)
+  }, [initializeCounts])
 
   const sidebar = (
     <SidebarStaff
@@ -51,30 +67,51 @@ export default function OperationLayout() {
           label="All Orders"
           active={location.pathname === '/operationstaff/all'}
           onClick={() => navigate('/operationstaff/all')}
+          badge={counts.packing > 0 ? counts.packing.toString() : undefined}
         />
         <SidebarStaff.MenuItem
           icon={<IoBuildOutline />}
           label="Technical Stations"
           active={location.pathname === '/operationstaff/prescription-orders'}
           onClick={() => navigate('/operationstaff/prescription-orders')}
+          badge={counts.technical > 0 ? counts.technical.toString() : undefined}
         />
         <SidebarStaff.MenuItem
           icon={<IoCarOutline />}
           label="Logistics Waiting Station"
           active={location.pathname === '/operationstaff/pre-orders'}
           onClick={() => navigate('/operationstaff/pre-orders')}
+          badge={counts.logistics > 0 ? counts.logistics.toString() : undefined}
         />
         <SidebarStaff.MenuItem
           icon={<FaBoxesPacking />}
           label="Packing Station"
           active={location.pathname === '/operationstaff/packing'}
           onClick={() => navigate('/operationstaff/packing')}
+          badge={counts.packing > 0 ? counts.packing.toString() : undefined}
+        />
+        <SidebarStaff.MenuItem
+          icon={<AiOutlineFileDone />}
+          label="Complete Orders"
+          active={location.pathname === '/operationstaff/packed-success'}
+          onClick={() => navigate('/operationstaff/packed-success')}
+          badge={counts.all > 0 ? counts.all.toString() : undefined}
         />
       </SidebarStaff.MenuSection>
 
       <SidebarStaff.MenuSection label="TOOLS">
-        <SidebarStaff.MenuItem icon={<IoSettingsOutline />} label="Settings" />
-        <SidebarStaff.MenuItem icon={<IoHelpCircleOutline />} label="Support" />
+        <SidebarStaff.MenuItem
+          icon={<IoSettingsOutline />}
+          label="Settings"
+          active={location.pathname === '/operationstaff/settings'}
+          onClick={() => navigate('/operationstaff/settings')}
+        />
+        <SidebarStaff.MenuItem
+          icon={<IoHelpCircleOutline />}
+          label="Support"
+          active={location.pathname === '/operationstaff/packed-success'}
+          onClick={() => navigate('/operationstaff/support')}
+        />
         <ThemeToggle />
       </SidebarStaff.MenuSection>
     </SidebarStaff>

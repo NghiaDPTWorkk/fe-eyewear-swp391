@@ -1,8 +1,9 @@
-import { Link } from 'react-router-dom'
 import { Container } from '@/components'
-import { OrderTable } from '@/components/staff'
+import OrderTable from '@/components/staff/ordertable/OrderTable'
+import React from 'react'
+import { Link } from 'react-router-dom'
 
-export default function OperationDeliveryPage() {
+export default function OperationCompleteOrdersPage() {
   return (
     <Container>
       <div className="mb-8">
@@ -14,12 +15,12 @@ export default function OperationDeliveryPage() {
             Dashboard
           </Link>
           <span className="text-neutral-300">/</span>
-          <span className="text-primary-500 font-bold">Delivery Handover</span>
+          <span className="text-primary-500 font-bold">Complete Orders</span>
         </div>
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Delivery Handover</h1>
+        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Complete Order Tracking</h1>
       </div>
 
-      <OrderTable hiddenColumns={['WAITING FOR']} />
+      <OrderTable filterType="All" />
     </Container>
   )
 }

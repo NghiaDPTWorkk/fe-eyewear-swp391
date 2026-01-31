@@ -1,8 +1,15 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Container, Button, Input } from '@/components'
 import { IoCameraOutline } from 'react-icons/io5'
 
-export default function StaffSettingPage() {
+interface StaffSettingPageProps {
+  homeUrl?: string // URL to navigate when clicking "Home" in breadcrumb
+}
+
+export default function StaffSettingPage({
+  homeUrl = '/salesstaff/dashboard'
+}: StaffSettingPageProps) {
   // Hardcoded state for demonstration
   const [firstName, setFirstName] = useState('Sarah')
   const [lastName, setLastName] = useState('Jenkins')
@@ -14,6 +21,13 @@ export default function StaffSettingPage() {
   return (
     <Container>
       <div className="mb-8">
+        <div className="flex items-center gap-2 text-sm mb-2 font-medium">
+          <Link to={homeUrl} className="text-neutral-400 hover:text-primary-500 transition-colors">
+            Home
+          </Link>
+          <span className="text-neutral-300">/</span>
+          <span className="text-primary-500 font-bold">Settings</span>
+        </div>
         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Staff System Settings</h1>
         <p className="text-gray-500 mt-1">Manage your profile, preferences, and display options.</p>
       </div>

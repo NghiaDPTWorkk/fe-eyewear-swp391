@@ -19,7 +19,7 @@ export default function OperationPreOrdersPage() {
         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Pre-order Tracking</h1>
       </div>
 
-      <OrderTable filterType="Pre-order" />
+      <OrderTable filterType="Pre-order" pageType="logistics" />
     </Container>
   )
 }

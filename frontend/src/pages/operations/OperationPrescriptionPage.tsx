@@ -22,7 +22,12 @@ export default function OperationPrescriptionPage() {
         </p>
       </div>
 
-      <OrderTable hiddenColumns={['WAITING FOR']} filterType="Prescription" role="operation" />
+      <OrderTable
+        hiddenColumns={['WAITING FOR']}
+        filterType="Prescription"
+        role="operation"
+        pageType="technical"
+      />
     </Container>
   )
 }

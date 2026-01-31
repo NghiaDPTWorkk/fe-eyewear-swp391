@@ -1,9 +1,19 @@
 import { lazy } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { LazyPage } from '@/pages/LazyPage'
-import OperationCompleteOrdersPage from '@/pages/operations/OperationCompleteOrdersPage'
-import { OperationSettingPage, OperationSupportPage } from '@/pages/operations'
+const OperationSettingPage = lazy(() =>
+  import('@/pages/operations/OperationSettingPage').then((m) => ({ default: m.default }))
+)
 
+const OperationSupportPage = lazy(() =>
+  import('@/pages/operations/OperationSupportPage').then((m) => ({ default: m.default }))
+)
+
+const OperationCompleteOrdersPage = lazy(() =>
+  import('@/pages/operations/OperationCompleteOrdersPage').then((m) => ({
+    default: m.default
+  }))
+)
 const RegisterPage = lazy(() =>
   import('@/pages/auth/customer/RegisterPage').then((m) => ({ default: m.RegisterPage }))
 )
@@ -73,8 +83,6 @@ const OperationPrescriptionPage = lazy(() => import('@/pages/operations/Operatio
 const OperationPreOrdersPage = lazy(() => import('@/pages/operations/OperationPreOrdersPage'))
 
 const OperationAllOrdersPage = lazy(() => import('@/pages/operations/OperationAllOrdersPage'))
-
-// const OperationDeliveryPage = lazy(() => import('@/pages/operations/OperationDeliveryPage'))
 
 const OperationPackingPage = lazy(() => import('@/pages/operations/OperationPackingPage'))
 

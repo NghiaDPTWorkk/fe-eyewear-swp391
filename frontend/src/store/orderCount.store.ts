@@ -5,6 +5,7 @@ interface OrderCountStore {
     technical: number // Số đơn Prescription
     logistics: number // Số đơn Pre-order
     packing: number // Số đơn có status packing
+    all: number
   }
   setCount: (type: 'technical' | 'logistics' | 'packing', count: number) => void
   initializeCounts: (orders: { orderType: string }[]) => void
@@ -15,7 +16,8 @@ export const useOrderCountStore = create<OrderCountStore>((set) => ({
   counts: {
     technical: 0,
     logistics: 0,
-    packing: 0
+    packing: 0,
+    all: 0
   },
   setCount: (type, count) =>
     set((state) => ({
@@ -33,7 +35,8 @@ export const useOrderCountStore = create<OrderCountStore>((set) => ({
       counts: {
         technical,
         logistics,
-        packing
+        packing,
+        all: orders.length
       }
     })
   },
@@ -42,7 +45,8 @@ export const useOrderCountStore = create<OrderCountStore>((set) => ({
       counts: {
         technical: 0,
         logistics: 0,
-        packing: 0
+        packing: 0,
+        all: 0
       }
     })
 }))

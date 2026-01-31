@@ -18,6 +18,7 @@ import {
 } from 'react-icons/io5'
 import { FaBoxesPacking } from 'react-icons/fa6'
 import { useOrderCountStore } from '@/store'
+import { AiOutlineFileDone } from 'react-icons/ai'
 
 export default function OperationLayout() {
   const location = useLocation()
@@ -28,9 +29,7 @@ export default function OperationLayout() {
   const mockOrders = [
     { orderType: 'Đơn Thường' },
     { orderType: 'Pre-order' },
-    { orderType: 'Pre-order' },
-    { orderType: 'Prescription' },
-    { orderType: 'Đơn Thường' }
+    { orderType: 'Prescription' }
   ]
 
   // Initialize counts khi component mount
@@ -91,6 +90,13 @@ export default function OperationLayout() {
           onClick={() => navigate('/operationstaff/packing')}
           badge={counts.packing > 0 ? counts.packing.toString() : undefined}
         />
+        <SidebarStaff.MenuItem
+          icon={<AiOutlineFileDone />}
+          label="Complete Orders"
+          active={location.pathname === '/operationstaff/packed-success'}
+          onClick={() => navigate('/operationstaff/packed-success')}
+          badge={counts.all > 0 ? counts.all.toString() : undefined}
+        />
       </SidebarStaff.MenuSection>
 
       <SidebarStaff.MenuSection label="TOOLS">
@@ -103,7 +109,7 @@ export default function OperationLayout() {
         <SidebarStaff.MenuItem
           icon={<IoHelpCircleOutline />}
           label="Support"
-          active={location.pathname === '/operationstaff/support'}
+          active={location.pathname === '/operationstaff/packed-success'}
           onClick={() => navigate('/operationstaff/support')}
         />
         <ThemeToggle />

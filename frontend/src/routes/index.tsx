@@ -88,6 +88,18 @@ const OperationSupportPage = lazy(() =>
   import('@/pages/operations/OperationSupportPage').then((m) => ({ default: m.default }))
 )
 
+const ManagerLayout = lazy(() =>
+  import('@/pages/manager/ManagerLayout').then((m) => ({ default: m.default }))
+)
+
+const ManagerDashboardPage = lazy(() =>
+  import('@/pages/manager/ManagerDashboardPage').then((m) => ({ default: m.default }))
+)
+
+const ManagerInvoicesPage = lazy(() =>
+  import('@/pages/manager/ManagerInvoicesPage').then((m) => ({ default: m.default }))
+)
+
 const OperationCompleteOrdersPage = lazy(() =>
   import('@/pages/operations/OperationCompleteOrdersPage').then((m) => ({
     default: m.default
@@ -389,6 +401,28 @@ export const router = createBrowserRouter([
             <OperationSupportPage />
           </LazyPage>
         )
+      }
+    ]
+  },
+  {
+    path: '/manager',
+    element: (
+      <LazyPage>
+        <ManagerLayout />
+      </LazyPage>
+    ),
+    children: [
+      {
+        index: true,
+        element: <Navigate to="/manager/dashboard" replace />
+      },
+      {
+        path: 'dashboard',
+        element: <ManagerDashboardPage />
+      },
+      {
+        path: 'invoices',
+        element: <ManagerInvoicesPage />
       }
     ]
   },

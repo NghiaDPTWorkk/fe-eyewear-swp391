@@ -25,7 +25,7 @@ export default function OperationAllOrdersPage() {
     { label: 'All', count: allCount, value: 'all' },
     { label: 'Pre-order', count: preOrderCount, value: OrderType.PRE_ORDER }, // 'PRE-ORDER'
     { label: 'Normal', count: normalCount, value: OrderType.NORMAL }, // 'NORMAL'
-    { label: 'Prescription', count: prescriptionCount, value: OrderType.MANUFACTURING } // 'MANUFACTURING'
+    { label: 'Manufacturing', count: prescriptionCount, value: OrderType.MANUFACTURING } // 'MANUFACTURING'
   ]
 
   return (

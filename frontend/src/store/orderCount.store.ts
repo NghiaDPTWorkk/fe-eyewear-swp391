@@ -6,7 +6,7 @@ import { OrderType, OrderStatus } from '@/shared/utils/enums/order.enum'
 
 interface OrderCountStore {
   counts: {
-    technical: number // Số đơn Prescription
+    technical: number // Số đơn Manufacturing
     logistics: number // Số đơn Pre-order
     packing: number // Số đơn có status packing
     all: number

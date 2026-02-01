@@ -1,3 +1,8 @@
+export interface AdminInvoiceListOrderItem {
+  id: string
+  type: string[]
+}
+
 export interface AdminInvoiceListItem {
   id: string
   invoiceCode: string
@@ -7,6 +12,7 @@ export interface AdminInvoiceListItem {
   status: string
   createdAt: string
   address: string
+  orders?: AdminInvoiceListOrderItem[]
 }
 
 export interface AdminInvoiceListPagination {

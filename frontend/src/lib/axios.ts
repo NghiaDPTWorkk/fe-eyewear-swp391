@@ -68,7 +68,7 @@ export const apiClient: AxiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json'
   },
-  withCredentials: false
+  withCredentials: true
 })
 
 apiClient.interceptors.request.use(

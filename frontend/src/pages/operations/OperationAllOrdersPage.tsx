@@ -17,7 +17,9 @@ export default function OperationAllOrdersPage() {
   const allCount = orders.length
   const preOrderCount = orders.filter((o: Order) => o.orderType === OrderType.PRE_ORDER).length
   const normalCount = orders.filter((o: Order) => o.orderType === OrderType.NORMAL).length
-  const prescriptionCount = orders.filter((o: Order) => o.orderType === OrderType.MANUFACTURING).length
+  const prescriptionCount = orders.filter(
+    (o: Order) => o.orderType === OrderType.MANUFACTURING
+  ).length
 
   const filterButtons = [
     { label: 'All', count: allCount, value: 'all' },

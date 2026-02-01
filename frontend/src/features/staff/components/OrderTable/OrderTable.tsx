@@ -67,7 +67,7 @@ const getOrderTypeStyles = (type: string, role: string) => {
         return 'bg-neutral-50 text-neutral-600'
     }
   } else {
-   // operation staff
+    // operation staff
     switch (type) {
       case 'all':
         return 'bg-neutral-50 text-neutral-600'

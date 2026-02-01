@@ -86,7 +86,8 @@ export const transformApiOrderToTableOrder = (apiOrder: OperationOrder): Order =
     timeElapsed: calculateTimeElapsed(apiOrder.createdAt),
     statusColor: getStatusColor(apiOrder.status),
     // ========== START NEW CODE ==========
-    isNextActive: apiOrder.status !== OrderStatus.COMPLETED && apiOrder.status !== OrderStatus.PACKAGING,
+    isNextActive:
+      apiOrder.status !== OrderStatus.COMPLETED && apiOrder.status !== OrderStatus.PACKAGING,
     // ========== END NEW CODE ==========
     price: apiOrder.price,
     assignedStaff: apiOrder.assignedStaff

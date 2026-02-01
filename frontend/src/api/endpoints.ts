@@ -24,7 +24,7 @@ export const ENDPOINTS = {
   // Cart
   CART: {
     GET: '/cart',
-    ADD: '/cart/items',
+    ADD: '/cart/add-product',
     UPDATE: (itemId: string) => `/cart/items/${itemId}`,
     REMOVE: (itemId: string) => `/cart/items/${itemId}`,
     CLEAR: '/cart/clear'

@@ -25,18 +25,18 @@ export interface LenSpec {
 /**
  * Base product interface
  */
-// interface BaseProduct {
-//   _id: string
-//   nameBase: string
-//   slugBase: string
-//   skuBase: string
-//   categories: string[]
-//   brand: string | null
-//   variants: Variant[]
-//   deletedAt: Date | null
-//   createdAt: Date
-//   updatedAt: Date
-// }
+interface BaseProduct {
+  _id: string
+  nameBase: string
+  slugBase: string
+  skuBase: string
+  categories: string[]
+  brand: string | null
+  variants: Variant[]
+  deletedAt: Date | null
+  createdAt: Date
+  updatedAt: Date
+}
 
 /**
  * Standard product for list views (simplified)

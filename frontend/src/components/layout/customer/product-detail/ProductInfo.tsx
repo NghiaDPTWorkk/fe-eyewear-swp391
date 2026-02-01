@@ -20,9 +20,10 @@ import { useProductVariants } from '@/shared/hooks/products/useProductVariants'
 
 interface ProductInfoProps {
   product: Product
+  productId: string
 }
 
-export const ProductInfo = ({ product }: ProductInfoProps) => {
+export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
   // Use variant selection hook
   const {
     currentVariant,
@@ -38,13 +39,19 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
     availableOptionsForAttribute
   } = useProductVariants(product)
 
-  const addItem = useCartStore((state) => state.addItem)
+  const addItemAsync = useCartStore((state) => state.addItemAsync)
+  const isAddingToCart = useCartStore((state) => state.isAddingToCart)
   const { isAuthenticated } = useAuthStore()
   const navigate = useNavigate()
   const [isLensModalOpen, setIsLensModalOpen] = useState(false)
 
   const handleAddToCart = () => {
+    console.log('🛒 Add to Cart clicked!')
+    console.log('Product data:', product)
+
     const isAuth = isAuthenticated || !!localStorage.getItem('accessToken')
+    console.log('Is authenticated:', isAuth)
+
     if (!isAuth) {
       toast.error('Please login to add items to cart')
       navigate('/login')
@@ -52,58 +59,101 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
     }
 
     const type = (product as any).type || 'frame'
+    console.log('Product type:', type)
 
     if (type === 'frame' || type === 'lens') {
+      console.log('Opening lens modal for frame/lens product')
       setIsLensModalOpen(true)
       return
     }
 
     // Sunglass or default frame path
+    console.log('Proceeding to add sunglass to cart')
     performAddToCart()
   }
 
   const handleLensConfirm = (selection: LensSelectionState) => {
     performAddToCart(selection)
-    toast.success(`${product.nameBase} with ${selection.visionNeed} lenses added to cart!`)
   }
 
-  const performAddToCart = (lensSelection?: LensSelectionState) => {
+  const performAddToCart = async (lensSelection?: LensSelectionState) => {
+    console.log('📦 performAddToCart called')
+    console.log('Current variant:', currentVariant)
+    console.log('Is in stock:', isInStock)
+    console.log('Lens selection:', lensSelection)
+
     // Validation: Check if variant is selected and in stock
     if (!currentVariant) {
+      console.error('❌ No variant selected')
       toast.error('Please select a valid product variant')
       return
     }
 
     if (!isInStock) {
+      console.error('❌ Product out of stock')
       toast.error('This variant is currently out of stock')
       return
     }
 
+    // Use productId from URL params (passed as prop) instead of extracting from product
+    // This is more reliable since backend may not return _id or id in the response
     const productAny = product as any
-    const id = productAny._id || productAny.id || productAny.skuBase || 'unknown'
+    const extractedId = productAny.id || productAny._id || productAny.skuBase
 
-    // Add to cart with SKU and quantity
-    addItem({
-      product_id: id,
-      sku: currentVariant.sku, // ✅ Send SKU instead of product_id
-      name: currentVariant.name,
-      price: currentVariant.finalPrice,
-      quantity: 1,
-      image: currentVariant.imgs?.[0] || '',
-      addAt: new Date(),
-      // Add selected options for display
-      selectedOptions: selectedOptions,
-      // Add lens selection info if applicable
-      lens: lensSelection
-        ? {
-            visionNeed: lensSelection.visionNeed,
-            prescription: lensSelection.prescription
-          }
-        : undefined
-    } as any)
+    console.log('🔍 Product ID extraction:')
+    console.log('  productId (from URL prop):', productId)
+    console.log('  id (from product):', productAny.id)
+    console.log('  _id (from product):', productAny._id)
+    console.log('  skuBase (from product):', productAny.skuBase)
+    console.log('  extractedId:', extractedId)
+    console.log('  Final productId (using prop):', productId)
+    console.log('  SKU:', currentVariant.sku)
 
-    if (!lensSelection) {
-      toast.success(`${currentVariant.name} added to cart!`)
+    if (!productId) {
+      console.error('❌ Product ID is missing from URL! Using fallback:', extractedId)
+      if (!extractedId) {
+        toast.error('Unable to add to cart: Product ID not found')
+        return
+      }
+    }
+
+    // Use productId from prop (URL) as the primary source
+    const finalProductId = productId || extractedId
+
+    try {
+      console.log('🚀 Calling addItemAsync with:', {
+        productId: finalProductId,
+        sku: currentVariant.sku,
+        quantity: 1,
+        lensSelection
+      })
+
+      // Call async add to cart with API integration
+      await addItemAsync(finalProductId, currentVariant.sku, 1, lensSelection)
+
+      console.log('✅ Successfully added to cart')
+
+      // Show success message
+      if (lensSelection) {
+        toast.success(`${product.nameBase} with ${lensSelection.visionNeed} lenses added to cart!`)
+      } else {
+        toast.success(`${currentVariant.name} added to cart!`)
+      }
+
+      // Close lens modal if open
+      if (isLensModalOpen) {
+        setIsLensModalOpen(false)
+      }
+    } catch (error: any) {
+      console.error('❌ Error adding to cart:', error)
+
+      // Handle specific errors
+      if (error.message === 'UNAUTHORIZED') {
+        toast.error('Please login to add items to cart')
+        navigate('/login')
+      } else {
+        toast.error(error.message || 'Failed to add item to cart')
+      }
     }
   }
 
@@ -285,19 +335,21 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
           onClick={handleAddToCart}
           size="lg"
           isFullWidth
-          disabled={!isValidCombination || !isInStock}
+          disabled={!isValidCombination || !isInStock || isAddingToCart}
           className="h-16 rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
           leftIcon={<ShoppingCart className="w-6 h-6" />}
         >
-          {!isValidCombination
-            ? 'Select Options'
-            : !isInStock
-              ? 'Out of Stock'
-              : (product as any).type === 'frame'
-                ? 'Select Lenses'
-                : (product as any).type === 'lens'
-                  ? 'Enter Prescription & Add'
-                  : 'Add to Cart'}
+          {isAddingToCart
+            ? 'Adding...'
+            : !isValidCombination
+              ? 'Select Options'
+              : !isInStock
+                ? 'Out of Stock'
+                : (product as any).type === 'frame'
+                  ? 'Select Lenses'
+                  : (product as any).type === 'lens'
+                    ? 'Enter Prescription & Add'
+                    : 'Add to Cart'}
         </Button>
         <Button
           variant="outline"

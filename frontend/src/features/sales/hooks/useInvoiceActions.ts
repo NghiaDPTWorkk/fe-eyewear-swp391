@@ -1,31 +1,29 @@
 import { useState } from 'react'
-import { httpClient } from '@/api/apiClients'
 import { invoiceService } from '../services/invoiceService'
-import type { LensParameter } from '../types'
 
-export const useSalesStaffAction = () => {
+export const useInvoiceActions = () => {
   const [processing, setProcessing] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const verifyOrder = async (orderId: string | number, lensParameter: LensParameter) => {
+  const approveInvoice = async (id: string) => {
     setProcessing(true)
     setError(null)
     try {
-      await httpClient.patch(`/orders/${orderId}`, { lensParameter })
+      await invoiceService.approveInvoice(id)
       return true
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Verification failed')
+      setError(err instanceof Error ? err.message : 'Approval failed')
       return false
     } finally {
       setProcessing(false)
     }
   }
 
-  const rejectOrder = async (invoiceId: string | number) => {
+  const rejectInvoice = async (id: string) => {
     setProcessing(true)
     setError(null)
     try {
-      await invoiceService.rejectInvoice(String(invoiceId))
+      await invoiceService.rejectInvoice(id)
       return true
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Rejection failed')
@@ -35,10 +33,5 @@ export const useSalesStaffAction = () => {
     }
   }
 
-  return {
-    verifyOrder,
-    rejectOrder,
-    processing,
-    error
-  }
+  return { approveInvoice, rejectInvoice, processing, error }
 }

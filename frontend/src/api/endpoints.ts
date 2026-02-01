@@ -77,6 +77,9 @@ export const ENDPOINTS = {
 
       return `/admin/invoices?${params.toString()}`
     },
-    INVOICES_ONBOARD: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/onboard`
+    INVOICES_ONBOARD: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/onboard`,
+    INVOICES_DEPOSITED: '/admin/invoices/deposited',
+    INVOICES_APPROVE: (id: string) => `/admin/invoices/${id}/status/approve`,
+    INVOICES_REJECT: (id: string) => `/admin/invoices/${id}/status/reject`
   }
 } as const

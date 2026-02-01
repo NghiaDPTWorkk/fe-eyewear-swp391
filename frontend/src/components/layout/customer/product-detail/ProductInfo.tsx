@@ -13,6 +13,9 @@ import type { Product } from '@/shared/types/product.types'
 import { useCartStore, useAuthStore } from '@/store'
 import { toast } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
+import { Button } from '@/shared/components/ui'
+import LensSelectionModal from './lenses/LensSelectionModal'
+import type { LensSelectionState } from './lenses/types'
 
 interface ProductInfoProps {
   product: Product
@@ -24,6 +27,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
   const addItem = useCartStore((state) => state.addItem)
   const { isAuthenticated } = useAuthStore()
   const navigate = useNavigate()
+  const [isLensModalOpen, setIsLensModalOpen] = useState(false)
 
   const handleAddToCart = () => {
     const isAuth = isAuthenticated || !!localStorage.getItem('accessToken')
@@ -32,6 +36,24 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
       navigate('/login')
       return
     }
+
+    const type = (product as any).type || 'frame'
+
+    if (type === 'frame' || type === 'lens') {
+      setIsLensModalOpen(true)
+      return
+    }
+
+    // Sunglass or default frame path
+    performAddToCart()
+  }
+
+  const handleLensConfirm = (selection: LensSelectionState) => {
+    performAddToCart(selection)
+    toast.success(`${product.nameBase} with ${selection.visionNeed} lenses added to cart!`)
+  }
+
+  const performAddToCart = (lensSelection?: LensSelectionState) => {
     const productAny = product as any
     const defaultVariant =
       productAny.variants?.find((v: any) => v.isDefault) || productAny.variants?.[0]
@@ -50,10 +72,19 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
       price: price,
       quantity: 1,
       image: productAny.defaultVariantImage || productAny.imageUrl || productAny.images?.[0] || '',
-      addAt: new Date()
-    })
+      addAt: new Date(),
+      // Add lens selection info to cart item if needed (will need to update cart types)
+      lens: lensSelection
+        ? {
+            visionNeed: lensSelection.visionNeed,
+            prescription: lensSelection.prescription
+          }
+        : undefined
+    } as any)
 
-    toast.success(`${product.nameBase} added to cart!`)
+    if (!lensSelection) {
+      toast.success(`${product.nameBase} added to cart!`)
+    }
   }
 
   // Mock data for colors and sizes since they might not be in the base product type yet
@@ -96,10 +127,10 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
             }
             toast.success('Added to wishlist!')
           }}
-          className="flex items-center gap-2 text-gray-eyewear hover:text-primary-500 transition-colors group"
+          className="flex items-center gap-2 text-gray-eyewear hover:text-primary-500 transition-colors group px-4 py-2 rounded-full hover:bg-mint-50"
         >
           <Heart className="w-5 h-5 group-hover:fill-primary-500" />
-          <span className="text-sm font-medium">Wishlist</span>
+          <span className="text-sm font-bold uppercase tracking-wider">Wishlist</span>
         </button>
       </div>
 
@@ -176,21 +207,33 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
 
       {/* Action Buttons */}
       <div className="flex flex-col gap-4 mb-8">
-        <button
+        <Button
           onClick={handleAddToCart}
-          className="w-full py-5 bg-primary-500 text-white font-bold rounded-2xl hover:bg-primary-600 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3"
+          size="lg"
+          isFullWidth
+          className="h-16 rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+          leftIcon={<ShoppingCart className="w-6 h-6" />}
         >
-          <ShoppingCart className="w-6 h-6" />
-          Add to Cart
-        </button>
-        <button className="w-full py-5 bg-white text-mint-1200 font-bold rounded-2xl border-2 border-mint-300 hover:bg-mint-300 transition-all flex items-center justify-center gap-3 group">
-          <Video className="w-6 h-6 text-primary-500 group-hover:scale-110 transition-transform" />
+          {(product as any).type === 'frame'
+            ? 'Select Lenses'
+            : (product as any).type === 'lens'
+              ? 'Enter Prescription & Add'
+              : 'Add to Cart'}
+        </Button>
+        <Button
+          variant="outline"
+          size="lg"
+          isFullWidth
+          colorScheme="neutral"
+          className="h-16 rounded-2xl border-mint-300 hover:bg-mint-50 px-0"
+          leftIcon={<Video className="w-6 h-6 text-primary-500" />}
+        >
           Virtual Try-On
-        </button>
+        </Button>
       </div>
 
-      <button className="flex items-center justify-center gap-2 text-primary-500 font-bold mb-12 hover:underline">
-        <MessageCircle className="w-5 h-5" />
+      <button className="flex items-center justify-center gap-2 text-primary-500 font-bold mb-12 hover:underline group transition-all">
+        <MessageCircle className="w-5 h-5 group-hover:scale-110 transition-transform" />
         Chat with an Expert about this frame
       </button>
 
@@ -213,6 +256,21 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
           <span className="text-sm text-gray-eyewear font-medium">Prescription Ready</span>
         </div>
       </div>
+
+      <LensSelectionModal
+        isOpen={isLensModalOpen}
+        onClose={() => setIsLensModalOpen(false)}
+        onConfirm={handleLensConfirm}
+        productName={product.nameBase}
+        productImage={
+          productAny.defaultVariantImage ||
+          productAny.imageUrl ||
+          defaultVariant?.imgs?.[0] ||
+          productAny.images?.[0] ||
+          ''
+        }
+        productType={(product as any).type || 'frame'}
+      />
     </div>
   )
 }

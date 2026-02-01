@@ -17,7 +17,7 @@ export const EmptyCart = () => {
       </p>
       <Button
         size="lg"
-        onClick={() => navigate('/products')}
+        onClick={() => navigate('/eyeglasses')}
         className="px-10 py-4 rounded-xl shadow-lg"
       >
         Start Shopping

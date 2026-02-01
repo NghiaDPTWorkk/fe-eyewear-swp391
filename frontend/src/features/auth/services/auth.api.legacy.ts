@@ -1,23 +1,46 @@
 import { ENDPOINTS, httpClient } from '@/api'
-import type { LoginRequest, LoginResponse, RegisterRequest, User } from '@/shared/types'
+import type {
+  LoginRequest,
+  LoginResponse,
+  RegisterRequest,
+  User,
+  ApiResponse
+} from '@/shared/types'
 
-// Khúc này nên đổi tên là service, không nên đặt tên như vầy
-// ???????????
 export const authApi = {
-  loginCustomer(payload: LoginRequest) {
+  /**
+   * Đăng nhập cho khách hàng
+   * @param payload - Email và mật khẩu
+   * @returns Thông tin định danh và token
+   */
+  loginCustomer: (payload: LoginRequest) => {
     return httpClient.post<LoginResponse>(ENDPOINTS.AUTH.LOGIN_CUSTOMER, payload)
   },
 
-  loginStaff(payload: LoginRequest) {
+  /**
+   * Đăng nhập cho nhân viên
+   * @param payload - Email và mật khẩu
+   * @returns Thông tin định danh và token
+   */
+  loginStaff: (payload: LoginRequest) => {
     return httpClient.post<LoginResponse>(ENDPOINTS.AUTH.LOGIN_STAFF, payload)
   },
 
-  register(payload: RegisterRequest) {
+  /**
+   * Đăng ký tài khoản khách hàng mới
+   * @param payload - Thông tin đăng ký
+   * @returns Thông tin tài khoản và token
+   */
+  register: (payload: RegisterRequest) => {
     return httpClient.post<LoginResponse>(ENDPOINTS.AUTH.REGISTER, payload)
   },
 
-  getProfile() {
-    return httpClient.get<User>(ENDPOINTS.AUTH.PROFILE)
+  /**
+   * Lấy thông tin cá nhân của người dùng hiện tại
+   * @returns Thông tin chi tiết khách hàng
+   */
+  getProfile: () => {
+    return httpClient.get<ApiResponse<User>>(ENDPOINTS.AUTH.PROFILE)
   },
 
   refreshToken() {
@@ -26,7 +49,10 @@ export const authApi = {
     })
   },
 
-  logout() {
+  /**
+   * Đăng xuất khỏi hệ thống
+   */
+  logout: () => {
     return httpClient.post(ENDPOINTS.AUTH.LOGOUT)
   }
 }

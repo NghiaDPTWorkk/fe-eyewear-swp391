@@ -134,8 +134,6 @@ apiClient.interceptors.response.use(
   async (error: AxiosError) => {
     if (error.response?.status === 401) {
       authEventEmitter.emit('UNAUTHORIZED')
-
-      localStorage.removeItem('access_token')
     }
 
     return Promise.reject(error)

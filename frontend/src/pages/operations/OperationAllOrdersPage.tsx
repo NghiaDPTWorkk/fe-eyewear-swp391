@@ -17,7 +17,9 @@ export default function OperationAllOrdersPage() {
   const allCount = orders.length
   const preOrderCount = orders.filter((o: Order) => o.orderType === OrderType.PRE_ORDER).length
   const normalCount = orders.filter((o: Order) => o.orderType === OrderType.NORMAL).length
-  const prescriptionCount = orders.filter((o: Order) => o.orderType === OrderType.MANUFACTURING).length
+  const prescriptionCount = orders.filter(
+    (o: Order) => o.orderType === OrderType.MANUFACTURING
+  ).length
 
   const filterButtons = [
     { label: 'All', count: allCount, value: 'all' },
@@ -41,17 +43,15 @@ export default function OperationAllOrdersPage() {
         className="mb-6"
       />
 
-      {/* ========== START NEW CODE ========== */}
       {/* Truyền orders, isLoading, isError xuống OrderTable để xử lý render states */}
       <OrderTable
-        orders={orders} // Data từ API
-        isLoading={isLoading} // Trạng thái đang load
-        isError={isError} // Trạng thái lỗi
+        orders={orders}
+        isLoading={isLoading}
+        isError={isError}
         hiddenColumns={['WAITING FOR']}
         filterType={filter === 'all' ? undefined : filter}
         role="operation"
       />
-      {/* ========== END NEW CODE ========== */}
     </Container>
   )
 }

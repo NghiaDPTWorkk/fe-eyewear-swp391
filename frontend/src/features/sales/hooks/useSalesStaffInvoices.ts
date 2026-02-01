@@ -1,7 +1,10 @@
 import { useState, useCallback } from 'react'
-import { httpClient } from '@/api/apiClients'
 import type { Invoice } from '../types'
+import { salesStaffService } from '../services/sales-staff.service'
 
+/**
+ * Hook for managing Sales Staff invoices
+ */
 export const useSalesStaffInvoices = () => {
   const [invoices, setInvoices] = useState<Invoice[]>([])
   const [loading, setLoading] = useState(false)
@@ -11,11 +14,8 @@ export const useSalesStaffInvoices = () => {
     setLoading(true)
     setError(null)
     try {
-      const response = await httpClient.get<any>('/invoices')
-      const data = response.data?.data?.data || response.data?.data || []
-      const deposited = Array.isArray(data)
-        ? data.filter((inv: Invoice) => inv.status === 'DEPOSITED')
-        : []
+      const data = await salesStaffService.getInvoices()
+      const deposited = data.filter((inv: Invoice) => inv.status === 'DEPOSITED')
       setInvoices(deposited)
     } catch (err: any) {
       setError(err.message || 'Failed to fetch invoices')

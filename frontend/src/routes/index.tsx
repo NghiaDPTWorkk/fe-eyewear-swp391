@@ -82,6 +82,9 @@ const OperationOrderPackingProcess = lazy(
   () => import('@/pages/operations/OperationOrderPackingProcess')
 )
 
+import { RoleGuard } from '@/routes/guards/RoleGuard'
+import { UserRole } from '@/shared/constants/user-role'
+
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -182,9 +185,11 @@ export const router = createBrowserRouter([
   {
     path: '/salestaff',
     element: (
-      <LazyPage>
-        <SaleStaffLayout />
-      </LazyPage>
+      <RoleGuard allowedRoles={[UserRole.STAFF, UserRole.ADMIN]}>
+        <LazyPage>
+          <SaleStaffLayout />
+        </LazyPage>
+      </RoleGuard>
     ),
     children: [
       {
@@ -246,9 +251,11 @@ export const router = createBrowserRouter([
   {
     path: '/operationstaff',
     element: (
-      <LazyPage>
-        <OperationLayout />
-      </LazyPage>
+      <RoleGuard allowedRoles={[UserRole.OPERATIONS, UserRole.STAFF, UserRole.ADMIN]}>
+        <LazyPage>
+          <OperationLayout />
+        </LazyPage>
+      </RoleGuard>
     ),
     children: [
       {

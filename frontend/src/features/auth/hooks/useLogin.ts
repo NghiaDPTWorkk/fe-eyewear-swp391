@@ -15,7 +15,7 @@ export const useLogin = (role: 'customer' | 'staff' = 'customer') => {
       }
       return authApi.loginCustomer(payload)
     },
-    onSuccess: (response: LoginResponse) => {
+    onSuccess: async (response: LoginResponse) => {
       console.log('Login Success Response:', response)
 
       // 1. Robust Token Extraction
@@ -28,19 +28,35 @@ export const useLogin = (role: 'customer' | 'staff' = 'customer') => {
         return
       }
 
-      // 2. Store token
-      localStorage.setItem('accessToken', token)
+      // 2. Store token and set state
       localStorage.setItem('access_token', token)
       setToken(token)
 
-      toast.success('Login successful!')
+      try {
+        // 3. Fetch user profile immediately
+        const userProfile = await authApi.getProfile()
+        const userData = (userProfile as any).data || userProfile
 
-      if (role === 'staff') {
-        navigate('/admin/dashboard')
-      } else {
-        navigate('/')
+        // 4. Set user data to store
+        useAuthStore.getState().setUser(userData)
+
+        toast.success('Login successful!')
+
+        // 5. Navigate based on role from profile
+        const userRole = userData.role
+        if (userRole === 'SALE_STAFF' || role === 'staff') {
+          navigate('/salestaff/dashboard')
+        } else if (userRole === 'OPERATION_STAFF') {
+          navigate('/operationstaff/dashboard')
+        } else {
+          navigate('/')
+        }
+      } catch (error) {
+        console.error('Failed to fetch profile after login:', error)
+        toast.error('Logged in but failed to load user profile')
       }
     },
+
     onError: (error: any) => {
       toast.error(error.message || 'Login failed. Please try again.')
       console.error('Login failed', error)

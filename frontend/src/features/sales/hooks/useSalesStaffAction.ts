@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { httpClient } from '@/api/apiClients'
 import type { LensParameter } from '../types'
+import { salesStaffService } from '../services/sales-staff.service'
 
 export const useSalesStaffAction = () => {
   const [processing, setProcessing] = useState(false)
@@ -10,7 +10,7 @@ export const useSalesStaffAction = () => {
     setProcessing(true)
     setError(null)
     try {
-      await httpClient.patch(`/orders/${orderId}`, { lensParameter })
+      await salesStaffService.verifyOrder(orderId, lensParameter)
       return true
     } catch (err: any) {
       setError(err.message || 'Verification failed')
@@ -24,7 +24,7 @@ export const useSalesStaffAction = () => {
     setProcessing(true)
     setError(null)
     try {
-      await httpClient.patch(`/invoices/${invoiceId}/cancel`)
+      await salesStaffService.rejectInvoice(invoiceId)
       return true
     } catch (err: any) {
       setError(err.message || 'Rejection failed')

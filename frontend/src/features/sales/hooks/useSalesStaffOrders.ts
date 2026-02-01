@@ -1,7 +1,11 @@
 import { useState, useCallback } from 'react'
-import { httpClient } from '@/api/apiClients'
 import type { Order } from '../types'
+import { salesStaffService } from '../services/sales-staff.service'
+import { mapApiOrderToFrontend, filterOrdersByStatus } from '../utils/order.utils'
 
+/**
+ * Hook for managing Sales Staff orders
+ */
 export const useSalesStaffOrders = () => {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(false)
@@ -11,28 +15,8 @@ export const useSalesStaffOrders = () => {
     setLoading(true)
     setError(null)
     try {
-      const response = await httpClient.get<any>('/admin/orders')
-
-      const rawData = response.data?.orders?.data || response.data?.data || []
-
-      const mappedOrders: Order[] = (Array.isArray(rawData) ? rawData : []).map((o: any) => {
-        let frontendStatus = o.status
-        if (o.status === 'PENDING') frontendStatus = 'WAITING_ASSIGN'
-        else if (['MAKING', 'PACKAGING', 'ASSIGNED'].includes(o.status))
-          frontendStatus = 'PROCESSING'
-        else if (o.status === 'COMPLETE') frontendStatus = 'COMPLETED'
-
-        return {
-          ...o,
-          id: o._id,
-          status: frontendStatus,
-          isPrescription: o.type?.includes('MANUFACTURING') || false,
-          orderType: o.type,
-          invoice: o.invoice || (o.invoiceId ? { id: o.invoiceId, status: 'UNKNOWN' } : undefined),
-          customerName: o.customerName || o.invoice?.fullName || 'Customer'
-        }
-      })
-
+      const rawData = await salesStaffService.getOrders()
+      const mappedOrders = (Array.isArray(rawData) ? rawData : []).map(mapApiOrderToFrontend)
       setOrders(mappedOrders)
     } catch (err: any) {
       setError(err.message || 'Failed to fetch orders')
@@ -44,13 +28,8 @@ export const useSalesStaffOrders = () => {
   const fetchOrderDetail = useCallback(async (orderId: string | number) => {
     setLoading(true)
     try {
-      // Correct endpoint: /orders/:id (apiClient adds /api/v1)
-      const response = await httpClient.get<any>(`/orders/${orderId}`)
-      const data = response.data?.data || response.data
-      return {
-        ...data,
-        id: data._id
-      }
+      const data = await salesStaffService.getOrderDetail(orderId)
+      return mapApiOrderToFrontend(data)
     } catch (err: any) {
       setError(err.message || 'Failed to fetch order detail')
       return null
@@ -59,11 +38,7 @@ export const useSalesStaffOrders = () => {
     }
   }, [])
 
-  const rxOrders = orders.filter(
-    (o) => o.isPrescription && (o.status === 'WAITING_ASSIGN' || o.status === 'PROCESSING')
-  )
-  const pendingOrders = orders.filter((o) => o.isPrescription && o.status === 'WAITING_ASSIGN')
-  const processedOrders = orders.filter((o) => !o.isPrescription || o.status !== 'WAITING_ASSIGN')
+  const { rxOrders, pendingOrders, processedOrders } = filterOrdersByStatus(orders)
 
   return {
     orders,

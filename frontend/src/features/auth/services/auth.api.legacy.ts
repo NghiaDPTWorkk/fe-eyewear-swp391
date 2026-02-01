@@ -20,8 +20,10 @@ export const authApi = {
     return httpClient.get<User>(ENDPOINTS.AUTH.PROFILE)
   },
 
-  refreshToken(payload: { refreshToken: string }) {
-    return httpClient.post<{ accessToken: string }>(ENDPOINTS.AUTH.REFRESH_TOKEN, payload)
+  refreshToken() {
+    return httpClient.post<{ accessToken: string }>(ENDPOINTS.AUTH.REFRESH_TOKEN, undefined, {
+      withCredentials: true
+    })
   },
 
   logout() {

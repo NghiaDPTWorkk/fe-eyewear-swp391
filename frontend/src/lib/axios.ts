@@ -58,11 +58,14 @@ async function refreshAccessToken(): Promise<string> {
   refreshPromise = (async () => {
     const deviceId = getOrCreateDeviceId()
 
+    // NOTE: Refresh token endpoint PHẢI có withCredentials: true để gửi refreshToken cookie
+    // Ngay cả trong development, endpoint này cần cookies
     const res = await apiClient.post<RefreshTokenResponse>('/admin/auth/refresh-token', undefined, {
       headers: {
         'x-device-id': deviceId
       },
-      skipAuth: true
+      skipAuth: true,
+      withCredentials: true  // ← Force enable cho refresh endpoint
     } as AxiosRequestConfig)
 
     const newToken = res.data?.data?.accessToken

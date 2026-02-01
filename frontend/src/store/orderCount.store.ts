@@ -52,14 +52,11 @@ export const useOrderCountStore = create<OrderCountStore>((set) => ({
       }
     })),
   initializeCounts: (orders) => {
-    // ========== START NEW CODE ==========
     const technical = orders.filter((o) => o.orderType === OrderType.MANUFACTURING).length
     const logistics = orders.filter((o) => o.orderType === OrderType.PRE_ORDER).length
-    const all = orders.length
-    // Completed và Packing là STATUS, không phải TYPE
-    const completed = orders.filter((o) => o.currentStatus === OrderStatus.COMPLETED).length
+    // const all = orders.length
+    // const completed = orders.filter((o) => o.currentStatus === OrderStatus.COMPLETED).length
     const packing = orders.filter((o) => o.currentStatus === OrderStatus.PACKAGING).length
-    // ========== END NEW CODE ==========
 
     set({
       counts: {

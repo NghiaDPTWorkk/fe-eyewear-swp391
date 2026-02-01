@@ -5,12 +5,21 @@ import { authApi } from '../services/auth.api.legacy'
 import toast from 'react-hot-toast'
 import { useAuthStore } from '@/store/auth.store'
 
-export const useLogin = (role: 'customer' | 'staff' = 'customer') => {
+export const useLogin = (
+  role:
+    | 'customer'
+    | 'staff'
+    | 'admin'
+    | 'manager'
+    | 'operations'
+    | 'SALE_STAFF'
+    | 'SALES_STAFF' = 'customer'
+) => {
   const navigate = useNavigate()
   const { setToken } = useAuthStore()
   return useMutation({
     mutationFn: (payload: LoginRequest) => {
-      if (role === 'staff') {
+      if (role !== 'customer') {
         return authApi.loginStaff(payload)
       }
       return authApi.loginCustomer(payload)
@@ -19,7 +28,9 @@ export const useLogin = (role: 'customer' | 'staff' = 'customer') => {
       console.log('Login Success Response:', response)
 
       // 1. Robust Token Extraction
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const authData = (response as any).data || response
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const token = authData.token || authData.accessToken || (response as any).token
 
       if (!token) {
@@ -35,7 +46,7 @@ export const useLogin = (role: 'customer' | 'staff' = 'customer') => {
 
       toast.success('Login successful!')
 
-      if (role === 'staff') {
+      if (role !== 'customer') {
         navigate('/admin/dashboard')
       } else {
         navigate('/')

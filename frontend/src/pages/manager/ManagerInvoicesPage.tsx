@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { Container } from '@/components'
 import { useAdminInvoices } from '@/features/manager/hooks/useAdminInvoices'
 import { useOnboard } from '@/features/manager/hooks/useOnboard'
@@ -7,13 +7,26 @@ import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import InvoiceCard from './InvoiceCard'
 
 export default function ManagerInvoicesPage() {
+  const [searchParams] = useSearchParams()
+  const status = searchParams.get('status') ?? undefined
+
+  // Reset page to 1 whenever status changes
+  const [prevStatus, setPrevStatus] = useState(status)
   const [page, setPage] = useState(1)
   const [expandedInvoiceId, setExpandedInvoiceId] = useState<string | null>(null)
   const limit = 10
 
+  // Check if status changed and reset page
+  if (status !== prevStatus) {
+    setPrevStatus(status)
+    if (page !== 1) {
+      setPage(1)
+    }
+  }
+
   const { onboard, isLoading: isOnboarding } = useOnboard()
 
-  const { data, isLoading, isError, error, refetch } = useAdminInvoices(page, limit)
+  const { data, isLoading, isError, error, refetch } = useAdminInvoices(page, limit, status)
 
   const invoiceList = data?.data.invoiceList ?? []
   const pagination = data?.data.pagination
@@ -103,6 +116,9 @@ export default function ManagerInvoicesPage() {
                     onOnboard={async (invoiceId) => {
                       await onboard(invoiceId)
                       await refetch()
+                    }}
+                    onComplete={() => {
+                      // TODO: implement later
                     }}
                   />
                 )

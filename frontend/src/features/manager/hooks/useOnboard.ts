@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { httpClient } from '@/api'
+import { ENDPOINTS, httpClient } from '@/api'
 
 type OnboardInvoiceResponse = {
   success: boolean
@@ -10,7 +10,7 @@ type OnboardInvoiceResponse = {
 export function useOnboard() {
   const mutation = useMutation({
     mutationFn: (invoiceId: string) =>
-      httpClient.patch<OnboardInvoiceResponse>(`/admin/invoices/${invoiceId}/onboard`)
+      httpClient.patch<OnboardInvoiceResponse>(ENDPOINTS.ADMIN.INVOICES_ONBOARD(invoiceId))
   })
 
   return {

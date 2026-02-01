@@ -32,6 +32,7 @@ export type InvoiceCardProps = {
   isOnboarding: boolean
   onToggleExpanded: () => void
   onOnboard: (invoiceId: string) => Promise<unknown>
+  onComplete?: (invoiceId: string) => void
   showOnboardButton?: boolean
 }
 
@@ -41,11 +42,20 @@ export default function InvoiceCard({
   isOnboarding,
   onToggleExpanded,
   onOnboard,
+  onComplete,
   showOnboardButton
 }: InvoiceCardProps) {
   return (
     <div className="rounded-2xl border border-neutral-200 bg-white shadow-sm">
-      <button type="button" className="w-full text-left p-4" onClick={onToggleExpanded}>
+      <div
+        role="button"
+        tabIndex={0}
+        className="w-full text-left p-4 cursor-pointer"
+        onClick={onToggleExpanded}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') onToggleExpanded()
+        }}
+      >
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
             <div className="flex items-center gap-3">
@@ -96,12 +106,26 @@ export default function InvoiceCard({
               </button>
             )}
 
+            {invoice.status === InvoiceStatus.ONBOARD && (
+              <button
+                type="button"
+                className="px-3 py-2 rounded-lg bg-secondary-500 text-white text-sm font-medium disabled:opacity-50"
+                disabled={isOnboarding}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onComplete?.(invoice.id)
+                }}
+              >
+                Change to COMPLETED
+              </button>
+            )}
+
             <div className="text-xs text-neutral-400">
               {isExpanded ? 'Hide orders' : 'View orders'}
             </div>
           </div>
         </div>
-      </button>
+      </div>
 
       {isExpanded && (
         <div className="px-4 pb-4">

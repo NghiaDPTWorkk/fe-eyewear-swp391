@@ -1,8 +1,31 @@
 import { authEventEmitter } from '@/shared/utils/auth.events'
 import { getOrCreateDeviceId } from '@/shared/utils/device.utils'
-import axios, { type AxiosError, type AxiosInstance, type InternalAxiosRequestConfig } from 'axios'
+import axios, {
+  type AxiosError,
+  type AxiosInstance,
+  type AxiosRequestConfig,
+  type InternalAxiosRequestConfig
+} from 'axios'
 
-function decodeJwtPayload(token: string): any | null {
+declare module 'axios' {
+  export interface AxiosRequestConfig {
+    skipAuth?: boolean
+  }
+
+  export interface InternalAxiosRequestConfig {
+    skipAuth?: boolean
+  }
+}
+
+type RefreshTokenResponse = {
+  success: boolean
+  message: string
+  data?: {
+    accessToken: string
+  }
+}
+
+function decodeJwtPayload(token: string): Record<string, unknown> | null {
   try {
     const payloadPart = token.split('.')[1]
     if (!payloadPart) return null
@@ -35,23 +58,20 @@ async function refreshAccessToken(): Promise<string> {
   refreshPromise = (async () => {
     const deviceId = getOrCreateDeviceId()
 
-    const res = await axios.post(
-      `${import.meta.env.VITE_API_URL}/api/v1/auth/refresh-token`,
-      undefined,
-      {
-        headers: {
-          'x-device-id': deviceId
-        },
-        withCredentials: true
-      }
-    )
+    const res = await apiClient.post<RefreshTokenResponse>('/admin/auth/refresh-token', undefined, {
+      headers: {
+        'x-device-id': deviceId
+      },
+      skipAuth: true
+    } as AxiosRequestConfig)
 
-    const newToken = (res.data as any)?.data?.accessToken
+    const newToken = res.data?.data?.accessToken
     if (!newToken) {
       throw new Error('Refresh token response missing accessToken')
     }
 
     localStorage.setItem('access_token', newToken)
+    localStorage.setItem('accessToken', newToken)
     return newToken
   })()
 
@@ -74,13 +94,20 @@ export const apiClient: AxiosInstance = axios.create({
 apiClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     const deviceId = getOrCreateDeviceId()
-    let token = localStorage.getItem('access_token')
+    let token =
+      localStorage.getItem('access_token') ??
+      localStorage.getItem('accessToken') ??
+      localStorage.getItem('token')
     config.headers['x-device-id'] = deviceId
 
     const publicRoutes = ['/auth/login', '/admin/auth/login', '/products', '/auth/refresh-token']
     const isPublicRoute = publicRoutes.some((route) => config.url?.includes(route))
 
-    if (token && !isPublicRoute) {
+    if (config.skipAuth || isPublicRoute) {
+      return config
+    }
+
+    if (token) {
       if (isTokenExpiredOrNearExpiry(token)) {
         try {
           token = await refreshAccessToken()

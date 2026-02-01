@@ -18,7 +18,8 @@ export const ENDPOINTS = {
     REFRESH_TOKEN_STAFF: '/admin/auth/refresh-token',
 
     // Profile
-    PROFILE: '/customer'
+    PROFILE: '/accounts/profile',
+    PROFILE_STAFF: '/accounts/profile'
   },
 
   // Products
@@ -67,7 +68,8 @@ export const ENDPOINTS = {
     ADMIN_MANAGER_LIST: '/admin/invoices/manager',
     APPROVE: (id: string) => `/admin/invoices/${id}/status/approve`,
     REJECT: (id: string) => `/admin/invoices/${id}/status/reject`,
-    ONBOARD: (id: string) => `/admin/invoices/${id}/status/onboard`
+    ONBOARD: (id: string) => `/admin/invoices/${id}/status/onboard`,
+    DEPOSIT: '/admin/invoices/deposit'
   },
 
   // Orders (Admin)
@@ -91,6 +93,7 @@ export const ENDPOINTS = {
     AVAILABLE: '/vouchers/available',
     MY_VOUCHERS: '/vouchers/my-vouchers',
     VALIDATE: '/vouchers/validate',
+
     // Admin
     ADMIN_LIST: '/admin/vouchers',
     ADMIN_CREATE: '/admin/vouchers',

@@ -15,9 +15,10 @@ export function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
     return <Navigate to="/admin/login" state={{ from: location }} replace />
   }
 
-  const userRole = (user as any)?.role || 'staff'
+  const userRole = (user as any)?.role?.toUpperCase()
 
-  if (!allowedRoles.includes(userRole as UserRole)) {
+  if (!userRole || !allowedRoles.includes(userRole as UserRole)) {
+    console.warn(`Access denied. User role: ${userRole}, Allowed: ${allowedRoles}`)
     return <Navigate to="/404" replace />
   }
 

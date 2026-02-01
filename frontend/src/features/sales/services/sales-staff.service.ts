@@ -16,10 +16,19 @@ export const salesStaffService = {
   },
 
   /**
+   * Fetch deposit invoices (Pre-orders)
+   */
+  getInvoicesDeposit: async (): Promise<any[]> => {
+    const response = await httpClient.get<any>(ENDPOINTS.INVOICES.DEPOSIT)
+    const data = response.data?.data || response.data?.items || response.data || response || []
+    return Array.isArray(data) ? data : []
+  },
+
+  /**
    * Fetch all orders for staff
    */
   getOrders: async (): Promise<any> => {
-    const url = ENDPOINTS.ORDERS.LIST || '/orders'
+    const url = ENDPOINTS.ORDERS.ADMIN_LIST || '/orders'
     const response = await httpClient.get<any>(url)
     return (
       response.data?.orders?.data ||
@@ -35,7 +44,7 @@ export const salesStaffService = {
    * Fetch a single order detail
    */
   getOrderDetail: async (orderId: string | number): Promise<any> => {
-    const url = ENDPOINTS.ORDERS.DETAIL(orderId.toString())
+    const url = ENDPOINTS.ORDERS.ADMIN_DETAIL(orderId.toString())
     const response = await httpClient.get<any>(url)
     return response.data?.data || response.data || response
   },
@@ -48,9 +57,17 @@ export const salesStaffService = {
   },
 
   /**
-   * Cancel an invoice (reject order)
+  /**
+   * Reject an invoice
    */
   rejectInvoice: (invoiceId: string | number) => {
-    return httpClient.patch(`/invoices/${invoiceId}/cancel`)
+    return httpClient.put(ENDPOINTS.INVOICES.REJECT(invoiceId.toString()))
+  },
+
+  /**
+   * Approve an invoice
+   */
+  approveInvoice: (invoiceId: string | number) => {
+    return httpClient.put(ENDPOINTS.INVOICES.APPROVE(invoiceId.toString()))
   }
 }

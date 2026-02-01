@@ -38,6 +38,40 @@ export const useSalesStaffOrders = () => {
     }
   }, [])
 
+  const fetchDepositOrders = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const rawData = await salesStaffService.getInvoicesDeposit()
+      const mappedOrders = (Array.isArray(rawData) ? rawData : []).map(mapApiOrderToFrontend)
+      setOrders(mappedOrders)
+    } catch (err: any) {
+      setError(err.message || 'Failed to fetch deposit orders')
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  const updateOrderStatus = useCallback(
+    async (invoiceId: string | number, status: 'approve' | 'reject') => {
+      setLoading(true)
+      setError(null)
+      try {
+        if (status === 'approve') {
+          await salesStaffService.approveInvoice(invoiceId)
+        } else {
+          await salesStaffService.rejectInvoice(invoiceId)
+        }
+        await fetchDepositOrders()
+      } catch (err: any) {
+        setError(err.message || `Failed to ${status} order`)
+      } finally {
+        setLoading(false)
+      }
+    },
+    [fetchDepositOrders]
+  )
+
   const { rxOrders, pendingOrders, processedOrders } = filterOrdersByStatus(orders)
 
   return {
@@ -48,6 +82,8 @@ export const useSalesStaffOrders = () => {
     loading,
     error,
     fetchOrders,
-    fetchOrderDetail
+    fetchDepositOrders,
+    fetchOrderDetail,
+    updateOrderStatus
   }
 }

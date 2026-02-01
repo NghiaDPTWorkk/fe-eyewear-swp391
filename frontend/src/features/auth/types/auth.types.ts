@@ -24,8 +24,14 @@ export interface AuthResponse {
     email: string
     phone: string
     gender: 'F' | 'M' | 'N'
+    role?: string
   }
 }
 
-// Alias for backward compatibility
-export type LoginResponse = AuthResponse
+export interface LoginResponse {
+  data?: AuthResponse
+  token?: string
+  user?: AuthResponse['user']
+  accessToken?: string
+  message?: string
+}

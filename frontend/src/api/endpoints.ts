@@ -50,5 +50,10 @@ export const ENDPOINTS = {
     MOMO: '/payment/momo',
     VNPAY: '/payment/vnpay',
     STATUS: (transactionId: string) => `/payment/status/${transactionId}`
+  },
+
+  // Admin
+  ADMIN: {
+    INVOICES: (page: number, limit: number) => `/admin/invoices?page=${page}&limit=${limit}`
   }
 } as const

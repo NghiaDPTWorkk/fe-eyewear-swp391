@@ -11,6 +11,7 @@ import { useSalesStaffAction } from '@/features/sales/hooks/useSalesStaffAction'
 import { IoFilter, IoAdd, IoSearchOutline } from 'react-icons/io5'
 import type { Order, LensParameter } from '@/features/sales/types'
 import { toast } from 'react-hot-toast'
+import { OrderStatus } from '@/shared/utils/enums/order.enum'
 
 export default function SaleStaffPrescriptionPage() {
   const { rxOrders, loading, fetchOrders } = useSalesStaffOrders()
@@ -27,9 +28,19 @@ export default function SaleStaffPrescriptionPage() {
     fetchOrders()
   }, [fetchOrders])
 
+  const rxMetrics = useMemo(() => {
+    return {
+      pendingLab: rxOrders.filter((o) => (o as any).rawStatus === OrderStatus.WAITING_ASSIGN)
+        .length,
+      grinding: rxOrders.filter((o) => (o as any).rawStatus === OrderStatus.MAKING).length,
+      qa: rxOrders.filter((o) => (o as any).rawStatus === OrderStatus.PACKAGING).length,
+      completed: rxOrders.filter((o) => (o as any).rawStatus === OrderStatus.COMPLETED).length
+    }
+  }, [rxOrders])
+
   const filterOptions = [
     { label: 'All Orders', value: 'All' },
-    { label: 'Waiting Verify', value: 'WAITING_ASSIGN' },
+    { label: 'Wait Verify', value: 'WAITING_ASSIGN' },
     { label: 'Processing', value: 'PROCESSING' }
   ]
 
@@ -84,7 +95,7 @@ export default function SaleStaffPrescriptionPage() {
         <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">Prescription Orders</h1>
       </div>
 
-      <SalesStaffRxMetrics />
+      <SalesStaffRxMetrics counts={rxMetrics} />
 
       <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center mb-6">
         <div className="relative flex-1 max-w-xl w-full">

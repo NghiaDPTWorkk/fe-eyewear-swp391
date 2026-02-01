@@ -7,15 +7,39 @@ import {
   IoCheckmarkDoneCircleOutline
 } from 'react-icons/io5'
 
-export const SalesStaffRxMetrics: React.FC = () => {
+interface SalesStaffRxMetricsProps {
+  counts?: {
+    pendingLab: number
+    grinding: number
+    qa: number
+    completed: number
+  }
+}
+
+export const SalesStaffRxMetrics: React.FC<SalesStaffRxMetricsProps> = ({ counts }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-      <MetricItem title="Pending Lab" value="12" icon={<IoFlaskOutline />} color="orange" />
-      <MetricItem title="In Grinding" value="8" icon={<IoSync />} color="blue" />
-      <MetricItem title="Ready for QA" value="5" icon={<IoCheckboxOutline />} color="purple" />
+      <MetricItem
+        title="Pending Lab"
+        value={String(counts?.pendingLab || 0)}
+        icon={<IoFlaskOutline />}
+        color="orange"
+      />
+      <MetricItem
+        title="In Grinding"
+        value={String(counts?.grinding || 0)}
+        icon={<IoSync />}
+        color="blue"
+      />
+      <MetricItem
+        title="Ready for QA"
+        value={String(counts?.qa || 0)}
+        icon={<IoCheckboxOutline />}
+        color="purple"
+      />
       <MetricItem
         title="Completed Today"
-        value="24"
+        value={String(counts?.completed || 0)}
         icon={<IoCheckmarkDoneCircleOutline />}
         color="emerald"
       />

@@ -1,11 +1,12 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Container } from '@/shared/components/ui/container'
-import { MetricCard } from '@/shared/components/ui/metric-card'
+import { MetricCard, type MetricCardProps } from '@/shared/components/ui/metric-card/MetricCard'
 import { Card } from '@/shared/components/ui/card'
 import { SalesStaffDashboardTable } from '@/features/sales/components/dashboard/SalesStaffDashboardTable'
 import { SalesStaffDashboardCharts } from '@/features/sales/components/dashboard/SalesStaffDashboardCharts'
 import { useSalesStaffInvoices } from '@/features/sales/hooks/useSalesStaffInvoices'
+import { useSalesStaffOrders } from '@/features/sales/hooks/useSalesStaffOrders'
 import {
   IoClipboardOutline,
   IoWalletOutline,
@@ -13,45 +14,44 @@ import {
   IoFlagOutline,
   IoAdd
 } from 'react-icons/io5'
-
-const METRICS: any[] = [
-  {
-    label: 'Pending Orders',
-    value: '24',
-    icon: <IoClipboardOutline className="text-2xl" />,
-    trend: { label: 'from yesterday', value: 12, isPositive: true },
-    colorScheme: 'warning'
-  },
-  {
-    label: 'Daily Revenue',
-    value: '$4,250.00',
-    icon: <IoWalletOutline className="text-2xl" />,
-    trend: { label: 'vs last week', value: 8.2, isPositive: true },
-    colorScheme: 'success'
-  },
-  {
-    label: 'Open Tickets',
-    value: '5',
-    icon: <IoTicketOutline className="text-2xl" />,
-    trend: { label: 'new today', value: -2, isPositive: false },
-    colorScheme: 'danger'
-  },
-  {
-    label: 'Monthly Target',
-    value: '85%',
-    subValue: '$102k achieved',
-    icon: <IoFlagOutline className="text-2xl" />,
-    colorScheme: 'primary'
-  }
-]
+import type { Order } from '@/features/sales/types'
 
 export default function SaleStaffDashboardPage() {
   const navigate = useNavigate()
-  const { invoices, loading, fetchInvoices } = useSalesStaffInvoices()
+  const { invoices, loading: invLoading, fetchInvoices } = useSalesStaffInvoices()
+  const { orders, loading: ordLoading, fetchOrders } = useSalesStaffOrders()
 
   useEffect(() => {
     fetchInvoices()
-  }, [fetchInvoices])
+    fetchOrders()
+  }, [fetchInvoices, fetchOrders])
+
+  const metrics: MetricCardProps[] = [
+    {
+      label: 'Pending Orders',
+      value: String(orders.filter((o: Order) => o.status === 'WAITING_ASSIGN').length),
+      icon: <IoClipboardOutline className="text-2xl" />,
+      colorScheme: 'warning'
+    },
+    {
+      label: 'Recent Deposits',
+      value: String(invoices.length),
+      icon: <IoWalletOutline className="text-2xl" />,
+      colorScheme: 'success'
+    },
+    {
+      label: 'Total Orders',
+      value: String(orders.length),
+      icon: <IoTicketOutline className="text-2xl" />,
+      colorScheme: 'primary'
+    },
+    {
+      label: 'Lab Orders',
+      value: String(orders.filter((o: Order) => o.status === 'PROCESSING').length),
+      icon: <IoFlagOutline className="text-2xl" />,
+      colorScheme: 'danger'
+    }
+  ]
 
   return (
     <Container>
@@ -63,7 +63,7 @@ export default function SaleStaffDashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {METRICS.map((m, i) => (
+        {metrics.map((m, i) => (
           <MetricCard key={i} {...m} />
         ))}
       </div>
@@ -82,7 +82,7 @@ export default function SaleStaffDashboardPage() {
         </div>
         <SalesStaffDashboardTable
           invoices={invoices}
-          loading={loading}
+          loading={invLoading || ordLoading}
           onInvoiceClick={(inv) => navigate(`/salestaff/orders?invoiceId=${inv.id}`)}
         />
       </Card>

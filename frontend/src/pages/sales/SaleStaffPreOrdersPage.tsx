@@ -10,10 +10,11 @@ import {
   IoCloudDownloadOutline,
   IoAdd,
   IoHourglassOutline,
-  IoWarningOutline,
   IoCalendarOutline,
-  IoWalletOutline
+  IoWalletOutline,
+  IoCheckboxOutline
 } from 'react-icons/io5'
+import { OrderType } from '@/shared/utils/enums/order.enum'
 
 export default function SaleStaffPreOrdersPage() {
   const navigate = useNavigate()
@@ -24,8 +25,6 @@ export default function SaleStaffPreOrdersPage() {
   useEffect(() => {
     fetchOrders()
   }, [fetchOrders])
-
-  const pendingCount = orders.filter((o) => o.status === 'WAITING_ASSIGN').length
 
   const handleOpenDrawer = (id: string) => {
     setSelectedOrderId(id)
@@ -64,66 +63,84 @@ export default function SaleStaffPreOrdersPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <Card className="p-5 border border-neutral-100 flex flex-col justify-between">
+        <Card className="p-5 border border-neutral-100 flex flex-col justify-between shadow-sm">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
-                Pending Orders
+                Pending Pre-orders
               </p>
               <h3 className="text-3xl font-semibold text-neutral-900 mt-2">
-                {loading ? '...' : pendingCount}
+                {loading
+                  ? '...'
+                  : orders.filter(
+                      (o) => o.orderType === OrderType.PRE_ORDER && o.status === 'WAITING_ASSIGN'
+                    ).length}
               </h3>
             </div>
             <div className="p-2 bg-amber-50 rounded-lg text-amber-500">
               <IoHourglassOutline size={20} />
             </div>
           </div>
-          <div className="mt-4 text-xs font-medium text-emerald-500">+12% this week</div>
+          <div className="mt-4 text-xs font-medium text-emerald-500">Awaiting processing</div>
         </Card>
 
-        <Card className="p-5 border border-neutral-100 flex flex-col justify-between">
+        <Card className="p-5 border border-neutral-100 flex flex-col justify-between shadow-sm">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
-                Overdue ETA
+                Processing
               </p>
-              <h3 className="text-3xl font-semibold text-neutral-900 mt-2">8</h3>
+              <h3 className="text-3xl font-semibold text-neutral-900 mt-2">
+                {
+                  orders.filter(
+                    (o) => o.orderType === OrderType.PRE_ORDER && o.status === 'PROCESSING'
+                  ).length
+                }
+              </h3>
             </div>
-            <div className="p-2 bg-red-50 rounded-lg text-red-500">
-              <IoWarningOutline size={20} />
-            </div>
-          </div>
-          <div className="mt-4 text-xs font-semibold text-red-500">Action required</div>
-        </Card>
-
-        <Card className="p-5 border border-neutral-100 flex flex-col justify-between">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
-                Arriving Soon
-              </p>
-              <h3 className="text-3xl font-semibold text-neutral-900 mt-2">24</h3>
-            </div>
-            <div className="p-2 bg-emerald-50 rounded-lg text-emerald-500">
+            <div className="p-2 bg-blue-50 rounded-lg text-blue-500">
               <IoCalendarOutline size={20} />
             </div>
           </div>
-          <div className="mt-4 text-xs font-medium text-neutral-500">Within 3 days</div>
+          <div className="mt-4 text-xs font-medium text-neutral-500">In supplier cycle</div>
         </Card>
 
-        <Card className="p-5 border border-neutral-100 flex flex-col justify-between">
+        <Card className="p-5 border border-neutral-100 flex flex-col justify-between shadow-sm">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
-                Total Deposits
+                Completed
               </p>
-              <h3 className="text-3xl font-semibold text-neutral-900 mt-2">$12,450</h3>
+              <h3 className="text-3xl font-semibold text-neutral-900 mt-2">
+                {
+                  orders.filter(
+                    (o) => o.orderType === OrderType.PRE_ORDER && o.status === 'COMPLETED'
+                  ).length
+                }
+              </h3>
             </div>
-            <div className="p-2 bg-blue-50 rounded-lg text-blue-500">
+            <div className="p-2 bg-emerald-50 rounded-lg text-emerald-500">
+              <IoCheckboxOutline size={20} />
+            </div>
+          </div>
+          <div className="mt-4 text-xs font-medium text-emerald-500">Ready for pickup</div>
+        </Card>
+
+        <Card className="p-5 border border-neutral-100 flex flex-col justify-between shadow-sm">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
+                Total Orders
+              </p>
+              <h3 className="text-3xl font-semibold text-neutral-900 mt-2">
+                {orders.filter((o) => o.orderType === OrderType.PRE_ORDER).length}
+              </h3>
+            </div>
+            <div className="p-2 bg-purple-50 rounded-lg text-purple-500">
               <IoWalletOutline size={20} />
             </div>
           </div>
-          <div className="mt-4 text-xs font-medium text-neutral-500">Held securely</div>
+          <div className="mt-4 text-xs font-medium text-neutral-500">Lifetime total</div>
         </Card>
       </div>
 

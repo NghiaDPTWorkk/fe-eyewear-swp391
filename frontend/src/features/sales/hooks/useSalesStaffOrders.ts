@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
-import { httpClient } from '@/api/apiClients'
+import { orderService } from '../services/orderService'
+import { OrderType, OrderStatus } from '@/shared/utils/enums/order.enum'
 import type { Order } from '../types'
 
 export const useSalesStaffOrders = () => {
@@ -7,35 +8,34 @@ export const useSalesStaffOrders = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const mapOrder = (o: any): Order => {
+    let displayStatus = o.status
+    if (o.status === OrderStatus.PENDING) displayStatus = 'WAITING_ASSIGN'
+    else if ([OrderStatus.MAKING, OrderStatus.PACKAGING, OrderStatus.ASSIGNED].includes(o.status)) {
+      displayStatus = 'PROCESSING'
+    }
+
+    return {
+      ...o,
+      id: o._id || o.id,
+      status: displayStatus,
+      rawStatus: o.status,
+      isPrescription: o.type === OrderType.MANUFACTURING,
+      orderType: o.type,
+      invoice: o.invoice || (o.invoiceId ? { id: o.invoiceId, status: 'UNKNOWN' } : undefined),
+      customerName: o.customerName || o.invoice?.fullName || 'Customer'
+    }
+  }
+
   const fetchOrders = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
-      const response = await httpClient.get<any>('/admin/orders')
-
-      const rawData = response.data?.orders?.data || response.data?.data || []
-
-      const mappedOrders: Order[] = (Array.isArray(rawData) ? rawData : []).map((o: any) => {
-        let frontendStatus = o.status
-        if (o.status === 'PENDING') frontendStatus = 'WAITING_ASSIGN'
-        else if (['MAKING', 'PACKAGING', 'ASSIGNED'].includes(o.status))
-          frontendStatus = 'PROCESSING'
-        else if (o.status === 'COMPLETE') frontendStatus = 'COMPLETED'
-
-        return {
-          ...o,
-          id: o._id,
-          status: frontendStatus,
-          isPrescription: o.type?.includes('MANUFACTURING') || false,
-          orderType: o.type,
-          invoice: o.invoice || (o.invoiceId ? { id: o.invoiceId, status: 'UNKNOWN' } : undefined),
-          customerName: o.customerName || o.invoice?.fullName || 'Customer'
-        }
-      })
-
-      setOrders(mappedOrders)
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch orders')
+      const response = await orderService.getOrders()
+      const data = (response as any).data || response
+      setOrders((Array.isArray(data) ? data : []).map(mapOrder))
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch orders')
     } finally {
       setLoading(false)
     }
@@ -44,32 +44,22 @@ export const useSalesStaffOrders = () => {
   const fetchOrderDetail = useCallback(async (orderId: string | number) => {
     setLoading(true)
     try {
-      // Correct endpoint: /orders/:id (apiClient adds /api/v1)
-      const response = await httpClient.get<any>(`/orders/${orderId}`)
-      const data = response.data?.data || response.data
-      return {
-        ...data,
-        id: data._id
-      }
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch order detail')
+      const response = await orderService.getOrderDetail(orderId)
+      const detail = (response as any).data || response
+      return { ...detail, id: detail._id || detail.id }
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch order detail')
       return null
     } finally {
       setLoading(false)
     }
   }, [])
 
-  const rxOrders = orders.filter(
-    (o) => o.isPrescription && (o.status === 'WAITING_ASSIGN' || o.status === 'PROCESSING')
-  )
-  const pendingOrders = orders.filter((o) => o.isPrescription && o.status === 'WAITING_ASSIGN')
-  const processedOrders = orders.filter((o) => !o.isPrescription || o.status !== 'WAITING_ASSIGN')
-
   return {
     orders,
-    rxOrders,
-    pendingOrders,
-    processedOrders,
+    rxOrders: orders.filter((o) => o.isPrescription),
+    pendingOrders: orders.filter((o) => o.isPrescription && o.status === 'WAITING_ASSIGN'),
+    processedOrders: orders.filter((o) => !o.isPrescription || o.status !== 'WAITING_ASSIGN'),
     loading,
     error,
     fetchOrders,

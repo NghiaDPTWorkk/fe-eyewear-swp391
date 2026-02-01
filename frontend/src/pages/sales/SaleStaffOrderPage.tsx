@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Container } from '@/components'
 import { useSalesStaffOrders } from '@/features/sales/hooks/useSalesStaffOrders'
 import { useSalesStaffAction } from '@/features/sales/hooks/useSalesStaffAction'
@@ -10,6 +11,8 @@ import { SalesStaffPagination } from '@/features/sales/components/SalesStaffPagi
 import type { LensParameter, Order } from '@/features/sales/types'
 
 export default function SaleStaffOrderPage() {
+  const [searchParams] = useSearchParams()
+  const invoiceIdParam = searchParams.get('invoiceId')
   const { orders, loading, fetchOrders } = useSalesStaffOrders()
   const { verifyOrder, rejectOrder, processing } = useSalesStaffAction()
 
@@ -24,6 +27,10 @@ export default function SaleStaffOrderPage() {
 
   const filteredOrders = useMemo(() => {
     return orders.filter((order) => {
+      const matchInvoice =
+        !invoiceIdParam ||
+        String(order.invoiceId) === invoiceIdParam ||
+        order.invoice?.id === invoiceIdParam
       const matchSearch =
         order.id.toString().toLowerCase().includes(search.toLowerCase()) ||
         order.customerName?.toLowerCase().includes(search.toLowerCase())
@@ -31,9 +38,9 @@ export default function SaleStaffOrderPage() {
         filter === 'All' ||
         (filter === 'Pending' && order.isPrescription && order.status === 'WAITING_ASSIGN') ||
         (filter === 'Processed' && (!order.isPrescription || order.status !== 'WAITING_ASSIGN'))
-      return matchSearch && matchFilter
+      return matchInvoice && matchSearch && matchFilter
     })
-  }, [orders, search, filter])
+  }, [orders, search, filter, invoiceIdParam])
 
   const handleVerifySubmit = async (params: LensParameter) => {
     if (selectedOrder && (await verifyOrder(selectedOrder.id, params))) {

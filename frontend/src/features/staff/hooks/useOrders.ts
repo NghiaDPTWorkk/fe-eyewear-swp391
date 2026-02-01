@@ -8,7 +8,7 @@ import { orderService } from '../services/orderService'
  * @param status - Filter theo status (optional)
  * @param type - Filter theo type (optional)
  */
-export const useOrders = (page = 1, limit = 10, status?: string, type?: string) => {
+export const useOrders = (page = 1, limit = 50, status?: string, type?: string) => {
   return useQuery({
     queryKey: ['orders', page, limit, status, type],
     queryFn: () => orderService.getOrders(page, limit, status, type),
@@ -24,7 +24,7 @@ export const useOrders = (page = 1, limit = 10, status?: string, type?: string) 
 export const useAllOrders = () => {
   return useQuery({
     queryKey: ['orders', 'all'],
-    queryFn: () => orderService.getOrders(1, 1000), // Lấy max 1000 orders
+    queryFn: () => orderService.getOrders(1, 50), // Lấy max 1000 orders
     staleTime: 60000, // Cache 1 phút
     refetchOnWindowFocus: true
   })

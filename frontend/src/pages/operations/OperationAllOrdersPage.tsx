@@ -2,15 +2,28 @@ import { useState } from 'react'
 import { Container } from '@/components'
 import { OrderTable, FilterButtonList } from '@/components/staff'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
+import { useOrderCountStore } from '@/store'
+import type { Order } from '@/features/staff/components/OrderTable/OrderTable'
+import { OrderType } from '@/shared/utils/enums/order.enum'
 
 export default function OperationAllOrdersPage() {
   const [filter, setFilter] = useState('all')
 
+  // ========== START NEW CODE ==========
+  // Lấy orders, isLoading, isError từ Zustand store (đã được fetch ở OperationLayout)
+  const { orders, isLoading, isError } = useOrderCountStore()
+  // ========== END NEW CODE ==========
+
+  const allCount = orders.length
+  const preOrderCount = orders.filter((o: Order) => o.orderType === OrderType.PRE_ORDER).length
+  const normalCount = orders.filter((o: Order) => o.orderType === OrderType.NORMAL).length
+  const prescriptionCount = orders.filter((o: Order) => o.orderType === OrderType.MANUFACTURING).length
+
   const filterButtons = [
-    { label: 'All', count: 5, value: 'all' },
-    { label: 'Pre-order', count: 2, value: 'Pre-order' },
-    { label: 'Normal', count: 2, value: 'Đơn Thường' },
-    { label: 'Prescription', count: 1, value: 'Prescription' }
+    { label: 'All', count: allCount, value: 'all' },
+    { label: 'Pre-order', count: preOrderCount, value: OrderType.PRE_ORDER }, // 'PRE-ORDER'
+    { label: 'Normal', count: normalCount, value: OrderType.NORMAL }, // 'NORMAL'
+    { label: 'Prescription', count: prescriptionCount, value: OrderType.MANUFACTURING } // 'MANUFACTURING'
   ]
 
   return (
@@ -28,11 +41,17 @@ export default function OperationAllOrdersPage() {
         className="mb-6"
       />
 
+      {/* ========== START NEW CODE ========== */}
+      {/* Truyền orders, isLoading, isError xuống OrderTable để xử lý render states */}
       <OrderTable
+        orders={orders} // Data từ API
+        isLoading={isLoading} // Trạng thái đang load
+        isError={isError} // Trạng thái lỗi
         hiddenColumns={['WAITING FOR']}
         filterType={filter === 'all' ? undefined : filter}
         role="operation"
       />
+      {/* ========== END NEW CODE ========== */}
     </Container>
   )
 }

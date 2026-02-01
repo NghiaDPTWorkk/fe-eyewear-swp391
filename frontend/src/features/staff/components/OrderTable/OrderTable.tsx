@@ -8,9 +8,15 @@ import { Button } from '@/components'
 import { IoTimeOutline, IoChevronForward, IoEyeOutline } from 'react-icons/io5'
 import { PATHS } from '@/routes/paths'
 import { useOrderCountStore } from '@/store'
+// ========== START NEW CODE ==========
+import { OrderType, OrderStatus } from '@/shared/utils/enums/order.enum'
+// ========== END NEW CODE ==========
 
 export interface Order {
   id: string
+  // ========== START NEW CODE ==========
+  orderCode?: string // Mã đơn hàng từ backend
+  // ========== END NEW CODE ==========
   orderType: string
   customer: string
   item: string
@@ -19,45 +25,62 @@ export interface Order {
   timeElapsed: string
   statusColor: string
   isNextActive: boolean
+  // ========== START NEW CODE ==========
+  price?: number // Giá đơn hàng
+  assignedStaff?: string // Staff được assign
+  // ========== END NEW CODE ==========
 }
 
 // Định nghĩa cấu trúc 1 cột
 export interface Column<T> {
-  header: string | ReactNode // Tiêu đề cột (Text hoặc Component)
-  render: (item: T) => ReactNode // Hàm hiển thị dữ liệu cho từng dòng
-  className?: string // Class cho td á
-  headerClassName?: string // Class cho th
+  header: string | ReactNode
+  render: (item: T) => ReactNode
+  className?: string
+  headerClassName?: string
 }
 
 interface OrderTableProps {
-  columns?: Column<Order>[] // Mảng các cột
-  hiddenColumns?: string[] // Mảng các header cột muốn ẩn
-  filterType?: string // Loại đơn muốn lọc
-  role?: 'sales' | 'operation' // Phân biệt vai trò để hiển thị UI khác nhau
-  pageType?: 'technical' | 'logistics' | 'packing' // Loại trang để cập nhật badge count
+  // ========== START NEW CODE ==========
+  orders?: Order[] // Nhận orders từ parent component
+  isLoading?: boolean // Trạng thái đang fetch data từ API
+  isError?: boolean // Trạng thái lỗi khi fetch API
+  // ========== END NEW CODE ==========
+  columns?: Column<Order>[]
+  hiddenColumns?: string[]
+  filterType?: string
+  role?: 'sales' | 'operation'
+  pageType?: 'technical' | 'logistics' | 'packing' | 'all'
 }
 
 const getOrderTypeStyles = (type: string, role: string) => {
   if (role === 'sales') {
     switch (type) {
-      case 'Normal':
+      // ========== START NEW CODE ==========
+      case OrderType.NORMAL:
         return 'bg-emerald-50 text-emerald-600'
-      case 'Pre-order':
+      case OrderType.PRE_ORDER:
         return 'bg-amber-50 text-amber-600'
-      case 'Prescription':
+      case OrderType.MANUFACTURING:
         return 'bg-indigo-50 text-indigo-600'
+      // ========== END NEW CODE ==========
       default:
         return 'bg-neutral-50 text-neutral-600'
     }
   } else {
-    // Original styles for operations from reference
+   // operation staff
     switch (type) {
-      case 'Đơn Thường':
+      case 'all':
+        return 'bg-neutral-50 text-neutral-600'
+      // ========== START NEW CODE ==========
+      case OrderType.NORMAL:
         return 'bg-emerald-50 text-emerald-600'
-      case 'Pre-order':
+      case OrderType.PRE_ORDER:
         return 'bg-amber-50 text-amber-600'
-      case 'Prescription':
+      case OrderType.MANUFACTURING:
         return 'bg-indigo-50 text-indigo-600'
+      case OrderStatus.COMPLETED:
+        return 'bg-blue-50 text-blue-600'
+      // ========== END NEW CODE ==========
       default:
         return 'bg-neutral-50 text-neutral-600'
     }
@@ -65,6 +88,11 @@ const getOrderTypeStyles = (type: string, role: string) => {
 }
 
 export default function OrderTable({
+  // ========== START NEW CODE ==========
+  orders: ordersFromProps, // Nhận orders từ parent
+  isLoading = false, // Trạng thái loading, mặc định false
+  isError = false, // Trạng thái error, mặc định false
+  // ========== END NEW CODE ==========
   columns,
   hiddenColumns = [],
   filterType,
@@ -79,7 +107,9 @@ export default function OrderTable({
     navigate(PATHS.OPERATIONSTAFF.ORDER_DETAIL(orderId))
   }
 
-  const orders: Order[] = [
+  // ========== START NEW CODE ==========
+  // Dùng orders từ props, nếu không có thì dùng mock data (fallback)
+  const mockOrders: Order[] = [
     {
       id: 'ORD-001',
       orderType: isSales ? 'Normal' : 'Đơn Thường',
@@ -133,6 +163,10 @@ export default function OrderTable({
       isNextActive: true
     }
   ]
+
+  // Dùng orders từ props nếu có, không thì dùng mock data
+  const orders = ordersFromProps || mockOrders
+  // ========== END NEW CODE ==========
 
   const filteredOrders = filterType
     ? orders.filter((order) => order.orderType === filterType)
@@ -269,6 +303,29 @@ export default function OrderTable({
       )
     }
   ]
+
+  // ========== START NEW CODE ==========
+  // Nếu đang loading, hiển thị loading state
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-mint-500"></div>
+        <p className="mt-4 text-gray-500">Loading orders...</p>
+      </div>
+    )
+  }
+
+  // Nếu có lỗi, hiển thị error state
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12">
+        <div className="text-red-500 text-5xl mb-4">❌</div>
+        <p className="text-red-600 font-semibold">Failed to load orders</p>
+        <p className="text-gray-500 mt-2">Please try again later</p>
+      </div>
+    )
+  }
+  // ========== END NEW CODE ==========
 
   const activeColumns = (columns || defaultColumns).filter(
     (col) => !hiddenColumns.includes(col.header as string)

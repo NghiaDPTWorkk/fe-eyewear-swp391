@@ -1,4 +1,8 @@
 import { create } from 'zustand'
+// ========== START NEW CODE ==========
+import type { Order } from '@/features/staff/components/OrderTable/OrderTable'
+import { OrderType, OrderStatus } from '@/shared/utils/enums/order.enum'
+// ========== END NEW CODE ==========
 
 interface OrderCountStore {
   counts: {
@@ -6,9 +10,20 @@ interface OrderCountStore {
     logistics: number // Số đơn Pre-order
     packing: number // Số đơn có status packing
     all: number
+    completed: number
   }
-  setCount: (type: 'technical' | 'logistics' | 'packing', count: number) => void
-  initializeCounts: (orders: { orderType: string }[]) => void
+  // ========== START NEW CODE ==========
+  orders: Order[] // Lưu toàn bộ orders từ API
+  setOrders: (orders: Order[]) => void // Action để set orders
+  isLoading: boolean // Trạng thái đang fetch data
+  isError: boolean // Trạng thái lỗi khi fetch
+  setLoadingState: (isLoading: boolean, isError: boolean) => void // Set loading/error states
+  // ========== END NEW CODE ==========
+  setCount: (
+    type: 'technical' | 'logistics' | 'packing' | 'all' | 'completed',
+    count: number
+  ) => void
+  initializeCounts: (orders: { orderType: string; currentStatus: string }[]) => void
   resetCounts: () => void
 }
 
@@ -17,8 +32,18 @@ export const useOrderCountStore = create<OrderCountStore>((set) => ({
     technical: 0,
     logistics: 0,
     packing: 0,
-    all: 0
+    all: 0,
+    completed: 0
   },
+  // ========== START NEW CODE ==========
+  orders: [], // Khởi tạo empty array
+  isLoading: false, // Mặc định không loading
+  isError: false, // Mặc định không có lỗi
+  // ========== END NEW CODE ==========
+  setOrders: (orders) => set({ orders }), // Action để set orders
+  // ========== START NEW CODE ==========
+  setLoadingState: (isLoading, isError) => set({ isLoading, isError }),
+  // ========== END NEW CODE ==========
   setCount: (type, count) =>
     set((state) => ({
       counts: {
@@ -27,16 +52,22 @@ export const useOrderCountStore = create<OrderCountStore>((set) => ({
       }
     })),
   initializeCounts: (orders) => {
-    const technical = orders.filter((o) => o.orderType === 'Prescription').length
-    const logistics = orders.filter((o) => o.orderType === 'Pre-order').length
-    const packing = orders.length // Tất cả đơn
+    // ========== START NEW CODE ==========
+    const technical = orders.filter((o) => o.orderType === OrderType.MANUFACTURING).length
+    const logistics = orders.filter((o) => o.orderType === OrderType.PRE_ORDER).length
+    const all = orders.length
+    // Completed và Packing là STATUS, không phải TYPE
+    const completed = orders.filter((o) => o.currentStatus === OrderStatus.COMPLETED).length
+    const packing = orders.filter((o) => o.currentStatus === OrderStatus.PACKAGING).length
+    // ========== END NEW CODE ==========
 
     set({
       counts: {
         technical,
         logistics,
         packing,
-        all: orders.length
+        all: orders.length,
+        completed: 0
       }
     })
   },
@@ -46,7 +77,8 @@ export const useOrderCountStore = create<OrderCountStore>((set) => ({
         technical: 0,
         logistics: 0,
         packing: 0,
-        all: 0
+        all: 0,
+        completed: 0
       }
     })
 }))

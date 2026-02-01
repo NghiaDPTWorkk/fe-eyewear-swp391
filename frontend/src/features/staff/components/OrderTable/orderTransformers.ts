@@ -1,5 +1,8 @@
 import type { OperationOrder } from '@/shared/types/operationOrder.types'
 import type { Order } from './OrderTable'
+// ========== START NEW CODE ==========
+import { OrderType, OrderStatus } from '@/shared/utils/enums/order.enum'
+// ========== END NEW CODE ==========
 
 /**
  * Helper: Tính thời gian đã trôi qua từ createdAt
@@ -22,27 +25,32 @@ const calculateTimeElapsed = (createdAt: string): string => {
  * Helper: Map status sang màu
  */
 const getStatusColor = (status: string): string => {
+  // ========== START NEW CODE ==========
   const statusColorMap: Record<string, string> = {
-    PENDING: 'bg-yellow-100 text-yellow-600',
-    ASSIGNED: 'bg-blue-100 text-blue-600',
-    IN_PROGRESS: 'bg-purple-100 text-purple-600',
-    AWAITING_STOCK: 'bg-orange-100 text-orange-600',
-    READY_TO_PACK: 'bg-green-100 text-green-600',
-    PACKING: 'bg-indigo-100 text-indigo-600',
-    PACKED: 'bg-gray-100 text-gray-600',
-    COMPLETED: 'bg-emerald-100 text-emerald-600'
+    [OrderStatus.PENDING]: 'bg-yellow-100 text-yellow-600',
+    [OrderStatus.ASSIGNED]: 'bg-blue-100 text-blue-600',
+    [OrderStatus.MAKING]: 'bg-purple-100 text-purple-600',
+    [OrderStatus.PACKAGING]: 'bg-indigo-100 text-indigo-600',
+    [OrderStatus.COMPLETED]: 'bg-emerald-100 text-emerald-600',
+    [OrderStatus.CANCELED]: 'bg-red-100 text-red-600',
+    [OrderStatus.REFUNDED]: 'bg-gray-100 text-gray-600'
   }
+  // ========== END NEW CODE ==========
   return statusColorMap[status] || 'bg-gray-100 text-gray-600'
 }
 
 /**
- * Helper: Map type array sang string hiển thị
+ * Helper: Map type array sang enum OrderType value
  */
 const getOrderType = (types: string[]): string => {
-  if (types.includes('PRESCRIPTION')) return 'Prescription'
-  if (types.includes('MANUFACTURING')) return 'Đơn Thường'
-  if (types.includes('PRE_ORDER')) return 'Pre-order'
-  return 'Đơn Thường'
+  // ========== START NEW CODE ==========
+  // Backend trả về array như ['MANUFACTURING'], ['PRE_ORDER'], ['NORMAL']
+  if (types.includes('PRE_ORDER') || types.includes('PRE-ORDER')) return OrderType.PRE_ORDER
+  if (types.includes('MANUFACTURING')) return OrderType.MANUFACTURING
+  if (types.includes('NORMAL')) return OrderType.NORMAL
+  if (types.includes('RETURN')) return OrderType.RETURN
+  return OrderType.NORMAL // Default
+  // ========== END NEW CODE ==========
 }
 
 /**
@@ -77,7 +85,9 @@ export const transformApiOrderToTableOrder = (apiOrder: OperationOrder): Order =
     currentStatus: apiOrder.status,
     timeElapsed: calculateTimeElapsed(apiOrder.createdAt),
     statusColor: getStatusColor(apiOrder.status),
-    isNextActive: apiOrder.status !== 'COMPLETED' && apiOrder.status !== 'PACKED',
+    // ========== START NEW CODE ==========
+    isNextActive: apiOrder.status !== OrderStatus.COMPLETED && apiOrder.status !== OrderStatus.PACKAGING,
+    // ========== END NEW CODE ==========
     price: apiOrder.price,
     assignedStaff: apiOrder.assignedStaff
   }

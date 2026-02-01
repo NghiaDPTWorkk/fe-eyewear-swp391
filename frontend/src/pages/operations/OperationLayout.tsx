@@ -19,23 +19,46 @@ import {
 import { FaBoxesPacking } from 'react-icons/fa6'
 import { useOrderCountStore } from '@/store'
 import { AiOutlineFileDone } from 'react-icons/ai'
+import { useAllOrders } from '@/features/staff/hooks/useOrders'
+import { transformApiOrderToTableOrder } from '@/features/staff/components/OrderTable/orderTransformers'
 
 export default function OperationLayout() {
   const location = useLocation()
   const navigate = useNavigate()
-  const { counts, initializeCounts } = useOrderCountStore()
+  // ========== START NEW CODE ==========
+  const { counts, initializeCounts, setOrders, setLoadingState } = useOrderCountStore()
+  // ========== END NEW CODE ==========
 
-  // Mock orders data (giống trong OrderTable)
-  const mockOrders = [
-    { orderType: 'Đơn Thường' },
-    { orderType: 'Pre-order' },
-    { orderType: 'Prescription' }
-  ]
+  // Gọi API để lấy số lượng đơn hàng cho từng trạng thái
+  const { data, isLoading, isError, error } = useAllOrders()
 
-  // Initialize counts khi component mount
+  // Console.log data để xem cấu trúc response từ API
   useEffect(() => {
-    initializeCounts(mockOrders)
-  }, [initializeCounts])
+    console.log(' Trạng thái API:', { isLoading, isError, hasData: !!data })
+
+    // ========== START NEW CODE ==========
+    // Set loading và error states vào store
+    setLoadingState(isLoading, isError)
+    // ========== END NEW CODE ==========
+
+    if (data) {
+      console.log('✅ Dữ liệu đơn hàng từ API:', data)
+      // Transform data từ API sang format UI
+      const apiOrders = data?.data?.orders?.data || []
+
+      // Transform order để nhét vô OrderTable á
+      const transformedOrders = apiOrders.map(transformApiOrderToTableOrder)
+
+      // Lưu orders vào Zustand store để các trang khác dùng
+      setOrders(transformedOrders)
+
+      // Initialize counts vào Zustand store
+      initializeCounts(transformedOrders)
+    }
+    if (isError) {
+      console.error('Lỗi API:', error)
+    }
+  }, [data, isLoading, isError, error, initializeCounts, setOrders, setLoadingState])
 
   const sidebar = (
     <SidebarStaff

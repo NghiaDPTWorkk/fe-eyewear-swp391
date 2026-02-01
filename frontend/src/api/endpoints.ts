@@ -36,7 +36,17 @@ export const ENDPOINTS = {
     LIST: '/orders',
     DETAIL: (id: string) => `/orders/${id}`,
     CANCEL: (id: string) => `/orders/${id}/cancel`,
-    TRACKING: (id: string) => `/orders/${id}/tracking`
+    TRACKING: (id: string) => `/orders/${id}/tracking`,
+    LIST_WITH_PARAMS: (page: number, limit: number, status?: string, type?: string) => {
+      let endpoint = `/admin/orders?page=${page}&limit=${limit}`
+      if (status) {
+        endpoint += `&status=${status}`
+      }
+      if (type) {
+        endpoint += `&type=${type}`
+      }
+      return endpoint
+    }
   },
 
   // Prescription (Custom Lens)

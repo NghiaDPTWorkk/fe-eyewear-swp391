@@ -4,24 +4,26 @@ import { OrderTable, FilterButtonList } from '@/components/staff'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 import { useOrderCountStore } from '@/store'
 import type { Order } from '@/features/staff/components/OrderTable/OrderTable'
+import { OrderType } from '@/shared/utils/enums/order.enum'
 
 export default function OperationAllOrdersPage() {
   const [filter, setFilter] = useState('all')
 
-  const { orders } = useOrderCountStore()
-
-  // Tính filter counts từ real data
-  const allCount = orders.length
-  const preOrderCount = orders.filter((o: Order) => o.orderType === 'Pre-order').length
-  const normalCount = orders.filter((o: Order) => o.orderType === 'Đơn Thường').length
-  const prescriptionCount = orders.filter((o: Order) => o.orderType === 'Manufacturing').length
+  // ========== START NEW CODE ==========
+  // Lấy orders, isLoading, isError từ Zustand store (đã được fetch ở OperationLayout)
+  const { orders, isLoading, isError } = useOrderCountStore()
   // ========== END NEW CODE ==========
+
+  const allCount = orders.length
+  const preOrderCount = orders.filter((o: Order) => o.orderType === OrderType.PRE_ORDER).length
+  const normalCount = orders.filter((o: Order) => o.orderType === OrderType.NORMAL).length
+  const prescriptionCount = orders.filter((o: Order) => o.orderType === OrderType.MANUFACTURING).length
 
   const filterButtons = [
     { label: 'All', count: allCount, value: 'all' },
-    { label: 'Pre-order', count: preOrderCount, value: 'Pre-order' },
-    { label: 'Normal', count: normalCount, value: 'Đơn Thường' },
-    { label: 'Prescription', count: prescriptionCount, value: 'Manufacturing' }
+    { label: 'Pre-order', count: preOrderCount, value: OrderType.PRE_ORDER }, // 'PRE-ORDER'
+    { label: 'Normal', count: normalCount, value: OrderType.NORMAL }, // 'NORMAL'
+    { label: 'Prescription', count: prescriptionCount, value: OrderType.MANUFACTURING } // 'MANUFACTURING'
   ]
 
   return (
@@ -40,8 +42,11 @@ export default function OperationAllOrdersPage() {
       />
 
       {/* ========== START NEW CODE ========== */}
+      {/* Truyền orders, isLoading, isError xuống OrderTable để xử lý render states */}
       <OrderTable
-        orders={orders}
+        orders={orders} // Data từ API
+        isLoading={isLoading} // Trạng thái đang load
+        isError={isError} // Trạng thái lỗi
         hiddenColumns={['WAITING FOR']}
         filterType={filter === 'all' ? undefined : filter}
         role="operation"

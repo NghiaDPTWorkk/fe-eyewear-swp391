@@ -26,7 +26,7 @@ export default function OperationLayout() {
   const location = useLocation()
   const navigate = useNavigate()
   // ========== START NEW CODE ==========
-  const { counts, initializeCounts, setOrders } = useOrderCountStore()
+  const { counts, initializeCounts, setOrders, setLoadingState } = useOrderCountStore()
   // ========== END NEW CODE ==========
 
   // Gọi API để lấy số lượng đơn hàng cho từng trạng thái
@@ -36,25 +36,29 @@ export default function OperationLayout() {
   useEffect(() => {
     console.log(' Trạng thái API:', { isLoading, isError, hasData: !!data })
 
+    // ========== START NEW CODE ==========
+    // Set loading và error states vào store
+    setLoadingState(isLoading, isError)
+    // ========== END NEW CODE ==========
+
     if (data) {
+      console.log('✅ Dữ liệu đơn hàng từ API:', data)
       // Transform data từ API sang format UI
       const apiOrders = data?.data?.orders?.data || []
 
       // Transform order để nhét vô OrderTable á
       const transformedOrders = apiOrders.map(transformApiOrderToTableOrder)
 
-      // ========== START NEW CODE ==========
       // Lưu orders vào Zustand store để các trang khác dùng
       setOrders(transformedOrders)
-      // ========== END NEW CODE ==========
 
       // Initialize counts vào Zustand store
       initializeCounts(transformedOrders)
     }
     if (isError) {
-      console.error('❌ Lỗi API:', error)
+      console.error('Lỗi API:', error)
     }
-  }, [data, isLoading, isError, error, initializeCounts, setOrders])
+  }, [data, isLoading, isError, error, initializeCounts, setOrders, setLoadingState])
 
   const sidebar = (
     <SidebarStaff

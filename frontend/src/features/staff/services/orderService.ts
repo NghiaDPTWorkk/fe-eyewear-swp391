@@ -10,7 +10,7 @@ export const orderService = {
    * @param status - Filter theo status (optional)
    * @param type - Filter theo type (optional)
    */
-  getOrders: async (page = 1, limit = 10, status?: string, type?: string) => {
+  getOrders: async (page: number, limit: number, status?: string, type?: string) => {
     return httpClient.get<OrdersResponse>(
       ENDPOINTS.ORDERS.LIST_WITH_PARAMS(page, limit, status, type)
     )

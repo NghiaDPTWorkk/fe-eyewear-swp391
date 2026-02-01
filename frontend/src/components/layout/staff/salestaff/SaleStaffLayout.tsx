@@ -15,11 +15,9 @@ import {
   IoHelpCircle,
   IoStorefront
 } from 'react-icons/io5'
-import { useAuthStore } from '@/store'
 
 export default function SaleStaffLayout() {
   const location = useLocation()
-  const { user } = useAuthStore()
 
   const sidebar = (
     <SidebarStaff
@@ -35,9 +33,9 @@ export default function SaleStaffLayout() {
       storeIcon={<IoStorefront />}
       userWidget={
         <UserWidgetWithLogout
-          userInitials={user?.name?.charAt(0) || 'U'}
-          userName={user?.name || 'User'}
-          userRole="Sales Staff"
+          userInitials="AM"
+          userName="Anna Morgan"
+          userRole="Operations Manager"
         />
       }
     >

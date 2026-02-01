@@ -2,17 +2,8 @@ import { authEventEmitter } from '@/shared/utils/auth.events'
 import { getOrCreateDeviceId } from '@/shared/utils/device.utils'
 import axios, { type AxiosError, type AxiosInstance, type InternalAxiosRequestConfig } from 'axios'
 
-// Construct base URL more robustly to avoid redundant /api
-const getBaseURL = () => {
-  const apiUrl = import.meta.env.VITE_API_URL?.replace(/\/$/, '') || 'http://34.92.192.47:5000'
-
-  if (apiUrl.includes('/api/v1')) return apiUrl
-  if (apiUrl.endsWith('/api')) return `${apiUrl}/v1`
-  return `${apiUrl}/api/v1`
-}
-
 export const apiClient: AxiosInstance = axios.create({
-  baseURL: getBaseURL(),
+  baseURL: `${import.meta.env.VITE_API_URL}/api/v1`,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'

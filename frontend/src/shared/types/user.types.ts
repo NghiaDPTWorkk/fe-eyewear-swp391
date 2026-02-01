@@ -9,7 +9,6 @@ export interface User {
   address?: Address[]
   hobbies?: string[]
   isVerified?: boolean
-  role?: string
   linkedAccounts?: any
   deletedAt?: Date | string | null
   createdAt?: Date | string

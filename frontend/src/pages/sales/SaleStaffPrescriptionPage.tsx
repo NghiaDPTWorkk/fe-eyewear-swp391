@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import { SalesStaffRxTable } from '@/features/sales/components/prescription/SalesStaffRxTable'
 import { SalesStaffRxMetrics } from '@/features/sales/components/prescription/SalesStaffRxMetrics'
 import { SalesStaffVerifyModal } from '@/features/sales/components/SalesStaffVerifyModal'
+import { SalesStaffPagination } from '@/features/sales/components/SalesStaffPagination'
 import { useSalesStaffOrders } from '@/features/sales/hooks/useSalesStaffOrders'
 import { useSalesStaffAction } from '@/features/sales/hooks/useSalesStaffAction'
 import { IoFilter, IoAdd, IoSearchOutline } from 'react-icons/io5'
@@ -69,6 +70,13 @@ export default function SaleStaffPrescriptionPage() {
             className="text-neutral-400 hover:text-primary-500 transition-colors"
           >
             Dashboard
+          </Link>
+          <span className="text-neutral-300">/</span>
+          <Link
+            to="/salestaff/orders"
+            className="text-neutral-400 hover:text-primary-500 transition-colors"
+          >
+            Orders
           </Link>
           <span className="text-neutral-300">/</span>
           <span className="text-primary-500 font-semibold">Prescriptions</span>
@@ -150,6 +158,8 @@ export default function SaleStaffPrescriptionPage() {
           onReject={handleReject}
         />
       </Card>
+
+      <SalesStaffPagination total={filteredOrders.length} currentPage={1} pageSize={10} />
 
       <SalesStaffVerifyModal
         isOpen={isVerifyModalOpen}

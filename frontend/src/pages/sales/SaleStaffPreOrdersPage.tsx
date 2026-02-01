@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { PATHS } from '@/routes/paths'
 import { Container, Button, Card } from '@/components'
-import SaleStaffOrderTable from '@/features/sales/components/SaleStaffOrderTable/SaleStaffOrderTable'
+import { SalesStaffOrderList } from '@/features/sales/components/SalesStaffOrderList'
+import { SalesStaffPagination } from '@/features/sales/components/SalesStaffPagination'
 import OrderDetailsDrawer from '@/features/sales/components/orders/OrderDetailsDrawer'
 import { useSalesStaffOrders } from '@/features/sales/hooks/useSalesStaffOrders'
 import {
@@ -138,14 +139,19 @@ export default function SaleStaffPreOrdersPage() {
         </div>
       </div>
 
-      <Card className="p-0 overflow-hidden border border-neutral-200 shadow-sm">
-        <SaleStaffOrderTable
-          orders={orders}
+      <Card className="p-0 overflow-hidden border border-neutral-200 shadow-sm rounded-xl">
+        <SalesStaffOrderList
+          orders={orders.filter(
+            (o) => o.orderType === 'PRE-ORDER' || o.orderType?.includes('PREORDER')
+          )}
           loading={loading}
-          onRowClick={handleOpenDrawer}
-          filterType="Pre-order"
+          onVerify={() => {}}
+          onReject={() => {}}
+          onViewDetail={(order) => handleOpenDrawer(order.id.toString())}
         />
       </Card>
+
+      <SalesStaffPagination total={orders.length} currentPage={1} pageSize={10} />
 
       <OrderDetailsDrawer
         isOpen={isDrawerOpen}

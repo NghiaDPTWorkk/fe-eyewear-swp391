@@ -126,7 +126,7 @@ export default function SaleStaffCustomerPage() {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto no-scrollbar">
+          <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-300">
             {customers.map((customer) => (
               <div
                 key={customer.id}
@@ -223,7 +223,7 @@ export default function SaleStaffCustomerPage() {
                   showProfile ? 'w-[320px] lg:w-[360px]' : 'w-0'
                 )}
               >
-                <div className="w-[320px] lg:w-[360px] h-full flex flex-col p-6 overflow-y-auto no-scrollbar bg-white">
+                <div className="w-[320px] lg:w-[360px] h-full flex flex-col p-6 overflow-y-auto bg-white [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-300">
                   <div className="flex flex-col items-center mb-8 text-center pt-4">
                     <div className="relative mb-5">
                       <img

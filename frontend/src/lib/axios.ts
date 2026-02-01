@@ -65,7 +65,7 @@ async function refreshAccessToken(): Promise<string> {
         'x-device-id': deviceId
       },
       skipAuth: true,
-      withCredentials: true  // ← Force enable cho refresh endpoint
+      withCredentials: true // ← Force enable cho refresh endpoint
     } as AxiosRequestConfig)
 
     const newToken = res.data?.data?.accessToken

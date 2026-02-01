@@ -6,7 +6,8 @@ import {
   IoFlaskOutline,
   IoWarningOutline,
   IoCheckmarkCircleOutline,
-  IoChevronForward
+  IoChevronForward,
+  IoChevronBack
 } from 'react-icons/io5'
 
 export default function SaleStaffLabStatusPage() {
@@ -378,12 +379,12 @@ export default function SaleStaffLabStatusPage() {
 
         <div className="px-10 py-6 flex justify-between items-center text-xs font-semibold text-[#a4a9c1] bg-white border-t border-neutral-100">
           <span className="opacity-70">Showing 1 to 4 of 42 active orders</span>
-          <div className="flex gap-3">
-            <button className="px-6 py-2 border border-neutral-200 rounded-lg text-sm font-semibold text-[#3d4465] hover:bg-neutral-50 transition-colors bg-white">
-              Previous
+          <div className="flex gap-2">
+            <button className="p-2 border border-neutral-200 rounded-lg text-[#3d4465] hover:bg-neutral-50 transition-colors bg-white">
+              <IoChevronBack size={18} />
             </button>
-            <button className="px-6 py-2 border border-neutral-200 rounded-lg text-sm font-semibold text-[#3d4465] hover:bg-neutral-50 transition-colors bg-white">
-              Next
+            <button className="p-2 border border-neutral-200 rounded-lg text-[#3d4465] hover:bg-neutral-50 transition-colors bg-white">
+              <IoChevronForward size={18} />
             </button>
           </div>
         </div>

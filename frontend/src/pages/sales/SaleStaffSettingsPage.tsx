@@ -17,7 +17,7 @@ export default function SaleStaffSettingsPage() {
             to="/salestaff/dashboard"
             className="text-neutral-400 hover:text-primary-500 transition-colors"
           >
-            Home
+            Dashboard
           </Link>
           <span className="text-neutral-300">/</span>
           <span className="text-primary-500 font-semibold">Settings</span>

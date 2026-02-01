@@ -1,7 +1,7 @@
-/* eslint-disable */
 import { lazy } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { LazyPage } from '@/pages/LazyPage'
+import { AuthGuard } from '@/routes/guards'
 
 const RegisterPage = lazy(() =>
   import('@/pages/auth/customer/RegisterPage').then((m) => ({ default: m.RegisterPage }))
@@ -93,6 +93,33 @@ const OperationCompleteOrdersPage = lazy(() =>
     default: m.default
   }))
 )
+
+// Account Pages
+const AccountLayout = lazy(() =>
+  import('@/components/layout/customer/account/AccountLayout').then((m) => ({
+    default: m.AccountLayout
+  }))
+)
+const AccountSettingsPage = lazy(() =>
+  import('@/pages/customer/account/AccountSettingsPage').then((m) => ({
+    default: m.AccountSettingsPage
+  }))
+)
+const OrdersPage = lazy(() =>
+  import('@/pages/customer/account/OrdersPage').then((m) => ({ default: m.OrdersPage }))
+)
+const AddressesPage = lazy(() =>
+  import('@/pages/customer/account/AddressesPage').then((m) => ({ default: m.AddressesPage }))
+)
+const PrescriptionsPage = lazy(() =>
+  import('@/pages/customer/account/PrescriptionsPage').then((m) => ({
+    default: m.PrescriptionsPage
+  }))
+)
+const FavoritesPage = lazy(() =>
+  import('@/pages/customer/account/FavoritesPage').then((m) => ({ default: m.FavoritesPage }))
+)
+
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -143,6 +170,62 @@ export const router = createBrowserRouter([
     )
   },
   {
+    path: '/account',
+    element: (
+      <AuthGuard>
+        <LazyPage>
+          <AccountLayout />
+        </LazyPage>
+      </AuthGuard>
+    ),
+    children: [
+      {
+        index: true,
+        element: <Navigate to="/account/settings" replace />
+      },
+      {
+        path: 'settings',
+        element: (
+          <LazyPage>
+            <AccountSettingsPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'orders',
+        element: (
+          <LazyPage>
+            <OrdersPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'addresses',
+        element: (
+          <LazyPage>
+            <AddressesPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'prescriptions',
+        element: (
+          <LazyPage>
+            <PrescriptionsPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'favorites',
+        element: (
+          <LazyPage>
+            <FavoritesPage />
+          </LazyPage>
+        )
+      }
+    ]
+  },
+  {
     path: '/eyeglasses',
     element: (
       <LazyPage>
@@ -177,17 +260,21 @@ export const router = createBrowserRouter([
   {
     path: '/admin/dashboard',
     element: (
-      <LazyPage>
-        <CustomerHomePage />
-      </LazyPage>
+      <AuthGuard>
+        <LazyPage>
+          <CustomerHomePage />
+        </LazyPage>
+      </AuthGuard>
     )
   },
   {
     path: '/salestaff',
     element: (
-      <LazyPage>
-        <SaleStaffLayout />
-      </LazyPage>
+      <AuthGuard>
+        <LazyPage>
+          <SaleStaffLayout />
+        </LazyPage>
+      </AuthGuard>
     ),
     children: [
       {
@@ -301,9 +388,11 @@ export const router = createBrowserRouter([
   {
     path: '/operationstaff',
     element: (
-      <LazyPage>
-        <OperationLayout />
-      </LazyPage>
+      <AuthGuard>
+        <LazyPage>
+          <OperationLayout />
+        </LazyPage>
+      </AuthGuard>
     ),
     children: [
       {

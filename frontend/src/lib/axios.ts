@@ -1,5 +1,7 @@
 import { authEventEmitter } from '@/shared/utils/auth.events'
 import { getOrCreateDeviceId } from '@/shared/utils/device.utils'
+import { useAuthStore } from '@/store/auth.store'
+import { STORAGE_KEYS } from '@/shared/constants/storage'
 import axios, { type AxiosError, type AxiosInstance, type InternalAxiosRequestConfig } from 'axios'
 
 export const apiClient: AxiosInstance = axios.create({
@@ -37,7 +39,10 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401) {
       authEventEmitter.emit('UNAUTHORIZED')
 
-      localStorage.removeItem('access_token')
+      localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN)
+      localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN)
+
+      useAuthStore.getState().logout()
     }
 
     return Promise.reject(error)

@@ -1,3 +1,4 @@
+import type { User } from '@/shared/types'
 /**
  * Authentication request and response types
  * Matches backend API structure
@@ -17,15 +18,17 @@ export interface RegisterRequest {
 }
 
 export interface AuthResponse {
-  token: string
-  user: {
-    _id: string
-    name: string
-    email: string
-    phone: string
-    gender: 'F' | 'M' | 'N'
-  }
+  accessToken: string
+  refreshToken?: string
+  token?: string
+  user?: User
 }
 
-// Alias for backward compatibility
-export type LoginResponse = AuthResponse
+export interface LoginResponse {
+  success: boolean
+  message: string
+  data: AuthResponse
+}
+
+// Keep LoginResponse for backward compatibility and as the full response type
+// export type LoginResponse = AuthResponse // Removed this to use the interface above

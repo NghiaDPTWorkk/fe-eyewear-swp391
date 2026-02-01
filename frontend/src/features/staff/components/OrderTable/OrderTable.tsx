@@ -1,5 +1,5 @@
 /* eslint-disable max-lines */
-import type { ReactNode } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import OrderHeaderTable from './OrderHeaderTable'
@@ -7,6 +7,7 @@ import OrderList from './OrderList'
 import { Button } from '@/components'
 import { IoTimeOutline, IoChevronForward, IoEyeOutline } from 'react-icons/io5'
 import { PATHS } from '@/routes/paths'
+import { useOrderCountStore } from '@/store'
 
 export interface Order {
   id: string
@@ -33,6 +34,7 @@ interface OrderTableProps {
   hiddenColumns?: string[] // Mảng các header cột muốn ẩn
   filterType?: string // Loại đơn muốn lọc
   role?: 'sales' | 'operation' // Phân biệt vai trò để hiển thị UI khác nhau
+  pageType?: 'technical' | 'logistics' | 'packing' // Loại trang để cập nhật badge count
 }
 
 const getOrderTypeStyles = (type: string, role: string) => {
@@ -66,10 +68,12 @@ export default function OrderTable({
   columns,
   hiddenColumns = [],
   filterType,
-  role = 'operation'
+  role = 'operation',
+  pageType
 }: OrderTableProps) {
   const isSales = role === 'sales'
   const navigate = useNavigate()
+  const { setCount } = useOrderCountStore()
 
   const handleViewOrder = (orderId: string) => {
     navigate(PATHS.OPERATIONSTAFF.ORDER_DETAIL(orderId))
@@ -133,6 +137,13 @@ export default function OrderTable({
   const filteredOrders = filterType
     ? orders.filter((order) => order.orderType === filterType)
     : orders
+
+  // Cập nhật count vào store khi có pageType
+  useEffect(() => {
+    if (pageType) {
+      setCount(pageType, filteredOrders.length)
+    }
+  }, [filteredOrders.length, pageType, setCount])
 
   const defaultColumns: Column<Order>[] = [
     {

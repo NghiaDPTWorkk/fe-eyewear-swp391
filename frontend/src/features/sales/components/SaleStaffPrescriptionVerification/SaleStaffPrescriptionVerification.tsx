@@ -18,7 +18,6 @@ import {
   IoCallOutline,
   IoChatbubblesOutline,
   IoSend,
-  IoMicOutline,
   IoVideocamOutline,
   IoEllipsisHorizontal
 } from 'react-icons/io5'
@@ -27,11 +26,13 @@ import { Card, Button, Input } from '@/components'
 interface PrescriptionVerificationProps {
   orderId: string
   onBack: () => void
+  isApproved?: boolean
 }
 
 export default function SaleStaffPrescriptionVerification({
   orderId,
-  onBack
+  onBack,
+  isApproved = false
 }: PrescriptionVerificationProps) {
   const [rotation, setRotation] = useState(0)
   const [zoom, setZoom] = useState(100)
@@ -52,11 +53,11 @@ export default function SaleStaffPrescriptionVerification({
         <div className="flex items-center gap-4">
           <button
             onClick={onBack}
-            className="group p-2.5 bg-white border border-gray-200/60 hover:border-emerald-200 hover:bg-emerald-50/30 rounded-xl shadow-sm hover:shadow hover:scale-105 transition-all duration-200 mr-2 flex items-center justify-center"
+            className="group p-2.5 bg-white border border-gray-200/60 hover:border-mint-200 hover:bg-mint-50/30 rounded-xl shadow-sm hover:shadow hover:scale-105 transition-all duration-200 mr-2 flex items-center justify-center"
           >
             <IoArrowBackOutline
               size={22}
-              className="text-gray-400 group-hover:text-emerald-600 transition-colors duration-200"
+              className="text-gray-400 group-hover:text-mint-600 transition-colors duration-200"
             />
           </button>
           <div>
@@ -67,12 +68,18 @@ export default function SaleStaffPrescriptionVerification({
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="px-3 py-1 bg-emerald-50 text-emerald-600 font-semibold rounded-full text-xs border border-emerald-100 uppercase tracking-wide">
-            In Verification
-          </span>
+          {isApproved ? (
+            <span className="px-3 py-1 bg-emerald-50 text-emerald-600 font-semibold rounded-full text-xs border border-emerald-100 uppercase tracking-wide flex items-center gap-1.5">
+              <IoCheckmark size={14} /> Verified & Approved
+            </span>
+          ) : (
+            <span className="px-3 py-1 bg-mint-50 text-mint-600 font-semibold rounded-full text-xs border border-mint-100 uppercase tracking-wide">
+              In Verification
+            </span>
+          )}
           <div className="h-6 w-px bg-gray-200"></div>
           <div className="px-4 py-1.5 bg-orange-50 text-orange-600 font-semibold rounded-full text-sm border border-orange-100">
-            24 Pending
+            {isApproved ? 'Lab Processing' : '24 Pending'}
           </div>
         </div>
       </div>
@@ -132,7 +139,7 @@ export default function SaleStaffPrescriptionVerification({
           <Card className="p-0 border border-neutral-200 overflow-hidden shadow-sm">
             <div className="p-5 bg-white border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100/50 shadow-sm">
+                <div className="w-12 h-12 rounded-2xl bg-mint-50 text-mint-600 flex items-center justify-center border border-mint-100/50 shadow-sm">
                   <IoInformationCircleOutline size={24} />
                 </div>
                 <div>
@@ -148,7 +155,7 @@ export default function SaleStaffPrescriptionVerification({
                 <Button
                   size="sm"
                   variant="outline"
-                  className="flex-1 sm:flex-none text-[11px] h-10 font-semibold border-emerald-100 text-emerald-700 bg-white hover:bg-emerald-50 rounded-xl transition-all"
+                  className="flex-1 sm:flex-none text-[11px] h-10 font-semibold border-mint-100 text-mint-700 bg-white hover:bg-mint-50 rounded-xl transition-all"
                 >
                   Copy Previous
                 </Button>
@@ -164,45 +171,45 @@ export default function SaleStaffPrescriptionVerification({
 
             <div className="p-6 bg-white space-y-6">
               {/* Right Eye (OD) */}
-              <div className="bg-emerald-50/20 p-6 rounded-2xl border border-emerald-100/50">
-                <h4 className="font-semibold text-sm text-emerald-800 mb-5 flex items-center gap-2">
+              <div className="bg-mint-50/20 p-6 rounded-2xl border border-mint-100/50">
+                <h4 className="font-semibold text-sm text-mint-800 mb-5 flex items-center gap-2">
                   <IoEyeOutline size={18} /> Right Eye (OD)
                 </h4>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[11px] font-semibold text-emerald-700 uppercase tracking-widest pl-1">
+                    <label className="text-[11px] font-semibold text-mint-700 uppercase tracking-widest pl-1">
                       SPH
                     </label>
                     <Input
                       defaultValue="-2.00"
-                      className="bg-white border-emerald-200 focus:border-emerald-500 font-semibold text-emerald-900 text-center h-11"
+                      className="bg-white border-mint-200 focus:border-mint-500 font-semibold text-mint-900 text-center h-11"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[11px] font-semibold text-emerald-700 uppercase tracking-widest pl-1">
+                    <label className="text-[11px] font-semibold text-mint-700 uppercase tracking-widest pl-1">
                       CYL
                     </label>
                     <Input
                       defaultValue="-0.50"
-                      className="bg-white border-emerald-200 focus:border-emerald-500 font-semibold text-emerald-900 text-center h-11"
+                      className="bg-white border-mint-200 focus:border-mint-500 font-semibold text-mint-900 text-center h-11"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[11px] font-semibold text-emerald-700 uppercase tracking-widest pl-1">
+                    <label className="text-[11px] font-semibold text-mint-700 uppercase tracking-widest pl-1">
                       AXIS
                     </label>
                     <Input
                       defaultValue="180"
-                      className="bg-white border-emerald-200 focus:border-emerald-500 font-semibold text-emerald-900 text-center h-11"
+                      className="bg-white border-mint-200 focus:border-mint-500 font-semibold text-mint-900 text-center h-11"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[11px] font-semibold text-emerald-700 uppercase tracking-widest pl-1">
+                    <label className="text-[11px] font-semibold text-mint-700 uppercase tracking-widest pl-1">
                       ADD
                     </label>
                     <Input
                       defaultValue="+1.50"
-                      className="bg-white border-emerald-200 focus:border-emerald-500 font-semibold text-emerald-900 text-center h-11"
+                      className="bg-white border-mint-200 focus:border-mint-500 font-semibold text-mint-900 text-center h-11"
                     />
                   </div>
                 </div>
@@ -264,18 +271,18 @@ export default function SaleStaffPrescriptionVerification({
                     <div className="relative">
                       <Input
                         defaultValue="31.5"
-                        className="font-semibold text-center border-neutral-200 h-12 pr-8 rounded-xl focus:border-emerald-500 focus:ring-emerald-500/10"
+                        className="font-semibold text-center border-neutral-200 h-12 pr-8 rounded-xl focus:border-mint-500 focus:ring-mint-500/10"
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md border border-emerald-100">
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-mint-600 bg-mint-50 px-1.5 py-0.5 rounded-md border border-mint-100">
                         R
                       </span>
                     </div>
                     <div className="relative">
                       <Input
                         defaultValue="31.5"
-                        className="font-semibold text-center border-neutral-200 h-12 pr-8 rounded-xl focus:border-emerald-500 focus:ring-emerald-500/10"
+                        className="font-semibold text-center border-neutral-200 h-12 pr-8 rounded-xl focus:border-mint-500 focus:ring-mint-500/10"
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-md border border-emerald-100">
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-mint-600 bg-mint-50 px-1.5 py-0.5 rounded-md border border-mint-100">
                         L
                       </span>
                     </div>
@@ -288,30 +295,42 @@ export default function SaleStaffPrescriptionVerification({
                     Notes
                   </label>
                   <textarea
-                    className="w-full h-12 p-3 rounded-xl border border-neutral-200 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 text-sm font-medium resize-none bg-neutral-50/20 transition-all placeholder:text-neutral-300"
+                    className="w-full h-12 p-3 rounded-xl border border-neutral-200 focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 text-sm font-medium resize-none bg-neutral-50/20 transition-all placeholder:text-neutral-300"
                     placeholder="Enter special instructions for lab technician..."
                   ></textarea>
                 </div>
               </div>
             </div>
 
-            <div className="bg-neutral-50/80 p-6 flex gap-4 border-t border-neutral-100">
-              <Button
-                isFullWidth
-                className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold h-12 rounded-xl shadow-md shadow-emerald-100 transition-all active:scale-95 border-none"
-                leftIcon={<IoCheckmark size={20} />}
-              >
-                Verify & Submit to Lab
-              </Button>
-              <Button
-                isFullWidth
-                variant="outline"
-                className="bg-white border-neutral-200 text-neutral-600 hover:text-red-600 hover:bg-neutral-50 font-semibold h-12 rounded-xl transition-all active:scale-95 translate-y-0"
-                leftIcon={<IoClose size={20} />}
-              >
-                Reject Order
-              </Button>
-            </div>
+            {!isApproved && (
+              <div className="bg-neutral-50/80 p-6 flex gap-4 border-t border-neutral-100">
+                <Button
+                  isFullWidth
+                  className="bg-mint-700 hover:bg-mint-800 text-white font-semibold h-12 rounded-xl shadow-md shadow-mint-100 transition-all active:scale-95 border-none"
+                  leftIcon={<IoCheckmark size={20} />}
+                >
+                  Verify & Submit to Lab
+                </Button>
+                <Button
+                  isFullWidth
+                  variant="outline"
+                  className="bg-white border-neutral-200 text-neutral-600 hover:text-red-600 hover:bg-neutral-50 font-semibold h-12 rounded-xl transition-all active:scale-95 translate-y-0"
+                  leftIcon={<IoClose size={20} />}
+                >
+                  Reject Order
+                </Button>
+              </div>
+            )}
+            {isApproved && (
+              <div className="bg-emerald-50/50 p-4 border-t border-emerald-100 flex items-center justify-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                  <IoCheckmark size={18} />
+                </div>
+                <p className="text-sm font-semibold text-emerald-700">
+                  This prescription was verified and approved on Jan 20, 2026
+                </p>
+              </div>
+            )}
           </Card>
         </div>
 
@@ -321,9 +340,7 @@ export default function SaleStaffPrescriptionVerification({
           <Card className="p-5 border border-neutral-200 shadow-sm">
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-semibold text-gray-900 text-sm">Order Details</h3>
-              <button className="text-emerald-600 text-xs font-semibold hover:underline">
-                Edit
-              </button>
+              <button className="text-mint-600 text-xs font-semibold hover:underline">Edit</button>
             </div>
             <div className="space-y-4">
               <div className="flex gap-3">
@@ -362,7 +379,7 @@ export default function SaleStaffPrescriptionVerification({
           <Card className="p-0 border border-neutral-200 shadow-sm overflow-hidden bg-white">
             <div className="p-4 bg-white border-b border-gray-100 flex justify-between items-center">
               <h3 className="font-semibold text-gray-900 text-sm flex items-center gap-2">
-                <IoChatbubblesOutline className="text-emerald-500" /> Communication
+                <IoChatbubblesOutline className="text-mint-500" /> Communication
               </h3>
               <div className="flex gap-1">
                 <button className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
@@ -373,7 +390,7 @@ export default function SaleStaffPrescriptionVerification({
 
             {/* Tabs */}
             <div className="flex border-b border-gray-100">
-              <button className="flex-1 py-2.5 text-xs font-semibold text-emerald-600 border-b-2 border-emerald-500 bg-emerald-50/30">
+              <button className="flex-1 py-2.5 text-xs font-semibold text-mint-600 border-b-2 border-mint-500 bg-mint-50/30">
                 Chat (2)
               </button>
               <button className="flex-1 py-2.5 text-xs font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50">
@@ -406,11 +423,11 @@ export default function SaleStaffPrescriptionVerification({
 
                 {/* Outgoing Message */}
                 <div className="flex gap-2 items-start max-w-[90%] ml-auto flex-row-reverse">
-                  <div className="w-6 h-6 rounded-full bg-emerald-100 shrink-0 flex items-center justify-center text-[10px] font-semibold text-emerald-600">
+                  <div className="w-6 h-6 rounded-full bg-mint-100 shrink-0 flex items-center justify-center text-[10px] font-semibold text-mint-600">
                     You
                   </div>
                   <div className="text-right">
-                    <div className="bg-emerald-500 p-2.5 rounded-2xl rounded-tr-none text-xs text-white shadow-sm">
+                    <div className="bg-mint-500 p-2.5 rounded-2xl rounded-tr-none text-xs text-white shadow-sm">
                       Checking now. Please upload a selfie holding a card for reference if possible.
                     </div>
                     <span className="text-[9px] text-gray-400 mr-1">10:48 AM</span>
@@ -425,13 +442,10 @@ export default function SaleStaffPrescriptionVerification({
                     <input
                       type="text"
                       placeholder="Type a message..."
-                      className="w-full pl-3 pr-8 py-2 rounded-full border border-gray-200 text-xs focus:outline-none focus:border-emerald-300 focus:ring-2 focus:ring-emerald-100 transition-all"
+                      className="w-full pl-3 pr-3 py-2 rounded-full border border-gray-200 text-xs focus:outline-none focus:border-mint-300 focus:ring-2 focus:ring-mint-100 transition-all"
                     />
-                    <Button className="absolute right-2 top-1.5 text-gray-400 hover:text-gray-600">
-                      <IoMicOutline size={14} />
-                    </Button>
                   </div>
-                  <button className="p-2 bg-emerald-500 text-white rounded-full hover:bg-emerald-600 shadow-sm transition-transform active:scale-95">
+                  <button className="p-2 bg-mint-500 text-white rounded-full hover:bg-mint-600 shadow-sm transition-transform active:scale-95">
                     <IoSend size={14} />
                   </button>
                 </div>
@@ -444,12 +458,12 @@ export default function SaleStaffPrescriptionVerification({
                 */}
             <div className="p-3 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                <div className="w-2 h-2 rounded-full bg-mint-500 animate-pulse"></div>
                 <span className="text-xs font-medium text-gray-600">Customer Online</span>
               </div>
               <div className="flex gap-2">
                 <button
-                  className="p-1.5 rounded-full bg-white border border-gray-200 text-gray-600 hover:text-emerald-600 hover:border-emerald-200 shadow-sm"
+                  className="p-1.5 rounded-full bg-white border border-gray-200 text-gray-600 hover:text-mint-600 hover:border-mint-200 shadow-sm"
                   title="Voice Call"
                 >
                   <IoCallOutline />
@@ -466,11 +480,11 @@ export default function SaleStaffPrescriptionVerification({
 
           {/* Laboratory Operations Channel */}
           <Card className="p-0 border border-neutral-200 shadow-sm overflow-hidden">
-            <div className="p-4 bg-emerald-50/50 border-b border-emerald-100 flex justify-between items-center">
-              <h3 className="font-semibold text-emerald-900 text-sm flex items-center gap-2">
+            <div className="p-4 bg-mint-50/50 border-b border-mint-100 flex justify-between items-center">
+              <h3 className="font-semibold text-mint-900 text-sm flex items-center gap-2">
                 <IoConstructOutline /> Lab Operations
               </h3>
-              <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+              <span className="w-2 h-2 bg-mint-500 rounded-full animate-pulse"></span>
             </div>
 
             <div className="p-4 space-y-4">
@@ -503,7 +517,7 @@ export default function SaleStaffPrescriptionVerification({
                   <p className="text-[10px] text-gray-400">Pending assignment</p>
                 </div>
                 <div className="pl-4 relative">
-                  <div className="absolute -left-[5px] top-1 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white shadow-sm ring-2 ring-emerald-50"></div>
+                  <div className="absolute -left-[5px] top-1 w-2.5 h-2.5 rounded-full bg-mint-500 border-2 border-white shadow-sm ring-2 ring-mint-50"></div>
                   <p className="text-xs font-semibold text-gray-800">Data Transcription</p>
                   <p className="text-[10px] text-gray-500">Started 5m ago by You</p>
                 </div>
@@ -511,7 +525,7 @@ export default function SaleStaffPrescriptionVerification({
             </div>
 
             <div className="p-3 bg-gray-50 border-t border-gray-100 text-center">
-              <button className="text-xs font-semibold text-emerald-600 flex items-center justify-center gap-1 hover:underline">
+              <button className="text-xs font-semibold text-mint-600 flex items-center justify-center gap-1 hover:underline">
                 <IoMailOutline /> Contact Lab Manager
               </button>
             </div>

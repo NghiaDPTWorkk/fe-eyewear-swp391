@@ -127,7 +127,7 @@ export default function SaleStaffCustomerCommunicationDrawer({
                   Me
                 </div>
                 <div>
-                  <div className="bg-mint-600 p-3 rounded-2xl rounded-br-none shadow-sm text-sm text-white">
+                  <div className="bg-mint-700 p-3 rounded-2xl rounded-br-none shadow-sm text-sm text-white">
                     Hello {customer.name.split(' ')[0]}! Let me check that for you right away.
                   </div>
                   <span className="text-[10px] text-gray-400 mr-1 mt-1 block text-right flex justify-end gap-1 items-center">
@@ -144,7 +144,7 @@ export default function SaleStaffCustomerCommunicationDrawer({
                   placeholder="Type a message..."
                   className="flex-1 bg-gray-100 border-0 rounded-full px-4 py-2.5 text-sm focus:ring-2 focus:ring-mint-500/20 focus:border-mint-500 focus:bg-white transition-all outline-none"
                 />
-                <Button className="rounded-full w-10 h-10 p-0 flex items-center justify-center bg-mint-600 hover:bg-mint-700 text-white shadow-lg shadow-mint-100 active:scale-95 transition-all">
+                <Button className="rounded-full w-10 h-10 p-0 flex items-center justify-center bg-mint-700 hover:bg-mint-800 text-white shadow-lg shadow-mint-100 active:scale-95 transition-all">
                   <IoSend size={16} className="ml-0.5" />
                 </Button>
               </div>

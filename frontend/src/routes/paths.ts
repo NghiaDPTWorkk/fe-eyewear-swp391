@@ -27,7 +27,8 @@ export const PATHS = {
     DASHBOARD: '/operationstaff/dashboard',
     PRESCRIPTION_ORDERS: '/operationstaff/prescription-orders',
     ORDER_DETAIL: (orderId: string) => `/operationstaff/orders/${orderId}`,
-    PACKING_PROCESS: (orderId: string) => `/operationstaff/orders/${orderId}/process`
+    PACKING_PROCESS: (orderId: string) => `/operationstaff/orders/${orderId}/process`,
+    PACKING_SUCCESS: (orderId: string) => `/operationstaff/orders/${orderId}/success`
   },
   NOT_FOUND: '*'
 }

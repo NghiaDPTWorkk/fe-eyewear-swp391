@@ -1,30 +1,63 @@
-import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import { PATHS } from '@/routes/paths'
+import { useState, useEffect, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { Container, Button, Card } from '@/components'
-import SaleStaffOrderTable, {
-  type Order
-} from '@/features/sales/components/SaleStaffOrderTable/SaleStaffOrderTable'
-import SaleStaffOrderDetailsDrawer from '@/features/sales/components/SaleStaffOrderDetailsDrawer/SaleStaffOrderDetailsDrawer'
-import {
-  IoFilter,
-  IoAdd,
-  IoFlaskOutline,
-  IoSync,
-  IoCheckmarkDoneCircleOutline,
-  IoCheckboxOutline
-} from 'react-icons/io5'
+import { cn } from '@/lib/utils'
+import { SalesStaffRxTable } from '@/features/sales/components/prescription/SalesStaffRxTable'
+import { SalesStaffRxMetrics } from '@/features/sales/components/prescription/SalesStaffRxMetrics'
+import { SalesStaffVerifyModal } from '@/features/sales/components/SalesStaffVerifyModal'
+import { useSalesStaffOrders } from '@/features/sales/hooks/useSalesStaffOrders'
+import { useSalesStaffAction } from '@/features/sales/hooks/useSalesStaffAction'
+import { IoFilter, IoAdd, IoSearchOutline } from 'react-icons/io5'
+import type { Order, LensParameter } from '@/features/sales/types'
+import { toast } from 'react-hot-toast'
 
 export default function SaleStaffPrescriptionPage() {
-  const navigate = useNavigate()
-  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const { rxOrders, loading, fetchOrders } = useSalesStaffOrders()
+  const { verifyOrder, rejectOrder, processing } = useSalesStaffAction()
 
-  const handleOpenDrawer = (id: string, order?: Order) => {
-    setSelectedOrderId(id)
-    setSelectedOrder(order || null)
-    setIsDrawerOpen(true)
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
+  const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false)
+
+  const [filter, setFilter] = useState('All')
+  const [search, setSearch] = useState('')
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
+
+  useEffect(() => {
+    fetchOrders()
+  }, [fetchOrders])
+
+  const filterOptions = [
+    { label: 'All Orders', value: 'All' },
+    { label: 'Waiting Verify', value: 'WAITING_ASSIGN' },
+    { label: 'Processing', value: 'PROCESSING' }
+  ]
+
+  const filteredOrders = useMemo(() => {
+    return rxOrders.filter((order) => {
+      const matchSearch =
+        order.id.toString().toLowerCase().includes(search.toLowerCase()) ||
+        order.customerName?.toLowerCase().includes(search.toLowerCase())
+      const matchFilter = filter === 'All' || order.status === filter
+      return matchSearch && matchFilter
+    })
+  }, [rxOrders, search, filter])
+
+  const handleVerifySubmit = async (params: LensParameter) => {
+    if (!selectedOrder) return
+    if (await verifyOrder(selectedOrder.id, params)) {
+      toast.success('Prescription verified')
+      setIsVerifyModalOpen(false)
+      fetchOrders()
+    } else toast.error('Verification failed')
+  }
+
+  const handleReject = async (order: Order) => {
+    if (order.invoiceId && window.confirm('Reject this order?')) {
+      if (await rejectOrder(order.invoiceId)) {
+        toast.success('Rejected')
+        fetchOrders()
+      } else toast.error('Rejection failed')
+    }
   }
 
   return (
@@ -38,112 +71,91 @@ export default function SaleStaffPrescriptionPage() {
             Dashboard
           </Link>
           <span className="text-neutral-300">/</span>
-          <Link
-            to="/salestaff/orders"
-            className="text-neutral-400 hover:text-primary-500 transition-colors"
-          >
-            Orders
-          </Link>
-          <span className="text-neutral-300">/</span>
-          <span className="text-primary-500 font-semibold">Prescription Management</span>
+          <span className="text-primary-500 font-semibold">Prescriptions</span>
         </div>
         <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">Prescription Orders</h1>
-        <p className="text-gray-500 mt-1">Manage technical lens details and fabrication status.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <Card className="p-5 border border-neutral-100 flex flex-col justify-between">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
-                Pending Lab
-              </p>
-              <h3 className="text-3xl font-semibold text-neutral-900 mt-2">12</h3>
-            </div>
-            <div className="p-2 bg-orange-50 rounded-lg text-orange-500">
-              <IoFlaskOutline size={20} />
-            </div>
-          </div>
-        </Card>
-        <Card className="p-5 border border-neutral-100 flex flex-col justify-between">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
-                In Grinding
-              </p>
-              <h3 className="text-3xl font-semibold text-neutral-900 mt-2">8</h3>
-            </div>
-            <div className="p-2 bg-blue-50 rounded-lg text-blue-500">
-              <IoSync size={20} />
-            </div>
-          </div>
-        </Card>
-        <Card className="p-5 border border-neutral-100 flex flex-col justify-between">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
-                Ready for QA
-              </p>
-              <h3 className="text-3xl font-semibold text-neutral-900 mt-2">5</h3>
-            </div>
-            <div className="p-2 bg-purple-50 rounded-lg text-purple-500">
-              <IoCheckboxOutline size={20} />
-            </div>
-          </div>
-        </Card>
-        <Card className="p-5 border border-neutral-100 flex flex-col justify-between">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">
-                Completed Today
-              </p>
-              <h3 className="text-3xl font-semibold text-neutral-900 mt-2">24</h3>
-            </div>
-            <div className="p-2 bg-emerald-50 rounded-lg text-emerald-500">
-              <IoCheckmarkDoneCircleOutline size={20} />
-            </div>
-          </div>
-        </Card>
-      </div>
+      <SalesStaffRxMetrics />
 
-      <div className="mb-6 flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
-        <div className="flex-1 max-w-xl w-full"></div>
-        <div className="flex gap-3 justify-end w-full md:w-auto">
-          <Button
-            variant="outline"
-            colorScheme="neutral"
-            leftIcon={<IoFilter />}
-            className="rounded-xl font-semibold"
-          >
-            Filter
-          </Button>
-          <Button
-            variant="solid"
-            colorScheme="primary"
-            leftIcon={<IoAdd />}
-            className="rounded-xl font-semibold"
-          >
+      <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center mb-6">
+        <div className="relative flex-1 max-w-xl w-full">
+          <IoSearchOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
+          <input
+            type="text"
+            placeholder="Search prescriptions..."
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-10 pr-4 py-2.5 bg-gray-50/30 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 transition-all placeholder:text-neutral-400"
+          />
+        </div>
+
+        <div className="flex gap-3 w-full md:w-auto relative">
+          <div className="relative">
+            <button
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+              className={cn(
+                'flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium transition-all min-w-[170px] justify-between h-[42px]',
+                isFilterOpen
+                  ? 'border-primary-500 bg-primary-50 text-primary-600'
+                  : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+              )}
+            >
+              <div className="flex items-center gap-2">
+                <IoFilter /> Filter:{' '}
+                {filterOptions.find((o) => o.value === filter)?.label || filter}
+              </div>
+            </button>
+
+            {isFilterOpen && (
+              <>
+                <div className="fixed inset-0 z-10" onClick={() => setIsFilterOpen(false)} />
+                <Card className="absolute top-full mt-2 right-0 w-56 z-20 p-2 shadow-xl border border-neutral-100 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="space-y-1">
+                    {filterOptions.map((opt) => (
+                      <button
+                        key={opt.value}
+                        className={cn(
+                          'w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all text-left',
+                          filter === opt.value
+                            ? 'bg-primary-50 text-primary-600 font-semibold'
+                            : 'text-gray-600 hover:bg-gray-50'
+                        )}
+                        onClick={() => {
+                          setFilter(opt.value)
+                          setIsFilterOpen(false)
+                        }}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </Card>
+              </>
+            )}
+          </div>
+          <Button colorScheme="primary" leftIcon={<IoAdd className="text-lg" />}>
             New Order
           </Button>
         </div>
       </div>
 
-      <Card className="p-0 overflow-hidden border border-neutral-200 shadow-sm">
-        <SaleStaffOrderTable onRowClick={handleOpenDrawer} filterType="Prescription" />
+      <Card className="p-0 overflow-hidden border border-neutral-200 shadow-sm rounded-xl">
+        <SalesStaffRxTable
+          orders={filteredOrders}
+          loading={loading}
+          onVerify={(o) => {
+            setSelectedOrder(o)
+            setIsVerifyModalOpen(true)
+          }}
+          onReject={handleReject}
+        />
       </Card>
 
-      <SaleStaffOrderDetailsDrawer
-        isOpen={isDrawerOpen}
-        onClose={() => setIsDrawerOpen(false)}
-        orderId={selectedOrderId}
-        orderType="Prescription"
-        isApproved={selectedOrder?.isApproved}
-        onViewFullDetails={() => {
-          if (selectedOrderId) {
-            navigate(PATHS.SALESTAFF.VERIFY_RX(selectedOrderId))
-            setIsDrawerOpen(false)
-          }
-        }}
+      <SalesStaffVerifyModal
+        isOpen={isVerifyModalOpen}
+        onClose={() => setIsVerifyModalOpen(false)}
+        onSubmit={handleVerifySubmit}
+        isProcessing={processing}
       />
     </Container>
   )

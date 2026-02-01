@@ -7,6 +7,7 @@ interface StaffHeaderProps {
   left?: ReactNode
   center?: ReactNode
   right: ReactNode
+  className?: string
 }
 
 export function StaffHeader({
@@ -14,11 +15,12 @@ export function StaffHeader({
   containerJustify,
   left,
   center,
-  right
+  right,
+  className
 }: StaffHeaderProps) {
   return (
     <header className="w-full bg-white border-b border-neutral-200">
-      <Container maxWidth={containerWidth} justify={containerJustify}>
+      <Container maxWidth={containerWidth} justify={containerJustify} className={className}>
         <div className="flex items-center justify-between w-full h-[63.5px] gap-4 mx-auto w-full max-w-[1320px]">
           <div className="flex items-center flex-1 min-w-0">
             {left && <div className="w-full">{left}</div>}

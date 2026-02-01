@@ -10,6 +10,7 @@ interface StaffMainLayoutProps {
   headerRight?: ReactNode
   headerContainerWidth?: string
   mainClassName?: string
+  headerClassName?: string
 }
 
 export function StaffMainLayout({
@@ -17,7 +18,8 @@ export function StaffMainLayout({
   headerLeft,
   headerRight,
   headerContainerWidth = '100%',
-  mainClassName = 'p-4 md:p-6 bg-neutral-50'
+  mainClassName = 'p-4 md:p-6 bg-neutral-50',
+  headerClassName
 }: StaffMainLayoutProps) {
   const { sidebarCollapsed, toggleSidebar } = useLayoutStore()
 
@@ -39,7 +41,12 @@ export function StaffMainLayout({
           sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-64'
         )}
       >
-        <StaffHeader containerWidth={headerContainerWidth} left={headerLeft} right={headerRight} />
+        <StaffHeader
+          containerWidth={headerContainerWidth}
+          left={headerLeft}
+          right={headerRight}
+          className={headerClassName}
+        />
 
         <main className={cn('h-full overflow-auto', mainClassName)}>
           <Outlet />

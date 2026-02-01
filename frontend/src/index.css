@@ -3,11 +3,17 @@
 /* Custom theme configuration for Eyewear Project */
 @theme {
   /* ===== MINT COLORS (Brand) ===== */
+  --color-mint-50: #f6fffb;
+  --color-mint-100: #e6f9f4;
   --color-mint-200: #f6fffb;
   --color-mint-300: #d4ede5;
+  --color-mint-400: #a8e0d1;
   --color-mint-500: #7fe3c7;
+  --color-mint-600: #3bc19d;
   --color-mint-700: #4ad7b0;
+  --color-mint-800: #228a6a;
   --color-mint-900: #2aa57f;
+  --color-mint-950: #1a6d53;
   --color-mint-1200: #043026; /* dùng cho tiêu đề hoặc văn bản đậm màu */
   --color-gray-eyewear: #5b6b66; /* text chữ nhỏ kiểu z */
 

@@ -1,0 +1,1 @@
+export { default as ManagerDashboardPage } from './ManagerDashboardPage'

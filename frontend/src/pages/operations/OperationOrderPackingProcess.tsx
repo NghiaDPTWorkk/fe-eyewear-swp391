@@ -38,8 +38,7 @@ export default function OperationOrderPackingProcess() {
 
   const handleFinish = () => {
     if (allChecked) {
-      // Navigate to prescription orders list
-      navigate(PATHS.OPERATIONSTAFF.PRESCRIPTION_ORDERS)
+      navigate(PATHS.OPERATIONSTAFF.ORDER_DETAIL(orderId || ''), { replace: true })
     }
   }
 

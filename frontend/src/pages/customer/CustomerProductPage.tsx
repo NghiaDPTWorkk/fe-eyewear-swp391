@@ -23,7 +23,7 @@ export const CustomerProductPage = () => {
     if (path === '/eyeglasses') return 'frame'
     if (path === '/sunglasses') return 'sunglass'
     if (path === '/lenses') return 'lens'
-    return null
+    return 'frame'
   }, [location.pathname])
 
   const [prevType, setPrevType] = useState(productType)
@@ -199,28 +199,33 @@ export const CustomerProductPage = () => {
                         discountPrice={discountPrice}
                         salePercent={salePercent}
                         onClick={(id) => navigate(`/products/${id}`)}
-                        onAddToCart={() => {
-                          const isAuth = isAuthenticated || !!localStorage.getItem('accessToken')
-                          if (!isAuth) {
-                            toast.error('Please login to add items to cart')
-                            navigate('/login')
-                            return
-                          }
-                          const id =
-                            productAny.id ||
-                            productAny._id ||
-                            productAny.skuBase ||
-                            `product-${index}`
-                          addItem({
-                            product_id: id,
-                            name: product.nameBase,
-                            price: currentPrice,
-                            quantity: 1,
-                            image: productAny.defaultVariantImage || '',
-                            addAt: new Date()
-                          })
-                          toast.success('Added to bag!')
-                        }}
+                        onAddToCart={
+                          productType === 'sunglass' || productAny.type === 'sunglass'
+                            ? () => {
+                                const isAuth =
+                                  isAuthenticated || !!localStorage.getItem('accessToken')
+                                if (!isAuth) {
+                                  toast.error('Please login to add items to cart')
+                                  navigate('/login')
+                                  return
+                                }
+                                const id =
+                                  productAny.id ||
+                                  productAny._id ||
+                                  productAny.skuBase ||
+                                  `product-${index}`
+                                addItem({
+                                  product_id: id,
+                                  name: product.nameBase,
+                                  price: currentPrice,
+                                  quantity: 1,
+                                  image: productAny.defaultVariantImage || '',
+                                  addAt: new Date()
+                                })
+                                toast.success('Added to bag!')
+                              }
+                            : undefined
+                        }
                         onAddToWishlist={() => {
                           const isAuth = isAuthenticated || !!localStorage.getItem('accessToken')
                           if (!isAuth) {

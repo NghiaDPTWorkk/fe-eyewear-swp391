@@ -42,7 +42,8 @@ export const ENDPOINTS = {
   // Prescription (Custom Lens)
   PRESCRIPTION: {
     VALIDATE: '/prescription/validate',
-    CALCULATE: '/prescription/calculate'
+    CALCULATE: '/prescription/calculate',
+    GET_SAVED: '/prescription/saved'
   },
 
   // Payment

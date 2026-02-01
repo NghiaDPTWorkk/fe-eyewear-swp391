@@ -1,3 +1,5 @@
+import type { PrescriptionData } from './prescription.types'
+
 export interface CartItem {
   product_id: string // SKU
   quantity: number
@@ -6,6 +8,10 @@ export interface CartItem {
   image: string
   addAt: Date
   selected?: boolean
+  lens?: {
+    visionNeed: string
+    prescription: PrescriptionData | null
+  }
 }
 
 export interface Cart {

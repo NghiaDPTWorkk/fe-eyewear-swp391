@@ -20,12 +20,19 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   addItem: (item) =>
     set((state) => {
-      const existingItem = state.items.find((i) => i.product_id === item.product_id)
+      const existingItem = state.items.find((i) => {
+        const isSameProduct = i.product_id === item.product_id
+        const isSameLens = JSON.stringify(i.lens) === JSON.stringify(item.lens)
+        return isSameProduct && isSameLens
+      })
+
       if (existingItem) {
         return {
-          items: state.items.map((i) =>
-            i.product_id === item.product_id ? { ...i, quantity: i.quantity + item.quantity } : i
-          )
+          items: state.items.map((i) => {
+            const isSameProduct = i.product_id === item.product_id
+            const isSameLens = JSON.stringify(i.lens) === JSON.stringify(item.lens)
+            return isSameProduct && isSameLens ? { ...i, quantity: i.quantity + item.quantity } : i
+          })
         }
       }
       return { items: [...state.items, { ...item, selected: item.selected ?? true }] }

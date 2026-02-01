@@ -113,15 +113,17 @@ export function ProductCard({
               ${finalPrice.toLocaleString()}
             </span>
           </div>
-          <Button
-            onClick={(e) => {
-              e.stopPropagation()
-              handleAddToCart()
-            }}
-            className="w-12 h-12 bg-primary-500 text-white rounded-full flex items-center justify-center hover:bg-primary-600 transition-all hover:scale-110 shadow-md"
-          >
-            <ShoppingCart className="w-6 h-6" />
-          </Button>
+          {onAddToCart && (
+            <Button
+              onClick={(e) => {
+                e.stopPropagation()
+                handleAddToCart()
+              }}
+              className="w-12 h-12 bg-primary-500 text-white rounded-full flex items-center justify-center hover:bg-primary-600 transition-all hover:scale-110 shadow-md"
+            >
+              <ShoppingCart className="w-6 h-6" />
+            </Button>
+          )}
         </div>
       </div>
     </div>

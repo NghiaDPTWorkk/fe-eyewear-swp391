@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layout/StaffMainLayout'
+import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import {
   SidebarStaff,
   UserWidgetWithLogout,
@@ -50,6 +51,21 @@ export default function ManagerLayout() {
           active={location.pathname === '/manager/invoices'}
           onClick={() => navigate('/manager/invoices')}
         />
+
+        <div className="ml-9 mt-2 space-y-1">
+          {Object.values(InvoiceStatus).map((status) => (
+            <SidebarStaff.MenuItem
+              key={status}
+              icon={<span className="w-2 h-2 rounded-full bg-neutral-300" />}
+              label={status}
+              active={
+                location.pathname === '/manager/invoices' &&
+                new URLSearchParams(location.search).get('status') === status
+              }
+              onClick={() => navigate(`/manager/invoices?status=${status}`)}
+            />
+          ))}
+        </div>
         <SidebarStaff.MenuItem
           icon={<IoDocumentTextOutline />}
           label="Reports"

@@ -1,14 +1,32 @@
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { Container } from '@/components'
 import { useAdminInvoices } from '@/features/manager/hooks/useAdminInvoices'
+import { useOnboard } from '@/features/manager/hooks/useOnboard'
+import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
+import InvoiceCard from './InvoiceCard'
 
 export default function ManagerInvoicesPage() {
+  const [searchParams] = useSearchParams()
+  const status = searchParams.get('status') ?? undefined
+
+  // Reset page to 1 whenever status changes
+  const [prevStatus, setPrevStatus] = useState(status)
   const [page, setPage] = useState(1)
   const [expandedInvoiceId, setExpandedInvoiceId] = useState<string | null>(null)
   const limit = 10
 
-  const { data, isLoading, isError, error, refetch } = useAdminInvoices(page, limit)
+  // Check if status changed and reset page
+  if (status !== prevStatus) {
+    setPrevStatus(status)
+    if (page !== 1) {
+      setPage(1)
+    }
+  }
+
+  const { onboard, isLoading: isOnboarding } = useOnboard()
+
+  const { data, isLoading, isError, error, refetch } = useAdminInvoices(page, limit, status)
 
   const invoiceList = data?.data.invoiceList ?? []
   const pagination = data?.data.pagination
@@ -77,89 +95,39 @@ export default function ManagerInvoicesPage() {
         )}
 
         {!isLoading && !errorMessage && (
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-sm">
-              <thead className="bg-neutral-50 text-neutral-600">
-                <tr>
-                  <th className="text-left font-semibold px-4 py-3">Invoice Code</th>
-                  <th className="text-left font-semibold px-4 py-3">Customer</th>
-                  <th className="text-left font-semibold px-4 py-3">Phone</th>
-                  <th className="text-left font-semibold px-4 py-3">Orders</th>
-                  <th className="text-left font-semibold px-4 py-3">Final Price</th>
-                  <th className="text-left font-semibold px-4 py-3">Status</th>
-                  <th className="text-left font-semibold px-4 py-3">Created At</th>
-                  <th className="text-left font-semibold px-4 py-3">Address</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-neutral-100">
-                {invoiceList.map((inv) => {
-                  const isExpanded = expandedInvoiceId === inv.id
+          <div className="p-4">
+            <div className="space-y-4">
+              {invoiceList.map((inv) => {
+                const isExpanded = expandedInvoiceId === inv.id
 
-                  return (
-                    <>
-                      <tr
-                        key={inv.id}
-                        className="hover:bg-neutral-50 cursor-pointer"
-                        onClick={() =>
-                          setExpandedInvoiceId((cur) => (cur === inv.id ? null : inv.id))
-                        }
-                      >
-                        <td className="px-4 py-3 font-semibold text-neutral-900">
-                          {inv.invoiceCode}
-                        </td>
-                        <td className="px-4 py-3 text-neutral-700">{inv.fullName}</td>
-                        <td className="px-4 py-3 text-neutral-700">{inv.phone}</td>
-                        <td className="px-4 py-3 text-neutral-700">{inv.orders?.length ?? 0}</td>
-                        <td className="px-4 py-3 text-neutral-700">{inv.finalPrice}</td>
-                        <td className="px-4 py-3 text-neutral-700">{inv.status}</td>
-                        <td className="px-4 py-3 text-neutral-700">{inv.createdAt}</td>
-                        <td className="px-4 py-3 text-neutral-700">{inv.address}</td>
-                      </tr>
+                const showOnboardButton =
+                  inv.status === InvoiceStatus.APPROVED || inv.status === InvoiceStatus.DEPOSITED
 
-                      {isExpanded && (
-                        <tr className="bg-neutral-50">
-                          <td className="px-4 py-3" colSpan={8}>
-                            <div className="rounded-xl border border-neutral-200 bg-white p-3">
-                              <div className="text-xs font-semibold text-neutral-500 mb-2">
-                                Orders
-                              </div>
+                return (
+                  <InvoiceCard
+                    key={inv.id}
+                    invoice={inv}
+                    isExpanded={isExpanded}
+                    isOnboarding={isOnboarding}
+                    showOnboardButton={showOnboardButton}
+                    onToggleExpanded={() =>
+                      setExpandedInvoiceId((cur) => (cur === inv.id ? null : inv.id))
+                    }
+                    onOnboard={async (invoiceId) => {
+                      await onboard(invoiceId)
+                      await refetch()
+                    }}
+                    onComplete={() => {
+                      // TODO: implement later
+                    }}
+                  />
+                )
+              })}
 
-                              {inv.orders && inv.orders.length > 0 ? (
-                                <div className="space-y-2">
-                                  {inv.orders.map((o) => (
-                                    <div
-                                      key={o.id}
-                                      className="flex items-center justify-between gap-3 text-sm"
-                                    >
-                                      <div className="font-medium text-neutral-800">{o.id}</div>
-                                      <div className="text-neutral-600">
-                                        {(o.type ?? []).join(', ')}
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              ) : (
-                                <div className="text-sm text-neutral-500">
-                                  Invoice này chưa có order.
-                                </div>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      )}
-                    </>
-                  )
-                })}
-
-                {invoiceList.length === 0 && (
-                  <tr>
-                    <td className="px-4 py-6 text-neutral-500" colSpan={8}>
-                      Không có invoice.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+              {invoiceList.length === 0 && (
+                <div className="px-4 py-6 text-neutral-500">Không có invoice.</div>
+              )}
+            </div>
           </div>
         )}
       </div>

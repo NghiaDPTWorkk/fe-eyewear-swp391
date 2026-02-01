@@ -55,6 +55,18 @@ export const ENDPOINTS = {
 
   // Admin
   ADMIN: {
-    INVOICES: (page: number, limit: number) => `/admin/invoices?page=${page}&limit=${limit}`
+    INVOICES: (page: number, limit: number, status?: string) => {
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: String(limit)
+      })
+
+      if (status) {
+        params.append('status', status)
+      }
+
+      return `/admin/invoices?${params.toString()}`
+    },
+    INVOICES_ONBOARD: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/onboard`
   }
 } as const

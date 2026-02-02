@@ -1,14 +1,19 @@
-import { Shield, Home, User, CreditCard } from 'lucide-react'
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
-import { Button, Card, Input, Select } from '@/shared/components/ui'
+import { Card } from '@/shared/components/ui'
 import { addressService, type Province, type Ward } from '@/shared/services/addressService'
+import { customerAddressService } from '@/features/customer/services/customerAddress.service'
 import { invoiceService } from '@/features/customer/invoice/services/invoice.service'
 import { useCartStore } from '@/store'
 import { useAuth } from '@/features/auth/hooks/useAuth'
-import { PaymentMethodType } from '@/shared/types'
+import { PaymentMethodType, type Address } from '@/shared/types'
 import type { CreateInvoiceRequest } from '@/shared/types/invoice.types'
+
+import { CustomerInfoSection } from './sections/CustomerInfoSection'
+import { ShippingAddressSection } from './sections/ShippingAddressSection'
+import { PaymentMethodSection } from './sections/PaymentMethodSection'
+import { OrderSummarySection } from './sections/OrderSummarySection'
 
 interface CartSummaryProps {
   subtotal: number
@@ -35,7 +40,10 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
 
   const [provinces, setProvinces] = useState<Province[]>([])
   const [wards, setWards] = useState<Ward[]>([])
-
+  const [savedAddresses, setSavedAddresses] = useState<Address[]>([])
+  const [addressMode, setAddressMode] = useState<'list' | 'manual'>('manual')
+  const [selectedAddressId, setSelectedAddressId] = useState<string>('')
+  const [isAddressDropdownOpen, setIsAddressDropdownOpen] = useState(false)
   const [selectedProvinceCode, setSelectedProvinceCode] = useState<number | null>(null)
 
   // Sync user info if it loads late
@@ -49,21 +57,77 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
     }
   }, [user])
 
-  // Fetch all provinces on mount
+  // Fetch requirements
   useEffect(() => {
-    const fetchProvinces = async () => {
+    const initData = async () => {
       try {
-        const data = await addressService.getProvinces()
-        setProvinces(Array.isArray(data) ? data : [])
+        const provinceData = await addressService.getProvinces()
+        const provincesArray = Array.isArray(provinceData) ? provinceData : []
+        setProvinces(provincesArray)
+
+        if (user) {
+          const addresses = await customerAddressService.getAddresses()
+          setSavedAddresses(addresses)
+
+          if (addresses.length > 0) {
+            const defaultAddr = addresses.find((a) => a.isDefault) || addresses[0]
+            setAddressMode('list')
+            setSelectedAddressId(defaultAddr._id || '')
+            setAddress({
+              street: defaultAddr.street,
+              ward: defaultAddr.ward,
+              city: defaultAddr.city
+            })
+
+            const province = provincesArray.find(
+              (p) => p.name.toLowerCase() === defaultAddr.city.toLowerCase()
+            )
+            if (province) {
+              setSelectedProvinceCode(province.code)
+              const wardData = await addressService.getWards(province.code)
+              setWards(Array.isArray(wardData) ? wardData : [])
+            }
+          }
+        }
       } catch (error) {
-        console.error('Failed to fetch provinces:', error)
-        setProvinces([])
+        console.error('Failed to initialize cart summary data:', error)
       }
     }
-    fetchProvinces()
-  }, [])
+    initData()
+  }, [user])
 
-  // Fetch wards when province changes
+  const handleSavedAddressChange = async (id: string) => {
+    if (id === 'new') {
+      setAddressMode('manual')
+      setSelectedAddressId('')
+      setAddress({ street: '', ward: '', city: '' })
+      setSelectedProvinceCode(null)
+      setWards([])
+      return
+    }
+
+    const addr = savedAddresses.find((a) => a._id === id)
+    if (addr) {
+      setSelectedAddressId(id)
+      setAddress({
+        street: addr.street,
+        ward: addr.ward,
+        city: addr.city
+      })
+
+      const province = provinces.find((p) => p.name.toLowerCase() === addr.city.toLowerCase())
+      if (province) {
+        setSelectedProvinceCode(province.code)
+        try {
+          const data = await addressService.getWards(province.code)
+          setWards(Array.isArray(data) ? data : [])
+        } catch (error) {
+          console.error('Failed to fetch wards:', error)
+        }
+      }
+    }
+  }
+
   const handleProvinceChange = useCallback(async (code: number, name: string) => {
     setSelectedProvinceCode(code)
     setWards([])
@@ -79,7 +143,6 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
   }, [])
 
   const handleCheckout = async () => {
-    // 1. Validation
     if (!customerInfo.fullName || !customerInfo.phone) {
       toast.error('Vui lòng nhập đầy đủ thông tin khách hàng')
       return
@@ -98,7 +161,6 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
 
     setIsProcessing(true)
     try {
-      // 2. Prepare payload
       const productsPayload = selectedItems.map((item) => ({
         product: {
           product_id: item.product_id,
@@ -152,23 +214,17 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
         note
       }
 
-      // 3. Call API
       const response = await invoiceService.createInvoice(payload)
-
       if (response.success) {
         toast.success(response.message || 'Đặt hàng thành công!')
-
-        // Selective removal: Only remove the items that were checked out
-        // We do this manually because the backend might not clear the cart on invoice creation
-        const itemsToRemove = selectedItems.map((item) => ({ ...item }))
+        const selectedItemsCopy = selectedItems.map((item) => ({ ...item }))
         const { clearCart, removeItems, items: currentItems } = useCartStore.getState()
 
-        if (itemsToRemove.length === currentItems.length) {
+        if (selectedItemsCopy.length === currentItems.length) {
           await clearCart()
         } else {
-          await removeItems(itemsToRemove)
+          await removeItems(selectedItemsCopy)
         }
-
         navigate('/account/orders')
       } else {
         toast.error(response.message || 'Tạo đơn hàng thất bại')
@@ -186,97 +242,24 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
 
   return (
     <Card className="p-8 border-mint-300/50 sticky top-8 rounded-3xl">
-      {/* Customer Info */}
-      <div className="mb-6">
-        <h2 className="text-xl font-bold text-mint-1200 mb-4 flex items-center gap-2">
-          <User className="w-5 h-5 text-primary-500" />
-          Customer Information
-        </h2>
-        <div className="space-y-4">
-          <div>
-            <label className="text-xs font-bold text-gray-eyewear uppercase mb-1 block">
-              Full Name
-            </label>
-            <Input
-              value={customerInfo.fullName}
-              onChange={(e) => setCustomerInfo({ ...customerInfo, fullName: e.target.value })}
-              placeholder="Minh Lâm"
-              className="rounded-xl border-mint-200 focus:border-primary-500"
-            />
-          </div>
-          <div>
-            <label className="text-xs font-bold text-gray-eyewear uppercase mb-1 block">
-              Phone Number
-            </label>
-            <Input
-              value={customerInfo.phone}
-              onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
-              placeholder="0812345678"
-              className="rounded-xl border-mint-200 focus:border-primary-500"
-            />
-          </div>
-        </div>
-      </div>
+      <CustomerInfoSection customerInfo={customerInfo} onUpdate={setCustomerInfo} />
 
-      {/* Address */}
-      <div className="mb-6">
-        <h2 className="text-xl font-bold text-mint-1200 mb-4 flex items-center gap-2">
-          <Home className="w-5 h-5 text-primary-500" />
-          Shipping Address
-        </h2>
-        <div className="space-y-4">
-          <div>
-            <label className="text-xs font-bold text-gray-eyewear uppercase mb-1 block">
-              City / Province
-            </label>
-            <Select
-              value={selectedProvinceCode || ''}
-              onChange={(e) => {
-                const code = Number(e.target.value)
-                const province = provinces.find((p) => p.code === code)
-                if (province) handleProvinceChange(code, province.name)
-              }}
-              placeholder="Select Province"
-              className="rounded-xl border-mint-200 focus-within:border-primary-500"
-            >
-              {provinces.map((p) => (
-                <option key={p.code} value={p.code}>
-                  {p.name}
-                </option>
-              ))}
-            </Select>
-          </div>
-          <div>
-            <label className="text-xs font-bold text-gray-eyewear uppercase mb-1 block">Ward</label>
-            <Select
-              value={address.ward}
-              onChange={(e) => setAddress({ ...address, ward: e.target.value })}
-              placeholder="Select Ward"
-              isDisabled={!selectedProvinceCode}
-              className="rounded-xl border-mint-200 focus-within:border-primary-500"
-            >
-              {(wards || []).map((w) => (
-                <option key={w.code} value={w.name}>
-                  {w.name}
-                </option>
-              ))}
-            </Select>
-          </div>
-          <div>
-            <label className="text-xs font-bold text-gray-eyewear uppercase mb-1 block">
-              Street
-            </label>
-            <Input
-              value={address.street}
-              onChange={(e) => setAddress({ ...address, street: e.target.value })}
-              placeholder="e.g. Le van viet"
-              className="rounded-xl border-mint-200 focus:border-primary-500"
-            />
-          </div>
-        </div>
-      </div>
+      <ShippingAddressSection
+        address={address}
+        addressMode={addressMode}
+        savedAddresses={savedAddresses}
+        selectedAddressId={selectedAddressId}
+        isAddressDropdownOpen={isAddressDropdownOpen}
+        provinces={provinces}
+        wards={wards}
+        selectedProvinceCode={selectedProvinceCode}
+        onModeChange={setAddressMode}
+        onDropdownToggle={setIsAddressDropdownOpen}
+        onSavedAddressChange={handleSavedAddressChange}
+        onProvinceChange={handleProvinceChange}
+        onAddressUpdate={(updates) => setAddress((prev) => ({ ...prev, ...updates }))}
+      />
 
-      {/* Note */}
       <div className="border-t border-mint-100 py-6 mb-6">
         <h2 className="text-xl font-bold text-mint-1200 mb-4">Order Note</h2>
         <textarea
@@ -288,92 +271,18 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
         />
       </div>
 
-      {/* Payment Method */}
-      <div className="mb-6">
-        <h2 className="text-xl font-bold text-mint-1200 mb-4 flex items-center gap-2">
-          <CreditCard className="w-5 h-5 text-primary-500" />
-          Payment Method
-        </h2>
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            onClick={() => setPaymentMethod(PaymentMethodType.COD)}
-            className={`py-3 px-4 rounded-xl border-2 transition-all font-bold text-sm ${
-              paymentMethod === PaymentMethodType.COD
-                ? 'border-primary-500 bg-primary-50 text-primary-600'
-                : 'border-mint-200 text-gray-eyewear hover:border-mint-300'
-            }`}
-          >
-            COD
-          </button>
-          <button
-            onClick={() => setPaymentMethod(PaymentMethodType.ZALAPAY)}
-            className={`py-3 px-4 rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${
-              paymentMethod === PaymentMethodType.ZALAPAY
-                ? 'border-[#0068FF] bg-[#0068FF]/5 text-[#0068FF]'
-                : 'border-mint-200 text-gray-eyewear hover:border-mint-300'
-            }`}
-          >
-            <img
-              src="https://cdn.brandfetch.io/id_T-oXJkN/w/1624/h/1624/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1767789070990"
-              alt="ZaloPay"
-              className="h-6"
-            />
-            <span className="font-bold text-sm">ZaloPay</span>
-          </button>
-        </div>
-      </div>
+      <PaymentMethodSection
+        paymentMethod={paymentMethod}
+        onPaymentMethodChange={setPaymentMethod}
+      />
 
-      {/* Summary */}
-      <div className="space-y-4 mb-8">
-        <div className="flex justify-between text-mint-1200">
-          <span className="font-medium">Subtotal</span>
-          <span className="font-bold">
-            ${subtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-          </span>
-        </div>
-        <div className="flex justify-between text-mint-1200">
-          <span className="font-medium">Shipping</span>
-          <span className="font-bold">{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
-        </div>
-        <div className="flex justify-between items-baseline pt-4 border-t border-mint-100">
-          <span className="text-xl font-bold text-mint-1200 uppercase">
-            Total{' '}
-            <span className="text-xs font-medium text-gray-eyewear normal-case">(Excl. Tax)</span>
-          </span>
-          <span className="text-3xl font-extrabold text-mint-1200">
-            ${total.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-          </span>
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <Button
-          isFullWidth
-          size="lg"
-          onClick={handleCheckout}
-          isLoading={isProcessing}
-          className="py-6 rounded-xl shadow-sm hover:shadow-md uppercase tracking-wider font-bold bg-[#4AD7B0] hover:bg-[#3CBFA0] text-white border-0"
-        >
-          {isProcessing ? 'Processing...' : 'SECURE CHECKOUT'}
-        </Button>
-      </div>
-
-      <div className="text-center mt-6">
-        <p className="text-[10px] text-gray-eyewear mb-4 leading-relaxed">
-          By clicking on the button above you agree to Glasses.com <br />
-          <a href="#" className="underline">
-            Terms and Conditions
-          </a>{' '}
-          and{' '}
-          <a href="#" className="underline">
-            Privacy Policy
-          </a>
-        </p>
-        <div className="flex items-center justify-center gap-2 text-xs text-mint-1200 font-bold">
-          <Shield className="w-4 h-4 text-primary-500" />
-          Secure checkout guaranteed
-        </div>
-      </div>
+      <OrderSummarySection
+        subtotal={subtotal}
+        shipping={shipping}
+        total={total}
+        isProcessing={isProcessing}
+        onCheckout={handleCheckout}
+      />
     </Card>
   )
 }

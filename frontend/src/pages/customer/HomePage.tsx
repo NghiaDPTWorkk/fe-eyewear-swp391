@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
 import { ShoppingCart, Truck, RotateCcw, Glasses, Headphones, ArrowRight, Star } from 'lucide-react'
-import { Button, Input } from '@/components'
 
 interface HomePageProps {
   header: ReactNode
@@ -27,12 +26,12 @@ export const HomePage = ({ header }: HomePageProps) => {
                 curated collection of modern designs.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Button className="px-8 py-4 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                <button className="px-8 py-4 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
                   Shop Now
-                </Button>
-                <Button className="px-8 py-4 bg-white text-mint-1200 font-semibold rounded-xl hover:bg-mint-300 transition-all duration-300 border-2 border-mint-300">
+                </button>
+                <button className="px-8 py-4 bg-white text-mint-1200 font-semibold rounded-xl hover:bg-mint-300 transition-all duration-300 border-2 border-mint-300">
                   Try Virtual Try-On
-                </Button>
+                </button>
               </div>
             </div>
             <div className="relative">
@@ -119,9 +118,9 @@ export const HomePage = ({ header }: HomePageProps) => {
                 <h3 className="font-semibold text-mint-1200 mb-2">{product.name}</h3>
                 <div className="flex items-center justify-between">
                   <span className="text-primary-500 font-bold text-lg">{product.price}</span>
-                  <Button className="w-8 h-8 bg-primary-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button className="w-8 h-8 bg-primary-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <ShoppingCart className="w-4 h-4" />
-                  </Button>
+                  </button>
                 </div>
               </div>
             ))}
@@ -142,10 +141,10 @@ export const HomePage = ({ header }: HomePageProps) => {
                 materials, expert craftsmanship, and timeless designs that elevate your everyday
                 look.
               </p>
-              <Button className="px-8 py-4 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-600 transition-all duration-300 inline-flex items-center gap-2">
+              <button className="px-8 py-4 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-600 transition-all duration-300 inline-flex items-center gap-2">
                 Learn More
                 <ArrowRight className="w-5 h-5" />
-              </Button>
+              </button>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-white rounded-2xl p-6 shadow-lg">
@@ -227,14 +226,14 @@ export const HomePage = ({ header }: HomePageProps) => {
               Subscribe to get special offers, free giveaways, and exclusive deals.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <Input
+              <input
                 type="email"
                 placeholder="Enter your email"
                 className="flex-1 px-6 py-4 rounded-xl border-2 border-white bg-white/10 text-white placeholder-white/70 focus:outline-none focus:bg-white/20 transition-all"
               />
-              <Button className="px-8 py-4 bg-white text-primary-500 font-semibold rounded-xl hover:bg-mint-200 transition-all duration-300 whitespace-nowrap">
+              <button className="px-8 py-4 bg-white text-primary-500 font-semibold rounded-xl hover:bg-mint-200 transition-all duration-300 whitespace-nowrap">
                 Subscribe
-              </Button>
+              </button>
             </div>
             <p className="text-primary-100 text-sm">
               We respect your privacy. Unsubscribe at any time.

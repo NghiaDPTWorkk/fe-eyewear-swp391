@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { FiChevronDown } from 'react-icons/fi'
 import { useLayoutStore } from '@/store/layout.store'
-import { Button } from '@/components'
 
 interface MenuItemProps {
   icon: ReactNode
@@ -103,13 +102,13 @@ export function MenuItem({
   return (
     <div className="mb-1">
       {hasDropdown || !to ? (
-        <Button
+        <button
           onClick={handleClick}
           className={commonClasses}
           title={sidebarCollapsed ? label : undefined}
         >
           {content}
-        </Button>
+        </button>
       ) : (
         <Link
           to={to}

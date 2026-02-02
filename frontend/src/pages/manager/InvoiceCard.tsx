@@ -1,6 +1,5 @@
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import type { AdminInvoiceListItem } from '@/shared/types'
-import { Button } from '@/components'
 
 function getInvoiceStatusBadgeClass(status: string) {
   switch (status) {
@@ -49,7 +48,7 @@ export default function InvoiceCard({
   return (
     <div className="rounded-2xl border border-neutral-200 bg-white shadow-sm">
       <div
-        role="Button"
+        role="button"
         tabIndex={0}
         className="w-full text-left p-4 cursor-pointer"
         onClick={onToggleExpanded}
@@ -94,8 +93,8 @@ export default function InvoiceCard({
 
           <div className="flex flex-col items-end gap-2 shrink-0">
             {showOnboardButton && (
-              <Button
-                type="Button"
+              <button
+                type="button"
                 className="px-3 py-2 rounded-lg bg-primary-500 text-white text-sm font-medium disabled:opacity-50"
                 disabled={isOnboarding}
                 onClick={async (e) => {
@@ -104,12 +103,12 @@ export default function InvoiceCard({
                 }}
               >
                 Change to ONBOARD
-              </Button>
+              </button>
             )}
 
             {invoice.status === InvoiceStatus.ONBOARD && (
-              <Button
-                type="Button"
+              <button
+                type="button"
                 className="px-3 py-2 rounded-lg bg-secondary-500 text-white text-sm font-medium disabled:opacity-50"
                 disabled={isOnboarding}
                 onClick={(e) => {
@@ -118,7 +117,7 @@ export default function InvoiceCard({
                 }}
               >
                 Change to COMPLETED
-              </Button>
+              </button>
             )}
 
             <div className="text-xs text-neutral-400">

@@ -8,21 +8,21 @@ interface FilterButton {
 }
 
 interface FilterButtonListProps {
-  Buttons: FilterButton[]
+  buttons: FilterButton[]
   selectedValue: string
   onChange: (value: string) => void
   className?: string
 }
 
 export default function FilterButtonList({
-  Buttons,
+  buttons,
   selectedValue,
   onChange,
   className
 }: FilterButtonListProps) {
   return (
     <div className={cn('flex items-center gap-3 mb-6', className)}>
-      {Buttons.map((btn) => {
+      {buttons.map((btn) => {
         const isActive = selectedValue === btn.value
         return (
           <Button

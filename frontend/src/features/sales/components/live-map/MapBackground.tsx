@@ -1,3 +1,7 @@
+/**
+ * MapBackground Component
+ * Mock map background with route visualization
+ */
 import { IoLocation } from 'react-icons/io5'
 
 export default function MapBackground() {

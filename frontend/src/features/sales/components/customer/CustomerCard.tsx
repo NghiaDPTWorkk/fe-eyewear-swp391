@@ -2,7 +2,7 @@
  * CustomerCard Component
  * Displays individual customer information in a card format
  */
-import { Card, Button } from '@/components'
+import { Card } from '@/components'
 import { IoEllipsisVertical, IoCallOutline, IoMailOutline, IoLinkOutline } from 'react-icons/io5'
 
 interface Customer {
@@ -48,12 +48,12 @@ export default function CustomerCard({ customer, isSelected, onClick }: Customer
             </p>
           </div>
         </div>
-        <Button
+        <button
           className="p-2 text-neutral-300 hover:text-neutral-500 transition-colors rounded-full hover:bg-neutral-50"
           onClick={(e) => e.stopPropagation()}
         >
           <IoEllipsisVertical size={20} />
-        </Button>
+        </button>
       </div>
 
       <div className="mb-8">

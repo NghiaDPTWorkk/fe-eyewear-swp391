@@ -126,18 +126,18 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
           </span>
         </div>
 
-        <Button className="w-full py-4 border border-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-50 transition-colors">
+        <button className="w-full py-4 border border-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-50 transition-colors">
           <img
             src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg"
             alt="PayPal"
             className="h-6"
           />
-        </Button>
+        </button>
       </div>
 
       <div className="text-center mt-6">
         <p className="text-xs text-gray-eyewear mb-6">
-          By clicking on one of the Buttons above you agree to Glasses.com <br />
+          By clicking on one of the buttons above you agree to Glasses.com <br />
           <a href="#" className="underline hover:text-primary-500">
             Terms and Conditions
           </a>{' '}

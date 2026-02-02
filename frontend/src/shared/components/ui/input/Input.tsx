@@ -2,7 +2,7 @@ import { forwardRef, type InputHTMLAttributes, type ReactNode } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
-const InputVariants = cva(
+const inputVariants = cva(
   [
     'flex w-full rounded-lg border bg-white transition-all duration-200',
     'focus-within:ring-2 focus-within:ring-offset-1',
@@ -32,7 +32,7 @@ export type InputSize = 'sm' | 'md' | 'lg'
 export interface InputProps
   extends
     Omit<InputHTMLAttributes<HTMLInputElement>, 'size'>,
-    Omit<VariantProps<typeof InputVariants>, 'isInvalid'> {
+    Omit<VariantProps<typeof inputVariants>, 'isInvalid'> {
   isInvalid?: boolean
   isDisabled?: boolean
   leftElement?: ReactNode
@@ -53,14 +53,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     ref
   ) => {
     return (
-      <div className={cn(InputVariants({ size, isInvalid }), className)}>
+      <div className={cn(inputVariants({ size, isInvalid }), className)}>
         {leftElement && (
-          <span className="flex items-center justify-center pl-3 text-neutral-500 Select-none cursor-default">
+          <span className="flex items-center justify-center pl-3 text-neutral-500 select-none cursor-default">
             {leftElement}
           </span>
         )}
 
-        <Input
+        <input
           ref={ref}
           disabled={isDisabled}
           className={cn(
@@ -72,7 +72,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         />
 
         {rightElement && (
-          <span className="flex items-center justify-center pr-3 text-neutral-500 Select-none cursor-default">
+          <span className="flex items-center justify-center pr-3 text-neutral-500 select-none cursor-default">
             {rightElement}
           </span>
         )}

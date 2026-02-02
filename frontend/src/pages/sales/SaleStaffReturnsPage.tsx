@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Container, Button, Card, Input } from '@/components'
-import { ReturnDetails } from '@/features/sales/components/returns'
+import { Container, Button, Card } from '@/components'
+import SaleStaffReturnDetails from '@/features/sales/components/SaleStaffReturnDetails/SaleStaffReturnDetails'
 import {
   IoSearchOutline,
   IoRefreshOutline,
@@ -11,12 +11,15 @@ import {
 } from 'react-icons/io5'
 
 export default function SaleStaffReturnsPage() {
-  const [SelectedReturnId, setSelectedReturnId] = useState<string | null>(null)
+  const [selectedReturnId, setSelectedReturnId] = useState<string | null>(null)
 
-  if (SelectedReturnId) {
+  if (selectedReturnId) {
     return (
       <Container>
-        <ReturnDetails returnId={SelectedReturnId} onBack={() => setSelectedReturnId(null)} />
+        <SaleStaffReturnDetails
+          returnId={selectedReturnId}
+          onBack={() => setSelectedReturnId(null)}
+        />
       </Container>
     )
   }
@@ -50,7 +53,7 @@ export default function SaleStaffReturnsPage() {
         <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
           <div className="relative flex-1 max-w-md w-full">
             <IoSearchOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
-            <Input
+            <input
               type="text"
               placeholder="Search Return ID, Order #..."
               className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all placeholder:text-gray-400"
@@ -125,7 +128,7 @@ export default function SaleStaffReturnsPage() {
                     <div className="text-sm font-medium text-[#3d4465]">Oct 23, 2023</div>
                   </td>
                   <td className="pr-10 px-6 py-6 text-right align-middle">
-                    <Button
+                    <button
                       className="text-neutral-300 hover:text-emerald-500 hover:bg-emerald-50 transition-all p-2 rounded-xl"
                       onClick={(e) => {
                         e.stopPropagation()
@@ -133,7 +136,7 @@ export default function SaleStaffReturnsPage() {
                       }}
                     >
                       <IoChevronForward size={18} />
-                    </Button>
+                    </button>
                   </td>
                 </tr>
                 <tr
@@ -164,7 +167,7 @@ export default function SaleStaffReturnsPage() {
                     <div className="text-sm font-medium text-[#3d4465]">Oct 23, 2023</div>
                   </td>
                   <td className="pr-10 px-6 py-6 text-right align-middle">
-                    <Button
+                    <button
                       className="text-neutral-300 hover:text-emerald-500 hover:bg-emerald-50 transition-all p-2 rounded-xl"
                       onClick={(e) => {
                         e.stopPropagation()
@@ -172,7 +175,7 @@ export default function SaleStaffReturnsPage() {
                       }}
                     >
                       <IoChevronForward size={18} />
-                    </Button>
+                    </button>
                   </td>
                 </tr>
               </tbody>

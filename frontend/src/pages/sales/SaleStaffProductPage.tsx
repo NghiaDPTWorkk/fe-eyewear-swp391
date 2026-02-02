@@ -128,9 +128,9 @@ export default function SaleStaffProductPage() {
             >
               Add Product
             </Button>
-            <Button className="p-2 text-neutral-300 hover:text-neutral-500 transition-colors">
+            <button className="p-2 text-neutral-300 hover:text-neutral-500 transition-colors">
               <IoSettingsOutline size={22} className="opacity-60" />
-            </Button>
+            </button>
           </div>
         </div>
 
@@ -191,9 +191,9 @@ export default function SaleStaffProductPage() {
                     </span>
                   </td>
                   <td className="pr-10 py-6 text-right">
-                    <Button className="text-neutral-300 hover:text-neutral-500 transition-colors">
+                    <button className="text-neutral-300 hover:text-neutral-500 transition-colors">
                       <IoEllipsisVertical />
-                    </Button>
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -204,21 +204,21 @@ export default function SaleStaffProductPage() {
         {/* Pagination */}
         <div className="px-10 py-10 flex justify-between items-center text-[11px] font-semibold text-[#a4a9c1] uppercase tracking-widest bg-white">
           <div className="flex items-center gap-1.5 p-1.5 bg-neutral-50/50 rounded-2xl border border-neutral-100">
-            <Button className="w-9 h-9 flex items-center justify-center hover:bg-white hover:shadow-sm rounded-xl transition-all text-neutral-400">
+            <button className="w-9 h-9 flex items-center justify-center hover:bg-white hover:shadow-sm rounded-xl transition-all text-neutral-400">
               <IoChevronForward className="rotate-180" size={14} />
-            </Button>
-            <Button className="w-9 h-9 rounded-xl bg-white shadow-sm text-[#63b38e] flex items-center justify-center border border-neutral-100/50">
+            </button>
+            <button className="w-9 h-9 rounded-xl bg-white shadow-sm text-[#63b38e] flex items-center justify-center border border-neutral-100/50">
               1
-            </Button>
-            <Button className="w-9 h-9 rounded-xl hover:bg-white hover:shadow-sm flex items-center justify-center transition-all border border-transparent">
+            </button>
+            <button className="w-9 h-9 rounded-xl hover:bg-white hover:shadow-sm flex items-center justify-center transition-all border border-transparent">
               2
-            </Button>
-            <Button className="w-9 h-9 rounded-xl hover:bg-white hover:shadow-sm flex items-center justify-center transition-all border border-transparent">
+            </button>
+            <button className="w-9 h-9 rounded-xl hover:bg-white hover:shadow-sm flex items-center justify-center transition-all border border-transparent">
               3
-            </Button>
-            <Button className="w-9 h-9 flex items-center justify-center hover:bg-white hover:shadow-sm rounded-xl transition-all text-neutral-400">
+            </button>
+            <button className="w-9 h-9 flex items-center justify-center hover:bg-white hover:shadow-sm rounded-xl transition-all text-neutral-400">
               <IoChevronForward size={14} />
-            </Button>
+            </button>
           </div>
           <span className="opacity-80">Page 1 of 10</span>
         </div>

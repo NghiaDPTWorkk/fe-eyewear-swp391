@@ -4,7 +4,6 @@ import { MenuItem, MenuSection, StoreDropdown, SubMenuItem } from '@/components/
 import { useLayoutStore } from '@/store/layout.store'
 import { HiMenuAlt2 } from 'react-icons/hi'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components'
 
 interface SidebarStaffProps {
   logo?: ReactNode
@@ -42,7 +41,7 @@ export function SidebarStaff({
         style={{ height: sidebarCollapsed ? '64px' : `${headerHeight}px` }}
       >
         {!sidebarCollapsed && logo && <div className="transition-opacity duration-300">{logo}</div>}
-        <Button
+        <button
           onClick={toggleSidebar}
           title={sidebarCollapsed ? 'Open Sidebar' : 'Close Sidebar'}
           className={cn(
@@ -51,7 +50,7 @@ export function SidebarStaff({
           )}
         >
           <HiMenuAlt2 className="text-xl" />
-        </Button>
+        </button>
       </div>
 
       {!sidebarCollapsed && storeName && <StoreDropdown storeName={storeName} icon={storeIcon} />}

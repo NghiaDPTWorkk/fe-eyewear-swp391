@@ -1,3 +1,7 @@
+/**
+ * LabMetricsCard Component
+ * Displays lab-related metrics (In Production, Urgent/Late, Ready for QC)
+ */
 import { Card } from '@/components'
 import { IoFlaskOutline, IoWarningOutline, IoCheckmarkCircleOutline } from 'react-icons/io5'
 

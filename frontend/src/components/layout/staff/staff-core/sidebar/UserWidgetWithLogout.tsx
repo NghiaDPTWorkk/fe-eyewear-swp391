@@ -1,7 +1,6 @@
 import { IoLogOut } from 'react-icons/io5'
 import { useLayoutStore } from '@/store/layout.store'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components'
 
 interface UserWidgetWithLogoutProps {
   userInitials: string
@@ -35,13 +34,13 @@ export function UserWidgetWithLogout({
               <div className="text-sm font-semibold text-gray-900 truncate">{userName}</div>
               <div className="text-xs text-gray-500 truncate">{userRole}</div>
             </div>
-            <Button
+            <button
               onClick={onLogout}
               className="p-2 hover:bg-red-50 rounded-lg transition-colors text-red-500"
               title="Logout"
             >
               <IoLogOut className="w-5 h-5" />
-            </Button>
+            </button>
           </>
         )}
       </div>

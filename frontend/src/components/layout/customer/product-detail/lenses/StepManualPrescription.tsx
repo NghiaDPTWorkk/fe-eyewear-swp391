@@ -2,7 +2,6 @@ import { useState } from 'react'
 import type { PrescriptionData } from './types'
 import { Select } from '@/shared/components/ui/select'
 import { Info, Check } from 'lucide-react'
-import { Button } from '@/components'
 
 interface StepManualPrescriptionProps {
   onSubmit: (rx: PrescriptionData) => void
@@ -60,9 +59,9 @@ export default function StepManualPrescription({ onSubmit }: StepManualPrescript
       </h2>
       <p className="text-gray-eyewear mb-6">
         We'll create a lens tailor-made to your vision needs. Don't have a valid prescription?
-        <Button className="text-primary-500 font-bold ml-1 hover:underline">
+        <button className="text-primary-500 font-bold ml-1 hover:underline">
           Find Eye Doctors Near You
-        </Button>
+        </button>
       </p>
 
       <div className="flex items-center gap-2 text-sm text-primary-600 mb-6 group cursor-pointer">
@@ -223,9 +222,9 @@ export default function StepManualPrescription({ onSubmit }: StepManualPrescript
               <Info className="w-4 h-4 text-primary-500 cursor-help" />
             </h4>
           </div>
-          <Button className="text-xs font-bold text-primary-500 hover:underline uppercase tracking-wider">
+          <button className="text-xs font-bold text-primary-500 hover:underline uppercase tracking-wider">
             What is PD?
-          </Button>
+          </button>
         </div>
         <div className="w-32">
           <Select
@@ -254,12 +253,12 @@ export default function StepManualPrescription({ onSubmit }: StepManualPrescript
           </span>
         </label>
 
-        <Button
+        <button
           onClick={() => onSubmit(rx)}
           className="w-full py-5 bg-primary-500 text-white font-bold rounded-2xl hover:bg-primary-600 transition-all shadow-lg hover:shadow-xl uppercase tracking-widest text-sm"
         >
           Continue
-        </Button>
+        </button>
       </div>
     </div>
   )

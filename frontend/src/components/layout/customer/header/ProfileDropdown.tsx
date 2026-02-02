@@ -3,7 +3,6 @@ import { User, LogOut, ChevronRight, ShoppingBag, MapPin, Clipboard, Heart } fro
 import { Link, useNavigate } from 'react-router-dom'
 import { STORAGE_KEYS } from '@/shared/constants/storage'
 import { useAuthStore, useCartStore } from '@/store'
-import { Button } from '@/components'
 
 export function ProfileDropdown() {
   const [isOpen, setIsOpen] = useState(false)
@@ -35,7 +34,7 @@ export function ProfileDropdown() {
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
     >
-      <Button
+      <button
         className="p-2 hover:bg-mint-200 rounded-full transition-all group flex items-center gap-2"
         aria-label="User Profile"
         onClick={() => navigate('/account/settings')}
@@ -44,7 +43,7 @@ export function ProfileDropdown() {
         <span className="text-sm font-medium text-gray-eyewear hidden md:block">
           {user?.name || 'User'}
         </span>
-      </Button>
+      </button>
 
       {isOpen && (
         <div className="absolute right-0 mt-0 w-72 bg-white rounded-2xl shadow-xl border border-neutral-100 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
@@ -85,7 +84,7 @@ export function ProfileDropdown() {
           </div>
 
           <div className="p-3 bg-neutral-50/50 border-t border-neutral-50 font-sans">
-            <Button
+            <button
               className="flex items-center gap-3 w-full px-4 py-3 rounded-xl hover:bg-danger-50 group transition-all border border-transparent hover:border-danger-100"
               onClick={handleLogout}
             >
@@ -95,7 +94,7 @@ export function ProfileDropdown() {
               <span className="text-sm font-bold text-danger-600 group-hover:text-danger-700 transition-colors uppercase tracking-wider">
                 Sign Out
               </span>
-            </Button>
+            </button>
           </div>
         </div>
       )}

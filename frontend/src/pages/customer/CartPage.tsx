@@ -8,11 +8,11 @@ import { EmptyCart, CartItem, CartSummary, PromoSection } from '@/components/lay
 export const CartPage = () => {
   const { items, isLoading, fetchError, toggleAllSelection } = useCart()
 
-  const SelectedItems = items.filter((item) => item.Selected)
-  const allSelected = items.length > 0 && items.every((item) => item.Selected)
-  const SelectedCount = SelectedItems.length
+  const selectedItems = items.filter((item) => item.selected)
+  const allSelected = items.length > 0 && items.every((item) => item.selected)
+  const selectedCount = selectedItems.length
 
-  const subtotal = SelectedItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  const subtotal = selectedItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
   return (
     <div className="min-h-screen bg-mint-200">
@@ -55,10 +55,10 @@ export const CartPage = () => {
                       id="select-all"
                     />
                     <label
-                      htmlFor="Select-all"
+                      htmlFor="select-all"
                       className="font-medium text-mint-1200 cursor-pointer"
                     >
-                      Select All ({SelectedCount}/{items.length})
+                      Select All ({selectedCount}/{items.length})
                     </label>
                   </div>
 

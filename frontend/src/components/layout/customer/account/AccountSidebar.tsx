@@ -3,7 +3,6 @@ import { ShoppingBag, MapPin, Clipboard, Heart, LogOut, Settings } from 'lucide-
 import { STORAGE_KEYS } from '@/shared/constants/storage'
 import { useAuthStore, useCartStore } from '@/store'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components'
 
 export function AccountSidebar() {
   const navigate = useNavigate()
@@ -56,7 +55,7 @@ export function AccountSidebar() {
         {menuItems.map((item) => {
           const isActive = location.pathname === item.path
           return (
-            <Button
+            <button
               key={item.label}
               onClick={() => navigate(item.path)}
               className={cn(
@@ -80,12 +79,12 @@ export function AccountSidebar() {
                   <span className="text-[10px] text-gray-500 font-medium">{item.description}</span>
                 )}
               </div>
-            </Button>
+            </button>
           )
         })}
       </div>
 
-      <Button
+      <button
         onClick={handleLogout}
         className="w-full flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-danger-50 group transition-all mt-auto mb-10 border border-transparent hover:border-danger-100"
       >
@@ -95,7 +94,7 @@ export function AccountSidebar() {
         <span className="text-sm font-bold text-danger-600 group-hover:text-danger-700 transition-colors uppercase tracking-wider">
           Sign Out
         </span>
-      </Button>
+      </button>
     </div>
   )
 }

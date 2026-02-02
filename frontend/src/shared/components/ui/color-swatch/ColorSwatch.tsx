@@ -1,5 +1,4 @@
 import { cn } from '@/lib/utils'
-import { Button } from '@/components'
 
 export interface ColorSwatchProps {
   color: string
@@ -25,8 +24,8 @@ export function ColorSwatch({
   }
 
   return (
-    <Button
-      type="Button"
+    <button
+      type="button"
       onClick={onClick}
       className={cn(
         'rounded-full border-2 transition-all duration-200',

@@ -1,3 +1,7 @@
+/**
+ * ReturnsTable Component
+ * Displays return requests with status and actions
+ */
 import { Card, Button } from '@/components'
 import { IoChevronForward, IoChevronBackOutline, IoChevronForwardOutline } from 'react-icons/io5'
 
@@ -91,7 +95,7 @@ export default function ReturnsTable({ onRowClick }: ReturnsTableProps) {
                   <div className="text-sm font-medium text-[#3d4465]">{ret.date}</div>
                 </td>
                 <td className="pr-10 px-6 py-6 text-right align-middle">
-                  <Button
+                  <button
                     className="text-neutral-300 hover:text-emerald-500 hover:bg-emerald-50 transition-all p-2 rounded-xl"
                     onClick={(e) => {
                       e.stopPropagation()
@@ -99,7 +103,7 @@ export default function ReturnsTable({ onRowClick }: ReturnsTableProps) {
                     }}
                   >
                     <IoChevronForward size={18} />
-                  </Button>
+                  </button>
                 </td>
               </tr>
             ))}

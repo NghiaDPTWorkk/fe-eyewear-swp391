@@ -1,22 +1,21 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { Container, Button, Card, Input } from '@/components'
+import { Container, Button, Card } from '@/components'
 import { cn } from '@/lib/utils'
-import { OrderVerifyModal } from '@/features/sales/components/OrderVerifyModal'
-import { OrderPagination } from '@/features/sales/components/OrderPagination'
+import { SalesStaffRxTable } from '@/features/sales/components/prescription/SalesStaffRxTable'
+import { SalesStaffRxMetrics } from '@/features/sales/components/prescription/SalesStaffRxMetrics'
+import { SalesStaffVerifyModal } from '@/features/sales/components/SalesStaffVerifyModal'
 import { useSalesStaffOrders } from '@/features/sales/hooks/useSalesStaffOrders'
 import { useSalesStaffAction } from '@/features/sales/hooks/useSalesStaffAction'
 import { IoFilter, IoAdd, IoSearchOutline } from 'react-icons/io5'
 import type { Order, LensParameter } from '@/features/sales/types'
 import { toast } from 'react-hot-toast'
-import { OrderStatus } from '@/shared/utils/enums/order.enum'
-import { PrescriptionMetrics, PrescriptionTable } from '@/features/sales/components/prescriptions'
 
 export default function SaleStaffPrescriptionPage() {
   const { rxOrders, loading, fetchOrders } = useSalesStaffOrders()
   const { verifyOrder, rejectOrder, processing } = useSalesStaffAction()
 
-  const [SelectedOrder, setSelectedOrder] = useState<Order | null>(null)
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false)
 
   const [filter, setFilter] = useState('All')
@@ -27,19 +26,9 @@ export default function SaleStaffPrescriptionPage() {
     fetchOrders()
   }, [fetchOrders])
 
-  const rxMetrics = useMemo(() => {
-    return {
-      pendingLab: rxOrders.filter((o) => (o as any).rawStatus === OrderStatus.WAITING_ASSIGN)
-        .length,
-      grinding: rxOrders.filter((o) => (o as any).rawStatus === OrderStatus.MAKING).length,
-      qa: rxOrders.filter((o) => (o as any).rawStatus === OrderStatus.PACKAGING).length,
-      completed: rxOrders.filter((o) => (o as any).rawStatus === OrderStatus.COMPLETED).length
-    }
-  }, [rxOrders])
-
   const filterOptions = [
     { label: 'All Orders', value: 'All' },
-    { label: 'Wait Verify', value: 'WAITING_ASSIGN' },
+    { label: 'Waiting Verify', value: 'WAITING_ASSIGN' },
     { label: 'Processing', value: 'PROCESSING' }
   ]
 
@@ -54,8 +43,8 @@ export default function SaleStaffPrescriptionPage() {
   }, [rxOrders, search, filter])
 
   const handleVerifySubmit = async (params: LensParameter) => {
-    if (!SelectedOrder) return
-    if (await verifyOrder(SelectedOrder.id, params)) {
+    if (!selectedOrder) return
+    if (await verifyOrder(selectedOrder.id, params)) {
       toast.success('Prescription verified')
       setIsVerifyModalOpen(false)
       fetchOrders()
@@ -82,24 +71,17 @@ export default function SaleStaffPrescriptionPage() {
             Dashboard
           </Link>
           <span className="text-neutral-300">/</span>
-          <Link
-            to="/salestaff/orders"
-            className="text-neutral-400 hover:text-primary-500 transition-colors"
-          >
-            Orders
-          </Link>
-          <span className="text-neutral-300">/</span>
           <span className="text-primary-500 font-semibold">Prescriptions</span>
         </div>
         <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">Prescription Orders</h1>
       </div>
 
-      <PrescriptionMetrics counts={rxMetrics} />
+      <SalesStaffRxMetrics />
 
       <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center mb-6">
         <div className="relative flex-1 max-w-xl w-full">
           <IoSearchOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
-          <Input
+          <input
             type="text"
             placeholder="Search prescriptions..."
             onChange={(e) => setSearch(e.target.value)}
@@ -109,7 +91,7 @@ export default function SaleStaffPrescriptionPage() {
 
         <div className="flex gap-3 w-full md:w-auto relative">
           <div className="relative">
-            <Button
+            <button
               onClick={() => setIsFilterOpen(!isFilterOpen)}
               className={cn(
                 'flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium transition-all min-w-[170px] justify-between h-[42px]',
@@ -122,7 +104,7 @@ export default function SaleStaffPrescriptionPage() {
                 <IoFilter /> Filter:{' '}
                 {filterOptions.find((o) => o.value === filter)?.label || filter}
               </div>
-            </Button>
+            </button>
 
             {isFilterOpen && (
               <>
@@ -130,7 +112,7 @@ export default function SaleStaffPrescriptionPage() {
                 <Card className="absolute top-full mt-2 right-0 w-56 z-20 p-2 shadow-xl border border-neutral-100 animate-in fade-in slide-in-from-top-2 duration-200">
                   <div className="space-y-1">
                     {filterOptions.map((opt) => (
-                      <Button
+                      <button
                         key={opt.value}
                         className={cn(
                           'w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all text-left',
@@ -144,7 +126,7 @@ export default function SaleStaffPrescriptionPage() {
                         }}
                       >
                         {opt.label}
-                      </Button>
+                      </button>
                     ))}
                   </div>
                 </Card>
@@ -158,7 +140,7 @@ export default function SaleStaffPrescriptionPage() {
       </div>
 
       <Card className="p-0 overflow-hidden border border-neutral-200 shadow-sm rounded-xl">
-        <PrescriptionTable
+        <SalesStaffRxTable
           orders={filteredOrders}
           loading={loading}
           onVerify={(o) => {
@@ -169,9 +151,7 @@ export default function SaleStaffPrescriptionPage() {
         />
       </Card>
 
-      <OrderPagination total={filteredOrders.length} currentPage={1} pageSize={10} />
-
-      <OrderVerifyModal
+      <SalesStaffVerifyModal
         isOpen={isVerifyModalOpen}
         onClose={() => setIsVerifyModalOpen(false)}
         onSubmit={handleVerifySubmit}

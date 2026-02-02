@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
 import { IoChevronDown } from 'react-icons/io5'
-import { Button } from '@/components'
 
 interface StoreDropdownProps {
   storeName: string
@@ -10,7 +9,7 @@ interface StoreDropdownProps {
 
 export function StoreDropdown({ storeName, icon, onSelect: _onSelect }: StoreDropdownProps) {
   return (
-    <Button className="w-full px-6 py-3 border-b border-gray-200 hover:bg-gray-50 transition-colors">
+    <button className="w-full px-6 py-3 border-b border-gray-200 hover:bg-gray-50 transition-colors">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           {icon && <div className="text-mint-500">{icon}</div>}
@@ -21,6 +20,6 @@ export function StoreDropdown({ storeName, icon, onSelect: _onSelect }: StoreDro
         </div>
         <IoChevronDown className="text-gray-400" />
       </div>
-    </Button>
+    </button>
   )
 }

@@ -1,5 +1,4 @@
 import { X, ChevronLeft } from 'lucide-react'
-import { Button } from '@/components'
 
 interface ModalHeaderProps {
   currentStep: string
@@ -19,13 +18,13 @@ export default function ModalHeader({
   return (
     <div className="flex justify-between items-center p-6 border-b border-mint-100">
       {showBackButton ? (
-        <Button
+        <button
           onClick={onBack}
           className="p-2 hover:bg-mint-50 rounded-full transition-colors group"
           title="Back"
         >
           <ChevronLeft className="w-6 h-6 text-mint-1200 group-hover:scale-110 transition-transform" />
-        </Button>
+        </button>
       ) : (
         <div className="w-10" />
       )}
@@ -43,13 +42,13 @@ export default function ModalHeader({
         </div>
       </div>
 
-      <Button
+      <button
         onClick={onClose}
         className="p-2 hover:bg-mint-50 rounded-full transition-colors group"
         title="Close"
       >
         <X className="w-6 h-6 text-mint-1200 group-hover:scale-110 transition-transform" />
-      </Button>
+      </button>
     </div>
   )
 }

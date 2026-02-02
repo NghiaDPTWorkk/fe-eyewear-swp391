@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 // ========== START NEW CODE ==========
-import type { Order } from '@/features/staff/components/order/OrderTable'
+import type { Order } from '@/features/staff/components/OrderTable/OrderTable'
 import { OrderType, OrderStatus } from '@/shared/utils/enums/order.enum'
 // ========== END NEW CODE ==========
 

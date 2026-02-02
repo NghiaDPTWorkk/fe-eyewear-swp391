@@ -1,5 +1,4 @@
 import glasses_blue from '@/assets/images/glasses_blue.avif'
-import { Button } from '@/components'
 
 export const Hero = () => {
   return (
@@ -18,12 +17,12 @@ export const Hero = () => {
               curated collection of modern designs.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Button className="px-8 py-4 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+              <button className="px-8 py-4 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
                 Shop Now
-              </Button>
-              <Button className="px-8 py-4 bg-white text-mint-1200 font-semibold rounded-xl hover:bg-mint-300 transition-all duration-300 border-2 border-mint-300">
+              </button>
+              <button className="px-8 py-4 bg-white text-mint-1200 font-semibold rounded-xl hover:bg-mint-300 transition-all duration-300 border-2 border-mint-300">
                 Try Virtual Try-On
-              </Button>
+              </button>
             </div>
           </div>
           <div className="relative">

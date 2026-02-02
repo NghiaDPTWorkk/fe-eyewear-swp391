@@ -11,37 +11,37 @@ export interface Category {
 
 export interface ProductFiltersProps {
   categories: Category[]
-  SelectedCategories: string[]
+  selectedCategories: string[]
   onCategoryChange: (categoryIds: string[]) => void
   priceRanges: PriceRange[]
-  SelectedPriceRanges: string[]
+  selectedPriceRanges: string[]
   onPriceRangeChange: (rangeIds: string[]) => void
   onCustomPriceApply?: (min: number | null, max: number | null) => void
   priceResetKey?: number
   colors: ColorOption[]
-  SelectedColors: string[]
+  selectedColors: string[]
   onColorChange: (colorIds: string[]) => void
   className?: string
 }
 
 export function ProductFilters({
   categories,
-  SelectedCategories,
+  selectedCategories,
   onCategoryChange,
   priceRanges,
-  SelectedPriceRanges,
+  selectedPriceRanges,
   onPriceRangeChange,
   onCustomPriceApply,
   priceResetKey,
   colors,
-  SelectedColors,
+  selectedColors,
   onColorChange,
   className
 }: ProductFiltersProps) {
   const handleCategoryClick = (categoryId: string) => {
-    const newSelected = SelectedCategories.includes(categoryId)
-      ? SelectedCategories.filter((id) => id !== categoryId)
-      : [...SelectedCategories, categoryId]
+    const newSelected = selectedCategories.includes(categoryId)
+      ? selectedCategories.filter((id) => id !== categoryId)
+      : [...selectedCategories, categoryId]
     onCategoryChange(newSelected)
   }
 
@@ -67,7 +67,7 @@ export function ProductFilters({
               {categories.map((category) => (
                 <label key={category.id} className="flex items-center gap-2 cursor-pointer group">
                   <Checkbox
-                    isChecked={SelectedCategories.includes(category.id)}
+                    isChecked={selectedCategories.includes(category.id)}
                     onCheckedChange={() => handleCategoryClick(category.id)}
                   />
                   <span className="text-sm text-mint-1200 group-hover:text-primary-500 transition-colors">
@@ -113,7 +113,7 @@ export function ProductFilters({
         <PriceRangeFilter
           key={priceResetKey}
           ranges={priceRanges}
-          SelectedRanges={SelectedPriceRanges}
+          selectedRanges={selectedPriceRanges}
           onRangeChange={onPriceRangeChange}
           onCustomRangeApply={onCustomPriceApply}
         />
@@ -123,7 +123,7 @@ export function ProductFilters({
       <div className="bg-mint-200 rounded-2xl border-2 border-mint-500 p-4">
         <ColorFilter
           colors={colors}
-          SelectedColors={SelectedColors}
+          selectedColors={selectedColors}
           onColorChange={onColorChange}
         />
       </div>

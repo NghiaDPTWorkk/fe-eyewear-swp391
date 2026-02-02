@@ -20,7 +20,7 @@ import { FaBoxesPacking } from 'react-icons/fa6'
 import { useOrderCountStore } from '@/store'
 import { AiOutlineFileDone } from 'react-icons/ai'
 import { useAllOrders } from '@/features/staff/hooks/useOrders'
-import { transformApiOrderToTableOrder } from '@/features/staff/components/order/OrderTransformers'
+import { transformApiOrderToTableOrder } from '@/features/staff/components/OrderTable/orderTransformers'
 
 export default function OperationLayout() {
   const location = useLocation()

@@ -32,7 +32,7 @@ export function Radio({
     <label
       htmlFor={id}
       className={cn(
-        'inline-flex cursor-pointer items-center gap-2 Select-none',
+        'inline-flex cursor-pointer items-center gap-2 select-none',
         isDisabled && 'cursor-not-allowed opacity-50',
         className
       )}

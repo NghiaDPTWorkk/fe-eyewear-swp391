@@ -1,6 +1,6 @@
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Button } from '../Button'
+import { Button } from '../button'
 
 export interface FilterTag {
   id: string

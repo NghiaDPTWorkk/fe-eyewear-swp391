@@ -6,8 +6,7 @@ import {
   IoFlaskOutline,
   IoWarningOutline,
   IoCheckmarkCircleOutline,
-  IoChevronForward,
-  IoChevronBack
+  IoChevronForward
 } from 'react-icons/io5'
 
 export default function SaleStaffLabStatusPage() {
@@ -361,7 +360,7 @@ export default function SaleStaffLabStatusPage() {
                     </div>
                   </td>
                   <td className="pr-10 px-6 py-6 text-right">
-                    <Button
+                    <button
                       className="text-neutral-300 hover:text-emerald-500 hover:bg-emerald-50 transition-all p-2 rounded-xl"
                       onClick={(e) => {
                         e.stopPropagation()
@@ -369,7 +368,7 @@ export default function SaleStaffLabStatusPage() {
                       }}
                     >
                       <IoChevronForward size={18} />
-                    </Button>
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -379,13 +378,13 @@ export default function SaleStaffLabStatusPage() {
 
         <div className="px-10 py-6 flex justify-between items-center text-xs font-semibold text-[#a4a9c1] bg-white border-t border-neutral-100">
           <span className="opacity-70">Showing 1 to 4 of 42 active orders</span>
-          <div className="flex gap-2">
-            <Button className="p-2 border border-neutral-200 rounded-lg text-[#3d4465] hover:bg-neutral-50 transition-colors bg-white">
-              <IoChevronBack size={18} />
-            </Button>
-            <Button className="p-2 border border-neutral-200 rounded-lg text-[#3d4465] hover:bg-neutral-50 transition-colors bg-white">
-              <IoChevronForward size={18} />
-            </Button>
+          <div className="flex gap-3">
+            <button className="px-6 py-2 border border-neutral-200 rounded-lg text-sm font-semibold text-[#3d4465] hover:bg-neutral-50 transition-colors bg-white">
+              Previous
+            </button>
+            <button className="px-6 py-2 border border-neutral-200 rounded-lg text-sm font-semibold text-[#3d4465] hover:bg-neutral-50 transition-colors bg-white">
+              Next
+            </button>
           </div>
         </div>
       </Card>

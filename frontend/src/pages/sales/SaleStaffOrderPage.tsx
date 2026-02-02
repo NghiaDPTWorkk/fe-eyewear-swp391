@@ -1,22 +1,19 @@
 import { useState, useEffect, useMemo } from 'react'
-import { useSearchParams } from 'react-router-dom'
 import { Container } from '@/components'
 import { useSalesStaffOrders } from '@/features/sales/hooks/useSalesStaffOrders'
 import { useSalesStaffAction } from '@/features/sales/hooks/useSalesStaffAction'
-import { OrderManagementList } from '@/features/sales/components/OrderManagementList'
-import { OrderVerifyModal } from '@/features/sales/components/OrderVerifyModal'
-import { OrderBreadcrumb } from '@/features/sales/components/OrderBreadcrumb'
-import { OrderControls } from '@/features/sales/components/OrderControls'
-import { OrderPagination } from '@/features/sales/components/OrderPagination'
+import { SalesStaffOrderList } from '@/features/sales/components/SalesStaffOrderList'
+import { SalesStaffVerifyModal } from '@/features/sales/components/SalesStaffVerifyModal'
+import { SalesStaffBreadcrumb } from '@/features/sales/components/SalesStaffBreadcrumb'
+import { SalesStaffControls } from '@/features/sales/components/SalesStaffControls'
+import { SalesStaffPagination } from '@/features/sales/components/SalesStaffPagination'
 import type { LensParameter, Order } from '@/features/sales/types'
 
 export default function SaleStaffOrderPage() {
-  const [searchParams] = useSearchParams()
-  const invoiceIdParam = searchParams.get('invoiceId')
   const { orders, loading, fetchOrders } = useSalesStaffOrders()
   const { verifyOrder, rejectOrder, processing } = useSalesStaffAction()
 
-  const [SelectedOrder, setSelectedOrder] = useState<Order | null>(null)
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [filter, setFilter] = useState('All')
   const [search, setSearch] = useState('')
@@ -27,10 +24,6 @@ export default function SaleStaffOrderPage() {
 
   const filteredOrders = useMemo(() => {
     return orders.filter((order) => {
-      const matchInvoice =
-        !invoiceIdParam ||
-        String(order.invoiceId) === invoiceIdParam ||
-        order.invoice?.id === invoiceIdParam
       const matchSearch =
         order.id.toString().toLowerCase().includes(search.toLowerCase()) ||
         order.customerName?.toLowerCase().includes(search.toLowerCase())
@@ -38,12 +31,12 @@ export default function SaleStaffOrderPage() {
         filter === 'All' ||
         (filter === 'Pending' && order.isPrescription && order.status === 'WAITING_ASSIGN') ||
         (filter === 'Processed' && (!order.isPrescription || order.status !== 'WAITING_ASSIGN'))
-      return matchInvoice && matchSearch && matchFilter
+      return matchSearch && matchFilter
     })
-  }, [orders, search, filter, invoiceIdParam])
+  }, [orders, search, filter])
 
   const handleVerifySubmit = async (params: LensParameter) => {
-    if (SelectedOrder && (await verifyOrder(SelectedOrder.id, params))) {
+    if (selectedOrder && (await verifyOrder(selectedOrder.id, params))) {
       setIsModalOpen(false)
       fetchOrders()
     }
@@ -57,9 +50,9 @@ export default function SaleStaffOrderPage() {
 
   return (
     <Container>
-      <OrderBreadcrumb />
+      <SalesStaffBreadcrumb />
 
-      <OrderControls
+      <SalesStaffControls
         onSearch={setSearch}
         onFilterChange={setFilter}
         currentFilter={filter}
@@ -67,7 +60,7 @@ export default function SaleStaffOrderPage() {
         onCreateOrder={() => alert('Create new order')}
       />
 
-      <OrderManagementList
+      <SalesStaffOrderList
         orders={filteredOrders}
         loading={loading}
         onVerify={(order) => {
@@ -78,9 +71,9 @@ export default function SaleStaffOrderPage() {
         onViewDetail={(order) => console.log('Detail', order.id)}
       />
 
-      <OrderPagination total={filteredOrders.length} currentPage={1} pageSize={10} />
+      <SalesStaffPagination total={filteredOrders.length} currentPage={1} pageSize={10} />
 
-      <OrderVerifyModal
+      <SalesStaffVerifyModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleVerifySubmit}

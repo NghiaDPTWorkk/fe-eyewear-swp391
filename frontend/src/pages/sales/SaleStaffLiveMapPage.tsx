@@ -81,12 +81,12 @@ export default function SaleStaffLiveMapPage() {
       <div className="relative z-10 px-6 py-4 pointer-events-none">
         <div className="bg-white/90 backdrop-blur-md shadow-lg rounded-2xl p-4 flex justify-between items-center max-w-5xl mx-auto pointer-events-auto border border-white/50">
           <div className="flex items-center gap-4">
-            <Button
+            <button
               onClick={() => navigate(-1)}
               className="p-2 hover:bg-gray-100 rounded-full transition"
             >
               <IoArrowBackOutline size={24} className="text-gray-700" />
-            </Button>
+            </button>
             <div>
               <h1 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                 <IoAirplane className="text-emerald-500" /> Live Shipment Tracking

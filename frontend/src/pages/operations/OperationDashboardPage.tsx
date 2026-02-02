@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Container, MetricCard } from '@/components'
-import OrderTable from '@/features/staff/components/order/OrderTable'
+import { OrderTable } from '@/components/staff'
 import {
   IoClipboardOutline,
   IoFlagOutline,

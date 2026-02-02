@@ -19,7 +19,7 @@ interface UseSaleStaffOrdersReturn {
   // State
   filter: string
   setFilter: (filter: string) => void
-  SelectedOrderId: string | null
+  selectedOrderId: string | null
   isDrawerOpen: boolean
   viewFullId: string | null
   searchQuery: string
@@ -35,7 +35,7 @@ interface UseSaleStaffOrdersReturn {
 export function useSaleStaffOrders(): UseSaleStaffOrdersReturn {
   // UI State
   const [filter, setFilter] = useState('all')
-  const [SelectedOrderId, setSelectedOrderId] = useState<string | null>(null)
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [viewFullId, setViewFullId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
@@ -53,11 +53,11 @@ export function useSaleStaffOrders(): UseSaleStaffOrdersReturn {
 
   // View full order details
   const viewFullDetails = useCallback(() => {
-    if (SelectedOrderId) {
-      setViewFullId(SelectedOrderId)
+    if (selectedOrderId) {
+      setViewFullId(selectedOrderId)
       setIsDrawerOpen(false)
     }
-  }, [SelectedOrderId])
+  }, [selectedOrderId])
 
   // Return to order list
   const closeFullDetails = useCallback(() => {
@@ -74,7 +74,7 @@ export function useSaleStaffOrders(): UseSaleStaffOrdersReturn {
   return {
     filter,
     setFilter,
-    SelectedOrderId,
+    selectedOrderId,
     isDrawerOpen,
     viewFullId,
     searchQuery,

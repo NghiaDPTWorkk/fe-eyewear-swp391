@@ -1,2 +1,3 @@
-export { default as ProductsMetrics } from './ProductsMetrics'
-export { default as ProductsTable } from './ProductsTable'
+// Barrel export for Product components
+export { default as ProductMetrics } from './ProductMetrics'
+export { default as ProductTable } from './ProductTable'

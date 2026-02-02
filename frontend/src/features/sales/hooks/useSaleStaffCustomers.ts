@@ -1,6 +1,6 @@
 /**
  * Custom hook for SaleStaff Customer management
- * Handles customer Selection and drawer state
+ * Handles customer selection and drawer state
  */
 import { useState, useCallback } from 'react'
 
@@ -16,17 +16,17 @@ interface Customer {
 }
 
 interface UseCustomersReturn {
-  SelectedCustomer: Customer | null
+  selectedCustomer: Customer | null
   isDrawerOpen: boolean
-  SelectCustomer: (customer: Customer) => void
+  selectCustomer: (customer: Customer) => void
   closeDrawer: () => void
 }
 
 export function useCustomers(): UseCustomersReturn {
-  const [SelectedCustomer, setSelectedCustomer] = useState<Customer | null>(null)
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
-  const SelectCustomer = useCallback((customer: Customer) => {
+  const selectCustomer = useCallback((customer: Customer) => {
     setSelectedCustomer(customer)
     setIsDrawerOpen(true)
   }, [])
@@ -36,9 +36,9 @@ export function useCustomers(): UseCustomersReturn {
   }, [])
 
   return {
-    SelectedCustomer,
+    selectedCustomer,
     isDrawerOpen,
-    SelectCustomer,
+    selectCustomer,
     closeDrawer
   }
 }

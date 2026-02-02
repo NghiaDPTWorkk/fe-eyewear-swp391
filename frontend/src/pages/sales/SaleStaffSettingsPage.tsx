@@ -8,19 +8,16 @@ import {
   AccountInfoSidebar
 } from '@/features/sales/components/settings'
 
-interface SaleStaffSettingsPageProps {
-  homeUrl?: string
-}
-
-export default function SaleStaffSettingsPage({
-  homeUrl = '/salestaff/dashboard'
-}: SaleStaffSettingsPageProps) {
+export default function SaleStaffSettingsPage() {
   return (
     <Container>
       <div className="mb-8">
         <div className="flex items-center gap-2 text-sm mb-2 font-medium">
-          <Link to={homeUrl} className="text-neutral-400 hover:text-primary-500 transition-colors">
-            Dashboard
+          <Link
+            to="/salestaff/dashboard"
+            className="text-neutral-400 hover:text-primary-500 transition-colors"
+          >
+            Home
           </Link>
           <span className="text-neutral-300">/</span>
           <span className="text-primary-500 font-semibold">Settings</span>

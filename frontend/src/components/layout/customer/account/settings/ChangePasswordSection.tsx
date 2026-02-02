@@ -24,13 +24,13 @@ export const ChangePasswordSection = () => {
             placeholder="••••••••"
             className="bg-white border-primary-500 rounded-xl h-14"
             rightElement={
-              <Button
-                type="Button"
+              <button
+                type="button"
                 onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                 className="p-2 hover:bg-neutral-50 rounded-full transition-colors text-gray-400 hover:text-primary-500"
               >
                 {showCurrentPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </Button>
+              </button>
             }
           />
         </div>
@@ -44,13 +44,13 @@ export const ChangePasswordSection = () => {
             placeholder="••••••••"
             className="bg-white border-primary-500 rounded-xl h-14"
             rightElement={
-              <Button
-                type="Button"
+              <button
+                type="button"
                 onClick={() => setShowNewPassword(!showNewPassword)}
                 className="p-2 hover:bg-neutral-50 rounded-full transition-colors text-gray-400 hover:text-primary-500"
               >
                 {showNewPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </Button>
+              </button>
             }
           />
         </div>
@@ -64,13 +64,13 @@ export const ChangePasswordSection = () => {
             placeholder="••••••••"
             className="bg-white border-primary-500 rounded-xl h-14"
             rightElement={
-              <Button
-                type="Button"
+              <button
+                type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 className="p-2 hover:bg-neutral-50 rounded-full transition-colors text-gray-400 hover:text-primary-500"
               >
                 {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </Button>
+              </button>
             }
           />
         </div>

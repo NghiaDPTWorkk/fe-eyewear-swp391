@@ -1,4 +1,5 @@
-export { default as AccountInfoSidebar } from './SettingsAccountInfoSidebar'
-export { default as NotificationPreferences } from './SettingsNotificationPreferences'
-export { default as PasswordForm } from './SettingsPasswordForm'
-export { default as ProfileForm } from './SettingsProfileForm'
+// Barrel export for Settings components
+export { default as ProfileForm } from './ProfileForm'
+export { default as PasswordForm } from './PasswordForm'
+export { default as NotificationPreferences } from './NotificationPreferences'
+export { default as AccountInfoSidebar } from './AccountInfoSidebar'

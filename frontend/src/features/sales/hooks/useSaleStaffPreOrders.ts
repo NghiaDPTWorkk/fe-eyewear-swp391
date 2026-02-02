@@ -17,7 +17,7 @@ export interface PreOrder {
 
 interface UseSaleStaffPreOrdersReturn {
   // State
-  SelectedOrderId: string | null
+  selectedOrderId: string | null
   isDrawerOpen: boolean
   showFullDetails: boolean
   isCreateModalOpen: boolean
@@ -33,7 +33,7 @@ interface UseSaleStaffPreOrdersReturn {
 
 export function useSaleStaffPreOrders(): UseSaleStaffPreOrdersReturn {
   // UI State
-  const [SelectedOrderId, setSelectedOrderId] = useState<string | null>(null)
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [showFullDetails, setShowFullDetails] = useState(false)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
@@ -80,7 +80,7 @@ export function useSaleStaffPreOrders(): UseSaleStaffPreOrdersReturn {
   }, [])
 
   return {
-    SelectedOrderId,
+    selectedOrderId,
     isDrawerOpen,
     showFullDetails,
     isCreateModalOpen,

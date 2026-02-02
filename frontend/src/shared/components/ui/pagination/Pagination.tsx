@@ -70,7 +70,7 @@ export function Pagination({
           const isActive = pageNum === currentPage
 
           return (
-            <Button
+            <button
               key={pageNum}
               onClick={() => onPageChange(pageNum)}
               className={cn(
@@ -81,7 +81,7 @@ export function Pagination({
               )}
             >
               {pageNum}
-            </Button>
+            </button>
           )
         })}
       </div>

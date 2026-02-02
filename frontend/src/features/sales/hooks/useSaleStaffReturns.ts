@@ -1,19 +1,19 @@
 /**
  * Custom hook for SaleStaff Returns management
- * Handles return Selection and detail view
+ * Handles return selection and detail view
  */
 import { useState, useCallback } from 'react'
 
 interface UseReturnsReturn {
-  SelectedReturnId: string | null
-  SelectReturn: (id: string) => void
+  selectedReturnId: string | null
+  selectReturn: (id: string) => void
   clearSelection: () => void
 }
 
 export function useReturns(): UseReturnsReturn {
-  const [SelectedReturnId, setSelectedReturnId] = useState<string | null>(null)
+  const [selectedReturnId, setSelectedReturnId] = useState<string | null>(null)
 
-  const SelectReturn = useCallback((id: string) => {
+  const selectReturn = useCallback((id: string) => {
     setSelectedReturnId(id)
   }, [])
 
@@ -22,8 +22,8 @@ export function useReturns(): UseReturnsReturn {
   }, [])
 
   return {
-    SelectedReturnId,
-    SelectReturn,
+    selectedReturnId,
+    selectReturn,
     clearSelection
   }
 }

@@ -113,7 +113,7 @@ export type IconButtonVariant = 'solid' | 'outline' | 'ghost'
 export type IconButtonColorScheme = 'primary' | 'secondary' | 'danger' | 'neutral'
 export type IconButtonSize = 'sm' | 'md' | 'lg'
 
-type IconButtonOwnProps<E extends ElementType = 'Button'> = {
+type IconButtonOwnProps<E extends ElementType = 'button'> = {
   as?: E
   icon: ReactNode
   'aria-label': string
@@ -122,10 +122,10 @@ type IconButtonOwnProps<E extends ElementType = 'Button'> = {
   className?: string
 } & Omit<VariantProps<typeof iconButtonVariants>, 'isRound'>
 
-export type IconButtonProps<E extends ElementType = 'Button'> = IconButtonOwnProps<E> &
+export type IconButtonProps<E extends ElementType = 'button'> = IconButtonOwnProps<E> &
   Omit<ComponentPropsWithoutRef<E>, keyof IconButtonOwnProps<E>>
 
-export function IconButton<E extends ElementType = 'Button'>({
+export function IconButton<E extends ElementType = 'button'>({
   as,
   icon,
   variant = 'ghost',
@@ -136,13 +136,13 @@ export function IconButton<E extends ElementType = 'Button'>({
   className,
   ...props
 }: IconButtonProps<E>) {
-  const Component = as || 'Button'
+  const Component = as || 'button'
 
   return (
     <Component
       className={cn(iconButtonVariants({ variant, colorScheme, size, isRound }), className)}
-      disabled={Component === 'Button' ? isDisabled : undefined}
-      aria-disabled={Component !== 'Button' ? isDisabled : undefined}
+      disabled={Component === 'button' ? isDisabled : undefined}
+      aria-disabled={Component !== 'button' ? isDisabled : undefined}
       {...props}
     >
       {icon}

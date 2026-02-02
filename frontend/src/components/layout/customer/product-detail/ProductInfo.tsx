@@ -12,7 +12,7 @@ import { useState } from 'react'
 import type { Product } from '@/shared/types/product.types'
 import { useCartStore, useAuthStore } from '@/store'
 import { toast } from 'react-hot-toast'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { Button } from '@/shared/components/ui'
 import LensSelectionModal from './lenses/LensSelectionModal'
 import type { LensSelectionState } from './lenses/types'
@@ -43,6 +43,7 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
   const isAddingToCart = useCartStore((state) => state.isAddingToCart)
   const { isAuthenticated } = useAuthStore()
   const navigate = useNavigate()
+  const location = useLocation()
   const [isLensModalOpen, setIsLensModalOpen] = useState(false)
 
   const handleAddToCart = () => {
@@ -54,7 +55,7 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
 
     if (!isAuth) {
       toast.error('Please login to add items to cart')
-      navigate('/login')
+      navigate('/login', { state: { from: location } })
       return
     }
 
@@ -150,7 +151,7 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
       // Handle specific errors
       if (error.message === 'UNAUTHORIZED') {
         toast.error('Please login to add items to cart')
-        navigate('/login')
+        navigate('/login', { state: { from: location } })
       } else {
         toast.error(error.message || 'Failed to add item to cart')
       }
@@ -180,7 +181,7 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
               useAuthStore.getState().isAuthenticated || !!localStorage.getItem('accessToken')
             if (!isAuth) {
               toast.error('Please login to add items to wishlist')
-              navigate('/login')
+              navigate('/login', { state: { from: location } })
               return
             }
             toast.success('Added to wishlist!')

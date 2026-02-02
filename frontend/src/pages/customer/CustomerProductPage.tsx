@@ -202,7 +202,7 @@ export const CustomerProductPage = () => {
                           const isAuth = isAuthenticated || !!localStorage.getItem('accessToken')
                           if (!isAuth) {
                             toast.error('Please login to add items to wishlist')
-                            navigate('/login')
+                            navigate('/login', { state: { from: location } })
                             return
                           }
                           toast.success('Added to wishlist!')

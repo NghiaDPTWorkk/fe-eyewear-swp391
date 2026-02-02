@@ -82,18 +82,25 @@ export const useLogin = () => {
       // Get role from store (it was automatically extracted from JWT by setToken)
       const roleFromToken = useAuthStore.getState().role
 
-      if (!roleFromToken) {
-        console.error('Role not found in JWT token')
-        toast.error('Invalid token: Role missing')
-        return
-      }
-
       console.log('Role from token:', roleFromToken)
-      // Redirect based on role
-      const rolePath = getRolePath(
-        roleFromToken as 'customer' | 'SALE_STAFF' | 'SYSTEM_ADMIN' | 'MANAGER' | 'OPERATION_STAFF'
-      )
-      navigate(`/${rolePath}`)
+
+      // Navigation logic based on role
+      // Customer: no role in JWT token and not staff login
+      if (!roleFromToken && !isStaffLogin()) {
+        // For customers: redirect to previous page or home
+        const from = (location.state as any)?.from?.pathname || '/'
+        navigate(from, { replace: true })
+      } else if (roleFromToken) {
+        // For staff: redirect to role-specific dashboard
+        const rolePath = getRolePath(
+          roleFromToken as 'SALE_STAFF' | 'SYSTEM_ADMIN' | 'MANAGER' | 'OPERATION_STAFF'
+        )
+        navigate(`/${rolePath}`)
+      } else {
+        // Fallback: if something went wrong, go to home
+        console.error('Unexpected state: roleFromToken and isStaffLogin mismatch')
+        navigate('/')
+      }
     },
     onError: (error: any) => {
       toast.error(error.message || 'Login failed. Please try again.')

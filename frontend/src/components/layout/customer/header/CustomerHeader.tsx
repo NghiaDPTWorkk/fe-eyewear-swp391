@@ -184,7 +184,7 @@ export default function CustomerHeader() {
               <button
                 className="p-2 hover:bg-mint-200 rounded-full transition-all group flex items-center gap-2"
                 aria-label="Login"
-                onClick={() => navigate('/login')}
+                onClick={() => navigate('/login', { state: { from: location } })}
               >
                 <User className="w-5 h-5 text-gray-eyewear group-hover:text-primary-500 transition-colors" />
                 <span className="text-sm font-medium text-gray-eyewear hidden md:block">Login</span>

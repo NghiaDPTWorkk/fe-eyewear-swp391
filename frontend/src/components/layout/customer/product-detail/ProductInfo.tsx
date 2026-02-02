@@ -16,21 +16,42 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '@/shared/components/ui'
 import LensSelectionModal from './lenses/LensSelectionModal'
 import type { LensSelectionState } from './lenses/types'
+import { useProductVariants } from '@/shared/hooks/products/useProductVariants'
 
 interface ProductInfoProps {
   product: Product
+  productId: string
 }
 
-export const ProductInfo = ({ product }: ProductInfoProps) => {
-  const [selectedColor, setSelectedColor] = useState('Sage Mist')
-  const [selectedSize, setSelectedSize] = useState('Medium')
-  const addItem = useCartStore((state) => state.addItem)
+export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
+  // Use variant selection hook
+  const {
+    currentVariant,
+    selectedOptions,
+    attributes,
+    selectOption,
+    price,
+    finalPrice,
+    stock,
+    images,
+    isInStock,
+    isValidCombination,
+    availableOptionsForAttribute
+  } = useProductVariants(product)
+
+  const addItemAsync = useCartStore((state) => state.addItemAsync)
+  const isAddingToCart = useCartStore((state) => state.isAddingToCart)
   const { isAuthenticated } = useAuthStore()
   const navigate = useNavigate()
   const [isLensModalOpen, setIsLensModalOpen] = useState(false)
 
   const handleAddToCart = () => {
+    console.log('🛒 Add to Cart clicked!')
+    console.log('Product data:', product)
+
     const isAuth = isAuthenticated || !!localStorage.getItem('accessToken')
+    console.log('Is authenticated:', isAuth)
+
     if (!isAuth) {
       toast.error('Please login to add items to cart')
       navigate('/login')
@@ -38,77 +59,114 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
     }
 
     const type = (product as any).type || 'frame'
+    console.log('Product type:', type)
 
     if (type === 'frame' || type === 'lens') {
+      console.log('Opening lens modal for frame/lens product')
       setIsLensModalOpen(true)
       return
     }
 
     // Sunglass or default frame path
+    console.log('Proceeding to add sunglass to cart')
     performAddToCart()
   }
 
   const handleLensConfirm = (selection: LensSelectionState) => {
     performAddToCart(selection)
-    toast.success(`${product.nameBase} with ${selection.visionNeed} lenses added to cart!`)
   }
 
-  const performAddToCart = (lensSelection?: LensSelectionState) => {
+  const performAddToCart = async (lensSelection?: LensSelectionState) => {
+    console.log('📦 performAddToCart called')
+    console.log('Current variant:', currentVariant)
+    console.log('Is in stock:', isInStock)
+    console.log('Lens selection:', lensSelection)
+
+    // Validation: Check if variant is selected and in stock
+    if (!currentVariant) {
+      console.error('❌ No variant selected')
+      toast.error('Please select a valid product variant')
+      return
+    }
+
+    if (!isInStock) {
+      console.error('❌ Product out of stock')
+      toast.error('This variant is currently out of stock')
+      return
+    }
+
+    // Use productId from URL params (passed as prop) instead of extracting from product
+    // This is more reliable since backend may not return _id or id in the response
     const productAny = product as any
-    const defaultVariant =
-      productAny.variants?.find((v: any) => v.isDefault) || productAny.variants?.[0]
+    const extractedId = productAny.id || productAny._id || productAny.skuBase
 
-    const price =
-      productAny.defaultVariantFinalPrice ||
-      defaultVariant?.finalPrice ||
-      productAny.defaultVariantPrice ||
-      defaultVariant?.price ||
-      0
-    const id = productAny._id || productAny.id || productAny.skuBase || 'unknown'
+    console.log('🔍 Product ID extraction:')
+    console.log('  productId (from URL prop):', productId)
+    console.log('  id (from product):', productAny.id)
+    console.log('  _id (from product):', productAny._id)
+    console.log('  skuBase (from product):', productAny.skuBase)
+    console.log('  extractedId:', extractedId)
+    console.log('  Final productId (using prop):', productId)
+    console.log('  SKU:', currentVariant.sku)
 
-    addItem({
-      product_id: id,
-      name: product.nameBase,
-      price: price,
-      quantity: 1,
-      image: productAny.defaultVariantImage || productAny.imageUrl || productAny.images?.[0] || '',
-      addAt: new Date(),
-      // Add lens selection info to cart item if needed (will need to update cart types)
-      lens: lensSelection
-        ? {
-            visionNeed: lensSelection.visionNeed,
-            prescription: lensSelection.prescription
-          }
-        : undefined
-    } as any)
+    if (!productId) {
+      console.error('❌ Product ID is missing from URL! Using fallback:', extractedId)
+      if (!extractedId) {
+        toast.error('Unable to add to cart: Product ID not found')
+        return
+      }
+    }
 
-    if (!lensSelection) {
-      toast.success(`${product.nameBase} added to cart!`)
+    // Use productId from prop (URL) as the primary source
+    const finalProductId = productId || extractedId
+
+    try {
+      console.log('🚀 Calling addItemAsync with:', {
+        productId: finalProductId,
+        sku: currentVariant.sku,
+        quantity: 1,
+        lensSelection
+      })
+
+      // Call async add to cart with API integration
+      await addItemAsync(finalProductId, currentVariant.sku, 1, lensSelection)
+
+      console.log('✅ Successfully added to cart')
+
+      // Show success message
+      if (lensSelection) {
+        toast.success(`${product.nameBase} with ${lensSelection.visionNeed} lenses added to cart!`)
+      } else {
+        toast.success(`${currentVariant.name} added to cart!`)
+      }
+
+      // Close lens modal if open
+      if (isLensModalOpen) {
+        setIsLensModalOpen(false)
+      }
+    } catch (error: any) {
+      console.error('❌ Error adding to cart:', error)
+
+      // Handle specific errors
+      if (error.message === 'UNAUTHORIZED') {
+        toast.error('Please login to add items to cart')
+        navigate('/login')
+      } else {
+        toast.error(error.message || 'Failed to add item to cart')
+      }
     }
   }
 
-  // Mock data for colors and sizes since they might not be in the base product type yet
-  const colors = [
-    { name: 'Sage Mist', value: '#5EEAD4' },
-    { name: 'Midnight', value: '#1E293B' },
-    { name: 'Sand', value: '#D1D5DB' },
-    { name: 'Steel', value: '#475569' }
-  ]
-
-  const sizes = ['Small', 'Medium', 'Wide']
-
+  // Get product description
   const productAny = product as any
-  const defaultVariant =
-    productAny.variants?.find((v: any) => v.isDefault) || productAny.variants?.[0]
-
-  const originalPrice = productAny.defaultVariantPrice || defaultVariant?.price || 0
-  const finalPrice =
-    productAny.defaultVariantFinalPrice || defaultVariant?.finalPrice || originalPrice
-
   const description =
     productAny.description ||
     productAny.shortDescription ||
     'A modern interpretation of the classic square silhouette. Crafted from premium Italian acetate with a subtle translucent finish that catches the light from every angle.'
+
+  // Calculate discount percentage if applicable
+  const hasDiscount = finalPrice < price
+  const discountPercentage = hasDiscount ? Math.round(((price - finalPrice) / price) * 100) : 0
 
   return (
     <div className="flex flex-col h-full">
@@ -142,68 +200,134 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
         <span className="text-3xl font-bold text-mint-1200">
           ${finalPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })}
         </span>
-        {finalPrice < originalPrice && (
-          <span className="text-xl text-gray-eyewear line-through">
-            ${originalPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-          </span>
+        {hasDiscount && (
+          <>
+            <span className="text-xl text-gray-eyewear line-through">
+              ${price.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+            </span>
+            <span className="px-2 py-1 bg-red-100 text-red-600 rounded-full text-xs font-bold">
+              -{discountPercentage}%
+            </span>
+          </>
         )}
       </div>
 
+      {/* Stock Status */}
+      {currentVariant && (
+        <div className="mb-6">
+          {isInStock ? (
+            <p className="text-sm text-green-600 font-semibold flex items-center gap-2">
+              <span className="w-2 h-2 bg-green-600 rounded-full"></span>
+              In Stock ({stock} available)
+            </p>
+          ) : (
+            <p className="text-sm text-red-600 font-semibold flex items-center gap-2">
+              <span className="w-2 h-2 bg-red-600 rounded-full"></span>
+              Out of Stock
+            </p>
+          )}
+        </div>
+      )}
+
       <p className="text-gray-eyewear leading-relaxed mb-8 max-w-xl">{description}</p>
 
-      {/* Color Selection */}
-      <div className="mb-8">
-        <h3 className="text-sm font-bold text-mint-1200 uppercase tracking-wider mb-4">
-          Color:{' '}
-          <span className="text-gray-eyewear font-medium ml-1 uppercase">{selectedColor}</span>
-        </h3>
-        <div className="flex gap-4">
-          {colors.map((color) => (
-            <button
-              key={color.name}
-              title={color.name}
-              className={`w-10 h-10 rounded-full border-2 transition-all p-0.5 ${
-                selectedColor === color.name
-                  ? 'border-primary-500 scale-110'
-                  : 'border-transparent hover:border-primary-300'
-              }`}
-              onClick={() => setSelectedColor(color.name)}
-            >
-              <div
-                className="w-full h-full rounded-full"
-                style={{ backgroundColor: color.value }}
-              />
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* Dynamic Options Rendering */}
+      {attributes.length > 0 && (
+        <div className="space-y-8 mb-10">
+          {attributes.map((attribute) => {
+            const availableValues = availableOptionsForAttribute(attribute.name)
+            const selectedValue = selectedOptions[attribute.name]
 
-      {/* Size Selection */}
-      <div className="mb-10">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-sm font-bold text-mint-1200 uppercase tracking-wider">
-            Size Selection
-          </h3>
-          <button className="text-xs font-bold text-primary-500 uppercase flex items-center gap-1 hover:underline">
-            Size Guide
-          </button>
+            // Check if this attribute is a color (value starts with # or is a hex color)
+            const isColorAttribute = attribute.values.some(
+              (val) => /^#[0-9A-Fa-f]{6}$/.test(val) || /^#[0-9A-Fa-f]{3}$/.test(val)
+            )
+
+            return (
+              <div key={attribute.name}>
+                <h3 className="text-sm font-bold text-mint-1200 uppercase tracking-wider mb-4">
+                  {attribute.name}:{' '}
+                  <span className="text-primary-600 font-semibold ml-1">
+                    {selectedValue || 'Select'}
+                  </span>
+                </h3>
+                <div className="flex gap-3 flex-wrap">
+                  {attribute.values.map((value) => {
+                    const isAvailable = availableValues.includes(value)
+                    const isSelected = selectedValue === value
+
+                    // Render color swatch for color attributes
+                    if (isColorAttribute) {
+                      return (
+                        <button
+                          key={value}
+                          disabled={!isAvailable}
+                          className={`relative w-12 h-12 rounded-full transition-all border-4 group ${
+                            isSelected
+                              ? 'border-primary-500 shadow-lg scale-110'
+                              : isAvailable
+                                ? 'border-mint-300 hover:border-primary-400 hover:scale-105'
+                                : 'border-gray-200 cursor-not-allowed opacity-40'
+                          }`}
+                          style={{
+                            backgroundColor: value,
+                            boxShadow: isSelected ? '0 4px 12px rgba(0,0,0,0.15)' : undefined
+                          }}
+                          onClick={() => isAvailable && selectOption(attribute.name, value)}
+                          title={value}
+                        >
+                          {/* Tooltip on hover */}
+                          <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
+                            {value}
+                          </span>
+                          {/* Checkmark for selected color */}
+                          {isSelected && (
+                            <svg
+                              className="absolute inset-0 m-auto w-5 h-5 text-white drop-shadow-md"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              style={{
+                                filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))'
+                              }}
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={3}
+                                d="M5 13l4 4L19 7"
+                              />
+                            </svg>
+                          )}
+                        </button>
+                      )
+                    }
+
+                    // Render regular button for non-color attributes
+                    return (
+                      <button
+                        key={value}
+                        disabled={!isAvailable}
+                        className={`px-6 py-3 rounded-xl font-semibold transition-all border-2 ${
+                          isSelected
+                            ? 'bg-primary-500 text-white border-primary-500 shadow-md'
+                            : isAvailable
+                              ? 'bg-white text-gray-eyewear border-mint-300 hover:border-primary-400 hover:bg-mint-50'
+                              : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
+                        }`}
+                        onClick={() => isAvailable && selectOption(attribute.name, value)}
+                      >
+                        {value}
+                        {!isAvailable && <span className="ml-2 text-xs">(Unavailable)</span>}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })}
         </div>
-        <div className="flex gap-4">
-          {sizes.map((size) => (
-            <button
-              key={size}
-              className={`flex-1 py-4 rounded-xl font-semibold transition-all border-2 ${
-                selectedSize === size
-                  ? 'bg-primary-50 text-primary-600 border-primary-500'
-                  : 'bg-white text-gray-eyewear border-mint-300 hover:border-primary-300'
-              }`}
-              onClick={() => setSelectedSize(size)}
-            >
-              {size}
-            </button>
-          ))}
-        </div>
-      </div>
+      )}
 
       {/* Action Buttons */}
       <div className="flex flex-col gap-4 mb-8">
@@ -211,14 +335,21 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
           onClick={handleAddToCart}
           size="lg"
           isFullWidth
-          className="h-16 rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+          disabled={!isValidCombination || !isInStock || isAddingToCart}
+          className="h-16 rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
           leftIcon={<ShoppingCart className="w-6 h-6" />}
         >
-          {(product as any).type === 'frame'
-            ? 'Select Lenses'
-            : (product as any).type === 'lens'
-              ? 'Enter Prescription & Add'
-              : 'Add to Cart'}
+          {isAddingToCart
+            ? 'Adding...'
+            : !isValidCombination
+              ? 'Select Options'
+              : !isInStock
+                ? 'Out of Stock'
+                : (product as any).type === 'frame'
+                  ? 'Select Lenses'
+                  : (product as any).type === 'lens'
+                    ? 'Enter Prescription & Add'
+                    : 'Add to Cart'}
         </Button>
         <Button
           variant="outline"
@@ -262,13 +393,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
         onClose={() => setIsLensModalOpen(false)}
         onConfirm={handleLensConfirm}
         productName={product.nameBase}
-        productImage={
-          productAny.defaultVariantImage ||
-          productAny.imageUrl ||
-          defaultVariant?.imgs?.[0] ||
-          productAny.images?.[0] ||
-          ''
-        }
+        productImage={currentVariant?.imgs?.[0] || images[0] || ''}
         productType={(product as any).type || 'frame'}
       />
     </div>

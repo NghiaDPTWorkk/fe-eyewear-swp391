@@ -7,13 +7,12 @@ import { ProductCard } from '@/shared/components/ui/product-card'
 import { ArrowRight } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useAuthStore, useCartStore } from '@/store'
+import { useAuthStore } from '@/store'
 import toast from 'react-hot-toast'
 
 export const CustomerProductPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const { addItem } = useCartStore()
   const { isAuthenticated } = useAuthStore()
   const [page, setPage] = useState(1)
   const limit = 12
@@ -199,33 +198,6 @@ export const CustomerProductPage = () => {
                         discountPrice={discountPrice}
                         salePercent={salePercent}
                         onClick={(id) => navigate(`/products/${id}`)}
-                        onAddToCart={
-                          productType === 'sunglass' || productAny.type === 'sunglass'
-                            ? () => {
-                                const isAuth =
-                                  isAuthenticated || !!localStorage.getItem('accessToken')
-                                if (!isAuth) {
-                                  toast.error('Please login to add items to cart')
-                                  navigate('/login')
-                                  return
-                                }
-                                const id =
-                                  productAny.id ||
-                                  productAny._id ||
-                                  productAny.skuBase ||
-                                  `product-${index}`
-                                addItem({
-                                  product_id: id,
-                                  name: product.nameBase,
-                                  price: currentPrice,
-                                  quantity: 1,
-                                  image: productAny.defaultVariantImage || '',
-                                  addAt: new Date()
-                                })
-                                toast.success('Added to bag!')
-                              }
-                            : undefined
-                        }
                         onAddToWishlist={() => {
                           const isAuth = isAuthenticated || !!localStorage.getItem('accessToken')
                           if (!isAuth) {

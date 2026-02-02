@@ -1,12 +1,12 @@
 import { Info, Plus } from 'lucide-react'
 import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
 import { Newsletter, Footer } from '@/components/layout/customer/homepage/components'
-import { useCartStore } from '@/store/cart.store'
+import { useCart } from '@/features/customer/cart/hooks/useCart'
 import { Container, Checkbox } from '@/shared/components/ui'
 import { EmptyCart, CartItem, CartSummary, PromoSection } from '@/components/layout/customer/cart'
 
 export const CartPage = () => {
-  const { items, toggleAllSelection } = useCartStore()
+  const { items, isLoading, fetchError, toggleAllSelection } = useCart()
 
   const selectedItems = items.filter((item) => item.selected)
   const allSelected = items.length > 0 && items.every((item) => item.selected)
@@ -20,7 +20,26 @@ export const CartPage = () => {
 
       <main className="py-8 lg:py-12">
         <Container>
-          {items.length === 0 ? (
+          {isLoading ? (
+            <div className="flex justify-center items-center min-h-[400px]">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto mb-4"></div>
+                <p className="text-mint-800">Đang tải giỏ hàng...</p>
+              </div>
+            </div>
+          ) : fetchError ? (
+            <div className="flex justify-center items-center min-h-[400px]">
+              <div className="text-center">
+                <p className="text-red-600 mb-4">{fetchError}</p>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
+                >
+                  Thử lại
+                </button>
+              </div>
+            </div>
+          ) : items.length === 0 ? (
             <EmptyCart />
           ) : (
             <>
@@ -32,7 +51,7 @@ export const CartPage = () => {
                   <div className="flex items-center gap-3 mb-6">
                     <Checkbox
                       isChecked={allSelected}
-                      onCheckedChange={() => toggleAllSelection(!allSelected)}
+                      onCheckedChange={() => toggleAllSelection()}
                       id="select-all"
                     />
                     <label

@@ -76,10 +76,10 @@ export const ProductDetailPage = () => {
 
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
           {/* Left Column: Image Gallery - use key to force reset state on product change */}
-          <ImageGallery key={productAny._id || productAny.id} images={images as string[]} />
+          <ImageGallery key={productAny._id || productAny.id || id} images={images as string[]} />
 
           {/* Right Column: Product Info */}
-          <ProductInfo product={product} />
+          <ProductInfo product={product} productId={id || ''} />
         </div>
       </main>
 

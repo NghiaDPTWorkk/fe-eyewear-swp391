@@ -39,7 +39,7 @@ export const CartItem = ({ item }: CartItemProps) => {
               />
             </div>
             <button
-              onClick={() => removeItem(item.product_id)}
+              onClick={() => removeItem(item)}
               className="text-xs font-medium text-gray-400 hover:text-red-500 transition-colors underline"
             >
               Remove
@@ -210,7 +210,7 @@ export const CartItem = ({ item }: CartItemProps) => {
           {/* Quantity Selector (Invisible but functional) */}
           <div className="absolute top-8 right-8 flex items-center gap-3 bg-gray-50 rounded-lg p-1 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
-              onClick={() => updateQuantity(item.product_id, Math.max(1, item.quantity - 1))}
+              onClick={() => updateQuantity(item, Math.max(1, item.quantity - 1))}
               className="p-1 hover:bg-white rounded transition-colors text-gray-600"
             >
               <Minus className="w-3 h-3" />
@@ -219,7 +219,7 @@ export const CartItem = ({ item }: CartItemProps) => {
               {item.quantity}
             </span>
             <button
-              onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
+              onClick={() => updateQuantity(item, item.quantity + 1)}
               className="p-1 hover:bg-white rounded transition-colors text-gray-600"
             >
               <Plus className="w-3 h-3" />

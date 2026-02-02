@@ -42,8 +42,6 @@ export const useAuthStore = create<AuthState>()(
       logout: () => set({ user: null, accessToken: null, isAuthenticated: false, role: null }),
       setLoading: (loading) => set({ isLoading: loading }),
       fetchProfile: async () => {
-        if (useAuthStore.getState().isLoading) return
-
         set({ isLoading: true })
         try {
           const profile = await authService.getProfile()

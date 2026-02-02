@@ -2,14 +2,17 @@ import type { User } from '@/shared/types'
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { authService } from '@/features/auth/services/auth.service'
+import { getRoleFromToken } from '@/shared/utils'
 
 interface AuthState {
   user: User | null
   accessToken: string | null
   isAuthenticated: boolean
   isLoading: boolean
+  role: string | null
   setUser: (user: User | null) => void
   setToken: (token: string | null) => void
+  setRole: (role: string | null) => void
   logout: () => void
   setLoading: (loading: boolean) => void
   fetchProfile: () => Promise<void>
@@ -22,10 +25,21 @@ export const useAuthStore = create<AuthState>()(
       accessToken: null,
       isAuthenticated: false,
       isLoading: false,
+      role: null,
 
       setUser: (user) => set({ user }),
-      setToken: (token) => set({ accessToken: token, isAuthenticated: !!token }),
-      logout: () => set({ user: null, accessToken: null, isAuthenticated: false }),
+      setToken: (token) => {
+        if (token) {
+          // Extract role from JWT token
+          const role = getRoleFromToken(token)
+          console.log('Role from token in setToken:', role)
+          set({ accessToken: token, isAuthenticated: true, role })
+        } else {
+          set({ accessToken: null, isAuthenticated: false, role: null })
+        }
+      },
+      setRole: (role) => set({ role }),
+      logout: () => set({ user: null, accessToken: null, isAuthenticated: false, role: null }),
       setLoading: (loading) => set({ isLoading: loading }),
       fetchProfile: async () => {
         if (useAuthStore.getState().isLoading) return

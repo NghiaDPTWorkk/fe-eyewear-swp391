@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { orderService } from '../services/orderService'
 
 /**
- * Hook để fetch orders với pagination và filter
+ * Hook để lấy danh sách orders với phân trang và filter
  * @param page - Số trang
  * @param limit - Số lượng items mỗi trang
  * @param status - Filter theo status (optional)
@@ -30,7 +30,6 @@ export const useAllOrders = () => {
   })
 }
 
-// START NEW CODE
 /**
  * Hook để lấy chi tiết một order theo ID
  * @param orderId - ID của order cần lấy
@@ -40,7 +39,6 @@ export const useOrderDetail = (orderId: string) => {
     queryKey: ['order', orderId],
     queryFn: () => orderService.getOrderById(orderId),
     enabled: !!orderId, // Chỉ fetch khi có orderId
-    staleTime: 30000 // Cache 30 giây
+    staleTime: 30000
   })
 }
-// END NEW CODE

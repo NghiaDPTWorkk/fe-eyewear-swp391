@@ -12,13 +12,11 @@ interface OrderCountStore {
     all: number
     completed: number
   }
-  // ========== START NEW CODE ==========
   orders: Order[] // Lưu toàn bộ orders từ API
   setOrders: (orders: Order[]) => void // Action để set orders
   isLoading: boolean // Trạng thái đang fetch data
   isError: boolean // Trạng thái lỗi khi fetch
   setLoadingState: (isLoading: boolean, isError: boolean) => void // Set loading/error states
-  // ========== END NEW CODE ==========
   setCount: (
     type: 'technical' | 'logistics' | 'packing' | 'all' | 'completed',
     count: number

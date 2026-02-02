@@ -11,7 +11,6 @@ export default function OperationAllOrdersPage() {
 
   // Lấy orders, isLoading, isError từ Zustand store (đã được fetch ở OperationLayout)
   const { orders, isLoading, isError } = useOrderCountStore()
-  console.log('List Order OperationAllOrderPage :', orders)
 
   const allCount = orders.length
   const preOrderCount = orders.filter((o: Order) => o.orderType === OrderType.PRE_ORDER).length

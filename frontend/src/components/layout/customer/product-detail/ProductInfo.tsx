@@ -50,10 +50,14 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
     console.log('🛒 Add to Cart clicked!')
     console.log('Product data:', product)
 
-    const isAuth = isAuthenticated || !!localStorage.getItem('accessToken')
-    console.log('Is authenticated:', isAuth)
+    // Check for token in both possible localStorage keys
+    const token = localStorage.getItem('accessToken') || localStorage.getItem('access_token')
+    const isAuth = isAuthenticated && token
+
+    console.log('🔐 Auth check:', { isAuthenticated, hasToken: !!token, isAuth })
 
     if (!isAuth) {
+      console.log('❌ User not authenticated, redirecting to login')
       toast.error('Please login to add items to cart')
       navigate('/login', { state: { from: location } })
       return

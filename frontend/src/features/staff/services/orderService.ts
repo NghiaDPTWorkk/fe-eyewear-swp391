@@ -22,5 +22,9 @@ export const orderService = {
    */
   getOrderById: async (id: string) => {
     return httpClient.get(ENDPOINTS.ORDERS.DETAIL(id))
+  },
+
+  getOrderDetail: async (orderId: string) => {
+    return httpClient.get(ENDPOINTS.ORDERS.DETAIL(orderId))
   }
 }

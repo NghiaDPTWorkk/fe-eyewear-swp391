@@ -1,3 +1,4 @@
+/* eslint  */
 import { lazy } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { LazyPage } from '@/pages/LazyPage'

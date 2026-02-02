@@ -25,7 +25,7 @@ export default function OperationAllOrdersPage() {
     { label: 'All', count: allCount, value: 'all' },
     { label: 'Pre-order', count: preOrderCount, value: OrderType.PRE_ORDER }, // 'PRE-ORDER'
     { label: 'Normal', count: normalCount, value: OrderType.NORMAL }, // 'NORMAL'
-    { label: 'Prescription', count: prescriptionCount, value: OrderType.MANUFACTURING } // 'MANUFACTURING'
+    { label: 'Manufacturing', count: prescriptionCount, value: OrderType.MANUFACTURING } // 'MANUFACTURING'
   ]
 
   return (
@@ -43,17 +43,15 @@ export default function OperationAllOrdersPage() {
         className="mb-6"
       />
 
-      {/* ========== START NEW CODE ========== */}
       {/* Truyền orders, isLoading, isError xuống OrderTable để xử lý render states */}
       <OrderTable
-        orders={orders} // Data từ API
-        isLoading={isLoading} // Trạng thái đang load
-        isError={isError} // Trạng thái lỗi
+        orders={orders}
+        isLoading={isLoading}
+        isError={isError}
         hiddenColumns={['WAITING FOR']}
         filterType={filter === 'all' ? undefined : filter}
         role="operation"
       />
-      {/* ========== END NEW CODE ========== */}
     </Container>
   )
 }

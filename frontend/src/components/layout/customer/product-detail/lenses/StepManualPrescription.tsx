@@ -75,7 +75,13 @@ export default function StepManualPrescription({ onSubmit }: StepManualPrescript
             type="checkbox"
             className="sr-only peer"
             checked={sameForBothEyes}
-            onChange={() => setSameForBothEyes(!sameForBothEyes)}
+            onChange={() => {
+              const newValue = !sameForBothEyes
+              setSameForBothEyes(newValue)
+              if (newValue) {
+                setRx((prev) => ({ ...prev, left: { ...prev.right } }))
+              }
+            }}
           />
           <div className="w-5 h-5 border-2 border-mint-300 rounded peer-checked:bg-primary-500 peer-checked:border-primary-500 transition-all flex items-center justify-center">
             <Check

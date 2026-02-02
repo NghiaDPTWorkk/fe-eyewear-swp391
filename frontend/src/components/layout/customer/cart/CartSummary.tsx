@@ -314,9 +314,9 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
             }`}
           >
             <img
-              src="https://vcdn.zalopay.com.vn/zlp-website/assets/images/logo-zalopay.png"
+              src="https://cdn.brandfetch.io/id_T-oXJkN/w/1624/h/1624/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1767789070990"
               alt="ZaloPay"
-              className="h-4"
+              className="h-6"
             />
             <span className="font-bold text-sm">ZaloPay</span>
           </button>

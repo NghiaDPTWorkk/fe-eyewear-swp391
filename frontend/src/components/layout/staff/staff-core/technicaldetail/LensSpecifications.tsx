@@ -71,7 +71,7 @@ const LensSpecifications = ({ prescription, details }: LensSpecificationsProps) 
         {details.map((info, idx) => (
           <div key={idx}>
             <div className="text-xs text-mint-800 mb-0.5">{info.label}</div>
-            <div className="text-sm font-semibold text-gray-900">{info.value}</div>
+            <div className="text-sm font-semibold text-gray-900 mb-5">{info.value}</div>
           </div>
         ))}
       </div>

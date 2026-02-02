@@ -12,13 +12,11 @@ interface OrderCountStore {
     all: number
     completed: number
   }
-  // ========== START NEW CODE ==========
   orders: Order[] // Lưu toàn bộ orders từ API
   setOrders: (orders: Order[]) => void // Action để set orders
   isLoading: boolean // Trạng thái đang fetch data
   isError: boolean // Trạng thái lỗi khi fetch
   setLoadingState: (isLoading: boolean, isError: boolean) => void // Set loading/error states
-  // ========== END NEW CODE ==========
   setCount: (
     type: 'technical' | 'logistics' | 'packing' | 'all' | 'completed',
     count: number
@@ -35,15 +33,15 @@ export const useOrderCountStore = create<OrderCountStore>((set) => ({
     all: 0,
     completed: 0
   },
-  // ========== START NEW CODE ==========
+
   orders: [], // Khởi tạo empty array
   isLoading: false, // Mặc định không loading
   isError: false, // Mặc định không có lỗi
-  // ========== END NEW CODE ==========
+
   setOrders: (orders) => set({ orders }), // Action để set orders
-  // ========== START NEW CODE ==========
+
   setLoadingState: (isLoading, isError) => set({ isLoading, isError }),
-  // ========== END NEW CODE ==========
+
   setCount: (type, count) =>
     set((state) => ({
       counts: {

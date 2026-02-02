@@ -34,7 +34,7 @@ export const ENDPOINTS = {
   ORDERS: {
     CREATE: '/orders',
     LIST: '/orders',
-    DETAIL: (id: string) => `/orders/${id}`,
+    DETAIL: (id: string) => `/admin/orders/${id}`,
     CANCEL: (id: string) => `/orders/${id}/cancel`,
     TRACKING: (id: string) => `/orders/${id}/tracking`,
     LIST_WITH_PARAMS: (page: number, limit: number, status?: string, type?: string) => {

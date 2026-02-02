@@ -1,20 +1,23 @@
+/* eslint-disable */
 import { useParams, useNavigate } from 'react-router-dom'
 import { Container } from '@/components'
-import { JobTechnicalDetails } from '@/components/layout/staff/staff-core/technicaldetail'
-import { PATHS } from '@/routes/paths'
-import { IoArrowBack } from 'react-icons/io5'
-
 import { Button } from '@/shared/components/ui/button'
-import { ProcessTracker } from '@/components/layout/staff/staff-core/processtracker'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 import { useOrderDetail } from '@/features/staff/hooks/useOrders'
-import type { OrderResponse } from '@/shared/types'
+import { useProductDetails } from '@/features/staff/hooks/products/useProductDetails'
+import type { OrderResponse, OrderProductItem } from '@/shared/types'
+import LensNormalOrder from '@/components/layout/staff/staff-core/technicaldetail/LensNormalOrder'
+import LensSpecifications from '@/components/layout/staff/staff-core/technicaldetail/LensSpecifications'
+import FrameSpecifications from '@/components/layout/staff/staff-core/technicaldetail/FrameSpecifications'
+import { PATHS } from '@/routes/paths'
+import { ProcessTracker } from '@/components/layout/staff/staff-core/processtracker'
+import { IoArrowBack } from 'react-icons/io5'
 
 export default function OperationOrderDetailPage() {
   const { orderId } = useParams<{ orderId: string }>()
   const navigate = useNavigate()
 
-  // Gọi API lấy chi tiết đơn hàng theo orderId
+  // Bước 1: Fetch Order Data
   const { data: orderData, isLoading, isError } = useOrderDetail(orderId!)
 
   // Loading state
@@ -23,7 +26,7 @@ export default function OperationOrderDetailPage() {
       <Container>
         <div className="flex flex-col items-center justify-center py-12">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-mint-500"></div>
-          <p className="mt-4 text-gray-500">Đang tải thông tin đơn hàng...</p>
+          <p className="mt-4 text-gray-500">Loading order information...</p>
         </div>
       </Container>
     )
@@ -33,76 +36,255 @@ export default function OperationOrderDetailPage() {
     return (
       <Container>
         <div className="flex flex-col items-center justify-center py-12">
-          <p className="text-red-600 font-semibold">Không thể tải thông tin đơn hàng</p>
+          <p className="text-red-600 font-semibold">Unable to load order information</p>
           <Button onClick={() => navigate(-1)} className="mt-4">
-            Quay lại
+            Go Back
           </Button>
         </div>
       </Container>
     )
   }
 
-  // Extract order data từ API response
+  // Extract order data
   const order = (orderData as OrderResponse)?.data?.order
-  console.log('Order Detail from API:', order)
+  console.log('📦 Order Detail:', JSON.stringify(order, null, 2))
 
-  // Nếu không có order data, return error
   if (!order) {
     return (
       <Container>
         <div className="flex flex-col items-center justify-center py-12">
-          <div className="text-red-500 text-5xl mb-4"></div>
-          <p className="text-red-600 font-semibold">Dữ liệu đơn hàng không hợp lệ</p>
+          <p className="text-red-600 font-semibold">Invalid order data</p>
           <Button onClick={() => navigate(-1)} className="mt-4">
-            Quay lại
+            Go Back
           </Button>
         </div>
       </Container>
     )
   }
 
-  // TODO: Transform order data thành lensData và frameData format
-  const lensData = {
-    // KHÔNG có parameters → Hiển thị LensNormalOrder
-    productDetail: {
-      nameBase: 'Rodenstock Anti-Scratch Lens 1',
-      skuBase: 'LENS-001',
-      brand: 'Rodenstock',
-      categories: ['Premium Lenses', 'Anti-Scratch'],
-      spec: {
-        feature: ['Anti-Scratch', 'UV Protection'],
-        origin: 'Germany'
-      },
-      variants: []
-    },
-    variantDetail: {
-      sku: 'LENS-001-01',
-      name: 'Rodenstock Anti-Scratch Lens 1 - 1.50 - Premium',
-      options: [
-        {
-          attributeName: 'Thickness',
-          label: '1.50',
-          value: '1.50'
-        },
-        {
-          attributeName: 'Coating',
-          label: 'Premium',
-          value: 'Premium'
+  // Render với order data
+  return <OrderDetailContent order={order} orderId={orderId!} navigate={navigate} />
+}
+
+// Component xử lý transform data và render UI
+interface OrderDetailContentProps {
+  order: any
+  orderId: string
+  navigate: any
+}
+
+function OrderDetailContent({ order, orderId, navigate }: OrderDetailContentProps) {
+  const products: OrderProductItem[] = order?.products || []
+  const orderType = order?.type?.[0] || order?.type // Handle both array and string
+
+  // Phân loại products và chuẩn bị data
+  let framesList: any[] = []
+  let lensList: any[] = []
+  let frameObject: any = null
+  let lensParametersObject: any = null
+
+  if (orderType === 'NORMAL') {
+    // NORMAL Order: Phân loại products thành framesList và lensList
+    products.forEach((item: OrderProductItem) => {
+      const sku = item.product?.sku || ''
+
+      if (sku.startsWith('FRAME')) {
+        framesList.push({
+          product_id: item.product.product_id,
+          sku: item.product.sku,
+          pricePerUnit: item.product.pricePerUnit,
+          quantity: item.quantity
+        })
+      } else if (sku.startsWith('LENS')) {
+        lensList.push({
+          product_id: item.product.product_id,
+          sku: item.product.sku,
+          pricePerUnit: item.product.pricePerUnit,
+          quantity: item.quantity
+        })
+      }
+    })
+  } else if (orderType === 'MANUFACTURING') {
+    // MANUFACTURING Order: Lấy products[0]
+    const firstProduct = products[0]
+
+    if (firstProduct) {
+      frameObject = {
+        product_id: firstProduct.product.product_id,
+        sku: firstProduct.product.sku,
+        pricePerUnit: firstProduct.product.pricePerUnit,
+        quantity: firstProduct.quantity
+      }
+
+      if (firstProduct.lens) {
+        lensParametersObject = {
+          lens_id: firstProduct.lens.lens_id,
+          sku: firstProduct.lens.sku,
+          parameters: firstProduct.lens.parameters,
+          pricePerUnit: firstProduct.lens.pricePerUnit
         }
-      ],
-      price: 132,
-      imgs: ['https://picsum.photos/seed/lens1v0a/400/400']
-    },
-    quantity: 2,
-    pricePerUnit: 132
+      }
+    }
   }
 
-  const frameData = [
-    { label: 'Frame Code', value: 'RB-AV-001' },
-    { label: 'Brand', value: 'Ray-Ban' },
-    { label: 'Material', value: 'Metal Titanium' },
-    { label: 'Color', value: 'Gold' }
-  ]
+  // Fetch product details
+  const productIdsToFetch =
+    orderType === 'NORMAL'
+      ? [...framesList.map((f) => f.product_id), ...lensList.map((l) => l.product_id)]
+      : frameObject
+        ? [frameObject.product_id]
+        : []
+
+  const productQueries = useProductDetails(productIdsToFetch)
+  const productsLoading = productQueries.some((q: any) => q.isLoading)
+  const productsError = productQueries.some((q: any) => q.isError)
+
+  // Loading state cho product details
+  if (productsLoading) {
+    return (
+      <Container>
+        <div className="flex flex-col items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-mint-500"></div>
+          <p className="mt-4 text-gray-500">Loading product details...</p>
+        </div>
+      </Container>
+    )
+  }
+
+  // Error state cho product details
+  if (productsError) {
+    return (
+      <Container>
+        <div className="flex flex-col items-center justify-center py-12">
+          <p className="text-red-600 font-semibold">Unable to load product details</p>
+          <Button onClick={() => navigate(-1)} className="mt-4">
+            Go Back
+          </Button>
+        </div>
+      </Container>
+    )
+  }
+
+  // Transform data theo order type
+  let lensComponent = null
+  let frameComponent = null
+
+  // NORMAL Order - Lens
+  if (orderType === 'NORMAL' && lensList.length > 0) {
+    const lensItem = lensList[0]
+    const lensIndex = productIdsToFetch.indexOf(lensItem.product_id)
+    const lensProductDetail = (productQueries[lensIndex]?.data as any)?.data
+
+    if (lensProductDetail) {
+      const variantDetail = lensProductDetail?.variants?.find((v: any) => v.sku === lensItem.sku)
+      const finalVariant = variantDetail || lensProductDetail?.variants?.[0]
+
+      // Chỉ render nếu có variant detail
+      if (finalVariant) {
+        const lensData = {
+          productDetail: lensProductDetail,
+          variantDetail: finalVariant,
+          quantity: lensItem.quantity,
+          pricePerUnit: lensItem.pricePerUnit
+        }
+        lensComponent = <LensNormalOrder {...lensData} />
+      } else {
+        console.warn('⚠️ No variant found for lens SKU:', lensItem.sku)
+      }
+    }
+  }
+
+  // NORMAL Order - Frame
+  if (orderType === 'NORMAL' && framesList.length > 0) {
+    const frameItem = framesList[0]
+    const frameIndex = productIdsToFetch.indexOf(frameItem.product_id)
+    const frameProductDetail = (productQueries[frameIndex]?.data as any)?.data
+
+    if (frameProductDetail) {
+      const frameVariant = frameProductDetail?.variants?.find((v: any) => v.sku === frameItem.sku)
+      const frameSpec = frameProductDetail?.spec || {}
+
+      const frameData = {
+        data: [
+          { label: 'Frame Code', value: frameItem.sku },
+          { label: 'Brand', value: frameProductDetail.brand || 'N/A' },
+          { label: 'Material', value: frameSpec.material || 'N/A' },
+          { label: 'Shape', value: frameSpec.shape || 'N/A' },
+          {
+            label: 'Color',
+            value:
+              frameVariant?.options?.find((o: any) => o.attributeName === 'Color')?.value || 'N/A'
+          },
+          { label: 'Price', value: `$${frameItem.pricePerUnit}` }
+        ],
+        imageSrc: frameVariant?.imgs?.[0] || frameProductDetail?.variants?.[0]?.imgs?.[0]
+      }
+
+      frameComponent = <FrameSpecifications {...frameData} />
+    }
+  }
+
+  // MANUFACTURING Order - Lens
+  if (orderType === 'MANUFACTURING' && lensParametersObject) {
+    const { parameters } = lensParametersObject
+
+    const lensData = {
+      prescription: [
+        {
+          eye: 'Right Eye (OD)',
+          sph: parameters.right.SPH.toString(),
+          cyl: parameters.right.CYL.toString(),
+          axis: `${parameters.right.AXIS}°`,
+          prism: '-',
+          add: parameters.right.ADD?.toString() || '-'
+        },
+        {
+          eye: 'Left Eye (OS)',
+          sph: parameters.left.SPH.toString(),
+          cyl: parameters.left.CYL.toString(),
+          axis: `${parameters.left.AXIS}°`,
+          prism: '-',
+          add: parameters.left.ADD?.toString() || '-'
+        }
+      ],
+      details: [
+        { label: 'PD (Pupillary Distance)', value: `${parameters.PD} mm` },
+        { label: 'Lens SKU', value: lensParametersObject.sku },
+        { label: 'Price Per Unit', value: `$${lensParametersObject.pricePerUnit}` }
+      ]
+    }
+
+    lensComponent = <LensSpecifications {...lensData} />
+  }
+
+  // MANUFACTURING Order - Frame
+  if (orderType === 'MANUFACTURING' && frameObject) {
+    const frameProductDetail = (productQueries[0]?.data as any)?.data
+
+    if (frameProductDetail) {
+      const frameVariant = frameProductDetail?.variants?.find((v: any) => v.sku === frameObject.sku)
+      const frameSpec = frameProductDetail?.spec || {}
+
+      const frameData = {
+        data: [
+          { label: 'Frame Code', value: frameObject.sku },
+          { label: 'Brand', value: frameProductDetail.brand || 'N/A' },
+          { label: 'Material', value: frameSpec.material || 'N/A' },
+          { label: 'Shape', value: frameSpec.shape || 'N/A' },
+          {
+            label: 'Color',
+            value:
+              frameVariant?.options?.find((o: any) => o.attributeName === 'Color')?.value || 'N/A'
+          },
+          { label: 'Price', value: `$${frameObject.pricePerUnit}` }
+        ],
+        imageSrc: frameVariant?.imgs?.[0] || frameProductDetail?.variants?.[0]?.imgs?.[0]
+      }
+
+      frameComponent = <FrameSpecifications {...frameData} />
+    }
+  }
+
   return (
     <Container>
       {/* Breadcrumb Path */}
@@ -124,7 +306,7 @@ export default function OperationOrderDetailPage() {
         </div>
         <div className="ml-auto">
           <span className="px-6 py-2 bg-mint-100 text-mint-700 border border-mint-200 rounded-full text-xs font-bold uppercase tracking-widest">
-            Pending
+            {order.status || 'Pending'}
           </span>
         </div>
       </div>
@@ -132,8 +314,21 @@ export default function OperationOrderDetailPage() {
       {/* Progress Tracker */}
       <ProcessTracker />
 
-      {/* Technical Details - Lens & Frame Specifications */}
-      <JobTechnicalDetails lensData={lensData} frameData={frameData} />
+      {/* Technical Details - Lens Specifications */}
+      {lensComponent && (
+        <div className="bg-white rounded-lg shadow-sm border border-neutral-100 p-6 mb-6">
+          <h2 className="text-lg font-bold text-gray-900 mb-4">Lens Specification</h2>
+          {lensComponent}
+        </div>
+      )}
+
+      {/* Frame Specifications */}
+      {frameComponent && (
+        <div className="bg-white rounded-lg shadow-sm border border-neutral-100 p-6 mb-6">
+          <h2 className="text-lg font-bold text-gray-900 mb-4">Frame Specification</h2>
+          {frameComponent}
+        </div>
+      )}
 
       {/* Action Button */}
       <div className="flex justify-end gap-3 mt-4">

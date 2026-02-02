@@ -49,10 +49,12 @@ export interface Invoice {
   totalDiscount: number
   manager_onboard?: string | null
   staffVerified: string | null
+  note?: string | null
   createdAt: string
   updatedAt: string
   deletedAt: string | null
   __v?: number
+  productList?: InvoiceItem[]
 }
 
 // Timestamps are strings in API response
@@ -105,6 +107,71 @@ export interface Invoice {
 
 export interface InvoiceResponse {
   invoice: Invoice
+}
+
+export interface PaginatedInvoiceResponse {
+  data: Invoice[]
+  total: number
+  page: number
+  limit: number
+  totalPages: number
+}
+
+export interface GetInvoicesApiResponse {
+  success: boolean
+  message: string
+  data: PaginatedInvoiceResponse
+}
+
+export interface InvoiceProductDetail {
+  sku: string
+  name: string
+  slug: string
+  options: {
+    attributeId: string
+    attributeName: string
+    label: string
+    showType: string
+    value: string
+    _id: string
+  }[]
+  price: number
+  finalPrice: number
+  stock: number
+  imgs: string[]
+  isDefault: boolean
+  createdAt: string
+  updatedAt: string
+  deletedAt: string | null
+  _id: string
+}
+
+export interface InvoiceItem {
+  type: string[]
+  lens?: {
+    product_id: string
+    sku: string
+    pricePerUnit: number
+    detail: InvoiceProductDetail
+  }
+  product?: {
+    product_id: string
+    sku: string
+    pricePerUnit: number
+    detail: InvoiceProductDetail
+  }
+}
+
+export interface InvoiceDetailData {
+  invoiceStatus: string
+  invoice: Invoice
+  productList: InvoiceItem[]
+}
+
+export interface InvoiceDetailApiResponse {
+  success: boolean
+  message: string
+  data: InvoiceDetailData
 }
 
 export interface CreateInvoiceApiResponse {

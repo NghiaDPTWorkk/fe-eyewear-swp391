@@ -83,6 +83,7 @@ export const ENDPOINTS = {
   // Invoices
   INVOICE: {
     CREATE: '/invoices',
+    LIST: '/invoices',
     DETAIL: (id: string) => `/invoices/${id}`
   }
 } as const

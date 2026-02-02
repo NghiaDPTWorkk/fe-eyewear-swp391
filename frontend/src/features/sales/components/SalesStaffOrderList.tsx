@@ -8,6 +8,7 @@ interface SalesStaffOrderListProps {
   onVerify: (order: Order) => void
   onReject: (order: Order) => void
   onViewDetail: (order: Order) => void
+  onChat: (order: Order) => void
   loading?: boolean
 }
 
@@ -16,6 +17,7 @@ export const SalesStaffOrderList: React.FC<SalesStaffOrderListProps> = ({
   onVerify,
   onReject,
   onViewDetail,
+  onChat,
   loading
 }) => {
   if (loading)
@@ -35,6 +37,8 @@ export const SalesStaffOrderList: React.FC<SalesStaffOrderListProps> = ({
               <th className="px-6 py-5 text-center w-28">Order ID</th>
               <th className="px-6 py-5">SKU / Product</th>
               <th className="px-6 py-5 text-center">Customer</th>
+              <th className="px-6 py-5 text-center">Type</th>
+              <th className="px-6 py-5 text-center">Verification</th>
               <th className="px-6 py-5 text-center">Lab Status</th>
               <th className="px-6 py-5 text-center w-40">Actions</th>
             </tr>
@@ -49,11 +53,12 @@ export const SalesStaffOrderList: React.FC<SalesStaffOrderListProps> = ({
             ) : (
               orders.map((order) => (
                 <SalesStaffOrderCard
-                  key={order.id}
+                  key={order._id}
                   order={order}
                   onVerify={() => onVerify(order)}
                   onReject={() => onReject(order)}
                   onViewDetail={() => onViewDetail(order)}
+                  onChat={() => onChat(order)}
                 />
               ))
             )}

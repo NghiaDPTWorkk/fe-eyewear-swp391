@@ -4,19 +4,19 @@ import { Container, Button, Card } from '@/components'
 import { cn } from '@/lib/utils'
 import { SalesStaffRxTable } from '@/features/sales/components/prescription/SalesStaffRxTable'
 import { SalesStaffRxMetrics } from '@/features/sales/components/prescription/SalesStaffRxMetrics'
-import { SalesStaffVerifyModal } from '@/features/sales/components/SalesStaffVerifyModal'
+import { OrderDetailsDrawer } from '@/features/sales/components/orders/OrderDetailsDrawer'
 import { useSalesStaffOrders } from '@/features/sales/hooks/useSalesStaffOrders'
 import { useSalesStaffAction } from '@/features/sales/hooks/useSalesStaffAction'
 import { IoFilter, IoAdd, IoSearchOutline } from 'react-icons/io5'
-import type { Order, LensParameter } from '@/features/sales/types'
+import type { Order } from '@/features/sales/types'
 import { toast } from 'react-hot-toast'
 
 export default function SaleStaffPrescriptionPage() {
   const { rxOrders, loading, fetchOrders } = useSalesStaffOrders()
-  const { verifyOrder, rejectOrder, processing } = useSalesStaffAction()
+  const { rejectOrder } = useSalesStaffAction()
 
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
-  const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false)
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
   const [filter, setFilter] = useState('All')
   const [search, setSearch] = useState('')
@@ -35,25 +35,21 @@ export default function SaleStaffPrescriptionPage() {
   const filteredOrders = useMemo(() => {
     return rxOrders.filter((order) => {
       const matchSearch =
-        order.id.toString().toLowerCase().includes(search.toLowerCase()) ||
+        (order._id || '').toString().toLowerCase().includes(search.toLowerCase()) ||
         order.customerName?.toLowerCase().includes(search.toLowerCase())
       const matchFilter = filter === 'All' || order.status === filter
       return matchSearch && matchFilter
     })
   }, [rxOrders, search, filter])
 
-  const handleVerifySubmit = async (params: LensParameter) => {
-    if (!selectedOrder) return
-    if (await verifyOrder(selectedOrder.id, params)) {
-      toast.success('Prescription verified')
-      setIsVerifyModalOpen(false)
-      fetchOrders()
-    } else toast.error('Verification failed')
+  const handleOpenDrawer = (order: Order) => {
+    setSelectedOrderId(order._id)
+    setIsDrawerOpen(true)
   }
 
   const handleReject = async (order: Order) => {
-    if (order.invoiceId && window.confirm('Reject this order?')) {
-      if (await rejectOrder(order.invoiceId)) {
+    if (window.confirm('Reject this order?')) {
+      if (await rejectOrder(order._id)) {
         toast.success('Rejected')
         fetchOrders()
       } else toast.error('Rejection failed')
@@ -143,19 +139,18 @@ export default function SaleStaffPrescriptionPage() {
         <SalesStaffRxTable
           orders={filteredOrders}
           loading={loading}
-          onVerify={(o) => {
-            setSelectedOrder(o)
-            setIsVerifyModalOpen(true)
-          }}
+          onVerify={handleOpenDrawer}
           onReject={handleReject}
         />
       </Card>
 
-      <SalesStaffVerifyModal
-        isOpen={isVerifyModalOpen}
-        onClose={() => setIsVerifyModalOpen(false)}
-        onSubmit={handleVerifySubmit}
-        isProcessing={processing}
+      <OrderDetailsDrawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        orderId={selectedOrderId}
+        onUpdate={() => {
+          fetchOrders()
+        }}
       />
     </Container>
   )

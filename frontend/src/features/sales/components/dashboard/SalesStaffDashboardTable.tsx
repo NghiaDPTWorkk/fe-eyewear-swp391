@@ -5,12 +5,14 @@ import { SalesStaffDashboardRow } from './SalesStaffDashboardRow'
 interface SalesStaffDashboardTableProps {
   invoices: Invoice[]
   onInvoiceClick: (invoice: Invoice) => void
+  onApproveInvoice: (id: string) => void
   loading?: boolean
 }
 
 export const SalesStaffDashboardTable: React.FC<SalesStaffDashboardTableProps> = ({
   invoices,
   onInvoiceClick,
+  onApproveInvoice,
   loading
 }) => {
   if (loading)
@@ -46,6 +48,7 @@ export const SalesStaffDashboardTable: React.FC<SalesStaffDashboardTableProps> =
                 key={invoice.id}
                 invoice={invoice}
                 onClick={() => onInvoiceClick(invoice)}
+                onApprove={() => onApproveInvoice(invoice.id)}
               />
             ))
           )}

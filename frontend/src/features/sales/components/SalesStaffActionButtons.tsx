@@ -17,7 +17,8 @@ export const SalesStaffActionButtons: React.FC<SalesStaffActionButtonsProps> = (
   onVerify,
   onViewDetail
 }) => {
-  const canVerify = order.isPrescription && order.status === 'WAITING_ASSIGN'
+  const isMfg = order.type?.includes('MANUFACTURING') || order.isPrescription
+  const canVerify = isMfg && order.status !== 'VERIFIED' && order.status !== 'APPROVED'
 
   return (
     <div className="flex items-center justify-center gap-4">
@@ -33,6 +34,10 @@ export const SalesStaffActionButtons: React.FC<SalesStaffActionButtonsProps> = (
       </button>
 
       <button
+        onClick={(e) => {
+          e.stopPropagation()
+          alert('Chat Modal Placeholder')
+        }}
         className="text-blue-400 hover:text-blue-600 transition-colors"
         title="Contact Customer"
       >

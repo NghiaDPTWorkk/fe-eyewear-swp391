@@ -45,7 +45,7 @@ export const SalesStaffRxTable: React.FC<SalesStaffRxTableProps> = ({
           ) : (
             orders.map((order) => (
               <SalesStaffRxRow
-                key={order.id}
+                key={order._id}
                 order={order}
                 onVerify={() => onVerify(order)}
                 onReject={() => onReject(order)}

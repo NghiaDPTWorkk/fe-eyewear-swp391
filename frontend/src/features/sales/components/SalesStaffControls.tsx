@@ -5,25 +5,26 @@ import { cn } from '@/lib/utils'
 
 interface SalesStaffControlsProps {
   onSearch: (value: string) => void
-  onFilterChange: (value: string) => void
+  onTypeFilterChange: (value: string) => void
   onExport: () => void
   onCreateOrder: () => void
-  currentFilter: string
+  currentTypeFilter: string
 }
 
 export const SalesStaffControls: React.FC<SalesStaffControlsProps> = ({
   onSearch,
-  onFilterChange,
+  onTypeFilterChange,
   onExport,
   onCreateOrder,
-  currentFilter
+  currentTypeFilter
 }) => {
-  const [isFilterOpen, setIsFilterOpen] = useState(false)
+  const [isTypeFilterOpen, setIsTypeFilterOpen] = useState(false)
 
-  const filterOptions = [
+  const typeOptions = [
     { label: 'All Orders', value: 'All' },
-    { label: 'Pending', value: 'Pending' },
-    { label: 'Processed', value: 'Processed' }
+    { label: 'Prescription', value: 'MANUFACTURING' },
+    { label: 'Pre-order', value: 'PRE-ORDER' },
+    { label: 'Regular', value: 'STANDARD' }
   ]
 
   return (
@@ -38,40 +39,41 @@ export const SalesStaffControls: React.FC<SalesStaffControlsProps> = ({
         />
       </div>
 
-      <div className="flex gap-3 w-full md:w-auto relative">
+      <div className="flex gap-3 w-full md:w-auto relative flex-wrap md:flex-nowrap">
+        {/* Type Filter */}
         <div className="relative">
           <button
-            onClick={() => setIsFilterOpen(!isFilterOpen)}
+            onClick={() => setIsTypeFilterOpen(!isTypeFilterOpen)}
             className={cn(
-              'flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium transition-all min-w-[170px] justify-between h-[42px]',
-              isFilterOpen
+              'flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium transition-all min-w-[150px] justify-between h-[42px]',
+              isTypeFilterOpen
                 ? 'border-primary-500 bg-primary-50 text-primary-600'
                 : 'border-gray-200 text-gray-600 hover:bg-gray-50'
             )}
           >
             <div className="flex items-center gap-2">
-              <IoFilter /> Filter:{' '}
-              {filterOptions.find((o) => o.value === currentFilter)?.label || currentFilter}
+              <IoFilter /> Type:{' '}
+              {typeOptions.find((o) => o.value === currentTypeFilter)?.label || currentTypeFilter}
             </div>
           </button>
 
-          {isFilterOpen && (
+          {isTypeFilterOpen && (
             <>
-              <div className="fixed inset-0 z-10" onClick={() => setIsFilterOpen(false)} />
+              <div className="fixed inset-0 z-10" onClick={() => setIsTypeFilterOpen(false)} />
               <Card className="absolute top-full mt-2 right-0 w-56 z-20 p-2 shadow-xl border border-neutral-100 animate-in fade-in slide-in-from-top-2 duration-200">
                 <div className="space-y-1">
-                  {filterOptions.map((opt) => (
+                  {typeOptions.map((opt) => (
                     <button
                       key={opt.value}
                       className={cn(
                         'w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all text-left',
-                        currentFilter === opt.value
+                        currentTypeFilter === opt.value
                           ? 'bg-primary-50 text-primary-600 font-semibold'
                           : 'text-gray-600 hover:bg-gray-50'
                       )}
                       onClick={() => {
-                        onFilterChange(opt.value)
-                        setIsFilterOpen(false)
+                        onTypeFilterChange(opt.value)
+                        setIsTypeFilterOpen(false)
                       }}
                     >
                       {opt.label}
@@ -82,6 +84,7 @@ export const SalesStaffControls: React.FC<SalesStaffControlsProps> = ({
             </>
           )}
         </div>
+
         <Button
           variant="outline"
           colorScheme="neutral"

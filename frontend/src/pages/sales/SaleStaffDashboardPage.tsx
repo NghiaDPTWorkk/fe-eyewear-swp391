@@ -6,6 +6,7 @@ import { Card } from '@/shared/components/ui/card'
 import { SalesStaffDashboardTable } from '@/features/sales/components/dashboard/SalesStaffDashboardTable'
 import { SalesStaffDashboardCharts } from '@/features/sales/components/dashboard/SalesStaffDashboardCharts'
 import { useSalesStaffInvoices } from '@/features/sales/hooks/useSalesStaffInvoices'
+import { useSalesStaffAction } from '@/features/sales/hooks/useSalesStaffAction'
 import {
   IoClipboardOutline,
   IoWalletOutline,
@@ -48,10 +49,18 @@ const METRICS: any[] = [
 export default function SaleStaffDashboardPage() {
   const navigate = useNavigate()
   const { invoices, loading, fetchInvoices } = useSalesStaffInvoices()
+  const { approveInvoice } = useSalesStaffAction()
 
   useEffect(() => {
     fetchInvoices()
   }, [fetchInvoices])
+
+  const handleApproveInvoice = async (id: string) => {
+    if (window.confirm('Are you sure you want to approve this invoice?')) {
+      await approveInvoice(id)
+      fetchInvoices()
+    }
+  }
 
   return (
     <Container>
@@ -84,6 +93,7 @@ export default function SaleStaffDashboardPage() {
           invoices={invoices}
           loading={loading}
           onInvoiceClick={(inv) => navigate(`/salestaff/orders?invoiceId=${inv.id}`)}
+          onApproveInvoice={handleApproveInvoice}
         />
       </Card>
     </Container>

@@ -11,7 +11,6 @@ interface CartItemProps {
 export const CartItem = ({ item }: CartItemProps) => {
   const { updateQuantity, removeItem, toggleSelection } = useCartStore()
   const [isLensesOpen, setIsLensesOpen] = useState(false)
-  const [hasProtectionPlan, setHasProtectionPlan] = useState(false)
 
   // Mock data to match design
   const hasPromo = true
@@ -75,105 +74,91 @@ export const CartItem = ({ item }: CartItemProps) => {
           </div>
 
           {/* Collapsible Lenses Section */}
-          <div className="mb-8">
-            <button
-              onClick={() => setIsLensesOpen(!isLensesOpen)}
-              className="flex items-center gap-2 text-base font-bold text-[#4F8B8B] hover:text-[#3D6E6E] transition-colors mb-4"
-            >
-              {item.lens ? 'Your lenses' : 'Standard lenses'}
-              {isLensesOpen ? (
-                <ChevronUp className="w-4 h-4" />
-              ) : (
-                <ChevronDown className="w-4 h-4" />
-              )}
-            </button>
+          {item.productType !== 'lens' && (
+            <div className="mb-8">
+              <button
+                onClick={() => setIsLensesOpen(!isLensesOpen)}
+                className="flex items-center gap-2 text-base font-bold text-[#4F8B8B] hover:text-[#3D6E6E] transition-colors mb-4"
+              >
+                {item.lens ? 'Your lenses' : 'Standard lenses'}
+                {isLensesOpen ? (
+                  <ChevronUp className="w-4 h-4" />
+                ) : (
+                  <ChevronDown className="w-4 h-4" />
+                )}
+              </button>
 
-            {isLensesOpen && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-3 mb-6 animate-in fade-in slide-in-from-top-2 duration-300">
-                {item.lens ? (
-                  <>
-                    <div className="flex justify-between gap-4 py-0.5">
-                      <span className="text-sm text-gray-400 whitespace-nowrap">Vision Need</span>
-                      <span className="text-sm text-[#000000] font-bold text-right uppercase">
-                        {item.lens.visionNeed.replace('-', ' ')}
-                      </span>
-                    </div>
-                    {item.lens.prescription && (
-                      <>
-                        <div className="md:col-span-2 border-t border-mint-50 mt-2 pt-2">
-                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
-                            Prescription Details
-                          </p>
-                          <div className="grid grid-cols-2 gap-8 bg-mint-50/30 p-3 rounded-lg">
-                            <div>
-                              <p className="text-[10px] font-bold text-mint-700 uppercase mb-1">
-                                Right (OD)
-                              </p>
-                              <p className="text-xs font-bold text-mint-1200">
-                                SPH: {item.lens.prescription.right.SPH} | CYL:{' '}
-                                {item.lens.prescription.right.CYL} | AXIS:{' '}
-                                {item.lens.prescription.right.AXIS}
-                                {item.lens.prescription.right.ADD &&
-                                  ` | ADD: ${item.lens.prescription.right.ADD}`}
-                              </p>
-                            </div>
-                            <div>
-                              <p className="text-[10px] font-bold text-mint-700 uppercase mb-1">
-                                Left (OS)
-                              </p>
-                              <p className="text-xs font-bold text-mint-1200">
-                                SPH: {item.lens.prescription.left.SPH} | CYL:{' '}
-                                {item.lens.prescription.left.CYL} | AXIS:{' '}
-                                {item.lens.prescription.left.AXIS}
-                                {item.lens.prescription.left.ADD &&
-                                  ` | ADD: ${item.lens.prescription.left.ADD}`}
-                              </p>
-                            </div>
-                            <div className="col-span-2 mt-1">
-                              <p className="text-[10px] font-bold text-mint-700 uppercase mb-1">
-                                PD
-                              </p>
-                              <p className="text-xs font-bold text-mint-1200">
-                                {item.lens.prescription.PD}
-                              </p>
+              {isLensesOpen && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-3 mb-6 animate-in fade-in slide-in-from-top-2 duration-300">
+                  {item.lens ? (
+                    <>
+                      <div className="flex justify-between gap-4 py-0.5">
+                        <span className="text-sm text-gray-400 whitespace-nowrap">Vision Need</span>
+                        <span className="text-sm text-[#000000] font-bold text-right uppercase">
+                          {item.lens.visionNeed.replace('-', ' ')}
+                        </span>
+                      </div>
+                      {item.lens.prescription && (
+                        <>
+                          <div className="md:col-span-2 border-t border-mint-50 mt-2 pt-2">
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
+                              Prescription Details
+                            </p>
+                            <div className="grid grid-cols-2 gap-8 bg-mint-50/30 p-3 rounded-lg">
+                              <div>
+                                <p className="text-[10px] font-bold text-mint-700 uppercase mb-1">
+                                  Right (OD)
+                                </p>
+                                <p className="text-xs font-bold text-mint-1200">
+                                  SPH: {item.lens.prescription.right.SPH} | CYL:{' '}
+                                  {item.lens.prescription.right.CYL} | AXIS:{' '}
+                                  {item.lens.prescription.right.AXIS}
+                                  {item.lens.prescription.right.ADD &&
+                                    ` | ADD: ${item.lens.prescription.right.ADD}`}
+                                </p>
+                              </div>
+                              <div>
+                                <p className="text-[10px] font-bold text-mint-700 uppercase mb-1">
+                                  Left (OS)
+                                </p>
+                                <p className="text-xs font-bold text-mint-1200">
+                                  SPH: {item.lens.prescription.left.SPH} | CYL:{' '}
+                                  {item.lens.prescription.left.CYL} | AXIS:{' '}
+                                  {item.lens.prescription.left.AXIS}
+                                  {item.lens.prescription.left.ADD &&
+                                    ` | ADD: ${item.lens.prescription.left.ADD}`}
+                                </p>
+                              </div>
+                              <div className="col-span-2 mt-1">
+                                <p className="text-[10px] font-bold text-mint-700 uppercase mb-1">
+                                  PD
+                                </p>
+                                <p className="text-xs font-bold text-mint-1200">
+                                  {item.lens.prescription.PD}
+                                </p>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </>
-                    )}
-                  </>
-                ) : (
-                  <div className="flex justify-between gap-4 py-0.5">
-                    <span className="text-sm text-gray-400 whitespace-nowrap">Type</span>
-                    <span className="text-sm text-[#000000] font-bold text-right">
-                      Standard Sunglass Lenses
-                    </span>
+                        </>
+                      )}
+                    </>
+                  ) : (
+                    <div className="flex justify-between gap-4 py-0.5">
+                      <span className="text-sm text-gray-400 whitespace-nowrap">Type</span>
+                      <span className="text-sm text-[#000000] font-bold text-right">
+                        Standard Sunglass Lenses
+                      </span>
+                    </div>
+                  )}
+                  <div className="md:col-span-2 flex justify-end mt-4">
+                    <button className="text-xs font-bold text-[#4F8B8B] hover:underline uppercase tracking-widest">
+                      Edit
+                    </button>
                   </div>
-                )}
-                <div className="md:col-span-2 flex justify-end mt-4">
-                  <button className="text-xs font-bold text-[#4F8B8B] hover:underline uppercase tracking-widest">
-                    Edit
-                  </button>
                 </div>
-              </div>
-            )}
-
-            <div className="flex items-center gap-3 mt-4">
-              <Checkbox
-                isChecked={hasProtectionPlan}
-                onCheckedChange={setHasProtectionPlan}
-                id={`protection-${item.product_id}`}
-              />
-              <label
-                htmlFor={`protection-${item.product_id}`}
-                className="text-sm text-gray-600 font-medium cursor-pointer"
-              >
-                Add{' '}
-                <span className="font-bold underline text-[#000000]">Glasses Protection Plan</span>{' '}
-                ($24.99)
-              </label>
+              )}
             </div>
-          </div>
+          )}
 
           {/* Promo Section */}
           <div className="space-y-2 py-6 border-t border-gray-100">

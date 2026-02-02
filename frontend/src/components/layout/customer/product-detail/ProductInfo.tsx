@@ -47,11 +47,9 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
   const [isLensModalOpen, setIsLensModalOpen] = useState(false)
 
   const handleAddToCart = () => {
-    console.log('🛒 Add to Cart clicked!')
-    console.log('Product data:', product)
-
-    const isAuth = isAuthenticated || !!localStorage.getItem('accessToken')
-    console.log('Is authenticated:', isAuth)
+    // Check for token in both possible localStorage keys
+    const token = localStorage.getItem('accessToken') || localStorage.getItem('access_token')
+    const isAuth = isAuthenticated && token
 
     if (!isAuth) {
       toast.error('Please login to add items to cart')
@@ -60,79 +58,49 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
     }
 
     const type = (product as any).type || 'frame'
-    console.log('Product type:', type)
 
-    if (type === 'frame' || type === 'lens') {
-      console.log('Opening lens modal for frame/lens product')
+    if (type === 'frame') {
       setIsLensModalOpen(true)
       return
     }
 
     // Sunglass or default frame path
-    console.log('Proceeding to add sunglass to cart')
     performAddToCart()
   }
 
   const handleLensConfirm = (selection: LensSelectionState) => {
-    performAddToCart(selection)
+    performAddToCart({
+      ...selection,
+      sku: selection.sku
+    })
   }
 
   const performAddToCart = async (lensSelection?: LensSelectionState) => {
-    console.log('📦 performAddToCart called')
-    console.log('Current variant:', currentVariant)
-    console.log('Is in stock:', isInStock)
-    console.log('Lens selection:', lensSelection)
-
     // Validation: Check if variant is selected and in stock
     if (!currentVariant) {
-      console.error('❌ No variant selected')
       toast.error('Please select a valid product variant')
       return
     }
 
     if (!isInStock) {
-      console.error('❌ Product out of stock')
       toast.error('This variant is currently out of stock')
       return
     }
 
-    // Use productId from URL params (passed as prop) instead of extracting from product
-    // This is more reliable since backend may not return _id or id in the response
     const productAny = product as any
-    const extractedId = productAny.id || productAny._id || productAny.skuBase
 
-    console.log('🔍 Product ID extraction:')
-    console.log('  productId (from URL prop):', productId)
-    console.log('  id (from product):', productAny.id)
-    console.log('  _id (from product):', productAny._id)
-    console.log('  skuBase (from product):', productAny.skuBase)
-    console.log('  extractedId:', extractedId)
-    console.log('  Final productId (using prop):', productId)
-    console.log('  SKU:', currentVariant.sku)
+    // Prioritize the MongoDB ID from the product object if available
+    // Otherwise fallback to the ID from the URL prop
+    const finalProductId = productAny._id || productAny.id || productId
 
-    if (!productId) {
-      console.error('❌ Product ID is missing from URL! Using fallback:', extractedId)
-      if (!extractedId) {
-        toast.error('Unable to add to cart: Product ID not found')
-        return
-      }
+    if (!finalProductId) {
+      toast.error('Unable to add to cart: Product ID not found')
+      return
     }
 
-    // Use productId from prop (URL) as the primary source
-    const finalProductId = productId || extractedId
-
     try {
-      console.log('🚀 Calling addItemAsync with:', {
-        productId: finalProductId,
-        sku: currentVariant.sku,
-        quantity: 1,
-        lensSelection
-      })
-
       // Call async add to cart with API integration
       await addItemAsync(finalProductId, currentVariant.sku, 1, lensSelection)
-
-      console.log('✅ Successfully added to cart')
 
       // Show success message
       if (lensSelection) {
@@ -146,8 +114,6 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
         setIsLensModalOpen(false)
       }
     } catch (error: any) {
-      console.error('❌ Error adding to cart:', error)
-
       // Handle specific errors
       if (error.message === 'UNAUTHORIZED') {
         toast.error('Please login to add items to cart')
@@ -348,9 +314,7 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
                 ? 'Out of Stock'
                 : (product as any).type === 'frame'
                   ? 'Select Lenses'
-                  : (product as any).type === 'lens'
-                    ? 'Enter Prescription & Add'
-                    : 'Add to Cart'}
+                  : 'Add to Cart'}
         </Button>
         <Button
           variant="outline"
@@ -396,6 +360,8 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
         productName={product.nameBase}
         productImage={currentVariant?.imgs?.[0] || images[0] || ''}
         productType={(product as any).type || 'frame'}
+        productId={productId}
+        sku={currentVariant?.sku || ''}
       />
     </div>
   )

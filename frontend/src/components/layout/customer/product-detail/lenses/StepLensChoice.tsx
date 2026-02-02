@@ -1,14 +1,17 @@
+import { useState } from 'react'
 import { Glasses, Loader2, AlertCircle } from 'lucide-react'
 import { Card, Button } from '@/shared/components/ui'
 import { useGetProductWithType } from '@/shared/hooks/products/useGetProductWithType'
+import { productService } from '@/shared/services/products/productService'
 import type { Product } from '@/shared/types/product.types'
 
 interface StepLensChoiceProps {
-  onSelect: (lensId: string) => void
+  onSelect: (lensId: string, lensSku: string) => void
 }
 
 export default function StepLensChoice({ onSelect }: StepLensChoiceProps) {
   const { products, loading, error } = useGetProductWithType(1, 10, 'lens')
+  const [selectingId, setSelectingId] = useState<string | null>(null)
 
   if (loading) {
     return (
@@ -52,17 +55,42 @@ export default function StepLensChoice({ onSelect }: StepLensChoiceProps) {
           </div>
         ) : (
           products.map((lens: Product) => {
+            const productAny = lens as any
             const defaultVariant =
               lens.variants?.find((v: any) => v.isDefault) || lens.variants?.[0]
+
+            const id = lens._id || lens.id || lens.skuBase
+
+            const lensSku = defaultVariant?.sku || productAny.sku || lens.skuBase || ''
             const price = lens.defaultVariantFinalPrice || defaultVariant?.finalPrice || 0
             const originalPrice = lens.defaultVariantPrice || defaultVariant?.price || 0
-            const id = lens.id || lens._id || lens.skuBase
 
             return (
               <Card
                 key={id}
-                onClick={() => onSelect(id)}
-                className="group p-6 border-2 border-mint-100 rounded-2xl hover:border-primary-500 hover:bg-primary-50 transition-all text-left flex items-center gap-6 cursor-pointer"
+                onClick={async () => {
+                  if (selectingId) return
+                  setSelectingId(id)
+                  try {
+                    // Always fetch detail to ensure we have the correct variant SKU
+                    const response = await productService.getProductDetail(id)
+                    const fullLens = response.data.product
+                    const variant =
+                      fullLens.variants?.find((v: any) => v.isDefault) || fullLens.variants?.[0]
+                    const finalSku = variant?.sku || fullLens.sku || fullLens.skuBase
+                    onSelect(id, finalSku)
+                  } catch (err) {
+                    console.error('error neeee: ', err)
+                    onSelect(id, lensSku) // Fallback to current best guess
+                  } finally {
+                    setSelectingId(null)
+                  }
+                }}
+                className={`group p-6 border-2 rounded-2xl transition-all text-left flex items-center gap-6 cursor-pointer ${
+                  selectingId === id
+                    ? 'border-primary-500 bg-primary-50 animate-pulse'
+                    : 'border-mint-100 hover:border-primary-500 hover:bg-primary-50'
+                }`}
               >
                 <div className="w-16 h-16 bg-mint-100 rounded-xl flex items-center justify-center group-hover:bg-primary-100 transition-colors shrink-0 overflow-hidden">
                   {lens.defaultVariantImage || lens.imageUrl ? (

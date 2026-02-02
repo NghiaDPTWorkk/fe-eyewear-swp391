@@ -13,6 +13,7 @@ type ButtonOwnProps<E extends ElementType = 'button'> = {
   rightIcon?: ReactNode
   isDisabled?: boolean
   isFullWidth?: boolean
+  isLoading?: boolean
   children?: ReactNode
   className?: string
 } & VariantProps<typeof buttonVariants>
@@ -43,10 +44,15 @@ export function Button<E extends ElementType = 'button'>({
         className
       )}
       disabled={Component === 'button' ? isDisabled : undefined}
-      aria-disabled={Component !== 'button' ? isDisabled : undefined}
+      aria-disabled={Component !== 'button' ? isDisabled || (props as any).isLoading : undefined}
       {...props}
     >
-      {leftIcon && <span className="inline-flex shrink-0">{leftIcon}</span>}
+      {(props as any).isLoading && (
+        <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+      )}
+      {leftIcon && !(props as any).isLoading && (
+        <span className="inline-flex shrink-0">{leftIcon}</span>
+      )}
       {children}
       {rightIcon && <span className="inline-flex shrink-0">{rightIcon}</span>}
     </Component>

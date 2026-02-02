@@ -1,5 +1,6 @@
-import type { Address, PaymentMethodType, PaymentStatus } from '.'
-import type { OrderProduct } from './order.types'
+import type { Address, PaymentMethodType } from '.'
+import type { OrderProduct } from './order-item.types'
+import type { InvoiceStatus } from './enums'
 
 /**
  * {
@@ -42,7 +43,7 @@ export interface Invoice {
   totalPrice: number
   voucher: string[]
   address: Address
-  status: string
+  status: InvoiceStatus
   fullName: string
   phone: string
   totalDiscount: number
@@ -54,19 +55,7 @@ export interface Invoice {
   __v?: number
 }
 
-export interface Payment {
-  _id: string
-  ownerId: string
-  invoiceId: string
-  paymentMethod: PaymentMethodType
-  status: PaymentStatus
-  note: string
-  price: number
-  createdAt: string
-  updatedAt: string
-  deletedAt?: string | null
-  __v?: number
-}
+// Timestamps are strings in API response
 
 /**
  * {
@@ -114,13 +103,12 @@ export interface Payment {
 }
  */
 
-export interface CreateInvoiceResponse {
+export interface InvoiceResponse {
   invoice: Invoice
-  payment: Payment
 }
 
 export interface CreateInvoiceApiResponse {
   success: boolean
   message: string
-  data: CreateInvoiceResponse
+  data: InvoiceResponse
 }

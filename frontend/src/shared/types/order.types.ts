@@ -1,5 +1,11 @@
-import type { OrderType, OrderStatus, AssignmentOrderStatus, InvoiceStatus } from './enums'
+import type { OrderType, OrderStatus, AssignmentOrderStatus } from './enums'
 import type { Address } from './address.types'
+import type { LensParameters, OrderProduct } from './order-item.types'
+import type { Invoice } from './invoice.types'
+
+/**
+ * Order product structure matching backend - Imported from order-item.types.ts
+ */
 
 export interface Order {
   _id: string
@@ -20,22 +26,7 @@ export interface Order {
   deletedAt?: Date | null
 }
 
-export interface Invoice {
-  _id: string
-  orders: string[] // Order IDs
-  owner: string
-  totalPrice: number
-  voucher: string[]
-  address: Address
-  status: InvoiceStatus
-  fullName: string
-  phone: string
-  totalDiscount: number
-  manager_onboard?: string | null
-  createdAt: Date
-  updatedAt: Date
-  deletedAt?: Date | null
-}
+// Invoice interface is moved to invoice.types.ts
 
 /**
  * Create order request matching backend ClientCreateOrderSchema
@@ -120,9 +111,7 @@ export interface OrderListResponse {
   }
 }
 
-export interface InvoiceResponse {
-  invoice: Invoice
-}
+// InvoiceResponse is moved to invoice.types.ts
 
 export interface InvoiceListResponse {
   items: Invoice[]

@@ -4,6 +4,7 @@ export interface User {
   _id: string
   email: string
   name: string
+  fullName?: string
   phone?: string
   gender?: 'F' | 'M' | 'N' | string
   address?: Address[]

@@ -15,7 +15,7 @@ export const SalesStaffRxActions: React.FC<SalesStaffRxActionsProps> = ({
 }) => {
   if (order.status !== 'WAITING_ASSIGN') {
     return (
-      <span className="px-3 py-1 bg-emerald-50 text-emerald-500 border border-emerald-100 rounded-full text-[10px] font-bold uppercase tracking-wider">
+      <span className="px-3 py-1 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-full text-[10px] font-semibold uppercase tracking-wider">
         Verified
       </span>
     )
@@ -25,7 +25,7 @@ export const SalesStaffRxActions: React.FC<SalesStaffRxActionsProps> = ({
     <div className="flex gap-2 justify-center">
       <Button
         size="sm"
-        className="bg-primary-500 hover:bg-primary-600 text-white text-[11px] font-bold px-3 py-1 rounded-lg"
+        className="bg-primary-500 hover:bg-primary-600 text-white text-[11px] font-semibold px-3 py-1 rounded-lg"
         onClick={(e) => {
           e.stopPropagation()
           onVerify()
@@ -36,7 +36,7 @@ export const SalesStaffRxActions: React.FC<SalesStaffRxActionsProps> = ({
       <Button
         variant="outline"
         size="sm"
-        className="border-red-100 text-red-500 hover:bg-red-50 text-[11px] font-bold px-3 py-1 rounded-lg"
+        className="border-red-100 text-red-500 hover:bg-red-50 text-[11px] font-semibold px-3 py-1 rounded-lg"
         onClick={(e) => {
           e.stopPropagation()
           onReject()

@@ -12,7 +12,7 @@ export interface MetricCardProps {
     isPositive: boolean
   }
   icon?: ReactNode
-  colorScheme?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info'
+  colorScheme?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info' | 'mint'
   className?: string
   progress?: {
     value: number
@@ -33,7 +33,9 @@ export function MetricCard({
   const getIconBgColor = () => {
     switch (colorScheme) {
       case 'primary':
-        return 'bg-blue-50 text-blue-600'
+        return 'bg-mint-50 text-mint-700'
+      case 'mint':
+        return 'bg-primary-100 text-primary-600'
       case 'secondary':
         return 'bg-purple-50 text-purple-600'
       case 'success':
@@ -53,10 +55,21 @@ export function MetricCard({
     <Card className={cn('p-6', className)}>
       <div className="flex justify-between items-start">
         <div>
-          <p className="text-sm font-medium text-gray-500">{label}</p>
-          <h3 className="text-2xl font-bold mt-2 text-gray-900">{value}</h3>
+          <p className="text-[12px] font-bold text-slate-400 uppercase tracking-widest">{label}</p>
+          <h3 className="text-3xl font-bold mt-2 text-slate-900 font-heading tracking-tight">
+            {value}
+          </h3>
         </div>
-        {icon && <div className={cn('p-3 rounded-lg', getIconBgColor())}>{icon}</div>}
+        {icon && (
+          <div
+            className={cn(
+              'p-3.5 rounded-2xl shadow-sm transition-transform hover:scale-105',
+              getIconBgColor()
+            )}
+          >
+            {icon}
+          </div>
+        )}
       </div>
 
       {(trend || subValue) && (
@@ -85,8 +98,11 @@ export function MetricCard({
       )}
 
       {!progress && label?.includes('Target') && subValue && (
-        <div className="mt-3 w-full bg-gray-100 rounded-full h-1.5">
-          <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: '85%' }}></div>
+        <div className="mt-4 w-full bg-neutral-100 rounded-full h-2 overflow-hidden shadow-inner">
+          <div
+            className="bg-primary-500 h-full rounded-full transition-all duration-1000"
+            style={{ width: '85%' }}
+          ></div>
         </div>
       )}
     </Card>

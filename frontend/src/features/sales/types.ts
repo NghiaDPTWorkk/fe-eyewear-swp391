@@ -58,6 +58,7 @@ export interface OrderDetail {
         PD: number
       }
     }
+    prescriptionImageUrl?: string
   }[]
   assignedAt?: string | null
   startedAt?: string | null

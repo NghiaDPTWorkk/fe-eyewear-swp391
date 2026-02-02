@@ -13,9 +13,7 @@ export const useSalesStaffOrders = () => {
     setError(null)
     try {
       const response = await httpClient.get<any>('/admin/invoices/deposited')
-
       const invoices = response.data?.data || response.data || []
-
       const allOrders: Order[] = []
 
       if (Array.isArray(invoices)) {
@@ -24,16 +22,15 @@ export const useSalesStaffOrders = () => {
             inv.orders.forEach((ord: any) => {
               allOrders.push({
                 ...ord,
-                _id: ord.id,
-                orderCode: ord.orderCode || inv.invoiceCode,
-                invoiceId: inv.id,
-                customerName: inv.fullName,
-                customerPhone: inv.phone,
+                _id: ord.id || ord._id,
+                orderCode: ord.orderCode || inv.invoiceCode || `ORD-${ord.id || ord._id}`,
+                invoiceId: inv.id || inv._id,
+                customerName: inv.fullName || inv.customer?.fullName || 'Guest',
+                customerPhone: inv.phone || inv.customer?.phone || '',
                 createdAt: inv.createdAt,
-                status: ord.status || inv.status,
-                isPrescription: ord.type?.includes('MANUFACTURING') || false,
-                price: Number(inv.finalPrice?.replace(/[^0-9]/g, '') || 0),
-                products: ord.products || []
+                status: ord.status || 'DEPOSITED',
+                isPrescription: ord.type?.includes('MANUFACTURING') || ord.isPrescription || false,
+                products: ord.products || ord.orderItems || []
               })
             })
           }
@@ -51,11 +48,29 @@ export const useSalesStaffOrders = () => {
   const fetchOrderDetail = useCallback(async (orderId: string | number) => {
     setLoading(true)
     try {
-      const response = await httpClient.get<{ data: { order: OrderDetail } }>(
+      const response = await httpClient.get<{ data: { order: any } } | any>(
         `/admin/orders/${orderId}`
       )
-      const orderData = response.data?.order
-      return orderData || null
+      const ord = response.data?.order || response.data?.data?.order || response.data || null
+
+      if (!ord) return null
+
+      const transformed: OrderDetail = {
+        ...ord,
+        _id: ord._id || ord.id,
+        orderCode: ord.orderCode || `ORD-${ord.id || ord._id}`,
+        invoiceId: ord.invoiceId || ord.invoice?._id,
+        customerName:
+          ord.customerName || ord.invoice?.fullName || ord.invoice?.customer?.fullName || 'Guest',
+        customerPhone:
+          ord.customerPhone || ord.invoice?.phone || ord.invoice?.customer?.phone || '',
+        createdAt: ord.createdAt,
+        status: ord.status,
+        isPrescription: ord.type?.includes('MANUFACTURING') || ord.isPrescription || false,
+        products: ord.products || ord.orderItems || []
+      }
+
+      return transformed
     } catch (err: any) {
       setError(err.message || 'Failed to fetch order detail')
       return null

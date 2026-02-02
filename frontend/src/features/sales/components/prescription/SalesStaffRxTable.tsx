@@ -26,10 +26,11 @@ export const SalesStaffRxTable: React.FC<SalesStaffRxTableProps> = ({
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-left border-collapse">
-        <thead className="bg-white border-b border-neutral-100 text-[10px] uppercase text-slate-400 font-bold tracking-widest">
+        <thead className="bg-white border-b border-neutral-100 text-[10px] uppercase text-slate-400 font-semibold tracking-widest">
           <tr className="text-center">
-            <th className="px-6 py-5">Order ID</th>
+            <th className="px-6 py-5">Order Code</th>
             <th className="px-6 py-5 text-left">Lens / Product</th>
+            <th className="px-6 py-5">Customer</th>
             <th className="px-6 py-5">Rx Summary</th>
             <th className="px-6 py-5">Status</th>
             <th className="px-6 py-5">Actions</th>

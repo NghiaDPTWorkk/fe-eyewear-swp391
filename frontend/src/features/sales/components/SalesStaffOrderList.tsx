@@ -6,7 +6,6 @@ import { SalesStaffOrderCard } from './SalesStaffOrderCard'
 interface SalesStaffOrderListProps {
   orders: Order[]
   onVerify: (order: Order) => void
-  onReject: (order: Order) => void
   onViewDetail: (order: Order) => void
   onChat: (order: Order) => void
   loading?: boolean
@@ -15,7 +14,6 @@ interface SalesStaffOrderListProps {
 export const SalesStaffOrderList: React.FC<SalesStaffOrderListProps> = ({
   orders,
   onVerify,
-  onReject,
   onViewDetail,
   onChat,
   loading
@@ -34,12 +32,12 @@ export const SalesStaffOrderList: React.FC<SalesStaffOrderListProps> = ({
         <table className="w-full text-left border-collapse">
           <thead className="bg-white border-b border-neutral-100 text-[10px] uppercase text-slate-400 font-bold tracking-widest">
             <tr>
-              <th className="px-6 py-5 text-center w-28">Order ID</th>
-              <th className="px-6 py-5">SKU / Product</th>
-              <th className="px-6 py-5 text-center">Customer</th>
+              <th className="px-6 py-5 text-center w-28">Order Code</th>
+              <th className="px-6 py-5">Customer Name</th>
+              <th className="px-6 py-5 text-center">Date</th>
               <th className="px-6 py-5 text-center">Type</th>
               <th className="px-6 py-5 text-center">Verification</th>
-              <th className="px-6 py-5 text-center">Lab Status</th>
+              <th className="px-6 py-5 text-center">Status</th>
               <th className="px-6 py-5 text-center w-40">Actions</th>
             </tr>
           </thead>
@@ -56,7 +54,6 @@ export const SalesStaffOrderList: React.FC<SalesStaffOrderListProps> = ({
                   key={order._id}
                   order={order}
                   onVerify={() => onVerify(order)}
-                  onReject={() => onReject(order)}
                   onViewDetail={() => onViewDetail(order)}
                   onChat={() => onChat(order)}
                 />

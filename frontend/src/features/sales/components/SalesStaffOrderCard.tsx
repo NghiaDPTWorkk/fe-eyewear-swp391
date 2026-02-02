@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-  IoGlassesOutline,
   IoCheckmarkCircleOutline,
   IoEyeOutline,
   IoChatbubbleEllipsesOutline
@@ -11,7 +10,6 @@ import type { Order } from '../types'
 interface SalesStaffOrderCardProps {
   order: Order
   onVerify: () => void
-  onReject: () => void
   onViewDetail: () => void
   onChat: () => void
 }
@@ -36,40 +34,32 @@ export const SalesStaffOrderCard: React.FC<SalesStaffOrderCardProps> = ({
       onClick={onViewDetail}
     >
       <td className="px-4 py-6 text-center">
-        <span className="text-sm font-bold text-emerald-500 uppercase">
-          {order.orderCode?.split('_')[0] || 'ORD'}-{order._id.slice(-3).toUpperCase()}
-        </span>
+        <span className="text-sm font-semibold text-emerald-500 uppercase">{order.orderCode}</span>
       </td>
 
-      <td className="px-6 py-6 font-primary">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-neutral-50 rounded-xl flex items-center justify-center text-primary-500 group-hover:bg-white transition-colors">
-            <IoGlassesOutline size={20} />
-          </div>
-          <div className="flex flex-col">
-            <div className="text-[13px] font-bold text-slate-700 uppercase tracking-tight">
-              {order.products?.[0]?.product?.sku || 'N/A'}
-            </div>
-            <div className="text-[11px] text-slate-400 font-medium whitespace-nowrap overflow-hidden text-ellipsis max-w-[150px]">
-              {order.products?.[0]?.product?.product_name || 'Ray-Ban Aviator Gold'}
-            </div>
-          </div>
+      <td className="px-6 py-6 font-primary text-center">
+        <div className="flex flex-col">
+          <span className="text-sm font-semibold text-slate-700">
+            {order.customerName || 'Guest User'}
+          </span>
+          <span className="text-[11px] text-slate-400 font-normal">
+            {order.customerPhone || '+1 (555) 012-3456'}
+          </span>
         </div>
       </td>
 
       <td className="px-4 py-6 text-center">
         <div className="flex flex-col items-center">
-          <span className="text-sm font-bold text-slate-700">
-            {order.customerName || 'Guest User'}
+          <span className="text-sm text-slate-500 font-medium">
+            {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A'}
           </span>
-          <span className="text-[11px] text-slate-400 font-medium">+1 (555) 012-3456</span>
         </div>
       </td>
 
       <td className="px-4 py-6 text-center">
         <span
           className={cn(
-            'px-3 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider',
+            'px-3 py-1 rounded-lg text-[9px] font-semibold uppercase tracking-wider',
             isMfg
               ? 'bg-indigo-50 text-indigo-500'
               : isPreorder
@@ -85,13 +75,13 @@ export const SalesStaffOrderCard: React.FC<SalesStaffOrderCardProps> = ({
         {isMfg ? (
           <span
             className={cn(
-              'px-3 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider',
+              'px-3 py-1 rounded-lg text-[9px] font-semibold uppercase tracking-wider',
               isVerified
                 ? 'bg-emerald-50 text-emerald-500 border border-emerald-100'
                 : 'bg-amber-50 text-amber-500 border border-amber-100'
             )}
           >
-            {isVerified ? 'APPROVED' : '-'}
+            {isVerified ? 'VERIFIED' : 'NOT VERIFIED'}
           </span>
         ) : (
           <span className="text-slate-300 font-medium">-</span>
@@ -101,7 +91,7 @@ export const SalesStaffOrderCard: React.FC<SalesStaffOrderCardProps> = ({
       <td className="px-4 py-6 text-center">
         <span
           className={cn(
-            'px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider border',
+            'px-4 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-wider border',
             order.status === 'PROCESSING'
               ? 'bg-blue-50 text-blue-500 border-blue-100'
               : order.status === 'COMPLETED'

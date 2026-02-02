@@ -11,9 +11,7 @@ export default defineConfig({
     proxy: {
       '/api': {
         target: 'http://34.92.192.47:5000',
-        changeOrigin: true,
-        secure: false,
-        rewrite: (path) => path.replace(/^\/api/, '/api/v1')
+        changeOrigin: true
       }
     }
   },

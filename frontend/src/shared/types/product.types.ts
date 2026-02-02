@@ -31,6 +31,7 @@ export interface StandardProduct {
   nameBase: string
   slugBase: string
   skuBase: string
+  sku?: string
   type: ProductType
   brand: string | null
   categories: string[]

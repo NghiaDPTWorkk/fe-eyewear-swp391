@@ -11,8 +11,6 @@ export const cartApi = {
    * @returns Giỏ hàng đã cập nhật
    */
   addProductToCart: (payload: AddToCartPayload) => {
-    console.log(payload)
-
     return httpClient.post<AddToCartResponse>(ENDPOINTS.CART.ADD, payload)
   },
 

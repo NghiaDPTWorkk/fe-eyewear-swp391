@@ -211,7 +211,7 @@ export const cartService = {
       if (lensSelection && lensSelection.lensId) {
         payload.item.lens = {
           lens_id: lensSelection.lensId,
-          sku: lensSelection.sku || '', // Use the same SKU or lens SKU if different
+          sku: lensSelection.sku || '',
           parameters:
             lensSelection.prescription && lensSelection.visionNeed === 'prescription'
               ? transformPrescriptionToParameters(lensSelection.prescription)

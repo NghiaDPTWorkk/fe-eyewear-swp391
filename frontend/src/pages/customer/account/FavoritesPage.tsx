@@ -1,37 +1,27 @@
-import { useState } from 'react'
+import { useEffect } from 'react'
 import { Heart } from 'lucide-react'
 import { FavoriteItem } from '@/components/layout/customer/account/favorites/FavoriteItem'
 import { Card } from '@/shared/components/ui/card'
-
-const MOCK_FAVORITES = [
-  {
-    id: 'f1',
-    brand: 'Emporio Armani',
-    name: 'EA3211 Rectangular',
-    image:
-      'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&q=80&w=300',
-    price: 137.2,
-    originalPrice: 196.0,
-    discount: '30%',
-    frameSize: 'Small (54-16)',
-    frameColor: 'Shiny Opaline Azure'
-  },
-  {
-    id: 'f2',
-    brand: 'Ray-Ban',
-    name: 'Clubmaster Classic',
-    image:
-      'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&q=80&w=300',
-    price: 154.0,
-    frameSize: 'Medium (51-21)',
-    frameColor: 'Mock Tortoise'
-  }
-]
+import { useWishlistStore } from '@/store/wishlist.store'
+import { useNavigate } from 'react-router-dom'
 
 export function FavoritesPage() {
-  const [favorites] = useState(MOCK_FAVORITES)
+  const { items, isLoading, fetchWishlist, toggleWishlist, isInitialized } = useWishlistStore()
+  const navigate = useNavigate()
 
-  const isEmpty = favorites.length === 0
+  useEffect(() => {
+    fetchWishlist(true)
+  }, [fetchWishlist, isInitialized])
+
+  const isEmpty = items.length === 0
+
+  if (isLoading && !isInitialized) {
+    return (
+      <div className="flex items-center justify-center p-20">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500" />
+      </div>
+    )
+  }
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -51,35 +41,36 @@ export function FavoritesPage() {
           <p className="text-gray-400 font-medium text-center max-w-xs mb-8">
             Explore our collection and save your favorite frames here to shop later.
           </p>
-          <button className="bg-mint-1200 text-white px-10 py-5 rounded-2xl font-bold uppercase tracking-widest text-xs hover:bg-black transition-all">
+          <button
+            onClick={() => navigate('/products')}
+            className="bg-mint-1200 text-white px-10 py-5 rounded-2xl font-bold uppercase tracking-widest text-xs hover:bg-black transition-all"
+          >
             Continue Shopping
           </button>
         </Card>
       ) : (
         <div className="flex flex-col">
-          {favorites.map((item) => (
-            <FavoriteItem key={item.id} {...item} />
-          ))}
-        </div>
-      )}
-
-      {/* Social Footer */}
-      {!isEmpty && (
-        <div className="mt-16 text-center">
-          <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px] mb-4">
-            Sharing is caring
-          </p>
-          <div className="flex justify-center gap-4">
-            <button className="w-12 h-12 rounded-2xl bg-white border border-mint-100 flex items-center justify-center text-mint-1200 hover:border-primary-500 hover:text-primary-600 transition-all shadow-sm">
-              f
-            </button>
-            <button className="w-12 h-12 rounded-2xl bg-white border border-mint-100 flex items-center justify-center text-mint-1200 hover:border-primary-500 hover:text-primary-600 transition-all shadow-sm">
-              t
-            </button>
-            <button className="w-12 h-12 rounded-2xl bg-white border border-mint-100 flex items-center justify-center text-mint-1200 hover:border-primary-500 hover:text-primary-600 transition-all shadow-sm">
-              in
-            </button>
-          </div>
+          {Array.isArray(items) &&
+            items.map((item) => (
+              <FavoriteItem
+                key={item._id || item.id}
+                id={item._id || item.id || ''}
+                name={item.nameBase}
+                brand={item.brand || 'No Brand'}
+                image={item.defaultVariantImage || ''}
+                price={item.defaultVariantFinalPrice || 0}
+                originalPrice={item.defaultVariantPrice}
+                discount={
+                  item.defaultVariantFinalPrice && item.defaultVariantPrice
+                    ? `${Math.round((1 - item.defaultVariantFinalPrice / item.defaultVariantPrice) * 100)}%`
+                    : undefined
+                }
+                frameSize="One Size" // Default for now
+                frameColor="Default" // Default for now
+                onRemove={() => toggleWishlist(item)}
+                onAddToCart={() => navigate(`/product/${item._id || item.id}`)}
+              />
+            ))}
         </div>
       )}
     </div>

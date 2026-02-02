@@ -7,13 +7,31 @@ import { ProductCard } from '@/shared/components/ui/product-card'
 import { ArrowRight } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useAuthStore } from '@/store'
-import toast from 'react-hot-toast'
+
+// Static data for filters
+const categories = [
+  { id: 'men', name: 'Men' },
+  { id: 'women', name: 'Women' },
+  { id: 'unisex', name: 'Unisex' }
+]
+
+const priceRanges = [
+  { id: 'range1', label: '$20.00 - $50.00', min: 20, max: 50 },
+  { id: 'range2', label: '$50.00 - $100.00', min: 50, max: 100 },
+  { id: 'range3', label: '$100.00 - $1200.00', min: 100, max: 1200 }
+]
+
+const colors = [
+  { id: 'black', name: 'Black', hex: '#000000' },
+  { id: 'brown', name: 'Brown', hex: '#8B4513' },
+  { id: 'red', name: 'Red', hex: '#DC143C' },
+  { id: 'gray', name: 'Gray', hex: '#808080' },
+  { id: 'white', name: 'White', hex: '#FFFFFF' }
+]
 
 export const CustomerProductPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const { isAuthenticated } = useAuthStore()
   const [page, setPage] = useState(1)
   const limit = 12
 
@@ -48,27 +66,6 @@ export const CustomerProductPage = () => {
 
   const canPrev = useMemo(() => currentPage > 1, [currentPage])
   const canNext = useMemo(() => currentPage < totalPages, [currentPage, totalPages])
-
-  // Mock data for filters - replace with real data from API
-  const categories = [
-    { id: 'men', name: 'Men' },
-    { id: 'women', name: 'Women' },
-    { id: 'unisex', name: 'Unisex' }
-  ]
-
-  const priceRanges = [
-    { id: 'range1', label: '$20.00 - $50.00', min: 20, max: 50 },
-    { id: 'range2', label: '$50.00 - $100.00', min: 50, max: 100 },
-    { id: 'range3', label: '$100.00 - $1200.00', min: 100, max: 1200 }
-  ]
-
-  const colors = [
-    { id: 'black', name: 'Black', hex: '#000000' },
-    { id: 'brown', name: 'Brown', hex: '#8B4513' },
-    { id: 'red', name: 'Red', hex: '#DC143C' },
-    { id: 'gray', name: 'Gray', hex: '#808080' },
-    { id: 'white', name: 'White', hex: '#FFFFFF' }
-  ]
 
   // Generate filter tags
   const filterTags = useMemo<FilterTag[]>(() => {
@@ -198,15 +195,6 @@ export const CustomerProductPage = () => {
                         discountPrice={discountPrice}
                         salePercent={salePercent}
                         onClick={(id) => navigate(`/products/${id}`)}
-                        onAddToWishlist={() => {
-                          const isAuth = isAuthenticated || !!localStorage.getItem('accessToken')
-                          if (!isAuth) {
-                            toast.error('Please login to add items to wishlist')
-                            navigate('/login', { state: { from: location } })
-                            return
-                          }
-                          toast.success('Added to wishlist!')
-                        }}
                       />
                     )
                   })}

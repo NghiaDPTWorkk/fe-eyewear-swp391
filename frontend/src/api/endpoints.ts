@@ -85,5 +85,11 @@ export const ENDPOINTS = {
     CREATE: '/invoices',
     LIST: '/invoices',
     DETAIL: (id: string) => `/invoices/${id}`
+  },
+  // Wishlist
+  WISHLIST: {
+    GET: '/wishlist',
+    ADD: (id: string) => `/wishlist/products/${id}`,
+    REMOVE: (id: string) => `/wishlist/products/${id}`
   }
 } as const

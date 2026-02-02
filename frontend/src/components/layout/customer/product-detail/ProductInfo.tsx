@@ -9,14 +9,15 @@ import {
   PenTool
 } from 'lucide-react'
 import { useState } from 'react'
-import type { Product } from '@/shared/types/product.types'
-import { useCartStore, useAuthStore } from '@/store'
+import type { Product, StandardProduct } from '@/shared/types/product.types'
+import { useCartStore, useAuthStore, useWishlistStore } from '@/store'
 import { toast } from 'react-hot-toast'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Button } from '@/shared/components/ui'
 import LensSelectionModal from './lenses/LensSelectionModal'
 import type { LensSelectionState } from './lenses/types'
 import { useProductVariants } from '@/shared/hooks/products/useProductVariants'
+import { cn } from '@/lib/utils'
 
 interface ProductInfoProps {
   product: Product
@@ -41,10 +42,13 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
 
   const addItemAsync = useCartStore((state) => state.addItemAsync)
   const isAddingToCart = useCartStore((state) => state.isAddingToCart)
+  const { toggleWishlist, isInWishlist } = useWishlistStore()
   const { isAuthenticated } = useAuthStore()
   const navigate = useNavigate()
   const location = useLocation()
   const [isLensModalOpen, setIsLensModalOpen] = useState(false)
+
+  const isFavorite = isInWishlist(productId)
 
   const handleAddToCart = () => {
     // Check for token in both possible localStorage keys
@@ -113,14 +117,40 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
       if (isLensModalOpen) {
         setIsLensModalOpen(false)
       }
-    } catch (error: any) {
+    } catch (error) {
       // Handle specific errors
-      if (error.message === 'UNAUTHORIZED') {
+      const err = error as Error
+      if (err.message === 'UNAUTHORIZED') {
         toast.error('Please login to add items to cart')
         navigate('/login', { state: { from: location } })
       } else {
         toast.error(error.message || 'Failed to add item to cart')
       }
+    }
+  }
+
+  const handleToggleWishlist = async () => {
+    const isAuth = useAuthStore.getState().isAuthenticated || !!localStorage.getItem('access_token') // Fixed key to access_token
+    if (!isAuth) {
+      toast.error('Please login to add items to wishlist')
+      navigate('/login', { state: { from: location } })
+      return
+    }
+
+    try {
+      // Ensure we have all necessary fields for StandardProduct
+      const productToSave: StandardProduct = {
+        ...(product as StandardProduct),
+        _id: (product as any)._id || productId,
+        id: (product as any).id || productId,
+        defaultVariantImage: (product as any).defaultVariantImage || images[0],
+        defaultVariantPrice: price,
+        defaultVariantFinalPrice: finalPrice
+      }
+      await toggleWishlist(productToSave)
+      toast.success(isFavorite ? 'Removed from wishlist' : 'Added to wishlist')
+    } catch {
+      toast.error('Failed to update wishlist')
     }
   }
 
@@ -142,19 +172,20 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
           New Arrival
         </span>
         <button
-          onClick={() => {
-            const isAuth =
-              useAuthStore.getState().isAuthenticated || !!localStorage.getItem('accessToken')
-            if (!isAuth) {
-              toast.error('Please login to add items to wishlist')
-              navigate('/login', { state: { from: location } })
-              return
-            }
-            toast.success('Added to wishlist!')
-          }}
-          className="flex items-center gap-2 text-gray-eyewear hover:text-primary-500 transition-colors group px-4 py-2 rounded-full hover:bg-mint-50"
+          onClick={handleToggleWishlist}
+          className={cn(
+            'flex items-center gap-2 transition-colors group px-4 py-2 rounded-full',
+            isFavorite
+              ? 'text-primary-500 bg-primary-50'
+              : 'text-gray-eyewear hover:text-primary-500 hover:bg-mint-50'
+          )}
         >
-          <Heart className="w-5 h-5 group-hover:fill-primary-500" />
+          <Heart
+            className={cn(
+              'w-5 h-5 transition-all group-hover:scale-110',
+              isFavorite && 'fill-primary-500'
+            )}
+          />
           <span className="text-sm font-bold uppercase tracking-wider">Wishlist</span>
         </button>
       </div>

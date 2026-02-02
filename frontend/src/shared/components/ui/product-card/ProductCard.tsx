@@ -1,6 +1,12 @@
 import { Button } from '@/components'
 import { cn } from '@/lib/utils'
 import { Heart, ShoppingCart, Glasses } from 'lucide-react'
+import { useWishlistStore } from '@/store/wishlist.store'
+import type { StandardProduct } from '@/shared/types/product.types'
+import { ProductType } from '@/shared/types/enums'
+import { toast } from 'react-hot-toast'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { useAuthStore } from '@/store'
 
 export interface ProductCardProps {
   id: string
@@ -10,6 +16,7 @@ export interface ProductCardProps {
   price: number
   discountPrice?: number
   salePercent?: number
+  type?: ProductType
   onAddToCart?: (productId: string) => void
   onAddToWishlist?: (productId: string) => void
   onClick?: (productId: string) => void
@@ -24,20 +31,59 @@ export function ProductCard({
   price,
   discountPrice,
   salePercent,
+  type = ProductType.FRAME,
   onAddToCart,
   onAddToWishlist,
   onClick,
   className
 }: ProductCardProps) {
+  const { isInWishlist, toggleWishlist } = useWishlistStore()
+  const isFavorite = isInWishlist(id)
+
+  const location = useLocation()
+  const navigate = useNavigate()
+
   const handleAddToCart = () => {
     if (onAddToCart) {
       onAddToCart(id)
     }
   }
 
-  const handleAddToWishlist = () => {
+  const handleAddToWishlist = async () => {
+    // Auth check
+    const isAuth = useAuthStore.getState().isAuthenticated || !!localStorage.getItem('access_token')
+    if (!isAuth) {
+      toast.error('Please login to add items to wishlist')
+      navigate('/login', { state: { from: location } })
+      return
+    }
+
+    // If external handler provided, use it
     if (onAddToWishlist) {
       onAddToWishlist(id)
+      return
+    }
+
+    // Otherwise use internal store logic
+    try {
+      const product: StandardProduct = {
+        id,
+        _id: id,
+        nameBase: name,
+        brand: brand || null,
+        defaultVariantImage: image,
+        defaultVariantPrice: price,
+        defaultVariantFinalPrice: discountPrice || price,
+        type,
+        slugBase: '', // Reconstructing enough for store/UI
+        skuBase: '',
+        categories: []
+      }
+      await toggleWishlist(product)
+      toast.success(isFavorite ? 'Removed from favorites' : 'Added to favorites')
+    } catch (error) {
+      console.error('Wishlist toggle error:', error)
+      toast.error('Failed to update favorites')
     }
   }
 
@@ -71,10 +117,17 @@ export function ProductCard({
           e.stopPropagation()
           handleAddToWishlist()
         }}
-        className="absolute top-3 right-3 z-10 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-white hover:scale-110"
+        className="absolute top-3 right-3 z-10 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center group-hover:opacity-100 transition-all hover:bg-white hover:scale-110"
         aria-label="Add to wishlist"
       >
-        <Heart className="w-4 h-4 text-gray-eyewear hover:text-primary-500 transition-colors" />
+        <Heart
+          className={cn(
+            'w-4 h-4 transition-colors',
+            isFavorite
+              ? 'text-primary-500 fill-primary-500'
+              : 'text-gray-eyewear hover:text-primary-500'
+          )}
+        />
       </button>
 
       {/* Product Image - Full width, no padding */}

@@ -50,19 +50,8 @@ export interface UpdateCartRequest {
 /**
  * Lens parameters for prescription
  */
-export interface LensParameters {
-  left: {
-    SPH: number
-    CYL: number
-    AXIS: number
-  }
-  right: {
-    SPH: number
-    CYL: number
-    AXIS: number
-  }
-  PD: number
-}
+import { type LensParameters } from './order-item.types'
+export type { LensParameters }
 
 /**
  * Product info for add to cart

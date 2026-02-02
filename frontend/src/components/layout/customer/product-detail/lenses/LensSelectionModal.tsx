@@ -15,6 +15,8 @@ interface LensSelectionModalProps {
   productName: string
   productImage: string
   productType: string
+  productId?: string
+  sku?: string
 }
 
 type Step = 'VISION_NEED' | 'LENS_CHOICE' | 'PRESCRIPTION_OPTION' | 'MANUAL_RX' | 'SAVED_RX'
@@ -27,14 +29,17 @@ export default function LensSelectionModal({
   onConfirm,
   productName,
   productImage,
-  productType
+  productType,
+  productId,
+  sku
 }: LensSelectionModalProps) {
   const [step, setStep] = useState<Step>(
     productType === 'lens' ? 'PRESCRIPTION_OPTION' : 'VISION_NEED'
   )
   const [state, setState] = useState<LensSelectionState>({
-    visionNeed: null,
-    lensId: null,
+    visionNeed: productType === 'lens' ? 'prescription' : null,
+    lensId: productType === 'lens' ? productId || null : null,
+    sku: productType === 'lens' ? sku || null : null,
     prescription: null,
     useSavedPrescription: false
   })
@@ -51,8 +56,8 @@ export default function LensSelectionModal({
     }
   }
 
-  const handleLensSelect = (lensId: string) => {
-    setState((prev) => ({ ...prev, lensId }))
+  const handleLensSelect = (lensId: string, lensSku: string) => {
+    setState((prev) => ({ ...prev, lensId, sku: lensSku }))
     setStep('PRESCRIPTION_OPTION')
   }
 

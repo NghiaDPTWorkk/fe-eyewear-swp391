@@ -30,8 +30,8 @@ const PD_OPTIONS = Array.from({ length: 41 }, (_, i) => (40 + i).toString()).map
 
 export default function StepManualPrescription({ onSubmit }: StepManualPrescriptionProps) {
   const [rx, setRx] = useState<PrescriptionData>({
-    right: { SPH: '0.00', CYL: '0.00', AXIS: '0' },
-    left: { SPH: '0.00', CYL: '0.00', AXIS: '0' },
+    right: { SPH: '0.00', CYL: '0.00', AXIS: '0', ADD: '' },
+    left: { SPH: '0.00', CYL: '0.00', AXIS: '0', ADD: '' },
     PD: '63'
   })
 

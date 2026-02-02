@@ -12,6 +12,7 @@ interface CartState {
   isClearing: boolean
   addToCartError: string | null
   fetchError: string | null
+  isInitialized: boolean
   addItem: (item: CartItem) => void
   addItemAsync: (
     productId: string,
@@ -19,9 +20,10 @@ interface CartState {
     quantity: number,
     lensSelection?: LensSelectionState
   ) => Promise<void>
-  fetchCart: () => Promise<void>
+  fetchCart: (force?: boolean) => Promise<void>
   updateQuantity: (item: CartItem, quantity: number) => Promise<void>
   removeItem: (item: CartItem) => Promise<void>
+  removeItems: (items: CartItem[]) => Promise<void>
   toggleSelection: (productId: string) => void
   toggleAllSelection: () => void
   clearCart: () => Promise<void>
@@ -38,6 +40,7 @@ export const useCartStore = create<CartState>((set, get) => ({
   isClearing: false,
   addToCartError: null,
   fetchError: null,
+  isInitialized: false,
 
   /**
    * Local-only add item (backward compatibility)
@@ -91,23 +94,26 @@ export const useCartStore = create<CartState>((set, get) => ({
   /**
    * Fetch cart from backend
    */
-  fetchCart: async () => {
+  fetchCart: async (force = false) => {
+    // Optimization: Skip if already initialized and not a forced refresh
+    // But ONLY if we actually have items. If items is empty, we likely need to fetch.
+    if (get().isInitialized && !force && get().items.length > 0) {
+      return
+    }
+
     set({ isLoading: true, fetchError: null })
 
     try {
-      // Call cart service to get cart items
-
-      // Call cart service to get cart items
       const items = await cartService.getCart()
-
-      // Update cart state with backend response
-      set({ items, isLoading: false })
+      set({ items, isLoading: false, isInitialized: true })
     } catch (error: any) {
       const errorMessage = error.message || 'Failed to fetch cart'
-      set({ isLoading: false, fetchError: errorMessage, items: [] })
-
-      // Don't re-throw, just set error state
-      // This allows the UI to handle the error gracefully
+      set({
+        isLoading: false,
+        fetchError: errorMessage,
+        items: [],
+        isInitialized: true // Mark as initialized even on error to prevent infinite retries
+      })
     }
   },
 
@@ -116,6 +122,12 @@ export const useCartStore = create<CartState>((set, get) => ({
     try {
       const updatedItems = await cartService.updateQuantity(item, quantity)
       set({ items: updatedItems, isUpdating: false })
+
+      // Safety fix: If updatedItems is empty, it might be due to API response shape
+      // Fetch specifically to ensure we have the truth
+      if (updatedItems.length === 0) {
+        await get().fetchCart(true)
+      }
     } catch (error: any) {
       set({ isUpdating: false })
       throw error
@@ -126,6 +138,21 @@ export const useCartStore = create<CartState>((set, get) => ({
     set({ isRemoving: true })
     try {
       const updatedItems = await cartService.removeItem(item)
+      set({ items: updatedItems, isRemoving: false })
+
+      if (updatedItems.length === 0) {
+        await get().fetchCart(true)
+      }
+    } catch (error: any) {
+      set({ isRemoving: false })
+      throw error
+    }
+  },
+
+  removeItems: async (itemsToRemove) => {
+    set({ isRemoving: true })
+    try {
+      const updatedItems = await cartService.removeItems(itemsToRemove)
       set({ items: updatedItems, isRemoving: false })
     } catch (error: any) {
       set({ isRemoving: false })

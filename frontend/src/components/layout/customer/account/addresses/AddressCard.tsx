@@ -3,15 +3,25 @@ import { MapPin, Edit2, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface AddressCardProps {
+  _id?: string
   street: string
   ward: string
   city: string
   isDefault?: boolean
   onEdit?: () => void
   onDelete?: () => void
+  onSetDefault?: () => void
 }
 
-export function AddressCard({ street, ward, city, isDefault, onEdit, onDelete }: AddressCardProps) {
+export function AddressCard({
+  street,
+  ward,
+  city,
+  isDefault,
+  onEdit,
+  onDelete,
+  onSetDefault
+}: AddressCardProps) {
   return (
     <Card
       className={cn(
@@ -63,7 +73,10 @@ export function AddressCard({ street, ward, city, isDefault, onEdit, onDelete }:
         </div>
 
         {!isDefault && (
-          <button className="text-[11px] font-bold text-gray-400 hover:text-primary-600 uppercase tracking-widest transition-colors">
+          <button
+            onClick={onSetDefault}
+            className="text-[11px] font-bold text-gray-400 hover:text-primary-600 uppercase tracking-widest transition-colors"
+          >
             Set as default
           </button>
         )}

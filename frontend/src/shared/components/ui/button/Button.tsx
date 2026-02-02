@@ -30,6 +30,7 @@ export function Button<E extends ElementType = 'button'>({
   rightIcon,
   isDisabled = false,
   isFullWidth = false,
+  isLoading = false,
   className,
   children,
   ...props
@@ -43,16 +44,14 @@ export function Button<E extends ElementType = 'button'>({
         isFullWidth && 'w-full',
         className
       )}
-      disabled={Component === 'button' ? isDisabled : undefined}
-      aria-disabled={Component !== 'button' ? isDisabled || (props as any).isLoading : undefined}
+      disabled={Component === 'button' ? isDisabled || isLoading : undefined}
+      aria-disabled={Component !== 'button' ? isDisabled || isLoading : undefined}
       {...props}
     >
-      {(props as any).isLoading && (
+      {isLoading && (
         <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
       )}
-      {leftIcon && !(props as any).isLoading && (
-        <span className="inline-flex shrink-0">{leftIcon}</span>
-      )}
+      {leftIcon && !isLoading && <span className="inline-flex shrink-0">{leftIcon}</span>}
       {children}
       {rightIcon && <span className="inline-flex shrink-0">{rightIcon}</span>}
     </Component>

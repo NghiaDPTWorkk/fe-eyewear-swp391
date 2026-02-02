@@ -8,7 +8,10 @@ export const ENDPOINTS = {
     REGISTER: '/auth/register',
     LOGOUT: '/auth/logout',
     REFRESH_TOKEN: '/auth/refresh-token',
-    PROFILE: '/customer'
+    PROFILE: '/customer',
+    ADDRESS_LIST: '/customer/profile/address',
+    ADDRESS_ADD: '/customer/profile/address',
+    CHANGE_DEFAULT: (id: string) => `/customer/profile/address/change-default/${id}`
   },
 
   // Products

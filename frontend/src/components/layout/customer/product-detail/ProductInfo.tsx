@@ -124,7 +124,7 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
         toast.error('Please login to add items to cart')
         navigate('/login', { state: { from: location } })
       } else {
-        toast.error(error.message || 'Failed to add item to cart')
+        toast.error(err.message || 'Failed to add item to cart')
       }
     }
   }

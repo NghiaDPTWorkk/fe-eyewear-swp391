@@ -2,9 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { Container } from '@/shared/components/ui/container'
 import { MetricCard } from '@/shared/components/ui/metric-card'
 import { Card } from '@/shared/components/ui/card'
-import { SalesStaffDashboardTable } from '@/features/sales/components/dashboard/SalesStaffDashboardTable'
-import { SalesStaffDashboardCharts } from '@/features/sales/components/dashboard/SalesStaffDashboardCharts'
-import { InvoiceOrdersDrawer } from '@/features/sales/components/dashboard/InvoiceOrdersDrawer'
 import { useSalesStaffInvoices } from '@/features/sales/hooks/useSalesStaffInvoices'
 import {
   IoClipboardOutline,
@@ -14,6 +11,10 @@ import {
   IoAdd
 } from 'react-icons/io5'
 import type { Invoice } from '@/features/sales/types'
+import { Charts } from '@/features/sales/components/dashboard/Charts'
+import { Table } from '@/features/sales/components/dashboard/Table'
+import { InvoiceOrdersDrawer } from '@/features/sales/components/dashboard/InvoiceOrdersDrawer'
+import { Button } from '@/components'
 
 export default function SaleStaffDashboardPage() {
   const { invoices, loading, fetchInvoices } = useSalesStaffInvoices()
@@ -84,7 +85,7 @@ export default function SaleStaffDashboardPage() {
         ))}
       </div>
 
-      <SalesStaffDashboardCharts />
+      <Charts />
 
       <Card className="p-8 border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8">
@@ -94,12 +95,12 @@ export default function SaleStaffDashboardPage() {
               Latest deposited invoices requiring processing.
             </p>
           </div>
-          <button className="flex items-center gap-2.5 px-6 py-3 bg-primary-600 text-white rounded-2xl text-[14px] font-bold hover:bg-primary-700 hover:shadow-lg hover:shadow-primary-100 transition-all active:scale-95 group">
+          <Button className="flex items-center gap-2.5 px-6 py-3 bg-primary-600 text-white rounded-2xl text-[14px] font-bold hover:bg-primary-700 hover:shadow-lg hover:shadow-primary-100 transition-all active:scale-95 group">
             <IoAdd size={22} className="group-hover:rotate-90 transition-transform duration-300" />
             New Transaction
-          </button>
+          </Button>
         </div>
-        <SalesStaffDashboardTable
+        <Table
           invoices={invoices}
           loading={loading}
           onInvoiceClick={handleInvoiceClick}

@@ -1,3 +1,2 @@
-// Barrel export for Support components
-export { default as SupportMetrics } from './SupportMetrics'
-export { default as SupportTicketsTable } from './SupportTicketsTable'
+export { default as Metrics } from './SupportSupportMetrics'
+export { default as TicketsTable } from './SupportSupportTicketsTable'

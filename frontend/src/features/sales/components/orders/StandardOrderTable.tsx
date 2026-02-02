@@ -5,8 +5,8 @@
  */
 import { Card, Button } from '@/components'
 import { IoChevronForward, IoGlassesOutline } from 'react-icons/io5'
-import Pagination from '../common/Pagination'
-import OrderStatusIndicator from '../common/OrderStatusIndicator'
+import Pagination from '../common/CommonPagination'
+import OrderStatusIndicator from '../common/CommonOrderStatusIndicator'
 import { TYPOGRAPHY } from '../../constants/saleStaffDesignSystem'
 
 // Mock data for standard orders

@@ -1,17 +1,18 @@
 import { useState, useCallback } from 'react'
 import { httpClient } from '@/api/apiClients'
 import type { Order, OrderDetail } from '../types'
+import { transformOrder } from '../utils/orderUtils'
 
 export const useSalesStaffOrders = () => {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  /* eslint-disable @typescript-eslint/no-explicit-any */
   const fetchOrders = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
+      /* eslint-disable @typescript-eslint/no-explicit-any */
       const response = await httpClient.get<any>('/admin/invoices/deposited')
       const invoices = response.data?.data || response.data || []
       const allOrders: Order[] = []
@@ -20,18 +21,7 @@ export const useSalesStaffOrders = () => {
         invoices.forEach((inv: any) => {
           if (Array.isArray(inv.orders)) {
             inv.orders.forEach((ord: any) => {
-              allOrders.push({
-                ...ord,
-                _id: ord.id || ord._id,
-                orderCode: ord.orderCode || inv.invoiceCode || `ORD-${ord.id || ord._id}`,
-                invoiceId: inv.id || inv._id,
-                customerName: inv.fullName || inv.customer?.fullName || 'Guest',
-                customerPhone: inv.phone || inv.customer?.phone || '',
-                createdAt: inv.createdAt,
-                status: ord.status || 'DEPOSITED',
-                isPrescription: ord.type?.includes('MANUFACTURING') || ord.isPrescription || false,
-                products: ord.products || ord.orderItems || []
-              })
+              allOrders.push(transformOrder(ord, inv))
             })
           }
         })
@@ -48,29 +38,13 @@ export const useSalesStaffOrders = () => {
   const fetchOrderDetail = useCallback(async (orderId: string | number) => {
     setLoading(true)
     try {
-      const response = await httpClient.get<{ data: { order: any } } | any>(
-        `/admin/orders/${orderId}`
-      )
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+      const response = await httpClient.get<any>(`/admin/orders/${orderId}`)
       const ord = response.data?.order || response.data?.data?.order || response.data || null
 
       if (!ord) return null
 
-      const transformed: OrderDetail = {
-        ...ord,
-        _id: ord._id || ord.id,
-        orderCode: ord.orderCode || `ORD-${ord.id || ord._id}`,
-        invoiceId: ord.invoiceId || ord.invoice?._id,
-        customerName:
-          ord.customerName || ord.invoice?.fullName || ord.invoice?.customer?.fullName || 'Guest',
-        customerPhone:
-          ord.customerPhone || ord.invoice?.phone || ord.invoice?.customer?.phone || '',
-        createdAt: ord.createdAt,
-        status: ord.status,
-        isPrescription: ord.type?.includes('MANUFACTURING') || ord.isPrescription || false,
-        products: ord.products || ord.orderItems || []
-      }
-
-      return transformed
+      return transformOrder(ord) as OrderDetail
     } catch (err: any) {
       setError(err.message || 'Failed to fetch order detail')
       return null
@@ -81,12 +55,10 @@ export const useSalesStaffOrders = () => {
 
   const rxOrders = orders.filter((o) => o.isPrescription)
   const pendingOrders = orders.filter(
-    (o) =>
-      o.isPrescription &&
-      (o.status === 'WAITING_ASSIGN' || o.status === 'PENDING' || o.status === 'DEPOSITED')
+    (o) => o.isPrescription && ['WAITING_ASSIGN', 'PENDING', 'DEPOSITED'].includes(o.status)
   )
   const processedOrders = orders.filter(
-    (o) => !o.isPrescription || (o.status !== 'WAITING_ASSIGN' && o.status !== 'PENDING')
+    (o) => !o.isPrescription || !['WAITING_ASSIGN', 'PENDING'].includes(o.status)
   )
 
   return {

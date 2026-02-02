@@ -1,11 +1,7 @@
-/**
- * MetricCard Component
- * Displays a single KPI/metric with icon, value, and trend.
- */
 import { Card } from '@/components'
-import { STYLES } from '../../constants/saleStaffDesignSystem'
 import { cn } from '@/lib/utils'
 import type { ReactNode } from 'react'
+import { STYLES } from '../../constants/saleStaffDesignSystem'
 
 interface MetricCardProps {
   label: string

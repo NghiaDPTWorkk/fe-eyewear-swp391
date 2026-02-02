@@ -1,6 +1,6 @@
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { Container, Card } from '@/components'
-import SaleStaffPrescriptionVerification from '@/features/sales/components/SaleStaffPrescriptionVerification/SaleStaffPrescriptionVerification'
+import PrescriptionVerification from '@/features/sales/components/prescriptions/PrescriptionVerification'
 import { IoChevronBackOutline } from 'react-icons/io5'
 
 export default function SaleStaffRxVerificationPage() {
@@ -28,7 +28,7 @@ export default function SaleStaffRxVerificationPage() {
         </div>
       </div>
       <Card className="p-0 border-none shadow-xl overflow-hidden rounded-3xl">
-        <SaleStaffPrescriptionVerification orderId={orderId || ''} onBack={() => navigate(-1)} />
+        <PrescriptionVerification orderId={orderId || ''} onBack={() => navigate(-1)} />
       </Card>
     </Container>
   )

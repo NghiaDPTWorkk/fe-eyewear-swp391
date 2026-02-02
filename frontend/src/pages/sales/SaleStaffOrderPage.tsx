@@ -1,11 +1,13 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Link, useSearchParams, useNavigate } from 'react-router-dom'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 import { Container, Card, Button } from '@/components'
-import { useSalesStaffOrders } from '@/features/sales/hooks/useSalesStaffOrders'
-import { SalesStaffOrderList } from '@/features/sales/components/SalesStaffOrderList'
+import { OrderList } from '@/features/sales/components/orders/OrderList'
 import { OrderDetailsDrawer } from '@/features/sales/components/orders/OrderDetailsDrawer'
 import { OrderFilterBar } from '@/features/sales/components/orders/OrderFilterBar'
 import { IoChevronBackOutline, IoChevronForwardOutline } from 'react-icons/io5'
+import type { Order } from '@/features/sales/types'
+import { useSalesStaffOrders } from '@/features/sales/hooks'
+import { PageHeader } from '@/features/sales/components/common'
 
 export default function SaleStaffOrderPage() {
   const { orders, loading, fetchOrders } = useSalesStaffOrders()
@@ -44,36 +46,30 @@ export default function SaleStaffOrderPage() {
     [orders, search, typeFilter, invoiceIdParam]
   )
 
-  const handleOpenDrawer = (o: any) => {
+  const handleOpenDrawer = (o: Order) => {
     setSelectedOrderId(o._id)
     setIsDrawerOpen(true)
   }
 
-  const handleVerify = (order: any) => {
-    navigate(`/salestaff/orders/${order._id || order.id}/verify-rx`)
+  const handleVerify = (order: Order) => {
+    navigate(`/salestaff/orders/${order._id || order._id}/verify-rx`)
   }
 
-  const handleChat = (order: any) => {
-    const customerId = order.customerId || order.invoiceId
+  const handleChat = (order: Order) => {
+    const customerId = order.invoiceId
     console.log('Opening chat with customer:', customerId)
     alert(`Chat with ${order.customerName} (ID: ${customerId})`)
   }
 
   return (
     <Container>
-      <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm mb-2 font-medium">
-          <Link
-            to="/salestaff/dashboard"
-            className="text-neutral-400 hover:text-primary-500 transition-colors"
-          >
-            Dashboard
-          </Link>
-          <span className="text-neutral-300">/</span>
-          <span className="text-primary-500 font-semibold">Order Management</span>
-        </div>
-        <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">Order List</h1>
-      </div>
+      <PageHeader
+        title="Order List"
+        breadcrumbs={[
+          { label: 'Dashboard', path: '/salestaff/dashboard' },
+          { label: 'Order Management' }
+        ]}
+      />
 
       <OrderFilterBar
         search={search}
@@ -94,7 +90,7 @@ export default function SaleStaffOrderPage() {
       />
 
       <Card className="p-0 overflow-hidden border border-neutral-200 shadow-sm bg-white rounded-xl mt-6">
-        <SalesStaffOrderList
+        <OrderList
           orders={filteredOrders}
           loading={loading}
           onVerify={handleVerify}

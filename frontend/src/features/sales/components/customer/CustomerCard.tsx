@@ -16,13 +16,17 @@ interface Customer {
   avatar: string
 }
 
-interface CustomerCardProps {
+interface CustomerCustomerCardProps {
   customer: Customer
   isSelected: boolean
   onClick: () => void
 }
 
-export default function CustomerCard({ customer, isSelected, onClick }: CustomerCardProps) {
+export default function CustomerCustomerCard({
+  customer,
+  isSelected,
+  onClick
+}: CustomerCustomerCardProps) {
   return (
     <Card
       className={`p-8 border-none shadow-sm hover:shadow-xl transition-all duration-300 group relative bg-white rounded-[32px] cursor-pointer ring-2 ${

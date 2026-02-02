@@ -1,23 +1,37 @@
+/* eslint-disable max-lines */
 import type { ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
-import OrderHeaderTable from './OrderHeaderTable'
-import OrderList from './OrderList'
-import { IoGlassesOutline } from 'react-icons/io5'
+import { Button } from '@/shared/components/ui/button'
+import { IoTimeOutline, IoChevronForward } from 'react-icons/io5'
 import { PATHS } from '@/routes/paths'
+import type { Order as DomainOrder } from '../../types'
 
-export interface Order {
+const formatTimeElapsed = (dateString?: string) => {
+  if (!dateString) return 'N/A'
+  const date = new Date(dateString)
+  const now = new Date()
+  const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / 60000)
+
+  if (diffInMinutes < 60) return `${diffInMinutes}m ago`
+  const diffInHours = Math.floor(diffInMinutes / 60)
+  if (diffInHours < 24) return `${diffInHours}h ago`
+  const diffInDays = Math.floor(diffInHours / 24)
+  return `${diffInDays}d ago`
+}
+
+export interface OrderRow {
   id: string
   orderType: string
   customer: string
   item: string
   waitingFor?: string
   currentStatus: string
-  prescriptionStatus?: 'PENDING_CONFIRMATION' | 'CONFIRMED' | 'REJECTED'
   timeElapsed: string
-  createdAt?: string
   statusColor: string
   isNextActive: boolean
+  isApproved?: boolean
+  original: DomainOrder
 }
 
 export interface Column<T> {
@@ -28,235 +42,243 @@ export interface Column<T> {
 }
 
 interface OrderTableProps {
-  columns?: Column<Order>[]
-  hiddenColumns?: string[]
+  orders?: DomainOrder[]
+  loading?: boolean
+  onRowClick?: (id: string, order?: DomainOrder) => void
+  onReviewRx?: (id: string) => void
+  onNotifyCustomer?: (customerId: string) => void
   filterType?: string
-  role?: 'sales' | 'operation'
-  onRowClick?: (orderId: string) => void
-  onConfirmPrescription?: (orderId: string) => void
+  hiddenColumns?: string[]
+}
+
+const getOrderTypeStyles = (type: string) => {
+  if (type.includes('Regular')) return 'bg-emerald-50 text-emerald-600'
+  if (type.includes('Pre-order')) return 'bg-amber-50 text-amber-600'
+  if (type.includes('Prescription')) return 'bg-indigo-50 text-indigo-600'
+  return 'bg-neutral-50 text-neutral-600'
+}
+
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'PENDING':
+    case 'WAITING_ASSIGN':
+      return 'bg-amber-100 text-amber-700'
+    case 'PROCESSING':
+      return 'bg-blue-100 text-blue-700'
+    case 'COMPLETED':
+    case 'APPROVED':
+    case 'VERIFIED':
+      return 'bg-emerald-100 text-emerald-700'
+    case 'REJECTED':
+      return 'bg-red-100 text-red-700'
+    default:
+      return 'bg-gray-100 text-gray-700'
+  }
 }
 
 export default function OrderTable({
-  columns,
-  hiddenColumns = [],
-  filterType,
-  role = 'operation',
+  orders = [],
+  loading,
   onRowClick,
-  onConfirmPrescription
+  filterType,
+  hiddenColumns = []
 }: OrderTableProps) {
   const navigate = useNavigate()
 
-  const handleViewOrder = (orderId: string) => {
+  const handleViewOrder = (order: OrderRow) => {
     if (onRowClick) {
-      onRowClick(orderId)
+      onRowClick(order.id, order.original)
     } else {
-      navigate(PATHS.OPERATIONSTAFF.ORDER_DETAIL(orderId))
+      // Default navigation
+      if (order.orderType === 'Prescription') {
+        navigate(PATHS.SALESTAFF.VERIFY_RX(order.id))
+      } else if (order.orderType === 'Pre-order') {
+        navigate(PATHS.SALESTAFF.PRE_ORDER_DETAIL(order.id))
+      } else {
+        navigate(PATHS.SALESTAFF.REGULAR_DETAIL(order.id))
+      }
     }
   }
 
-  const orders: Order[] = [
-    {
-      id: 'ORD-001',
-      orderType: 'Regular',
-      customer: 'Van A Nguyen',
-      item: 'SKU-001',
-      waitingFor: 'Chemi 5.5 Lens',
-      currentStatus: 'Processing',
-      timeElapsed: '2h 15m',
-      statusColor: 'bg-blue-100 text-blue-700',
-      isNextActive: true
-    },
-    {
-      id: 'ORD-002',
-      orderType: 'Pre-order',
-      customer: 'Thi B Tran',
-      item: 'SKU-001',
-      waitingFor: 'Titan Frame',
-      currentStatus: 'Lens Edging',
-      timeElapsed: '3h 45m',
-      statusColor: 'bg-purple-100 text-purple-700',
-      isNextActive: false
-    },
-    {
-      id: 'PRE-003',
-      orderType: 'Pre-order',
-      customer: 'Van C Le',
-      item: 'SKU-001',
-      currentStatus: 'Awaiting Stock',
-      timeElapsed: '5d 2h',
-      statusColor: 'bg-orange-100 text-orange-700',
-      isNextActive: true
-    },
-    {
-      id: 'ORD-004',
-      orderType: 'Prescription',
-      customer: 'Thi D Pham',
-      item: 'SKU-001',
-      prescriptionStatus: 'PENDING_CONFIRMATION',
-      currentStatus: 'Pending QC',
-      timeElapsed: '45m',
-      statusColor: 'bg-gray-100 text-gray-700',
-      isNextActive: true
-    },
-    {
-      id: 'ORD-005',
-      orderType: 'Regular',
-      customer: 'Van E Hoang',
-      item: 'SKU-001',
-      currentStatus: 'Packed',
-      timeElapsed: '1h 30m',
-      statusColor: 'bg-mint-100 text-mint-700',
-      isNextActive: true
+  const mapToRow = (order: DomainOrder): OrderRow => {
+    const isPrescription =
+      order.type?.includes('MANUFACTURING') || order.products?.some((p) => p.lens)
+    const isPreOrder = order.type?.includes('PRE-ORDER')
+
+    let typeStr = 'Regular'
+    if (isPrescription) typeStr = 'Prescription'
+    if (isPreOrder) typeStr = 'Pre-order'
+
+    const productName =
+      order.products?.[0]?.product?.product_name || order.products?.[0]?.lens?.sku || 'Unknown Item'
+
+    return {
+      id: order._id,
+      orderType: typeStr,
+      customer: order.customerName || 'Guest',
+      item: productName,
+      waitingFor: '-',
+      currentStatus: order.status,
+      timeElapsed: order.createdAt ? formatTimeElapsed(order.createdAt) : 'N/A',
+      statusColor: getStatusColor(order.status),
+      isNextActive: true,
+      isApproved: order.status === 'APPROVED',
+      original: order
     }
-  ]
+  }
 
-  const filteredOrders = filterType
-    ? orders.filter((order) => order.orderType === filterType)
-    : orders
+  const tableData: OrderRow[] = orders
+    .map(mapToRow)
+    .filter((row) => (filterType ? row.orderType === filterType : true))
 
-  const defaultColumns: Column<Order>[] = [
-    {
-      header: 'SKU / PRODUCT',
-      render: (order) => (
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-emerald-50 rounded-xl border border-emerald-100/50 flex items-center justify-center text-emerald-600 shrink-0">
-            <IoGlassesOutline size={20} />
-          </div>
-          <div>
-            <div className="text-sm font-semibold text-[#3d4465]">{order.item}</div>
-            <div className="text-[11px] text-[#a4a9c1] font-medium">Ray-Ban Aviator Gold</div>
-          </div>
-        </div>
-      ),
-      className: 'pl-10 px-6 py-6'
-    },
+  const columns: Column<OrderRow>[] = [
     {
       header: 'ORDER ID',
-      render: (order) => (
-        <div
-          className="text-sm font-medium text-emerald-500 cursor-pointer hover:text-emerald-600 transition-colors"
-          onClick={() => handleViewOrder(order.id)}
-        >
-          {order.id}
+      render: (row) => (
+        <div className="flex flex-col items-center">
+          <div
+            className="font-bold text-neutral-900 cursor-pointer hover:text-primary-600"
+            onClick={() => handleViewOrder(row)}
+          >
+            {row.original.orderCode || row.id.substring(0, 8)}
+          </div>
+          <div className="w-12 mt-1 h-1 rounded-full overflow-hidden bg-neutral-100">
+            <div className="bg-emerald-400 h-full w-1/2 rounded-full"></div>
+          </div>
         </div>
       ),
       headerClassName: 'text-center',
-      className: 'text-center px-6 py-6'
+      className: 'font-medium text-center'
+    },
+    {
+      header: 'TYPE',
+      render: (row) => (
+        <span
+          className={cn(
+            'whitespace-nowrap font-bold uppercase tracking-wider px-3 py-1 rounded-full text-[10px]',
+            getOrderTypeStyles(row.orderType)
+          )}
+        >
+          {row.orderType}
+        </span>
+      ),
+      headerClassName: 'text-center',
+      className: 'text-center'
     },
     {
       header: 'CUSTOMER',
-      render: (order) => (
-        <div>
-          <div className="text-sm font-semibold text-[#3d4465]">{order.customer}</div>
-          <div className="text-[11px] text-[#a4a9c1] font-medium">+1 (555) 012-3456</div>
-        </div>
+      render: (row) => <div className="text-neutral-900 font-medium">{row.customer}</div>
+    },
+    {
+      header: 'ITEMS',
+      render: (row) => row.item,
+      className: 'text-neutral-400 font-medium text-center',
+      headerClassName: 'text-center'
+    },
+    {
+      header: 'WAITING FOR',
+      render: (row) => row.waitingFor || '-',
+      className: 'text-purple-600 font-medium text-center',
+      headerClassName: 'text-center'
+    },
+    {
+      header: 'STATUS',
+      render: (row) => (
+        <span
+          className={cn(
+            'font-bold uppercase tracking-wider whitespace-nowrap px-3 py-1 rounded-full text-[10px]',
+            row.statusColor
+          )}
+        >
+          {row.currentStatus}
+        </span>
       ),
-      className: 'px-6 py-6'
+      headerClassName: 'text-center',
+      className: 'text-center'
     },
     {
-      header: 'PRESCRIPTION STATUS',
-      render: (order) => {
-        if (order.orderType !== 'Prescription') return <span className="text-neutral-400">—</span>
-
-        const statusConfig = {
-          PENDING_CONFIRMATION: {
-            label: 'Needs Confirmation',
-            className: 'bg-orange-50 text-orange-700 border-orange-200',
-            showDot: true
-          },
-          CONFIRMED: {
-            label: 'Confirmed',
-            className: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-            showDot: false
-          },
-          REJECTED: {
-            label: 'Rejected',
-            className: 'bg-red-50 text-red-700 border-red-200',
-            showDot: false
-          }
-        }
-
-        const config = order.prescriptionStatus ? statusConfig[order.prescriptionStatus] : null
-
-        if (!config) return <span className="text-neutral-400">—</span>
-
-        return (
-          <span
-            className={cn(
-              'inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider whitespace-nowrap border',
-              config.className
-            )}
-          >
-            {config.showDot && <span className="w-1.5 h-1.5 bg-orange-500 rounded-full" />}
-            {config.label}
-          </span>
-        )
-      },
-      className: 'px-6 py-6'
-    },
-    {
-      header: 'LAB STATUS',
-      render: (order) => (
-        <div className="flex justify-center">
-          <span
-            className={cn(
-              'px-4 py-1.5 rounded-full text-[9px] font-semibold uppercase tracking-widest border shadow-sm bg-white',
-              order.statusColor.includes('blue')
-                ? 'text-blue-600 border-blue-100 bg-blue-50/30'
-                : order.statusColor.includes('emerald') || order.statusColor.includes('mint')
-                  ? 'text-emerald-600 border-emerald-100 bg-emerald-50/30'
-                  : order.statusColor.includes('amber') || order.statusColor.includes('orange')
-                    ? 'text-amber-600 border-amber-100 bg-amber-50/30'
-                    : 'text-neutral-500 border-neutral-100'
-            )}
-          >
-            {order.currentStatus}
-          </span>
+      header: 'ORDER AT',
+      render: (row) => (
+        <div className="flex items-center gap-1.5 justify-center">
+          <IoTimeOutline className="text-neutral-400" />
+          <span className="text-neutral-500">{row.timeElapsed}</span>
         </div>
       ),
       headerClassName: 'text-center',
-      className: 'text-center px-6 py-6'
+      className: 'text-center'
     },
     {
-      header: 'ACTIONS',
-      headerClassName: 'text-right pr-10',
-      className: 'text-right pr-10 py-6',
-      render: (order) => {
-        const needsConfirmation =
-          role === 'sales' &&
-          order.orderType === 'Prescription' &&
-          order.prescriptionStatus === 'PENDING_CONFIRMATION'
-
-        return (
-          <div className="flex items-center justify-end gap-2">
-            {needsConfirmation && (
-              <button
-                className="bg-emerald-500 text-white text-[10px] font-bold uppercase tracking-widest px-4 py-2 rounded-xl hover:bg-emerald-600 transition-all shadow-sm shadow-emerald-100"
-                onClick={() => onConfirmPrescription?.(order.id)}
-              >
-                Confirm
-              </button>
-            )}
-          </div>
-        )
-      }
+      header: 'ACTION',
+      headerClassName: 'text-center w-32',
+      render: (row) => (
+        <div className="flex items-center justify-center gap-3">
+          <Button
+            variant="ghost"
+            colorScheme="primary"
+            size="sm"
+            className="p-2 h-8 w-8 text-primary-500"
+            disabled={!row.isNextActive}
+            title="View Details"
+            onClick={() => handleViewOrder(row)}
+          >
+            <IoChevronForward size={18} />
+          </Button>
+        </div>
+      )
     }
   ]
 
-  const activeColumns = (columns || defaultColumns).filter(
-    (col) => !hiddenColumns.includes(col.header as string)
-  )
+  const activeColumns = columns.filter((col) => !hiddenColumns.includes(col.header as string))
+
+  if (loading) {
+    return (
+      <div className="p-20 flex flex-col items-center justify-center text-gray-400">
+        <div className="w-10 h-10 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin mb-4" />
+        <p className="text-sm font-medium animate-pulse">Loading orders...</p>
+      </div>
+    )
+  }
+
+  if (tableData.length === 0) {
+    return <div className="p-20 text-center text-gray-400 font-medium">No orders found.</div>
+  }
 
   return (
-    <div className="overflow-x-auto bg-white rounded-lg shadow-sm border border-neutral-100">
+    <div className="overflow-x-auto bg-white rounded-lg shadow">
       <table className="w-full text-left border-collapse">
-        <OrderHeaderTable columns={activeColumns} role={role} />
-        <OrderList
-          orders={filteredOrders}
-          columns={activeColumns}
-          role={role}
-          onRowClick={handleViewOrder}
-        />
+        <thead>
+          <tr className="border-b border-gray-100 bg-gray-50">
+            {activeColumns.map((col, index) => (
+              <th
+                key={index}
+                className={cn(
+                  'px-4 py-3 text-xs font-bold text-gray-600 uppercase tracking-wider',
+                  col.headerClassName
+                )}
+              >
+                {col.header}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {tableData.map((row, index) => (
+            <tr
+              key={row.id}
+              className={cn(
+                'border-b border-gray-50 hover:bg-gray-50/50 transition-colors cursor-pointer',
+                index % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'
+              )}
+              onClick={() => handleViewOrder(row)}
+            >
+              {activeColumns.map((col, colIndex) => (
+                <td key={colIndex} className={cn('px-4 py-4 text-sm', col.className)}>
+                  {col.render(row)}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
       </table>
     </div>
   )

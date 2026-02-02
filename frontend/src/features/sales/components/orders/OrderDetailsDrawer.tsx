@@ -17,7 +17,8 @@ export const OrderDetailsDrawer: React.FC<{
   onClose: () => void
   orderId: string | null
   onUpdate?: () => void
-}> = ({ isOpen, onClose, orderId, onUpdate }) => {
+  onViewFullDetails?: () => void
+}> = ({ isOpen, onClose, orderId, onUpdate, onViewFullDetails }) => {
   const navigate = useNavigate()
   const { fetchOrderDetail } = useSalesStaffOrders()
   const { approveInvoice, rejectInvoice, processing } = useSalesStaffAction()
@@ -118,6 +119,10 @@ export const OrderDetailsDrawer: React.FC<{
   const handleViewDetail = () => {
     if (!order) return
     handleClose()
+    if (onViewFullDetails) {
+      onViewFullDetails()
+      return
+    }
     if (isPrescription) {
       const isVerified =
         order.status === 'VERIFIED' || order.status === 'APPROVED' || order.status === 'COMPLETED'

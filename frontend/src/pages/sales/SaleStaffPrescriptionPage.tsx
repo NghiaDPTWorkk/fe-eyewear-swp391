@@ -1,13 +1,14 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Link } from 'react-router-dom'
 import { Container, Card } from '@/components'
-import { SalesStaffRxTable } from '@/features/sales/components/prescription/SalesStaffRxTable'
-import { SalesStaffRxMetrics } from '@/features/sales/components/prescription/SalesStaffRxMetrics'
 import { OrderDetailsDrawer } from '@/features/sales/components/orders/OrderDetailsDrawer'
 import { OrderFilterBar } from '@/features/sales/components/orders/OrderFilterBar'
+import { SalesStaffRxTable } from '@/features/sales/components/prescriptions/RxTable'
+import SalesStaffRxMetrics from '@/features/sales/components/prescriptions/RxMetrics'
 import { useSalesStaffOrders } from '@/features/sales/hooks/useSalesStaffOrders'
 import { useSalesStaffAction } from '@/features/sales/hooks/useSalesStaffAction'
 import { toast } from 'react-hot-toast'
+import PageHeader from '@/features/sales/components/common/PageHeader'
+import type { Order } from '@/features/sales/types'
 
 export default function SaleStaffPrescriptionPage() {
   const { rxOrders, loading, fetchOrders } = useSalesStaffOrders()
@@ -39,7 +40,7 @@ export default function SaleStaffPrescriptionPage() {
     [rxOrders, search, filter]
   )
 
-  const handleReject = async (order: any) => {
+  const handleReject = async (order: Order) => {
     if (window.confirm('Reject this order?') && (await rejectOrder(order._id))) {
       toast.success('Rejected')
       fetchOrders()
@@ -48,16 +49,13 @@ export default function SaleStaffPrescriptionPage() {
 
   return (
     <Container>
-      <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm mb-2 font-medium">
-          <Link to="/salestaff/dashboard" className="text-neutral-400 hover:text-primary-500">
-            Dashboard
-          </Link>
-          <span className="text-neutral-300">/</span>
-          <span className="text-primary-500 font-semibold">Prescriptions</span>
-        </div>
-        <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">Prescription Orders</h1>
-      </div>
+      <PageHeader
+        title="Prescription Orders"
+        breadcrumbs={[
+          { label: 'Dashboard', path: '/salestaff/dashboard' },
+          { label: 'Prescriptions' }
+        ]}
+      />
       <SalesStaffRxMetrics />
       <OrderFilterBar
         search={search}
@@ -78,7 +76,7 @@ export default function SaleStaffPrescriptionPage() {
         <SalesStaffRxTable
           orders={filteredOrders}
           loading={loading}
-          onVerify={(o) => {
+          onVerify={(o: Order) => {
             setSelectedOrderId(o._id)
             setIsDrawerOpen(true)
           }}

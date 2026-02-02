@@ -1,8 +1,9 @@
 import React from 'react'
 import { createPortal } from 'react-dom'
 import { IoClose, IoArrowForward } from 'react-icons/io5'
-import { cn } from '@/lib/utils'
 import type { Invoice } from '../../types'
+import { StatusBadge } from '../common'
+import { Button } from '@/components'
 
 interface InvoiceOrdersDrawerProps {
   isOpen: boolean
@@ -39,12 +40,12 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
               <span className="text-slate-500">{invoice.phone}</span>
             </p>
           </div>
-          <button
+          <Button
             onClick={onClose}
             className="p-2 hover:bg-neutral-100 rounded-xl transition-all text-slate-400 hover:text-slate-600 active:scale-95"
           >
             <IoClose size={24} />
-          </button>
+          </Button>
         </div>
 
         {/* Content */}
@@ -80,18 +81,7 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
                         {order.type.join(' & ')}
                       </span>
                     </div>
-                    <span
-                      className={cn(
-                        'px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider border transition-all',
-                        order.status === 'APPROVED' || order.status === 'VERIFIED'
-                          ? 'bg-emerald-50 text-emerald-600 border-emerald-100 shadow-sm shadow-emerald-50'
-                          : order.status === 'REJECTED'
-                            ? 'bg-rose-50 text-rose-600 border-rose-100 shadow-sm shadow-rose-50'
-                            : 'bg-primary-50 text-primary-600 border-primary-100 shadow-sm shadow-primary-50'
-                      )}
-                    >
-                      {order.status}
-                    </span>
+                    <StatusBadge status={order.status} />
                   </div>
 
                   <div className="flex items-center justify-between mt-5 pt-4 border-t border-neutral-50">

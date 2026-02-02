@@ -25,9 +25,8 @@ import { transformApiOrderToTableOrder } from '@/features/staff/components/Order
 export default function OperationLayout() {
   const location = useLocation()
   const navigate = useNavigate()
-  // ========== START NEW CODE ==========
+
   const { counts, initializeCounts, setOrders, setLoadingState } = useOrderCountStore()
-  // ========== END NEW CODE ==========
 
   // Gọi API để lấy số lượng đơn hàng cho từng trạng thái
   const { data, isLoading, isError, error } = useAllOrders()
@@ -36,13 +35,11 @@ export default function OperationLayout() {
   useEffect(() => {
     console.log(' Trạng thái API:', { isLoading, isError, hasData: !!data })
 
-    // ========== START NEW CODE ==========
     // Set loading và error states vào store
     setLoadingState(isLoading, isError)
-    // ========== END NEW CODE ==========
 
     if (data) {
-      console.log('✅ Dữ liệu đơn hàng từ API:', data)
+      console.log('Đây là dữ liệu đơn hàng từ API:', data)
       // Transform data từ API sang format UI
       const apiOrders = data?.data?.orders?.data || []
 
@@ -90,7 +87,7 @@ export default function OperationLayout() {
           label="All Orders"
           active={location.pathname === '/operationstaff/all'}
           onClick={() => navigate('/operationstaff/all')}
-          badge={counts.packing > 0 ? counts.packing.toString() : undefined}
+          badge={counts.all > 0 ? counts.all.toString() : undefined}
         />
         <SidebarStaff.MenuItem
           icon={<IoBuildOutline />}

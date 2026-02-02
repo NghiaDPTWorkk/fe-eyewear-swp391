@@ -35,15 +35,15 @@ export const useOrderCountStore = create<OrderCountStore>((set) => ({
     all: 0,
     completed: 0
   },
-  // ========== START NEW CODE ==========
+
   orders: [], // Khởi tạo empty array
   isLoading: false, // Mặc định không loading
   isError: false, // Mặc định không có lỗi
-  // ========== END NEW CODE ==========
+
   setOrders: (orders) => set({ orders }), // Action để set orders
-  // ========== START NEW CODE ==========
+
   setLoadingState: (isLoading, isError) => set({ isLoading, isError }),
-  // ========== END NEW CODE ==========
+
   setCount: (type, count) =>
     set((state) => ({
       counts: {

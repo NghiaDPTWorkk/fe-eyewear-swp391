@@ -44,7 +44,7 @@ export default function OperationOrderDetailPage() {
 
   // Extract order data từ API response
   const order = (orderData as OrderResponse)?.data?.order
-  console.log('Order data from API:', order)
+  console.log('Order Detail from API:', order)
 
   // Nếu không có order data, return error
   if (!order) {
@@ -62,7 +62,6 @@ export default function OperationOrderDetailPage() {
   }
 
   // TODO: Transform order data thành lensData và frameData format
-  // Tạm thời dùng mock data
   const lensData = {
     // KHÔNG có parameters → Hiển thị LensNormalOrder
     productDetail: {
@@ -118,11 +117,7 @@ export default function OperationOrderDetailPage() {
           <IoArrowBack size={20} className="text-gray-600" />
         </button>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
-            {/* START NEW CODE */}
-            Order #{order._id}
-            {/* END NEW CODE */}
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Order #{order._id}</h1>
           <p className="text-sm text-neutral-500 mt-1 font-medium tracking-wide italic opacity-80 uppercase tracking-widest text-[10px]">
             DETAILED ORDER INFORMATION
           </p>

@@ -79,7 +79,6 @@ interface JobTechnicalDetailsProps {
 }
 
 const JobTechnicalDetails = ({ lensData, frameData }: JobTechnicalDetailsProps) => {
-  // Type guard để TypeScript hiểu đúng type
   const hasParameters = (data: LensData): data is Extract<LensData, { parameters: any }> => {
     return 'parameters' in data && data.parameters !== undefined
   }

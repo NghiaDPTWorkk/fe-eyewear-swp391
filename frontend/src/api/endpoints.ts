@@ -77,6 +77,15 @@ export const ENDPOINTS = {
 
       return `/admin/invoices?${params.toString()}`
     },
-    INVOICES_ONBOARD: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/onboard`
+    INVOICES_ONBOARD: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/onboard`,
+    ORDER_DETAIL: (orderId: string) => `/admin/orders/${orderId}`,
+    ORDER_ASSIGN: (orderId: string) => `/admin/orders/${orderId}/status/assign`
+  },
+
+  ADMINS: {
+    GET_ADMIN: (role?: string) => {
+      if (!role) return '/admin/staff/admins'
+      return `/admin/staff/admins?role=${role}`
+    }
   }
 } as const

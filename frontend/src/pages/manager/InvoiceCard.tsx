@@ -1,5 +1,17 @@
+import { useMemo, useState } from 'react'
+import { useQueries } from '@tanstack/react-query'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
+import { OrderStatus } from '@/shared/utils/enums/order.enum'
 import type { AdminInvoiceListItem } from '@/shared/types'
+import type {
+  AdminOrderDetail,
+  AdminOrderDetailApiResponse
+} from '@/shared/types/admin-order.types'
+import type { AdminAccount } from '@/shared/types/admin-account.types'
+import { orderAdminService } from '@/shared/services/admin/orderService'
+import { useGetAdminsByRole } from '@/features/manager/hooks/useGetAdminsByRole'
+import { useAssignOrderStaff } from '@/features/manager/hooks/useAssignOrderStaff'
+import { isManufacturingOrder } from '@/shared/types/order.types'
 
 function getInvoiceStatusBadgeClass(status: string) {
   switch (status) {
@@ -36,6 +48,34 @@ export type InvoiceCardProps = {
   showOnboardButton?: boolean
 }
 
+function StaffSelect({
+  staffList,
+  value,
+  onChange,
+  disabled
+}: {
+  staffList: AdminAccount[]
+  value: string
+  onChange: (v: string) => void
+  disabled?: boolean
+}) {
+  return (
+    <select
+      className="w-full px-3 py-2 rounded-lg border border-neutral-200 bg-white text-sm"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      disabled={disabled}
+    >
+      <option value="">Chọn Operation staff</option>
+      {staffList.map((s) => (
+        <option key={s._id} value={s._id}>
+          {s.name} ({s.email})
+        </option>
+      ))}
+    </select>
+  )
+}
+
 export default function InvoiceCard({
   invoice,
   isExpanded,
@@ -45,6 +85,32 @@ export default function InvoiceCard({
   onComplete,
   showOnboardButton
 }: InvoiceCardProps) {
+  const orderIds = useMemo(() => invoice.orders?.map((o) => o.id) ?? [], [invoice.orders])
+
+  const orderQueries = useQueries({
+    queries: orderIds.map((orderId) => ({
+      queryKey: ['admin-order-detail', orderId],
+      queryFn: () => orderAdminService.getOrderById(orderId),
+      enabled: isExpanded && !!orderId,
+      staleTime: 30_000
+    }))
+  })
+
+  const hasAnyOrderLoading = orderQueries.some((q) => q.isLoading)
+  const hasAnyOrderError = orderQueries.some((q) => q.isError)
+
+  const ordersData = orderQueries
+    .map((q) => (q.data as AdminOrderDetailApiResponse | undefined)?.data?.order)
+    .filter(Boolean) as AdminOrderDetail[]
+
+  const { data: staffData, isLoading: isStaffLoading } = useGetAdminsByRole(
+    isExpanded ? 'OPERATION_STAFF' : undefined
+  )
+  const staffList = staffData?.data?.admins ?? []
+
+  const assignMutation = useAssignOrderStaff()
+  const [selectedStaffByOrderId, setSelectedStaffByOrderId] = useState<Record<string, string>>({})
+
   return (
     <div className="rounded-2xl border border-neutral-200 bg-white shadow-sm">
       <div
@@ -133,16 +199,185 @@ export default function InvoiceCard({
             <div className="text-xs font-semibold text-neutral-500 mb-2">Orders</div>
 
             {invoice.orders && invoice.orders.length > 0 ? (
-              <div className="space-y-2">
-                {invoice.orders.map((o) => (
-                  <div
-                    key={o.id}
-                    className="flex items-center justify-between gap-3 text-sm rounded-lg bg-white border border-neutral-200 px-3 py-2"
-                  >
-                    <div className="font-medium text-neutral-800 truncate">{o.id}</div>
-                    <div className="text-neutral-600">{(o.type ?? []).join(', ')}</div>
-                  </div>
-                ))}
+              <div className="space-y-3">
+                {hasAnyOrderLoading && (
+                  <div className="text-sm text-neutral-500">Đang tải chi tiết order...</div>
+                )}
+
+                {hasAnyOrderError && (
+                  <div className="text-sm text-red-600">Có lỗi khi tải chi tiết order.</div>
+                )}
+
+                {ordersData.map((order) => {
+                  const manufacturing = isManufacturingOrder(order)
+                  const canAssign =
+                    invoice.status === InvoiceStatus.ONBOARD &&
+                    order.status === OrderStatus.WAITING_ASSIGN
+
+                  const selectedStaff = selectedStaffByOrderId[order._id] ?? ''
+
+                  return (
+                    <div
+                      key={order._id}
+                      className="rounded-xl bg-white border border-neutral-200 p-3"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="font-semibold text-neutral-900 truncate">
+                            {order.orderCode}
+                          </div>
+                          <div className="text-xs text-neutral-500 truncate">
+                            Order ID: {order._id}
+                          </div>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <div className="text-xs text-neutral-500">Status</div>
+                          <div className="text-sm font-medium text-neutral-800">{order.status}</div>
+                        </div>
+                      </div>
+
+                      <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-sm">
+                        <div className="text-neutral-700">
+                          <span className="text-neutral-500">Type:</span>{' '}
+                          {(order.type ?? []).join(', ')}
+                        </div>
+                        <div className="text-neutral-700">
+                          <span className="text-neutral-500">Price:</span> {order.price}
+                        </div>
+                        <div className="text-neutral-700">
+                          <span className="text-neutral-500">Assigned staff:</span>{' '}
+                          {order.assignedStaff ?? '-'}
+                        </div>
+                        <div className="text-neutral-700">
+                          <span className="text-neutral-500">Assigned at:</span>{' '}
+                          {order.assignedAt ?? '-'}
+                        </div>
+                      </div>
+
+                      {canAssign && (
+                        <div className="mt-4 rounded-lg border border-neutral-200 bg-neutral-50 p-3">
+                          <div className="text-xs font-semibold text-neutral-600 mb-2">
+                            Assign Operation Staff
+                          </div>
+
+                          {isStaffLoading ? (
+                            <div className="text-sm text-neutral-500">
+                              Đang tải danh sách staff...
+                            </div>
+                          ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 items-center">
+                              <StaffSelect
+                                staffList={staffList}
+                                value={selectedStaff}
+                                onChange={(v) =>
+                                  setSelectedStaffByOrderId((cur) => ({ ...cur, [order._id]: v }))
+                                }
+                                disabled={assignMutation.isPending}
+                              />
+
+                              <button
+                                type="button"
+                                className="px-3 py-2 rounded-lg bg-primary-500 text-white text-sm font-medium disabled:opacity-50"
+                                disabled={!selectedStaff || assignMutation.isPending}
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  assignMutation.mutate({
+                                    orderId: order._id,
+                                    assignedStaff: selectedStaff
+                                  })
+                                }}
+                              >
+                                Assign
+                              </button>
+                            </div>
+                          )}
+
+                          {assignMutation.isError && (
+                            <div className="mt-2 text-sm text-red-600">
+                              {(assignMutation.error as any)?.response?.data?.message ||
+                                (assignMutation.error as any)?.message ||
+                                'Assign thất bại.'}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      <div className="mt-3">
+                        <div className="text-xs font-semibold text-neutral-500 mb-2">Items</div>
+                        <div className="space-y-2">
+                          {order.products.map((line) => (
+                            <div
+                              key={line._id}
+                              className="rounded-lg border border-neutral-200 bg-neutral-50 p-2"
+                            >
+                              <div className="flex items-center justify-between gap-3 text-sm">
+                                <div className="text-neutral-800 font-medium">
+                                  Qty: {line.quantity}
+                                </div>
+                                <div className="text-xs text-neutral-500">
+                                  {manufacturing ? 'MANUFACTURING' : 'NORMAL'}
+                                </div>
+                              </div>
+
+                              <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                                <div className="text-neutral-700">
+                                  <div className="text-xs text-neutral-500 mb-1">Frame</div>
+                                  {line.product ? (
+                                    <div>
+                                      <div className="font-medium text-neutral-800">
+                                        {line.product.sku}
+                                      </div>
+                                      <div className="text-xs text-neutral-500">
+                                        {line.product.product_id}
+                                      </div>
+                                      <div className="text-xs text-neutral-500">
+                                        Price/unit: {line.product.pricePerUnit}
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div className="text-neutral-500">-</div>
+                                  )}
+                                </div>
+
+                                <div className="text-neutral-700">
+                                  <div className="text-xs text-neutral-500 mb-1">Lens</div>
+                                  {line.lens ? (
+                                    <div>
+                                      <div className="font-medium text-neutral-800">
+                                        {line.lens.sku}
+                                      </div>
+                                      <div className="text-xs text-neutral-500">
+                                        {line.lens.lens_id}
+                                      </div>
+                                      <div className="text-xs text-neutral-500">
+                                        Price/unit: {line.lens.pricePerUnit}
+                                      </div>
+                                      <div className="text-xs text-neutral-500">
+                                        PD: {line.lens.parameters.PD} • L(
+                                        {line.lens.parameters.left.SPH}/
+                                        {line.lens.parameters.left.CYL}/
+                                        {line.lens.parameters.left.AXIS}) • R(
+                                        {line.lens.parameters.right.SPH}/
+                                        {line.lens.parameters.right.CYL}/
+                                        {line.lens.parameters.right.AXIS})
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div className="text-neutral-500">-</div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+
+                {ordersData.length === 0 && !hasAnyOrderLoading && !hasAnyOrderError && (
+                  <div className="text-sm text-neutral-500">Không lấy được chi tiết order.</div>
+                )}
               </div>
             ) : (
               <div className="text-sm text-neutral-500">Invoice này chưa có order.</div>

@@ -151,3 +151,7 @@ export interface InvoiceListResponse {
     totalPages: number
   }
 }
+
+export function isManufacturingOrder(order: { type?: Array<string> | null }) {
+  return Array.isArray(order.type) && order.type.includes('MANUFACTURING')
+}

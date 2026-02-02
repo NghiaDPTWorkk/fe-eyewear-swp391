@@ -1,59 +1,113 @@
 /**
  * LensNormalOrder Component
  * Component hiển thị thông tin tròng kính cho đơn hàng THƯỜNG (NORMAL ORDER)
- * Layout đồng bộ với FrameSpecifications
+ * Nhận nguyên productDetail và variantDetail từ API, tự destructure bên trong
  */
 
-interface LensItem {
+interface LensSpec {
+  feature?: string[]
+  origin?: string
+}
+
+interface VariantOption {
+  attributeName: string
   label: string
   value: string
 }
 
-interface LensNormalOrderProps {
-  data: LensItem[]
-  nameBase?: string // Tên sản phẩm lens
+interface Variant {
+  sku: string
+  name: string
+  options: VariantOption[]
+  price: number
+  imgs: string[]
 }
 
-const LensNormalOrder = ({ data, nameBase }: LensNormalOrderProps) => {
+interface ProductDetail {
+  nameBase: string
+  skuBase: string
+  brand: string
+  categories: string[]
+  spec: LensSpec
+  variants: Variant[]
+}
+
+interface LensNormalOrderProps {
+  productDetail: ProductDetail
+  variantDetail: Variant
+  quantity: number // Số lượng từ order
+  pricePerUnit: number // Giá từ order snapshot
+}
+
+const LensNormalOrder = ({ productDetail, variantDetail }: LensNormalOrderProps) => {
+  // Destructure data từ productDetail
+  const { nameBase, skuBase, brand, categories, spec } = productDetail
+
+  // Destructure data từ variantDetail
+  const { sku, name, imgs } = variantDetail
+
+  const origin = spec.origin || 'N/A'
+
+  // Lấy hình ảnh đầu tiên
+  const imageSrc = imgs[0] || 'https://via.placeholder.com/400x300?text=Lens'
+
   return (
     <div className="space-y-4">
-      {/* Product Name Header - nếu có */}
-      {nameBase && (
-        <div className="bg-mint-50 rounded-lg p-4 border border-mint-100">
-          <p className="text-xs text-mint-600 uppercase tracking-wide font-medium mb-1">
-            Product Name
-          </p>
-          <p className="text-base font-bold text-mint-900">{nameBase}</p>
-        </div>
-      )}
-
-      {/* Lens Details Grid - giống FrameSpecifications */}
-      <div className="grid grid-cols-2 gap-x-12 gap-y-4">
-        {data.map((item, idx) => (
-          <div key={idx} className="min-w-[120px] py-7 px-8">
-            <p className="text-xs text-gray-500">{item.label}</p>
-            <p className="text-sm font-semibold text-gray-900">{item.value}</p>
+      {/* Product Header Info */}
+      <div className="bg-mint-50 rounded-lg p-4 border border-mint-100">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <p className="text-xs text-mint-600 uppercase tracking-wide font-medium mb-1">
+              Lens SKU
+            </p>
+            <p className="text-sm font-bold text-mint-900">{sku}</p>
           </div>
-        ))}
+          <div>
+            <p className="text-xs text-mint-600 uppercase tracking-wide font-medium mb-1">
+              Product Name
+            </p>
+            <p className="text-sm font-bold text-mint-900">{nameBase}</p>
+          </div>
+          <div>
+            <p className="text-xs text-mint-600 uppercase tracking-wide font-medium mb-1">
+              Categories
+            </p>
+            <p className="text-sm font-bold text-mint-900">
+              {categories.length > 0 ? categories.join(', ') : 'N/A'}
+            </p>
+          </div>
+        </div>
       </div>
 
-      {/* Helper Note */}
-      <div className="flex items-start gap-2 bg-mint-50 rounded-lg p-3 border border-mint-200 mt-4">
-        <svg
-          className="w-5 h-5 text-mint-600 flex-shrink-0 mt-0.5"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-        >
-          <path
-            fillRule="evenodd"
-            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-            clipRule="evenodd"
-          />
-        </svg>
-        <p className="text-xs text-mint-700">
-          <span className="font-semibold">Note:</span> Use the SKU to locate the correct lens in the
-          warehouse. Verify all specifications before packing.
-        </p>
+      {/* Main Content - giống FrameSpecifications */}
+      <div className="flex flex-col md:flex-row gap-6">
+        {/* Lens Image Section */}
+        <div className="w-55 h-55 md:w-1/3 bg-gray-50 rounded-lg p-4 flex justify-center">
+          <img src={imageSrc} alt="Lens" className="max-w-full h-auto" />
+        </div>
+
+        {/* Lens Details Grid */}
+        <div className="w-55 h-55 md:w-fit grid grid-cols-2 gap-x-12 gap-y-4">
+          <div className="min-w-[120px] py-7 px-8">
+            <p className="text-xs text-gray-500">Variant Name</p>
+            <p className="text-sm font-semibold text-gray-900">{name}</p>
+          </div>
+
+          <div className="min-w-[120px] py-7 px-8">
+            <p className="text-xs text-gray-500">Brand</p>
+            <p className="text-sm font-semibold text-gray-900">{brand}</p>
+          </div>
+
+          <div className="min-w-[120px] py-7 px-8">
+            <p className="text-xs text-gray-500">SKU Base</p>
+            <p className="text-sm font-semibold text-gray-900">{skuBase}</p>
+          </div>
+
+          <div className="min-w-[120px] py-7 px-8">
+            <p className="text-xs text-gray-500">Origin</p>
+            <p className="text-sm font-semibold text-gray-900">{origin}</p>
+          </div>
+        </div>
       </div>
     </div>
   )

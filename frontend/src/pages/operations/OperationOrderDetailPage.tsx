@@ -7,22 +7,95 @@ import { IoArrowBack } from 'react-icons/io5'
 import { Button } from '@/shared/components/ui/button'
 import { ProcessTracker } from '@/components/layout/staff/staff-core/processtracker'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
+import { useOrderDetail } from '@/features/staff/hooks/useOrders'
+import type { OrderResponse } from '@/shared/types'
 
 export default function OperationOrderDetailPage() {
   const { orderId } = useParams<{ orderId: string }>()
-
   const navigate = useNavigate()
-  // TẤT CẢ MOCK DATA NẰM Ở ĐÂY
 
+  // Gọi API lấy chi tiết đơn hàng theo orderId
+  const { data: orderData, isLoading, isError } = useOrderDetail(orderId!)
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <Container>
+        <div className="flex flex-col items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-mint-500"></div>
+          <p className="mt-4 text-gray-500">Đang tải thông tin đơn hàng...</p>
+        </div>
+      </Container>
+    )
+  }
+
+  if (isError || !orderData) {
+    return (
+      <Container>
+        <div className="flex flex-col items-center justify-center py-12">
+          <p className="text-red-600 font-semibold">Không thể tải thông tin đơn hàng</p>
+          <Button onClick={() => navigate(-1)} className="mt-4">
+            Quay lại
+          </Button>
+        </div>
+      </Container>
+    )
+  }
+
+  // Extract order data từ API response
+  const order = (orderData as OrderResponse)?.data?.order
+  console.log('Order data from API:', order)
+
+  // Nếu không có order data, return error
+  if (!order) {
+    return (
+      <Container>
+        <div className="flex flex-col items-center justify-center py-12">
+          <div className="text-red-500 text-5xl mb-4"></div>
+          <p className="text-red-600 font-semibold">Dữ liệu đơn hàng không hợp lệ</p>
+          <Button onClick={() => navigate(-1)} className="mt-4">
+            Quay lại
+          </Button>
+        </div>
+      </Container>
+    )
+  }
+
+  // TODO: Transform order data thành lensData và frameData format
+  // Tạm thời dùng mock data
   const lensData = {
-    prescription: [
-      { eye: 'Right Eye (OD)', sph: '-6.50', cyl: '-1.50', axis: '0°', prism: '-', add: '-' },
-      { eye: 'Left Eye (OS)', sph: '-6.50', cyl: '-1.50', axis: '0°', prism: '-', add: '-' }
-    ],
-    additional: [
-      { label: 'Loại Tròng', value: 'Single Vision' },
-      { label: 'Chất Liệu', value: 'CR-39 Plastic' }
-    ]
+    // KHÔNG có parameters → Hiển thị LensNormalOrder
+    productDetail: {
+      nameBase: 'Rodenstock Anti-Scratch Lens 1',
+      skuBase: 'LENS-001',
+      brand: 'Rodenstock',
+      categories: ['Premium Lenses', 'Anti-Scratch'],
+      spec: {
+        feature: ['Anti-Scratch', 'UV Protection'],
+        origin: 'Germany'
+      },
+      variants: []
+    },
+    variantDetail: {
+      sku: 'LENS-001-01',
+      name: 'Rodenstock Anti-Scratch Lens 1 - 1.50 - Premium',
+      options: [
+        {
+          attributeName: 'Thickness',
+          label: '1.50',
+          value: '1.50'
+        },
+        {
+          attributeName: 'Coating',
+          label: 'Premium',
+          value: 'Premium'
+        }
+      ],
+      price: 132,
+      imgs: ['https://picsum.photos/seed/lens1v0a/400/400']
+    },
+    quantity: 2,
+    pricePerUnit: 132
   }
 
   const frameData = [
@@ -46,7 +119,9 @@ export default function OperationOrderDetailPage() {
         </button>
         <div>
           <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
-            Order #{orderId || 'REG-001'}
+            {/* START NEW CODE */}
+            Order #{order._id}
+            {/* END NEW CODE */}
           </h1>
           <p className="text-sm text-neutral-500 mt-1 font-medium tracking-wide italic opacity-80 uppercase tracking-widest text-[10px]">
             DETAILED ORDER INFORMATION

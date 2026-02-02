@@ -29,3 +29,18 @@ export const useAllOrders = () => {
     refetchOnWindowFocus: true
   })
 }
+
+// START NEW CODE
+/**
+ * Hook để lấy chi tiết một order theo ID
+ * @param orderId - ID của order cần lấy
+ */
+export const useOrderDetail = (orderId: string) => {
+  return useQuery({
+    queryKey: ['order', orderId],
+    queryFn: () => orderService.getOrderById(orderId),
+    enabled: !!orderId, // Chỉ fetch khi có orderId
+    staleTime: 30000 // Cache 30 giây
+  })
+}
+// END NEW CODE

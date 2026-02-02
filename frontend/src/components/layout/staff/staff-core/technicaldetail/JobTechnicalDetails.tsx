@@ -1,8 +1,9 @@
 /* eslint-disable */
 import FrameSpecifications from './FrameSpecifications'
 import LensSpecifications from './LensSpecifications'
-import LensNormalOrder from './LensNormalOrder' // Giả sử bạn đã import component này
+import LensNormalOrder from './LensNormalOrder'
 
+// Types for LensSpecifications (Manufacturing orders - có parameters)
 interface PrescriptionItem {
   eye: string
   sph: string
@@ -17,16 +18,60 @@ interface DetailItem {
   value: string
 }
 
+// Types for LensNormalOrder (Normal orders - không có parameters)
+interface LensSpec {
+  feature?: string[]
+  origin?: string
+}
+
+interface VariantOption {
+  attributeName: string
+  label: string
+  value: string
+}
+
+interface Variant {
+  sku: string
+  name: string
+  options: VariantOption[]
+  price: number
+  imgs: string[]
+}
+
+interface ProductDetail {
+  nameBase: string
+  skuBase: string
+  brand: string
+  categories: string[]
+  spec: LensSpec
+  variants: Variant[]
+}
+
 interface FrameDataItem {
   label: string
   value: string
 }
 
-interface LensData {
-  prescription: PrescriptionItem[]
-  additional: DetailItem[]
-  parameters?: any // để phân biệt là lens của đơn hàng kỹ thuật hay đơn hàng thường
-}
+// Union type - check bằng 'parameters' field
+type LensData =
+  | {
+      parameters: any // Có parameters → Manufacturing order
+      prescription: PrescriptionItem[]
+      additional: DetailItem[]
+      productDetail?: never
+      variantDetail?: never
+      quantity?: never
+      pricePerUnit?: never
+    }
+  | {
+      parameters?: never // Không có parameters → Normal order
+      productDetail: ProductDetail
+      variantDetail: Variant
+      quantity: number
+      pricePerUnit: number
+      prescription?: never
+      additional?: never
+    }
 
 interface JobTechnicalDetailsProps {
   lensData: LensData
@@ -34,6 +79,11 @@ interface JobTechnicalDetailsProps {
 }
 
 const JobTechnicalDetails = ({ lensData, frameData }: JobTechnicalDetailsProps) => {
+  // Type guard để TypeScript hiểu đúng type
+  const hasParameters = (data: LensData): data is Extract<LensData, { parameters: any }> => {
+    return 'parameters' in data && data.parameters !== undefined
+  }
+
   return (
     <div className="space-y-6">
       {/* Lens Specifications Section */}
@@ -41,10 +91,15 @@ const JobTechnicalDetails = ({ lensData, frameData }: JobTechnicalDetailsProps) 
         <h2 className="text-mint-900 font-semibold text-base mb-4">Lens Specification</h2>
 
         {/* Kiểm tra sự tồn tại của parameters */}
-        {lensData.parameters ? (
+        {hasParameters(lensData) ? (
           <LensSpecifications prescription={lensData.prescription} details={lensData.additional} />
         ) : (
-          <LensNormalOrder data={lensData.additional} />
+          <LensNormalOrder
+            productDetail={lensData.productDetail}
+            variantDetail={lensData.variantDetail}
+            quantity={lensData.quantity}
+            pricePerUnit={lensData.pricePerUnit}
+          />
         )}
       </section>
 

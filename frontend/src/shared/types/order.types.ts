@@ -124,8 +124,24 @@ export interface UpdateOrderRequest {
   note?: string
 }
 
-export interface OrderResponse {
+export interface OrderDataResponse {
   order: Order
+  assignerStaff: string
+  assignedStaff: string
+  assignedAt: string
+  startedAt: string | null
+  completedAt: string | null
+  price: number
+  deletedAt: string | null
+  __v: 0
+  createdAt: string
+  updatedAt: string
+}
+
+export interface OrderResponse {
+  success: boolean
+  message: string
+  data: OrderDataResponse | null
 }
 
 export interface OrderListResponse {

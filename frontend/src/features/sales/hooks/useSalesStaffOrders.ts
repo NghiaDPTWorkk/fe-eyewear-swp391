@@ -17,7 +17,7 @@ export const useSalesStaffOrders = () => {
 
       const mappedOrders: Order[] = (Array.isArray(rawData) ? rawData : []).map((o: any) => {
         let frontendStatus = o.status
-        if (o.status === 'PENDING') frontendStatus = 'WAITING_ASSIGN'
+        if (o.status === 'PENDING') frontendStatus = 'WAITING_ASSIGNED'
         else if (['MAKING', 'PACKAGING', 'ASSIGNED'].includes(o.status))
           frontendStatus = 'PROCESSING'
         else if (o.status === 'COMPLETE') frontendStatus = 'COMPLETED'
@@ -60,10 +60,10 @@ export const useSalesStaffOrders = () => {
   }, [])
 
   const rxOrders = orders.filter(
-    (o) => o.isPrescription && (o.status === 'WAITING_ASSIGN' || o.status === 'PROCESSING')
+    (o) => o.isPrescription && (o.status === 'WAITING_ASSIGNED' || o.status === 'PROCESSING')
   )
-  const pendingOrders = orders.filter((o) => o.isPrescription && o.status === 'WAITING_ASSIGN')
-  const processedOrders = orders.filter((o) => !o.isPrescription || o.status !== 'WAITING_ASSIGN')
+  const pendingOrders = orders.filter((o) => o.isPrescription && o.status === 'WAITING_ASSIGNED')
+  const processedOrders = orders.filter((o) => !o.isPrescription || o.status !== 'WAITING_ASSIGNED')
 
   return {
     orders,

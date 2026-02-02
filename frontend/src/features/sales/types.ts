@@ -18,7 +18,7 @@ export interface Order {
   id: number | string
   invoiceId?: number | string
   invoice?: Invoice
-  status: 'WAITING_ASSIGN' | 'PROCESSING' | 'COMPLETED' | string
+  status: 'WAITING_ASSIGNED' | 'PROCESSING' | 'COMPLETED' | string
   lensParameter?: LensParameter
   productName?: string
   customerName?: string

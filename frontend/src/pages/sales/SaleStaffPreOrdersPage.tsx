@@ -24,7 +24,7 @@ export default function SaleStaffPreOrdersPage() {
     fetchOrders()
   }, [fetchOrders])
 
-  const pendingCount = orders.filter((o) => o.status === 'WAITING_ASSIGN').length
+  const pendingCount = orders.filter((o) => o.status === 'WAITING_ASSIGNED').length
 
   const handleOpenDrawer = (id: string) => {
     setSelectedOrderId(id)

@@ -9,7 +9,7 @@ export enum OrderType {
 // Order Status Enum
 export enum OrderStatus {
   PENDING = 'PENDING', // Chờ xác minh
-  WAITING_ASSIGN = 'WAITING_ASSIGN', // Chờ phân công
+  WAITING_ASSIGN = 'WAITING_ASSIGNED', // Chờ phân công
   ASSIGNED = 'ASSIGNED', // Đã phân công
   MAKING = 'MAKING', // Đang sản xuất
   PACKAGING = 'PACKAGING', // Đã đóng gói

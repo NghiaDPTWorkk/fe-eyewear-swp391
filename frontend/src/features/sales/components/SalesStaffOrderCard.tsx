@@ -51,12 +51,12 @@ export const SalesStaffOrderCard: React.FC<SalesStaffOrderCardProps> = ({
         <span
           className={cn(
             'px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider',
-            order.status === 'WAITING_ASSIGN'
+            order.status === 'WAITING_ASSIGNED'
               ? 'bg-slate-50 text-slate-400/80 border border-slate-100'
               : 'bg-blue-50 text-blue-500 border border-blue-100'
           )}
         >
-          {order.status === 'WAITING_ASSIGN' ? 'Pending QC' : 'Processing'}
+          {order.status === 'WAITING_ASSIGNED' ? 'Pending QC' : 'Processing'}
         </span>
       </td>
       <td className="px-4 py-6 text-center">

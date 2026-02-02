@@ -28,7 +28,7 @@ export default function SaleStaffPrescriptionPage() {
 
   const filterOptions = [
     { label: 'All Orders', value: 'All' },
-    { label: 'Waiting Verify', value: 'WAITING_ASSIGN' },
+    { label: 'Waiting Verify', value: 'WAITING_ASSIGNED' },
     { label: 'Processing', value: 'PROCESSING' }
   ]
 

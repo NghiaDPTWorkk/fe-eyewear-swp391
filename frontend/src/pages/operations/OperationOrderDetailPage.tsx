@@ -6,6 +6,7 @@ import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcr
 import { useOrderDetail, useUpdateStatusToPackaging } from '@/features/staff/hooks/useOrders'
 import toast from 'react-hot-toast'
 import { useProductDetails } from '@/features/staff/hooks/products/useProductDetails'
+import { useQueryClient } from '@tanstack/react-query'
 import type { OrderResponse, OrderProductItem } from '@/shared/types'
 import LensNormalOrder from '@/components/layout/staff/staff-core/technicaldetail/LensNormalOrder'
 import LensSpecifications from '@/components/layout/staff/staff-core/technicaldetail/LensSpecifications'
@@ -77,10 +78,27 @@ interface OrderDetailContentProps {
 function OrderDetailContent({ order, orderId, navigate }: OrderDetailContentProps) {
   const updatePackaging = useUpdateStatusToPackaging()
 
+  const queryClient = useQueryClient()
+
   const handleStartProcessing = () => {
+    // Check if redundant status update
+    if (order.status === 'PACKAGING') {
+        navigate(PATHS.OPERATIONSTAFF.PACKING_PROCESS(orderId), {
+          state: {
+            status: 'PACKAGING',
+            products: order.products || []
+          }
+        })
+        return
+    }
+
     updatePackaging.mutate(orderId, {
       onSuccess: () => {
         toast.success('Order status updated to PACKAGING')
+        // Invalidate queries to refresh lists and details
+        queryClient.invalidateQueries({ queryKey: ['orders'] })
+        queryClient.invalidateQueries({ queryKey: ['order', orderId] })
+        
         navigate(PATHS.OPERATIONSTAFF.PACKING_PROCESS(orderId), {
           state: {
             status: 'PACKAGING', // Optimistic update
@@ -351,13 +369,22 @@ function OrderDetailContent({ order, orderId, navigate }: OrderDetailContentProp
 
       {/* Action Button */}
       <div className="flex justify-end gap-3 mt-4">
-        <Button
-          className="px-6 py-3 bg-mint-900 hover:bg-mint-700 text-white rounded-lg font-medium transition-colors shadow-sm"
-          onClick={handleStartProcessing}
-          disabled={updatePackaging.isPending}
-        >
-          {updatePackaging.isPending ? 'Processing...' : 'Start Processing'}
-        </Button>
+        {order.status === 'COMPLETED' ? (
+          <Button
+            className="px-6 py-3 bg-gray-100 text-gray-500 border border-gray-200 rounded-lg font-medium cursor-not-allowed"
+            disabled
+          >
+            Order Completed
+          </Button>
+        ) : (
+          <Button
+            className="px-6 py-3 bg-mint-900 hover:bg-mint-700 text-white rounded-lg font-medium transition-colors shadow-sm"
+            onClick={handleStartProcessing}
+            disabled={updatePackaging.isPending}
+          >
+            {updatePackaging.isPending ? 'Processing...' : 'Start Processing'}
+          </Button>
+        )}
       </div>
     </Container>
   )

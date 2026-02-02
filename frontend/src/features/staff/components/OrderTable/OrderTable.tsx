@@ -222,7 +222,7 @@ export default function OrderTable({
             className={
               isSales ? 'p-2 h-8 w-8 text-primary-500' : 'text-xs rounded-xl h-8 px-4 font-bold'
             }
-            isDisabled={!order.isNextActive}
+            isDisabled={!order.isNextActive || order.currentStatus === 'COMPLETED'}
             title={isSales ? 'Details' : 'Next'}
             rightIcon={!isSales ? <IoChevronForward /> : undefined}
             onClick={() => handleViewOrder(order.id)}

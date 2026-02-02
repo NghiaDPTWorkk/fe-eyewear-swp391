@@ -60,3 +60,12 @@ export const useUpdateStatusToPackaging = () => {
     mutationFn: (id: string) => orderService.updateStatusToPackaging(id)
   })
 }
+
+/**
+ * Hook để update order status sang COMPLETED
+ */
+export const useUpdateStatusToCompleted = () => {
+  return useMutation({
+    mutationFn: (id: string) => orderService.updateStatusToCompleted(id)
+  })
+}

@@ -38,6 +38,14 @@ export const orderService = {
    * @param id - Order ID
    */
   updateStatusToPackaging: async (id: string) => {
-    return httpClient.patch(ENDPOINTS.ORDERS.UPDATE_STATUS_PACKAGING(id))
+    return httpClient.patch(ENDPOINTS.ORDERS.UPDATE_STATUS_PACKAGING(id), {})
+  },
+
+  /**
+   * Cập nhật trạng thái order sang COMPLETED
+   * @param id - Order ID
+   */
+  updateStatusToCompleted: async (id: string) => {
+    return httpClient.patch(ENDPOINTS.ORDERS.UPDATE_STATUS_COMPLETED(id), {})
   }
 }

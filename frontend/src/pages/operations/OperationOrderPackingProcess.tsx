@@ -1,8 +1,7 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Container } from '@/components'
-import { PATHS } from '@/routes/paths'
-import { IoArrowBack, IoCubeOutline } from 'react-icons/io5'
+import { IoArrowBack, IoCubeOutline, IoCheckmarkCircle, IoReload } from 'react-icons/io5'
 import { ProcessTracker } from '@/components/layout/staff/staff-core/processtracker'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 import { ScanSection } from '@/shared/components/ui/scansection'
@@ -10,18 +9,27 @@ import ShippingLabel from '@/shared/components/ui/shippinglabel/ShippingLabel'
 import OrderSumary from '@/shared/components/ui/ordersummary/OrderSumary'
 import CheckListSection from '@/shared/components/ui/packingchecklist/CheckListSection'
 import CheckItem from '@/shared/components/ui/packingchecklist/CheckItem'
+import ConfirmationModal from '@/shared/components/ui/ConfirmationModal'
 import type { OrderProductItem } from '@/shared/types'
+import { useUpdateStatusToCompleted } from '@/features/staff/hooks/useOrders'
+import toast from 'react-hot-toast'
+import { useQueryClient } from '@tanstack/react-query'
 
 export default function OperationOrderPackingProcess() {
   const { orderId } = useParams<{ orderId: string }>()
   const navigate = useNavigate()
   const location = useLocation()
+  const queryClient = useQueryClient()
 
   // Lấy data từ trang trước
-  const { status, products } = (location.state as {
-    status?: string
-    products?: OrderProductItem[]
-  }) || { status: 'PACKAGING', products: [] }
+  const { status, products } = useMemo(() => {
+    const state = location.state as { status?: string; products?: OrderProductItem[] } | null
+    return state || { status: 'PACKAGING', products: [] }
+  }, [location.state])
+
+  const [isCompleted, setIsCompleted] = useState(status === 'COMPLETED')
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const updateStatus = useUpdateStatusToCompleted()
 
   // Define dynamic checklist items
   const checklistItems = useMemo(() => {
@@ -68,6 +76,7 @@ export default function OperationOrderPackingProcess() {
   const allChecked = checklistItems.every((item) => checkedState[item.id])
 
   const handleCheck = (id: string) => {
+    if (isCompleted) return // Disable checking when completed
     setCheckedState((prev) => ({
       ...prev,
       [id]: !prev[id]
@@ -75,9 +84,48 @@ export default function OperationOrderPackingProcess() {
   }
 
   const handleFinish = () => {
-    if (allChecked) {
-      navigate(PATHS.OPERATIONSTAFF.ORDER_DETAIL(orderId || ''), { replace: true })
+    if (allChecked && !isCompleted && orderId) {
+      setIsModalOpen(true)
     }
+  }
+
+  const confirmFinish = () => {
+    if (orderId) {
+      updateStatus.mutate(orderId, {
+        onSuccess: () => {
+          setIsCompleted(true)
+          toast.success('Order packing completed successfully!')
+          // Invalidate orders list to trigger refresh on other pages
+          queryClient.invalidateQueries({ queryKey: ['orders'] })
+          queryClient.invalidateQueries({ queryKey: ['order', orderId] })
+          setIsModalOpen(false)
+        },
+        onError: () => {
+          toast.error('Failed to update order status')
+          setIsModalOpen(false)
+        }
+      })
+    }
+  }
+
+  // Pre-fill checkboxes if already completed (optional, based on requirement)
+  useEffect(() => {
+    if (isCompleted) {
+      const allCheckedState: Record<string, boolean> = {}
+      checklistItems.forEach((item) => {
+        allCheckedState[item.id] = true
+      })
+      setCheckedState(allCheckedState)
+    }
+  }, [isCompleted, checklistItems])
+
+  const handleBack = () => {
+    if (isCompleted) {
+      // Just reuse invalidation logic to be safe if they go to lists
+      queryClient.invalidateQueries({ queryKey: ['orders'] })
+      queryClient.invalidateQueries({ queryKey: ['order', orderId] })
+    }
+    navigate(-1)
   }
 
   return (
@@ -88,7 +136,7 @@ export default function OperationOrderPackingProcess() {
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-5">
           <button
-            onClick={() => navigate(-1)}
+            onClick={handleBack}
             className="p-3 bg-white hover:bg-neutral-50 rounded-xl shadow-sm transition-all border border-neutral-100"
           >
             <IoArrowBack size={20} className="text-gray-600" />
@@ -102,8 +150,10 @@ export default function OperationOrderPackingProcess() {
             </p>
           </div>
         </div>
-        <span className="px-6 py-2 bg-amber-100 text-amber-700 border border-amber-200 rounded-full text-xs font-bold uppercase tracking-widest">
-          {status || 'In Progress'}
+        <span
+          className={`px-6 py-2 border rounded-full text-xs font-bold uppercase tracking-widest ${isCompleted ? 'bg-mint-100 text-mint-700 border-mint-200' : 'bg-amber-100 text-amber-700 border-amber-200'}`}
+        >
+          {isCompleted ? 'COMPLETED' : status || 'In Progress'}
         </span>
       </div>
 
@@ -132,7 +182,7 @@ export default function OperationOrderPackingProcess() {
 
         {/* Right Column - Shipping Info (Conditional Appearance) */}
         <div
-          className={`col-span-12 lg:col-span-5 space-y-6 transition-all duration-500 ease-in-out ${allChecked ? 'opacity-100 translate-y-0' : 'opacity-30 translate-y-4 pointer-events-none grayscale'}`}
+          className={`col-span-12 lg:col-span-5 space-y-6 transition-all duration-500 ease-in-out ${allChecked || isCompleted ? 'opacity-100 translate-y-0' : 'opacity-30 translate-y-4 pointer-events-none grayscale'}`}
         >
           {/* Shipping Info */}
           <ShippingLabel />
@@ -146,16 +196,43 @@ export default function OperationOrderPackingProcess() {
       <div className="flex justify-end items-center mt-8 pt-4 border-t border-gray-200">
         <button
           onClick={handleFinish}
-          disabled={!allChecked}
-          className={`px-6 py-2 rounded-lg font-medium transition-all shadow-lg shadow-mint-200 ${
-            allChecked
-              ? 'bg-mint-900 text-white hover:bg-mint-600 transform hover:-translate-y-1'
-              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+          disabled={!allChecked || isCompleted || updateStatus.isPending}
+          className={`px-8 py-3 rounded-lg font-medium transition-all shadow-lg flex items-center gap-2 border-2 ${
+            isCompleted
+              ? 'bg-white text-mint-600 border-mint-200 cursor-default'
+              : allChecked
+                ? 'bg-mint-900 text-white border-mint-900 hover:bg-mint-700 hover:border-mint-700 transform hover:-translate-y-1 shadow-mint-200'
+                : 'bg-gray-200 text-gray-400 border-gray-200 cursor-not-allowed'
           }`}
         >
-          Complete Packing
+          {updateStatus.isPending ? (
+            <>
+              <IoReload className="animate-spin text-white" size={20} />
+              Processing...
+            </>
+          ) : isCompleted ? (
+            <>
+              <IoCheckmarkCircle size={22} />
+              COMPLETED PACKING
+            </>
+          ) : (
+            'Complete Packing'
+          )}
         </button>
       </div>
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={confirmFinish}
+        title="Confirm Packing Completion"
+        message="Are you sure you want to mark this order as packed? This action cannot be undone."
+        confirmText="Yes, Complete Order"
+        cancelText="Cancel"
+        isLoading={updateStatus.isPending}
+        type="info"
+      />
     </Container>
   )
 }

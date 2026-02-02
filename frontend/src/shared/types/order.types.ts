@@ -1,40 +1,6 @@
 import type { OrderType, OrderStatus, AssignmentOrderStatus, InvoiceStatus } from './enums'
 import type { Address } from './address.types'
 
-export interface LensParameters {
-  left: {
-    SPH: number
-    CYL: number
-    AXIS: number
-  }
-  right: {
-    SPH: number
-    CYL: number
-    AXIS: number
-  }
-  PD: number
-}
-
-/**
- * Order product structure matching backend
- */
-export interface OrderProductFrame {
-  product_id: string
-  sku: string
-}
-
-export interface OrderProductLens {
-  lens_id: string
-  sku: string
-  parameters: LensParameters
-}
-
-export interface OrderProduct {
-  product?: OrderProductFrame
-  lens?: OrderProductLens
-  quantity: number
-}
-
 export interface Order {
   _id: string
   type: OrderType
@@ -167,3 +133,41 @@ export interface InvoiceListResponse {
     totalPages: number
   }
 }
+// API của t đừng xó nha
+
+export interface OrderProduct {
+  product_id: string // Required
+  sku: string // Required - Bắt đầu bằng "FRAME-" hoặc "LENS-"
+  pricePerUnit: number // Required
+}
+
+export interface LensParameters {
+  left: {
+    SPH: number // Sphere
+    CYL: number // Cylinder
+    AXIS: number // Axis
+    ADD?: number // Addition - OPTIONAL
+  }
+  right: {
+    SPH: number
+    CYL: number
+    AXIS: number
+    ADD?: number // OPTIONAL
+  }
+  PD: number // Pupillary Distance
+}
+
+export interface OrderLensDetail {
+  lens_id: string // Required
+  sku: string // Required
+  parameters: LensParameters // Thông số kỹ thuật
+  pricePerUnit: number // Required
+}
+
+export interface OrderProductItem {
+  product: OrderProduct // REQUIRED - Frame hoặc Lens
+  quantity: number // REQUIRED - Số lượng (min: 1)
+  lens?: OrderLensDetail // OPTIONAL - Chỉ có khi Manufacturing Order
+}
+
+//----------------------------------------------------------------------

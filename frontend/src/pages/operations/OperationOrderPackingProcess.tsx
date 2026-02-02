@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Container } from '@/components'
+import { Container, Button, Input, Select } from '@/components'
 import { PATHS } from '@/routes/paths'
 import {
   IoArrowBack,
@@ -48,12 +48,12 @@ export default function OperationOrderPackingProcess() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-5">
-          <button
+          <Button
             onClick={() => navigate(-1)}
             className="p-3 bg-white hover:bg-neutral-50 rounded-xl shadow-sm transition-all border border-neutral-100"
           >
             <IoArrowBack size={20} className="text-gray-600" />
-          </button>
+          </Button>
           <div>
             <h1 className="text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
               <IoCubeOutline className="text-primary-500" /> Packing Station
@@ -84,16 +84,16 @@ export default function OperationOrderPackingProcess() {
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <IoBarcodeOutline className="text-gray-400" />
                   </div>
-                  <input
+                  <Input
                     type="text"
                     className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-mint-500 focus:border-mint-500 bg-gray-50"
                     placeholder="Quét barcode..."
                     defaultValue={orderId}
                   />
                 </div>
-                <button className="px-4 py-2 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-colors">
+                <Button className="px-4 py-2 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-colors">
                   Xác nhận
-                </button>
+                </Button>
               </div>
               <div className="mt-2 text-xs text-gray-500">Mã đơn: {orderId || 'REG-001'}</div>
             </div>
@@ -114,14 +114,14 @@ export default function OperationOrderPackingProcess() {
                   onClick={() => handleCheck(index)}
                 >
                   <div className="flex items-center h-5">
-                    <input
+                    <Input
                       type="checkbox"
                       checked={checkedItems[index]}
                       onChange={() => handleCheck(index)}
                       className="w-5 h-5 text-mint-600 border-gray-300 rounded focus:ring-mint-500 cursor-pointer"
                     />
                   </div>
-                  <div className="ml-3 text-sm select-none">
+                  <div className="ml-3 text-sm Select-none">
                     <label
                       className={`font-medium cursor-pointer ${checkedItems[index] ? 'text-gray-900' : 'text-gray-700'}`}
                     >
@@ -149,11 +149,11 @@ export default function OperationOrderPackingProcess() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Đơn vị vận chuyển
                 </label>
-                <select className="block w-full py-2 px-3 border border-gray-300 rounded-lg focus:ring-mint-500 focus:border-mint-500 bg-gray-50">
+                <Select className="block w-full py-2 px-3 border border-gray-300 rounded-lg focus:ring-mint-500 focus:border-mint-500 bg-gray-50">
                   <option>Viettel Post</option>
                   <option>Giao Hàng Nhanh</option>
                   <option>J&T Express</option>
-                </select>
+                </Select>
               </div>
 
               <div>
@@ -177,9 +177,9 @@ export default function OperationOrderPackingProcess() {
                 </div>
               </div>
 
-              <button className="w-full py-2.5 bg-blue-100 text-blue-700 rounded-lg font-medium hover:bg-blue-200 transition-colors flex items-center justify-center gap-2">
+              <Button className="w-full py-2.5 bg-blue-100 text-blue-700 rounded-lg font-medium hover:bg-blue-200 transition-colors flex items-center justify-center gap-2">
                 <IoPrintOutline size={18} /> In nhãn vận chuyển
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -210,7 +210,7 @@ export default function OperationOrderPackingProcess() {
 
       {/* Footer Actions */}
       <div className="flex justify-end items-center mt-8 pt-4 border-t border-gray-200">
-        <button
+        <Button
           onClick={handleFinish}
           disabled={!allChecked}
           className={`px-6 py-2 rounded-lg font-medium transition-all shadow-lg shadow-mint-200 ${
@@ -220,7 +220,7 @@ export default function OperationOrderPackingProcess() {
           }`}
         >
           Hoàn thành đóng gói
-        </button>
+        </Button>
       </div>
     </Container>
   )

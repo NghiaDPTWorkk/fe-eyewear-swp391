@@ -8,11 +8,11 @@ import { EmptyCart, CartItem, CartSummary, PromoSection } from '@/components/lay
 export const CartPage = () => {
   const { items, toggleAllSelection } = useCartStore()
 
-  const selectedItems = items.filter((item) => item.selected)
-  const allSelected = items.length > 0 && items.every((item) => item.selected)
-  const selectedCount = selectedItems.length
+  const SelectedItems = items.filter((item) => item.Selected)
+  const allSelected = items.length > 0 && items.every((item) => item.Selected)
+  const SelectedCount = SelectedItems.length
 
-  const subtotal = selectedItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  const subtotal = SelectedItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
   return (
     <div className="min-h-screen bg-mint-200">
@@ -33,13 +33,13 @@ export const CartPage = () => {
                     <Checkbox
                       isChecked={allSelected}
                       onCheckedChange={() => toggleAllSelection(!allSelected)}
-                      id="select-all"
+                      id="Select-all"
                     />
                     <label
-                      htmlFor="select-all"
+                      htmlFor="Select-all"
                       className="font-medium text-mint-1200 cursor-pointer"
                     >
-                      Select All ({selectedCount}/{items.length})
+                      Select All ({SelectedCount}/{items.length})
                     </label>
                   </div>
 

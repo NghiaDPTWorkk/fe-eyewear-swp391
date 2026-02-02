@@ -59,15 +59,15 @@ export default function SupportTicketsTable({ onRowClick }: SupportTicketsTableP
             Filter
           </Button>
           <div className="flex bg-gray-100 rounded-lg p-1">
-            <button className="px-3 py-1 text-xs font-medium bg-white shadow-sm rounded-md text-gray-800">
+            <Button className="px-3 py-1 text-xs font-medium bg-white shadow-sm rounded-md text-gray-800">
               All
-            </button>
-            <button className="px-3 py-1 text-xs font-medium text-gray-500 hover:text-gray-800">
+            </Button>
+            <Button className="px-3 py-1 text-xs font-medium text-gray-500 hover:text-gray-800">
               Open
-            </button>
-            <button className="px-3 py-1 text-xs font-medium text-gray-500 hover:text-gray-800">
+            </Button>
+            <Button className="px-3 py-1 text-xs font-medium text-gray-500 hover:text-gray-800">
               Resolved
-            </button>
+            </Button>
           </div>
         </div>
         <div className="text-xs text-gray-500">Showing 1-10 of 142 tickets</div>

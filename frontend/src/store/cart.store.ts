@@ -8,7 +8,7 @@ interface CartState {
   updateQuantity: (productId: string, quantity: number) => void
   removeItem: (productId: string) => void
   toggleSelection: (productId: string) => void
-  toggleAllSelection: (selected: boolean) => void
+  toggleAllSelection: (Selected: boolean) => void
   clearCart: () => void
   setLoading: (loading: boolean) => void
   totalItems: () => number
@@ -35,7 +35,7 @@ export const useCartStore = create<CartState>((set, get) => ({
           })
         }
       }
-      return { items: [...state.items, { ...item, selected: item.selected ?? true }] }
+      return { items: [...state.items, { ...item, Selected: item.Selected ?? true }] }
     }),
 
   updateQuantity: (productId, quantity) =>
@@ -53,13 +53,13 @@ export const useCartStore = create<CartState>((set, get) => ({
   toggleSelection: (productId) =>
     set((state) => ({
       items: state.items.map((item) =>
-        item.product_id === productId ? { ...item, selected: !item.selected } : item
+        item.product_id === productId ? { ...item, Selected: !item.Selected } : item
       )
     })),
 
-  toggleAllSelection: (selected) =>
+  toggleAllSelection: (Selected) =>
     set((state) => ({
-      items: state.items.map((item) => ({ ...item, selected }))
+      items: state.items.map((item) => ({ ...item, Selected }))
     })),
 
   clearCart: () => set({ items: [] }),

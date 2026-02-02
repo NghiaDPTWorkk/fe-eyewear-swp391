@@ -66,7 +66,7 @@ export function ProductCard({
       )}
 
       {/* Wishlist Button */}
-      <button
+      <Button
         onClick={(e) => {
           e.stopPropagation()
           handleAddToWishlist()
@@ -75,7 +75,7 @@ export function ProductCard({
         aria-label="Add to wishlist"
       >
         <Heart className="w-4 h-4 text-gray-eyewear hover:text-primary-500 transition-colors" />
-      </button>
+      </Button>
 
       {/* Product Image - Full width, no padding */}
       <div className="aspect-square bg-gradient-to-br from-mint-100 to-mint-200 flex items-center justify-center overflow-hidden relative">

@@ -9,21 +9,21 @@ export interface ColorOption {
 
 export interface ColorFilterProps {
   colors: ColorOption[]
-  selectedColors: string[]
+  SelectedColors: string[]
   onColorChange: (colorIds: string[]) => void
   className?: string
 }
 
 export function ColorFilter({
   colors,
-  selectedColors,
+  SelectedColors,
   onColorChange,
   className
 }: ColorFilterProps) {
   const handleColorClick = (colorId: string) => {
-    const newSelected = selectedColors.includes(colorId)
-      ? selectedColors.filter((id) => id !== colorId)
-      : [...selectedColors, colorId]
+    const newSelected = SelectedColors.includes(colorId)
+      ? SelectedColors.filter((id) => id !== colorId)
+      : [...SelectedColors, colorId]
 
     onColorChange(newSelected)
   }
@@ -38,7 +38,7 @@ export function ColorFilter({
             key={color.id}
             color={color.hex}
             colorName={color.name}
-            isSelected={selectedColors.includes(color.id)}
+            isSelected={SelectedColors.includes(color.id)}
             onClick={() => handleColorClick(color.id)}
             size="md"
           />

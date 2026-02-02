@@ -1,13 +1,13 @@
 import type { PrescriptionData } from './prescription.types'
 
 export interface CartItem {
-  product_id: string // SKU
+  product_id: string
   quantity: number
   name: string
   price: number
   image: string
   addAt: Date
-  selected?: boolean
+  Selected?: boolean
   lens?: {
     visionNeed: string
     prescription: PrescriptionData | null

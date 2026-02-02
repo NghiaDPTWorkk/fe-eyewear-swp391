@@ -16,7 +16,7 @@ if [ $EXIT_CODE -ne 0 ]; then
   echo "║                                                           ║"
   echo "║  📋 Ví dụ:                                                ║"
   echo "║     KAN-123 feat: add login feature                       ║"
-  echo "║     KAN-456 fix: fix button color                         ║"
+  echo "║     KAN-456 fix: fix Button color                         ║"
   echo "║                                                           ║"
   echo "║  📄 Xem chi tiết: frontend/docs/DEVELOPER_GUIDE.md       ║"
   echo "║                                                           ║"

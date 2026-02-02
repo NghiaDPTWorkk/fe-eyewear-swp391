@@ -1,7 +1,6 @@
-// Barrel export for common staff components
-export { default as PageHeader } from './PageHeader'
-export { default as MetricCard } from './MetricCard'
-export { default as StatusBadge } from './StatusBadge'
-export { default as Pagination } from './Pagination'
-export { default as SearchBar } from './SearchBar'
-export { default as OrderStatusIndicator } from './OrderStatusIndicator'
+export { default as MetricCard } from './CommonMetricCard'
+export { default as OrderStatusIndicator } from './CommonOrderStatusIndicator'
+export { default as PageHeader } from './CommonPageHeader'
+export { default as Pagination } from './CommonPagination'
+export { default as SearchBar } from './CommonSearchBar'
+export { default as StatusBadge } from './CommonStatusBadge'

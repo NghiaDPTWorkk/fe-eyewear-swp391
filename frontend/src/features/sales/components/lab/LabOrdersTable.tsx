@@ -1,8 +1,4 @@
-/**
- * LabOrdersTable Component
- * Displays active lab orders with progress tracking
- */
-import { Card } from '@/components'
+import { Card, Button } from '@/components'
 import { IoChevronForward } from 'react-icons/io5'
 
 const LAB_ORDERS = [
@@ -150,9 +146,9 @@ export default function LabOrdersTable() {
                   </div>
                 </td>
                 <td className="pr-10 px-6 py-6 text-right">
-                  <button className="text-neutral-300 hover:text-emerald-500 hover:bg-emerald-50 transition-all p-2 rounded-xl">
+                  <Button className="text-neutral-300 hover:text-emerald-500 hover:bg-emerald-50 transition-all p-2 rounded-xl">
                     <IoChevronForward size={18} />
-                  </button>
+                  </Button>
                 </td>
               </tr>
             ))}
@@ -163,12 +159,12 @@ export default function LabOrdersTable() {
       <div className="px-10 py-6 flex justify-between items-center text-xs font-semibold text-[#a4a9c1] bg-white border-t border-neutral-100">
         <span className="opacity-70">Showing 1 to 4 of 42 active orders</span>
         <div className="flex gap-3">
-          <button className="px-6 py-2 border border-neutral-200 rounded-lg text-sm font-semibold text-[#3d4465] hover:bg-neutral-50 transition-colors bg-white">
+          <Button className="px-6 py-2 border border-neutral-200 rounded-lg text-sm font-semibold text-[#3d4465] hover:bg-neutral-50 transition-colors bg-white">
             Previous
-          </button>
-          <button className="px-6 py-2 border border-neutral-200 rounded-lg text-sm font-semibold text-[#3d4465] hover:bg-neutral-50 transition-colors bg-white">
+          </Button>
+          <Button className="px-6 py-2 border border-neutral-200 rounded-lg text-sm font-semibold text-[#3d4465] hover:bg-neutral-50 transition-colors bg-white">
             Next
-          </button>
+          </Button>
         </div>
       </div>
     </Card>

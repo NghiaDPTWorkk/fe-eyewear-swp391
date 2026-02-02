@@ -5,7 +5,7 @@
 import { useState, useCallback } from 'react'
 
 interface UseDashboardReturn {
-  selectedOrderId: string | null
+  SelectedOrderId: string | null
   isDrawerOpen: boolean
   viewFullId: string | null
   openDrawer: (id: string) => void
@@ -15,7 +15,7 @@ interface UseDashboardReturn {
 }
 
 export function useDashboard(): UseDashboardReturn {
-  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
+  const [SelectedOrderId, setSelectedOrderId] = useState<string | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [viewFullId, setViewFullId] = useState<string | null>(null)
 
@@ -29,11 +29,11 @@ export function useDashboard(): UseDashboardReturn {
   }, [])
 
   const viewFullDetails = useCallback(() => {
-    if (selectedOrderId) {
-      setViewFullId(selectedOrderId)
+    if (SelectedOrderId) {
+      setViewFullId(SelectedOrderId)
       setIsDrawerOpen(false)
     }
-  }, [selectedOrderId])
+  }, [SelectedOrderId])
 
   const closeFullDetails = useCallback(() => {
     setViewFullId(null)
@@ -41,7 +41,7 @@ export function useDashboard(): UseDashboardReturn {
   }, [])
 
   return {
-    selectedOrderId,
+    SelectedOrderId,
     isDrawerOpen,
     viewFullId,
     openDrawer,

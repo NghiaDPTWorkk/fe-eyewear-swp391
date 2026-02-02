@@ -1,7 +1,3 @@
-/**
- * DashboardMetrics Component
- * Displays key performance metrics for the dashboard
- */
 import { MetricCard } from '@/shared/components/ui/metric-card'
 import {
   IoClipboardOutline,

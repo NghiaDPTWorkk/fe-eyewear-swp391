@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { PATHS } from '@/routes/paths'
 import { Container, Button, Card } from '@/components'
-import { SalesStaffOrderList } from '@/features/sales/components/SalesStaffOrderList'
-import { SalesStaffPagination } from '@/features/sales/components/SalesStaffPagination'
-import OrderDetailsDrawer from '@/features/sales/components/orders/OrderDetailsDrawer'
+import { OrdersDetailsDrawer, OrdersTable } from '@/features/sales/components/orders'
+import { OrderPagination } from '@/features/sales/components/OrderPagination'
 import { useSalesStaffOrders } from '@/features/sales/hooks/useSalesStaffOrders'
 import {
   IoCloudDownloadOutline,
@@ -19,7 +18,7 @@ import { OrderType } from '@/shared/utils/enums/order.enum'
 export default function SaleStaffPreOrdersPage() {
   const navigate = useNavigate()
   const { orders, loading, fetchOrders } = useSalesStaffOrders()
-  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
+  const [SelectedOrderId, setSelectedOrderId] = useState<string | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
   useEffect(() => {
@@ -32,8 +31,8 @@ export default function SaleStaffPreOrdersPage() {
   }
 
   const handleViewFullDetails = () => {
-    if (selectedOrderId) {
-      navigate(PATHS.SALESTAFF.PRE_ORDER_DETAIL(selectedOrderId))
+    if (SelectedOrderId) {
+      navigate(PATHS.SALESTAFF.PRE_ORDER_DETAIL(SelectedOrderId))
       setIsDrawerOpen(false)
     }
   }
@@ -157,23 +156,20 @@ export default function SaleStaffPreOrdersPage() {
       </div>
 
       <Card className="p-0 overflow-hidden border border-neutral-200 shadow-sm rounded-xl">
-        <SalesStaffOrderList
+        <OrdersTable
           orders={orders.filter(
             (o) => o.orderType === 'PRE-ORDER' || o.orderType?.includes('PREORDER')
           )}
-          loading={loading}
-          onVerify={() => {}}
-          onReject={() => {}}
-          onViewDetail={(order) => handleOpenDrawer(order.id.toString())}
+          onRowClick={(id) => handleOpenDrawer(id)}
         />
       </Card>
 
-      <SalesStaffPagination total={orders.length} currentPage={1} pageSize={10} />
+      <OrderPagination total={orders.length} currentPage={1} pageSize={10} />
 
-      <OrderDetailsDrawer
+      <OrdersDetailsDrawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        orderId={selectedOrderId}
+        orderId={SelectedOrderId}
         onViewFullDetails={handleViewFullDetails}
       />
     </Container>

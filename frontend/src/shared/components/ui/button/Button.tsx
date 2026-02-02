@@ -1,13 +1,13 @@
 import type { ElementType, ReactNode, ComponentPropsWithoutRef } from 'react'
 import type { VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
-import { buttonVariants } from './Button.styles'
+import { ButtonVariants } from './Button.styles'
 
 export type ButtonVariant = 'solid' | 'outline' | 'ghost' | 'link'
 export type ButtonColorScheme = 'primary' | 'secondary' | 'danger' | 'neutral'
 export type ButtonSize = 'sm' | 'md' | 'lg'
 
-type ButtonOwnProps<E extends ElementType = 'button'> = {
+type ButtonOwnProps<E extends ElementType = 'Button'> = {
   as?: E
   leftIcon?: ReactNode
   rightIcon?: ReactNode
@@ -15,12 +15,12 @@ type ButtonOwnProps<E extends ElementType = 'button'> = {
   isFullWidth?: boolean
   children?: ReactNode
   className?: string
-} & VariantProps<typeof buttonVariants>
+} & VariantProps<typeof ButtonVariants>
 
-export type ButtonProps<E extends ElementType = 'button'> = ButtonOwnProps<E> &
+export type ButtonProps<E extends ElementType = 'Button'> = ButtonOwnProps<E> &
   Omit<ComponentPropsWithoutRef<E>, keyof ButtonOwnProps<E>>
 
-export function Button<E extends ElementType = 'button'>({
+export function Button<E extends ElementType = 'Button'>({
   as,
   variant = 'solid',
   colorScheme = 'primary',
@@ -33,17 +33,17 @@ export function Button<E extends ElementType = 'button'>({
   children,
   ...props
 }: ButtonProps<E>) {
-  const Component = as || 'button'
+  const Component = as || 'Button'
 
   return (
     <Component
       className={cn(
-        buttonVariants({ variant, colorScheme, size }),
+        ButtonVariants({ variant, colorScheme, size }),
         isFullWidth && 'w-full',
         className
       )}
-      disabled={Component === 'button' ? isDisabled : undefined}
-      aria-disabled={Component !== 'button' ? isDisabled : undefined}
+      disabled={Component === 'Button' ? isDisabled : undefined}
+      aria-disabled={Component !== 'Button' ? isDisabled : undefined}
       {...props}
     >
       {leftIcon && <span className="inline-flex shrink-0">{leftIcon}</span>}

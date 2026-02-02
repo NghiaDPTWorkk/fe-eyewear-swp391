@@ -1,5 +1,5 @@
-import StaffSupportPage from '../StaffSupportPage'
+import SaleStaffSupportPage from '../sales/SaleStaffSupportPage'
 
 export default function OperationSupportPage() {
-  return <StaffSupportPage homeUrl="/operationstaff/dashboard" />
+  return <SaleStaffSupportPage homeUrl="/operationstaff/dashboard" />
 }

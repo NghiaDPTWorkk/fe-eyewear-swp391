@@ -116,7 +116,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
         <span className="px-3 py-1 bg-primary-100 text-primary-600 rounded-full text-xs font-bold uppercase tracking-wider">
           New Arrival
         </span>
-        <button
+        <Button
           onClick={() => {
             const isAuth =
               useAuthStore.getState().isAuthenticated || !!localStorage.getItem('accessToken')
@@ -131,7 +131,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
         >
           <Heart className="w-5 h-5 group-hover:fill-primary-500" />
           <span className="text-sm font-bold uppercase tracking-wider">Wishlist</span>
-        </button>
+        </Button>
       </div>
 
       <h1 className="text-4xl lg:text-5xl font-heading font-bold text-mint-1200 mb-4">
@@ -159,7 +159,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
         </h3>
         <div className="flex gap-4">
           {colors.map((color) => (
-            <button
+            <Button
               key={color.name}
               title={color.name}
               className={`w-10 h-10 rounded-full border-2 transition-all p-0.5 ${
@@ -173,7 +173,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
                 className="w-full h-full rounded-full"
                 style={{ backgroundColor: color.value }}
               />
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -184,13 +184,13 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
           <h3 className="text-sm font-bold text-mint-1200 uppercase tracking-wider">
             Size Selection
           </h3>
-          <button className="text-xs font-bold text-primary-500 uppercase flex items-center gap-1 hover:underline">
+          <Button className="text-xs font-bold text-primary-500 uppercase flex items-center gap-1 hover:underline">
             Size Guide
-          </button>
+          </Button>
         </div>
         <div className="flex gap-4">
           {sizes.map((size) => (
-            <button
+            <Button
               key={size}
               className={`flex-1 py-4 rounded-xl font-semibold transition-all border-2 ${
                 selectedSize === size
@@ -200,7 +200,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
               onClick={() => setSelectedSize(size)}
             >
               {size}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -232,10 +232,10 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
         </Button>
       </div>
 
-      <button className="flex items-center justify-center gap-2 text-primary-500 font-bold mb-12 hover:underline group transition-all">
+      <Button className="flex items-center justify-center gap-2 text-primary-500 font-bold mb-12 hover:underline group transition-all">
         <MessageCircle className="w-5 h-5 group-hover:scale-110 transition-transform" />
         Chat with an Expert about this frame
-      </button>
+      </Button>
 
       {/* Feature Grid */}
       <div className="grid grid-cols-2 gap-y-6 gap-x-8 pt-8 border-t border-mint-300">

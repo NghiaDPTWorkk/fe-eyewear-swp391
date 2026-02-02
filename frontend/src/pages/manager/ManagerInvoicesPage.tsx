@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { Container } from '@/components'
+import { Container, Button } from '@/components'
 import { useAdminInvoices } from '@/features/manager/hooks/useAdminInvoices'
 import { useOnboard } from '@/features/manager/hooks/useOnboard'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
@@ -62,27 +62,27 @@ export default function ManagerInvoicesPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <button
+            <Button
               className="px-3 py-2 rounded-lg border border-neutral-200 text-sm font-medium disabled:opacity-50"
               disabled={!canPrev || isLoading}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
             >
               Prev
-            </button>
-            <button
+            </Button>
+            <Button
               className="px-3 py-2 rounded-lg border border-neutral-200 text-sm font-medium disabled:opacity-50"
               disabled={!canNext || isLoading}
               onClick={() => setPage((p) => p + 1)}
             >
               Next
-            </button>
-            <button
+            </Button>
+            <Button
               className="px-3 py-2 rounded-lg bg-primary-500 text-white text-sm font-medium disabled:opacity-50"
               disabled={isLoading}
               onClick={() => refetch()}
             >
               Refresh
-            </button>
+            </Button>
           </div>
         </div>
 

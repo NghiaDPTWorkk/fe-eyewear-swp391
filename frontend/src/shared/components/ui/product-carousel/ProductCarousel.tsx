@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { ProductCardHome } from '../product-card-home'
 import type { Product } from '@/shared/types/product.types'
 import { useNavigate } from 'react-router-dom'
+import { Button } from '@/components'
 
 interface ProductCarouselProps {
   products: Product[]
@@ -88,20 +89,20 @@ export const ProductCarousel = ({ products, itemsPerView = 4 }: ProductCarouselP
       {/* Navigation Buttons */}
       {products.length > itemsPerView && (
         <>
-          <button
+          <Button
             onClick={goToPrev}
             className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-mint-300 transition-all z-10 group"
             aria-label="Previous products"
           >
             <ChevronLeft className="w-6 h-6 text-mint-1200 group-hover:text-primary-500" />
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={goToNext}
             className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-mint-300 transition-all z-10 group"
             aria-label="Next products"
           >
             <ChevronRight className="w-6 h-6 text-mint-1200 group-hover:text-primary-500" />
-          </button>
+          </Button>
         </>
       )}
     </div>

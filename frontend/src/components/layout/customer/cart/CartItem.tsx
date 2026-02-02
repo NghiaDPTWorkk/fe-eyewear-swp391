@@ -3,6 +3,7 @@ import { useState } from 'react'
 import type { CartItem as CartItemType } from '@/shared/types'
 import { useCartStore } from '@/store/cart.store'
 import { Checkbox, Card } from '@/shared/components/ui'
+import { Button } from '@/components'
 
 interface CartItemProps {
   item: CartItemType
@@ -38,12 +39,12 @@ export const CartItem = ({ item }: CartItemProps) => {
                 className="w-full h-full object-contain mix-blend-multiply"
               />
             </div>
-            <button
+            <Button
               onClick={() => removeItem(item.product_id)}
               className="text-xs font-medium text-gray-400 hover:text-red-500 transition-colors underline"
             >
               Remove
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -76,7 +77,7 @@ export const CartItem = ({ item }: CartItemProps) => {
 
           {/* Collapsible Lenses Section */}
           <div className="mb-8">
-            <button
+            <Button
               onClick={() => setIsLensesOpen(!isLensesOpen)}
               className="flex items-center gap-2 text-base font-bold text-[#4F8B8B] hover:text-[#3D6E6E] transition-colors mb-4"
             >
@@ -86,7 +87,7 @@ export const CartItem = ({ item }: CartItemProps) => {
               ) : (
                 <ChevronDown className="w-4 h-4" />
               )}
-            </button>
+            </Button>
 
             {isLensesOpen && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-3 mb-6 animate-in fade-in slide-in-from-top-2 duration-300">
@@ -151,9 +152,9 @@ export const CartItem = ({ item }: CartItemProps) => {
                   </div>
                 )}
                 <div className="md:col-span-2 flex justify-end mt-4">
-                  <button className="text-xs font-bold text-[#4F8B8B] hover:underline uppercase tracking-widest">
+                  <Button className="text-xs font-bold text-[#4F8B8B] hover:underline uppercase tracking-widest">
                     Edit
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
@@ -209,21 +210,21 @@ export const CartItem = ({ item }: CartItemProps) => {
 
           {/* Quantity Selector (Invisible but functional) */}
           <div className="absolute top-8 right-8 flex items-center gap-3 bg-gray-50 rounded-lg p-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button
+            <Button
               onClick={() => updateQuantity(item.product_id, Math.max(1, item.quantity - 1))}
               className="p-1 hover:bg-white rounded transition-colors text-gray-600"
             >
               <Minus className="w-3 h-3" />
-            </button>
+            </Button>
             <span className="text-xs font-bold text-gray-800 min-w-[20px] text-center">
               {item.quantity}
             </span>
-            <button
+            <Button
               onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
               className="p-1 hover:bg-white rounded transition-colors text-gray-600"
             >
               <Plus className="w-3 h-3" />
-            </button>
+            </Button>
           </div>
         </div>
       </div>

@@ -1,14 +1,23 @@
-import { Container, Card, Button } from '@/components'
+import { useState } from 'react'
+import { Container, Card, Button, Input, Select } from '@/components'
 import { Link } from 'react-router-dom'
 import {
   IoShieldCheckmarkOutline,
   IoAlertCircleOutline,
   IoCloudUploadOutline,
   IoMailOutline,
-  IoCallOutline
+  IoCallOutline,
+  IoChevronUpOutline,
+  IoChevronDownOutline
 } from 'react-icons/io5'
 
-export default function SaleStaffSupportPage() {
+interface SaleStaffSupportPageProps {
+  homeUrl?: string
+}
+
+export default function SaleStaffSupportPage({
+  homeUrl = '/salestaff/dashboard'
+}: SaleStaffSupportPageProps) {
   const guidelines = [
     {
       title: 'Data Security',
@@ -77,14 +86,29 @@ export default function SaleStaffSupportPage() {
     { title: 'Print function error', date: 'Submitted 5 days ago', status: 'Resolved' }
   ]
 
+  const faqs = [
+    {
+      question: 'How do I process a refund for a customer?',
+      answer:
+        "Go to the Orders page, Select the specific order, and click the 'Process Refund' Button in the Actions menu. Approval may be required for amounts over $500."
+    },
+    {
+      question: 'Why is the label printer not connecting?',
+      answer:
+        "Ensure the printer is on the same Wi-Fi network as your terminal. Check settings under 'Devices' or restart the printer."
+    },
+    {
+      question: 'Can I edit an order after it has been shipped?',
+      answer:
+        "No, once an order status is 'Shipped', it cannot be modified. You will need to create a return request if corrections are needed."
+    }
+  ]
+
   return (
     <Container className="space-y-8">
       <div>
         <div className="flex items-center gap-2 text-sm mb-2 font-medium">
-          <Link
-            to="/salestaff/dashboard"
-            className="text-neutral-400 hover:text-primary-500 transition-colors"
-          >
+          <Link to={homeUrl} className="text-neutral-400 hover:text-primary-500 transition-colors">
             Dashboard
           </Link>
           <span className="text-neutral-300">/</span>
@@ -130,6 +154,17 @@ export default function SaleStaffSupportPage() {
           </Card>
 
           <Card className="p-8 border-none shadow-sm shadow-neutral-200/50">
+            <h2 className="text-xl font-semibold text-neutral-900 mb-8">
+              Frequently Asked Questions
+            </h2>
+            <div className="space-y-4">
+              {faqs.map((faq, index) => (
+                <FAQItem key={index} question={faq.question} answer={faq.answer} />
+              ))}
+            </div>
+          </Card>
+
+          <Card className="p-8 border-none shadow-sm shadow-neutral-200/50">
             <h2 className="text-xl font-semibold text-neutral-900 mb-8">Important Contacts</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {contacts.map((contact) => (
@@ -159,6 +194,28 @@ export default function SaleStaffSupportPage() {
         </div>
 
         <div className="lg:col-span-4 space-y-8">
+          <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
+            <h3 className="font-bold text-gray-900 mb-2">System Status</h3>
+            <div className="flex items-center gap-2 mb-4">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+              <span className="text-sm font-medium text-emerald-700">All Systems Operational</span>
+            </div>
+            <div className="space-y-2 text-xs text-gray-500">
+              <div className="flex justify-between">
+                <span>Version</span>
+                <span>v2.5.4</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Last Update</span>
+                <span>Oct 24, 2023</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Server</span>
+                <span>US-East-1</span>
+              </div>
+            </div>
+          </div>
+
           <Card className="p-8 border-none shadow-sm shadow-neutral-200/50">
             <h2 className="text-xl font-semibold text-neutral-900 mb-8">Report a Bug</h2>
             <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
@@ -166,7 +223,7 @@ export default function SaleStaffSupportPage() {
                 <label className="text-[11px] font-semibold text-neutral-400 uppercase tracking-widest pl-1">
                   Bug Title *
                 </label>
-                <input
+                <Input
                   type="text"
                   placeholder="Brief description of the issue"
                   className="w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 focus:bg-white transition-all"
@@ -177,11 +234,11 @@ export default function SaleStaffSupportPage() {
                 <label className="text-[11px] font-semibold text-neutral-400 uppercase tracking-widest pl-1">
                   Priority
                 </label>
-                <select className="w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-semibold text-neutral-700 appearance-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all cursor-pointer">
+                <Select className="w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-semibold text-neutral-700 appearance-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all cursor-pointer">
                   <option>Low - Cosmetic issue</option>
-                  <option selected>Medium - Affects workflow</option>
+                  <option Selected>Medium - Affects workflow</option>
                   <option>High - Critical blocker</option>
-                </select>
+                </Select>
               </div>
 
               <div className="space-y-2">
@@ -277,5 +334,27 @@ export default function SaleStaffSupportPage() {
         </div>
       </div>
     </Container>
+  )
+}
+
+function FAQItem({ question, answer }: { question: string; answer: string }) {
+  const [isOpen, setIsOpen] = useState(false)
+  return (
+    <div className="border border-gray-100 rounded-lg overflow-hidden">
+      <Button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between p-4 text-left bg-gray-50 hover:bg-gray-100 transition-colors"
+      >
+        <span className="font-medium text-gray-800">{question}</span>
+        {isOpen ? (
+          <IoChevronUpOutline className="text-gray-500" />
+        ) : (
+          <IoChevronDownOutline className="text-gray-500" />
+        )}
+      </Button>
+      {isOpen && (
+        <div className="p-4 bg-white text-sm text-gray-600 border-t border-gray-100">{answer}</div>
+      )}
+    </div>
   )
 }

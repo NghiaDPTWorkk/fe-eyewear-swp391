@@ -1,7 +1,8 @@
 import React from 'react'
 import { Input } from '../input'
-import { Button } from '../button'
+import { Button } from '../Button'
 import { IoChevronDownOutline } from 'react-icons/io5'
+import { Select } from '@/components'
 
 export default function ContactSupportTeam() {
   return (
@@ -16,22 +17,22 @@ export default function ContactSupportTeam() {
           <div className="space-y-1">
             <label className="text-sm font-semibold text-gray-700">Department</label>
             <div className="relative">
-              <select className="w-full h-10 px-3 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-primary-500 appearance-none">
+              <Select className="w-full h-10 px-3 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-primary-500 appearance-none">
                 <option>Technical Support</option>
                 <option>Order Logistics</option>
                 <option>Account Issues</option>
-              </select>
+              </Select>
               <IoChevronDownOutline className="absolute right-3 top-3 text-gray-400 pointer-events-none" />
             </div>
           </div>
           <div className="space-y-1">
             <label className="text-sm font-semibold text-gray-700">Priority</label>
             <div className="relative">
-              <select className="w-full h-10 px-3 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-primary-500 appearance-none">
+              <Select className="w-full h-10 px-3 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-primary-500 appearance-none">
                 <option>Normal</option>
                 <option>High</option>
                 <option>Urgent</option>
-              </select>
+              </Select>
               <IoChevronDownOutline className="absolute right-3 top-3 text-gray-400 pointer-events-none" />
             </div>
           </div>

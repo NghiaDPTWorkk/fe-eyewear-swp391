@@ -1,6 +1,6 @@
 import { cva } from 'class-variance-authority'
 
-export const buttonVariants = cva(
+export const ButtonVariants = cva(
   [
     'inline-flex items-center justify-center gap-2',
     'font-medium whitespace-nowrap',

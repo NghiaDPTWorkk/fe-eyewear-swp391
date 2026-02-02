@@ -1,8 +1,9 @@
 import { useId } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
+import { Input } from '@/components'
 
-const checkboxVariants = cva('inline-flex cursor-pointer items-center gap-2 select-none', {
+const checkboxVariants = cva('inline-flex cursor-pointer items-center gap-2 Select-none', {
   variants: {
     size: {
       sm: 'text-sm',
@@ -75,7 +76,7 @@ export function Checkbox({
 
   return (
     <label htmlFor={checkboxId} className={cn(checkboxVariants({ size, isDisabled }), className)}>
-      <input
+      <Input
         type="checkbox"
         id={checkboxId}
         checked={isChecked}

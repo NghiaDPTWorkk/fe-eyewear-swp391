@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react'
 import { invoiceService } from '../services/invoiceService'
 
 export function useRxVerification() {
-  const [selectedRxId, setSelectedRxId] = useState<string | null>(null)
+  const [SelectedRxId, setSelectedRxId] = useState<string | null>(null)
   const [isComparing, setIsComparing] = useState(false)
   const [zoom, setZoom] = useState(100)
   const [rotation, setRotation] = useState(0)
@@ -11,7 +11,7 @@ export function useRxVerification() {
   const zoomOut = useCallback(() => setZoom((prev) => Math.max(prev - 10, 50)), [])
   const rotateImage = useCallback(() => setRotation((prev) => prev + 90), [])
 
-  const selectRx = useCallback((id: string) => {
+  const SelectRx = useCallback((id: string) => {
     setSelectedRxId(id)
     setIsComparing(true)
     setZoom(100)
@@ -46,7 +46,7 @@ export function useRxVerification() {
   }, [])
 
   return {
-    selectedRxId,
+    SelectedRxId,
     isComparing,
     zoom,
     rotation,
@@ -55,7 +55,7 @@ export function useRxVerification() {
     zoomIn,
     zoomOut,
     rotateImage,
-    selectRx,
+    SelectRx,
     backToList,
     approveRx,
     rejectRx

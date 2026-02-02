@@ -1,5 +1,5 @@
 import Header from '@/shared/components/ui/header/Header'
-import { Input } from '@/components'
+import { Input, Button } from '@/components'
 import { Search, ShoppingCart, User, X, Glasses, Heart } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
@@ -52,7 +52,7 @@ export default function CustomerHeader() {
       navListContent={
         !isSearchExpanded ? (
           <nav className="flex items-center gap-8 transition-all duration-300">
-            <button
+            <Button
               onClick={() => navigate('/')}
               className={`${
                 isActive('/') ? 'text-mint-1200 font-semibold' : 'text-gray-eyewear font-medium'
@@ -64,8 +64,8 @@ export default function CustomerHeader() {
                   isActive('/') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
                 } transition-transform`}
               ></span>
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => navigate('/eyeglasses')}
               className={`${
                 isActive('/eyeglasses') || isActive('/products')
@@ -81,8 +81,8 @@ export default function CustomerHeader() {
                     : 'scale-x-0 group-hover:scale-x-100'
                 } transition-transform`}
               ></span>
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => navigate('/sunglasses')}
               className={`${
                 isActive('/sunglasses')
@@ -96,8 +96,8 @@ export default function CustomerHeader() {
                   isActive('/sunglasses') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
                 } transition-transform`}
               ></span>
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => navigate('/lenses')}
               className={`${
                 isActive('/lenses')
@@ -111,7 +111,7 @@ export default function CustomerHeader() {
                   isActive('/lenses') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
                 } transition-transform`}
               ></span>
-            </button>
+            </Button>
           </nav>
         ) : (
           <div ref={searchRef} className="w-full transition-all duration-300">
@@ -125,13 +125,13 @@ export default function CustomerHeader() {
                 </span>
               }
               rightElement={
-                <button
+                <Button
                   onClick={() => setIsSearchExpanded(false)}
                   className="flex items-center justify-center hover:bg-mint-500 rounded-full p-1 transition-colors"
                   aria-label="Close search"
                 >
                   <X className="w-4 h-4 text-gray-eyewear" />
-                </button>
+                </Button>
               }
               className="w-full bg-mint-300 border-mint-300 rounded-xl"
               onBlur={(e) => {
@@ -159,13 +159,13 @@ export default function CustomerHeader() {
                 onFocus={() => setIsSearchExpanded(true)}
               />
             </div>
-            <button
+            <Button
               className="p-2 hover:bg-mint-200 rounded-full transition-all relative group"
               aria-label="Wishlist"
             >
               <Heart className="w-5 h-5 text-gray-eyewear group-hover:text-primary-500 transition-colors" />
-            </button>
-            <button
+            </Button>
+            <Button
               className="p-2 hover:bg-mint-200 rounded-full transition-all relative group"
               aria-label="Shopping Cart"
               onClick={() => navigate('/cart')}
@@ -176,18 +176,18 @@ export default function CustomerHeader() {
                   {totalItems()}
                 </span>
               )}
-            </button>
+            </Button>
             {isAuthenticated || !!localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN) ? (
               <ProjectProfileDropdown />
             ) : (
-              <button
+              <Button
                 className="p-2 hover:bg-mint-200 rounded-full transition-all group flex items-center gap-2"
                 aria-label="Login"
                 onClick={() => navigate('/login')}
               >
                 <User className="w-5 h-5 text-gray-eyewear group-hover:text-primary-500 transition-colors" />
                 <span className="text-sm font-medium text-gray-eyewear hidden md:block">Login</span>
-              </button>
+              </Button>
             )}
           </div>
         ) : null

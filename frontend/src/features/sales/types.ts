@@ -1,28 +1,74 @@
-export interface LensParameter {
-  SPH: number
-  CYL: number
-  AXIS: number
-  PD: number
-  ADD?: number
-  [key: string]: any
-}
-
 export interface Invoice {
-  id: number | string
-  status: 'DEPOSITED' | 'CANCEL' | 'PAID' | 'WAITING' | string
-  totalAmount?: number
-  createdAt?: string
+  id: string
+  invoiceCode: string
+  fullName: string
+  phone: string
+  finalPrice: string
+  status: 'DEPOSITED' | 'WAITING_ASSIGN' | 'REJECTED' | 'APPROVED'
+  address: string
+  createdAt: string
+  orders: {
+    id: string
+    type: ('MANUFACTURING' | 'STANDARD' | 'PRE-ORDER')[]
+    status:
+      | 'PENDING'
+      | 'APPROVED'
+      | 'REJECTED'
+      | 'VERIFIED'
+      | 'UNVERIFIED'
+      | 'WAITING_ASSIGN'
+      | 'PROCESSING'
+      | 'COMPLETED'
+      | 'DEPOSITED'
+  }[]
+  approvedOrdersCount?: number
+  totalOrdersCount?: number
 }
 
-export interface Order {
-  id: number | string
-  invoiceId?: number | string
-  invoice?: Invoice
-  status: 'WAITING_ASSIGNED' | 'PROCESSING' | 'COMPLETED' | string
-  lensParameter?: LensParameter
-  productName?: string
+export interface OrderDetail {
+  _id: string
+  orderCode: string
+  invoiceId: string
+  type: ('MANUFACTURING' | 'STANDARD' | 'PRE-ORDER')[]
+  status:
+    | 'PENDING'
+    | 'APPROVED'
+    | 'REJECTED'
+    | 'VERIFIED'
+    | 'UNVERIFIED'
+    | 'WAITING_ASSIGN'
+    | 'PROCESSING'
+    | 'COMPLETED'
+    | 'DEPOSITED'
+  price: number
+  products: {
+    product: {
+      product_id: string
+      sku: string
+      product_name?: string
+      pricePerUnit: number
+    }
+    quantity: number
+    lens?: {
+      lens_id: string
+      sku: string
+      parameters: {
+        left: { SPH: number; CYL: number; AXIS: number }
+        right: { SPH: number; CYL: number; AXIS: number }
+        PD: number
+      }
+    }
+    prescriptionImageUrl?: string
+  }[]
+  assignedAt?: string | null
+  startedAt?: string | null
+  completedAt?: string | null
+  createdAt?: string
+  // Additional fields for compatibility
   customerName?: string
+  customerPhone?: string
   isPrescription?: boolean
-  orderType?: string
-  description?: string
+  invoice?: Invoice
 }
+
+export type Order = OrderDetail

@@ -25,11 +25,13 @@ const METRICS: Metric[] = [
   { label: 'On-site Now', value: '5', icon: <IoOptionsOutline />, color: 'bg-amber-500' }
 ]
 
-interface CustomerMetricsProps {
+interface CustomerCustomerMetricsProps {
   isCompact?: boolean
 }
 
-export default function CustomerMetrics({ isCompact = false }: CustomerMetricsProps) {
+export default function CustomerCustomerMetrics({
+  isCompact = false
+}: CustomerCustomerMetricsProps) {
   return (
     <div
       className={`grid gap-6 mb-10 transition-all ${isCompact ? 'grid-cols-2 lg:grid-cols-2' : 'grid-cols-2 md:grid-cols-4'}`}

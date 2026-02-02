@@ -11,12 +11,22 @@ export const useSalesStaffInvoices = () => {
     setLoading(true)
     setError(null)
     try {
-      const response = await httpClient.get<any>('/invoices')
-      const data = response.data?.data?.data || response.data?.data || []
-      const deposited = Array.isArray(data)
-        ? data.filter((inv: Invoice) => inv.status === 'DEPOSITED')
-        : []
-      setInvoices(deposited)
+      const response = await httpClient.get<any>('/admin/invoices/deposited')
+      const rawData = response.data?.data || response.data || []
+
+      const mappedInvoices = (Array.isArray(rawData) ? rawData : []).map((inv: any) => {
+        const total = inv.orders?.length || 0
+        const approved =
+          inv.orders?.filter((o: any) => o.status === 'APPROVED' || o.status === 'COMPLETED')
+            .length || 0
+        return {
+          ...inv,
+          totalOrdersCount: total,
+          approvedOrdersCount: approved
+        }
+      })
+
+      setInvoices(mappedInvoices)
     } catch (err: any) {
       setError(err.message || 'Failed to fetch invoices')
     } finally {

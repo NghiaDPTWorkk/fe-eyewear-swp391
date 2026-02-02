@@ -1,7 +1,7 @@
-/* eslint-disable max-lines */
 import { useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import { Card, Container } from '@/shared/components/ui'
+import PageHeader from '@/features/sales/components/common/PageHeader'
 import {
   IoSearchOutline,
   IoCallOutline,
@@ -13,7 +13,7 @@ import {
   IoInformationCircleOutline
 } from 'react-icons/io5'
 import { cn } from '@/lib/utils'
-import SaleStaffCustomerCommunicationDrawer from '@/features/sales/components/SaleStaffCustomerCommunicationDrawer/SaleStaffCustomerCommunicationDrawer'
+import CommunicationDrawer from '@/features/sales/components/customer/CommunicationDrawer'
 
 interface Customer {
   id: string
@@ -83,23 +83,11 @@ export default function SaleStaffCustomerPage() {
 
   return (
     <Container className="h-[calc(100vh-140px)] flex flex-col overflow-hidden">
-      {/* 1. Standardized Header Section */}
-      <div className="mb-6 shrink-0">
-        <div className="flex items-center gap-2 text-sm mb-2 font-medium">
-          <Link
-            to="/salestaff/dashboard"
-            className="text-neutral-400 hover:text-primary-500 transition-colors"
-          >
-            Dashboard
-          </Link>
-          <span className="text-neutral-300">/</span>
-          <span className="text-primary-500 font-semibold">Customers</span>
-        </div>
-        <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">Customer Inbox</h1>
-        <p className="text-gray-500 mt-1">
-          Manage communications and provide personalized support to your clients.
-        </p>
-      </div>
+      <PageHeader
+        title="Customer Inbox"
+        subtitle="Manage communications and provide personalized support to your clients."
+        breadcrumbs={[{ label: 'Dashboard', path: '/salestaff/dashboard' }, { label: 'Customers' }]}
+      />
 
       {/* 2. Main content area (Inbox logic) */}
       <Card className="flex-1 flex overflow-hidden border border-neutral-200 shadow-sm p-0 rounded-3xl">
@@ -206,7 +194,7 @@ export default function SaleStaffCustomerPage() {
                 </header>
 
                 <div className="flex-1 overflow-hidden">
-                  <SaleStaffCustomerCommunicationDrawer
+                  <CommunicationDrawer
                     isOpen={true}
                     onClose={() => setSelectedCustomerId(null)}
                     customer={selectedCustomer}

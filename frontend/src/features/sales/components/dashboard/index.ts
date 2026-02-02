@@ -1,5 +1,8 @@
-// Barrel export for Dashboard components
-export { default as DashboardMetrics } from './DashboardMetrics'
+export { default as Charts } from './Charts'
+export { default as Metrics } from './Metrics'
+export { default as Row } from './Row'
+export { default as Table } from './Table'
 export { default as SalesChart } from './SalesChart'
 export { default as OrderStatusChart } from './OrderStatusChart'
 export { default as UrgentOrdersTable } from './UrgentOrdersTable'
+export { default as InvoiceOrdersDrawer } from './InvoiceOrdersDrawer'

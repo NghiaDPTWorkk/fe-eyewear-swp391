@@ -4,8 +4,8 @@
  */
 import { Card, Button } from '@/components'
 import { IoGlassesOutline, IoEyeOutline } from 'react-icons/io5'
-import StatusBadge from '../common/StatusBadge'
-import Pagination from '../common/Pagination'
+import StatusBadge from '../common/CommonStatusBadge'
+import Pagination from '../common/CommonPagination'
 import { TYPOGRAPHY } from '../../constants/saleStaffDesignSystem'
 
 // Mock data

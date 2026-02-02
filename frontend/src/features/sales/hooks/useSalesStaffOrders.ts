@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 import { httpClient } from '@/api/apiClients'
-import type { Order } from '../types'
+import type { Order, OrderDetail } from '../types'
+import { transformOrder } from '../utils/orderUtils'
 
 export const useSalesStaffOrders = () => {
   const [orders, setOrders] = useState<Order[]>([])
@@ -11,29 +12,22 @@ export const useSalesStaffOrders = () => {
     setLoading(true)
     setError(null)
     try {
-      const response = await httpClient.get<any>('/admin/orders')
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+      const response = await httpClient.get<any>('/admin/invoices/deposited')
+      const invoices = response.data?.data || response.data || []
+      const allOrders: Order[] = []
 
-      const rawData = response.data?.orders?.data || response.data?.data || []
+      if (Array.isArray(invoices)) {
+        invoices.forEach((inv: any) => {
+          if (Array.isArray(inv.orders)) {
+            inv.orders.forEach((ord: any) => {
+              allOrders.push(transformOrder(ord, inv))
+            })
+          }
+        })
+      }
 
-      const mappedOrders: Order[] = (Array.isArray(rawData) ? rawData : []).map((o: any) => {
-        let frontendStatus = o.status
-        if (o.status === 'PENDING') frontendStatus = 'WAITING_ASSIGNED'
-        else if (['MAKING', 'PACKAGING', 'ASSIGNED'].includes(o.status))
-          frontendStatus = 'PROCESSING'
-        else if (o.status === 'COMPLETE') frontendStatus = 'COMPLETED'
-
-        return {
-          ...o,
-          id: o._id,
-          status: frontendStatus,
-          isPrescription: o.type?.includes('MANUFACTURING') || false,
-          orderType: o.type,
-          invoice: o.invoice || (o.invoiceId ? { id: o.invoiceId, status: 'UNKNOWN' } : undefined),
-          customerName: o.customerName || o.invoice?.fullName || 'Customer'
-        }
-      })
-
-      setOrders(mappedOrders)
+      setOrders(allOrders)
     } catch (err: any) {
       setError(err.message || 'Failed to fetch orders')
     } finally {
@@ -44,13 +38,25 @@ export const useSalesStaffOrders = () => {
   const fetchOrderDetail = useCallback(async (orderId: string | number) => {
     setLoading(true)
     try {
-      // Correct endpoint: /orders/:id (apiClient adds /api/v1)
-      const response = await httpClient.get<any>(`/orders/${orderId}`)
-      const data = response.data?.data || response.data
-      return {
-        ...data,
-        id: data._id
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+      const response = await httpClient.get<any>(`/admin/orders/${orderId}`)
+      const ord = response.data?.order || response.data?.data?.order || response.data || null
+
+      if (!ord) return null
+
+      // Try to fetch invoice data if we have invoiceId
+      let invoiceData = null
+      const invoiceId = ord.invoiceId || ord.invoice?._id
+      if (invoiceId) {
+        try {
+          const invResponse = await httpClient.get<any>(`/admin/invoices/${invoiceId}`)
+          invoiceData = invResponse.data?.invoice || invResponse.data?.data || invResponse.data
+        } catch {
+          // Invoice fetch failed, continue without it
+        }
       }
+
+      return transformOrder(ord, invoiceData) as OrderDetail
     } catch (err: any) {
       setError(err.message || 'Failed to fetch order detail')
       return null
@@ -59,11 +65,13 @@ export const useSalesStaffOrders = () => {
     }
   }, [])
 
-  const rxOrders = orders.filter(
-    (o) => o.isPrescription && (o.status === 'WAITING_ASSIGNED' || o.status === 'PROCESSING')
+  const rxOrders = orders.filter((o) => o.isPrescription)
+  const pendingOrders = orders.filter(
+    (o) => o.isPrescription && ['WAITING_ASSIGN', 'PENDING', 'DEPOSITED'].includes(o.status)
   )
-  const pendingOrders = orders.filter((o) => o.isPrescription && o.status === 'WAITING_ASSIGNED')
-  const processedOrders = orders.filter((o) => !o.isPrescription || o.status !== 'WAITING_ASSIGNED')
+  const processedOrders = orders.filter(
+    (o) => !o.isPrescription || !['WAITING_ASSIGN', 'PENDING'].includes(o.status)
+  )
 
   return {
     orders,

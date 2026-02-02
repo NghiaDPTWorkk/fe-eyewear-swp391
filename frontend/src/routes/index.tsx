@@ -60,9 +60,9 @@ const SaleStaffSettingsPage = lazy(() => import('@/pages/sales/SaleStaffSettings
 const SaleStaffSupportPage = lazy(() => import('@/pages/sales/SaleStaffSupportPage'))
 const SaleStaffRxVerificationPage = lazy(() => import('@/pages/sales/SaleStaffRxVerificationPage'))
 
-const RegularOrderDetailPage = lazy(() => import('@/pages/sales/RegularOrderDetailPage'))
+const RegularOrderDetailPage = lazy(() => import('@/pages/sales/SaleStaffRegularOrderDetailPage'))
 
-const PreOrderDetailPage = lazy(() => import('@/pages/sales/PreOrderDetailPage'))
+const PreOrderDetailPage = lazy(() => import('@/pages/sales/SaleStaffPreOrderDetailPage'))
 
 const OperationLayout = lazy(() => import('@/pages/operations/OperationLayout'))
 

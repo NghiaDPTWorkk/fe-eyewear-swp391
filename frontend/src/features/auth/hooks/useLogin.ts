@@ -13,7 +13,7 @@ const getRolePath = (
   const rolePathMap: Record<string, string> = {
     customer: 'customer',
     SALE_STAFF: 'salestaff',
-    OPERATION_STAFF: 'operation',
+    OPERATION_STAFF: 'operationstaff',
     MANAGER: 'manager',
     SYSTEM_ADMIN: 'admin'
   }

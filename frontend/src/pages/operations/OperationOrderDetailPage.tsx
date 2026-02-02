@@ -286,7 +286,7 @@ function OrderDetailContent({ order, orderId, navigate }: OrderDetailContentProp
   }
 
   return (
-    <Container>
+    <Container className="animate-in fade-in slide-in-from-bottom-4 duration-500 ease-out">
       {/* Breadcrumb Path */}
       <BreadcrumbPath paths={['Dashboard', 'Details']} />
 

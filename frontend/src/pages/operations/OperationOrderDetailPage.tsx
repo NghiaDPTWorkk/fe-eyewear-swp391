@@ -286,7 +286,7 @@ function OrderDetailContent({ order, orderId, navigate }: OrderDetailContentProp
   }
 
   return (
-    <Container className="animate-in fade-in slide-in-from-bottom-4 duration-500 ease-out">
+    <Container className="animate-fade-in-up">
       {/* Breadcrumb Path */}
       <BreadcrumbPath paths={['Dashboard', 'Details']} />
 
@@ -325,7 +325,7 @@ function OrderDetailContent({ order, orderId, navigate }: OrderDetailContentProp
       {/* Frame Specifications */}
       {frameComponent && (
         <div className="bg-white rounded-lg shadow-sm border border-neutral-100 p-6 mb-6">
-          <h2 className="text-lg font-semibold text-mint-900 mb-6">Frame Specification</h2>
+          <h2 className="text-lg font-bold text-gray-900 mb-4">Frame Specification</h2>
           {frameComponent}
         </div>
       )}

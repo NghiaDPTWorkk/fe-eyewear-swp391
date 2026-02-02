@@ -219,7 +219,7 @@ export default function OperationOrderPackingProcess() {
               : 'bg-gray-200 text-gray-400 cursor-not-allowed'
           }`}
         >
-          Hoàn thành đóng gói
+          Complete Packing
         </button>
       </div>
     </Container>

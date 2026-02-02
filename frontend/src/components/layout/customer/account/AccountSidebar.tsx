@@ -58,7 +58,7 @@ export function AccountSidebar() {
 
   return (
     <div className="w-80 flex flex-col pt-8 px-6 min-h-[calc(100vh-200px)]">
-      <h1 className="text-2xl font-bold text-mint-1200 mb-8">My Account</h1>
+      <h1 className="md:text-[36px] text-2xl font-bold text-mint-1200 mb-8">My Account</h1>
 
       <div className="flex flex-col gap-8 mb-12">
         {menuItems.map((group) => (
@@ -96,7 +96,7 @@ export function AccountSidebar() {
                     >
                       {item.label}
                     </span>
-                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                    <span className="text-[10px] text-gray-400 tracking-wider">
                       {item.description}
                     </span>
                   </div>

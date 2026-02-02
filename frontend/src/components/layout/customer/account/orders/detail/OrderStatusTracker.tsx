@@ -64,7 +64,7 @@ export function OrderStatusTracker({ status }: OrderStatusTrackerProps) {
             <div key={step} className="flex flex-col items-center relative z-10 w-20">
               <div
                 className={cn(
-                  'w-10 h-10 rounded-full flex items-center justify-center border-4 transition-all duration-500',
+                  'w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-500',
                   isActive
                     ? 'bg-primary-500 border-primary-100 text-white'
                     : 'bg-white border-mint-50 text-mint-200'
@@ -74,7 +74,7 @@ export function OrderStatusTracker({ status }: OrderStatusTrackerProps) {
               </div>
               <span
                 className={cn(
-                  'mt-2 text-[10px] font-bold uppercase tracking-widest',
+                  'mt-3 text-[10px] font-bold uppercase tracking-[0.15em]',
                   isCurrent ? 'text-primary-600' : isActive ? 'text-mint-1200' : 'text-mint-200'
                 )}
               >

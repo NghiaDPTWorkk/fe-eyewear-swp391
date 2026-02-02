@@ -102,40 +102,48 @@ export function OrdersPage() {
   })
 
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex justify-between items-end mb-8">
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-5xl mx-auto">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
         <div>
-          <h2 className="text-[32px] font-bold text-mint-1200 mb-2">My Orders</h2>
-          <p className="text-gray-eyewear font-medium">
-            View history and track your latest eyewear delivery.
+          <h2 className="text-[28px] md:text-[30px] font-bold text-mint-1200 mb-2 leading-tight">
+            My Orders
+          </h2>
+          <p className="text-gray-500 font-medium text-sm">
+            Track your latest eyewear and view your order history.
           </p>
         </div>
-        <div className="flex bg-mint-50/50 p-1 rounded-xl">
-          <button className="px-4 py-2 text-xs font-bold bg-primary-600 text-white rounded-lg shadow-sm">
+
+        {/* Sleek Segmented Control */}
+        <div className="flex bg-mint-50/50 p-1 rounded-xl border border-mint-100/50 self-start md:self-auto">
+          <button className="px-6 py-2 text-[10px] font-bold uppercase tracking-[0.1em] bg-white text-primary-600 rounded-lg shadow-sm border border-mint-100/10 transition-all">
             Active
           </button>
-          <button className="px-4 py-2 text-xs font-bold text-gray-400 hover:text-mint-1200 transition-colors">
+          <button className="px-6 py-2 text-[10px] font-bold uppercase tracking-[0.1em] text-gray-400 hover:text-mint-1200 transition-colors">
             Archived
           </button>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-4 mb-8 overflow-x-auto pb-2 scrollbar-hide">
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => handleTabChange(tab.id)}
-            className={cn(
-              'px-6 py-3 rounded-full text-xs font-bold transition-all border whitespace-nowrap',
-              activeTab === tab.id
-                ? 'bg-white border-mint-100 text-mint-1200 shadow-sm'
-                : 'bg-transparent border-transparent text-gray-500 hover:text-mint-1200'
-            )}
-          >
-            {tab.label}
-          </button>
-        ))}
+      {/* Modern Tabs with Cleaner Spacing */}
+      <div className="flex gap-4 mb-10 overflow-x-auto pb-4 scrollbar-hide border-b border-mint-50">
+        {TABS.map((tab) => {
+          const isActive = activeTab === tab.id
+          return (
+            <button
+              key={tab.id}
+              onClick={() => handleTabChange(tab.id)}
+              className={cn(
+                'px-4 py-2 text-[11px] font-bold uppercase tracking-widest transition-all relative group whitespace-nowrap',
+                isActive ? 'text-mint-1200' : 'text-gray-400 hover:text-mint-800'
+              )}
+            >
+              {tab.label}
+              {isActive && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500 rounded-t-full" />
+              )}
+            </button>
+          )
+        })}
       </div>
 
       {/* Order List */}

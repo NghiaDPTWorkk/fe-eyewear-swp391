@@ -2,10 +2,13 @@ import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Container } from '@/components'
 import { PATHS } from '@/routes/paths'
-import { IoArrowBack, IoPrintOutline, IoCubeOutline, IoCarOutline } from 'react-icons/io5'
+import { IoArrowBack, IoCubeOutline } from 'react-icons/io5'
 import { ProcessTracker } from '@/components/layout/staff/staff-core/processtracker'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 import { ScanSection } from '@/shared/components/ui/scansection'
+import ShippingLabel from '@/shared/components/ui/shippinglabel/ShippingLabel'
+import OrderSumary from '@/shared/components/ui/ordersummary/OrderSumary'
+import CheckListSection from '@/shared/components/ui/packingchecklist/CheckListSection'
 
 const PACKING_ITEMS = [
   'Lenses (pair)',
@@ -73,38 +76,11 @@ export default function OperationOrderPackingProcess() {
           <ScanSection orderId={orderId} />
 
           {/* Checklist Section */}
-          <div className="bg-white rounded-lg p-6 shadow-sm border border-mint-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Danh sách đóng gói</h3>
-            <div className="space-y-3">
-              {PACKING_ITEMS.map((item, index) => (
-                <div
-                  key={index}
-                  className={`flex items-center p-3 border rounded-lg cursor-pointer group transition-colors ${
-                    checkedItems[index]
-                      ? 'bg-mint-50 border-mint-200'
-                      : 'border-gray-100 hover:bg-gray-50'
-                  }`}
-                  onClick={() => handleCheck(index)}
-                >
-                  <div className="flex items-center h-5">
-                    <input
-                      type="checkbox"
-                      checked={checkedItems[index]}
-                      onChange={() => handleCheck(index)}
-                      className="w-5 h-5 text-mint-600 border-gray-300 rounded focus:ring-mint-500 cursor-pointer"
-                    />
-                  </div>
-                  <div className="ml-3 text-sm select-none">
-                    <label
-                      className={`font-medium cursor-pointer ${checkedItems[index] ? 'text-gray-900' : 'text-gray-700'}`}
-                    >
-                      {item} <span className="text-red-500">*</span>
-                    </label>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <CheckListSection
+            PACKING_ITEMS={PACKING_ITEMS}
+            checkedItems={checkedItems}
+            handleCheck={handleCheck}
+          />
         </div>
 
         {/* Right Column - Shipping Info (Conditional Appearance) */}
@@ -112,72 +88,10 @@ export default function OperationOrderPackingProcess() {
           className={`col-span-12 lg:col-span-5 space-y-6 transition-all duration-500 ease-in-out ${allChecked ? 'opacity-100 translate-y-0' : 'opacity-30 translate-y-4 pointer-events-none grayscale'}`}
         >
           {/* Shipping Info */}
-          <div className="bg-white rounded-lg p-6 shadow-sm border border-mint-200 border-t-4 border-t-mint-400">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <IoCarOutline /> Thông tin vận chuyển
-            </h3>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Đơn vị vận chuyển
-                </label>
-                <select className="block w-full py-2 px-3 border border-gray-300 rounded-lg focus:ring-mint-500 focus:border-mint-500 bg-gray-50">
-                  <option>Viettel Post</option>
-                  <option>Giao Hàng Nhanh</option>
-                  <option>J&T Express</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Mã vận đơn</label>
-                <div className="p-3 bg-gray-100 rounded-lg font-mono font-medium text-gray-800 tracking-wide text-center border border-gray-200">
-                  VTP-1234567890
-                </div>
-                <div className="mt-1 text-xs text-gray-500 text-right">Tự động tạo</div>
-              </div>
-
-              <div className="pt-4 border-t border-gray-100">
-                <div className="text-sm font-medium text-gray-700 mb-2">Địa chỉ giao hàng</div>
-                <div className="text-sm text-gray-900 font-semibold">Van A Nguyen</div>
-                <div className="text-sm text-gray-600">+84 90 123 4567</div>
-                <div className="text-sm text-gray-600 mt-1">
-                  123 Nguyen Hue Street
-                  <br />
-                  Ho Chi Minh City, 700000
-                  <br />
-                  Vietnam
-                </div>
-              </div>
-
-              <button className="w-full py-2.5 bg-blue-100 text-blue-700 rounded-lg font-medium hover:bg-blue-200 transition-colors flex items-center justify-center gap-2">
-                <IoPrintOutline size={18} /> In nhãn vận chuyển
-              </button>
-            </div>
-          </div>
+          <ShippingLabel />
 
           {/* Order Summary */}
-          <div className="bg-white rounded-lg p-6 shadow-sm border border-mint-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Thông tin đơn hàng</h3>
-            <div className="space-y-3 text-sm">
-              <div className="flex justify-between py-1 border-b border-gray-50">
-                <span className="text-gray-500">Mã đơn:</span>
-                <span className="font-medium text-gray-900">{orderId || 'REG-001'}</span>
-              </div>
-              <div className="flex justify-between py-1 border-b border-gray-50">
-                <span className="text-gray-500">Khách hàng:</span>
-                <span className="font-medium text-gray-900">Van A Nguyen</span>
-              </div>
-              <div className="flex justify-between py-1 border-b border-gray-50">
-                <span className="text-gray-500">Loại đơn:</span>
-                <span className="font-medium text-gray-900">Thường</span>
-              </div>
-              <div className="flex justify-between py-1">
-                <span className="text-gray-500">Gọng:</span>
-                <span className="font-medium text-gray-900">RayBan Aviator Classic</span>
-              </div>
-            </div>
-          </div>
+          <OrderSumary orderId={orderId} />
         </div>
       </div>
 

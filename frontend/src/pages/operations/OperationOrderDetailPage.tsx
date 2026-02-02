@@ -10,8 +10,10 @@ import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcr
 
 export default function OperationOrderDetailPage() {
   const { orderId } = useParams<{ orderId: string }>()
+
   const navigate = useNavigate()
   // TẤT CẢ MOCK DATA NẰM Ở ĐÂY
+
   const lensData = {
     prescription: [
       { eye: 'Right Eye (OD)', sph: '-6.50', cyl: '-1.50', axis: '0°', prism: '-', add: '-' },

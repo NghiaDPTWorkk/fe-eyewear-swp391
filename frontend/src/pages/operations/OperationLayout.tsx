@@ -39,7 +39,7 @@ export default function OperationLayout() {
     setLoadingState(isLoading, isError)
 
     if (data) {
-      console.log('Đây là dữ liệu đơn hàng từ API:', data)
+      console.log('data API:', data)
       // Transform data từ API sang format UI
       const apiOrders = data?.data?.orders?.data || []
 

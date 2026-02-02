@@ -1,5 +1,7 @@
+/* eslint-disable */
 import FrameSpecifications from './FrameSpecifications'
 import LensSpecifications from './LensSpecifications'
+import LensNormalOrder from './LensNormalOrder' // Giả sử bạn đã import component này
 
 interface PrescriptionItem {
   eye: string
@@ -23,6 +25,7 @@ interface FrameDataItem {
 interface LensData {
   prescription: PrescriptionItem[]
   additional: DetailItem[]
+  parameters?: any // để phân biệt là lens của đơn hàng kỹ thuật hay đơn hàng thường
 }
 
 interface JobTechnicalDetailsProps {
@@ -36,7 +39,13 @@ const JobTechnicalDetails = ({ lensData, frameData }: JobTechnicalDetailsProps) 
       {/* Lens Specifications Section */}
       <section className="bg-white rounded-lg shadow-sm p-6 border border-neutral-200">
         <h2 className="text-mint-900 font-semibold text-base mb-4">Lens Specification</h2>
-        <LensSpecifications prescription={lensData.prescription} details={lensData.additional} />
+
+        {/* Kiểm tra sự tồn tại của parameters */}
+        {lensData.parameters ? (
+          <LensSpecifications prescription={lensData.prescription} details={lensData.additional} />
+        ) : (
+          <LensNormalOrder data={lensData.additional} />
+        )}
       </section>
 
       {/* Frame Specifications Section */}

@@ -43,14 +43,11 @@ const getStatusColor = (status: string): string => {
  * Helper: Map type array sang enum OrderType value
  */
 const getOrderType = (types: string[]): string => {
-  // ========== START NEW CODE ==========
-  // Backend trả về array như ['MANUFACTURING'], ['PRE_ORDER'], ['NORMAL']
   if (types.includes('PRE_ORDER') || types.includes('PRE-ORDER')) return OrderType.PRE_ORDER
   if (types.includes('MANUFACTURING')) return OrderType.MANUFACTURING
   if (types.includes('NORMAL')) return OrderType.NORMAL
   if (types.includes('RETURN')) return OrderType.RETURN
   return OrderType.NORMAL // Default
-  // ========== END NEW CODE ==========
 }
 
 /**

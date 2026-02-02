@@ -7,16 +7,7 @@ export function AccountLayout() {
     <div className="min-h-screen bg-[#f8fafc]">
       <CustomerHeader />
 
-      {/* Light blue banner shown in image */}
-      <div className="w-full bg-mint-50/50 py-3 border-b border-mint-100">
-        <div className="max-w-[1240px] mx-auto px-4 text-center">
-          <p className="font-bold text-[11px] tracking-widest text-mint-1200 uppercase">
-            Your last chance: Up to 50% off frames & lenses*
-          </p>
-        </div>
-      </div>
-
-      <div className="max-w-[1240px] mx-auto flex gap-10 px-4 py-8">
+      <div className="max-w-[1240px] mx-auto flex gap-10 px-4">
         <aside className="hidden lg:block shrink-0">
           <AccountSidebar />
         </aside>

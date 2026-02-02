@@ -12,30 +12,39 @@ export function AccountSidebar() {
 
   const menuItems = [
     {
-      label: 'My Settings',
-      description: 'Personal info & passwords',
-      icon: Settings,
-      path: '/account/settings'
-    },
-    {
-      label: 'My Orders',
-      icon: ShoppingBag,
-      path: '/account/orders'
-    },
-    {
-      label: 'My Addresses',
-      icon: MapPin,
-      path: '/account/addresses'
-    },
-    {
-      label: 'My Prescriptions',
-      icon: Clipboard,
-      path: '/account/prescriptions'
-    },
-    {
-      label: 'My favorites',
-      icon: Heart,
-      path: '/account/favorites'
+      group: 'ACCOUNT',
+      items: [
+        {
+          label: 'My Settings',
+          description: 'Personal info & passwords',
+          icon: Settings,
+          path: '/account/settings'
+        },
+        {
+          label: 'My Orders',
+          description: 'Track & view history',
+          icon: ShoppingBag,
+          path: '/account/orders'
+        },
+        {
+          label: 'My Addresses',
+          description: 'Shipping destinations',
+          icon: MapPin,
+          path: '/account/addresses'
+        },
+        {
+          label: 'My Prescriptions',
+          description: 'Manage vision details',
+          icon: Clipboard,
+          path: '/account/prescriptions'
+        },
+        {
+          label: 'My Favorites',
+          description: 'Saved frames & lenses',
+          icon: Heart,
+          path: '/account/favorites'
+        }
+      ]
     }
   ]
 
@@ -49,39 +58,68 @@ export function AccountSidebar() {
 
   return (
     <div className="w-80 flex flex-col pt-8 px-6 min-h-[calc(100vh-200px)]">
-      <h1 className="text-2xl font-bold text-mint-1200 mb-8">My Account</h1>
+      <h1 className="md:text-[36px] text-2xl font-bold text-mint-1200 mb-8">My Account</h1>
 
-      <div className="flex flex-col gap-2 mb-12">
-        {menuItems.map((item) => {
-          const isActive = location.pathname === item.path
-          return (
-            <button
-              key={item.label}
-              onClick={() => navigate(item.path)}
-              className={cn(
-                'flex items-center gap-4 p-4 rounded-xl transition-all h-16',
-                isActive ? 'bg-primary-100 text-primary-600' : 'text-gray-eyewear hover:bg-mint-100'
-              )}
-            >
-              <item.icon
-                className={cn('w-5 h-5', isActive ? 'text-primary-600' : 'text-gray-eyewear')}
-              />
-              <div className="flex flex-col items-start">
-                <span
+      <div className="flex flex-col gap-8 mb-12">
+        {menuItems.map((group) => (
+          <div key={group.group} className="flex flex-col gap-2">
+            <span className="text-[10px] font-bold text-gray-300 uppercase tracking-[0.2em] px-4 mb-2">
+              {group.group}
+            </span>
+            {group.items.map((item) => {
+              const isActive = location.pathname === item.path
+              return (
+                <button
+                  key={item.label}
+                  onClick={() => navigate(item.path)}
                   className={cn(
-                    'font-semibold text-sm',
-                    isActive ? 'text-primary-600' : 'text-mint-1200'
+                    'flex items-center gap-4 p-4 rounded-xl transition-all h-[72px] border border-transparent',
+                    isActive
+                      ? 'bg-white text-primary-600 shadow-sm border-mint-50'
+                      : 'text-gray-eyewear hover:bg-mint-50/50'
                   )}
                 >
-                  {item.label}
-                </span>
-                {item.description && (
-                  <span className="text-[10px] text-gray-500 font-medium">{item.description}</span>
-                )}
-              </div>
-            </button>
-          )
-        })}
+                  <div
+                    className={cn(
+                      'w-10 h-10 rounded-xl flex items-center justify-center transition-all',
+                      isActive ? 'bg-primary-50 text-primary-600' : 'bg-mint-50/50 text-gray-400'
+                    )}
+                  >
+                    <item.icon className="w-5 h-5" />
+                  </div>
+                  <div className="flex flex-col items-start">
+                    <span
+                      className={cn(
+                        'font-bold text-sm leading-none mb-1',
+                        isActive ? 'text-primary-600' : 'text-mint-1200'
+                      )}
+                    >
+                      {item.label}
+                    </span>
+                    <span className="text-[10px] text-gray-400 tracking-wider">
+                      {item.description}
+                    </span>
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+        ))}
+      </div>
+
+      {/* Vision Exam Card from screenshot */}
+      <div className="bg-[#3D6376] p-6 rounded-[24px] text-white overflow-hidden relative mb-8">
+        <div className="relative z-10">
+          <p className="text-[10px] font-bold uppercase tracking-widest opacity-60 mb-2">
+            Next Vision Exam
+          </p>
+          <h4 className="text-lg font-bold mb-4">Nov 24, 2024</h4>
+          <button className="w-full py-3 bg-[#54D5B1] hover:bg-[#48c4a1] text-[#1E3A47] font-bold rounded-xl text-xs transition-all">
+            Reschedule
+          </button>
+        </div>
+        {/* Decorative circle */}
+        <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/5 rounded-full" />
       </div>
 
       <button

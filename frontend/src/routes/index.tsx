@@ -132,6 +132,11 @@ const PrescriptionsPage = lazy(() =>
 const FavoritesPage = lazy(() =>
   import('@/pages/customer/account/FavoritesPage').then((m) => ({ default: m.FavoritesPage }))
 )
+const CustomerOrderDetailPage = lazy(() =>
+  import('@/pages/customer/account/OrderDetailPage').then((m) => ({
+    default: m.CustomerOrderDetailPage
+  }))
+)
 
 export const router = createBrowserRouter([
   {
@@ -209,6 +214,14 @@ export const router = createBrowserRouter([
         element: (
           <LazyPage>
             <OrdersPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'orders/:invoiceId',
+        element: (
+          <LazyPage>
+            <CustomerOrderDetailPage />
           </LazyPage>
         )
       },

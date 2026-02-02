@@ -8,7 +8,10 @@ export const ENDPOINTS = {
     REGISTER: '/auth/register',
     LOGOUT: '/auth/logout',
     REFRESH_TOKEN: '/auth/refresh-token',
-    PROFILE: '/customer'
+    PROFILE: '/customer',
+    ADDRESS_LIST: '/customer/profile/address',
+    ADDRESS_ADD: '/customer/profile/address',
+    CHANGE_DEFAULT: (id: string) => `/customer/profile/address/change-default/${id}`
   },
 
   // Products
@@ -83,6 +86,13 @@ export const ENDPOINTS = {
   // Invoices
   INVOICE: {
     CREATE: '/invoices',
+    LIST: '/invoices',
     DETAIL: (id: string) => `/invoices/${id}`
+  },
+  // Wishlist
+  WISHLIST: {
+    GET: '/wishlist',
+    ADD: (id: string) => `/wishlist/products/${id}`,
+    REMOVE: (id: string) => `/wishlist/products/${id}`
   }
 } as const

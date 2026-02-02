@@ -12,6 +12,13 @@ export const PATHS = {
     LENSES: '/products/lenses'
   },
   CART: '/cart',
+  ACCOUNT: {
+    SETTINGS: '/account/settings',
+    ORDERS: '/account/orders',
+    ADDRESSES: '/account/addresses',
+    PRESCRIPTIONS: '/account/prescriptions',
+    FAVORITES: '/account/favorites'
+  },
   ADMIN: {
     DASHBOARD: '/admin/dashboard'
   },

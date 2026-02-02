@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Container } from '@/components'
 import { useAdminInvoices } from '@/features/manager/hooks/useAdminInvoices'
+import { useComplete } from '@/features/manager/hooks/useComplete'
+import { useDelivering } from '@/features/manager/hooks/useDelivering'
 import { useOnboard } from '@/features/manager/hooks/useOnboard'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import InvoiceCard from './InvoiceCard'
@@ -25,6 +27,8 @@ export default function ManagerInvoicesPage() {
   }
 
   const { onboard, isLoading: isOnboarding } = useOnboard()
+  const { complete, isLoading: isCompleting } = useComplete()
+  const { delivering, isLoading: isDelivering } = useDelivering()
 
   const { data, isLoading, isError, error, refetch } = useAdminInvoices(page, limit, status)
 
@@ -108,7 +112,7 @@ export default function ManagerInvoicesPage() {
                     key={inv.id}
                     invoice={inv}
                     isExpanded={isExpanded}
-                    isOnboarding={isOnboarding}
+                    isOnboarding={isOnboarding || isCompleting || isDelivering}
                     showOnboardButton={showOnboardButton}
                     onToggleExpanded={() =>
                       setExpandedInvoiceId((cur) => (cur === inv.id ? null : inv.id))
@@ -117,8 +121,13 @@ export default function ManagerInvoicesPage() {
                       await onboard(invoiceId)
                       await refetch()
                     }}
-                    onComplete={() => {
-                      // TODO: implement later
+                    onComplete={async (invoiceId) => {
+                      await complete(invoiceId)
+                      await refetch()
+                    }}
+                    onDelivering={async (invoiceId) => {
+                      await delivering(invoiceId)
+                      await refetch()
                     }}
                   />
                 )

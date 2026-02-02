@@ -78,6 +78,8 @@ export const ENDPOINTS = {
       return `/admin/invoices?${params.toString()}`
     },
     INVOICES_ONBOARD: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/onboard`,
+    INVOICES_COMPLETE: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/complete`,
+    INVOICES_DELIVERING: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/delivering`,
     ORDER_DETAIL: (orderId: string) => `/admin/orders/${orderId}`,
     ORDER_ASSIGN: (orderId: string) => `/admin/orders/${orderId}/status/assign`
   },

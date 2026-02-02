@@ -44,7 +44,8 @@ export type InvoiceCardProps = {
   isOnboarding: boolean
   onToggleExpanded: () => void
   onOnboard: (invoiceId: string) => Promise<unknown>
-  onComplete?: (invoiceId: string) => void
+  onComplete?: (invoiceId: string) => Promise<unknown>
+  onDelivering?: (invoiceId: string) => Promise<unknown>
   showOnboardButton?: boolean
 }
 
@@ -83,6 +84,7 @@ export default function InvoiceCard({
   onToggleExpanded,
   onOnboard,
   onComplete,
+  onDelivering,
   showOnboardButton
 }: InvoiceCardProps) {
   const orderIds = useMemo(() => invoice.orders?.map((o) => o.id) ?? [], [invoice.orders])
@@ -172,17 +174,33 @@ export default function InvoiceCard({
               </button>
             )}
 
-            {invoice.status === InvoiceStatus.ONBOARD && (
+            {invoice.status === InvoiceStatus.ONBOARD &&
+              ordersData.length > 0 &&
+              ordersData.every((o) => o.status === OrderStatus.COMPLETED) && (
+                <button
+                  type="button"
+                  className="px-3 py-2 rounded-lg bg-secondary-500 text-white text-sm font-medium disabled:opacity-50"
+                  disabled={isOnboarding}
+                  onClick={async (e) => {
+                    e.stopPropagation()
+                    await onComplete?.(invoice.id)
+                  }}
+                >
+                  Change to COMPLETED
+                </button>
+              )}
+
+            {invoice.status === InvoiceStatus.COMPLETED && (
               <button
                 type="button"
                 className="px-3 py-2 rounded-lg bg-secondary-500 text-white text-sm font-medium disabled:opacity-50"
                 disabled={isOnboarding}
-                onClick={(e) => {
+                onClick={async (e) => {
                   e.stopPropagation()
-                  onComplete?.(invoice.id)
+                  await onDelivering?.(invoice.id)
                 }}
               >
-                Change to COMPLETED
+                DELIVERY TO CUSTOMER
               </button>
             )}
 

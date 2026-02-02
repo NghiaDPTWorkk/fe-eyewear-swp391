@@ -4,7 +4,7 @@ import { useGetProductWithType } from '@/shared/hooks/products/useGetProductWith
 import type { Product } from '@/shared/types/product.types'
 
 interface StepLensChoiceProps {
-  onSelect: (lensId: string) => void
+  onSelect: (lensId: string, lensSku: string) => void
 }
 
 export default function StepLensChoice({ onSelect }: StepLensChoiceProps) {
@@ -57,11 +57,12 @@ export default function StepLensChoice({ onSelect }: StepLensChoiceProps) {
             const price = lens.defaultVariantFinalPrice || defaultVariant?.finalPrice || 0
             const originalPrice = lens.defaultVariantPrice || defaultVariant?.price || 0
             const id = lens.id || lens._id || lens.skuBase
+            const lensSku = defaultVariant?.sku || lens.skuBase || ''
 
             return (
               <Card
                 key={id}
-                onClick={() => onSelect(id)}
+                onClick={() => onSelect(id, lensSku)}
                 className="group p-6 border-2 border-mint-100 rounded-2xl hover:border-primary-500 hover:bg-primary-50 transition-all text-left flex items-center gap-6 cursor-pointer"
               >
                 <div className="w-16 h-16 bg-mint-100 rounded-xl flex items-center justify-center group-hover:bg-primary-100 transition-colors shrink-0 overflow-hidden">

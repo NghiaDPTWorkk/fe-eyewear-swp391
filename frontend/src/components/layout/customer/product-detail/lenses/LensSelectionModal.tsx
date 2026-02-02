@@ -35,6 +35,7 @@ export default function LensSelectionModal({
   const [state, setState] = useState<LensSelectionState>({
     visionNeed: null,
     lensId: null,
+    sku: null,
     prescription: null,
     useSavedPrescription: false
   })
@@ -51,8 +52,8 @@ export default function LensSelectionModal({
     }
   }
 
-  const handleLensSelect = (lensId: string) => {
-    setState((prev) => ({ ...prev, lensId }))
+  const handleLensSelect = (lensId: string, lensSku: string) => {
+    setState((prev) => ({ ...prev, lensId, sku: lensSku }))
     setStep('PRESCRIPTION_OPTION')
   }
 

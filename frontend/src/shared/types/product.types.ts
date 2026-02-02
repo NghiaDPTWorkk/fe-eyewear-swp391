@@ -23,26 +23,11 @@ export interface LenSpec {
 }
 
 /**
- * Base product interface
- */
-interface BaseProduct {
-  _id: string
-  nameBase: string
-  slugBase: string
-  skuBase: string
-  categories: string[]
-  brand: string | null
-  variants: Variant[]
-  deletedAt: Date | null
-  createdAt: Date
-  updatedAt: Date
-}
-
-/**
- * Standard product for list views (simplified)
+ * Standard product interface - used for both list and detail views
  */
 export interface StandardProduct {
-  id: string
+  id?: string
+  _id?: string
   nameBase: string
   slugBase: string
   skuBase: string
@@ -52,17 +37,23 @@ export interface StandardProduct {
   defaultVariantPrice?: number
   defaultVariantFinalPrice?: number
   defaultVariantImage?: string
-  totalVariants: number
-  createdAt: string
+  totalVariants?: number
+  createdAt?: string
+  updatedAt?: Date
+  deletedAt?: Date | null
+  // Optional fields for detail views
+  variants?: Variant[]
+  spec?: FrameSpec | LenSpec | null
+  description?: string
+  shortDescription?: string
+  imageUrl?: string
+  nameVariant?: string
 }
+
 /**
- * Product discriminated union
+ * Product type alias for backward compatibility
  */
-export type Product =
-  | (BaseProduct & { type: 'frame'; spec: FrameSpec })
-  | (BaseProduct & { type: 'sunglass'; spec: FrameSpec })
-  | (BaseProduct & { type: 'lens'; spec: LenSpec | null })
-  | StandardProduct
+export type Product = StandardProduct
 
 /**
  * Product create request types

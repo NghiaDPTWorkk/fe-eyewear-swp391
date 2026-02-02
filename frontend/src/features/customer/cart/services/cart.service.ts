@@ -115,7 +115,7 @@ const enrichCartItemsWithProductDetails = async (items: CartItem[]): Promise<Car
 
           return {
             ...item,
-            name: productDetail.nameBase || item.name,
+            name: variant.name || productDetail.nameBase || item.name,
             price: variant.finalPrice || variant.price || item.price,
             image: variant.imgs?.[0] || item.image,
             sku: variant.sku || item.sku,

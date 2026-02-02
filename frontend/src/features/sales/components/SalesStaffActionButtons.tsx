@@ -17,7 +17,7 @@ export const SalesStaffActionButtons: React.FC<SalesStaffActionButtonsProps> = (
   onVerify,
   onViewDetail
 }) => {
-  const canVerify = order.isPrescription && order.status === 'WAITING_ASSIGN'
+  const canVerify = order.isPrescription && order.status === 'WAITING_ASSIGNED'
 
   return (
     <div className="flex items-center justify-center gap-4">

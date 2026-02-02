@@ -35,12 +35,12 @@ export const SalesStaffRxRow: React.FC<SalesStaffRxRowProps> = ({ order, onVerif
         <span
           className={cn(
             'px-3 py-1 rounded-full text-[10px] font-bold uppercase border',
-            order.status === 'WAITING_ASSIGN'
+            order.status === 'WAITING_ASSIGNED'
               ? 'bg-amber-50 text-amber-500 border-amber-100'
               : 'bg-blue-50 text-blue-500 border-blue-100'
           )}
         >
-          {order.status === 'WAITING_ASSIGN' ? 'Waiting Verify' : 'Processing'}
+          {order.status === 'WAITING_ASSIGNED' ? 'Waiting Verify' : 'Processing'}
         </span>
       </td>
       <td className="px-6 py-5">

@@ -13,7 +13,7 @@ export const SalesStaffRxActions: React.FC<SalesStaffRxActionsProps> = ({
   onVerify,
   onReject
 }) => {
-  if (order.status !== 'WAITING_ASSIGN') {
+  if (order.status !== 'WAITING_ASSIGNED') {
     return (
       <span className="px-3 py-1 bg-emerald-50 text-emerald-500 border border-emerald-100 rounded-full text-[10px] font-bold uppercase tracking-wider">
         Verified

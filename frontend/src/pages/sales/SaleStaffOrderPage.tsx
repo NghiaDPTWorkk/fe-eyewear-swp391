@@ -29,8 +29,8 @@ export default function SaleStaffOrderPage() {
         order.customerName?.toLowerCase().includes(search.toLowerCase())
       const matchFilter =
         filter === 'All' ||
-        (filter === 'Pending' && order.isPrescription && order.status === 'WAITING_ASSIGN') ||
-        (filter === 'Processed' && (!order.isPrescription || order.status !== 'WAITING_ASSIGN'))
+        (filter === 'Pending' && order.isPrescription && order.status === 'WAITING_ASSIGNED') ||
+        (filter === 'Processed' && (!order.isPrescription || order.status !== 'WAITING_ASSIGNED'))
       return matchSearch && matchFilter
     })
   }, [orders, search, filter])

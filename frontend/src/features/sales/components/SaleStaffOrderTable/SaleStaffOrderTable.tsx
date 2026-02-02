@@ -80,7 +80,7 @@ export default function SaleStaffOrderTable({
       statusColor:
         o.status === 'COMPLETED' ? 'bg-mint-100 text-mint-700' : 'bg-blue-100 text-blue-700',
       isNextActive: true,
-      isApproved: o.status !== 'WAITING_ASSIGN'
+      isApproved: o.status !== 'WAITING_ASSIGNED'
     }
   })
 

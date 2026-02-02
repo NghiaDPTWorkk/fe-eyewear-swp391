@@ -17,12 +17,14 @@ const transformPrescriptionToParameters = (prescription: PrescriptionData): Lens
     left: {
       SPH: Number(prescription.left.SPH),
       CYL: Number(prescription.left.CYL),
-      AXIS: Number(prescription.left.AXIS)
+      AXIS: Number(prescription.left.AXIS),
+      ADD: prescription.left.ADD ? Number(prescription.left.ADD) : undefined
     },
     right: {
       SPH: Number(prescription.right.SPH),
       CYL: Number(prescription.right.CYL),
-      AXIS: Number(prescription.right.AXIS)
+      AXIS: Number(prescription.right.AXIS),
+      ADD: prescription.right.ADD ? Number(prescription.right.ADD) : undefined
     },
     PD: Number(prescription.PD)
   }
@@ -51,12 +53,14 @@ const transformBackendCartToItems = (backendCart: BackendCart): CartItem[] => {
                 left: {
                   SPH: item.lens.parameters.left?.SPH || 0,
                   CYL: item.lens.parameters.left?.CYL || 0,
-                  AXIS: item.lens.parameters.left?.AXIS || 0
+                  AXIS: item.lens.parameters.left?.AXIS || 0,
+                  ADD: item.lens.parameters.left?.ADD || 0
                 },
                 right: {
                   SPH: item.lens.parameters.right?.SPH || 0,
                   CYL: item.lens.parameters.right?.CYL || 0,
-                  AXIS: item.lens.parameters.right?.AXIS || 0
+                  AXIS: item.lens.parameters.right?.AXIS || 0,
+                  ADD: item.lens.parameters.right?.ADD || 0
                 },
                 PD: item.lens.parameters.PD || 0
               }
@@ -348,6 +352,34 @@ export const cartService = {
       }
       throw new Error(error.message || 'Failed to remove item')
     }
+  },
+
+  /**
+   * Xóa nhiều item khỏi giỏ hàng
+   */
+  removeItems: async (items: CartItem[]): Promise<CartItem[]> => {
+    // Perform deletions sequentially
+    for (const item of items) {
+      const payload = buildCartItemPayload(item)
+      try {
+        await cartApi.removeItem(payload)
+      } catch (error) {
+        console.error('Failed to remove item in batch:', error)
+      }
+    }
+
+    // After all deletions are attempted, fetch the definitive latest state from server
+    try {
+      const response = await cartApi.getCart()
+      if (response.data?.cart) {
+        const transformedItems = transformBackendCartToItems(response.data.cart)
+        return await enrichCartItemsWithProductDetails(transformedItems)
+      }
+    } catch (error) {
+      console.error('Failed to fetch final cart state:', error)
+    }
+
+    return [] // Fallback to empty if everything fails
   },
 
   /**

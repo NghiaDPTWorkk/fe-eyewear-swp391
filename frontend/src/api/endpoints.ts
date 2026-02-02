@@ -78,5 +78,11 @@ export const ENDPOINTS = {
       return `/admin/invoices?${params.toString()}`
     },
     INVOICES_ONBOARD: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/onboard`
+  },
+
+  // Invoices
+  INVOICE: {
+    CREATE: '/invoices',
+    DETAIL: (id: string) => `/invoices/${id}`
   }
 } as const

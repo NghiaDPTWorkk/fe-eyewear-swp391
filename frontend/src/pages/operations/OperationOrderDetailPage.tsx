@@ -3,8 +3,7 @@ import { Container } from '@/components'
 import { JobTechnicalDetails } from '@/components/layout/staff/staff-core/technicaldetail'
 import { PATHS } from '@/routes/paths'
 import { IoArrowBack } from 'react-icons/io5'
-
-import { Button } from '@/shared/components/ui/button'
+import { Button } from '@/shared/components/ui/Button'
 import { ProcessTracker } from '@/components/layout/staff/staff-core/processtracker'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 
@@ -36,12 +35,12 @@ export default function OperationOrderDetailPage() {
 
       {/* Header */}
       <div className="flex items-center gap-5 mb-8">
-        <button
+        <Button
           onClick={() => navigate(-1)}
           className="p-3 bg-white hover:bg-neutral-50 rounded-xl shadow-sm transition-all border border-neutral-100"
         >
           <IoArrowBack size={20} className="text-gray-600" />
-        </button>
+        </Button>
         <div>
           <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
             Order #{orderId || 'REG-001'}

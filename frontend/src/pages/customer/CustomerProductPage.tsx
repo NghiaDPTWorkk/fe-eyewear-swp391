@@ -9,6 +9,7 @@ import { useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store'
 import toast from 'react-hot-toast'
+import { Button } from '@/components'
 
 export const CustomerProductPage = () => {
   const navigate = useNavigate()
@@ -31,9 +32,9 @@ export const CustomerProductPage = () => {
     setPage(1)
   }
 
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
-  const [selectedPriceRanges, setSelectedPriceRanges] = useState<string[]>([])
-  const [selectedColors, setSelectedColors] = useState<string[]>([])
+  const [SelectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [SelectedPriceRanges, setSelectedPriceRanges] = useState<string[]>([])
+  const [SelectedColors, setSelectedColors] = useState<string[]>([])
   const [customPriceRange, setCustomPriceRange] = useState<{
     min: number | null
     max: number | null
@@ -75,7 +76,7 @@ export const CustomerProductPage = () => {
     const tags: FilterTag[] = []
 
     // Add category tags
-    selectedCategories.forEach((catId) => {
+    SelectedCategories.forEach((catId) => {
       const category = categories.find((c) => c.id === catId)
       if (category) {
         tags.push({ id: `cat-${catId}`, label: category.name, type: 'category' })
@@ -83,7 +84,7 @@ export const CustomerProductPage = () => {
     })
 
     // Add color tags
-    selectedColors.forEach((colorId) => {
+    SelectedColors.forEach((colorId) => {
       const color = colors.find((c) => c.id === colorId)
       if (color) {
         tags.push({ id: `color-${colorId}`, label: color.name, type: 'color' })
@@ -102,7 +103,7 @@ export const CustomerProductPage = () => {
     }
 
     return tags
-  }, [selectedCategories, selectedColors, customPriceRange, categories, colors])
+  }, [SelectedCategories, SelectedColors, customPriceRange, categories, colors])
 
   const handleRemoveTag = (tagId: string) => {
     if (tagId.startsWith('cat-')) {
@@ -139,15 +140,15 @@ export const CustomerProductPage = () => {
             <aside className="w-64 flex-shrink-0 sticky top-20 self-start">
               <ProductFilters
                 categories={categories}
-                selectedCategories={selectedCategories}
+                SelectedCategories={SelectedCategories}
                 onCategoryChange={setSelectedCategories}
                 priceRanges={priceRanges}
-                selectedPriceRanges={selectedPriceRanges}
+                SelectedPriceRanges={SelectedPriceRanges}
                 onPriceRangeChange={setSelectedPriceRanges}
                 onCustomPriceApply={handleCustomPriceApply}
                 priceResetKey={priceResetKey}
                 colors={colors}
-                selectedColors={selectedColors}
+                SelectedColors={SelectedColors}
                 onColorChange={setSelectedColors}
               />
             </aside>
@@ -215,27 +216,27 @@ export const CustomerProductPage = () => {
 
               {/* Pagination */}
               <div className="flex items-center justify-center gap-4 mt-10">
-                <button
+                <Button
                   className="px-4 py-2 rounded-xl border-2 border-mint-300 bg-white text-mint-1200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-mint-200 transition-all"
                   disabled={!canPrev || loading}
                   onClick={() => setPage((prev) => Math.max(1, prev - 1))}
                 >
                   Prev
-                </button>
+                </Button>
 
                 <div className="text-sm text-gray-eyewear">
                   Page <span className="font-semibold text-mint-1200">{currentPage}</span> /{' '}
                   <span className="font-semibold text-mint-1200">{totalPages || 1}</span>
                 </div>
 
-                <button
+                <Button
                   className="px-4 py-2 rounded-xl border-2 border-mint-300 bg-white text-mint-1200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-mint-200 transition-all inline-flex items-center gap-2"
                   disabled={!canNext || loading}
                   onClick={() => setPage((prev) => prev + 1)}
                 >
                   Next
                   <ArrowRight className="w-4 h-4" />
-                </button>
+                </Button>
               </div>
             </div>
           </div>

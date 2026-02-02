@@ -13,7 +13,8 @@ import {
   IoInformationCircleOutline
 } from 'react-icons/io5'
 import { cn } from '@/lib/utils'
-import SaleStaffCustomerCommunicationDrawer from '@/features/sales/components/SaleStaffCustomerCommunicationDrawer/SaleStaffCustomerCommunicationDrawer'
+import CustomerCommunicationDrawer from '@/features/sales/components/customer/CustomerCommunicationDrawer'
+import { Button, Input } from '@/components'
 
 interface Customer {
   id: string
@@ -75,11 +76,11 @@ export default function SaleStaffCustomerPage() {
   const [searchParams] = useSearchParams()
   const customerIdParam = searchParams.get('customerId')
 
-  const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(customerIdParam)
+  const [SelectedCustomerId, setSelectedCustomerId] = useState<string | null>(customerIdParam)
   const [showProfile, setShowProfile] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
-  const selectedCustomer = customers.find((c) => c.id === selectedCustomerId) || null
+  const SelectedCustomer = customers.find((c) => c.id === SelectedCustomerId) || null
 
   return (
     <Container className="h-[calc(100vh-140px)] flex flex-col overflow-hidden">
@@ -108,7 +109,7 @@ export default function SaleStaffCustomerPage() {
           <div className="p-5 border-b border-neutral-100 space-y-4">
             <div className="relative">
               <IoSearchOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-              <input
+              <Input
                 type="text"
                 placeholder="Search..."
                 className="w-full pl-9 pr-4 py-2 bg-neutral-50 border border-transparent rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 transition-all outline-none"
@@ -117,23 +118,23 @@ export default function SaleStaffCustomerPage() {
               />
             </div>
             <div className="flex gap-2 p-1 bg-neutral-50 rounded-xl">
-              <button className="flex-1 py-1.5 px-3 bg-white text-gray-800 text-[11px] font-medium rounded-lg shadow-sm border border-neutral-100">
+              <Button className="flex-1 py-1.5 px-3 bg-white text-gray-800 text-[11px] font-medium rounded-lg shadow-sm border border-neutral-100">
                 Focused
-              </button>
-              <button className="flex-1 py-1.5 px-3 text-neutral-400 text-[11px] font-medium rounded-lg hover:text-gray-600 transition-colors">
+              </Button>
+              <Button className="flex-1 py-1.5 px-3 text-neutral-400 text-[11px] font-medium rounded-lg hover:text-gray-600 transition-colors">
                 Other
-              </button>
+              </Button>
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto no-scrollbar">
+          <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-300">
             {customers.map((customer) => (
               <div
                 key={customer.id}
                 onClick={() => setSelectedCustomerId(customer.id)}
                 className={cn(
                   'px-5 py-4 flex gap-4 cursor-pointer transition-all border-l-[3px]',
-                  selectedCustomerId === customer.id
+                  SelectedCustomerId === customer.id
                     ? 'bg-primary-50/40 border-primary-500'
                     : 'bg-white border-transparent hover:bg-neutral-50/50'
                 )}
@@ -168,19 +169,19 @@ export default function SaleStaffCustomerPage() {
 
         {/* Center/Right: Chat and Profile Area */}
         <main className="flex-1 flex overflow-hidden bg-white">
-          {selectedCustomer ? (
+          {SelectedCustomer ? (
             <div className="flex-1 flex overflow-hidden">
               {/* Chat Panel */}
               <div className="flex-1 flex flex-col overflow-hidden min-w-0">
                 <header className="px-6 py-4 border-b border-neutral-50 flex items-center justify-between shrink-0">
                   <div className="flex items-center gap-3">
                     <img
-                      src={selectedCustomer.avatar}
+                      src={SelectedCustomer.avatar}
                       className="w-9 h-9 rounded-xl object-cover"
                     />
                     <div>
                       <h2 className="text-sm font-semibold text-neutral-900 leading-none mb-1">
-                        {selectedCustomer.name}
+                        {SelectedCustomer.name}
                       </h2>
                       <div className="flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
@@ -191,7 +192,7 @@ export default function SaleStaffCustomerPage() {
                     </div>
                   </div>
 
-                  <button
+                  <Button
                     onClick={() => setShowProfile(!showProfile)}
                     className={cn(
                       'flex items-center gap-2 px-3 py-1.5 rounded-xl text-[10px] font-semibold uppercase tracking-widest transition-all border',
@@ -202,14 +203,14 @@ export default function SaleStaffCustomerPage() {
                   >
                     <IoInformationCircleOutline size={16} />
                     {showProfile ? 'Hide Profile' : 'Show Profile'}
-                  </button>
+                  </Button>
                 </header>
 
                 <div className="flex-1 overflow-hidden">
-                  <SaleStaffCustomerCommunicationDrawer
+                  <CustomerCommunicationDrawer
                     isOpen={true}
                     onClose={() => setSelectedCustomerId(null)}
-                    customer={selectedCustomer}
+                    customer={SelectedCustomer}
                     variant="inline"
                     hideHeader={true}
                   />
@@ -223,31 +224,31 @@ export default function SaleStaffCustomerPage() {
                   showProfile ? 'w-[320px] lg:w-[360px]' : 'w-0'
                 )}
               >
-                <div className="w-[320px] lg:w-[360px] h-full flex flex-col p-6 overflow-y-auto no-scrollbar bg-white">
+                <div className="w-[320px] lg:w-[360px] h-full flex flex-col p-6 overflow-y-auto bg-white [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-neutral-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-300">
                   <div className="flex flex-col items-center mb-8 text-center pt-4">
                     <div className="relative mb-5">
                       <img
-                        src={selectedCustomer.avatar}
+                        src={SelectedCustomer.avatar}
                         className="w-24 h-24 rounded-[2.5rem] object-cover ring-4 ring-neutral-50 shadow-lg"
-                        alt={selectedCustomer.name}
+                        alt={SelectedCustomer.name}
                       />
                       <div className="absolute -bottom-1 -right-1 bg-amber-400 text-white p-2 rounded-xl shadow-md border-2 border-white">
                         <IoStar size={16} />
                       </div>
                     </div>
                     <h2 className="text-xl font-semibold text-neutral-900 mb-1">
-                      {selectedCustomer.name}
+                      {SelectedCustomer.name}
                     </h2>
                     <p className="text-[11px] font-medium text-neutral-400 capitalize">
-                      {selectedCustomer.activity}
+                      {SelectedCustomer.activity}
                     </p>
                     <span
                       className={cn(
                         'mt-4 px-4 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-wider border',
-                        selectedCustomer.badgeColor.replace('bg-', 'bg-white border-')
+                        SelectedCustomer.badgeColor.replace('bg-', 'bg-white border-')
                       )}
                     >
-                      {selectedCustomer.badge}
+                      {SelectedCustomer.badge}
                     </span>
                   </div>
 
@@ -281,12 +282,12 @@ export default function SaleStaffCustomerPage() {
                           {
                             icon: <IoMailOutline />,
                             label: 'Email',
-                            value: selectedCustomer.email
+                            value: SelectedCustomer.email
                           },
                           {
                             icon: <IoCallOutline />,
                             label: 'Phone',
-                            value: selectedCustomer.phone
+                            value: SelectedCustomer.phone
                           },
                           { icon: <IoGlobeOutline />, label: 'Store', value: 'Downtown' }
                         ].map((info) => (
@@ -317,7 +318,7 @@ export default function SaleStaffCustomerPage() {
               </div>
               <h3 className="text-xl font-semibold text-neutral-900 mb-2">Select a Customer</h3>
               <p className="text-sm text-neutral-500 max-w-xs mx-auto opacity-70">
-                Start a consultation or check order progress by selecting a conversation from the
+                Start a consultation or check order progress by Selecting a conversation from the
                 sidebar.
               </p>
             </div>

@@ -136,7 +136,7 @@ export const useCartStore = create<CartState>((set, get) => ({
   toggleSelection: (productId) =>
     set((state) => ({
       items: state.items.map((item) =>
-        item.product_id === productId ? { ...item, selected: !item.selected } : item
+        item.product_id === productId ? { ...item, Selected: !item.Selected } : item
       )
     })),
 

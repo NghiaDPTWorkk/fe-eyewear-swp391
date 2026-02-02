@@ -1,3 +1,4 @@
+import { Button } from '@/components'
 export const Newsletter = () => {
   return (
     <section className="py-16 bg-gradient-to-br from-primary-500 to-primary-700">
@@ -13,9 +14,9 @@ export const Newsletter = () => {
               placeholder="Enter your email"
               className="flex-1 px-6 py-4 rounded-xl border-2 border-white bg-white/10 text-white placeholder-white/70 focus:outline-none focus:bg-white/20 transition-all"
             />
-            <button className="px-8 py-4 bg-white text-primary-500 font-semibold rounded-xl hover:bg-mint-200 transition-all duration-300 whitespace-nowrap">
+            <Button className="px-8 py-4 bg-white text-primary-500 font-semibold rounded-xl hover:bg-mint-200 transition-all duration-300 whitespace-nowrap">
               Subscribe
-            </button>
+            </Button>
           </div>
           <p className="text-primary-100 text-sm">
             We respect your privacy. Unsubscribe at any time.

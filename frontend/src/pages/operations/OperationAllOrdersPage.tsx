@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { Container } from '@/components'
-import { OrderTable, FilterButtonList } from '@/components/staff'
+import FilterButtonList from '@/components/staff/filter-button-list/FilterButtonList'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 import { useOrderCountStore } from '@/store'
-import type { Order } from '@/features/staff/components/OrderTable/OrderTable'
+import OrderTable, { type Order } from '@/features/staff/components/order/OrderTable'
 import { OrderType } from '@/shared/utils/enums/order.enum'
 
 export default function OperationAllOrdersPage() {
@@ -37,7 +37,7 @@ export default function OperationAllOrdersPage() {
       </div>
 
       <FilterButtonList
-        buttons={filterButtons}
+        Buttons={filterButtons}
         selectedValue={filter}
         onChange={setFilter}
         className="mb-6"

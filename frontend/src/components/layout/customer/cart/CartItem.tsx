@@ -3,6 +3,7 @@ import { useState } from 'react'
 import type { CartItem as CartItemType } from '@/shared/types'
 import { useCartStore } from '@/store/cart.store'
 import { Checkbox, Card } from '@/shared/components/ui'
+import { Button } from '@/components'
 
 interface CartItemProps {
   item: CartItemType
@@ -151,9 +152,9 @@ export const CartItem = ({ item }: CartItemProps) => {
                   </div>
                 )}
                 <div className="md:col-span-2 flex justify-end mt-4">
-                  <button className="text-xs font-bold text-[#4F8B8B] hover:underline uppercase tracking-widest">
+                  <Button className="text-xs font-bold text-[#4F8B8B] hover:underline uppercase tracking-widest">
                     Edit
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}

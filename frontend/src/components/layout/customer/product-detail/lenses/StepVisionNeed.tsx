@@ -1,6 +1,7 @@
 import type { VisionNeed } from './types'
 import { Glasses, Info } from 'lucide-react'
 import { Card } from '@/shared/components/ui/card'
+import { Button } from '@/components'
 
 interface StepVisionNeedProps {
   onSelect: (need: VisionNeed) => void
@@ -54,7 +55,7 @@ export default function StepVisionNeed({ onSelect }: StepVisionNeedProps) {
         <Info className="w-5 h-5 text-primary-500 mt-0.5 shrink-0" />
         <p className="text-sm text-primary-600 leading-relaxed font-medium">
           Not sure which one to choose?{' '}
-          <button className="underline font-bold">Try Lens Advisor</button>
+          <Button className="underline font-bold">Try Lens Advisor</Button>
         </p>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { Container } from '@/components'
-import { OrderTable } from '@/components/staff'
+import OrderTable from '@/features/staff/components/order/OrderTable'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 
 export default function OperationPrescriptionPage() {

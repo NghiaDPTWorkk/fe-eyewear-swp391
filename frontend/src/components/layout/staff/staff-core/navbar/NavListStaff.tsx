@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils'
 import { Input } from '@/shared/components/ui'
 import { HiMenuAlt2 } from 'react-icons/hi'
 import { useLayoutStore } from '@/store/layout.store'
+import { Button } from '@/components'
 
 export interface NavSearchProps {
   className?: string
@@ -44,12 +45,12 @@ export function NavSearch({
 
   return (
     <div className={cn('flex items-center gap-3 w-full pr-2', className)}>
-      <button
+      <Button
         onClick={toggleSidebar}
         className="lg:hidden p-2 rounded-lg text-neutral-500 hover:bg-neutral-50 transition-colors"
       >
         <HiMenuAlt2 className="text-2xl" />
-      </button>
+      </Button>
 
       <div className={cn('max-w-lg flex-1 lg:pl-6', inputContainerClassName)}>
         <Input
@@ -135,16 +136,16 @@ export function NavActions({
       className={cn('flex justify-end items-center gap-6 pr-4 relative', className)}
     >
       <div className="flex items-center gap-4 text-neutral-500">
-        <button
+        <Button
           className="relative p-1 hover:text-primary-500 transition-colors cursor-pointer"
           title="View Messages"
         >
           <FiMail className="text-2xl" />
           <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-danger-500 ring-2 ring-white"></span>
-        </button>
+        </Button>
 
         <div className="relative">
-          <button
+          <Button
             onClick={() =>
               setOpenDropdown(openDropdown === 'notifications' ? null : 'notifications')
             }
@@ -156,7 +157,7 @@ export function NavActions({
           >
             <MdOutlineNotifications className="text-2xl" />
             <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-primary-500 ring-2 ring-white"></span>
-          </button>
+          </Button>
 
           {openDropdown === 'notifications' && (
             <div className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-xl border border-neutral-100 py-4 z-50 animate-in fade-in zoom-in-95 duration-200">
@@ -188,9 +189,9 @@ export function NavActions({
               </div>
 
               <div className="px-5 pt-4 mt-2 border-t border-neutral-100">
-                <button className="w-full py-2 text-sm font-semibold text-primary-500 hover:text-primary-600 transition-colors flex items-center justify-center gap-1">
+                <Button className="w-full py-2 text-sm font-semibold text-primary-500 hover:text-primary-600 transition-colors flex items-center justify-center gap-1">
                   View All Notifications
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -200,7 +201,7 @@ export function NavActions({
       <div className="h-8 w-px bg-neutral-100" />
 
       <div className="relative">
-        <button
+        <Button
           onClick={() => setOpenDropdown(openDropdown === 'profile' ? null : 'profile')}
           className="flex items-center gap-3 group transition-opacity hover:opacity-80 cursor-pointer"
         >
@@ -211,7 +212,7 @@ export function NavActions({
           <div className="w-10 h-10 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center font-semibold border border-primary-100 shadow-sm shadow-primary-50">
             {userInitials}
           </div>
-        </button>
+        </Button>
 
         {openDropdown === 'profile' && (
           <div className="absolute right-0 mt-3 w-72 bg-white rounded-2xl shadow-xl border border-neutral-100 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
@@ -253,7 +254,7 @@ export function NavActions({
             </div>
 
             <div className="p-3 bg-neutral-50/50 border-t border-neutral-50">
-              <button
+              <Button
                 className="flex items-center gap-3 w-full px-4 py-3 rounded-xl hover:bg-red-50 group transition-all"
                 onClick={() => setOpenDropdown(null)}
               >
@@ -261,7 +262,7 @@ export function NavActions({
                   <IoLogOutOutline className="text-lg" />
                 </div>
                 <span className="text-sm font-semibold text-red-600">Sign Out</span>
-              </button>
+              </Button>
             </div>
           </div>
         )}

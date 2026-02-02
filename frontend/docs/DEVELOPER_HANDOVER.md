@@ -629,17 +629,17 @@ import { HeaderStaff } from '@/components/layout'
   iconList={<UserMenu />}
 />
 
-// Example 3: Replace search with action buttons (Support & Help Center)
+// Example 3: Replace search with action Buttons (Support & Help Center)
 <HeaderStaff
   logo={<Logo />}
   search={
     <div className="flex gap-3">
-      <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+      <Button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
         Knowledge Base
-      </button>
-      <button className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+      </Button>
+      <Button className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
         Report a Bug
-      </button>
+      </Button>
     </div>
   }
   iconList={
@@ -690,12 +690,12 @@ import { HeaderStaff } from '@/components/layout'
   }
   iconList={
     <div className="flex items-center gap-4">
-      <button className="relative">
+      <Button className="relative">
         <BellIcon className="w-6 h-6 text-gray-600" />
         <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">
           3
         </span>
-      </button>
+      </Button>
       <UserAvatar />
     </div>
   }
@@ -706,7 +706,7 @@ import { HeaderStaff } from '@/components/layout'
 
 - `containerWidth` (optional): Width của container, mặc định là `'70%'`. Có thể truyền bất kỳ giá trị CSS width nào (`'80%'`, `'1200px'`, `'100%'`, etc.)
 - `logo` (optional): ReactNode cho logo section
-- `search` (optional): ReactNode cho search bar hoặc action buttons. Có thể thay thế bằng bất kỳ component nào (search input, buttons, links, etc.)
+- `search` (optional): ReactNode cho search bar hoặc action Buttons. Có thể thay thế bằng bất kỳ component nào (search input, Buttons, links, etc.)
 - `iconList` (required): ReactNode cho icon list (notifications, settings, user menu, etc.)
 
 **Styling:**
@@ -832,7 +832,7 @@ describe('ProductCard', () => {
     const onAddToCart = vi.fn()
     render(<ProductCard product={mockProduct} onAddToCart={onAddToCart} />)
 
-    fireEvent.click(screen.getByRole('button'))
+    fireEvent.click(screen.getByRole('Button'))
 
     expect(onAddToCart).toHaveBeenCalledWith('1')
   })

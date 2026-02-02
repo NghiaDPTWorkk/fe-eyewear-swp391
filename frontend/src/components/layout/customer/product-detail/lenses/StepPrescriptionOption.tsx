@@ -19,9 +19,9 @@ export default function StepPrescriptionOption({ onSelect }: StepPrescriptionOpt
       <p className="text-gray-eyewear mb-2">
         We'll create a lens tailor-made to your vision needs. Don't have a valid prescription?
       </p>
-      <button className="text-sm font-bold text-primary-500 hover:underline mb-10">
+      <Button className="text-sm font-bold text-primary-500 hover:underline mb-10">
         Find Eye Doctors Near You
-      </button>
+      </Button>
 
       <div className="space-y-4">
         <Card

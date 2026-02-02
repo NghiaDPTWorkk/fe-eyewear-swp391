@@ -1,7 +1,7 @@
 import type { ElementType, ReactNode, ComponentPropsWithoutRef } from 'react'
 import type { VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
-import { buttonVariants } from './Button.styles'
+import { ButtonVariants } from './Button.styles'
 
 export type ButtonVariant = 'solid' | 'outline' | 'ghost' | 'link'
 export type ButtonColorScheme = 'primary' | 'secondary' | 'danger' | 'neutral'
@@ -15,7 +15,7 @@ type ButtonOwnProps<E extends ElementType = 'button'> = {
   isFullWidth?: boolean
   children?: ReactNode
   className?: string
-} & VariantProps<typeof buttonVariants>
+} & VariantProps<typeof ButtonVariants>
 
 export type ButtonProps<E extends ElementType = 'button'> = ButtonOwnProps<E> &
   Omit<ComponentPropsWithoutRef<E>, keyof ButtonOwnProps<E>>
@@ -38,7 +38,7 @@ export function Button<E extends ElementType = 'button'>({
   return (
     <Component
       className={cn(
-        buttonVariants({ variant, colorScheme, size }),
+        ButtonVariants({ variant, colorScheme, size }),
         isFullWidth && 'w-full',
         className
       )}

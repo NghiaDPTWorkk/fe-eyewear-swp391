@@ -1,4 +1,5 @@
 import { ArrowRight, Glasses } from 'lucide-react'
+import { Button } from '@/components'
 
 export const BusinessBanner = () => {
   return (
@@ -11,10 +12,10 @@ export const BusinessBanner = () => {
               Discover eyewear that complements your lifestyle. Our collection features premium
               materials, expert craftsmanship, and timeless designs that elevate your everyday look.
             </p>
-            <button className="px-8 py-4 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-600 transition-all duration-300 inline-flex items-center gap-2">
+            <Button className="px-8 py-4 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-600 transition-all duration-300 inline-flex items-center gap-2">
               Learn More
               <ArrowRight className="w-5 h-5" />
-            </button>
+            </Button>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-white rounded-2xl p-6 shadow-lg">

@@ -2,6 +2,7 @@ import { IoMoon, IoSunny } from 'react-icons/io5'
 import { useState } from 'react'
 import { useLayoutStore } from '@/store/layout.store'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components'
 
 interface ThemeToggleProps {
   label?: string
@@ -24,7 +25,7 @@ export function ThemeToggle({
   }
 
   return (
-    <button
+    <Button
       onClick={handleToggle}
       className={cn(
         'w-full flex items-center transition-all duration-300 relative group overflow-hidden',
@@ -65,6 +66,6 @@ export function ThemeToggle({
           />
         </div>
       )}
-    </button>
+    </Button>
   )
 }

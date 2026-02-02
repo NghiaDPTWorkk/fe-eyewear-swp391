@@ -1,5 +1,5 @@
-import StaffSettingPage from '../StaffSettingPage'
+import SaleStaffSettingsPage from '../sales/SaleStaffSettingsPage'
 
 export default function OperationSettingPage() {
-  return <StaffSettingPage homeUrl="/operationstaff/dashboard" />
+  return <SaleStaffSettingsPage homeUrl="/operationstaff/dashboard" />
 }

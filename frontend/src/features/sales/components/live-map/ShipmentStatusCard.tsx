@@ -1,7 +1,3 @@
-/**
- * ShipmentStatusCard Component
- * Displays shipment status with progress and timeline
- */
 import { Card } from '@/components'
 import { IoCube } from 'react-icons/io5'
 

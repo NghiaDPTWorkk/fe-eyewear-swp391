@@ -7,6 +7,7 @@ import StepManualPrescription from './StepManualPrescription'
 import StepSavedPrescription from './StepSavedPrescription'
 import ModalSidebar from './ModalSidebar'
 import ModalHeader from './ModalHeader'
+import { Button } from '@/components'
 
 interface LensSelectionModalProps {
   isOpen: boolean
@@ -114,9 +115,9 @@ export default function LensSelectionModal({
           </div>
 
           <div className="p-8 border-t border-mint-100 bg-[#F8F9FA]/50 flex justify-between items-center">
-            <button className="text-sm font-bold text-primary-500 hover:underline uppercase tracking-wider transition-all">
+            <Button className="text-sm font-bold text-primary-500 hover:underline uppercase tracking-wider transition-all">
               Add insurance benefits
-            </button>
+            </Button>
             <div className="text-right">
               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">
                 Frame Price

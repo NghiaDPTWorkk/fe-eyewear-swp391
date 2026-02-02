@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Divider, Input } from '@/components'
+import { Divider, Input, Button } from '@/components'
 import { cn } from '@/lib/utils'
 
 export interface PriceRange {
@@ -11,7 +11,7 @@ export interface PriceRange {
 
 export interface PriceRangeFilterProps {
   ranges: PriceRange[]
-  selectedRanges: string[]
+  SelectedRanges: string[]
   onRangeChange: (rangeIds: string[]) => void
   onCustomRangeApply?: (min: number | null, max: number | null) => void
   className?: string
@@ -54,12 +54,12 @@ export function PriceRangeFilter({ onCustomRangeApply, className }: PriceRangeFi
         />
       </div>
 
-      <button
+      <Button
         onClick={handleApply}
         className="w-full bg-primary-500 hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-lg transition-colors"
       >
         Apply
-      </button>
+      </Button>
     </div>
   )
 }

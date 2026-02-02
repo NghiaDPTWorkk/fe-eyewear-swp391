@@ -2,7 +2,7 @@ import { forwardRef, type SelectHTMLAttributes, type ReactNode } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
-const selectVariants = cva(
+const SelectVariants = cva(
   [
     'relative flex w-full rounded-lg border bg-white transition-all duration-200',
     'focus-within:ring-2 focus-within:ring-offset-1',
@@ -32,7 +32,7 @@ export type SelectSize = 'sm' | 'md' | 'lg'
 export interface SelectProps
   extends
     Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'>,
-    Omit<VariantProps<typeof selectVariants>, 'isInvalid'> {
+    Omit<VariantProps<typeof SelectVariants>, 'isInvalid'> {
   isInvalid?: boolean
   isDisabled?: boolean
   placeholder?: string
@@ -53,8 +53,8 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     ref
   ) => {
     return (
-      <div className={cn(selectVariants({ size, isInvalid }), className)}>
-        <select
+      <div className={cn(SelectVariants({ size, isInvalid }), className)}>
+        <Select
           ref={ref}
           disabled={isDisabled}
           className={cn(
@@ -69,7 +69,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             </option>
           )}
           {children}
-        </select>
+        </Select>
 
         <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500">
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none">

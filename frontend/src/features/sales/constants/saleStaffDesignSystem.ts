@@ -84,7 +84,7 @@ export const STYLES = {
 } as const
 
 // ─────────────────────────────────────────────────────────────────────────────
-// FILTER BUTTON CONFIGS
+// FILTER Button CONFIGS
 // ─────────────────────────────────────────────────────────────────────────────
 export const ORDER_FILTERS = [
   { label: 'All Orders', value: 'all', count: 128 },

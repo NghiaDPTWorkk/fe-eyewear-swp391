@@ -70,3 +70,4 @@ export const SalesStaffOrderCard: React.FC<SalesStaffOrderCardProps> = ({
     </tr>
   )
 }
+// export const SalesStaffOrderCard

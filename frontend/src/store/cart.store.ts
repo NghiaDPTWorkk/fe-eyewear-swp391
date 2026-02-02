@@ -7,7 +7,11 @@ interface CartState {
   items: CartItem[]
   isLoading: boolean
   isAddingToCart: boolean
+  isUpdating: boolean
+  isRemoving: boolean
+  isClearing: boolean
   addToCartError: string | null
+  fetchError: string | null
   addItem: (item: CartItem) => void
   addItemAsync: (
     productId: string,
@@ -15,11 +19,12 @@ interface CartState {
     quantity: number,
     lensSelection?: LensSelectionState
   ) => Promise<void>
-  updateQuantity: (productId: string, quantity: number) => void
-  removeItem: (productId: string) => void
+  fetchCart: () => Promise<void>
+  updateQuantity: (item: CartItem, quantity: number) => Promise<void>
+  removeItem: (item: CartItem) => Promise<void>
   toggleSelection: (productId: string) => void
-  toggleAllSelection: (selected: boolean) => void
-  clearCart: () => void
+  toggleAllSelection: () => void
+  clearCart: () => Promise<void>
   setLoading: (loading: boolean) => void
   totalItems: () => number
 }
@@ -28,7 +33,11 @@ export const useCartStore = create<CartState>((set, get) => ({
   items: [],
   isLoading: false,
   isAddingToCart: false,
+  isUpdating: false,
+  isRemoving: false,
+  isClearing: false,
   addToCartError: null,
+  fetchError: null,
 
   /**
    * Local-only add item (backward compatibility)
@@ -57,28 +66,21 @@ export const useCartStore = create<CartState>((set, get) => ({
    * Async add item with API integration
    */
   addItemAsync: async (productId, sku, quantity, lensSelection) => {
-    console.log('🏪 Cart Store: addItemAsync called with:', {
-      productId,
-      sku,
-      quantity,
-      lensSelection
-    })
-
     set({ isAddingToCart: true, addToCartError: null })
 
     try {
-      console.log('🏪 Cart Store: Calling cartService.addToCart')
-
       // Call cart service
       const updatedItems = await cartService.addToCart(productId, sku, quantity, lensSelection)
 
-      console.log('🏪 Cart Store: Received updated items:', updatedItems)
-
       // Update cart state with backend response
       set({ items: updatedItems, isAddingToCart: false })
+
+      // If backend didn't return cart data (empty array), fetch cart to get latest state
+      if (updatedItems.length === 0) {
+        await get().fetchCart()
+      }
     } catch (error: any) {
       const errorMessage = error.message || 'Failed to add item to cart'
-      console.error('🏪 Cart Store: Error:', errorMessage)
       set({ isAddingToCart: false, addToCartError: errorMessage })
 
       // Re-throw for component-level handling
@@ -86,17 +88,50 @@ export const useCartStore = create<CartState>((set, get) => ({
     }
   },
 
-  updateQuantity: (productId, quantity) =>
-    set((state) => ({
-      items: state.items.map((item) =>
-        item.product_id === productId ? { ...item, quantity } : item
-      )
-    })),
+  /**
+   * Fetch cart from backend
+   */
+  fetchCart: async () => {
+    set({ isLoading: true, fetchError: null })
 
-  removeItem: (productId) =>
-    set((state) => ({
-      items: state.items.filter((item) => item.product_id !== productId)
-    })),
+    try {
+      // Call cart service to get cart items
+
+      // Call cart service to get cart items
+      const items = await cartService.getCart()
+
+      // Update cart state with backend response
+      set({ items, isLoading: false })
+    } catch (error: any) {
+      const errorMessage = error.message || 'Failed to fetch cart'
+      set({ isLoading: false, fetchError: errorMessage, items: [] })
+
+      // Don't re-throw, just set error state
+      // This allows the UI to handle the error gracefully
+    }
+  },
+
+  updateQuantity: async (item, quantity) => {
+    set({ isUpdating: true })
+    try {
+      const updatedItems = await cartService.updateQuantity(item, quantity)
+      set({ items: updatedItems, isUpdating: false })
+    } catch (error: any) {
+      set({ isUpdating: false })
+      throw error
+    }
+  },
+
+  removeItem: async (item) => {
+    set({ isRemoving: true })
+    try {
+      const updatedItems = await cartService.removeItem(item)
+      set({ items: updatedItems, isRemoving: false })
+    } catch (error: any) {
+      set({ isRemoving: false })
+      throw error
+    }
+  },
 
   toggleSelection: (productId) =>
     set((state) => ({
@@ -105,12 +140,24 @@ export const useCartStore = create<CartState>((set, get) => ({
       )
     })),
 
-  toggleAllSelection: (selected) =>
-    set((state) => ({
-      items: state.items.map((item) => ({ ...item, selected }))
-    })),
+  toggleAllSelection: () =>
+    set((state) => {
+      const allSelected = state.items.every((item) => item.selected)
+      return {
+        items: state.items.map((item) => ({ ...item, selected: !allSelected }))
+      }
+    }),
 
-  clearCart: () => set({ items: [] }),
+  clearCart: async () => {
+    set({ isClearing: true })
+    try {
+      await cartService.clearCart()
+      set({ items: [], isClearing: false })
+    } catch (error: any) {
+      set({ isClearing: false })
+      throw error
+    }
+  },
 
   setLoading: (loading) => set({ isLoading: loading }),
 

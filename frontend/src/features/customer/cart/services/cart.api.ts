@@ -14,5 +14,33 @@ export const cartApi = {
     console.log(payload)
 
     return httpClient.post<AddToCartResponse>(ENDPOINTS.CART.ADD, payload)
+  },
+
+  /**
+   * Lấy giỏ hàng hiện tại
+   */
+  getCart: () => {
+    return httpClient.get<AddToCartResponse>(ENDPOINTS.CART.GET)
+  },
+
+  /**
+   * Cập nhật số lượng cart item
+   */
+  updateQuantity: (payload: AddToCartPayload) => {
+    return httpClient.patch<AddToCartResponse>(ENDPOINTS.CART.UPDATE_QUANTITY, payload)
+  },
+
+  /**
+   * Xóa item khỏi giỏ hàng
+   */
+  removeItem: (payload: AddToCartPayload) => {
+    return httpClient.delete<AddToCartResponse>(ENDPOINTS.CART.REMOVE_ITEM, { data: payload })
+  },
+
+  /**
+   * Xóa toàn bộ giỏ hàng
+   */
+  clearCart: () => {
+    return httpClient.delete<AddToCartResponse>(ENDPOINTS.CART.CLEAR)
   }
 }

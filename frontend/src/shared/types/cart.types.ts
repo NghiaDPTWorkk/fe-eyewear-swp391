@@ -10,6 +10,8 @@ export interface CartItem {
   selected?: boolean
   sku?: string
   lens?: {
+    lensId?: string // Backend lens_id for API
+    sku?: string // Lens SKU for API
     visionNeed: string
     prescription: PrescriptionData | null
   }

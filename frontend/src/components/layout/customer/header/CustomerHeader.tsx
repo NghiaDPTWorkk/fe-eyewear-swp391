@@ -12,7 +12,8 @@ export default function CustomerHeader() {
   const searchRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
   const location = useLocation()
-  const totalItems = useCartStore((state) => state.totalItems)
+  const items = useCartStore((state) => state.items)
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
   const { isAuthenticated } = useAuthStore()
 
   useEffect(() => {
@@ -171,9 +172,9 @@ export default function CustomerHeader() {
               onClick={() => navigate('/cart')}
             >
               <ShoppingCart className="w-5 h-5 text-gray-eyewear group-hover:text-primary-500 transition-colors" />
-              {totalItems() > 0 && (
+              {totalItems > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary-500 text-white text-xs rounded-full flex items-center justify-center font-semibold shadow-md">
-                  {totalItems()}
+                  {totalItems}
                 </span>
               )}
             </button>

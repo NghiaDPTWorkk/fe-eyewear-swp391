@@ -11,7 +11,6 @@ interface CartItemProps {
 export const CartItem = ({ item }: CartItemProps) => {
   const { updateQuantity, removeItem, toggleSelection } = useCartStore()
   const [isLensesOpen, setIsLensesOpen] = useState(false)
-  const [hasProtectionPlan, setHasProtectionPlan] = useState(false)
 
   // Mock data to match design
   const hasPromo = true
@@ -157,22 +156,6 @@ export const CartItem = ({ item }: CartItemProps) => {
                 </div>
               </div>
             )}
-
-            <div className="flex items-center gap-3 mt-4">
-              <Checkbox
-                isChecked={hasProtectionPlan}
-                onCheckedChange={setHasProtectionPlan}
-                id={`protection-${item.product_id}`}
-              />
-              <label
-                htmlFor={`protection-${item.product_id}`}
-                className="text-sm text-gray-600 font-medium cursor-pointer"
-              >
-                Add{' '}
-                <span className="font-bold underline text-[#000000]">Glasses Protection Plan</span>{' '}
-                ($24.99)
-              </label>
-            </div>
           </div>
 
           {/* Promo Section */}

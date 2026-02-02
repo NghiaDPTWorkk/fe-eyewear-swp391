@@ -26,7 +26,7 @@ export const Table: React.FC<TableProps> = ({
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-left border-collapse min-w-[800px]">
-        <thead className="bg-white border-b border-neutral-100 text-[10px] uppercase text-slate-400 font-bold tracking-widest">
+        <thead className="bg-white border-b border-neutral-100 text-xs uppercase text-slate-400 font-medium tracking-wide">
           <tr>
             <th className="px-6 py-5">Invoice Code</th>
             <th className="px-6 py-5">Customer Details</th>

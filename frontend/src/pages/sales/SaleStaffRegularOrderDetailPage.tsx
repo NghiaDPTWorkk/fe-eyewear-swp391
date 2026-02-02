@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { Container } from '@/components'
-import SaleStaffOrderDetail from '@/features/sales/components/customer/OrderDetailOrderDetail'
+import PrescriptionVerification from '@/features/sales/components/prescriptions/PrescriptionVerification'
 
 export default function SaleStaffRegularOrderDetailPage() {
   const { orderId } = useParams<{ orderId: string }>()
@@ -10,7 +10,7 @@ export default function SaleStaffRegularOrderDetailPage() {
 
   return (
     <Container>
-      <SaleStaffOrderDetail orderId={orderId} onBack={() => navigate(-1)} />
+      <PrescriptionVerification orderId={orderId} onBack={() => navigate(-1)} />
     </Container>
   )
 }

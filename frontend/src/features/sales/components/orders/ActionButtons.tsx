@@ -46,7 +46,7 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({ order, onVerify, o
             e.stopPropagation()
             onVerify()
           }}
-          className="text-primary-500 hover:text-primary-600 transition-colors"
+          className="text-mint-500 hover:text-mint-600 transition-colors"
           title="Verify Prescription"
         >
           <IoCheckmarkCircleOutline size={19} />

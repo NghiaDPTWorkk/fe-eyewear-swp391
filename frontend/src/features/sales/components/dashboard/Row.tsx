@@ -16,6 +16,9 @@ export const Row: React.FC<RowProps> = ({ invoice, onClick, onActionSuccess }) =
   const [isApprovable, setIsApprovable] = useState(false)
   const [isValidating, setIsValidating] = useState(true)
 
+  const approvedCount = invoice.approvedOrdersCount || 0
+  const totalCount = invoice.totalOrdersCount || 0
+
   useEffect(() => {
     let isMounted = true
     const checkStatus = async () => {
@@ -61,32 +64,32 @@ export const Row: React.FC<RowProps> = ({ invoice, onClick, onActionSuccess }) =
       onClick={onClick}
     >
       <td className="px-6 py-5">
-        <span className="text-sm font-bold text-primary-600 font-mono hover:text-primary-700 hover:underline decoration-primary-300 decoration-2 underline-offset-4 transition-all">
+        <span className="text-sm font-medium text-mint-600 font-mono hover:text-mint-700 transition-colors">
           {invoice.invoiceCode}
         </span>
       </td>
       <td className="px-6 py-5">
         <div className="flex flex-col">
-          <span className="text-sm font-bold text-slate-700">{invoice.fullName}</span>
-          <span className="text-[11px] text-slate-400 font-medium mt-0.5">{invoice.phone}</span>
+          <span className="text-sm font-medium text-slate-700">{invoice.fullName}</span>
+          <span className="text-xs text-slate-400 mt-0.5">{invoice.phone}</span>
         </div>
       </td>
       <td className="px-6 py-5">
         <div className="flex flex-col">
-          <span className="text-sm text-slate-500 font-medium">
+          <span className="text-sm text-slate-600">
             {invoice.createdAt ? invoice.createdAt.split(' ')[1] : 'N/A'}
           </span>
-          <span className="text-[10px] text-slate-400">
+          <span className="text-xs text-slate-400">
             {invoice.createdAt ? invoice.createdAt.split(' ')[0] : ''}
           </span>
         </div>
       </td>
-      <td className="px-6 py-5 text-right font-bold text-slate-700">{invoice.finalPrice}</td>
+      <td className="px-6 py-5 text-right font-medium text-slate-700">{invoice.finalPrice}</td>
       <td className="px-6 py-5">
         <div className="flex items-center justify-center">
           <span
             className={cn(
-              'px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border flex items-center gap-1.5',
+              'px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wide border flex items-center gap-1.5',
               invoice.status === 'DEPOSITED'
                 ? 'bg-blue-50 text-blue-600 border-blue-100'
                 : 'bg-slate-50 text-slate-400 border-slate-100'
@@ -119,20 +122,20 @@ export const Row: React.FC<RowProps> = ({ invoice, onClick, onActionSuccess }) =
             <IoCloseCircleOutline size={22} />
           </button>
 
-          {/* Approve Button */}
+          {/* Approve Button with Progress */}
           <button
             className={cn(
-              'p-2 rounded-xl transition-all',
+              'flex items-center gap-2 px-3 py-2 rounded-xl transition-all',
               isApprovable && !processing
-                ? 'text-emerald-500 hover:bg-emerald-50 hover:shadow-sm hover:shadow-emerald-100'
-                : 'text-neutral-300 cursor-not-allowed bg-neutral-50'
+                ? 'text-emerald-600 hover:bg-emerald-50 hover:shadow-sm hover:shadow-emerald-100'
+                : 'text-neutral-400 cursor-not-allowed bg-neutral-50'
             )}
             title={
               isValidating
                 ? 'Validating orders...'
                 : isApprovable
                   ? 'Approve Invoice'
-                  : 'All orders must be approved first'
+                  : `${approvedCount}/${totalCount} orders approved`
             }
             disabled={!isApprovable || processing || isValidating}
             onClick={handleApprove}
@@ -140,7 +143,12 @@ export const Row: React.FC<RowProps> = ({ invoice, onClick, onActionSuccess }) =
             {isValidating ? (
               <div className="w-5 h-5 border-2 border-neutral-200 border-t-neutral-400 rounded-full animate-spin" />
             ) : (
-              <IoCheckmarkCircleOutline size={22} />
+              <>
+                <IoCheckmarkCircleOutline size={20} />
+                <span className="text-xs font-medium">
+                  {approvedCount}/{totalCount}
+                </span>
+              </>
             )}
           </button>
         </div>

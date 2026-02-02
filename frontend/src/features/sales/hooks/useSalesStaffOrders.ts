@@ -44,7 +44,19 @@ export const useSalesStaffOrders = () => {
 
       if (!ord) return null
 
-      return transformOrder(ord) as OrderDetail
+      // Try to fetch invoice data if we have invoiceId
+      let invoiceData = null
+      const invoiceId = ord.invoiceId || ord.invoice?._id
+      if (invoiceId) {
+        try {
+          const invResponse = await httpClient.get<any>(`/admin/invoices/${invoiceId}`)
+          invoiceData = invResponse.data?.invoice || invResponse.data?.data || invResponse.data
+        } catch {
+          // Invoice fetch failed, continue without it
+        }
+      }
+
+      return transformOrder(ord, invoiceData) as OrderDetail
     } catch (err: any) {
       setError(err.message || 'Failed to fetch order detail')
       return null

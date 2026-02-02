@@ -30,7 +30,7 @@ export const OrderList: React.FC<OrderListProps> = ({
     <Card className="p-0 overflow-hidden border border-neutral-200 shadow-sm bg-white rounded-xl">
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
-          <thead className="bg-white border-b border-neutral-100 text-[10px] uppercase text-slate-400 font-bold tracking-widest">
+          <thead className="bg-white border-b border-neutral-100 text-xs uppercase text-slate-400 font-medium tracking-wide">
             <tr>
               <th className="px-6 py-5 text-center w-28">Order Code</th>
               <th className="px-6 py-5">Customer Name</th>

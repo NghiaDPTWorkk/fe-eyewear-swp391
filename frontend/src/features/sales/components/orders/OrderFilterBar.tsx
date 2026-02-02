@@ -45,7 +45,7 @@ export const OrderFilterBar: React.FC<OrderFilterBarProps> = ({
           className={cn(
             'flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium transition-all min-w-[170px] justify-between h-[42px]',
             isFilterOpen
-              ? 'border-primary-500 bg-primary-50 text-primary-600'
+              ? 'border-mint-500 bg-mint-50 text-mint-600'
               : 'border-gray-200 text-gray-600 hover:bg-gray-50'
           )}
         >
@@ -64,7 +64,7 @@ export const OrderFilterBar: React.FC<OrderFilterBarProps> = ({
                     className={cn(
                       'w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all text-left',
                       filter === opt.value
-                        ? 'bg-primary-50 text-primary-600 font-semibold'
+                        ? 'bg-mint-50 text-mint-600 font-semibold'
                         : 'text-gray-600 hover:bg-gray-50'
                     )}
                     onClick={() => {

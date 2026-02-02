@@ -19,9 +19,9 @@ export const OrderDrawerHeader: React.FC<OrderDrawerHeaderProps> = ({
       <div className="flex items-center justify-between mb-2">
         <span
           className={cn(
-            'px-2.5 py-0.5 rounded-lg text-[10px] font-semibold uppercase tracking-wider',
+            'px-2.5 py-0.5 rounded-lg text-[10px] font-medium uppercase tracking-wide',
             orderTypeLabel === 'Prescription'
-              ? 'bg-blue-50 text-blue-600 border border-blue-100'
+              ? 'bg-mint-50 text-mint-600 border border-mint-100'
               : orderTypeLabel === 'Pre-order'
                 ? 'bg-amber-50 text-amber-600 border border-amber-100'
                 : 'bg-neutral-50 text-neutral-500 border border-neutral-100'
@@ -29,12 +29,12 @@ export const OrderDrawerHeader: React.FC<OrderDrawerHeaderProps> = ({
         >
           {orderTypeLabel} Order
         </span>
-        <span className="inline-block px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-semibold uppercase tracking-widest rounded-full border border-emerald-100 shadow-sm">
+        <span className="inline-block px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-medium uppercase tracking-wide rounded-full border border-emerald-100 shadow-sm">
           {status}
         </span>
       </div>
-      <h2 className="text-2xl font-semibold text-[#0f172a] tracking-tight">Order Details</h2>
-      <p className="text-slate-400 text-sm font-medium mt-1">{orderCode}</p>
+      <h2 className="text-2xl font-medium text-[#0f172a] tracking-tight">Order Details</h2>
+      <p className="text-slate-400 text-sm font-normal mt-1">{orderCode || 'N/A'}</p>
     </div>
     <button
       onClick={onClose}

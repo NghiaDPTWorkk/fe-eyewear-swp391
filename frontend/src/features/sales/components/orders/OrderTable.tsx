@@ -137,7 +137,7 @@ export default function OrderTable({
       render: (row) => (
         <div className="flex flex-col items-center">
           <div
-            className="font-bold text-neutral-900 cursor-pointer hover:text-primary-600"
+            className="font-bold text-neutral-900 cursor-pointer hover:text-mint-600"
             onClick={() => handleViewOrder(row)}
           >
             {row.original.orderCode || row.id.substring(0, 8)}

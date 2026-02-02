@@ -29,14 +29,14 @@ export const SalesStaffRxRow: React.FC<SalesStaffRxRowProps> = ({ order, onVerif
       <td className="px-6 py-5 text-left min-w-[180px]">{renderProductInfo(order)}</td>
       <td className="px-6 py-5 whitespace-nowrap">{renderCustomer(order)}</td>
       <td className="px-6 py-5">
-        <span className="text-[12px] font-medium text-slate-600 bg-slate-50/80 px-2 py-1 rounded-lg border border-slate-100">
+        <span className="text-xs font-medium text-slate-600 bg-slate-50/80 px-2.5 py-1 rounded-lg border border-slate-100">
           {rxSummary}
         </span>
       </td>
       <td className="px-6 py-5">
         <StatusBadge status={order.status} />
       </td>
-      <td className="px-6 py-5">
+      <td className="px-6 py-5" onClick={(e) => e.stopPropagation()}>
         {renderActions(order, { onOpenDetail: onVerify, onVerify, onReject, onChat: () => {} })}
       </td>
     </tr>

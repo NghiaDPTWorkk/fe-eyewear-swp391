@@ -11,12 +11,12 @@ export const OrderDrawerCustomer: React.FC<OrderDrawerCustomerProps> = ({ order 
     </h3>
     <div className="bg-gray-50/50 border border-gray-100 p-5 rounded-2xl space-y-3 text-sm">
       <div className="flex justify-between items-center group">
-        <span className="text-gray-500 font-medium">Name</span>
-        <span className="font-semibold text-gray-900">{order?.customerName}</span>
+        <span className="text-gray-500 font-normal">Name</span>
+        <span className="font-medium text-gray-900">{order?.customerName || 'Not provided'}</span>
       </div>
       <div className="flex justify-between items-center group">
-        <span className="text-gray-500 font-medium">Phone</span>
-        <span className="font-semibold text-gray-900">{order?.customerPhone}</span>
+        <span className="text-gray-500 font-normal">Phone</span>
+        <span className="font-medium text-gray-900">{order?.customerPhone || 'Not provided'}</span>
       </div>
     </div>
   </div>

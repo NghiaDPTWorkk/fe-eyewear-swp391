@@ -1,0 +1,73 @@
+import { Shield } from 'lucide-react'
+import { Button } from '@/shared/components/ui'
+
+interface OrderSummarySectionProps {
+  subtotal: number
+  shipping: number
+  total: number
+  isProcessing: boolean
+  onCheckout: () => void
+}
+
+export const OrderSummarySection = ({
+  subtotal,
+  shipping,
+  total,
+  isProcessing,
+  onCheckout
+}: OrderSummarySectionProps) => {
+  return (
+    <>
+      <div className="space-y-4 mb-8">
+        <div className="flex justify-between text-mint-1200">
+          <span className="font-medium">Subtotal</span>
+          <span className="font-bold">
+            ${subtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+          </span>
+        </div>
+        <div className="flex justify-between text-mint-1200">
+          <span className="font-medium">Shipping</span>
+          <span className="font-bold">{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
+        </div>
+        <div className="flex justify-between items-baseline pt-4 border-t border-mint-100">
+          <span className="text-xl font-bold text-mint-1200 uppercase">
+            Total{' '}
+            <span className="text-xs font-medium text-gray-eyewear normal-case">(Excl. Tax)</span>
+          </span>
+          <span className="text-3xl font-extrabold text-mint-1200">
+            ${total.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+          </span>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <Button
+          isFullWidth
+          size="lg"
+          onClick={onCheckout}
+          isLoading={isProcessing}
+          className="py-6 rounded-xl shadow-sm hover:shadow-md uppercase tracking-wider font-bold bg-[#4AD7B0] hover:bg-[#3CBFA0] text-white border-0"
+        >
+          {isProcessing ? 'Processing...' : 'SECURE CHECKOUT'}
+        </Button>
+      </div>
+
+      <div className="text-center mt-6">
+        <p className="text-[10px] text-gray-eyewear mb-4 leading-relaxed">
+          By clicking on the button above you agree to Glasses.com <br />
+          <a href="#" className="underline">
+            Terms and Conditions
+          </a>{' '}
+          and{' '}
+          <a href="#" className="underline">
+            Privacy Policy
+          </a>
+        </p>
+        <div className="flex items-center justify-center gap-2 text-xs text-mint-1200 font-bold">
+          <Shield className="w-4 h-4 text-primary-500" />
+          Secure checkout guaranteed
+        </div>
+      </div>
+    </>
+  )
+}

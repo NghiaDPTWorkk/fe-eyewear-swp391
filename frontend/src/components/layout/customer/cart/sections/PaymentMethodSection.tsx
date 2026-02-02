@@ -1,0 +1,48 @@
+import { CreditCard } from 'lucide-react'
+import { PaymentMethodType } from '@/shared/types'
+
+interface PaymentMethodSectionProps {
+  paymentMethod: PaymentMethodType
+  onPaymentMethodChange: (method: PaymentMethodType) => void
+}
+
+export const PaymentMethodSection = ({
+  paymentMethod,
+  onPaymentMethodChange
+}: PaymentMethodSectionProps) => {
+  return (
+    <div className="mb-6">
+      <h2 className="text-xl font-bold text-mint-1200 mb-4 flex items-center gap-2">
+        <CreditCard className="w-5 h-5 text-primary-500" />
+        Payment Method
+      </h2>
+      <div className="grid grid-cols-2 gap-3">
+        <button
+          onClick={() => onPaymentMethodChange(PaymentMethodType.COD)}
+          className={`py-3 px-4 rounded-xl border-2 transition-all font-bold text-sm ${
+            paymentMethod === PaymentMethodType.COD
+              ? 'border-primary-500 bg-primary-50 text-primary-600'
+              : 'border-mint-200 text-gray-eyewear hover:border-mint-300'
+          }`}
+        >
+          COD
+        </button>
+        <button
+          onClick={() => onPaymentMethodChange(PaymentMethodType.ZALAPAY)}
+          className={`py-3 px-4 rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${
+            paymentMethod === PaymentMethodType.ZALAPAY
+              ? 'border-[#0068FF] bg-[#0068FF]/5 text-[#0068FF]'
+              : 'border-mint-200 text-gray-eyewear hover:border-mint-300'
+          }`}
+        >
+          <img
+            src="https://cdn.brandfetch.io/id_T-oXJkN/w/1624/h/1624/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1767789070990"
+            alt="ZaloPay"
+            className="h-6"
+          />
+          <span className="font-bold text-sm">ZaloPay</span>
+        </button>
+      </div>
+    </div>
+  )
+}

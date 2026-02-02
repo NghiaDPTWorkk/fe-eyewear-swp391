@@ -59,7 +59,7 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
 
     const type = (product as any).type || 'frame'
 
-    if (type === 'frame' || type === 'lens') {
+    if (type === 'frame') {
       setIsLensModalOpen(true)
       return
     }
@@ -314,9 +314,7 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
                 ? 'Out of Stock'
                 : (product as any).type === 'frame'
                   ? 'Select Lenses'
-                  : (product as any).type === 'lens'
-                    ? 'Enter Prescription & Add'
-                    : 'Add to Cart'}
+                  : 'Add to Cart'}
         </Button>
         <Button
           variant="outline"

@@ -123,6 +123,7 @@ const enrichCartItemsWithProductDetails = async (items: CartItem[]): Promise<Car
             price: variant.finalPrice || variant.price || item.price,
             image: variant.imgs?.[0] || item.image,
             sku: variant.sku || item.sku,
+            productType: productDetail.type,
             selectedOptions // Add variant attributes (color, size, etc.)
           }
         } else {
@@ -135,7 +136,8 @@ const enrichCartItemsWithProductDetails = async (items: CartItem[]): Promise<Car
               productDetail.variants?.[0]?.finalPrice ||
               productDetail.variants?.[0]?.price ||
               item.price,
-            image: productDetail.variants?.[0]?.imgs?.[0] || item.image
+            image: productDetail.variants?.[0]?.imgs?.[0] || item.image,
+            productType: productDetail.type
           }
         }
       }

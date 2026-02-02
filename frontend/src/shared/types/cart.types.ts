@@ -16,6 +16,7 @@ export interface CartItem {
     prescription: PrescriptionData | null
   }
   selectedOptions?: Record<string, string> // For display purposes
+  productType?: string
 }
 
 export interface Cart {

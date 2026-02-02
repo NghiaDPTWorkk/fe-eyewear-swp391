@@ -7,7 +7,7 @@ export type ButtonVariant = 'solid' | 'outline' | 'ghost' | 'link'
 export type ButtonColorScheme = 'primary' | 'secondary' | 'danger' | 'neutral'
 export type ButtonSize = 'sm' | 'md' | 'lg'
 
-type ButtonOwnProps<E extends ElementType = 'Button'> = {
+type ButtonOwnProps<E extends ElementType = 'button'> = {
   as?: E
   leftIcon?: ReactNode
   rightIcon?: ReactNode
@@ -17,10 +17,10 @@ type ButtonOwnProps<E extends ElementType = 'Button'> = {
   className?: string
 } & VariantProps<typeof ButtonVariants>
 
-export type ButtonProps<E extends ElementType = 'Button'> = ButtonOwnProps<E> &
+export type ButtonProps<E extends ElementType = 'button'> = ButtonOwnProps<E> &
   Omit<ComponentPropsWithoutRef<E>, keyof ButtonOwnProps<E>>
 
-export function Button<E extends ElementType = 'Button'>({
+export function Button<E extends ElementType = 'button'>({
   as,
   variant = 'solid',
   colorScheme = 'primary',
@@ -33,7 +33,7 @@ export function Button<E extends ElementType = 'Button'>({
   children,
   ...props
 }: ButtonProps<E>) {
-  const Component = as || 'Button'
+  const Component = as || 'button'
 
   return (
     <Component
@@ -42,8 +42,8 @@ export function Button<E extends ElementType = 'Button'>({
         isFullWidth && 'w-full',
         className
       )}
-      disabled={Component === 'Button' ? isDisabled : undefined}
-      aria-disabled={Component !== 'Button' ? isDisabled : undefined}
+      disabled={Component === 'button' ? isDisabled : undefined}
+      aria-disabled={Component !== 'button' ? isDisabled : undefined}
       {...props}
     >
       {leftIcon && <span className="inline-flex shrink-0">{leftIcon}</span>}

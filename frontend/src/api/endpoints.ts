@@ -46,7 +46,9 @@ export const ENDPOINTS = {
         endpoint += `&type=${type}`
       }
       return endpoint
-    }
+    },
+    UPDATE: (id: string) => `/admin/orders/${id}`,
+    UPDATE_STATUS_PACKAGING: (id: string) => `/admin/orders/${id}/status/packaging`
   },
 
   // Prescription (Custom Lens)

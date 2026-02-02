@@ -3,7 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Container } from '@/components'
 import { Button } from '@/shared/components/ui/button'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
-import { useOrderDetail } from '@/features/staff/hooks/useOrders'
+import { useOrderDetail, useUpdateStatusToPackaging } from '@/features/staff/hooks/useOrders'
+import toast from 'react-hot-toast'
 import { useProductDetails } from '@/features/staff/hooks/products/useProductDetails'
 import type { OrderResponse, OrderProductItem } from '@/shared/types'
 import LensNormalOrder from '@/components/layout/staff/staff-core/technicaldetail/LensNormalOrder'
@@ -69,11 +70,29 @@ export default function OperationOrderDetailPage() {
 // Component xử lý transform data và render UI
 interface OrderDetailContentProps {
   order: any
-  orderId: string
   navigate: any
+  orderId: string
 }
 
 function OrderDetailContent({ order, orderId, navigate }: OrderDetailContentProps) {
+  const updatePackaging = useUpdateStatusToPackaging()
+
+  const handleStartProcessing = () => {
+    updatePackaging.mutate(orderId, {
+      onSuccess: () => {
+        toast.success('Order status updated to PACKAGING')
+        navigate(PATHS.OPERATIONSTAFF.PACKING_PROCESS(orderId), {
+          state: {
+            status: 'PACKAGING', // Optimistic update
+            products: order.products || []
+          }
+        })
+      },
+      onError: () => {
+        toast.error('Failed to update order status')
+      }
+    })
+  }
   const products: OrderProductItem[] = order?.products || []
   const orderType = order?.type?.[0] || order?.type // Handle both array and string
 
@@ -334,9 +353,10 @@ function OrderDetailContent({ order, orderId, navigate }: OrderDetailContentProp
       <div className="flex justify-end gap-3 mt-4">
         <Button
           className="px-6 py-3 bg-mint-900 hover:bg-mint-700 text-white rounded-lg font-medium transition-colors shadow-sm"
-          onClick={() => navigate(PATHS.OPERATIONSTAFF.PACKING_PROCESS(orderId || ''))}
+          onClick={handleStartProcessing}
+          disabled={updatePackaging.isPending}
         >
-          Start Processing
+          {updatePackaging.isPending ? 'Processing...' : 'Start Processing'}
         </Button>
       </div>
     </Container>

@@ -22,5 +22,22 @@ export const orderService = {
    */
   getOrderById: async (id: string) => {
     return httpClient.get(ENDPOINTS.ORDERS.DETAIL(id))
+  },
+
+  /**
+   * Cập nhật thông tin order (status, ...)
+   * @param id - Order ID
+   * @param data - Dữ liệu cần update
+   */
+  updateOrder: async (id: string, data: any) => {
+    return httpClient.put(ENDPOINTS.ORDERS.UPDATE(id), data)
+  },
+
+  /**
+   * Cập nhật trạng thái order sang PACKAGING
+   * @param id - Order ID
+   */
+  updateStatusToPackaging: async (id: string) => {
+    return httpClient.patch(ENDPOINTS.ORDERS.UPDATE_STATUS_PACKAGING(id))
   }
 }

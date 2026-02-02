@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useState, useMemo } from 'react'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Container } from '@/components'
 import { PATHS } from '@/routes/paths'
 import { IoArrowBack, IoCubeOutline } from 'react-icons/io5'
@@ -9,28 +9,69 @@ import { ScanSection } from '@/shared/components/ui/scansection'
 import ShippingLabel from '@/shared/components/ui/shippinglabel/ShippingLabel'
 import OrderSumary from '@/shared/components/ui/ordersummary/OrderSumary'
 import CheckListSection from '@/shared/components/ui/packingchecklist/CheckListSection'
-
-const PACKING_ITEMS = [
-  'Lenses (pair)',
-  'Frames',
-  'Glasses Case',
-  'Cleaning Cloth',
-  'Documents & Invoices'
-]
+import CheckItem from '@/shared/components/ui/packingchecklist/CheckItem'
+import type { OrderProductItem } from '@/shared/types'
 
 export default function OperationOrderPackingProcess() {
   const { orderId } = useParams<{ orderId: string }>()
   const navigate = useNavigate()
-  const [checkedItems, setCheckedItems] = useState<boolean[]>(
-    new Array(PACKING_ITEMS.length).fill(false)
-  )
+  const location = useLocation()
 
-  const allChecked = checkedItems.every(Boolean)
+  // Lấy data từ trang trước
+  const { status, products } = (location.state as {
+    status?: string
+    products?: OrderProductItem[]
+  }) || { status: 'PACKAGING', products: [] }
 
-  const handleCheck = (index: number) => {
-    const newCheckedItems = [...checkedItems]
-    newCheckedItems[index] = !newCheckedItems[index]
-    setCheckedItems(newCheckedItems)
+  // Define dynamic checklist items
+  const checklistItems = useMemo(() => {
+    const items = [
+      { id: 'glasses_case', label: 'Glasses Case', required: true },
+      { id: 'cleaning_cloth', label: 'Cleaning Cloth', required: true },
+      { id: 'documents', label: 'Documents & Invoices', required: true }
+    ]
+
+    // Thêm dynamic items dựa trên products
+    if (products && products.length > 0) {
+      products.forEach((p) => {
+        const sku = p.product?.sku || ''
+        if (sku.startsWith('FRAME')) {
+          items.push({
+            id: `frame_${sku}`,
+            label: `Frame Check: ${sku}`,
+            required: true
+          })
+        } else if (sku.startsWith('LENS')) {
+          items.push({
+            id: `lens_${sku}`,
+            label: `Lens Check: ${sku}`,
+            required: true
+          })
+        } else if (p.product?.sku) {
+          // Fallback for other products if needed or just use product name
+          items.push({
+            id: `prod_${sku}`,
+            label: `Item Check: ${sku}`,
+            required: true
+          })
+        }
+      })
+    }
+
+    return items
+  }, [products])
+
+  // State lưu trạng thái checked của từng item (theo ID)
+  const [checkedState, setCheckedState] = useState<Record<string, boolean>>({})
+
+  // Kiểm tra tất cả đã check chưa
+  const allChecked = checklistItems.every((item) => checkedState[item.id])
+
+  const handleCheck = (id: string) => {
+    setCheckedState((prev) => ({
+      ...prev,
+      [id]: !prev[id]
+    }))
   }
 
   const handleFinish = () => {
@@ -40,7 +81,7 @@ export default function OperationOrderPackingProcess() {
   }
 
   return (
-    <Container>
+    <Container className="animate-fade-in-up">
       {/* Breadcrumb Path */}
       <BreadcrumbPath paths={['Dashboard', 'Packing Station']} />
       {/* Header */}
@@ -62,7 +103,7 @@ export default function OperationOrderPackingProcess() {
           </div>
         </div>
         <span className="px-6 py-2 bg-amber-100 text-amber-700 border border-amber-200 rounded-full text-xs font-bold uppercase tracking-widest">
-          In Progress
+          {status || 'In Progress'}
         </span>
       </div>
 
@@ -76,11 +117,17 @@ export default function OperationOrderPackingProcess() {
           <ScanSection orderId={orderId} />
 
           {/* Checklist Section */}
-          <CheckListSection
-            PACKING_ITEMS={PACKING_ITEMS}
-            checkedItems={checkedItems}
-            handleCheck={handleCheck}
-          />
+          <CheckListSection>
+            {checklistItems.map((item) => (
+              <CheckItem
+                key={item.id}
+                label={item.label}
+                checked={!!checkedState[item.id]}
+                onToggle={() => handleCheck(item.id)}
+                required={item.required}
+              />
+            ))}
+          </CheckListSection>
         </div>
 
         {/* Right Column - Shipping Info (Conditional Appearance) */}

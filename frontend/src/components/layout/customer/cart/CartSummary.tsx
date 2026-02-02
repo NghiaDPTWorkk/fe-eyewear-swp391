@@ -1,4 +1,4 @@
-import { Shield, CreditCard, Home } from 'lucide-react'
+import { Shield, Home } from 'lucide-react'
 import { useState, useEffect, useCallback } from 'react'
 import { Button, Card, Input, Select } from '@/shared/components/ui'
 import { addressService, type Province, type Ward } from '@/shared/services/addressService'
@@ -8,13 +8,13 @@ interface CartSummaryProps {
 }
 
 export const CartSummary = ({ subtotal }: CartSummaryProps) => {
-  const [paymentMethod, setPaymentMethod] = useState<'COD' | 'ONLINE'>('COD')
   const [address, setAddress] = useState({
     street: '',
     ward: '',
     district: '',
     city: ''
   })
+  const [note, setNote] = useState('')
 
   const [provinces, setProvinces] = useState<Province[]>([])
   const [wards, setWards] = useState<Ward[]>([])
@@ -56,61 +56,7 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
 
   return (
     <Card className="p-8 border-mint-300/50 sticky top-8 rounded-3xl">
-      <h2 className="text-xl font-bold text-mint-1200 mb-6">Select a payment method</h2>
-
-      <div className="space-y-4 mb-8">
-        <label
-          onClick={() => setPaymentMethod('COD')}
-          className={`flex items-start gap-4 p-4 rounded-2xl border-2 cursor-pointer transition-all ${
-            paymentMethod === 'COD'
-              ? 'border-primary-500 bg-primary-50/30'
-              : 'border-mint-200 hover:border-primary-300'
-          }`}
-        >
-          <div
-            className={`mt-1 w-5 h-5 rounded-full border-4 flex-shrink-0 transition-all ${
-              paymentMethod === 'COD' ? 'border-primary-500' : 'border-mint-300'
-            }`}
-          ></div>
-          <div className="flex-grow">
-            <div className="flex justify-between items-center mb-1">
-              <span className="flex items-center gap-2 font-bold text-mint-1200 text-sm">
-                <CreditCard className="w-4 h-4 text-primary-500" />
-                Cash on Delivery (COD)
-              </span>
-            </div>
-          </div>
-        </label>
-
-        <label
-          onClick={() => setPaymentMethod('ONLINE')}
-          className={`flex items-start gap-4 p-4 rounded-2xl border-2 cursor-pointer transition-all ${
-            paymentMethod === 'ONLINE'
-              ? 'border-primary-500 bg-primary-50/30'
-              : 'border-mint-200 hover:border-primary-300'
-          }`}
-        >
-          <div
-            className={`mt-1 w-5 h-5 rounded-full border-4 flex-shrink-0 transition-all ${
-              paymentMethod === 'ONLINE' ? 'border-primary-500' : 'border-mint-300'
-            }`}
-          ></div>
-          <div className="flex-grow">
-            <div className="flex justify-between items-center mb-1">
-              <span className="flex items-center gap-2 font-bold text-mint-1200 text-sm">
-                <img
-                  src="https://vcdn.zalopay.com.vn/zlp-website/assets/images/logo-zalopay.png"
-                  alt="ZaloPay"
-                  className="w-4 h-4 object-contain"
-                />
-                ZaloPay
-              </span>
-            </div>
-          </div>
-        </label>
-      </div>
-
-      <div className="border-t border-mint-100 py-6 mb-6">
+      <div className="mb-6">
         <h2 className="text-xl font-bold text-mint-1200 mb-4 flex items-center gap-2">
           <Home className="w-5 h-5 text-primary-500" />
           Shipping Address
@@ -167,6 +113,22 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
         </div>
       </div>
 
+      <div className="border-t border-mint-100 py-6 mb-6">
+        <h2 className="text-xl font-bold text-mint-1200 mb-4">Order Note</h2>
+        <div>
+          <label className="text-xs font-bold text-gray-eyewear uppercase mb-1 block">
+            Add a note to your order (Optional)
+          </label>
+          <textarea
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            placeholder="e.g. Special delivery instructions, gift message, etc."
+            rows={4}
+            className="w-full px-4 py-3 rounded-xl border-2 border-mint-200 focus:border-primary-500 focus:outline-none transition-colors resize-none text-mint-1200 placeholder:text-gray-300"
+          />
+        </div>
+      </div>
+
       <div className="space-y-4 mb-8">
         <div className="flex justify-between text-mint-1200">
           <span className="font-medium">Subtotal</span>
@@ -207,12 +169,13 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
           </span>
         </div>
 
-        <button className="w-full py-4 border border-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-50 transition-colors">
+        <button className="w-full py-4 border-2 border-[#0068FF] bg-white rounded-lg flex items-center justify-center gap-2 hover:bg-[#0068FF]/5 transition-colors group">
           <img
-            src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg"
-            alt="PayPal"
+            src="https://vcdn.zalopay.com.vn/zlp-website/assets/images/logo-zalopay.png"
+            alt="ZaloPay"
             className="h-6"
           />
+          <span className="font-bold text-[#0068FF]">ZaloPay</span>
         </button>
       </div>
 

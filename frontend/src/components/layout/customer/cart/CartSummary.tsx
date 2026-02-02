@@ -1,156 +1,288 @@
-import { Truck, Shield } from 'lucide-react'
-import { useState } from 'react'
-import { Button, Card } from '@/shared/components/ui'
+import { useState, useEffect, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-hot-toast'
+import { Card } from '@/shared/components/ui'
+import { addressService, type Province, type Ward } from '@/shared/services/addressService'
+import { customerAddressService } from '@/features/customer/services/customerAddress.service'
+import { invoiceService } from '@/features/customer/invoice/services/invoice.service'
+import { useCartStore } from '@/store'
+import { useAuth } from '@/features/auth/hooks/useAuth'
+import { PaymentMethodType, type Address } from '@/shared/types'
+import type { CreateInvoiceRequest } from '@/shared/types/invoice.types'
+
+import { CustomerInfoSection } from './sections/CustomerInfoSection'
+import { ShippingAddressSection } from './sections/ShippingAddressSection'
+import { PaymentMethodSection } from './sections/PaymentMethodSection'
+import { OrderSummarySection } from './sections/OrderSummarySection'
 
 interface CartSummaryProps {
   subtotal: number
 }
 
 export const CartSummary = ({ subtotal }: CartSummaryProps) => {
-  const [shippingMethod, setShippingMethod] = useState<'standard' | 'express'>('standard')
-  const [applyInsurance, setApplyInsurance] = useState(false)
+  const navigate = useNavigate()
+  const { user } = useAuth()
+  const { items } = useCartStore()
 
-  const shipping = shippingMethod === 'express' ? 18 : 0
+  const [customerInfo, setCustomerInfo] = useState({
+    fullName: user?.fullName || user?.name || '',
+    phone: user?.phone || ''
+  })
+
+  const [address, setAddress] = useState({
+    street: '',
+    ward: '',
+    city: ''
+  })
+  const [note, setNote] = useState('')
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>(PaymentMethodType.COD)
+  const [isProcessing, setIsProcessing] = useState(false)
+
+  const [provinces, setProvinces] = useState<Province[]>([])
+  const [wards, setWards] = useState<Ward[]>([])
+  const [savedAddresses, setSavedAddresses] = useState<Address[]>([])
+  const [addressMode, setAddressMode] = useState<'list' | 'manual'>('manual')
+  const [selectedAddressId, setSelectedAddressId] = useState<string>('')
+  const [isAddressDropdownOpen, setIsAddressDropdownOpen] = useState(false)
+  const [selectedProvinceCode, setSelectedProvinceCode] = useState<number | null>(null)
+
+  // Sync user info if it loads late
+  useEffect(() => {
+    if (user) {
+      setCustomerInfo((prev) => ({
+        ...prev,
+        fullName: prev.fullName || user.fullName || user.name || '',
+        phone: prev.phone || user.phone || ''
+      }))
+    }
+  }, [user])
+
+  // Fetch requirements
+  useEffect(() => {
+    const initData = async () => {
+      try {
+        const provinceData = await addressService.getProvinces()
+        const provincesArray = Array.isArray(provinceData) ? provinceData : []
+        setProvinces(provincesArray)
+
+        if (user) {
+          const addresses = await customerAddressService.getAddresses()
+          setSavedAddresses(addresses)
+
+          if (addresses.length > 0) {
+            const defaultAddr = addresses.find((a) => a.isDefault) || addresses[0]
+            setAddressMode('list')
+            setSelectedAddressId(defaultAddr._id || '')
+            setAddress({
+              street: defaultAddr.street,
+              ward: defaultAddr.ward,
+              city: defaultAddr.city
+            })
+
+            const province = provincesArray.find(
+              (p) => p.name.toLowerCase() === defaultAddr.city.toLowerCase()
+            )
+            if (province) {
+              setSelectedProvinceCode(province.code)
+              const wardData = await addressService.getWards(province.code)
+              setWards(Array.isArray(wardData) ? wardData : [])
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Failed to initialize cart summary data:', error)
+      }
+    }
+    initData()
+  }, [user])
+
+  const handleSavedAddressChange = async (id: string) => {
+    if (id === 'new') {
+      setAddressMode('manual')
+      setSelectedAddressId('')
+      setAddress({ street: '', ward: '', city: '' })
+      setSelectedProvinceCode(null)
+      setWards([])
+      return
+    }
+
+    const addr = savedAddresses.find((a) => a._id === id)
+    if (addr) {
+      setSelectedAddressId(id)
+      setAddress({
+        street: addr.street,
+        ward: addr.ward,
+        city: addr.city
+      })
+
+      const province = provinces.find((p) => p.name.toLowerCase() === addr.city.toLowerCase())
+      if (province) {
+        setSelectedProvinceCode(province.code)
+        try {
+          const data = await addressService.getWards(province.code)
+          setWards(Array.isArray(data) ? data : [])
+        } catch (error) {
+          console.error('Failed to fetch wards:', error)
+        }
+      }
+    }
+  }
+
+  const handleProvinceChange = useCallback(async (code: number, name: string) => {
+    setSelectedProvinceCode(code)
+    setWards([])
+    setAddress((prev) => ({ ...prev, city: name, ward: '' }))
+
+    try {
+      const data = await addressService.getWards(code)
+      setWards(Array.isArray(data) ? data : [])
+    } catch (error) {
+      console.error('Failed to fetch wards:', error)
+      setWards([])
+    }
+  }, [])
+
+  const handleCheckout = async () => {
+    if (!customerInfo.fullName || !customerInfo.phone) {
+      toast.error('Vui lòng nhập đầy đủ thông tin khách hàng')
+      return
+    }
+
+    if (!address.city || !address.ward || !address.street) {
+      toast.error('Vui lòng nhập đầy đủ địa chỉ giao hàng')
+      return
+    }
+
+    const selectedItems = items.filter((item) => item.selected)
+    if (selectedItems.length === 0) {
+      toast.error('Giỏ hàng chưa chọn sản phẩm nào')
+      return
+    }
+
+    setIsProcessing(true)
+    try {
+      const productsPayload = selectedItems.map((item) => ({
+        product: {
+          product_id: item.product_id,
+          sku: item.sku || ''
+        },
+        lens: item.lens
+          ? {
+              lens_id: item.lens.lensId || '',
+              sku: item.lens.sku || '',
+              parameters: item.lens.prescription
+                ? {
+                    left: {
+                      SPH: Number(item.lens.prescription.left.SPH),
+                      CYL: Number(item.lens.prescription.left.CYL),
+                      AXIS: Number(item.lens.prescription.left.AXIS),
+                      ADD: item.lens.prescription.left.ADD
+                        ? Number(item.lens.prescription.left.ADD)
+                        : undefined
+                    },
+                    right: {
+                      SPH: Number(item.lens.prescription.right.SPH),
+                      CYL: Number(item.lens.prescription.right.CYL),
+                      AXIS: Number(item.lens.prescription.right.AXIS),
+                      ADD: item.lens.prescription.right.ADD
+                        ? Number(item.lens.prescription.right.ADD)
+                        : undefined
+                    },
+                    PD: Number(item.lens.prescription.PD)
+                  }
+                : {
+                    left: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
+                    right: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
+                    PD: 0
+                  }
+            }
+          : undefined,
+        quantity: item.quantity
+      }))
+
+      const payload: CreateInvoiceRequest = {
+        products: productsPayload,
+        address: {
+          street: address.street,
+          ward: address.ward,
+          city: address.city
+        },
+        fullName: customerInfo.fullName,
+        phone: customerInfo.phone,
+        voucher: [],
+        paymentMethod,
+        note
+      }
+
+      const response = await invoiceService.createInvoice(payload)
+      if (response.success) {
+        toast.success(response.message || 'Đặt hàng thành công!')
+        const selectedItemsCopy = selectedItems.map((item) => ({ ...item }))
+        const { clearCart, removeItems, items: currentItems } = useCartStore.getState()
+
+        if (selectedItemsCopy.length === currentItems.length) {
+          await clearCart()
+        } else {
+          await removeItems(selectedItemsCopy)
+        }
+        navigate('/account/orders')
+      } else {
+        toast.error(response.message || 'Tạo đơn hàng thất bại')
+      }
+    } catch (error: any) {
+      const errorMsg = error.response?.data?.message || 'Có lỗi xảy ra khi đặt hàng'
+      toast.error(errorMsg)
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  const shipping: number = 0
   const total = subtotal + shipping
 
   return (
     <Card className="p-8 border-mint-300/50 sticky top-8 rounded-3xl">
-      <h2 className="text-xl font-bold text-mint-1200 mb-6">Select a shipping method</h2>
+      <CustomerInfoSection customerInfo={customerInfo} onUpdate={setCustomerInfo} />
 
-      <div className="space-y-4 mb-8">
-        <label
-          onClick={() => setShippingMethod('standard')}
-          className={`flex items-start gap-4 p-4 rounded-2xl border-2 cursor-pointer transition-all ${
-            shippingMethod === 'standard'
-              ? 'border-primary-500 bg-primary-50/30'
-              : 'border-mint-200 hover:border-primary-300'
-          }`}
-        >
-          <div
-            className={`mt-1 w-5 h-5 rounded-full border-4 flex-shrink-0 transition-all ${
-              shippingMethod === 'standard' ? 'border-primary-500' : 'border-mint-300'
-            }`}
-          ></div>
-          <div className="flex-grow">
-            <div className="flex justify-between items-center mb-1">
-              <span className="flex items-center gap-2 font-bold text-mint-1200 text-sm">
-                <Truck className="w-4 h-4 text-primary-500" />
-                Responsible shipping
-              </span>
-              <span className="text-sm font-bold text-primary-600">Free</span>
-            </div>
-            <p className="text-xs text-gray-eyewear uppercase font-bold tracking-tight">
-              Est. Date Jan 28 - Jan 30
-            </p>
-          </div>
-        </label>
+      <ShippingAddressSection
+        address={address}
+        addressMode={addressMode}
+        savedAddresses={savedAddresses}
+        selectedAddressId={selectedAddressId}
+        isAddressDropdownOpen={isAddressDropdownOpen}
+        provinces={provinces}
+        wards={wards}
+        selectedProvinceCode={selectedProvinceCode}
+        onModeChange={setAddressMode}
+        onDropdownToggle={setIsAddressDropdownOpen}
+        onSavedAddressChange={handleSavedAddressChange}
+        onProvinceChange={handleProvinceChange}
+        onAddressUpdate={(updates) => setAddress((prev) => ({ ...prev, ...updates }))}
+      />
 
-        <label
-          onClick={() => setShippingMethod('express')}
-          className={`flex items-start gap-4 p-4 rounded-2xl border-2 cursor-pointer transition-all ${
-            shippingMethod === 'express'
-              ? 'border-primary-500 bg-primary-50/30'
-              : 'border-mint-200 hover:border-primary-300'
-          }`}
-        >
-          <div
-            className={`mt-1 w-5 h-5 rounded-full border-4 flex-shrink-0 transition-all ${
-              shippingMethod === 'express' ? 'border-primary-500' : 'border-mint-300'
-            }`}
-          ></div>
-          <div className="flex-grow">
-            <div className="flex justify-between items-center mb-1">
-              <span className="font-bold text-mint-1200 text-sm">Express delivery</span>
-              <span className="text-sm font-bold text-mint-1200">$18.00</span>
-            </div>
-            <p className="text-xs text-gray-eyewear uppercase font-bold tracking-tight">
-              Est. Date Jan 29 - Jan 31
-            </p>
-          </div>
-        </label>
+      <div className="border-t border-mint-100 py-6 mb-6">
+        <h2 className="text-xl font-bold text-mint-1200 mb-4">Order Note</h2>
+        <textarea
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          placeholder="e.g. Special delivery instructions, gift message, etc."
+          rows={3}
+          className="w-full px-4 py-3 rounded-xl border-2 border-mint-200 focus:border-primary-500 focus:outline-none transition-colors resize-none text-mint-1200 placeholder:text-gray-300"
+        />
       </div>
 
-      <div className="flex items-center justify-between py-6 border-t border-mint-100 mb-6">
-        <span className="text-mint-1200 font-bold">Apply insurance benefits</span>
-        <div
-          onClick={() => setApplyInsurance(!applyInsurance)}
-          className={`w-12 h-6 rounded-full relative cursor-pointer p-1 transition-colors ${
-            applyInsurance ? 'bg-primary-500' : 'bg-mint-300'
-          }`}
-        >
-          <div
-            className={`w-4 h-4 bg-white rounded-full transition-all transform ${
-              applyInsurance ? 'translate-x-6' : 'translate-x-0'
-            }`}
-          ></div>
-        </div>
-      </div>
+      <PaymentMethodSection
+        paymentMethod={paymentMethod}
+        onPaymentMethodChange={setPaymentMethod}
+      />
 
-      <div className="space-y-4 mb-8">
-        <div className="flex justify-between text-mint-1200">
-          <span className="font-medium">Subtotal</span>
-          <span className="font-bold">
-            ${subtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-          </span>
-        </div>
-        <div className="flex justify-between text-mint-1200">
-          <span className="font-medium">Shipping</span>
-          <span className="font-bold">{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
-        </div>
-        <div className="flex justify-between items-baseline pt-4 border-t border-mint-100">
-          <span className="text-xl font-bold text-mint-1200 uppercase">
-            Total{' '}
-            <span className="text-xs font-medium text-gray-eyewear normal-case">(Excl. Tax)</span>
-          </span>
-          <span className="text-3xl font-extrabold text-mint-1200">
-            ${total.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-          </span>
-        </div>
-      </div>
-
-      <div className="space-y-4 mb-4">
-        <Button
-          isFullWidth
-          size="lg"
-          className="py-6 rounded-lg shadow-sm hover:shadow-md uppercase tracking-wider font-bold bg-[#4AD7B0] hover:bg-[#3CBFA0] text-white border-0"
-        >
-          SECURE CHECKOUT
-        </Button>
-
-        <div className="relative flex items-center justify-center py-4">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-100"></div>
-          </div>
-          <span className="relative px-4 bg-white text-[10px] font-bold text-gray-300 uppercase tracking-widest">
-            or express checkout with
-          </span>
-        </div>
-
-        <button className="w-full py-4 border border-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-50 transition-colors">
-          <img
-            src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg"
-            alt="PayPal"
-            className="h-6"
-          />
-        </button>
-      </div>
-
-      <div className="text-center mt-6">
-        <p className="text-xs text-gray-eyewear mb-6">
-          By clicking on one of the buttons above you agree to Glasses.com <br />
-          <a href="#" className="underline hover:text-primary-500">
-            Terms and Conditions
-          </a>{' '}
-          and{' '}
-          <a href="#" className="underline hover:text-primary-500">
-            Privacy Policy
-          </a>
-        </p>
-        <div className="flex items-center justify-center gap-2 text-xs text-mint-1200 font-bold">
-          <Shield className="w-4 h-4 text-primary-500" />
-          We accept FSA/HSA cards for payments
-        </div>
-      </div>
+      <OrderSummarySection
+        subtotal={subtotal}
+        shipping={shipping}
+        total={total}
+        isProcessing={isProcessing}
+        onCheckout={handleCheckout}
+      />
     </Card>
   )
 }

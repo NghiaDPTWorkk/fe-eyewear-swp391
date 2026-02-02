@@ -8,7 +8,10 @@ export const ENDPOINTS = {
     REGISTER: '/auth/register',
     LOGOUT: '/auth/logout',
     REFRESH_TOKEN: '/auth/refresh-token',
-    PROFILE: '/customer'
+    PROFILE: '/customer',
+    ADDRESS_LIST: '/customer/profile/address',
+    ADDRESS_ADD: '/customer/profile/address',
+    CHANGE_DEFAULT: (id: string) => `/customer/profile/address/change-default/${id}`
   },
 
   // Products
@@ -34,7 +37,7 @@ export const ENDPOINTS = {
   ORDERS: {
     CREATE: '/orders',
     LIST: '/orders',
-    DETAIL: (id: string) => `/orders/${id}`,
+    DETAIL: (id: string) => `/admin/orders/${id}`,
     CANCEL: (id: string) => `/orders/${id}/cancel`,
     TRACKING: (id: string) => `/orders/${id}/tracking`,
     LIST_WITH_PARAMS: (page: number, limit: number, status?: string, type?: string) => {
@@ -89,5 +92,19 @@ export const ENDPOINTS = {
       if (!role) return '/admin/staff/admins'
       return `/admin/staff/admins?role=${role}`
     }
+    INVOICES_ONBOARD: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/onboard`
+  },
+
+  // Invoices
+  INVOICE: {
+    CREATE: '/invoices',
+    LIST: '/invoices',
+    DETAIL: (id: string) => `/invoices/${id}`
+  },
+  // Wishlist
+  WISHLIST: {
+    GET: '/wishlist',
+    ADD: (id: string) => `/wishlist/products/${id}`,
+    REMOVE: (id: string) => `/wishlist/products/${id}`
   }
 } as const

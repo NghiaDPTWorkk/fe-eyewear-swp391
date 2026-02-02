@@ -9,14 +9,15 @@ import {
   PenTool
 } from 'lucide-react'
 import { useState } from 'react'
-import type { Product } from '@/shared/types/product.types'
-import { useCartStore, useAuthStore } from '@/store'
+import type { Product, StandardProduct } from '@/shared/types/product.types'
+import { useCartStore, useAuthStore, useWishlistStore } from '@/store'
 import { toast } from 'react-hot-toast'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Button } from '@/shared/components/ui'
 import LensSelectionModal from './lenses/LensSelectionModal'
 import type { LensSelectionState } from './lenses/types'
 import { useProductVariants } from '@/shared/hooks/products/useProductVariants'
+import { cn } from '@/lib/utils'
 
 interface ProductInfoProps {
   product: Product
@@ -41,17 +42,18 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
 
   const addItemAsync = useCartStore((state) => state.addItemAsync)
   const isAddingToCart = useCartStore((state) => state.isAddingToCart)
+  const { toggleWishlist, isInWishlist } = useWishlistStore()
   const { isAuthenticated } = useAuthStore()
   const navigate = useNavigate()
   const location = useLocation()
   const [isLensModalOpen, setIsLensModalOpen] = useState(false)
 
-  const handleAddToCart = () => {
-    console.log('🛒 Add to Cart clicked!')
-    console.log('Product data:', product)
+  const isFavorite = isInWishlist(productId)
 
-    const isAuth = isAuthenticated || !!localStorage.getItem('accessToken')
-    console.log('Is authenticated:', isAuth)
+  const handleAddToCart = () => {
+    // Check for token in both possible localStorage keys
+    const token = localStorage.getItem('accessToken') || localStorage.getItem('access_token')
+    const isAuth = isAuthenticated && token
 
     if (!isAuth) {
       toast.error('Please login to add items to cart')
@@ -60,79 +62,49 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
     }
 
     const type = (product as any).type || 'frame'
-    console.log('Product type:', type)
 
-    if (type === 'frame' || type === 'lens') {
-      console.log('Opening lens modal for frame/lens product')
+    if (type === 'frame') {
       setIsLensModalOpen(true)
       return
     }
 
     // Sunglass or default frame path
-    console.log('Proceeding to add sunglass to cart')
     performAddToCart()
   }
 
   const handleLensConfirm = (selection: LensSelectionState) => {
-    performAddToCart(selection)
+    performAddToCart({
+      ...selection,
+      sku: selection.sku
+    })
   }
 
   const performAddToCart = async (lensSelection?: LensSelectionState) => {
-    console.log('📦 performAddToCart called')
-    console.log('Current variant:', currentVariant)
-    console.log('Is in stock:', isInStock)
-    console.log('Lens selection:', lensSelection)
-
     // Validation: Check if variant is selected and in stock
     if (!currentVariant) {
-      console.error('❌ No variant selected')
       toast.error('Please select a valid product variant')
       return
     }
 
     if (!isInStock) {
-      console.error('❌ Product out of stock')
       toast.error('This variant is currently out of stock')
       return
     }
 
-    // Use productId from URL params (passed as prop) instead of extracting from product
-    // This is more reliable since backend may not return _id or id in the response
     const productAny = product as any
-    const extractedId = productAny.id || productAny._id || productAny.skuBase
 
-    console.log('🔍 Product ID extraction:')
-    console.log('  productId (from URL prop):', productId)
-    console.log('  id (from product):', productAny.id)
-    console.log('  _id (from product):', productAny._id)
-    console.log('  skuBase (from product):', productAny.skuBase)
-    console.log('  extractedId:', extractedId)
-    console.log('  Final productId (using prop):', productId)
-    console.log('  SKU:', currentVariant.sku)
+    // Prioritize the MongoDB ID from the product object if available
+    // Otherwise fallback to the ID from the URL prop
+    const finalProductId = productAny._id || productAny.id || productId
 
-    if (!productId) {
-      console.error('❌ Product ID is missing from URL! Using fallback:', extractedId)
-      if (!extractedId) {
-        toast.error('Unable to add to cart: Product ID not found')
-        return
-      }
+    if (!finalProductId) {
+      toast.error('Unable to add to cart: Product ID not found')
+      return
     }
 
-    // Use productId from prop (URL) as the primary source
-    const finalProductId = productId || extractedId
-
     try {
-      console.log('🚀 Calling addItemAsync with:', {
-        productId: finalProductId,
-        sku: currentVariant.sku,
-        quantity: 1,
-        lensSelection
-      })
-
       // Call async add to cart with API integration
       await addItemAsync(finalProductId, currentVariant.sku, 1, lensSelection)
-
-      console.log('✅ Successfully added to cart')
 
       // Show success message
       if (lensSelection) {
@@ -145,16 +117,40 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
       if (isLensModalOpen) {
         setIsLensModalOpen(false)
       }
-    } catch (error: any) {
-      console.error('❌ Error adding to cart:', error)
-
+    } catch (error) {
       // Handle specific errors
-      if (error.message === 'UNAUTHORIZED') {
+      const err = error as Error
+      if (err.message === 'UNAUTHORIZED') {
         toast.error('Please login to add items to cart')
         navigate('/login', { state: { from: location } })
       } else {
-        toast.error(error.message || 'Failed to add item to cart')
+        toast.error(err.message || 'Failed to add item to cart')
       }
+    }
+  }
+
+  const handleToggleWishlist = async () => {
+    const isAuth = useAuthStore.getState().isAuthenticated || !!localStorage.getItem('access_token') // Fixed key to access_token
+    if (!isAuth) {
+      toast.error('Please login to add items to wishlist')
+      navigate('/login', { state: { from: location } })
+      return
+    }
+
+    try {
+      // Ensure we have all necessary fields for StandardProduct
+      const productToSave: StandardProduct = {
+        ...(product as StandardProduct),
+        _id: (product as any)._id || productId,
+        id: (product as any).id || productId,
+        defaultVariantImage: (product as any).defaultVariantImage || images[0],
+        defaultVariantPrice: price,
+        defaultVariantFinalPrice: finalPrice
+      }
+      await toggleWishlist(productToSave)
+      toast.success(isFavorite ? 'Removed from wishlist' : 'Added to wishlist')
+    } catch {
+      toast.error('Failed to update wishlist')
     }
   }
 
@@ -176,19 +172,20 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
           New Arrival
         </span>
         <button
-          onClick={() => {
-            const isAuth =
-              useAuthStore.getState().isAuthenticated || !!localStorage.getItem('accessToken')
-            if (!isAuth) {
-              toast.error('Please login to add items to wishlist')
-              navigate('/login', { state: { from: location } })
-              return
-            }
-            toast.success('Added to wishlist!')
-          }}
-          className="flex items-center gap-2 text-gray-eyewear hover:text-primary-500 transition-colors group px-4 py-2 rounded-full hover:bg-mint-50"
+          onClick={handleToggleWishlist}
+          className={cn(
+            'flex items-center gap-2 transition-colors group px-4 py-2 rounded-full',
+            isFavorite
+              ? 'text-primary-500 bg-primary-50'
+              : 'text-gray-eyewear hover:text-primary-500 hover:bg-mint-50'
+          )}
         >
-          <Heart className="w-5 h-5 group-hover:fill-primary-500" />
+          <Heart
+            className={cn(
+              'w-5 h-5 transition-all group-hover:scale-110',
+              isFavorite && 'fill-primary-500'
+            )}
+          />
           <span className="text-sm font-bold uppercase tracking-wider">Wishlist</span>
         </button>
       </div>
@@ -348,9 +345,7 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
                 ? 'Out of Stock'
                 : (product as any).type === 'frame'
                   ? 'Select Lenses'
-                  : (product as any).type === 'lens'
-                    ? 'Enter Prescription & Add'
-                    : 'Add to Cart'}
+                  : 'Add to Cart'}
         </Button>
         <Button
           variant="outline"
@@ -396,6 +391,8 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
         productName={product.nameBase}
         productImage={currentVariant?.imgs?.[0] || images[0] || ''}
         productType={(product as any).type || 'frame'}
+        productId={productId}
+        sku={currentVariant?.sku || ''}
       />
     </div>
   )

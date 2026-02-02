@@ -31,15 +31,12 @@ export default function OperationLayout() {
   // Gọi API để lấy số lượng đơn hàng cho từng trạng thái
   const { data, isLoading, isError, error } = useAllOrders()
 
-  // Console.log data để xem cấu trúc response từ API
   useEffect(() => {
-    console.log(' Trạng thái API:', { isLoading, isError, hasData: !!data })
-
     // Set loading và error states vào store
     setLoadingState(isLoading, isError)
 
     if (data) {
-      console.log('Đây là dữ liệu đơn hàng từ API:', data)
+      console.log('Lấy thông tin từ order thành công:')
       // Transform data từ API sang format UI
       const apiOrders = data?.data?.orders?.data || []
 

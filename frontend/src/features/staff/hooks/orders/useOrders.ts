@@ -38,7 +38,7 @@ export const useAllOrders = () => {
 export const useOrderDetail = (orderId: string) => {
   return useQuery({
     queryKey: ['order', orderId],
-    queryFn: () => orderService.getOrderDetail(orderId),
+    queryFn: () => orderService.getOrderById(orderId),
     enabled: !!orderId, // Chỉ fetch khi có orderId
     staleTime: 30000
   })

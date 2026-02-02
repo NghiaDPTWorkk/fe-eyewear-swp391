@@ -9,10 +9,8 @@ import { OrderType } from '@/shared/utils/enums/order.enum'
 export default function OperationAllOrdersPage() {
   const [filter, setFilter] = useState('all')
 
-  // ========== START NEW CODE ==========
   // Lấy orders, isLoading, isError từ Zustand store (đã được fetch ở OperationLayout)
   const { orders, isLoading, isError } = useOrderCountStore()
-  // ========== END NEW CODE ==========
 
   const allCount = orders.length
   const preOrderCount = orders.filter((o: Order) => o.orderType === OrderType.PRE_ORDER).length

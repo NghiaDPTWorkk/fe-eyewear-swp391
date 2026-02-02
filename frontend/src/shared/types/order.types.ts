@@ -1,39 +1,11 @@
-import type { OrderType, OrderStatus, AssignmentOrderStatus, InvoiceStatus } from './enums'
+import type { OrderType, OrderStatus, AssignmentOrderStatus } from './enums'
 import type { Address } from './address.types'
-
-export interface LensParameters {
-  left: {
-    SPH: number
-    CYL: number
-    AXIS: number
-  }
-  right: {
-    SPH: number
-    CYL: number
-    AXIS: number
-  }
-  PD: number
-}
+import type { LensParameters, OrderProduct } from './order-item.types'
+import type { Invoice } from './invoice.types'
 
 /**
- * Order product structure matching backend
+ * Order product structure matching backend - Imported from order-item.types.ts
  */
-export interface OrderProductFrame {
-  product_id: string
-  sku: string
-}
-
-export interface OrderProductLens {
-  lens_id: string
-  sku: string
-  parameters: LensParameters
-}
-
-export interface OrderProduct {
-  product?: OrderProductFrame
-  lens?: OrderProductLens
-  quantity: number
-}
 
 export interface Order {
   _id: string
@@ -54,22 +26,7 @@ export interface Order {
   deletedAt?: Date | null
 }
 
-export interface Invoice {
-  _id: string
-  orders: string[] // Order IDs
-  owner: string
-  totalPrice: number
-  voucher: string[]
-  address: Address
-  status: InvoiceStatus
-  fullName: string
-  phone: string
-  totalDiscount: number
-  manager_onboard?: string | null
-  createdAt: Date
-  updatedAt: Date
-  deletedAt?: Date | null
-}
+// Invoice interface is moved to invoice.types.ts
 
 /**
  * Create order request matching backend ClientCreateOrderSchema
@@ -124,8 +81,24 @@ export interface UpdateOrderRequest {
   note?: string
 }
 
-export interface OrderResponse {
+export interface OrderDataResponse {
   order: Order
+  assignerStaff: string
+  assignedStaff: string
+  assignedAt: string
+  startedAt: string | null
+  completedAt: string | null
+  price: number
+  deletedAt: string | null
+  __v: 0
+  createdAt: string
+  updatedAt: string
+}
+
+export interface OrderResponse {
+  success: boolean
+  message: string
+  data: OrderDataResponse | null
 }
 
 export interface OrderListResponse {
@@ -138,9 +111,7 @@ export interface OrderListResponse {
   }
 }
 
-export interface InvoiceResponse {
-  invoice: Invoice
-}
+// InvoiceResponse is moved to invoice.types.ts
 
 export interface InvoiceListResponse {
   items: Invoice[]
@@ -155,3 +126,41 @@ export interface InvoiceListResponse {
 export function isManufacturingOrder(order: { type?: Array<string> | null }) {
   return Array.isArray(order.type) && order.type.includes('MANUFACTURING')
 }
+// API của t đừng xó nha
+
+export interface OrderProduct {
+  product_id: string // Required
+  sku: string // Required - Bắt đầu bằng "FRAME-" hoặc "LENS-"
+  pricePerUnit: number // Required
+}
+
+export interface LensParameters {
+  left: {
+    SPH: number // Sphere
+    CYL: number // Cylinder
+    AXIS: number // Axis
+    ADD?: number // Addition - OPTIONAL
+  }
+  right: {
+    SPH: number
+    CYL: number
+    AXIS: number
+    ADD?: number // OPTIONAL
+  }
+  PD: number // Pupillary Distance
+}
+
+export interface OrderLensDetail {
+  lens_id: string // Required
+  sku: string // Required
+  parameters: LensParameters // Thông số kỹ thuật
+  pricePerUnit: number // Required
+}
+
+export interface OrderProductItem {
+  product: OrderProduct // REQUIRED - Frame hoặc Lens
+  quantity: number // REQUIRED - Số lượng (min: 1)
+  lens?: OrderLensDetail // OPTIONAL - Chỉ có khi Manufacturing Order
+}
+
+//----------------------------------------------------------------------

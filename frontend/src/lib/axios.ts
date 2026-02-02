@@ -104,7 +104,8 @@ apiClient.interceptors.request.use(
     config.headers['x-device-id'] = deviceId
 
     const publicRoutes = ['/auth/login', '/admin/auth/login', '/products', '/auth/refresh-token']
-    const isPublicRoute = publicRoutes.some((route) => config.url?.includes(route))
+    const url = config.url || ''
+    const isPublicRoute = publicRoutes.some((route) => url.startsWith(route))
 
     if (config.skipAuth || isPublicRoute) {
       return config

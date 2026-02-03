@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import { orderService } from '../services/orderService'
 
 /**
@@ -38,7 +38,34 @@ export const useOrderDetail = (orderId: string) => {
   return useQuery({
     queryKey: ['order', orderId],
     queryFn: () => orderService.getOrderById(orderId),
-    enabled: !!orderId, // Chỉ fetch khi có orderId
-    staleTime: 30000
+    enabled: !!orderId // Chỉ fetch khi có orderId
+  })
+}
+
+/**
+ * Hook để update order status
+ * @returns mutation object
+ */
+export const useUpdateOrder = () => {
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) => orderService.updateOrder(id, data)
+  })
+}
+
+/**
+ * Hook để update order status sang PACKAGING
+ */
+export const useUpdateStatusToPackaging = () => {
+  return useMutation({
+    mutationFn: (id: string) => orderService.updateStatusToPackaging(id)
+  })
+}
+
+/**
+ * Hook để update order status sang COMPLETED
+ */
+export const useUpdateStatusToCompleted = () => {
+  return useMutation({
+    mutationFn: (id: string) => orderService.updateStatusToCompleted(id)
   })
 }

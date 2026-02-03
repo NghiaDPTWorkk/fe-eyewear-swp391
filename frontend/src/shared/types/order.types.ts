@@ -1,6 +1,6 @@
 import type { OrderType, OrderStatus, AssignmentOrderStatus } from './enums'
 import type { Address } from './address.types'
-import type { LensParameters, OrderProduct } from './order-item.types'
+
 import type { Invoice } from './invoice.types'
 
 /**
@@ -12,7 +12,7 @@ export interface Order {
   type: OrderType
   status: OrderStatus
   assignmentStatus: AssignmentOrderStatus
-  products: OrderProduct[]
+  products: OrderProductItem[]
   // Flattened assignment fields
   staffId?: string | null
   assignStaff?: string | null
@@ -61,7 +61,7 @@ export interface CreateOrderRequest {
  */
 export interface UpdateOrderRequest {
   type?: OrderType
-  products?: OrderProduct[]
+  products?: OrderProductItem[]
   price?: number
   status?: OrderStatus
   staffVerified?: string | null
@@ -128,7 +128,7 @@ export function isManufacturingOrder(order: { type?: Array<string> | null }) {
 }
 // API của t đừng xó nha
 
-export interface OrderProduct {
+export interface OrderProductInfo {
   product_id: string // Required
   sku: string // Required - Bắt đầu bằng "FRAME-" hoặc "LENS-"
   pricePerUnit: number // Required
@@ -158,7 +158,7 @@ export interface OrderLensDetail {
 }
 
 export interface OrderProductItem {
-  product: OrderProduct // REQUIRED - Frame hoặc Lens
+  product: OrderProductInfo // REQUIRED - Frame hoặc Lens
   quantity: number // REQUIRED - Số lượng (min: 1)
   lens?: OrderLensDetail // OPTIONAL - Chỉ có khi Manufacturing Order
 }

@@ -13,6 +13,7 @@ import { OrderDrawerActions } from './drawer/OrderDrawerActions'
 import { OrderDrawerUpdateStatus } from './drawer/OrderDrawerUpdateStatus'
 import { OrderDrawerRxVerify } from './drawer/OrderDrawerRxVerify'
 import { OrderDrawerHeader } from './drawer/OrderDrawerHeader'
+import ConfirmationModal from '@/shared/components/ui/ConfirmationModal'
 
 export const OrderDetailsDrawer: React.FC<{
   isOpen: boolean
@@ -103,12 +104,31 @@ export const OrderDetailsDrawer: React.FC<{
   const isPrescription = order?.type?.includes('MANUFACTURING') || false
   const isApproved = ['APPROVED', 'VERIFIED', 'COMPLETED'].includes(order?.status || '')
 
-  const handleAction = async (action: 'approve' | 'reject') => {
-    if (!order) return
+  // Confirmation Modal State
+  const [confirmState, setConfirmState] = useState<{
+    isOpen: boolean
+    action: 'approve' | 'reject' | null
+  }>({
+    isOpen: false,
+    action: null
+  })
+
+  // Triggered by the child components (buttons)
+  const handleActionClick = (action: 'approve' | 'reject') => {
+    setConfirmState({
+      isOpen: true,
+      action
+    })
+  }
+
+  // Actual logic executed after confirmation
+  const executeAction = async () => {
+    const action = confirmState.action
+    if (!order || !action) return
 
     let success = false
     if (view === 'rx') {
-      // For Manufacturing/Prescription orders, approve the specific order
+      // For Manufacturing/Prescription orders
       success =
         action === 'approve'
           ? await approveOrder(order._id)
@@ -127,7 +147,10 @@ export const OrderDetailsDrawer: React.FC<{
       refetch()
       invalidateOrders()
       onUpdate?.()
-      setView('main')
+      if (view === 'rx' || view === 'status') {
+        setView('main')
+      }
+      setConfirmState({ isOpen: false, action: null })
     }
   }
 
@@ -197,12 +220,32 @@ export const OrderDetailsDrawer: React.FC<{
           <OrderDrawerRxVerify
             order={order || null}
             onBack={() => setView('main')}
-            onApprove={() => handleAction('approve')}
-            onReject={() => handleAction('reject')}
+            onApprove={() => handleActionClick('approve')}
+            onReject={() => handleActionClick('reject')}
             processing={processing}
           />
         )}
       </div>
+      <ConfirmationModal
+        isOpen={confirmState.isOpen}
+        onClose={() => setConfirmState({ ...confirmState, isOpen: false })}
+        onConfirm={executeAction}
+        title={
+          confirmState.action === 'approve'
+            ? 'Approve Order'
+            : confirmState.action === 'reject'
+              ? 'Reject Order'
+              : 'Confirm Action'
+        }
+        message={
+          confirmState.action === 'approve'
+            ? 'Are you sure you want to approve this order/invoice? This action cannot be undone.'
+            : 'Are you sure you want to reject this order? This will also reject the associated invoice.'
+        }
+        confirmText={confirmState.action === 'approve' ? 'Approve' : 'Reject'}
+        type={confirmState.action === 'approve' ? 'info' : 'danger'}
+        isLoading={processing}
+      />
     </div>,
     document.body
   )

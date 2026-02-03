@@ -32,14 +32,14 @@ export function NavSearch({
     styleVariant === 'operation'
       ? 'bg-mint-200 border-mint-500 rounded-xl'
       : styleVariant === 'manager'
-        ? 'bg-blue-50 border-blue-200 rounded-xl'
+        ? 'bg-mint-50 border-mint-200 rounded-xl shadow-sm'
         : 'bg-neutral-50 border-neutral-100 rounded-xl'
 
   const iconColor =
     styleVariant === 'operation'
       ? 'text-mint-700'
       : styleVariant === 'manager'
-        ? 'text-blue-700'
+        ? 'text-mint-600'
         : 'text-neutral-400'
 
   return (

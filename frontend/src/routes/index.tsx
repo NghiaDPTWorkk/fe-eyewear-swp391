@@ -101,6 +101,25 @@ const ManagerInvoicesPage = lazy(() =>
   import('@/pages/manager/ManagerInvoicesPage').then((m) => ({ default: m.default }))
 )
 
+const ManagerSettingsPage = lazy(() =>
+  import('@/pages/manager/ManagerSettingsPage').then((m) => ({ default: m.default }))
+)
+
+const ManagerSupportPage = lazy(() =>
+  import('@/pages/manager/ManagerSupportPage').then((m) => ({ default: m.default }))
+)
+
+const ManagerReportsPage = lazy(() =>
+  import('@/pages/manager/ManagerReportsPage').then((m) => ({ default: m.default }))
+)
+
+const ManagerTransactionsPage = lazy(() =>
+  import('@/pages/manager/ManagerTransactionsPage').then((m) => ({ default: m.default }))
+)
+const ManagerProductsPage = lazy(() =>
+  import('@/pages/manager/ManagerProductsPage').then((m) => ({ default: m.default }))
+)
+
 const OperationCompleteOrdersPage = lazy(() =>
   import('@/pages/operations/OperationCompleteOrdersPage').then((m) => ({
     default: m.default
@@ -524,8 +543,52 @@ export const router = createBrowserRouter([
         element: <ManagerDashboardPage />
       },
       {
-        path: 'invoices',
-        element: <ManagerInvoicesPage />
+        path: 'orders',
+        element: (
+          <LazyPage>
+            <ManagerInvoicesPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'settings',
+        element: (
+          <LazyPage>
+            <ManagerSettingsPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'help',
+        element: (
+          <LazyPage>
+            <ManagerSupportPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'reports',
+        element: (
+          <LazyPage>
+            <ManagerReportsPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'transactions',
+        element: (
+          <LazyPage>
+            <ManagerTransactionsPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'products',
+        element: (
+          <LazyPage>
+            <ManagerProductsPage />
+          </LazyPage>
+        )
       }
     ]
   },

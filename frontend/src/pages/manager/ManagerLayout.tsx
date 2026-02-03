@@ -1,6 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layout/StaffMainLayout'
-import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import {
   SidebarStaff,
   UserWidgetWithLogout,
@@ -9,12 +8,14 @@ import {
   NavSearch
 } from '@/components/staff'
 import {
-  IoGridOutline,
+  IoGrid,
+  IoCube,
   IoReceipt,
-  IoDocumentTextOutline,
-  IoSettingsOutline,
-  IoHelpCircleOutline,
-  IoAnalyticsOutline
+  IoBarChart,
+  IoSettings,
+  IoHelpCircle,
+  IoStorefront,
+  IoReader
 } from 'react-icons/io5'
 
 export default function ManagerLayout() {
@@ -25,71 +26,68 @@ export default function ManagerLayout() {
     <SidebarStaff
       logo={
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-lg">M</span>
+          <div className="w-8 h-8 bg-mint-500 rounded-lg flex items-center justify-center shadow-sm shadow-mint-100/30">
+            <span className="text-white font-semibold text-lg leading-none">O</span>
           </div>
-          <span className="font-semibold text-gray-900">Manager Portal</span>
+          <span className="font-semibold text-gray-900 tracking-tight">OpticView</span>
         </div>
       }
+      storeName="Kanky Store"
+      storeIcon={<IoStorefront />}
       userWidget={
-        <UserWidgetWithLogout userInitials="MN" userName="Manager Name" userRole="Store Manager" />
+        <UserWidgetWithLogout
+          userInitials="GH"
+          userName="Guy Hawkins"
+          userRole="Admin"
+          onLogout={() => navigate('/login')}
+        />
       }
     >
-      <SidebarStaff.MenuSection label="DASHBOARD">
+      <SidebarStaff.MenuSection label="GENERAL">
         <SidebarStaff.MenuItem
-          icon={<IoGridOutline />}
-          label="Overview"
-          active={location.pathname === '/manager'}
-          onClick={() => navigate('/manager')}
+          icon={<IoGrid />}
+          label="Dashboard"
+          to="/manager/dashboard"
+          active={location.pathname === '/manager/dashboard'}
         />
-      </SidebarStaff.MenuSection>
-
-      <SidebarStaff.MenuSection label="FINANCE">
         <SidebarStaff.MenuItem
           icon={<IoReceipt />}
-          label="Invoices"
-          active={location.pathname === '/manager/invoices'}
-          onClick={() => navigate('/manager/invoices')}
-        />
-
-        <div className="ml-9 mt-2 space-y-1">
-          {Object.values(InvoiceStatus).map((status) => (
-            <SidebarStaff.MenuItem
-              key={status}
-              icon={<span className="w-2 h-2 rounded-full bg-neutral-300" />}
-              label={status}
-              active={
-                location.pathname === '/manager/invoices' &&
-                new URLSearchParams(location.search).get('status') === status
-              }
-              onClick={() => navigate(`/manager/invoices?status=${status}`)}
-            />
-          ))}
-        </div>
-        <SidebarStaff.MenuItem
-          icon={<IoDocumentTextOutline />}
-          label="Reports"
-          active={location.pathname === '/manager/reports'}
-          onClick={() => navigate('/manager/reports')}
+          label="Orders"
+          to="/manager/orders"
+          active={location.pathname === '/manager/orders'}
         />
         <SidebarStaff.MenuItem
-          icon={<IoAnalyticsOutline />}
-          label="Analytics"
-          active={location.pathname === '/manager/analytics'}
-          onClick={() => navigate('/manager/analytics')}
+          icon={<IoCube />}
+          label="Product"
+          to="/manager/products"
+          active={location.pathname.startsWith('/manager/products')}
+        />
+        <SidebarStaff.MenuItem
+          icon={<IoReader />}
+          label="Transaction"
+          to="/manager/transactions"
+          active={location.pathname.startsWith('/manager/transactions')}
+        />
+        <SidebarStaff.MenuItem
+          icon={<IoBarChart />}
+          label="Sales Report"
+          to="/manager/reports"
+          active={location.pathname.startsWith('/manager/reports')}
         />
       </SidebarStaff.MenuSection>
 
       <SidebarStaff.MenuSection label="TOOLS">
         <SidebarStaff.MenuItem
-          icon={<IoSettingsOutline />}
+          icon={<IoSettings />}
           label="Settings"
-          onClick={() => navigate('/manager/settings')}
+          to="/manager/settings"
+          active={location.pathname.startsWith('/manager/settings')}
         />
         <SidebarStaff.MenuItem
-          icon={<IoHelpCircleOutline />}
+          icon={<IoHelpCircle />}
           label="Support"
-          onClick={() => navigate('/manager/support')}
+          to="/manager/help"
+          active={location.pathname.startsWith('/manager/help')}
         />
         <ThemeToggle />
       </SidebarStaff.MenuSection>
@@ -99,9 +97,16 @@ export default function ManagerLayout() {
   return (
     <StaffMainLayout
       sidebar={sidebar}
-      headerLeft={<NavSearch placeholder="Search invoices, reports..." styleVariant="manager" />}
+      headerLeft={
+        <NavSearch
+          styleVariant="manager"
+          placeholder="Search products, orders..."
+          inputContainerClassName="lg:pl-0"
+        />
+      }
       headerRight={<NavActions />}
-      mainClassName="p-6 bg-gray-50"
+      mainClassName="p-4 md:p-6 bg-neutral-50"
+      headerClassName="px-4 md:px-6"
     />
   )
 }

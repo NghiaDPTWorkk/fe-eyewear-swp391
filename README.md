@@ -1,27 +1,32 @@
 # Eyewear Shop - E-commerce Platform
 
-A modern full-stack e-commerce application for eyewear products built with React TypeScript (frontend) and Spring Boot (backend).
+A modern full-stack e-commerce application for eyewear products built with React 19 (frontend) and Spring Boot (backend).
 
 ## Tech Stack
 
 ### Frontend
 
-- **Framework:** React 19 + TypeScript
-- **Build Tool:** Vite 7
-- **State Management:** Zustand 5
-- **Server State:** TanStack Query 5
-- **HTTP Client:** Axios
-- **Routing:** React Router 7
-- **Styling:** Tailwind CSS 4
-- **Code Quality:** ESLint + Prettier + Husky
+- **Framework:** React 19.2 + TypeScript 5.9
+- **Build Tool:** Vite 7.2
+- **State Management:** Zustand 5.0
+- **Server State:** TanStack Query 5.90
+- **HTTP Client:** Axios 1.13
+- **Routing:** React Router 7.12
+- **Styling:** Tailwind CSS 4.1
+- **Code Quality:** ESLint 9 + Prettier 3 + Husky 9
+- **Testing:** Vitest 4.0
 
 ## Project Structure
 
 ```
 Eyewear_Project/
 ├── frontend/          # React TypeScript frontend
-├── backend/           # Spring Boot backend
-└── docs/              # Project documentation
+│   ├── src/           # Application source code
+│   ├── public/        # Static assets
+│   ├── docs/          # Frontend documentation
+│   └── scripts/       # Validation and utility scripts
+├── backend/           # Spring Boot backend (In Development)
+└── docs/              # General project documentation
 ```
 
 ## Setup Instructions
@@ -51,45 +56,59 @@ npm install
 
 **Configure Environment Variables**
 
-Create `frontend/.env.local`:
+Create `frontend/.env.local` (or use `.env`):
 
 ```env
-VITE_API_URL=http://localhost:8080/api
+VITE_API_URL=http://localhost:8080
 VITE_APP_NAME=Eyewear Shop
 ```
 
+*Note: In development, the Vite server is configured to proxy `/api` requests to the backend.*
+
 **Run Development Servers**
+
+```bash
+# Start frontend
+npm run dev
+# Or skip validation
+npm run dev:skip
+```
 
 ## Access
 
 | Service     | URL                              |
 | ----------- | -------------------------------- |
-| Frontend    | http://localhost:5173            |
-| Backend API | http://localhost:8080/api        |
+| Frontend    | http://localhost:3000            |
+| Backend API | http://localhost:8080/api/v1     |
 | API Docs    | http://localhost:8080/swagger-ui |
+
+*Note: Frontend port is set to 3000 in `vite.config.ts`.*
 
 ## Features
 
-- User Authentication (JWT)
-- Product Catalog (Eyeglasses, Sunglasses, Lenses)
-- Custom Prescription Lens Ordering
-- Shopping Cart & Checkout
-- Order Tracking
-- Multi-role Dashboard (Customer, Staff, Operations, Manager, Admin)
-- Payment Integration (MoMo, VNPay)
-- Pre-order System
+- **User Authentication:** JWT-based secure authentication for customers and staff.
+- **Product Catalog:** Detailed listing for Eyeglasses, Sunglasses, and Lenses.
+- **Custom Prescriptions:** Specialized ordering flow for prescription lenses.
+- **Shopping Cart & Checkout:** Seamless experience with persistent cart.
+- **Order Tracking:** Real-time tracking for customers.
+- **Multi-role Dashboards:** Specialized interfaces for Sale Staff, Operations, and Managers.
+- **Payment Integration:** Supports COD and ZaloPay (with MOMO/VNPAY support in types).
+- **Pre-order System:** Ability to order upcoming or out-of-stock products.
+- **Inventory Management:** Full control over products and stock for managers.
 
 ## Development
 
 ### Frontend Scripts
 
-| Script                 | Description                |
-| ---------------------- | -------------------------- |
-| `npm run dev`          | Start dev server           |
-| `npm run build`        | Build for production       |
-| `npm run validate`     | Type-check + Lint + Format |
-| `npm run validate:fix` | Auto-fix issues            |
-| `npm run test`         | Run unit tests             |
+| Script                 | Description                                  |
+| ---------------------- | -------------------------------------------- |
+| `npm run dev`          | Validate code and start Vite dev server      |
+| `npm run dev:skip`     | Start Vite dev server without validation     |
+| `npm run build`        | Validate and build for production            |
+| `npm run validate`     | Run Type-check + Lint + Format checks        |
+| `npm run validate:fix` | Automatically fix Lint/Format issues         |
+| `npm run test`         | Run unit tests using Vitest                  |
+| `npm run type-check`   | Run TypeScript compiler without emitting files |
 
 ### Git Commit Convention
 
@@ -104,18 +123,19 @@ git commit -m "KAN-456 fix: resolve cart bug"
 
 ## User Roles
 
-| Role           | Access                             |
-| -------------- | ---------------------------------- |
-| **Customer**   | Browse, purchase, track orders     |
-| **Staff**      | Order management, customer support |
-| **Operations** | Lab processing, QC, packing        |
-| **Manager**    | Pricing, reports, policies         |
-| **Admin**      | RBAC, system configuration         |
+| Role           | Access                                                                 |
+| -------------- | ---------------------------------------------------------------------- |
+| **Customer**   | Browse products, manage cart, place orders, track shipments            |
+| **Sale Staff** | Order management, prescription verification, customer support          |
+| **Operations** | Lab processing, QC, packing workflow, order fulfillment                |
+| **Manager**    | Inventory management, sales reports, transaction history, settings     |
+| **Admin**      | System configuration, RBAC, and high-level management (WIP)            |
 
 ## Documentation
 
-- [Developer Guide](./frontend/docs/DEVELOPER_GUIDE.md) - Development guidelines
-- [Developer Handover](./frontend/docs/DEVELOPER_HANDOVER.md) - Complete documentation
+- [Developer Guide](./frontend/docs/DEVELOPER_GUIDE.md) - Frontend development guidelines
+- [Developer Handover](./frontend/docs/DEVELOPER_HANDOVER.md) - Specialized documentation for handovers
+- [Types Documentation](./frontend/docs/TYPES_DOCUMENTATION.md) - Comprehensive guide to the type system
 
 ## Contributing
 
@@ -126,7 +146,7 @@ git commit -m "KAN-456 fix: resolve cart bug"
 
 ## License
 
-This project is developed for educational purposes as part of SWP391 course at FPT University.
+This project is developed for educational purposes as part of the SWP391 course at FPT University.
 
 ---
 
@@ -136,4 +156,4 @@ This project is developed for educational purposes as part of SWP391 course at F
 
 **University:** FPT University
 
-Built with React, TypeScript
+Built with React, TypeScript, and Spring Boot

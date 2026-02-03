@@ -94,7 +94,7 @@ export const ENDPOINTS = {
     GET_ADMIN: (role?: string) => {
       if (!role) return '/admin/staff/admins'
       return `/admin/staff/admins?role=${role}`
-    }
+    },
     INVOICES_ONBOARD: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/onboard`
   },
 

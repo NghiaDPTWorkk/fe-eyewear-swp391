@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { cn } from '@/lib/utils'
 import type { Invoice } from '../../types'
 import { useSalesStaffAction } from '../../hooks/useSalesStaffAction'
@@ -11,39 +11,17 @@ interface RowProps {
 }
 
 export const Row: React.FC<RowProps> = ({ invoice, onClick, onActionSuccess }) => {
-  const { approveInvoice, rejectInvoice, validateInvoiceApproval, processing } =
-    useSalesStaffAction()
-  const [isApprovable, setIsApprovable] = useState(false)
-  const [isValidating, setIsValidating] = useState(true)
+  const { approveInvoice, rejectInvoice, processing } = useSalesStaffAction()
 
+  // Calculate approvable status directly from fetched data
   const approvedCount = invoice.approvedOrdersCount || 0
   const totalCount = invoice.totalOrdersCount || 0
-
-  useEffect(() => {
-    let isMounted = true
-    const checkStatus = async () => {
-      if (invoice.orders && invoice.orders.length > 0) {
-        const orderIds = invoice.orders.map((o) => o.id)
-        const result = await validateInvoiceApproval(orderIds)
-        if (isMounted) {
-          setIsApprovable(result)
-          setIsValidating(false)
-        }
-      } else {
-        if (isMounted) {
-          setIsApprovable(false)
-          setIsValidating(false)
-        }
-      }
-    }
-    checkStatus()
-    return () => {
-      isMounted = false
-    }
-  }, [invoice.orders, validateInvoiceApproval])
+  const isApprovable = approvedCount === totalCount && totalCount > 0
 
   const handleApprove = async (e: React.MouseEvent) => {
     e.stopPropagation()
+    if (!isApprovable) return
+
     if (window.confirm('Are you sure you want to approve this invoice?')) {
       const success = await approveInvoice(invoice.id)
       if (success) onActionSuccess()
@@ -131,25 +109,15 @@ export const Row: React.FC<RowProps> = ({ invoice, onClick, onActionSuccess }) =
                 : 'text-neutral-400 cursor-not-allowed bg-neutral-50'
             )}
             title={
-              isValidating
-                ? 'Validating orders...'
-                : isApprovable
-                  ? 'Approve Invoice'
-                  : `${approvedCount}/${totalCount} orders approved`
+              isApprovable ? 'Approve Invoice' : `${approvedCount}/${totalCount} orders approved`
             }
-            disabled={!isApprovable || processing || isValidating}
+            disabled={!isApprovable || processing}
             onClick={handleApprove}
           >
-            {isValidating ? (
-              <div className="w-5 h-5 border-2 border-neutral-200 border-t-neutral-400 rounded-full animate-spin" />
-            ) : (
-              <>
-                <IoCheckmarkCircleOutline size={20} />
-                <span className="text-xs font-medium">
-                  {approvedCount}/{totalCount}
-                </span>
-              </>
-            )}
+            <IoCheckmarkCircleOutline size={20} />
+            <span className="text-xs font-medium">
+              {approvedCount}/{totalCount}
+            </span>
           </button>
         </div>
       </td>

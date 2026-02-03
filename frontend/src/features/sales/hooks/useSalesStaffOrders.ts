@@ -11,20 +11,48 @@ export const useSalesStaffOrders = () => {
     queryKey: ['sales', 'orders'],
     queryFn: async ({ signal }) => {
       /* eslint-disable @typescript-eslint/no-explicit-any */
+      // 1. Fetch Invoices
       const response = await httpClient.get<any>('/admin/invoices/deposited', { signal })
       const invoices = response.data?.data || response.data || []
-      const allOrders: Order[] = []
 
+      const userOrders: any[] = []
+
+      // 2. Extract basic order info
       if (Array.isArray(invoices)) {
         invoices.forEach((inv: any) => {
           if (Array.isArray(inv.orders)) {
             inv.orders.forEach((ord: any) => {
-              allOrders.push(transformOrder(ord, inv))
+              userOrders.push({
+                ...ord,
+                invoice: inv // Pass parent invoice for context
+              })
             })
           }
         })
       }
-      return allOrders
+
+      // 3. Fetch detailed info for each order in parallel
+      const detailedOrders = await Promise.all(
+        userOrders.map(async (basicOrder) => {
+          try {
+            const detailRes = await httpClient.get<any>(`/admin/orders/${basicOrder.id}`)
+            const detailData =
+              detailRes.data?.data?.order || detailRes.data?.order || detailRes.data?.data
+
+            // Merge detail data with basic info (detail takes precedence)
+            return {
+              ...basicOrder,
+              ...detailData
+            }
+          } catch (error) {
+            console.error(`Failed to fetch details for order ${basicOrder.id}`, error)
+            return basicOrder // Fallback to basic info
+          }
+        })
+      )
+
+      // 4. Transform to application model
+      return detailedOrders.map((ord) => transformOrder(ord, ord.invoice))
     },
     staleTime: 30000 // 30 seconds
   })
@@ -55,22 +83,7 @@ export const useSalesStaffOrders = () => {
 
       if (!ord) return null
 
-      const invoiceId = ord.invoiceId || ord.invoice?._id
-      let invoiceData = null
-
-      if (invoiceId) {
-        try {
-          const invResponse = await httpClient.get<any>(`/admin/invoices/${invoiceId}`)
-          invoiceData =
-            invResponse.data?.invoice ||
-            invResponse.data?.data?.invoice ||
-            invResponse.data?.data ||
-            invResponse.data
-        } catch (error) {
-          console.error('Failed to fetch invoice:', error)
-        }
-      }
-      return transformOrder(ord, invoiceData) as OrderDetail
+      return transformOrder(ord, null) as OrderDetail
     } catch (err) {
       console.error('Failed to fetch order detail:', err)
       return null
@@ -92,39 +105,46 @@ export const useSalesStaffOrders = () => {
 }
 
 export const useSalesStaffOrderDetail = (orderId: string | null | number) => {
+  const queryClient = useQueryClient()
+
   return useQuery({
     queryKey: ['sales', 'order', orderId],
     queryFn: async () => {
       if (!orderId) return null
 
-      // FIRST STEP: Fetch the order
-      const response = await httpClient.get<any>(`/admin/orders/${orderId}`)
-      const ord = response.data?.order || response.data?.data?.order || response.data || null
+      // 1. Try to find in existing cache first
+      const cachedOrders = queryClient.getQueryData<Order[]>(['sales', 'orders'])
+      const cachedOrder = cachedOrders?.find((o) => o._id === orderId.toString())
 
-      if (!ord) return null
-
-      const invoiceId = ord.invoiceId || ord.invoice?._id
-
-      // SECOND STEP: Fetch invoice if exists.
-      // Note: This is still sequential because we need invoiceId,
-      // but TanStack Query will cache the results.
-      if (invoiceId) {
-        try {
-          const invResponse = await httpClient.get<any>(`/admin/invoices/${invoiceId}`)
-          const invoiceData =
-            invResponse.data?.invoice ||
-            invResponse.data?.data?.invoice ||
-            invResponse.data?.data ||
-            invResponse.data
-          return transformOrder(ord, invoiceData) as OrderDetail
-        } catch (error) {
-          console.error('Failed to fetch invoice:', error)
-        }
+      if (cachedOrder) {
+        return cachedOrder
       }
 
-      return transformOrder(ord, null) as OrderDetail
+      // 2. Fallback: Fetch from API
+      try {
+        const response = await httpClient.get<any>(`/admin/orders/${orderId}`)
+        const ord =
+          response.data?.data?.order ||
+          response.data?.order ||
+          response.data?.data ||
+          response.data ||
+          null
+
+        if (!ord) return null
+
+        return transformOrder(ord, null) as OrderDetail
+      } catch (err) {
+        console.error('Failed to fetch order detail:', err)
+        return null
+      }
     },
     enabled: !!orderId,
+    initialData: () => {
+      // Use initialData to provide instant feedback from cache
+      if (!orderId) return undefined
+      const cachedOrders = queryClient.getQueryData<Order[]>(['sales', 'orders'])
+      return cachedOrders?.find((o) => o._id === orderId.toString())
+    },
     staleTime: 60000 // 1 minute
   })
 }

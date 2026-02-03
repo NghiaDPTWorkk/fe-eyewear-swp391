@@ -58,7 +58,7 @@ export const OrderDrawerItems: React.FC<OrderDrawerItemsProps> = ({ order }) => 
                 {p.product?.sku || 'N/A'}
               </h4>
               <p className="text-[11px] text-slate-400 font-normal mt-0.5 truncate">
-                {p.product?.product_name || 'Prescription Eyewear'}
+                {p.product?.product_name || p.product?.sku || 'Eyewear Product'}
               </p>
               <p className="text-[10px] text-mint-600 font-medium mt-1">Qty: {p.quantity || 1}</p>
             </div>

@@ -1,5 +1,5 @@
 /* eslint-disable max-lines */
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import {
   IoInformationCircleOutline,
   IoCheckmark,
@@ -20,10 +20,9 @@ import {
   IoEllipsisHorizontal
 } from 'react-icons/io5'
 import { Card, Button, Input } from '@/components'
-import { useSalesStaffOrders } from '@/features/sales/hooks/useSalesStaffOrders'
 import { useSalesStaffAction } from '@/features/sales/hooks/useSalesStaffAction'
+import { useSalesStaffOrderDetail } from '@/features/sales/hooks/useSalesStaffOrders'
 import { useSearchParams } from 'react-router-dom'
-import type { OrderDetail } from '@/features/sales/types'
 import { toast } from 'react-hot-toast'
 
 interface PrescriptionVerificationProps {
@@ -37,40 +36,21 @@ export default function PrescriptionVerification({
   onBack,
   onActionSuccess
 }: PrescriptionVerificationProps) {
-  const { fetchOrderDetail } = useSalesStaffOrders()
   const { approveOrder, rejectOrder, processing } = useSalesStaffAction()
   const [searchParams] = useSearchParams()
   const mode = searchParams.get('mode')
   const isReadOnly = mode === 'readonly'
 
-  const [order, setOrder] = useState<OrderDetail | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: order, isLoading: loading, refetch } = useSalesStaffOrderDetail(orderId)
   const [rotation, setRotation] = useState(0)
   const [zoom, setZoom] = useState(100)
-
-  useEffect(() => {
-    let isMounted = true
-    const loadData = async () => {
-      setLoading(true)
-      const data = await fetchOrderDetail(orderId)
-      if (isMounted) {
-        setOrder(data)
-        setLoading(false)
-      }
-    }
-    loadData()
-    return () => {
-      isMounted = false
-    }
-  }, [orderId, fetchOrderDetail])
 
   const handleApprove = async () => {
     if (window.confirm('Are you sure you want to approve this prescription?')) {
       const success = await approveOrder(orderId)
       if (success) {
         toast.success('Prescription approved')
-        const updated = await fetchOrderDetail(orderId)
-        setOrder(updated)
+        refetch()
         onActionSuccess?.() // Trigger refresh
       }
     }
@@ -81,8 +61,7 @@ export default function PrescriptionVerification({
       const success = await rejectOrder(orderId)
       if (success) {
         toast.success('Prescription rejected')
-        const updated = await fetchOrderDetail(orderId)
-        setOrder(updated)
+        refetch()
       }
     }
   }

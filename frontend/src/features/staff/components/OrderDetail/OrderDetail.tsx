@@ -1,4 +1,6 @@
 import { useNavigate } from 'react-router-dom'
+import { useSalesStaffOrderDetail } from '@/features/sales/hooks/useSalesStaffOrders'
+
 import {
   IoPrintOutline,
   IoPencilOutline,
@@ -15,7 +17,8 @@ import {
   IoArrowBackOutline,
   IoAirplaneOutline,
   IoBusinessOutline,
-  IoStorefrontOutline
+  IoStorefrontOutline,
+  IoGlassesOutline
 } from 'react-icons/io5'
 import { Card, Button } from '@/components'
 
@@ -27,100 +30,137 @@ interface OrderDetailProps {
 
 export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetailProps) {
   const navigate = useNavigate()
-  // Expanded Mock Data
+
+  const { data: realOrder, isLoading, error } = useSalesStaffOrderDetail(orderId)
+
+  if (isLoading) {
+    return (
+      <div className="flex h-96 items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
+          <p className="text-slate-400 font-medium animate-pulse">Loading order details...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error || !realOrder) {
+    return (
+      <div className="flex h-96 items-center justify-center flex-col gap-4">
+        <p className="text-red-500 font-medium">Failed to load order details</p>
+        <Button onClick={onBack} variant="outline">
+          Go Back
+        </Button>
+      </div>
+    )
+  }
+
+  // Transform real data to match the component's expected structure
   const order = {
-    id: orderId,
-    date: '24 Oct, 2023',
-    status: 'In Production',
-    subtotal: '$178.00',
-    shipping: '$0.00',
-    tax: '$14.24',
-    total: '$192.24',
-    paymentMethod: 'Credit Card ending in 4242',
+    id: realOrder.orderCode || realOrder._id,
+    date: realOrder.createdAt
+      ? new Date(realOrder.createdAt).toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric'
+        })
+      : 'N/A',
+    status: realOrder.status,
+    subtotal: `${(realOrder.price || 0).toLocaleString()} ₫`,
+    shipping: '0 ₫', // Assuming free shipping for now or needs to be in API
+    tax: '0 ₫', // Needs API field
+    total: `${(realOrder.price || 0).toLocaleString()} ₫`,
+    paymentMethod: 'Credit Card (Simulated)', // Placeholder as payment method might not be in this API response yet
     customer: {
-      name: 'Leslie Alexander',
-      ordersCount: 4,
-      email: 'leslie.alex@example.com',
-      phone: '+1 (555) 123-4567',
-      avatar: 'LA',
-      since: 'Member since 2021'
+      name: realOrder.customerName || 'Guest',
+      ordersCount: 1, // Placeholder
+      email: 'No email provided', // Placeholder
+      phone: realOrder.customerPhone || 'No phone provided',
+      avatar: (realOrder.customerName || 'G').charAt(0).toUpperCase(),
+      since: 'Member'
     },
     shippingAddress: {
       type: 'Home',
-      address: '2972 Westheimer Rd. Santa Ana, Illinois 85486, United States'
+      address: 'Store Pickup or Not provided' // Need address in API
     },
     billingAddress: 'Same as shipping address',
-    items: [
-      {
-        id: 1,
-        name: 'Ray-Ban Aviator Classic',
-        sku: 'RB3025-001',
-        brand: 'Ray-Ban',
-        color: 'Gold / Green',
-        price: '$163.00',
-        image:
-          'https://images.unsplash.com/photo-1572635196237-14b3f281503f?q=80&w=2080&auto=format&fit=crop',
-        specs: {
-          eye: 58,
-          bridge: 14,
-          temple: 135,
-          material: 'Metal'
-        },
-        prescription: {
-          type: 'Single Vision (Polycarbonate)',
-          coatings: ['Anti-Reflective', 'Blue Light Filter', 'Scratch Resistant'],
-          od: { sph: '-2.25', cyl: '-0.50', axis: '180', add: '+2.00' },
-          os: { sph: '-2.50', cyl: '-0.75', axis: '175', add: '+2.00' },
-          pd: '63'
-        }
-      },
-      {
-        id: 2,
-        name: 'Premium Cleaning Kit',
-        sku: 'ACC-CLN-002',
-        description: 'Includes: Spray, Cloth, Screwdriver',
-        price: '$15.00',
-        image:
-          'https://images.unsplash.com/photo-1572635196237-14b3f281503f?q=80&w=2080&auto=format&fit=crop'
-      }
-    ],
+    items: (realOrder.products || []).map((p: any, idx: number) => ({
+      id: idx,
+      name: p.product?.product_name || p.product?.sku || 'Eyewear Product',
+      sku: p.product?.sku || 'N/A',
+      brand: 'Eyewear', // Placeholder
+      color: 'Standard', // Placeholder
+      price: `${(p.product?.pricePerUnit || 0).toLocaleString()} ₫`,
+      image: p.product?.product_id ? `https://api.eyewear.com/images/${p.product.product_id}` : '',
+      quantity: p.quantity,
+      specs: p.lens
+        ? {
+            eye: 'N/A',
+            bridge: 'N/A',
+            temple: 'N/A',
+            material: 'Lens'
+          }
+        : {
+            eye: 0,
+            bridge: 0,
+            temple: 0,
+            material: 'N/A'
+          },
+      prescription: p.lens
+        ? {
+            type: 'Prescription Lens',
+            coatings: [],
+            od: p.lens.parameters?.right
+              ? {
+                  sph: p.lens.parameters.right.SPH,
+                  cyl: p.lens.parameters.right.CYL,
+                  axis: p.lens.parameters.right.AXIS,
+                  add: '0.00'
+                }
+              : null,
+            os: p.lens.parameters?.left
+              ? {
+                  sph: p.lens.parameters.left.SPH,
+                  cyl: p.lens.parameters.left.CYL,
+                  axis: p.lens.parameters.left.AXIS,
+                  add: '0.00'
+                }
+              : null,
+            pd: p.lens.parameters?.PD || '63'
+          }
+        : null
+    })),
     timeline: [
       {
-        title: 'Quality Check Passed',
-        time: 'Today, 10:30 AM',
-        desc: 'Passed final inspection by Lab Team A',
-        icon: IoCheckmarkCircle,
-        active: true
-      },
-      {
-        title: 'In Production',
-        time: 'Oct 25, 09:15 AM',
-        desc: 'Lens cutting and mounting started',
-        icon: IoCubeOutline,
-        active: true
-      },
-      {
-        title: 'Prescription Verified',
-        time: 'Oct 24, 02:20 PM',
-        desc: 'Optometrist validated Rx values',
-        icon: IoEyeOutline,
-        active: true
-      },
-      {
         title: 'Order Placed',
-        time: 'Oct 24, 09:15 AM',
-        desc: 'Order received via Online Store',
+        time: realOrder.createdAt
+          ? new Date(realOrder.createdAt).toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit'
+            })
+          : '',
+        desc: 'Order received',
         icon: IoDocumentTextOutline,
+        active: true
+      },
+      {
+        title: 'Current Status',
+        time: 'Now',
+        desc: `Order is currently ${realOrder.status}`,
+        icon: IoCubeOutline,
         active: true
       }
     ],
     transactions: [
+      // Placeholder transaction based on total
       {
-        id: 'TRX-9981',
-        date: 'Oct 24, 2023',
-        method: 'Visa •••• 4242',
-        amount: '$192.24',
-        status: 'Success'
+        id: `TRX-${(realOrder.orderCode || '').slice(-4)}`,
+        date: realOrder.createdAt ? new Date(realOrder.createdAt).toLocaleDateString() : 'N/A',
+        method: 'System',
+        amount: `${(realOrder.price || 0).toLocaleString()} ₫`,
+        status: ['DEPOSITED', 'APPROVED', 'COMPLETED'].includes(realOrder.status)
+          ? 'Success'
+          : 'Pending'
       }
     ]
   }
@@ -194,11 +234,28 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
                 <div key={item.id} className="p-6 transition-colors hover:bg-gray-50/30">
                   <div className="flex gap-6">
                     <div className="w-24 h-24 bg-white rounded-xl overflow-hidden shrink-0 border border-neutral-100 p-2 flex items-center justify-center">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="max-w-full max-h-full object-contain mix-blend-multiply"
-                      />
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="max-w-full max-h-full object-contain mix-blend-multiply"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none'
+                            e.currentTarget.parentElement?.classList.add(
+                              'bg-gray-50',
+                              'text-gray-300'
+                            )
+                            const icon = document.createElement('div')
+                            icon.innerHTML =
+                              '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="32" width="32" xmlns="http://www.w3.org/2000/svg"><path d="M448 80H64c-35.3 0-64 28.7-64 64v224c0 35.3 28.7 64 64 64h384c35.3 0 64-28.7 64-64V144c0-35.3-28.7-64-64-64zM64 128h384c8.8 0 16 7.2 16 16v176L306.4 162.4c-6.1-6.1-16.3-6-22.3 0L160 286.8l-37.6-37.6c-6.1-6.1-16.3-6.1-22.3 0L48 301.3V144c0-8.8 7.2-16 16-16zm384 272H64c-8.8 0-16-7.2-16-16V346.6l73.4-73.4 37.6 37.6c6.1 6.1 16.3 6.1 22.3 0L305.6 186.5l158.4 158.4V384c0 8.8-7.2 16-16 16z"></path></svg>'
+                            e.currentTarget.parentElement?.appendChild(icon)
+                          }}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-300 bg-gray-50">
+                          <IoGlassesOutline size={32} />
+                        </div>
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-start mb-2">

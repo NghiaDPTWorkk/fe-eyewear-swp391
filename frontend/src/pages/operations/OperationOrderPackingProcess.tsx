@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Container } from '@/components'
 import { IoArrowBack, IoCubeOutline, IoCheckmarkCircle, IoReload } from 'react-icons/io5'
@@ -70,7 +70,16 @@ export default function OperationOrderPackingProcess() {
   }, [products])
 
   // State lưu trạng thái checked của từng item (theo ID)
-  const [checkedState, setCheckedState] = useState<Record<string, boolean>>({})
+  const [checkedState, setCheckedState] = useState<Record<string, boolean>>(() => {
+    if (status === 'COMPLETED') {
+      const allCheckedState: Record<string, boolean> = {}
+      checklistItems.forEach((item) => {
+        allCheckedState[item.id] = true
+      })
+      return allCheckedState
+    }
+    return {}
+  })
 
   // Kiểm tra tất cả đã check chưa
   const allChecked = checklistItems.every((item) => checkedState[item.id])
@@ -107,17 +116,6 @@ export default function OperationOrderPackingProcess() {
       })
     }
   }
-
-  // Pre-fill checkboxes if already completed (optional, based on requirement)
-  useEffect(() => {
-    if (isCompleted) {
-      const allCheckedState: Record<string, boolean> = {}
-      checklistItems.forEach((item) => {
-        allCheckedState[item.id] = true
-      })
-      setCheckedState(allCheckedState)
-    }
-  }, [isCompleted, checklistItems])
 
   const handleBack = () => {
     if (isCompleted) {

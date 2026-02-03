@@ -30,17 +30,19 @@ export default function ConfirmationModal({
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex min-h-screen items-center justify-center p-4 text-center">
         {/* Backdrop */}
-        <div 
-          className="fixed inset-0 bg-black/25 backdrop-blur-sm transition-opacity" 
+        <div
+          className="fixed inset-0 bg-black/25 backdrop-blur-sm transition-opacity"
           onClick={onClose}
         />
 
         {/* Modal Panel */}
         <div className="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all border border-neutral-100 scale-100 opacity-100">
           <div className="flex justify-between items-start mb-4">
-            <h3 className={`text-lg font-bold leading-6 ${
-              type === 'danger' ? 'text-red-600' : 'text-gray-900'
-            } flex items-center gap-2`}>
+            <h3
+              className={`text-lg font-bold leading-6 ${
+                type === 'danger' ? 'text-red-600' : 'text-gray-900'
+              } flex items-center gap-2`}
+            >
               {type === 'danger' && <IoAlertCircle size={24} />}
               {title}
             </h3>

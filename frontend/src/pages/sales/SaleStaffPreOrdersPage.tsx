@@ -33,6 +33,10 @@ export default function SaleStaffPreOrdersPage() {
     fetchOrders()
   }, [fetchOrders])
 
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 20
+
   // Filter only pre-orders
   const preOrders = useMemo(() => orders.filter((o) => o.type?.includes('PRE-ORDER')), [orders])
 
@@ -48,16 +52,35 @@ export default function SaleStaffPreOrdersPage() {
     [preOrders, debouncedSearch, statusFilter]
   )
 
+  // Reset pagination when filters change
+  const [prevFilters, setPrevFilters] = useState({ debouncedSearch, statusFilter })
+  if (
+    debouncedSearch !== prevFilters.debouncedSearch ||
+    statusFilter !== prevFilters.statusFilter
+  ) {
+    setPrevFilters({ debouncedSearch, statusFilter })
+    setCurrentPage(1)
+  }
+
+  const paginatedOrders = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage
+    return filteredOrders.slice(startIndex, startIndex + itemsPerPage)
+  }, [filteredOrders, currentPage])
+
   const pendingCount = preOrders.filter((o) => o.status === 'WAITING_ASSIGN').length
   const overdueCount = 8
   const arrivingSoonCount = 24
-  const totalDeposits = preOrders.reduce((sum, o) => {
-    const orderTotal =
-      o.products?.reduce((pSum, p) => {
-        return pSum + (p.product?.pricePerUnit || 0) * (p.quantity || 1)
-      }, 0) || 0
-    return sum + orderTotal
-  }, 0)
+  const totalDeposits = useMemo(
+    () =>
+      preOrders.reduce((sum, o) => {
+        const orderTotal =
+          o.products?.reduce((pSum, p) => {
+            return pSum + (p.product?.pricePerUnit || 0) * (p.quantity || 1)
+          }, 0) || 0
+        return sum + orderTotal
+      }, 0),
+    [preOrders]
+  )
 
   const handleOpenDrawer = (o: Order) => {
     setSelectedOrderId(o._id)
@@ -77,7 +100,7 @@ export default function SaleStaffPreOrdersPage() {
 
   const handleChat = (order: Order) => {
     const customerId = order.invoiceId
-    console.log('Opening chat with customer:', customerId)
+    // console.log('Opening chat with customer:', customerId)
     alert(`Chat with ${order.customerName} (ID: ${customerId})`)
   }
 
@@ -155,7 +178,7 @@ export default function SaleStaffPreOrdersPage() {
 
       <Card className="p-0 overflow-hidden border border-neutral-200 shadow-sm bg-white rounded-xl mt-6">
         <OrderList
-          orders={filteredOrders}
+          orders={paginatedOrders}
           loading={loading}
           onVerify={handleVerify}
           onViewDetail={handleOpenDrawer}
@@ -165,21 +188,34 @@ export default function SaleStaffPreOrdersPage() {
 
       <div className="flex items-center justify-between px-2 text-sm text-gray-500 mt-6 bottom-0">
         <span>
-          Showing 1-{filteredOrders.length} of {preOrders.length} pre-orders
+          Showing {filteredOrders.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}-
+          {Math.min(currentPage * itemsPerPage, filteredOrders.length)} of {filteredOrders.length}{' '}
+          orders
         </span>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="px-2 border-neutral-200">
+          <Button
+            variant="outline"
+            size="sm"
+            className="px-2 border-neutral-200"
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+          >
             <IoChevronBackOutline />
           </Button>
+          <span className="flex items-center px-2 font-semibold text-primary">
+            Page {currentPage} of {Math.ceil(filteredOrders.length / itemsPerPage) || 1}
+          </span>
           <Button
-            variant="solid"
-            colorScheme="primary"
+            variant="outline"
             size="sm"
-            className="min-w-[32px] font-semibold"
+            className="px-2 border-neutral-200"
+            onClick={() =>
+              setCurrentPage((p) =>
+                Math.min(Math.ceil(filteredOrders.length / itemsPerPage), p + 1)
+              )
+            }
+            disabled={currentPage >= Math.ceil(filteredOrders.length / itemsPerPage)}
           >
-            1
-          </Button>
-          <Button variant="outline" size="sm" className="px-2 border-neutral-200">
             <IoChevronForwardOutline />
           </Button>
         </div>

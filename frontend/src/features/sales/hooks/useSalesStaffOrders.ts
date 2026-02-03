@@ -9,9 +9,9 @@ export const useSalesStaffOrders = () => {
 
   const ordersQuery = useQuery({
     queryKey: ['sales', 'orders'],
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       /* eslint-disable @typescript-eslint/no-explicit-any */
-      const response = await httpClient.get<any>('/admin/invoices/deposited')
+      const response = await httpClient.get<any>('/admin/invoices/deposited', { signal })
       const invoices = response.data?.data || response.data || []
       const allOrders: Order[] = []
 
@@ -29,7 +29,7 @@ export const useSalesStaffOrders = () => {
     staleTime: 30000 // 30 seconds
   })
 
-  const orders = ordersQuery.data || []
+  const orders = useMemo(() => ordersQuery.data || [], [ordersQuery.data])
 
   const rxOrders = useMemo(() => orders.filter((o) => o.isPrescription), [orders])
   const pendingOrders = useMemo(

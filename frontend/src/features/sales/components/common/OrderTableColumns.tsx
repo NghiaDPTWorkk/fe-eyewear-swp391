@@ -11,7 +11,7 @@ import { getOrderTypeLabel, isOrderVerified } from '../../utils/orderUtils'
 
 export const renderOrderCode = (order: Order, onClick?: (id: string) => void) => (
   <div
-    className="text-sm font-semibold text-emerald-500 cursor-pointer hover:text-emerald-600 transition-colors inline-block uppercase"
+    className="text-sm font-semibold text-emerald-500 cursor-pointer hover:text-emerald-600 transition-colors inline-block"
     onClick={(e) => {
       if (onClick) {
         e.stopPropagation()
@@ -77,8 +77,8 @@ export const renderVerificationStatus = (order: Order) => {
 
   return (
     <StatusBadge
-      status={isVerified ? 'VERIFIED' : 'PENDING'}
-      label={isVerified ? 'VERIFIED' : 'NOT VERIFIED'}
+      status={isVerified ? 'COMPLETED' : 'PENDING'}
+      label={isVerified ? 'Verified' : 'Need Verify'}
     />
   )
 }
@@ -101,55 +101,62 @@ export const renderActions = (
   const isPrescription = order.isPrescription
 
   return (
-    <div className="flex items-center justify-center gap-3">
-      {onOpenDetail && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation()
-            onOpenDetail()
-          }}
-          className="text-slate-400 hover:text-slate-600 transition-colors"
-          title="View Details"
-        >
-          <IoEyeOutline size={18} />
-        </button>
-      )}
-      {onChat && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation()
-            onChat()
-          }}
-          className="text-blue-400 hover:text-blue-600 transition-colors"
-          title="Chat with Customer"
-        >
-          <IoChatbubbleEllipsesOutline size={18} />
-        </button>
-      )}
-      {onVerify && isPrescription && !isVerified && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation()
-            onVerify()
-          }}
-          className="text-emerald-400 hover:text-emerald-500 transition-colors"
-          title="Quick Verify"
-        >
-          <IoCheckmarkCircleOutline size={18} />
-        </button>
-      )}
-      {onReject && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation()
-            onReject()
-          }}
-          className="text-red-400 hover:text-red-500 transition-colors"
-          title="Reject Order"
-        >
-          <IoCheckmarkCircleOutline size={18} className="rotate-45" />
-        </button>
-      )}
+    <div className="flex items-center justify-center gap-1">
+      <div className="w-8 flex justify-center">
+        {onOpenDetail && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              onOpenDetail()
+            }}
+            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-lg transition-all"
+            title="View Details"
+          >
+            <IoEyeOutline size={18} />
+          </button>
+        )}
+      </div>
+
+      <div className="w-8 flex justify-center">
+        {onChat && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              onChat()
+            }}
+            className="p-2 text-blue-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+            title="Chat with Customer"
+          >
+            <IoChatbubbleEllipsesOutline size={18} />
+          </button>
+        )}
+      </div>
+
+      <div className="w-8 flex justify-center">
+        {onVerify && isPrescription && !isVerified ? (
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              onVerify()
+            }}
+            className="p-2 text-emerald-400 hover:text-emerald-500 hover:bg-emerald-50 rounded-lg transition-all"
+            title="Quick Verify"
+          >
+            <IoCheckmarkCircleOutline size={18} />
+          </button>
+        ) : onReject ? (
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              onReject()
+            }}
+            className="p-2 text-red-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+            title="Reject Order"
+          >
+            <IoCheckmarkCircleOutline size={18} className="rotate-45" />
+          </button>
+        ) : null}
+      </div>
     </div>
   )
 }

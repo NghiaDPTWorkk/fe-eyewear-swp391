@@ -10,6 +10,7 @@ import {
 } from 'react-icons/io5'
 import { Button } from '@/components'
 import { cn } from '@/lib/utils'
+import { httpClient } from '@/api/apiClients'
 
 interface OrderDetailsDrawerProps {
   isOpen: boolean
@@ -19,6 +20,34 @@ interface OrderDetailsDrawerProps {
   isApproved?: boolean
   onViewFullDetails?: () => void
   onNotifyCustomer?: (orderId: string) => void
+}
+
+interface OrderData {
+  id: string
+  status: string
+  isPrescription: boolean
+  isApproved?: boolean
+  customer: {
+    name: string
+    phone: string
+  }
+  item: {
+    name: string
+    qty: number
+    price: number
+  }
+  prescription?: {
+    od: { sph: string; cyl: string; axis: string; add: string }
+    os: { sph: string; cyl: string; axis: string; add: string }
+    pd: string
+    lensType: string
+  }
+  timeline: Array<{
+    label: string
+    time: string
+    date: string
+    status: 'completed' | 'current' | 'pending'
+  }>
 }
 
 export default function OrderDetailsDrawer({
@@ -32,6 +61,122 @@ export default function OrderDetailsDrawer({
 }: OrderDetailsDrawerProps) {
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false)
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null)
+  const [orderData, setOrderData] = useState<OrderData | null>(null)
+  const [loading, setLoading] = useState(false)
+
+  // Fetch order details when drawer opens
+  useEffect(() => {
+    const fetchOrderDetails = async () => {
+      if (!orderId) return
+
+      setLoading(true)
+      try {
+        /* eslint-disable @typescript-eslint/no-explicit-any */
+        // Fetch order data
+        const orderResponse = await httpClient.get<any>(`/admin/orders/${orderId}`)
+        const ord =
+          orderResponse.data?.order || orderResponse.data?.data?.order || orderResponse.data
+
+        if (!ord) {
+          setLoading(false)
+          return
+        }
+
+        // Try to fetch invoice data if we have invoiceId
+        let invoiceData = null
+        const invoiceId = ord.invoiceId || ord.invoice?._id
+        if (invoiceId) {
+          try {
+            const invResponse = await httpClient.get<any>(`/admin/invoices/${invoiceId}`)
+            invoiceData = invResponse.data?.invoice || invResponse.data?.data || invResponse.data
+          } catch {
+            // Invoice fetch failed, continue without it
+          }
+        }
+
+        // Transform the data
+        const customerName =
+          invoiceData?.fullName ||
+          invoiceData?.customer?.fullName ||
+          ord.invoice?.fullName ||
+          ord.invoice?.customer?.fullName ||
+          ord.customerName ||
+          'Guest'
+
+        const customerPhone =
+          invoiceData?.phone ||
+          invoiceData?.customer?.phone ||
+          ord.invoice?.phone ||
+          ord.invoice?.customer?.phone ||
+          ord.customerPhone ||
+          'Not provided'
+
+        // Get first product for display
+        const products = ord.products || []
+        const firstProduct = products[0] || {}
+        const productDetail = firstProduct.product?.detail || firstProduct.lens?.detail || {}
+
+        setOrderData({
+          id: ord.orderCode || `OD_${ord._id}`,
+          status: ord.status || 'PENDING',
+          isPrescription: orderType === 'Prescription' || ord.type?.includes('MANUFACTURING'),
+          isApproved: isApproved,
+          customer: {
+            name: customerName,
+            phone: customerPhone
+          },
+          item: {
+            name: productDetail.name || 'Product',
+            qty: firstProduct.quantity || 1,
+            price: firstProduct.product?.pricePerUnit || firstProduct.lens?.pricePerUnit || 0
+          },
+          prescription: firstProduct.lens?.parameters
+            ? {
+                od: {
+                  sph: String(firstProduct.lens.parameters.right?.SPH || 0),
+                  cyl: String(firstProduct.lens.parameters.right?.CYL || 0),
+                  axis: String(firstProduct.lens.parameters.right?.AXIS || 0),
+                  add: String(firstProduct.lens.parameters.right?.ADD || 0)
+                },
+                os: {
+                  sph: String(firstProduct.lens.parameters.left?.SPH || 0),
+                  cyl: String(firstProduct.lens.parameters.left?.CYL || 0),
+                  axis: String(firstProduct.lens.parameters.left?.AXIS || 0),
+                  add: String(firstProduct.lens.parameters.left?.ADD || 0)
+                },
+                pd: String(firstProduct.lens.parameters.PD || 0) + 'mm',
+                lensType: productDetail.name || 'Prescription Lens'
+              }
+            : undefined,
+          timeline: [
+            {
+              label: 'Order Placed',
+              time: ord.createdAt
+                ? new Date(ord.createdAt).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })
+                : '',
+              date: 'Today',
+              status: 'completed'
+            },
+            { label: 'Payment Confirmed', time: '', date: '', status: 'completed' },
+            { label: 'In Production', time: '', date: '', status: 'current' },
+            { label: 'Quality Check', time: 'Pending', date: '', status: 'pending' },
+            { label: 'Ready to Ship', time: 'Pending', date: '', status: 'pending' }
+          ]
+        })
+      } catch (error) {
+        console.error('Failed to fetch order details:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (isOpen && orderId) {
+      fetchOrderDetails()
+    }
+  }, [isOpen, orderId, orderType, isApproved])
 
   // Prevent body scroll when drawer is open
   useEffect(() => {
@@ -52,35 +197,22 @@ export default function OrderDetailsDrawer({
 
   if (!isOpen) return null
 
-  // Mock data - in real app fetch based on orderId
-  const orderData = {
-    id: orderId || 'ORD-2024-1234',
-    status: 'In Production',
-    isPrescription: orderType === 'Prescription',
-    isApproved: isApproved,
-    customer: {
-      name: 'John Smith',
-      email: 'john.smith@email.com',
-      phone: '+1 (555) 123-4567'
-    },
-    item: {
-      name: 'Progressive Lenses',
-      qty: 1,
-      price: 450.0
-    },
-    prescription: {
-      od: { sph: '+2.50', cyl: '-0.75', axis: '180', add: '+2.00' },
-      os: { sph: '+2.25', cyl: '-0.50', axis: '175', add: '+2.00' },
-      pd: '64mm',
-      lensType: 'Progressive High Index 1.67'
-    },
-    timeline: [
-      { label: 'Order Placed', time: '10:30 AM', date: 'Today', status: 'completed' },
-      { label: 'Payment Confirmed', time: '10:32 AM', date: 'Today', status: 'completed' },
-      { label: 'In Production', time: '11:15 AM', date: 'Today', status: 'current' },
-      { label: 'Quality Check', time: 'Pending', date: '', status: 'pending' },
-      { label: 'Ready to Ship', time: 'Pending', date: '', status: 'pending' }
-    ]
+  // Show loading state
+  if (loading || !orderData) {
+    return createPortal(
+      <div className="fixed inset-0 z-50 flex justify-end transition-opacity duration-300">
+        <div
+          className="absolute inset-0 bg-black/20 backdrop-blur-[1px] transition-opacity"
+          onClick={onClose}
+        />
+        <div className="relative w-full max-w-md h-full bg-white shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 overflow-hidden">
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-gray-500">Loading...</div>
+          </div>
+        </div>
+      </div>,
+      document.body
+    )
   }
 
   const statusOptions = [
@@ -155,7 +287,7 @@ export default function OrderDetailsDrawer({
             {/* Order Status & Type Section */}
 
             {/* Prescription Summary Section */}
-            {orderData.isPrescription && (
+            {orderData.isPrescription && orderData.prescription && (
               <div className="space-y-3 pt-2">
                 <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-widest">
                   Prescription Summary
@@ -243,12 +375,6 @@ export default function OrderDetailsDrawer({
                 <div className="flex justify-between items-center group">
                   <span className="text-gray-500 font-medium">Name</span>
                   <span className="font-semibold text-gray-900">{orderData.customer.name}</span>
-                </div>
-                <div className="flex justify-between items-center group">
-                  <span className="text-gray-500 font-medium">Email</span>
-                  <span className="font-semibold text-gray-900 truncate max-w-[200px]">
-                    {orderData.customer.email}
-                  </span>
                 </div>
                 <div className="flex justify-between items-center group">
                   <span className="text-gray-500 font-medium">Phone</span>

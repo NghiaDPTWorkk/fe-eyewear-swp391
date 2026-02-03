@@ -11,8 +11,10 @@ export const transformOrder = (ord: any, inv?: any): Order => {
   return {
     ...ord,
     _id: orderId,
-    orderCode: ord.orderCode || inv?.invoiceCode || `ORD-${orderId}`,
+    orderCode:
+      ord.orderCode || (orderId ? `ORD-${orderId.toString().slice(-6).toUpperCase()}` : 'N/A'),
     invoiceId: invoiceId,
+    invoiceCode: inv?.invoiceCode,
     customerName:
       ord.customerName ||
       inv?.fullName ||
@@ -47,7 +49,15 @@ export const getOrderTypeLabel = (order: Order): 'Prescription' | 'Pre-order' | 
  * Checks if an order is verified (for Prescription orders).
  */
 export const isOrderVerified = (order: Order): boolean => {
-  return ['VERIFIED', 'APPROVED', 'COMPLETED'].includes(order.status)
+  return [
+    'VERIFIED',
+    'APPROVED',
+    'WAITING_ASSIGN',
+    'PROCESSING',
+    'COMPLETED',
+    'SHIPPED',
+    'DELIVERED'
+  ].includes(order.status)
 }
 
 /**

@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import { Container, Button } from '@/components'
 import {
   IoAdd,
@@ -9,8 +8,11 @@ import {
   IoChevronForward
 } from 'react-icons/io5'
 
+import { PageHeader } from '@/features/sales/components/common'
+
 export default function SaleStaffProductPage() {
   const metrics = [
+    // ... metrics
     { title: 'Total Products', value: '1,240', trend: '+12%', subtext: '+48 from last month' },
     {
       title: 'Low Stock Items',
@@ -77,23 +79,19 @@ export default function SaleStaffProductPage() {
   ]
 
   return (
-    <Container className="max-w-[1600px] bg-[#f8f9fa] min-h-screen pb-10">
-      {/* Breadcrumb Path */}
-      <div className="flex items-center gap-2 text-sm pt-8 px-2 font-medium">
-        <Link
-          to="/salestaff/dashboard"
-          className="text-neutral-400 hover:text-primary-500 transition-colors"
-        >
-          Dashboard
-        </Link>
-        <span className="text-neutral-300">/</span>
-        <span className="text-primary-500 font-semibold">Product Management</span>
-      </div>
+    <Container className="pt-2 pb-8 px-2 max-w-none">
+      <PageHeader
+        title="Product Management"
+        breadcrumbs={[
+          { label: 'Dashboard', path: '/salestaff/dashboard' },
+          { label: 'Product Management' }
+        ]}
+      />
 
       {/* Metrics Row */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 pt-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         {metrics.map((m, idx) => (
-          <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm border-none">
+          <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm border border-neutral-100">
             <div className="text-sm font-medium text-neutral-500 mb-4">{m.title}</div>
             <div className="flex items-center gap-3 mb-2">
               <span className="text-3xl font-semibold text-neutral-800">{m.value}</span>
@@ -109,9 +107,9 @@ export default function SaleStaffProductPage() {
       </div>
 
       {/* Main List Container */}
-      <div className="bg-white rounded-[32px] shadow-sm overflow-hidden min-h-[600px] border-none">
+      <div className="bg-white rounded-3xl shadow-sm overflow-hidden min-h-[600px] border border-neutral-100">
         {/* Header Bar */}
-        <div className="px-10 py-8 flex flex-col md:flex-row justify-between items-center gap-4 bg-white">
+        <div className="px-10 py-8 flex flex-col md:flex-row justify-between items-center gap-4 bg-white border-b border-neutral-50">
           <h2 className="text-2xl font-semibold text-[#0a1d37]">Product List</h2>
           <div className="flex items-center gap-4">
             <Button
@@ -124,7 +122,7 @@ export default function SaleStaffProductPage() {
             <Button
               colorScheme="primary"
               leftIcon={<IoAdd />}
-              className="rounded-xl text-sm h-11 px-6 font-semibold bg-[#6EE7B7] hover:bg-[#5CD6A6] border-none shadow-sm"
+              className="rounded-xl text-sm h-11 px-6 font-semibold bg-mint-600 hover:bg-mint-700 text-white border-none shadow-sm"
             >
               Add Product
             </Button>

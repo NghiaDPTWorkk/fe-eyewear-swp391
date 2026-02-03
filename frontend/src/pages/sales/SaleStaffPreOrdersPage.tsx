@@ -17,6 +17,7 @@ import {
 import { PageHeader } from '@/features/sales/components/common'
 import MetricCard from '@/features/sales/components/common/MetricCard'
 import type { Order } from '@/features/sales/types'
+import { useDebounce } from '@/shared/hooks'
 
 export default function SaleStaffPreOrdersPage() {
   const navigate = useNavigate()
@@ -24,6 +25,7 @@ export default function SaleStaffPreOrdersPage() {
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [search, setSearch] = useState('')
+  const debouncedSearch = useDebounce(search, 300)
   const [statusFilter, setStatusFilter] = useState('All')
   const [isFilterOpen, setIsFilterOpen] = useState(false)
 
@@ -38,12 +40,12 @@ export default function SaleStaffPreOrdersPage() {
     () =>
       preOrders.filter(
         (o) =>
-          ((o._id || '').toString().toLowerCase().includes(search.toLowerCase()) ||
-            o.customerName?.toLowerCase().includes(search.toLowerCase()) ||
-            o.orderCode?.toLowerCase().includes(search.toLowerCase())) &&
+          ((o._id || '').toString().toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+            o.customerName?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+            o.orderCode?.toLowerCase().includes(debouncedSearch.toLowerCase())) &&
           (statusFilter === 'All' || o.status === statusFilter)
       ),
-    [preOrders, search, statusFilter]
+    [preOrders, debouncedSearch, statusFilter]
   )
 
   const pendingCount = preOrders.filter((o) => o.status === 'WAITING_ASSIGN').length
@@ -80,14 +82,14 @@ export default function SaleStaffPreOrdersPage() {
   }
 
   return (
-    <Container>
+    <Container className="pt-2 pb-8 px-2 max-w-none">
       <PageHeader
         title="Pre-order Tracking"
         subtitle="Manage outstanding orders and supplier ETA updates."
         breadcrumbs={[
           { label: 'Dashboard', path: '/salestaff/dashboard' },
           { label: 'Orders', path: '/salestaff/orders' },
-          { label: 'Pre-order Management' }
+          { label: 'Pre-orders' }
         ]}
       />
 

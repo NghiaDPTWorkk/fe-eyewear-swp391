@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { Container } from '@/components'
-import PrescriptionVerification from '@/features/sales/components/prescriptions/PrescriptionVerification'
+import OrderDetail from '@/features/staff/components/OrderDetail/OrderDetail'
+import { PageHeader } from '@/features/sales/components/common'
 
 export default function SaleStaffRegularOrderDetailPage() {
   const { orderId } = useParams<{ orderId: string }>()
@@ -9,8 +10,16 @@ export default function SaleStaffRegularOrderDetailPage() {
   if (!orderId) return null
 
   return (
-    <Container>
-      <PrescriptionVerification orderId={orderId} onBack={() => navigate(-1)} />
+    <Container className="pt-2 pb-8 px-2 max-w-none">
+      <PageHeader
+        title="Order Details"
+        breadcrumbs={[
+          { label: 'Dashboard', path: '/salestaff/dashboard' },
+          { label: 'Orders', path: '/salestaff/orders' },
+          { label: 'Order Details' }
+        ]}
+      />
+      <OrderDetail orderId={orderId} onBack={() => navigate(-1)} />
     </Container>
   )
 }

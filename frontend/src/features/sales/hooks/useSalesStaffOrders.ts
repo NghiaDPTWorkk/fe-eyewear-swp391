@@ -1,17 +1,15 @@
-import { useState, useCallback } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { httpClient } from '@/api/apiClients'
 import type { Order, OrderDetail } from '../types'
 import { transformOrder } from '../utils/orderUtils'
+import { useMemo } from 'react'
 
 export const useSalesStaffOrders = () => {
-  const [orders, setOrders] = useState<Order[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const queryClient = useQueryClient()
 
-  const fetchOrders = useCallback(async () => {
-    setLoading(true)
-    setError(null)
-    try {
+  const ordersQuery = useQuery({
+    queryKey: ['sales', 'orders'],
+    queryFn: async () => {
       /* eslint-disable @typescript-eslint/no-explicit-any */
       const response = await httpClient.get<any>('/admin/invoices/deposited')
       const invoices = response.data?.data || response.data || []
@@ -26,61 +24,107 @@ export const useSalesStaffOrders = () => {
           }
         })
       }
+      return allOrders
+    },
+    staleTime: 30000 // 30 seconds
+  })
 
-      setOrders(allOrders)
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch orders')
-    } finally {
-      setLoading(false)
-    }
-  }, [])
+  const orders = ordersQuery.data || []
 
-  const fetchOrderDetail = useCallback(async (orderId: string | number) => {
-    setLoading(true)
+  const rxOrders = useMemo(() => orders.filter((o) => o.isPrescription), [orders])
+  const pendingOrders = useMemo(
+    () =>
+      orders.filter(
+        (o) => o.isPrescription && ['WAITING_ASSIGN', 'PENDING', 'DEPOSITED'].includes(o.status)
+      ),
+    [orders]
+  )
+  const processedOrders = useMemo(
+    () =>
+      orders.filter((o) => !o.isPrescription || !['WAITING_ASSIGN', 'PENDING'].includes(o.status)),
+    [orders]
+  )
+
+  const fetchOrders = () => ordersQuery.refetch()
+
+  // Manual fetch function for compatibility with existing components if needed
+  const fetchOrderDetail = async (orderId: string | number) => {
     try {
-      /* eslint-disable @typescript-eslint/no-explicit-any */
       const response = await httpClient.get<any>(`/admin/orders/${orderId}`)
       const ord = response.data?.order || response.data?.data?.order || response.data || null
 
       if (!ord) return null
 
-      // Try to fetch invoice data if we have invoiceId
-      let invoiceData = null
       const invoiceId = ord.invoiceId || ord.invoice?._id
+      let invoiceData = null
+
       if (invoiceId) {
         try {
           const invResponse = await httpClient.get<any>(`/admin/invoices/${invoiceId}`)
-          invoiceData = invResponse.data?.invoice || invResponse.data?.data || invResponse.data
-        } catch {
-          // Invoice fetch failed, continue without it
+          invoiceData =
+            invResponse.data?.invoice ||
+            invResponse.data?.data?.invoice ||
+            invResponse.data?.data ||
+            invResponse.data
+        } catch (error) {
+          console.error('Failed to fetch invoice:', error)
         }
       }
-
       return transformOrder(ord, invoiceData) as OrderDetail
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch order detail')
+    } catch (err) {
+      console.error('Failed to fetch order detail:', err)
       return null
-    } finally {
-      setLoading(false)
     }
-  }, [])
-
-  const rxOrders = orders.filter((o) => o.isPrescription)
-  const pendingOrders = orders.filter(
-    (o) => o.isPrescription && ['WAITING_ASSIGN', 'PENDING', 'DEPOSITED'].includes(o.status)
-  )
-  const processedOrders = orders.filter(
-    (o) => !o.isPrescription || !['WAITING_ASSIGN', 'PENDING'].includes(o.status)
-  )
+  }
 
   return {
     orders,
     rxOrders,
     pendingOrders,
     processedOrders,
-    loading,
-    error,
+    loading: ordersQuery.isLoading,
+    isFetching: ordersQuery.isFetching,
+    error: ordersQuery.error,
     fetchOrders,
-    fetchOrderDetail
+    fetchOrderDetail,
+    invalidateOrders: () => queryClient.invalidateQueries({ queryKey: ['sales', 'orders'] })
   }
+}
+
+export const useSalesStaffOrderDetail = (orderId: string | null | number) => {
+  return useQuery({
+    queryKey: ['sales', 'order', orderId],
+    queryFn: async () => {
+      if (!orderId) return null
+
+      // FIRST STEP: Fetch the order
+      const response = await httpClient.get<any>(`/admin/orders/${orderId}`)
+      const ord = response.data?.order || response.data?.data?.order || response.data || null
+
+      if (!ord) return null
+
+      const invoiceId = ord.invoiceId || ord.invoice?._id
+
+      // SECOND STEP: Fetch invoice if exists.
+      // Note: This is still sequential because we need invoiceId,
+      // but TanStack Query will cache the results.
+      if (invoiceId) {
+        try {
+          const invResponse = await httpClient.get<any>(`/admin/invoices/${invoiceId}`)
+          const invoiceData =
+            invResponse.data?.invoice ||
+            invResponse.data?.data?.invoice ||
+            invResponse.data?.data ||
+            invResponse.data
+          return transformOrder(ord, invoiceData) as OrderDetail
+        } catch (error) {
+          console.error('Failed to fetch invoice:', error)
+        }
+      }
+
+      return transformOrder(ord, null) as OrderDetail
+    },
+    enabled: !!orderId,
+    staleTime: 60000 // 1 minute
+  })
 }

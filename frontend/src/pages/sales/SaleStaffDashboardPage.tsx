@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Container } from '@/shared/components/ui/container'
-import { MetricCard } from '@/shared/components/ui/metric-card'
-import { Card } from '@/shared/components/ui/card'
+import { Container, MetricCard, Card, Button } from '@/components'
 import { useSalesStaffInvoices } from '@/features/sales/hooks/useSalesStaffInvoices'
 import {
   IoClipboardOutline,
@@ -14,7 +12,7 @@ import type { Invoice } from '@/features/sales/types'
 import { Charts } from '@/features/sales/components/dashboard/Charts'
 import { Table } from '@/features/sales/components/dashboard/Table'
 import { InvoiceOrdersDrawer } from '@/features/sales/components/dashboard/InvoiceOrdersDrawer'
-import { Button } from '@/components'
+import { PageHeader } from '@/features/sales/components/common'
 
 export default function SaleStaffDashboardPage() {
   const { invoices, loading, fetchInvoices } = useSalesStaffInvoices()
@@ -81,15 +79,12 @@ export default function SaleStaffDashboardPage() {
   }
 
   return (
-    <Container>
-      <div className="mb-8">
-        <h1 className="text-3xl font-medium text-gray-900 tracking-tight font-heading">
-          Sales Overview
-        </h1>
-        <p className="text-gray-500 mt-1.5 text-sm font-normal leading-relaxed">
-          Overview of store performance and daily sales operations.
-        </p>
-      </div>
+    <Container className="pt-2 pb-8 px-2 max-w-none">
+      <PageHeader
+        title="Sales Overview"
+        subtitle="Overview of store performance and daily sales operations."
+        breadcrumbs={[{ label: 'Dashboard' }]}
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {metrics.map((m, i) => (

@@ -26,11 +26,11 @@ interface StatusBadgeProps {
 
 const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
   PENDING: { label: 'Pending', className: COLORS.status.pending },
-  WAITING_ASSIGN: { label: 'Waiting Verify', className: COLORS.status.pending },
+  WAITING_ASSIGN: { label: 'Awaiting Assignment', className: COLORS.status.processing },
   DEPOSITED: { label: 'Deposited', className: COLORS.status.pending },
   PROCESSING: { label: 'Processing', className: COLORS.status.processing },
   COMPLETED: { label: 'Completed', className: COLORS.status.completed },
-  APPROVED: { label: 'Approved', className: COLORS.status.completed },
+  APPROVED: { label: 'Verified', className: COLORS.status.completed },
   VERIFIED: { label: 'Verified', className: COLORS.status.completed },
   REJECTED: { label: 'Rejected', className: COLORS.status.rejected },
   DELAYED: { label: 'Delayed', className: COLORS.status.delayed },
@@ -39,7 +39,7 @@ const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
 }
 
 export default function StatusBadge({ status, label, className }: StatusBadgeProps) {
-  const upperStatus = status?.toUpperCase() || 'UNKNOWN'
+  const upperStatus = status?.toUpperCase() || 'PENDING'
   const config =
     STATUS_CONFIG[upperStatus] ||
     (status
@@ -48,8 +48,8 @@ export default function StatusBadge({ status, label, className }: StatusBadgePro
           className: 'bg-gray-50 text-gray-500 border-gray-100'
         }
       : {
-          label: 'Unknown',
-          className: 'bg-gray-50 text-gray-500 border-gray-100'
+          label: 'Pending',
+          className: COLORS.status.pending
         })
 
   return (

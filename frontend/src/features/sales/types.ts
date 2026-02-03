@@ -69,6 +69,7 @@ export interface OrderDetail {
   customerPhone?: string
   isPrescription?: boolean
   invoice?: Invoice
+  assignStaff?: string | null
 }
 
 export type Order = OrderDetail

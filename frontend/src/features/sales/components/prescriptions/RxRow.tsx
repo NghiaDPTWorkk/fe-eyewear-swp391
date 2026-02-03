@@ -1,19 +1,20 @@
+import { memo } from 'react'
 import type { Order } from '../../types'
 import StatusBadge from '../common/StatusBadge'
 import {
   renderOrderCode,
   renderCustomer,
   renderProductInfo,
+  renderVerificationStatus,
   renderActions
 } from '../common/OrderTableColumns'
 
 interface SalesStaffRxRowProps {
   order: Order
   onVerify: () => void
-  onReject: () => void
 }
 
-export const SalesStaffRxRow: React.FC<SalesStaffRxRowProps> = ({ order, onVerify, onReject }) => {
+export const SalesStaffRxRow: React.FC<SalesStaffRxRowProps> = memo(({ order, onVerify }) => {
   const lensProduct = order.products?.find((p) => p.lens)
   const rx = lensProduct?.lens?.parameters
   const rxSummary = rx
@@ -33,12 +34,13 @@ export const SalesStaffRxRow: React.FC<SalesStaffRxRowProps> = ({ order, onVerif
           {rxSummary}
         </span>
       </td>
+      <td className="px-6 py-5">{renderVerificationStatus(order)}</td>
       <td className="px-6 py-5">
         <StatusBadge status={order.status} />
       </td>
       <td className="px-6 py-5" onClick={(e) => e.stopPropagation()}>
-        {renderActions(order, { onOpenDetail: onVerify, onVerify, onReject, onChat: () => {} })}
+        {renderActions(order, { onOpenDetail: onVerify, onVerify, onChat: () => {} })}
       </td>
     </tr>
   )
-}
+})

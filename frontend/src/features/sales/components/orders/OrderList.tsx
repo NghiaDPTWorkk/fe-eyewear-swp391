@@ -20,25 +20,65 @@ export const OrderList: React.FC<OrderListProps> = ({
 }) => {
   if (loading)
     return (
-      <div className="p-20 flex flex-col items-center justify-center text-gray-400">
-        <div className="w-10 h-10 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin mb-4" />
-        <p className="text-sm font-medium animate-pulse">Fetching orders...</p>
-      </div>
+      <Card className="p-0 overflow-hidden border border-neutral-200 shadow-sm bg-white rounded-xl">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead className="bg-white border-b border-neutral-100 text-[10px] text-slate-400 font-bold tracking-widest">
+              <tr>
+                <th className="px-6 py-5 text-center w-28 pr-12">ORDER CODE</th>
+                <th className="px-6 py-5">CUSTOMER NAME</th>
+                <th className="px-6 py-5 text-center">DATE</th>
+                <th className="px-6 py-5 text-center">TYPE</th>
+                <th className="px-6 py-5 text-center">VERIFICATION</th>
+                <th className="px-6 py-5 text-center">STATUS</th>
+                <th className="px-6 py-5 text-center w-40">ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {[...Array(5)].map((_, i) => (
+                <tr key={i} className="animate-pulse">
+                  <td className="px-4 py-6">
+                    <div className="h-4 bg-gray-100 rounded w-20 mx-auto"></div>
+                  </td>
+                  <td className="px-6 py-6">
+                    <div className="h-4 bg-gray-100 rounded w-32 mx-auto"></div>
+                  </td>
+                  <td className="px-4 py-6">
+                    <div className="h-4 bg-gray-100 rounded w-24 mx-auto"></div>
+                  </td>
+                  <td className="px-4 py-6">
+                    <div className="h-4 bg-gray-100 rounded w-16 mx-auto"></div>
+                  </td>
+                  <td className="px-4 py-6">
+                    <div className="h-4 bg-gray-100 rounded w-24 mx-auto"></div>
+                  </td>
+                  <td className="px-4 py-6">
+                    <div className="h-4 bg-gray-100 rounded w-20 mx-auto"></div>
+                  </td>
+                  <td className="px-4 py-6">
+                    <div className="h-4 bg-gray-100 rounded w-28 mx-auto"></div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
     )
 
   return (
     <Card className="p-0 overflow-hidden border border-neutral-200 shadow-sm bg-white rounded-xl">
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
-          <thead className="bg-white border-b border-neutral-100 text-xs uppercase text-slate-400 font-medium tracking-wide">
+          <thead className="bg-white border-b border-neutral-100 text-[10px] text-slate-400 font-bold tracking-widest">
             <tr>
-              <th className="px-6 py-5 text-center w-28">Order Code</th>
-              <th className="px-6 py-5">Customer Name</th>
-              <th className="px-6 py-5 text-center">Date</th>
-              <th className="px-6 py-5 text-center">Type</th>
-              <th className="px-6 py-5 text-center">Verification</th>
-              <th className="px-6 py-5 text-center">Status</th>
-              <th className="px-6 py-5 text-center w-40">Actions</th>
+              <th className="px-6 py-5 text-center w-28 pr-12">ORDER CODE</th>
+              <th className="px-6 py-5">CUSTOMER NAME</th>
+              <th className="px-6 py-5 text-center">DATE</th>
+              <th className="px-6 py-5 text-center">TYPE</th>
+              <th className="px-6 py-5 text-center">VERIFICATION</th>
+              <th className="px-6 py-5 text-center">STATUS</th>
+              <th className="px-6 py-5 text-center w-40">ACTIONS</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">

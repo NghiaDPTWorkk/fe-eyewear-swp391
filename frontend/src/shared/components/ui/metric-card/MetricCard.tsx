@@ -33,9 +33,8 @@ export function MetricCard({
   const getIconBgColor = () => {
     switch (colorScheme) {
       case 'primary':
-        return 'bg-mint-50 text-mint-700'
       case 'mint':
-        return 'bg-primary-100 text-primary-600'
+        return 'bg-mint-50 text-mint-700'
       case 'secondary':
         return 'bg-purple-50 text-purple-600'
       case 'success':
@@ -52,11 +51,13 @@ export function MetricCard({
   }
 
   return (
-    <Card className={cn('p-6', className)}>
+    <Card className={cn('p-6 border-none shadow-sm ring-1 ring-neutral-100/50', className)}>
       <div className="flex justify-between items-start">
         <div>
-          <p className="text-[12px] font-bold text-slate-400 uppercase tracking-widest">{label}</p>
-          <h3 className="text-3xl font-bold mt-2 text-slate-900 font-heading tracking-tight">
+          <p className="text-[12px] font-bold text-slate-400 tracking-wider whitespace-nowrap">
+            {label}
+          </p>
+          <h3 className="text-2xl font-bold mt-1.5 text-slate-900 font-heading tracking-tight">
             {value}
           </h3>
         </div>

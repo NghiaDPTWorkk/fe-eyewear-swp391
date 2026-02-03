@@ -44,16 +44,16 @@ export const COLORS = {
 // ─────────────────────────────────────────────────────────────────────────────
 export const TYPOGRAPHY = {
   // Heading styles
-  pageTitle: 'text-3xl font-semibold text-gray-900 tracking-tight',
-  pageSubtitle: 'text-gray-500 mt-1 font-normal',
+  pageTitle: 'text-2xl font-bold text-gray-900 tracking-tight',
+  pageSubtitle: 'text-gray-500 text-sm font-normal leading-relaxed',
   sectionTitle: 'text-lg font-semibold text-gray-900',
   cardTitle: 'text-sm font-semibold text-gray-900',
   // Body text
   body: 'text-sm text-gray-600',
   bodySmall: 'text-xs text-gray-500',
   // Labels
-  label: 'text-xs font-semibold text-gray-400 uppercase tracking-wider',
-  labelSmall: 'text-[10px] font-semibold text-gray-400 uppercase tracking-widest',
+  label: 'text-xs font-semibold text-gray-400 tracking-wider',
+  labelSmall: 'text-[10px] font-semibold text-gray-400 tracking-widest',
   // Table headers
   tableHeader: 'text-[10px] font-semibold text-gray-400 uppercase tracking-widest'
 } as const
@@ -63,9 +63,9 @@ export const TYPOGRAPHY = {
 // ─────────────────────────────────────────────────────────────────────────────
 export const STYLES = {
   // Breadcrumb
-  breadcrumbLink: 'text-neutral-400 hover:text-emerald-500 transition-colors',
-  breadcrumbActive: 'text-emerald-600 font-semibold',
-  breadcrumbSeparator: 'text-neutral-300',
+  breadcrumbLink: 'text-neutral-400 hover:text-neutral-600 transition-colors font-normal',
+  breadcrumbActive: 'text-mint-600 font-medium',
+  breadcrumbSeparator: 'text-neutral-300 mx-1',
   // Cards
   card: 'p-5 border border-neutral-200 shadow-sm rounded-xl',
   cardHover: 'hover:shadow-md transition-shadow cursor-pointer',

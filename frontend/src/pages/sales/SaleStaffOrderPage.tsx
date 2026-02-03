@@ -8,6 +8,7 @@ import { IoChevronBackOutline, IoChevronForwardOutline } from 'react-icons/io5'
 import type { Order } from '@/features/sales/types'
 import { useSalesStaffOrders } from '@/features/sales/hooks'
 import { PageHeader } from '@/features/sales/components/common'
+import { useDebounce } from '@/shared/hooks'
 
 export default function SaleStaffOrderPage() {
   const { orders, loading, fetchOrders } = useSalesStaffOrders()
@@ -20,6 +21,7 @@ export default function SaleStaffOrderPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(!!orderIdParam)
   const [typeFilter, setTypeFilter] = useState('All')
   const [search, setSearch] = useState('')
+  const debouncedSearch = useDebounce(search, 300)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
 
   useEffect(() => {
@@ -31,9 +33,9 @@ export default function SaleStaffOrderPage() {
       orders.filter(
         (o) =>
           (invoiceIdParam ? o.invoiceId === invoiceIdParam : true) &&
-          ((o._id || '').toString().toLowerCase().includes(search.toLowerCase()) ||
-            o.customerName?.toLowerCase().includes(search.toLowerCase()) ||
-            o.orderCode?.toLowerCase().includes(search.toLowerCase())) &&
+          ((o._id || '').toString().toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+            o.customerName?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+            o.orderCode?.toLowerCase().includes(debouncedSearch.toLowerCase())) &&
           (typeFilter === 'All' ||
             (typeFilter === 'Prescription' &&
               (o.type?.includes('MANUFACTURING') || o.isPrescription)) ||
@@ -43,7 +45,7 @@ export default function SaleStaffOrderPage() {
               !o.type?.includes('PRE-ORDER') &&
               !o.isPrescription))
       ),
-    [orders, search, typeFilter, invoiceIdParam]
+    [orders, debouncedSearch, typeFilter, invoiceIdParam]
   )
 
   const handleOpenDrawer = (o: Order) => {
@@ -62,13 +64,10 @@ export default function SaleStaffOrderPage() {
   }
 
   return (
-    <Container>
+    <Container className="pt-2 pb-8 px-2 max-w-none">
       <PageHeader
-        title="Order List"
-        breadcrumbs={[
-          { label: 'Dashboard', path: '/salestaff/dashboard' },
-          { label: 'Order Management' }
-        ]}
+        title="Order Management"
+        breadcrumbs={[{ label: 'Dashboard', path: '/salestaff/dashboard' }, { label: 'Orders' }]}
       />
 
       <OrderFilterBar
@@ -84,12 +83,12 @@ export default function SaleStaffOrderPage() {
           { label: 'Pre-order', value: 'Pre-order' },
           { label: 'Regular', value: 'Regular' }
         ]}
-        placeholder="Search by Order ID, Customer Name..."
+        placeholder="Search by Order Code, Customer Name..."
         onExport={() => {}}
         onAdd={() => {}}
       />
 
-      <Card className="p-0 overflow-hidden border border-neutral-200 shadow-sm bg-white rounded-xl mt-6">
+      <Card className="p-0 overflow-hidden border border-gray-200 shadow-sm bg-white rounded-xl mt-6">
         <OrderList
           orders={filteredOrders}
           loading={loading}
@@ -104,7 +103,7 @@ export default function SaleStaffOrderPage() {
           Showing 1-{filteredOrders.length} of {orders.length} orders
         </span>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="px-2 border-neutral-200">
+          <Button variant="outline" size="sm" className="px-2 border-gray-200">
             <IoChevronBackOutline />
           </Button>
           <Button
@@ -115,7 +114,7 @@ export default function SaleStaffOrderPage() {
           >
             1
           </Button>
-          <Button variant="outline" size="sm" className="px-2 border-neutral-200">
+          <Button variant="outline" size="sm" className="px-2 border-gray-200">
             <IoChevronForwardOutline />
           </Button>
         </div>

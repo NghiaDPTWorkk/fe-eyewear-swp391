@@ -144,7 +144,7 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
               <h1 className="text-3xl font-semibold text-neutral-900 tracking-tight">
                 Order #{order.id}
               </h1>
-              <span className="px-5 py-2 bg-[#dcfce7] text-[#15803d] text-[10px] font-semibold uppercase tracking-widest rounded-full border border-[#bbf7d0] cursor-pointer">
+              <span className="px-5 py-2 bg-[#dcfce7] text-[#15803d] text-[10px] font-semibold tracking-widest rounded-full border border-[#bbf7d0] cursor-pointer">
                 {order.status}
               </span>
             </div>
@@ -225,7 +225,7 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
                       {item.specs && (
                         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="bg-gray-50 rounded-lg p-3">
-                            <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                            <h4 className="text-xs font-semibold text-gray-400 tracking-wider mb-2">
                               Frame Measurements
                             </h4>
                             <div className="flex justify-between text-sm">
@@ -254,7 +254,7 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
 
                           {item.prescription && (
                             <div className="bg-emerald-50/50 border border-emerald-100/50 rounded-lg p-3">
-                              <h4 className="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                              <h4 className="text-xs font-semibold text-emerald-600 tracking-wider mb-2 flex items-center gap-1.5">
                                 <IoEyeOutline /> Prescription Lens
                               </h4>
                               <p
@@ -421,7 +421,7 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
                       <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
                     </div>
                     <div className="group">
-                      <span className="text-xs font-semibold text-emerald-600 uppercase tracking-widest mb-1 block">
+                      <span className="text-xs font-semibold text-emerald-600 tracking-widest mb-1 block">
                         {act.time}
                       </span>
                       <h4 className="text-base font-medium text-gray-900 group-hover:text-emerald-700 transition-colors">
@@ -478,7 +478,7 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
             <div className="absolute top-0 right-0 p-4 opacity-10">
               <IoPersonOutline size={100} />
             </div>
-            <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-6 relative z-10">
+            <h2 className="text-sm font-semibold text-gray-400 tracking-wider mb-6 relative z-10">
               Customer
             </h2>
             <div className="relative z-10">
@@ -523,7 +523,7 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
 
           {/* Delivery & Billing */}
           <Card className="p-6 border border-neutral-100 shadow-sm rounded-2xl">
-            <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-6">
+            <h2 className="text-sm font-semibold text-gray-400 tracking-wider mb-6">
               Delivery Details
             </h2>
 
@@ -541,7 +541,7 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
               </div>
 
               <div className="pt-4 border-t border-gray-100">
-                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+                <h3 className="text-xs font-semibold text-gray-400 tracking-wider mb-3">
                   Billing Address
                 </h3>
                 <div className="flex items-center gap-2 text-sm">
@@ -554,7 +554,7 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
 
           {/* Notes */}
           <Card className="p-6 border border-neutral-100 shadow-sm rounded-2xl bg-amber-50/30 border-amber-100/50">
-            <h2 className="text-sm font-semibold text-amber-700/70 uppercase tracking-wider mb-3">
+            <h2 className="text-sm font-semibold text-amber-700/70 tracking-wider mb-3">
               Order Notes
             </h2>
             <textarea

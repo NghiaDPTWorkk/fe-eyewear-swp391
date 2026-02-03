@@ -82,7 +82,7 @@ export default function SaleStaffCustomerPage() {
   const selectedCustomer = customers.find((c) => c.id === selectedCustomerId) || null
 
   return (
-    <Container className="h-[calc(100vh-140px)] flex flex-col overflow-hidden">
+    <Container className="pt-2 pb-1 px-2 max-w-none h-screen flex flex-col overflow-hidden">
       <PageHeader
         title="Customer Inbox"
         subtitle="Manage communications and provide personalized support to your clients."
@@ -172,7 +172,7 @@ export default function SaleStaffCustomerPage() {
                       </h2>
                       <div className="flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                        <span className="text-[10px] font-medium text-emerald-600 uppercase tracking-wider">
+                        <span className="text-[10px] font-medium text-emerald-600 tracking-wider">
                           Online
                         </span>
                       </div>
@@ -182,7 +182,7 @@ export default function SaleStaffCustomerPage() {
                   <button
                     onClick={() => setShowProfile(!showProfile)}
                     className={cn(
-                      'flex items-center gap-2 px-3 py-1.5 rounded-xl text-[10px] font-semibold uppercase tracking-widest transition-all border',
+                      'flex items-center gap-2 px-3 py-1.5 rounded-xl text-[10px] font-semibold tracking-widest transition-all border',
                       showProfile
                         ? 'bg-primary-50 border-primary-200 text-primary-600'
                         : 'bg-white border-neutral-200 text-neutral-400 hover:bg-neutral-50'
@@ -231,7 +231,7 @@ export default function SaleStaffCustomerPage() {
                     </p>
                     <span
                       className={cn(
-                        'mt-4 px-4 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-wider border',
+                        'mt-4 px-4 py-1.5 rounded-full text-[10px] font-semibold tracking-wider border',
                         selectedCustomer.badgeColor.replace('bg-', 'bg-white border-')
                       )}
                     >
@@ -242,7 +242,7 @@ export default function SaleStaffCustomerPage() {
                   <div className="space-y-6">
                     <div className="p-5 bg-neutral-900 rounded-3xl text-white">
                       <div className="flex justify-between items-center mb-4">
-                        <p className="text-[10px] font-semibold uppercase opacity-50 tracking-wider">
+                        <p className="text-[10px] font-semibold opacity-50 tracking-wider">
                           Customer Value
                         </p>
                         <IoBagCheckOutline size={18} className="opacity-50" />
@@ -250,18 +250,18 @@ export default function SaleStaffCustomerPage() {
                       <p className="text-2xl font-semibold">$4,250</p>
                       <div className="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-4">
                         <div>
-                          <p className="text-[9px] font-semibold uppercase opacity-40">Orders</p>
+                          <p className="text-[9px] font-semibold opacity-40">Orders</p>
                           <p className="text-sm font-semibold">12 Total</p>
                         </div>
                         <div>
-                          <p className="text-[9px] font-semibold uppercase opacity-40">Tier</p>
+                          <p className="text-[9px] font-semibold opacity-40">Tier</p>
                           <p className="text-sm font-semibold text-emerald-400">Elite</p>
                         </div>
                       </div>
                     </div>
 
                     <div className="space-y-4">
-                      <h4 className="text-[10px] font-semibold text-neutral-400 uppercase tracking-widest pl-1">
+                      <h4 className="text-[10px] font-semibold text-neutral-400 tracking-widest pl-1">
                         Contact Details
                       </h4>
                       <div className="space-y-4">
@@ -283,7 +283,7 @@ export default function SaleStaffCustomerPage() {
                               {info.icon}
                             </div>
                             <div className="min-w-0">
-                              <p className="text-[10px] font-semibold text-neutral-400 uppercase tracking-tight leading-none mb-1">
+                              <p className="text-[10px] font-semibold text-neutral-400 tracking-tight leading-none mb-1">
                                 {info.label}
                               </p>
                               <p className="text-sm font-semibold text-neutral-800 truncate">

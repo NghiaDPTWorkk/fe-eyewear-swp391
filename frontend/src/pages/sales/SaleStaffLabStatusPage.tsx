@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import { Container, Card, Button } from '@/components'
 import {
   IoFilter,
@@ -9,8 +8,11 @@ import {
   IoChevronForward
 } from 'react-icons/io5'
 
+import { PageHeader } from '@/features/sales/components/common'
+
 export default function SaleStaffLabStatusPage() {
   const labOrders = [
+    // ... existing labOrders data
     {
       id: '#ORD-7352',
       type: 'Progressive Digital',
@@ -62,27 +64,17 @@ export default function SaleStaffLabStatusPage() {
   ]
 
   return (
-    <Container>
-      <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm mb-4 font-medium">
-          <Link
-            to="/salestaff/dashboard"
-            className="text-neutral-400 hover:text-primary-500 transition-colors"
-          >
-            Dashboard
-          </Link>
-          <span className="text-neutral-300">/</span>
-          <span className="text-primary-500 font-semibold">Lab Status Tracking</span>
-        </div>
-      </div>
-
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Lab Status Tracking</h1>
-          <p className="text-sm text-neutral-500 mt-1">
-            Monitor production stages, urgent requests, and lens specifications.
-          </p>
-        </div>
+    <Container className="pt-2 pb-8 px-2 max-w-none">
+      <div className="flex items-center justify-between mb-6">
+        <PageHeader
+          title="Lab Status Tracking"
+          subtitle="Monitor production stages, urgent requests, and lens specifications."
+          breadcrumbs={[
+            { label: 'Dashboard', path: '/salestaff/dashboard' },
+            { label: 'Lab Status' }
+          ]}
+          noMargin
+        />
         <div className="flex gap-2">
           <div className="flex gap-2 bg-white p-1 rounded-xl border border-neutral-100 shadow-sm">
             <Button
@@ -121,7 +113,7 @@ export default function SaleStaffLabStatusPage() {
         <div className="col-span-12 lg:col-span-3 space-y-4">
           <Card className="p-4 border border-neutral-100 flex items-center justify-between">
             <div>
-              <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider">
+              <p className="text-[11px] font-semibold text-neutral-400 tracking-wider">
                 In Production
               </p>
               <h3 className="text-2xl font-semibold text-neutral-900 mt-1">42</h3>
@@ -132,7 +124,7 @@ export default function SaleStaffLabStatusPage() {
           </Card>
           <Card className="p-4 border border-neutral-100 flex items-center justify-between">
             <div>
-              <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider">
+              <p className="text-[11px] font-semibold text-neutral-400 tracking-wider">
                 Urgent / Late
               </p>
               <h3 className="text-2xl font-semibold text-neutral-900 mt-1">8</h3>
@@ -143,7 +135,7 @@ export default function SaleStaffLabStatusPage() {
           </Card>
           <Card className="p-4 border border-neutral-100 flex items-center justify-between">
             <div>
-              <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider">
+              <p className="text-[11px] font-semibold text-neutral-400 tracking-wider">
                 Ready for QC
               </p>
               <h3 className="text-2xl font-semibold text-neutral-900 mt-1">12</h3>
@@ -168,7 +160,7 @@ export default function SaleStaffLabStatusPage() {
                 </span>
               </h3>
             </div>
-            <span className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider italic">
+            <span className="text-[11px] font-semibold text-neutral-400 tracking-wider italic">
               Read-Only View
             </span>
           </div>
@@ -176,7 +168,7 @@ export default function SaleStaffLabStatusPage() {
           <div className="grid grid-cols-4 gap-8">
             <div className="col-span-2 space-y-4">
               <div>
-                <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider mb-2">
+                <p className="text-[11px] font-semibold text-neutral-400 tracking-wider mb-2">
                   Lens Type
                 </p>
                 <div className="px-3 py-2 bg-neutral-50 rounded-lg text-sm font-medium text-neutral-800">
@@ -184,7 +176,7 @@ export default function SaleStaffLabStatusPage() {
                 </div>
               </div>
               <div>
-                <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider mb-2">
+                <p className="text-[11px] font-semibold text-neutral-400 tracking-wider mb-2">
                   Material
                 </p>
                 <div className="px-3 py-2 bg-neutral-50 rounded-lg text-sm font-medium text-neutral-800">
@@ -195,18 +187,18 @@ export default function SaleStaffLabStatusPage() {
 
             <div className="col-span-1 border-x border-neutral-100 px-6 space-y-4">
               <div>
-                <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider mb-2 text-center">
+                <p className="text-[11px] font-semibold text-neutral-400 tracking-wider mb-2 text-center">
                   Sphere (SPH)
                 </p>
                 <div className="flex gap-2 justify-center">
                   <div className="text-center">
-                    <span className="text-[10px] text-neutral-400 uppercase font-semibold tracking-wider">
+                    <span className="text-[10px] text-neutral-400 font-semibold tracking-wider">
                       OD
                     </span>
                     <div className="text-sm font-semibold text-neutral-900">-2.50</div>
                   </div>
                   <div className="text-center">
-                    <span className="text-[10px] text-neutral-400 uppercase font-semibold tracking-wider">
+                    <span className="text-[10px] text-neutral-400 font-semibold tracking-wider">
                       OS
                     </span>
                     <div className="text-sm font-semibold text-neutral-900">-2.75</div>
@@ -214,7 +206,7 @@ export default function SaleStaffLabStatusPage() {
                 </div>
               </div>
               <div>
-                <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider mb-2 text-center">
+                <p className="text-[11px] font-semibold text-neutral-400 tracking-wider mb-2 text-center">
                   Cylinder (CYL)
                 </p>
                 <div className="flex gap-2 justify-center">
@@ -225,7 +217,7 @@ export default function SaleStaffLabStatusPage() {
                     <div className="text-sm font-semibold text-neutral-900">-0.50</div>
                   </div>
                   <div className="text-center">
-                    <span className="text-[10px] text-neutral-400 uppercase font-semibold tracking-wider">
+                    <span className="text-[10px] text-neutral-400 font-semibold tracking-wider">
                       OS
                     </span>
                     <div className="text-sm font-semibold text-neutral-900">-0.75</div>
@@ -249,10 +241,10 @@ export default function SaleStaffLabStatusPage() {
                   Coating
                 </p>
                 <div className="flex flex-wrap gap-1.5">
-                  <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-semibold rounded uppercase tracking-wider">
+                  <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-semibold rounded tracking-wider">
                     Anti-Reflective
                   </span>
-                  <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-semibold rounded uppercase tracking-wider">
+                  <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-semibold rounded tracking-wider">
                     Blue Light Filter
                   </span>
                 </div>
@@ -279,25 +271,25 @@ export default function SaleStaffLabStatusPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-white border-b border-neutral-100">
-                <th className="pl-10 px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] uppercase tracking-widest align-middle">
+                <th className="pl-10 px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] tracking-widest align-middle">
                   Order ID
                 </th>
-                <th className="px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] uppercase tracking-widest align-middle">
+                <th className="px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] tracking-widest align-middle">
                   Lens Type
                 </th>
-                <th className="px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] uppercase tracking-widest text-center align-middle">
+                <th className="px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] tracking-widest text-center align-middle">
                   Lab Station
                 </th>
-                <th className="px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] uppercase tracking-widest text-center align-middle">
+                <th className="px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] tracking-widest text-center align-middle">
                   Progress
                 </th>
-                <th className="px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] uppercase tracking-widest text-center align-middle">
+                <th className="px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] tracking-widest text-center align-middle">
                   Time in Stn.
                 </th>
-                <th className="px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] uppercase tracking-widest text-center align-middle">
+                <th className="px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] tracking-widest text-center align-middle">
                   Urgency
                 </th>
-                <th className="pr-10 px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] uppercase tracking-widest text-right align-middle">
+                <th className="pr-10 px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] tracking-widest text-right align-middle">
                   Action
                 </th>
               </tr>
@@ -327,7 +319,7 @@ export default function SaleStaffLabStatusPage() {
                   </td>
                   <td className="px-6 py-6 text-center">
                     <span
-                      className={`inline-flex items-center justify-center px-4 py-1.5 rounded-full text-[9px] font-semibold uppercase tracking-widest border shadow-sm bg-white ${order.stationColor.replace('bg-', 'text-').replace('text-', 'border-')}`}
+                      className={`inline-flex items-center justify-center px-4 py-1.5 rounded-full text-[9px] font-semibold tracking-widest border shadow-sm bg-white ${order.stationColor.replace('bg-', 'text-').replace('text-', 'border-')}`}
                     >
                       {order.station}
                     </span>
@@ -353,7 +345,7 @@ export default function SaleStaffLabStatusPage() {
                   <td className="px-6 py-6 text-center">
                     <div className="flex justify-center">
                       <span
-                        className={`px-3 py-1.5 rounded-lg text-[9px] font-semibold uppercase tracking-widest shadow-sm bg-white ${order.urgencyColor.replace('bg-', 'text-').replace('text-', 'border-')}`}
+                        className={`px-3 py-1.5 rounded-lg text-[9px] font-semibold tracking-widest shadow-sm bg-white ${order.urgencyColor.replace('bg-', 'text-').replace('text-', 'border-')}`}
                       >
                         {order.urgency}
                       </span>

@@ -113,32 +113,38 @@ export default function PrescriptionVerification({
   const parameters = lens?.parameters
 
   return (
-    <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
+    <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
       {/* Status Badge */}
-      <div className="flex items-center justify-end px-1">
-        {isApproved ? (
-          <span className="px-3 py-1.5 bg-emerald-50 text-emerald-600 font-medium rounded-full text-xs border border-emerald-200 uppercase tracking-wide flex items-center gap-1.5">
-            <IoCheckmark size={14} /> Verified
-          </span>
-        ) : isPending ? (
-          <span className="px-3 py-1.5 bg-amber-50 text-amber-600 font-medium rounded-full text-xs border border-amber-200 uppercase tracking-wide">
-            Pending Verification
-          </span>
-        ) : (
-          <span className="px-3 py-1.5 bg-orange-50 text-orange-600 font-medium rounded-full text-xs border border-orange-200 uppercase tracking-wide">
-            {order.status}
-          </span>
-        )}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 text-sm text-gray-600">
+          <span className="font-medium">Order Status:</span>
+          {isApproved ? (
+            <span className="px-3 py-1.5 bg-emerald-50 text-emerald-600 font-medium rounded-lg text-xs border border-emerald-200 uppercase tracking-wide flex items-center gap-1.5">
+              <IoCheckmark size={14} /> Verified
+            </span>
+          ) : isPending ? (
+            <span className="px-3 py-1.5 bg-amber-50 text-amber-600 font-medium rounded-lg text-xs border border-amber-200 uppercase tracking-wide">
+              Pending Verification
+            </span>
+          ) : (
+            <span className="px-3 py-1.5 bg-orange-50 text-orange-600 font-medium rounded-lg text-xs border border-orange-200 uppercase tracking-wide">
+              {order.status}
+            </span>
+          )}
+        </div>
+        <div className="text-sm text-gray-500">
+          <span className="font-medium text-amber-600">24</span> Pending
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Left Column (Main Content): Image & Data Entry */}
         <div className="xl:col-span-2 space-y-4">
           {/* Image Viewer */}
-          <Card className="p-0 overflow-hidden h-[500px] flex flex-col border border-neutral-200 shadow-sm">
-            <div className="flex justify-between items-center px-4 py-3 border-b border-neutral-100 bg-gray-50/50">
-              <h3 className="font-medium text-gray-900 text-sm uppercase tracking-wide flex items-center gap-2">
-                <IoEyeOutline /> Prescription Scan
+          <Card className="p-0 overflow-hidden h-[500px] flex flex-col border border-gray-200 shadow-sm rounded-xl bg-white">
+            <div className="flex justify-between items-center px-4 py-3 border-b border-gray-200 bg-white">
+              <h3 className="font-medium text-gray-700 text-sm flex items-center gap-2">
+                <IoEyeOutline /> PRESCRIPTION SCAN
               </h3>
               <div className="flex gap-2">
                 <button
@@ -186,7 +192,7 @@ export default function PrescriptionVerification({
           </Card>
 
           {/* Data Entry Form */}
-          <Card className="p-0 border border-neutral-200 overflow-hidden shadow-sm">
+          <Card className="p-0 border border-gray-200 overflow-hidden shadow-sm rounded-xl bg-white">
             <div className="px-4 py-3 bg-white border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-mint-50 text-mint-600 flex items-center justify-center border border-mint-100/50 shadow-sm">
@@ -373,19 +379,58 @@ export default function PrescriptionVerification({
               </div>
             )}
             {isApproved && (
-              <div className="bg-emerald-50/50 p-5 border-t border-emerald-100">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center flex-shrink-0">
-                    <IoCheckmark size={20} />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-emerald-700">✓ Verified and Approved</p>
-                    {order.completedAt && (
-                      <p className="text-xs text-emerald-600 mt-0.5">
-                        Completed on {new Date(order.completedAt).toLocaleDateString()} at{' '}
-                        {new Date(order.completedAt).toLocaleTimeString()}
-                      </p>
-                    )}
+              <div className="p-6 bg-white border-t border-gray-200">
+                <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-200 rounded-2xl p-5 shadow-sm">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-emerald-500 text-white flex items-center justify-center flex-shrink-0 shadow-md">
+                      <IoCheckmark size={24} className="font-bold" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-3">
+                        <h3 className="text-lg font-bold text-emerald-900">
+                          ✓ Verified and Approved
+                        </h3>
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-3">
+                        {/* Verified By */}
+                        <div className="flex items-center gap-3 bg-white/60 rounded-lg p-3 border border-emerald-100">
+                          <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
+                            <IoPersonOutline className="text-emerald-600" size={16} />
+                          </div>
+                          <div>
+                            <p className="text-xs text-emerald-600 font-medium">Verified by</p>
+                            <p className="text-sm font-semibold text-emerald-900">
+                              {order.assignStaff || 'Sales Staff'}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Completion Time */}
+                        {order.completedAt && (
+                          <div className="flex items-center gap-3 bg-white/60 rounded-lg p-3 border border-emerald-100">
+                            <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
+                              <IoCalendarOutline className="text-emerald-600" size={16} />
+                            </div>
+                            <div>
+                              <p className="text-xs text-emerald-600 font-medium">Completed on</p>
+                              <p className="text-sm font-semibold text-emerald-900">
+                                {new Date(order.completedAt).toLocaleDateString('en-US', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  year: 'numeric'
+                                })}{' '}
+                                at{' '}
+                                {new Date(order.completedAt).toLocaleTimeString('en-US', {
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -394,9 +439,9 @@ export default function PrescriptionVerification({
         </div>
 
         {/* Right Column: Information & Operations (Sidebar) */}
-        <div className="space-y-6">
+        <div className="space-y-5">
           {/* Order Details Card */}
-          <Card className="p-5 border border-neutral-200 shadow-sm">
+          <Card className="p-5 border border-gray-200 shadow-sm rounded-xl bg-white">
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-medium text-gray-900 text-sm">Order Details</h3>
               <button className="text-mint-600 text-xs font-medium hover:underline">Edit</button>
@@ -441,7 +486,7 @@ export default function PrescriptionVerification({
           </Card>
 
           {/* Customer Communication Hub */}
-          <Card className="p-0 border border-neutral-200 shadow-sm overflow-hidden bg-white">
+          <Card className="p-0 border border-gray-200 shadow-sm overflow-hidden bg-white rounded-xl">
             <div className="p-4 bg-white border-b border-gray-100 flex justify-between items-center">
               <h3 className="font-medium text-gray-900 text-sm flex items-center gap-2">
                 <IoChatbubblesOutline className="text-mint-500" /> Communication
@@ -540,7 +585,7 @@ export default function PrescriptionVerification({
           </Card>
 
           {/* Laboratory Operations Channel */}
-          <Card className="p-0 border border-neutral-200 shadow-sm overflow-hidden">
+          <Card className="p-0 border border-gray-200 shadow-sm overflow-hidden rounded-xl bg-white">
             <div className="p-4 bg-mint-50/50 border-b border-mint-100 flex justify-between items-center">
               <h3 className="font-medium text-mint-900 text-sm flex items-center gap-2">
                 <IoConstructOutline /> Lab Operations

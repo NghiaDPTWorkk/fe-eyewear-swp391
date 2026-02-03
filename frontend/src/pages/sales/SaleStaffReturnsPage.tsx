@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { Container, Button, Card } from '@/components'
 import ReturnDetails from '@/features/sales/components/returns/ReturnDetails'
 import {
@@ -10,40 +9,30 @@ import {
   IoChevronForward
 } from 'react-icons/io5'
 
+import { PageHeader } from '@/features/sales/components/common'
+
 export default function SaleStaffReturnsPage() {
   const [selectedReturnId, setSelectedReturnId] = useState<string | null>(null)
 
   if (selectedReturnId) {
     return (
-      <Container>
+      <Container className="pt-2 pb-8 px-2 max-w-none">
         <ReturnDetails returnId={selectedReturnId} onBack={() => setSelectedReturnId(null)} />
       </Container>
     )
   }
 
   return (
-    <Container>
-      <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm mb-2 font-medium">
-          <Link
-            to="/salestaff/dashboard"
-            className="text-neutral-400 hover:text-primary-500 transition-colors"
-          >
-            Dashboard
-          </Link>
-          <span className="text-neutral-300">/</span>
-          <Link
-            to="/salestaff/orders"
-            className="text-neutral-400 hover:text-primary-500 transition-colors"
-          >
-            Orders
-          </Link>
-          <span className="text-neutral-300">/</span>
-          <span className="text-primary-500 font-semibold">Returns Management</span>
-        </div>
-        <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">Returns Management</h1>
-        <p className="text-gray-500 mt-1">Process customer returns and refunds.</p>
-      </div>
+    <Container className="pt-2 pb-8 px-2 max-w-none">
+      <PageHeader
+        title="Returns Management"
+        subtitle="Process customer returns and refunds."
+        breadcrumbs={[
+          { label: 'Dashboard', path: '/salestaff/dashboard' },
+          { label: 'Orders', path: '/salestaff/orders' },
+          { label: 'Returns' }
+        ]}
+      />
 
       <div className="space-y-6">
         {/* Controls */}
@@ -53,7 +42,7 @@ export default function SaleStaffReturnsPage() {
             <input
               type="text"
               placeholder="Search Return ID, Order #..."
-              className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all placeholder:text-gray-400"
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-mint-500/20 focus:border-mint-500 transition-all placeholder:text-gray-400"
             />
           </div>
           <Button
@@ -116,7 +105,7 @@ export default function SaleStaffReturnsPage() {
                   </td>
                   <td className="px-6 py-6 align-middle">
                     <div className="flex justify-center">
-                      <span className="px-4 py-1.5 rounded-full text-[9px] font-semibold uppercase tracking-widest bg-white text-orange-600 border border-orange-100 shadow-sm">
+                      <span className="px-4 py-1.5 rounded-full text-[9px] font-semibold tracking-widest bg-white text-orange-600 border border-orange-100 shadow-sm">
                         Pending
                       </span>
                     </div>
@@ -155,7 +144,7 @@ export default function SaleStaffReturnsPage() {
                   </td>
                   <td className="px-6 py-6 align-middle">
                     <div className="flex justify-center">
-                      <span className="px-4 py-1.5 rounded-full text-[9px] font-semibold uppercase tracking-widest bg-white text-emerald-600 border border-emerald-100 shadow-sm">
+                      <span className="px-4 py-1.5 rounded-full text-[9px] font-semibold tracking-widest bg-white text-emerald-600 border border-emerald-100 shadow-sm">
                         Approved
                       </span>
                     </div>

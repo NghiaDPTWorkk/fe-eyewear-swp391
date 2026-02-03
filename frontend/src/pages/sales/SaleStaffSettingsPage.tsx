@@ -1,5 +1,4 @@
 import { Container } from '@/components'
-import { Link } from 'react-router-dom'
 import { IoWarningOutline } from 'react-icons/io5'
 import {
   ProfileForm,
@@ -7,24 +6,16 @@ import {
   NotificationPreferences,
   AccountInfoSidebar
 } from '@/features/sales/components/settings'
+import { PageHeader } from '@/features/sales/components/common'
 
 export default function SaleStaffSettingsPage() {
   return (
-    <Container>
-      <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm mb-2 font-medium">
-          <Link
-            to="/salestaff/dashboard"
-            className="text-neutral-400 hover:text-primary-500 transition-colors"
-          >
-            Home
-          </Link>
-          <span className="text-neutral-300">/</span>
-          <span className="text-primary-500 font-semibold">Settings</span>
-        </div>
-        <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">Settings</h1>
-        <p className="text-neutral-500 mt-1 font-medium">Manage your account and preferences</p>
-      </div>
+    <Container className="pt-2 pb-8 px-2 max-w-none">
+      <PageHeader
+        title="Settings"
+        subtitle="Manage your account and preferences"
+        breadcrumbs={[{ label: 'Home', path: '/salestaff/dashboard' }, { label: 'Settings' }]}
+      />
 
       <div className="mb-8 p-5 bg-amber-50/50 border border-amber-100 rounded-2xl flex gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
         <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">

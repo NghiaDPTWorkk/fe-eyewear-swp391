@@ -14,13 +14,14 @@ interface PageHeaderProps {
   title: string
   subtitle?: string
   breadcrumbs: BreadcrumbItem[]
+  noMargin?: boolean
 }
 
-export default function PageHeader({ title, subtitle, breadcrumbs }: PageHeaderProps) {
+export default function PageHeader({ title, subtitle, breadcrumbs, noMargin }: PageHeaderProps) {
   return (
-    <div className="mb-8">
+    <div className={noMargin ? '' : 'mb-3'}>
       {/* Breadcrumbs */}
-      <div className="flex items-center gap-2 text-sm mb-2 font-medium">
+      <div className="flex items-center gap-2 text-sm mb-1 font-medium">
         {breadcrumbs.map((item, index) => {
           const isLast = index === breadcrumbs.length - 1
           return (

@@ -1,5 +1,6 @@
 import { IoClose } from 'react-icons/io5'
 import { cn } from '@/lib/utils'
+import StatusBadge from '../../common/StatusBadge'
 
 interface OrderDrawerHeaderProps {
   orderCode?: string
@@ -29,9 +30,7 @@ export const OrderDrawerHeader: React.FC<OrderDrawerHeaderProps> = ({
         >
           {orderTypeLabel} Order
         </span>
-        <span className="inline-block px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-medium uppercase tracking-wide rounded-full border border-emerald-100 shadow-sm">
-          {status}
-        </span>
+        <StatusBadge status={status || ''} />
       </div>
       <h2 className="text-2xl font-medium text-[#0f172a] tracking-tight">Order Details</h2>
       <p className="text-slate-400 text-sm font-normal mt-1">{orderCode || 'N/A'}</p>

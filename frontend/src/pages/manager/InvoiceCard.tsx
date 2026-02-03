@@ -53,19 +53,24 @@ function StaffSelect({
   staffList,
   value,
   onChange,
-  disabled
+  disabled,
+  className
 }: {
   staffList: AdminAccount[]
   value: string
   onChange: (v: string) => void
   disabled?: boolean
+  className?: string
 }) {
   return (
     <select
-      className="w-full px-3 py-2 rounded-lg border border-neutral-200 bg-white text-sm"
+      className={`px-3 py-2 rounded-lg border border-neutral-200 bg-white text-sm ${
+        className ?? 'w-full'
+      }`}
       value={value}
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
+      onClick={(e) => e.stopPropagation()}
     >
       <option value="">Chọn Operation staff</option>
       {staffList.map((s) => (
@@ -249,8 +254,57 @@ export default function InvoiceCard({
                           </div>
                         </div>
                         <div className="text-right shrink-0">
-                          <div className="text-xs text-neutral-500">Status</div>
-                          <div className="text-sm font-medium text-neutral-800">{order.status}</div>
+                          {canAssign ? (
+                            <div
+                              className="flex flex-col items-end gap-2"
+                              style={{ minWidth: 200 }}
+                            >
+                              {isStaffLoading ? (
+                                <div className="text-xs text-neutral-500">Loading staff...</div>
+                              ) : (
+                                <>
+                                  <StaffSelect
+                                    staffList={staffList}
+                                    value={selectedStaff}
+                                    onChange={(v) =>
+                                      setSelectedStaffByOrderId((cur) => ({
+                                        ...cur,
+                                        [order._id]: v
+                                      }))
+                                    }
+                                    disabled={assignMutation.isPending}
+                                    className="w-full text-xs py-1.5"
+                                  />
+                                  <button
+                                    type="button"
+                                    className="w-full px-3 py-1.5 rounded-lg bg-primary-500 text-white text-xs font-medium disabled:opacity-50 hover:bg-primary-600 transition-colors"
+                                    disabled={!selectedStaff || assignMutation.isPending}
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      assignMutation.mutate({
+                                        orderId: order._id,
+                                        assignedStaff: selectedStaff
+                                      })
+                                    }}
+                                  >
+                                    Assign
+                                  </button>
+                                </>
+                              )}
+                              {assignMutation.isError && (
+                                <div className="text-xs text-red-600 text-right mt-1">
+                                  Assign Error
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <>
+                              <div className="text-xs text-neutral-500">Status</div>
+                              <div className="text-sm font-medium text-neutral-800">
+                                {order.status}
+                              </div>
+                            </>
+                          )}
                         </div>
                       </div>
 
@@ -271,54 +325,6 @@ export default function InvoiceCard({
                           {order.assignedAt ?? '-'}
                         </div>
                       </div>
-
-                      {canAssign && (
-                        <div className="mt-4 rounded-lg border border-neutral-200 bg-neutral-50 p-3">
-                          <div className="text-xs font-semibold text-neutral-600 mb-2">
-                            Assign Operation Staff
-                          </div>
-
-                          {isStaffLoading ? (
-                            <div className="text-sm text-neutral-500">
-                              Đang tải danh sách staff...
-                            </div>
-                          ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 items-center">
-                              <StaffSelect
-                                staffList={staffList}
-                                value={selectedStaff}
-                                onChange={(v) =>
-                                  setSelectedStaffByOrderId((cur) => ({ ...cur, [order._id]: v }))
-                                }
-                                disabled={assignMutation.isPending}
-                              />
-
-                              <button
-                                type="button"
-                                className="px-3 py-2 rounded-lg bg-primary-500 text-white text-sm font-medium disabled:opacity-50"
-                                disabled={!selectedStaff || assignMutation.isPending}
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  assignMutation.mutate({
-                                    orderId: order._id,
-                                    assignedStaff: selectedStaff
-                                  })
-                                }}
-                              >
-                                Assign
-                              </button>
-                            </div>
-                          )}
-
-                          {assignMutation.isError && (
-                            <div className="mt-2 text-sm text-red-600">
-                              {(assignMutation.error as any)?.response?.data?.message ||
-                                (assignMutation.error as any)?.message ||
-                                'Assign thất bại.'}
-                            </div>
-                          )}
-                        </div>
-                      )}
 
                       <div className="mt-3">
                         <div className="text-xs font-semibold text-neutral-500 mb-2">Items</div>

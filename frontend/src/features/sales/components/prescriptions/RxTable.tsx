@@ -5,12 +5,14 @@ import { SalesStaffRxRow } from './RxRow'
 interface SalesStaffRxTableProps {
   orders: Order[]
   onVerify: (order: Order) => void
+  onReject?: (order: Order) => void
   loading?: boolean
 }
 
 export const SalesStaffRxTable: React.FC<SalesStaffRxTableProps> = ({
   orders,
   onVerify,
+  onReject,
   loading
 }) => {
   if (loading)
@@ -21,7 +23,6 @@ export const SalesStaffRxTable: React.FC<SalesStaffRxTableProps> = ({
             <tr className="text-center">
               <th className="px-6 py-5">Order Code</th>
               <th className="px-6 py-5 text-left">Lens / Product</th>
-              <th className="px-6 py-5">Customer</th>
               <th className="px-6 py-5">Rx Summary</th>
               <th className="px-6 py-5">Verification</th>
               <th className="px-6 py-5">Status</th>
@@ -36,9 +37,6 @@ export const SalesStaffRxTable: React.FC<SalesStaffRxTableProps> = ({
                 </td>
                 <td className="px-6 py-6">
                   <div className="h-4 bg-gray-100 rounded w-40"></div>
-                </td>
-                <td className="px-6 py-6">
-                  <div className="h-4 bg-gray-100 rounded w-32 mx-auto"></div>
                 </td>
                 <td className="px-6 py-6">
                   <div className="h-4 bg-gray-100 rounded w-48 mx-auto"></div>
@@ -66,7 +64,6 @@ export const SalesStaffRxTable: React.FC<SalesStaffRxTableProps> = ({
           <tr className="text-center">
             <th className="px-6 py-5">Order Code</th>
             <th className="px-6 py-5 text-left">Lens / Product</th>
-            <th className="px-6 py-5">Customer</th>
             <th className="px-6 py-5">Rx Summary</th>
             <th className="px-6 py-5">Verification</th>
             <th className="px-6 py-5">Status</th>
@@ -76,13 +73,18 @@ export const SalesStaffRxTable: React.FC<SalesStaffRxTableProps> = ({
         <tbody className="divide-y divide-gray-50">
           {orders.length === 0 ? (
             <tr>
-              <td colSpan={7} className="py-20 text-center text-gray-400 font-medium">
+              <td colSpan={6} className="py-20 text-center text-gray-400 font-medium">
                 No prescription orders found.
               </td>
             </tr>
           ) : (
             orders.map((order) => (
-              <SalesStaffRxRow key={order._id} order={order} onVerify={() => onVerify(order)} />
+              <SalesStaffRxRow
+                key={order._id}
+                order={order}
+                onVerify={() => onVerify(order)}
+                onReject={onReject ? () => onReject(order) : undefined}
+              />
             ))
           )}
         </tbody>

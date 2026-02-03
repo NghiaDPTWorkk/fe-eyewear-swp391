@@ -31,6 +31,8 @@ interface PrescriptionVerificationProps {
   onActionSuccess?: () => void
 }
 
+import ConfirmationModal from '@/shared/components/ui/ConfirmationModal'
+
 export default function PrescriptionVerification({
   orderId,
   onBack,
@@ -45,24 +47,35 @@ export default function PrescriptionVerification({
   const [rotation, setRotation] = useState(0)
   const [zoom, setZoom] = useState(100)
 
-  const handleApprove = async () => {
-    if (window.confirm('Are you sure you want to approve this prescription?')) {
-      const success = await approveOrder(orderId)
-      if (success) {
-        toast.success('Prescription approved')
-        refetch()
-        onActionSuccess?.() // Trigger refresh
-      }
-    }
+  // Confirmation Modal State
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false)
+  const [confirmAction, setConfirmAction] = useState<'approve' | 'reject' | null>(null)
+
+  const handleApprove = () => {
+    setConfirmAction('approve')
+    setIsConfirmOpen(true)
   }
 
-  const handleReject = async () => {
-    if (window.confirm('Are you sure you want to reject this prescription?')) {
-      const success = await rejectOrder(orderId)
-      if (success) {
-        toast.success('Prescription rejected')
-        refetch()
-      }
+  const handleReject = () => {
+    setConfirmAction('reject')
+    setIsConfirmOpen(true)
+  }
+
+  const handleConfirm = async () => {
+    let success = false
+    if (confirmAction === 'approve') {
+      success = await approveOrder(orderId)
+    } else if (confirmAction === 'reject') {
+      success = await rejectOrder(orderId, order?.invoiceId)
+    }
+
+    if (success) {
+      if (confirmAction === 'approve') toast.success('Prescription approved')
+      if (confirmAction === 'reject') toast.success('Prescription rejected')
+
+      setIsConfirmOpen(false)
+      refetch()
+      onActionSuccess?.()
     }
   }
 
@@ -596,6 +609,20 @@ export default function PrescriptionVerification({
           </Card>
         </div>
       </div>
+      <ConfirmationModal
+        isOpen={isConfirmOpen}
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirm={handleConfirm}
+        title={confirmAction === 'approve' ? 'Approve Prescription' : 'Reject Prescription'}
+        message={
+          confirmAction === 'approve'
+            ? 'Are you sure you want to approve this prescription? This will move the order to the next stage.'
+            : 'Are you sure you want to reject this prescription? This action cannot be undone and will reject the associated invoice.'
+        }
+        confirmText={confirmAction === 'approve' ? 'Approve' : 'Reject'}
+        type={confirmAction === 'approve' ? 'info' : 'danger'}
+        isLoading={processing}
+      />
     </div>
   )
 }

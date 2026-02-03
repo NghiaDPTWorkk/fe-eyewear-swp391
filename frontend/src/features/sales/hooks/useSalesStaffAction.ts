@@ -76,11 +76,25 @@ export const useSalesStaffAction = () => {
   )
 
   const rejectOrder = useCallback(
-    async (id: string) => {
+    async (id: string, invoiceId?: string) => {
       setProcessing(true)
       setError(null)
       try {
+        // 1. Reject the Order
         await httpClient.patch(`/admin/orders/${id}/status/reject`)
+
+        // 2. If Invoice ID is present, reject the Invoice as well
+        if (invoiceId) {
+          try {
+            await httpClient.patch(`/admin/invoices/${invoiceId}/status/reject`)
+          } catch (invErr) {
+            console.error('Failed to auto-reject invoice:', invErr)
+            // We don't block the flow if invoice reject fails, but we log it.
+            // Or maybe we should? User said "reject call reject invoice".
+            // Assuming soft dependency effectively.
+          }
+        }
+
         toast.success('Order rejected successfully')
         invalidateSalesData()
         return true

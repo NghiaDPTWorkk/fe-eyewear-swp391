@@ -112,15 +112,13 @@ export const useSalesStaffOrderDetail = (orderId: string | null | number) => {
     queryFn: async () => {
       if (!orderId) return null
 
-      // 1. Try to find in existing cache first
       const cachedOrders = queryClient.getQueryData<Order[]>(['sales', 'orders'])
       const cachedOrder = cachedOrders?.find((o) => o._id === orderId.toString())
 
-      if (cachedOrder) {
+      if (cachedOrder && cachedOrder.customerName !== 'Guest') {
         return cachedOrder
       }
 
-      // 2. Fallback: Fetch from API
       try {
         const response = await httpClient.get<any>(`/admin/orders/${orderId}`)
         const ord =
@@ -132,19 +130,30 @@ export const useSalesStaffOrderDetail = (orderId: string | null | number) => {
 
         if (!ord) return null
 
-        return transformOrder(ord, null) as OrderDetail
+        let invoiceData = null
+        if (ord.invoiceId) {
+          const cachedInvoices = queryClient.getQueryData<any[]>(['sales', 'invoices'])
+          let invoice = cachedInvoices?.find(
+            (i: any) => i.id === ord.invoiceId || i._id === ord.invoiceId
+          )
+
+          if (!invoice) {
+            const invRes = await httpClient.get<any>('/admin/invoices/deposited')
+            const invoices = invRes.data?.data || invRes.data || []
+            if (Array.isArray(invoices)) {
+              invoice = invoices.find((i: any) => i.id === ord.invoiceId || i._id === ord.invoiceId)
+            }
+          }
+          invoiceData = invoice
+        }
+
+        return transformOrder(ord, invoiceData) as OrderDetail
       } catch (err) {
         console.error('Failed to fetch order detail:', err)
         return null
       }
     },
     enabled: !!orderId,
-    initialData: () => {
-      // Use initialData to provide instant feedback from cache
-      if (!orderId) return undefined
-      const cachedOrders = queryClient.getQueryData<Order[]>(['sales', 'orders'])
-      return cachedOrders?.find((o) => o._id === orderId.toString())
-    },
     staleTime: 60000 // 1 minute
   })
 }

@@ -109,7 +109,10 @@ export const OrderDetailsDrawer: React.FC<{
     let success = false
     if (view === 'rx') {
       // For Manufacturing/Prescription orders, approve the specific order
-      success = action === 'approve' ? await approveOrder(order._id) : await rejectOrder(order._id)
+      success =
+        action === 'approve'
+          ? await approveOrder(order._id)
+          : await rejectOrder(order._id, order.invoiceId)
     } else {
       // Default to Invoice level actions
       if (order.invoiceId) {

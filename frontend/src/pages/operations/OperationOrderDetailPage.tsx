@@ -83,13 +83,13 @@ function OrderDetailContent({ order, orderId, navigate }: OrderDetailContentProp
   const handleStartProcessing = () => {
     // Check if redundant status update
     if (order.status === 'PACKAGING') {
-        navigate(PATHS.OPERATIONSTAFF.PACKING_PROCESS(orderId), {
-          state: {
-            status: 'PACKAGING',
-            products: order.products || []
-          }
-        })
-        return
+      navigate(PATHS.OPERATIONSTAFF.PACKING_PROCESS(orderId), {
+        state: {
+          status: 'PACKAGING',
+          products: order.products || []
+        }
+      })
+      return
     }
 
     updatePackaging.mutate(orderId, {
@@ -98,7 +98,7 @@ function OrderDetailContent({ order, orderId, navigate }: OrderDetailContentProp
         // Invalidate queries to refresh lists and details
         queryClient.invalidateQueries({ queryKey: ['orders'] })
         queryClient.invalidateQueries({ queryKey: ['order', orderId] })
-        
+
         navigate(PATHS.OPERATIONSTAFF.PACKING_PROCESS(orderId), {
           state: {
             status: 'PACKAGING', // Optimistic update

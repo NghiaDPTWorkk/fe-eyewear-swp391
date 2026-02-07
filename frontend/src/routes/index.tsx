@@ -137,6 +137,12 @@ const OperationShippingHandoverPage = lazy(() =>
   }))
 )
 
+const OperationAllInvoices = lazy(() =>
+  import('@/pages/operations/OperationAllInvoices').then((m) => ({
+    default: m.default
+  }))
+)
+
 // Account Pages
 const AccountLayout = lazy(() =>
   import('@/components/layout/customer/account/AccountLayout').then((m) => ({
@@ -529,6 +535,14 @@ export const router = createBrowserRouter([
       },
       {
         path: 'shipping-handover',
+        element: (
+          <LazyPage>
+            <OperationAllInvoices />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'shipping-handover/:invoiceId',
         element: (
           <LazyPage>
             <OperationShippingHandoverPage />

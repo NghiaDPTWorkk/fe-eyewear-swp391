@@ -64,18 +64,21 @@ export default function OperationOrderDetailPage() {
     )
   }
 
+  // Extract orderCode from order (use type assertion since API returns OperationOrder)
+  const orderCode = (order as any).orderCode || order._id
+
   // Render với order data
-  return <OrderDetailContent order={order} orderId={orderId!} navigate={navigate} />
+  return <OrderDetailContent order={order} orderCode={orderCode} navigate={navigate} />
 }
 
 // Component xử lý transform data và render UI
 interface OrderDetailContentProps {
   order: any
   navigate: any
-  orderId: string
+  orderCode: string
 }
 
-function OrderDetailContent({ order, orderId, navigate }: OrderDetailContentProps) {
+function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentProps) {
   const updatePackaging = useUpdateStatusToPackaging()
 
   const queryClient = useQueryClient()
@@ -83,7 +86,7 @@ function OrderDetailContent({ order, orderId, navigate }: OrderDetailContentProp
   const handleStartProcessing = () => {
     // Check if redundant status update
     if (order.status === 'PACKAGING') {
-      navigate(PATHS.OPERATIONSTAFF.PACKING_PROCESS(orderId), {
+      navigate(PATHS.OPERATIONSTAFF.PACKING_PROCESS(order._id), {
         state: {
           status: 'PACKAGING',
           products: order.products || []
@@ -92,14 +95,14 @@ function OrderDetailContent({ order, orderId, navigate }: OrderDetailContentProp
       return
     }
 
-    updatePackaging.mutate(orderId, {
+    updatePackaging.mutate(order._id, {
       onSuccess: () => {
         toast.success('Order status updated to PACKAGING')
         // Invalidate queries to refresh lists and details
         queryClient.invalidateQueries({ queryKey: ['orders'] })
-        queryClient.invalidateQueries({ queryKey: ['order', orderId] })
+        queryClient.invalidateQueries({ queryKey: ['order', order._id] })
 
-        navigate(PATHS.OPERATIONSTAFF.PACKING_PROCESS(orderId), {
+        navigate(PATHS.OPERATIONSTAFF.PACKING_PROCESS(order._id), {
           state: {
             status: 'PACKAGING', // Optimistic update
             products: order.products || []
@@ -336,7 +339,7 @@ function OrderDetailContent({ order, orderId, navigate }: OrderDetailContentProp
           <IoArrowBack size={20} className="text-gray-600" />
         </button>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Order #{order._id}</h1>
+          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Order #{orderCode}</h1>
           <p className="text-sm text-neutral-500 mt-1 font-medium tracking-wide italic opacity-80 uppercase tracking-widest text-[10px]">
             DETAILED ORDER INFORMATION
           </p>

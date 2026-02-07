@@ -24,7 +24,7 @@ export const useOrders = (page = 1, limit = 50, status?: string, type?: string) 
 export const useAllOrders = () => {
   return useQuery({
     queryKey: ['orders', 'all'],
-    queryFn: () => orderService.getOrders(1, 50), // Lấy max 1000 orders
+    queryFn: () => orderService.getOrders(1, 1000), // Lấy max 1000 orders
     staleTime: 60000, // Cache 1 phút
     refetchOnWindowFocus: true
   })
@@ -49,6 +49,15 @@ export const useOrderDetail = (orderId: string) => {
 export const useUpdateOrder = () => {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: any }) => orderService.updateOrder(id, data)
+  })
+}
+
+/**
+ * Hook để update order status sang MAKING
+ */
+export const useUpdateStatusToMaking = () => {
+  return useMutation({
+    mutationFn: (id: string) => orderService.updateStatusToMaking(id)
   })
 }
 

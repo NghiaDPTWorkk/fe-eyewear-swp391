@@ -1,4 +1,4 @@
-/* eslint  */
+/* enable  eslint  */
 import { lazy } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { LazyPage } from '@/pages/LazyPage'
@@ -81,6 +81,11 @@ const OrderDetailPage = lazy(() => import('@/pages/operations/OperationOrderDeta
 const OperationOrderPackingProcess = lazy(
   () => import('@/pages/operations/OperationOrderPackingProcess')
 )
+
+const OperationManufacturingProcess = lazy(
+  () => import('@/pages/operations/OperationManufacturingProcess')
+)
+
 const OperationSettingPage = lazy(() =>
   import('@/pages/operations/OperationSettingPage').then((m) => ({ default: m.default }))
 )
@@ -122,6 +127,12 @@ const ManagerProductsPage = lazy(() =>
 
 const OperationCompleteOrdersPage = lazy(() =>
   import('@/pages/operations/OperationCompleteOrdersPage').then((m) => ({
+    default: m.default
+  }))
+)
+
+const OperationShippingHandoverPage = lazy(() =>
+  import('@/pages/operations/OperationShippingHandoverPage').then((m) => ({
     default: m.default
   }))
 )
@@ -493,6 +504,14 @@ export const router = createBrowserRouter([
         )
       },
       {
+        path: 'orders/:orderId/manufacturing',
+        element: (
+          <LazyPage>
+            <OperationManufacturingProcess />
+          </LazyPage>
+        )
+      },
+      {
         path: 'orders/:orderId/process',
         element: (
           <LazyPage>
@@ -505,6 +524,14 @@ export const router = createBrowserRouter([
         element: (
           <LazyPage>
             <OperationCompleteOrdersPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'shipping-handover',
+        element: (
+          <LazyPage>
+            <OperationShippingHandoverPage />
           </LazyPage>
         )
       },

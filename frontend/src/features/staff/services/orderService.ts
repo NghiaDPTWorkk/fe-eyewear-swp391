@@ -34,6 +34,14 @@ export const orderService = {
   },
 
   /**
+   * Cập nhật trạng thái order sang MAKING
+   * @param id - Order ID
+   */
+  updateStatusToMaking: async (id: string) => {
+    return httpClient.patch(ENDPOINTS.ORDERS.UPDATE_STATUS_MAKING(id), {})
+  },
+
+  /**
    * Cập nhật trạng thái order sang PACKAGING
    * @param id - Order ID
    */

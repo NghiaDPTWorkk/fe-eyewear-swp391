@@ -3,7 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Container } from '@/components'
 import { Button } from '@/shared/components/ui/button'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
-import { useOrderDetail, useUpdateStatusToPackaging } from '@/features/staff/hooks/useOrders'
+import {
+  useOrderDetail,
+  useUpdateStatusToPackaging,
+  useUpdateStatusToMaking
+} from '@/features/staff/hooks/useOrders'
 import toast from 'react-hot-toast'
 import { useProductDetails } from '@/features/staff/hooks/products/useProductDetails'
 import { useQueryClient } from '@tanstack/react-query'
@@ -64,26 +68,33 @@ export default function OperationOrderDetailPage() {
     )
   }
 
+  // Extract orderCode from order (use type assertion since API returns OperationOrder)
+  const orderCode = (order as any).orderCode || order._id
+
   // Render với order data
-  return <OrderDetailContent order={order} orderId={orderId!} navigate={navigate} />
+  return <OrderDetailContent order={order} orderCode={orderCode} navigate={navigate} />
 }
 
 // Component xử lý transform data và render UI
 interface OrderDetailContentProps {
   order: any
   navigate: any
-  orderId: string
+  orderCode: string
 }
 
-function OrderDetailContent({ order, orderId, navigate }: OrderDetailContentProps) {
+function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentProps) {
   const updatePackaging = useUpdateStatusToPackaging()
+  const updateMaking = useUpdateStatusToMaking()
 
   const queryClient = useQueryClient()
 
   const handleStartProcessing = () => {
+    // Get order type (handle both array and string)
+    const orderType = order?.type?.[0] || order?.type
+
     // Check if redundant status update
     if (order.status === 'PACKAGING') {
-      navigate(PATHS.OPERATIONSTAFF.PACKING_PROCESS(orderId), {
+      navigate(PATHS.OPERATIONSTAFF.PACKING_PROCESS(order._id), {
         state: {
           status: 'PACKAGING',
           products: order.products || []
@@ -92,14 +103,39 @@ function OrderDetailContent({ order, orderId, navigate }: OrderDetailContentProp
       return
     }
 
-    updatePackaging.mutate(orderId, {
+    // For MANUFACTURING orders, update status to MAKING and navigate to Manufacturing Process
+    if (orderType === 'MANUFACTURING') {
+      updateMaking.mutate(order._id, {
+        onSuccess: () => {
+          toast.success('Order status updated to MAKING')
+          // Invalidate queries to refresh lists and details
+          queryClient.invalidateQueries({ queryKey: ['orders'] })
+          queryClient.invalidateQueries({ queryKey: ['order', order._id] })
+
+          navigate(PATHS.OPERATIONSTAFF.MANUFACTURING_PROCESS(order._id), {
+            state: {
+              status: 'MAKING',
+              products: order.products || [],
+              orderType: 'MANUFACTURING'
+            }
+          })
+        },
+        onError: () => {
+          toast.error('Failed to update order status')
+        }
+      })
+      return
+    }
+
+    // For other order types (NORMAL, PRE_ORDER), update status and go to Packing
+    updatePackaging.mutate(order._id, {
       onSuccess: () => {
         toast.success('Order status updated to PACKAGING')
         // Invalidate queries to refresh lists and details
         queryClient.invalidateQueries({ queryKey: ['orders'] })
-        queryClient.invalidateQueries({ queryKey: ['order', orderId] })
+        queryClient.invalidateQueries({ queryKey: ['order', order._id] })
 
-        navigate(PATHS.OPERATIONSTAFF.PACKING_PROCESS(orderId), {
+        navigate(PATHS.OPERATIONSTAFF.PACKING_PROCESS(order._id), {
           state: {
             status: 'PACKAGING', // Optimistic update
             products: order.products || []
@@ -336,7 +372,7 @@ function OrderDetailContent({ order, orderId, navigate }: OrderDetailContentProp
           <IoArrowBack size={20} className="text-gray-600" />
         </button>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Order #{order._id}</h1>
+          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Order #{orderCode}</h1>
           <p className="text-sm text-neutral-500 mt-1 font-medium tracking-wide italic opacity-80 uppercase tracking-widest text-[10px]">
             DETAILED ORDER INFORMATION
           </p>

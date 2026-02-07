@@ -119,7 +119,7 @@ export default function OrderTable({
             className={cn('font-bold text-neutral-900 cursor-pointer', !isSales && 'font-medium')}
             onClick={() => handleViewOrder(order.id)}
           >
-            {order.id}
+            {order.orderCode}
           </div>
           <div
             className={cn(

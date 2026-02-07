@@ -14,7 +14,8 @@ import {
   IoCarOutline,
   IoSettingsOutline,
   IoHelpCircleOutline,
-  IoBuildOutline
+  IoBuildOutline,
+  IoAirplaneOutline
 } from 'react-icons/io5'
 import { FaBoxesPacking } from 'react-icons/fa6'
 import { useOrderCountStore } from '@/store'
@@ -91,7 +92,8 @@ export default function OperationLayout() {
           label="Technical Stations"
           active={location.pathname === '/operationstaff/prescription-orders'}
           onClick={() => navigate('/operationstaff/prescription-orders')}
-          badge={counts.technical > 0 ? counts.technical.toString() : undefined}
+          badge={counts.technical.toString()}
+          isLoading={isLoading}
         />
         <SidebarStaff.MenuItem
           icon={<IoCarOutline />}
@@ -113,6 +115,12 @@ export default function OperationLayout() {
           active={location.pathname === '/operationstaff/packed-success'}
           onClick={() => navigate('/operationstaff/packed-success')}
           badge={counts.all > 0 ? counts.all.toString() : undefined}
+        />
+        <SidebarStaff.MenuItem
+          icon={<IoAirplaneOutline />}
+          label="Shipping Handover"
+          active={location.pathname === '/operationstaff/shipping-handover'}
+          onClick={() => navigate('/operationstaff/shipping-handover')}
         />
       </SidebarStaff.MenuSection>
 

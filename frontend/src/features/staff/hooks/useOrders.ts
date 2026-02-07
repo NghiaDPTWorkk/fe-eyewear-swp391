@@ -53,6 +53,15 @@ export const useUpdateOrder = () => {
 }
 
 /**
+ * Hook để update order status sang MAKING
+ */
+export const useUpdateStatusToMaking = () => {
+  return useMutation({
+    mutationFn: (id: string) => orderService.updateStatusToMaking(id)
+  })
+}
+
+/**
  * Hook để update order status sang PACKAGING
  */
 export const useUpdateStatusToPackaging = () => {

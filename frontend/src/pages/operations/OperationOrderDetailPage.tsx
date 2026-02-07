@@ -84,6 +84,7 @@ interface OrderDetailContentProps {
 
 function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentProps) {
   const updatePackaging = useUpdateStatusToPackaging()
+  const updateMaking = useUpdateStatusToMaking()
 
   const queryClient = useQueryClient()
 
@@ -102,14 +103,25 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
       return
     }
 
-    // For MANUFACTURING orders, navigate to Manufacturing Process
+    // For MANUFACTURING orders, update status to MAKING and navigate to Manufacturing Process
     if (orderType === 'MANUFACTURING') {
-      // Navigate to Manufacturing Process without updating status
-      navigate(PATHS.OPERATIONSTAFF.MANUFACTURING_PROCESS(order._id), {
-        state: {
-          status: order.status,
-          products: order.products || [],
-          orderType: 'MANUFACTURING'
+      updateMaking.mutate(order._id, {
+        onSuccess: () => {
+          toast.success('Order status updated to MAKING')
+          // Invalidate queries to refresh lists and details
+          queryClient.invalidateQueries({ queryKey: ['orders'] })
+          queryClient.invalidateQueries({ queryKey: ['order', order._id] })
+
+          navigate(PATHS.OPERATIONSTAFF.MANUFACTURING_PROCESS(order._id), {
+            state: {
+              status: 'MAKING',
+              products: order.products || [],
+              orderType: 'MANUFACTURING'
+            }
+          })
+        },
+        onError: () => {
+          toast.error('Failed to update order status')
         }
       })
       return

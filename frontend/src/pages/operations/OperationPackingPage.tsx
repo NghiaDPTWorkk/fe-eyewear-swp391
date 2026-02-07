@@ -10,7 +10,7 @@ export default function OperationPackingPage() {
         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Packing Station</h1>
       </div>
 
-      <OrderTable hiddenColumns={['WAITING FOR']} pageType="packing" />
+      <OrderTable hiddenColumns={['WAITING FOR']} />
     </Container>
   )
 }

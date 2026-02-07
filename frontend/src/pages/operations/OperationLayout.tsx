@@ -92,7 +92,8 @@ export default function OperationLayout() {
           label="Technical Stations"
           active={location.pathname === '/operationstaff/prescription-orders'}
           onClick={() => navigate('/operationstaff/prescription-orders')}
-          badge={counts.technical > 0 ? counts.technical.toString() : undefined}
+          badge={counts.technical.toString()}
+          isLoading={isLoading}
         />
         <SidebarStaff.MenuItem
           icon={<IoCarOutline />}

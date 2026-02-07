@@ -16,6 +16,7 @@ interface MenuItemProps {
   onClick?: () => void
   menuOpen?: boolean
   isOpen?: boolean
+  isLoading?: boolean // Thêm prop để hiển thị loading spinner
 }
 
 export function MenuItem({
@@ -28,7 +29,8 @@ export function MenuItem({
   hasDropdown,
   children,
   onClick,
-  isOpen: defaultIsOpen = false
+  isOpen: defaultIsOpen = false,
+  isLoading = false // Mặc định không loading
 }: MenuItemProps) {
   const { sidebarCollapsed } = useLayoutStore()
   const hasActiveChild = Children.toArray(children).some(
@@ -74,16 +76,39 @@ export function MenuItem({
           <span className="flex-1 text-left truncate transition-opacity duration-300 font-medium">
             {label}
           </span>
-          {badge && (
+          {(badge || isLoading) && (
             <span
               className={cn(
-                'px-2 py-0.5 text-xs rounded-full font-semibold shrink-0 min-w-[28px] text-center',
+                'px-2 py-0.5 text-xs rounded-full font-semibold shrink-0 min-w-[28px] text-center flex items-center justify-center',
                 badgeVariant === 'primary' && 'bg-primary-100 text-primary-700',
                 badgeVariant === 'danger' && 'bg-red-100 text-red-700',
                 badgeVariant === 'default' && 'bg-gray-100 text-gray-700'
               )}
             >
-              {badge}
+              {isLoading ? (
+                <svg
+                  className="animate-spin h-3 w-3"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+              ) : (
+                badge
+              )}
             </span>
           )}
           {hasDropdown && (

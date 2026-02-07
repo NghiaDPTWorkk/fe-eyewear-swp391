@@ -50,7 +50,10 @@ export const useOrderCountStore = create<OrderCountStore>((set) => ({
       }
     })),
   initializeCounts: (orders) => {
-    const technical = orders.filter((o) => o.orderType === OrderType.MANUFACTURING).length
+    // Technical Station: chỉ đếm đơn có type = MANUFACTURING VÀ status = MAKING
+    const technical = orders.filter(
+      (o) => o.orderType === OrderType.MANUFACTURING && o.currentStatus === OrderStatus.MAKING
+    ).length
     const logistics = orders.filter((o) => o.orderType === OrderType.PRE_ORDER).length
     // const all = orders.length
     // const completed = orders.filter((o) => o.currentStatus === OrderStatus.COMPLETED).length

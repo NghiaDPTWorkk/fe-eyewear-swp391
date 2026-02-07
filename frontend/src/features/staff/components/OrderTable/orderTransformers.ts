@@ -1,8 +1,6 @@
 import type { OperationOrder } from '@/shared/types/operationOrder.types'
 import type { Order } from './OrderTable'
-// ========== START NEW CODE ==========
 import { OrderType, OrderStatus } from '@/shared/utils/enums/order.enum'
-// ========== END NEW CODE ==========
 
 /**
  * Helper: Tính thời gian đã trôi qua từ createdAt
@@ -51,6 +49,26 @@ const getOrderType = (types: string[]): string => {
 }
 
 /**
+ * Helper: Map status từ API sang enum OrderStatus value
+ */
+const getOrderStatus = (status: string): string => {
+  // Map các status từ API sang enum OrderStatus
+  const statusMap: Record<string, string> = {
+    PENDING: OrderStatus.PENDING,
+    WAITING_ASSIGN: OrderStatus.WAITING_ASSIGN,
+    ASSIGNED: OrderStatus.ASSIGNED,
+    MAKING: OrderStatus.MAKING,
+    IN_PROGRESS: OrderStatus.MAKING, // API có thể dùng IN_PROGRESS cho MAKING
+    PACKAGING: OrderStatus.PACKAGING,
+    COMPLETED: OrderStatus.COMPLETED,
+    CANCELED: OrderStatus.CANCELED,
+    REFUNDED: OrderStatus.REFUNDED
+  }
+
+  return statusMap[status] || status // Nếu không match thì giữ nguyên
+}
+
+/**
  * Helper: Xác định "Waiting For" dựa vào status
  */
 const getWaitingFor = (order: OperationOrder): string | undefined => {
@@ -72,6 +90,8 @@ const getWaitingFor = (order: OperationOrder): string | undefined => {
  * Main transform function: Chuyển đổi OperationOrder từ API sang Order cho OrderTable
  */
 export const transformApiOrderToTableOrder = (apiOrder: OperationOrder): Order => {
+  const mappedStatus = getOrderStatus(apiOrder.status)
+
   return {
     id: apiOrder._id,
     orderCode: apiOrder.orderCode,
@@ -79,13 +99,10 @@ export const transformApiOrderToTableOrder = (apiOrder: OperationOrder): Order =
     customer: 'N/A', // TODO: Cần fetch từ invoice hoặc customer data
     item: apiOrder.products[0]?.product?.sku || 'N/A',
     waitingFor: getWaitingFor(apiOrder),
-    currentStatus: apiOrder.status,
+    currentStatus: mappedStatus, // Sử dụng mapped status thay vì raw status
     timeElapsed: calculateTimeElapsed(apiOrder.createdAt),
-    statusColor: getStatusColor(apiOrder.status),
-    // ========== START NEW CODE ==========
-    isNextActive:
-      apiOrder.status !== OrderStatus.COMPLETED && apiOrder.status !== OrderStatus.PACKAGING,
-    // ========== END NEW CODE ==========
+    statusColor: getStatusColor(mappedStatus), // Sử dụng mapped status
+    isNextActive: mappedStatus !== OrderStatus.COMPLETED && mappedStatus !== OrderStatus.PACKAGING,
     price: apiOrder.price,
     assignedStaff: apiOrder.assignedStaff
   }

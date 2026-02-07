@@ -81,6 +81,11 @@ const OrderDetailPage = lazy(() => import('@/pages/operations/OperationOrderDeta
 const OperationOrderPackingProcess = lazy(
   () => import('@/pages/operations/OperationOrderPackingProcess')
 )
+
+const OperationManufacturingProcess = lazy(
+  () => import('@/pages/operations/OperationManufacturingProcess')
+)
+
 const OperationSettingPage = lazy(() =>
   import('@/pages/operations/OperationSettingPage').then((m) => ({ default: m.default }))
 )
@@ -495,6 +500,14 @@ export const router = createBrowserRouter([
         element: (
           <LazyPage>
             <OrderDetailPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'orders/:orderId/manufacturing',
+        element: (
+          <LazyPage>
+            <OperationManufacturingProcess />
           </LazyPage>
         )
       },

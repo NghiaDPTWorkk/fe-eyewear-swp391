@@ -3,7 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Container } from '@/components'
 import { Button } from '@/shared/components/ui/button'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
-import { useOrderDetail, useUpdateStatusToPackaging } from '@/features/staff/hooks/useOrders'
+import {
+  useOrderDetail,
+  useUpdateStatusToPackaging,
+  useUpdateStatusToMaking
+} from '@/features/staff/hooks/useOrders'
 import toast from 'react-hot-toast'
 import { useProductDetails } from '@/features/staff/hooks/products/useProductDetails'
 import { useQueryClient } from '@tanstack/react-query'
@@ -84,6 +88,9 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
   const queryClient = useQueryClient()
 
   const handleStartProcessing = () => {
+    // Get order type (handle both array and string)
+    const orderType = order?.type?.[0] || order?.type
+
     // Check if redundant status update
     if (order.status === 'PACKAGING') {
       navigate(PATHS.OPERATIONSTAFF.PACKING_PROCESS(order._id), {
@@ -95,6 +102,20 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
       return
     }
 
+    // For MANUFACTURING orders, navigate to Manufacturing Process
+    if (orderType === 'MANUFACTURING') {
+      // Navigate to Manufacturing Process without updating status
+      navigate(PATHS.OPERATIONSTAFF.MANUFACTURING_PROCESS(order._id), {
+        state: {
+          status: order.status,
+          products: order.products || [],
+          orderType: 'MANUFACTURING'
+        }
+      })
+      return
+    }
+
+    // For other order types (NORMAL, PRE_ORDER), update status and go to Packing
     updatePackaging.mutate(order._id, {
       onSuccess: () => {
         toast.success('Order status updated to PACKAGING')

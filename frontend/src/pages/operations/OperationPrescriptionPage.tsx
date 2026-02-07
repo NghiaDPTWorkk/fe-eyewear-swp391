@@ -18,7 +18,6 @@ export default function OperationPrescriptionPage() {
         hiddenColumns={['WAITING FOR']}
         filterType={OrderType.MANUFACTURING}
         role="operation"
-        pageType="technical"
       />
     </Container>
   )

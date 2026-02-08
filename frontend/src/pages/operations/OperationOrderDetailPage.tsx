@@ -7,7 +7,7 @@ import {
   useOrderDetail,
   useUpdateStatusToPackaging,
   useUpdateStatusToMaking
-} from '@/features/staff/hooks/useOrders'
+} from '@/features/staff/hooks/orders/useOrders'
 import toast from 'react-hot-toast'
 import { useProductDetails } from '@/features/staff/hooks/products/useProductDetails'
 import { useQueryClient } from '@tanstack/react-query'

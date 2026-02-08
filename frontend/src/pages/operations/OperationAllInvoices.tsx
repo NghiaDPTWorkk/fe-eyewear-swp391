@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom'
 interface Invoice {
   id: string
   invoiceCode: string
-  customer: string
   status: string
   orderCount: number
   totalAmount: number
@@ -20,7 +19,6 @@ export default function OperationAllInvoices() {
     {
       id: '1',
       invoiceCode: 'INV-2024-001',
-      customer: 'Nguyen Van A',
       status: 'READY_TO_SHIP',
       orderCount: 3,
       totalAmount: 2500000
@@ -28,7 +26,6 @@ export default function OperationAllInvoices() {
     {
       id: '2',
       invoiceCode: 'INV-2024-002',
-      customer: 'Tran Thi B',
       status: 'READY_TO_SHIP',
       orderCount: 2,
       totalAmount: 1800000
@@ -36,7 +33,6 @@ export default function OperationAllInvoices() {
     {
       id: '3',
       invoiceCode: 'INV-2024-003',
-      customer: 'Le Van C',
       status: 'PENDING',
       orderCount: 1,
       totalAmount: 950000
@@ -44,7 +40,6 @@ export default function OperationAllInvoices() {
     {
       id: '4',
       invoiceCode: 'INV-2024-004',
-      customer: 'Pham Thi D',
       status: 'READY_TO_SHIP',
       orderCount: 4,
       totalAmount: 3200000
@@ -99,9 +94,6 @@ export default function OperationAllInvoices() {
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                   Invoice ID
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  Customer
-                </th>
                 <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
                   Orders
                 </th>
@@ -123,9 +115,6 @@ export default function OperationAllInvoices() {
                     <span className="text-sm font-semibold text-gray-900">
                       {invoice.invoiceCode}
                     </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-gray-700">{invoice.customer}</span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-center">
                     <span className="text-sm font-medium text-gray-900">

@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { STORAGE_KEYS } from '@/shared/constants/storage'
 import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layout/StaffMainLayout'
 import {
   SidebarStaff,
@@ -77,6 +78,13 @@ export default function OperationLayout() {
     }
   }, [completedData, isLoadingCompleted, setCount, setCompletedLoadingState])
 
+  const handleLogout = () => {
+    localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN)
+    localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN)
+    localStorage.removeItem(STORAGE_KEYS.USER_INFO)
+    navigate('/admin/login')
+  }
+
   const sidebar = (
     <SidebarStaff
       logo={
@@ -92,6 +100,7 @@ export default function OperationLayout() {
           userInitials="SL"
           userName="Dr. Sarah L."
           userRole="Head Optometrist"
+          onLogout={handleLogout}
         />
       }
     >

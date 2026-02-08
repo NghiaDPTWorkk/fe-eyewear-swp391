@@ -20,17 +20,27 @@ import {
 import { FaBoxesPacking } from 'react-icons/fa6'
 import { useOrderCountStore } from '@/store'
 import { AiOutlineFileDone } from 'react-icons/ai'
-import { useAllOrders } from '@/features/staff/hooks/useOrders'
+import { useAllOrders, useCompletedOrders } from '@/features/staff/hooks/useOrders'
 import { transformApiOrderToTableOrder } from '@/features/staff/components/OrderTable/orderTransformers'
 
 export default function OperationLayout() {
   const location = useLocation()
   const navigate = useNavigate()
 
-  const { counts, initializeCounts, setOrders, setLoadingState } = useOrderCountStore()
+  const {
+    counts,
+    initializeCounts,
+    setOrders,
+    setLoadingState,
+    setCount,
+    setCompletedLoadingState
+  } = useOrderCountStore()
 
   // Gọi API để lấy số lượng đơn hàng cho từng trạng thái
   const { data, isLoading, isError, error } = useAllOrders()
+
+  // Gọi API riêng để lấy số đơn hàng COMPLETED
+  const { data: completedData, isLoading: isLoadingCompleted } = useCompletedOrders()
 
   useEffect(() => {
     // Set loading và error states vào store
@@ -54,6 +64,18 @@ export default function OperationLayout() {
       console.error('Lỗi API:', error)
     }
   }, [data, isLoading, isError, error, initializeCounts, setOrders, setLoadingState])
+
+  // Effect riêng để xử lý completed orders
+  useEffect(() => {
+    // Set loading state cho completed
+    setCompletedLoadingState(isLoadingCompleted)
+
+    if (completedData) {
+      const completedOrders = completedData?.data?.orders?.data || []
+      // Set count cho completed orders
+      setCount('completed', completedOrders.length)
+    }
+  }, [completedData, isLoadingCompleted, setCount, setCompletedLoadingState])
 
   const sidebar = (
     <SidebarStaff
@@ -114,7 +136,8 @@ export default function OperationLayout() {
           label="Complete Orders"
           active={location.pathname === '/operationstaff/packed-success'}
           onClick={() => navigate('/operationstaff/packed-success')}
-          badge={counts.all > 0 ? counts.all.toString() : undefined}
+          badge={counts.completed.toString()}
+          isLoading={isLoadingCompleted}
         />
         <SidebarStaff.MenuItem
           icon={<IoAirplaneOutline />}

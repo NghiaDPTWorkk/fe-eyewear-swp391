@@ -31,6 +31,19 @@ export const useAllOrders = () => {
 }
 
 /**
+ * Hook để lấy orders có status COMPLETED
+ * Dùng riêng cho sidebar count của Complete Orders
+ */
+export const useCompletedOrders = () => {
+  return useQuery({
+    queryKey: ['orders', 'completed'],
+    queryFn: () => orderService.getOrders(1, 1000, 'COMPLETED'),
+    staleTime: 60000, // Cache 1 phút
+    refetchOnWindowFocus: true
+  })
+}
+
+/**
  * Hook để lấy chi tiết một order theo ID
  * @param orderId - ID của order cần lấy
  */

@@ -18,7 +18,11 @@ export default function OperationCompleteOrdersPage() {
         <p className="text-gray-500 mt-1">View all successfully completed and packed orders.</p>
       </div>
 
-      <OrderTable orders={completedOrders} hiddenColumns={['WAITING FOR']} role="operation" />
+      <OrderTable
+        orders={completedOrders}
+        hiddenColumns={['WAITING FOR', 'CUSTOMER']}
+        role="operation"
+      />
     </Container>
   )
 }

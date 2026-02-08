@@ -136,7 +136,7 @@ export default function OperationLayout() {
           label="Complete Orders"
           active={location.pathname === '/operationstaff/packed-success'}
           onClick={() => navigate('/operationstaff/packed-success')}
-          badge={counts.completed > 0 ? counts.completed.toString() : undefined}
+          badge={counts.completed.toString()}
           isLoading={isLoadingCompleted}
         />
         <SidebarStaff.MenuItem

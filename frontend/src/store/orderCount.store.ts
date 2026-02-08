@@ -64,15 +64,15 @@ export const useOrderCountStore = create<OrderCountStore>((set) => ({
     // const completed = orders.filter((o) => o.currentStatus === OrderStatus.COMPLETED).length
     const packing = orders.filter((o) => o.currentStatus === OrderStatus.PACKAGING).length
 
-    set({
+    set((state) => ({
       counts: {
         technical,
         logistics,
         packing,
         all: orders.length,
-        completed: 0
+        completed: state.counts.completed // ← Giữ nguyên giá trị completed hiện tại
       }
-    })
+    }))
   },
   resetCounts: () =>
     set({

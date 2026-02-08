@@ -83,7 +83,7 @@ export default function OperationDashboardPage() {
         </div>
       </div>
 
-      <OrderTable hiddenColumns={['WAITING FOR', 'CUSTOMER']} role="operation" />
+      <OrderTable hiddenColumns={['WAITING FOR']} role="operation" />
     </Container>
   )
 }

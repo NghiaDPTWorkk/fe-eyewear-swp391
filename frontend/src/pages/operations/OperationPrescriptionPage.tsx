@@ -15,7 +15,7 @@ export default function OperationPrescriptionPage() {
       </div>
 
       <OrderTable
-        hiddenColumns={['WAITING FOR', 'CUSTOMER']}
+        hiddenColumns={['WAITING FOR']}
         filterType={OrderType.MANUFACTURING}
         role="operation"
       />

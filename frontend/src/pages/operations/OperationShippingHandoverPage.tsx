@@ -186,7 +186,7 @@ export default function OperationShippingHandoverPage() {
             {allOrdersCompleted && !isInvoiceConfirmed && (
               <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
                 <p className="text-sm text-amber-700 font-medium">
-                  ℹ️ All orders completed. Please scan and confirm invoice ID to proceed.
+                  All orders completed. Please scan and confirm invoice ID to proceed.
                 </p>
               </div>
             )}

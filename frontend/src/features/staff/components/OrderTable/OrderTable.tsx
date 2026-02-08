@@ -145,12 +145,6 @@ export default function OrderTable({
       className: isSales ? 'text-center' : ''
     },
     {
-      header: 'CUSTOMER',
-      render: (order) => (
-        <div className={cn('text-neutral-900', isSales ? 'font-medium' : '')}>{order.customer}</div>
-      )
-    },
-    {
       header: 'ITEMS',
       render: (order) => order.item,
       className: isSales ? 'text-neutral-400 font-medium text-center' : 'text-gray-400',

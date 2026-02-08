@@ -11,7 +11,7 @@ import CheckListSection from '@/shared/components/ui/packingchecklist/CheckListS
 import CheckItem from '@/shared/components/ui/packingchecklist/CheckItem'
 import ConfirmationModal from '@/shared/components/ui/ConfirmationModal'
 import type { OrderProductItem } from '@/shared/types'
-import { useUpdateStatusToCompleted } from '@/features/staff/hooks/useOrders'
+import { useUpdateStatusToCompleted } from '@/features/staff/hooks/orders/useOrders'
 import toast from 'react-hot-toast'
 import { useQueryClient } from '@tanstack/react-query'
 

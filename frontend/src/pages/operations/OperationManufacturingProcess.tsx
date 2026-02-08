@@ -6,7 +6,7 @@ import { ProcessTracker } from '@/components/layout/staff/staff-core/processtrac
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 import { Button } from '@/shared/components/ui/button'
 import { PATHS } from '@/routes/paths'
-import { useUpdateStatusToPackaging } from '@/features/staff/hooks/useOrders'
+import { useUpdateStatusToPackaging } from '@/features/staff/hooks/orders/useOrders'
 import toast from 'react-hot-toast'
 import { useQueryClient } from '@tanstack/react-query'
 

@@ -116,7 +116,8 @@ export default function OperationLayout() {
           label="All Orders"
           active={location.pathname === '/operationstaff/all'}
           onClick={() => navigate('/operationstaff/all')}
-          badge={counts.all > 0 ? counts.all.toString() : undefined}
+          badge={counts.all.toString()}
+          isLoading={isLoading}
         />
         <SidebarStaff.MenuItem
           icon={<IoBuildOutline />}
@@ -138,7 +139,8 @@ export default function OperationLayout() {
           label="Packing Station"
           active={location.pathname === '/operationstaff/packing'}
           onClick={() => navigate('/operationstaff/packing')}
-          badge={counts.packing > 0 ? counts.packing.toString() : undefined}
+          badge={counts.packing.toString()}
+          isLoading={isLoading}
         />
         <SidebarStaff.MenuItem
           icon={<AiOutlineFileDone />}

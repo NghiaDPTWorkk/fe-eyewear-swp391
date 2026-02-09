@@ -116,7 +116,7 @@ export default function OperationLayout() {
           label="All Orders"
           active={location.pathname === '/operationstaff/all'}
           onClick={() => navigate('/operationstaff/all')}
-          badge={counts.all.toString()}
+          badge={counts.all > 0 ? counts.all.toString() : undefined}
           isLoading={isLoading}
         />
         <SidebarStaff.MenuItem
@@ -133,13 +133,14 @@ export default function OperationLayout() {
           active={location.pathname === '/operationstaff/pre-orders'}
           onClick={() => navigate('/operationstaff/pre-orders')}
           badge={counts.logistics > 0 ? counts.logistics.toString() : undefined}
+          isLoading={isLoading}
         />
         <SidebarStaff.MenuItem
           icon={<FaBoxesPacking />}
           label="Packing Station"
           active={location.pathname === '/operationstaff/packing'}
           onClick={() => navigate('/operationstaff/packing')}
-          badge={counts.packing.toString()}
+          badge={counts.packing > 0 ? counts.packing.toString() : undefined}
           isLoading={isLoading}
         />
         <SidebarStaff.MenuItem

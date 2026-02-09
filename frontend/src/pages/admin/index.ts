@@ -1,1 +1,1 @@
-export { default as AminDashboardPage } from './AminDashboardPage'
+export { default as AminDashboardPage } from './AdminDashboardPage'

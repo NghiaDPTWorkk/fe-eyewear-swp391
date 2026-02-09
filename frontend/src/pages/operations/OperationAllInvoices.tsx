@@ -269,10 +269,10 @@ export default function OperationAllInvoices() {
                   {selectedInvoice.orders.map((order, index) => (
                     <div
                       key={index}
-                      className="group p-5 bg-white border border-neutral-100 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 hover:border-blue-100"
+                      className="group p-5 bg-white border border-neutral-100 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 hover:border-mint-100"
                     >
                       <div className="flex justify-between items-start mb-2">
-                        <span className="font-bold text-blue-600 text-sm bg-blue-50 px-2 py-0.5 rounded-md group-hover:bg-blue-100 transition-colors">
+                        <span className="font-bold text-mint-600 text-sm bg-mint-50 px-2 py-0.5 rounded-md group-hover:bg-mint-100 transition-colors">
                           {order.code}
                         </span>
                         <span className="text-[10px] text-neutral-400 font-mono border border-neutral-100 px-1.5 py-0.5 rounded">
@@ -303,7 +303,7 @@ export default function OperationAllInvoices() {
             <div className="p-8 border-t border-neutral-100 bg-white">
               <button
                 onClick={() => handleNextInvoice(selectedInvoice.id)}
-                className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-base transition-all shadow-lg shadow-blue-200 hover:shadow-blue-300 flex items-center justify-center gap-3 active:scale-[0.98]"
+                className="w-full py-4 bg-mint-600 hover:bg-mint-700 text-white rounded-xl font-bold text-base transition-all shadow-lg shadow-mint-200 hover:shadow-mint-300 flex items-center justify-center gap-3 active:scale-[0.98]"
               >
                 Proceed to Handover
                 <IoChevronForward size={20} />

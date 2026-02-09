@@ -182,7 +182,7 @@ export default function OperationLayout() {
       sidebar={sidebar}
       headerLeft={<NavSearch placeholder="Search orders..." styleVariant="operation" />}
       headerRight={<NavActions />}
-      mainClassName="p-4 md:p-8 bg-mint-200"
+      mainClassName="p-4 md:p-8 bg-mint-200 relative overflow-x-hidden"
     />
   )
 }

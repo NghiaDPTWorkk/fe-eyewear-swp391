@@ -25,6 +25,7 @@ export default function OperationOrderDetailPage() {
 
   // Bước 1: Fetch Order Data
   const { data: orderData, isLoading, isError } = useOrderDetail(orderId!)
+  // console.log('📦 Order Detail:', JSON.stringify(orderData, null, 2))
 
   // Loading state
   if (isLoading) {
@@ -200,7 +201,7 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
     }
   }
 
-  // Fetch product details
+  // Fetch product details from product id ang sku
   const productIdsToFetch =
     orderType === 'NORMAL'
       ? [...framesList.map((f) => f.product_id), ...lensList.map((l) => l.product_id)]
@@ -300,7 +301,6 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
   // MANUFACTURING Order - Lens
   if (orderType === 'MANUFACTURING' && lensParametersObject) {
     const { parameters } = lensParametersObject
-
     const lensData = {
       prescription: [
         {

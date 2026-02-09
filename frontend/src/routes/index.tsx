@@ -125,6 +125,14 @@ const ManagerProductsPage = lazy(() =>
   import('@/pages/manager/ManagerProductsPage').then((m) => ({ default: m.default }))
 )
 
+const ManagerAddProductPage = lazy(() =>
+  import('@/pages/manager/ManagerAddProductPage').then((m) => ({ default: m.default }))
+)
+
+const ManagerAddAttributePage = lazy(() =>
+  import('@/pages/manager/ManagerAddAttributePage').then((m) => ({ default: m.default }))
+)
+
 const OperationCompleteOrdersPage = lazy(() =>
   import('@/pages/operations/OperationCompleteOrdersPage').then((m) => ({
     default: m.default
@@ -628,6 +636,22 @@ export const router = createBrowserRouter([
         element: (
           <LazyPage>
             <ManagerProductsPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'products/add',
+        element: (
+          <LazyPage>
+            <ManagerAddProductPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'attributes/add',
+        element: (
+          <LazyPage>
+            <ManagerAddAttributePage />
           </LazyPage>
         )
       }

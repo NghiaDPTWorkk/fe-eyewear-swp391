@@ -1,14 +1,11 @@
 import { useMemo, useState } from 'react'
-import { useQueries } from '@tanstack/react-query'
+
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import { OrderStatus } from '@/shared/utils/enums/order.enum'
 import type { AdminInvoiceListItem } from '@/shared/types'
-import type {
-  AdminOrderDetail,
-  AdminOrderDetailApiResponse
-} from '@/shared/types/admin-order.types'
+
 import type { AdminAccount } from '@/shared/types/admin-account.types'
-import { orderAdminService } from '@/shared/services/admin/orderService'
+import { useAdminOrderDetails } from '@/shared/hooks/useAdminOrderDetails'
 import { useGetAdminsByRole } from '@/features/manager/hooks/useGetAdminsByRole'
 import { useAssignOrderStaff } from '@/features/manager/hooks/useAssignOrderStaff'
 import { isManufacturingOrder } from '@/shared/types/order.types'
@@ -96,21 +93,10 @@ export default function InvoiceCard({
 }: InvoiceCardProps) {
   const orderIds = useMemo(() => invoice.orders?.map((o) => o.id) ?? [], [invoice.orders])
 
-  const orderQueries = useQueries({
-    queries: orderIds.map((orderId) => ({
-      queryKey: ['admin-order-detail', orderId],
-      queryFn: () => orderAdminService.getOrderById(orderId),
-      enabled: isExpanded && !!orderId,
-      staleTime: 30_000
-    }))
+  const { ordersData, hasAnyOrderLoading, hasAnyOrderError } = useAdminOrderDetails({
+    orderIds,
+    enabled: isExpanded
   })
-
-  const hasAnyOrderLoading = orderQueries.some((q) => q.isLoading)
-  const hasAnyOrderError = orderQueries.some((q) => q.isError)
-
-  const ordersData = orderQueries
-    .map((q) => (q.data as AdminOrderDetailApiResponse | undefined)?.data?.order)
-    .filter(Boolean) as AdminOrderDetail[]
 
   const { data: staffData, isLoading: isStaffLoading } = useGetAdminsByRole(
     isExpanded ? 'OPERATION_STAFF' : undefined

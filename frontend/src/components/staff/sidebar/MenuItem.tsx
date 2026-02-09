@@ -108,19 +108,19 @@ export function MenuItem({
         {!sidebarCollapsed && (
           <>
             <span className="flex-1 text-left">{label}</span>
-            {isLoading ? (
-              <div className="w-5 h-5 border-2 border-gray-300 border-t-primary-500 rounded-full animate-spin" />
-            ) : (
-              badge && (
-                <span
-                  className={cn(
-                    'px-2 py-0.5 text-xs rounded font-medium',
-                    badgeStyles[badgeVariant]
-                  )}
-                >
-                  {badge}
-                </span>
-              )
+            {(badge || isLoading) && (
+              <span
+                className={cn(
+                  'px-2 py-0.5 text-xs rounded-full font-medium min-w-[24px] text-center flex items-center justify-center',
+                  badgeStyles[badgeVariant]
+                )}
+              >
+                {isLoading ? (
+                  <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  badge
+                )}
+              </span>
             )}
             {hasDropdown &&
               (isOpen ? (

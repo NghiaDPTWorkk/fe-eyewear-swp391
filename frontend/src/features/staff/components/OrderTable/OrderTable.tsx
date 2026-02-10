@@ -99,9 +99,6 @@ export default function OrderTable({
     ? orders.filter((order) => order.orderType === filterType)
     : orders
 
-  // NOTE: Count initialization is handled by OperationLayout's initializeCounts
-  // Do NOT call setCount here as it will overwrite the correct counts
-
   const defaultColumns: Column<Order>[] = [
     {
       header: 'ORDER ID',

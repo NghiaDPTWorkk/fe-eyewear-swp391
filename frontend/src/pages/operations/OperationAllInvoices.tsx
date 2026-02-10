@@ -207,30 +207,14 @@ export default function OperationAllInvoices() {
       </Container>
 
       {/* Invoice Detail Sidebar (Popup) - Rendered scoped to Main Layout (relative) */}
-
-      {/* Overlay */}
-      <div
-        className={`absolute inset-0 bg-neutral-900/40 backdrop-blur-[2px] z-[40] transition-opacity duration-300 ${
-          isSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
-        onClick={handleCloseSidebar}
-      />
-
-      {/* Sidebar Panel - Right Side */}
-      <div
-        className={`absolute right-0 top-0 h-full w-[450px] bg-white shadow-2xl z-[50] transform transition-transform duration-300 ease-out border-l border-neutral-100 flex flex-col ${
-          isSidebarOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
-      >
-        {selectedInvoice && (
-          <OperationInvoicePopup
-            isOpen={isSidebarOpen}
-            selectedInvoice={selectedInvoice}
-            onClose={handleCloseSidebar}
-            onNext={handleNextInvoice}
-          />
-        )}
-      </div>
+      {selectedInvoice && (
+        <OperationInvoicePopup
+          isOpen={isSidebarOpen}
+          selectedInvoice={selectedInvoice}
+          onClose={handleCloseSidebar}
+          onNext={handleNextInvoice}
+        />
+      )}
     </>
   )
 }

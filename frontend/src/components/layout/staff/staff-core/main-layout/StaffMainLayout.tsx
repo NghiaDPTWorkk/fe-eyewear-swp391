@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import { useLayoutStore } from '@/store/layout.store'
 import { cn } from '@/lib/utils'
 import { StaffHeader } from '@/components/layout/staff/staff-core/header'
@@ -21,6 +21,7 @@ export function StaffMainLayout({
   mainClassName = 'p-4 md:p-6 bg-neutral-50',
   headerClassName
 }: StaffMainLayoutProps) {
+  const location = useLocation()
   const { sidebarCollapsed, toggleSidebar } = useLayoutStore()
 
   return (
@@ -49,7 +50,9 @@ export function StaffMainLayout({
         />
 
         <main className={cn('h-full overflow-auto', mainClassName)}>
-          <Outlet />
+          <div key={location.pathname} className="animate-fade-in-up">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

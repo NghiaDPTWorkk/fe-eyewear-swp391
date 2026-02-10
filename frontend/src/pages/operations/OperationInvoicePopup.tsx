@@ -46,9 +46,9 @@ export default function OperationInvoicePopup({
 
   return (
     <>
-      {/* Overlay Backdrop - Only covers main content area */}
+      {/* Overlay */}
       <div
-        className={`absolute inset-0 bg-neutral-900/30 backdrop-blur-[2px] z-[40] transition-opacity duration-300 ${
+        className={`fixed inset-0 bg-neutral-900/40 backdrop-blur-[2px] z-[40] transition-opacity duration-300 ${
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={onClose}
@@ -56,7 +56,7 @@ export default function OperationInvoicePopup({
 
       {/* Sidebar Panel - Right Side */}
       <div
-        className={`absolute right-0 top-0 h-full w-[450px] bg-white shadow-2xl z-[50] transform transition-transform duration-300 ease-out border-l border-neutral-100 flex flex-col ${
+        className={`fixed right-0 top-0 h-full w-[450px] bg-white shadow-2xl z-[50] transform transition-transform duration-300 ease-out border-l border-neutral-100 flex flex-col ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >

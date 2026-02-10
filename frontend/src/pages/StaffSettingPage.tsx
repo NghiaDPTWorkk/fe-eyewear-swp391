@@ -19,7 +19,7 @@ export default function StaffSettingPage({
   const [desktopAlerts, setDesktopAlerts] = useState(true)
 
   return (
-    <Container className="animate-fade-in-up">
+    <Container>
       <div className="mb-8">
         <div className="flex items-center gap-2 text-sm mb-2 font-medium">
           <Link to={homeUrl} className="text-neutral-400 hover:text-primary-500 transition-colors">

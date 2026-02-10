@@ -102,7 +102,7 @@ export default function OperationAllInvoices() {
 
   return (
     <>
-      <Container className="animate-fade-in-up">
+      <Container>
         {/* Breadcrumb */}
         <BreadcrumbPath paths={['Dashboard', 'Shipping Handover']} />
 

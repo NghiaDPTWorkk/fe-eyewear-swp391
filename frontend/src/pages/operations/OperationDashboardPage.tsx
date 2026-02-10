@@ -64,7 +64,7 @@ function DashboardMetrics() {
 
 export default function OperationDashboardPage() {
   return (
-    <Container className="animate-fade-in-up">
+    <Container>
       <div className="mb-8">
         <div className="flex items-center gap-2 text-sm mb-2 font-medium">
           <Link

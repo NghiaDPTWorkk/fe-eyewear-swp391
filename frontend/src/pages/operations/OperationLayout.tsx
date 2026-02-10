@@ -1,7 +1,9 @@
 import { useEffect } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, Outlet } from 'react-router-dom'
 import { STORAGE_KEYS } from '@/shared/constants/storage'
-import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layout/StaffMainLayout'
+import { useLayoutStore } from '@/store/layout.store'
+import { cn } from '@/lib/utils'
+import { StaffHeader } from '@/components/layout/staff/staff-core/header'
 import {
   SidebarStaff,
   UserWidgetWithLogout,
@@ -177,12 +179,39 @@ export default function OperationLayout() {
     </SidebarStaff>
   )
 
+  // Inline StaffMainLayout interactions
+  const { sidebarCollapsed, toggleSidebar } = useLayoutStore()
+
   return (
-    <StaffMainLayout
-      sidebar={sidebar}
-      headerLeft={<NavSearch placeholder="Search orders..." styleVariant="operation" />}
-      headerRight={<NavActions />}
-      mainClassName="p-4 md:p-8 bg-mint-200 relative overflow-x-hidden"
-    />
+    <div className="flex h-screen bg-white">
+      {sidebar}
+
+      {!sidebarCollapsed && (
+        <div
+          className="fixed inset-0 bg-neutral-900/40 z-40 lg:hidden animate-in fade-in duration-200"
+          onClick={toggleSidebar}
+        />
+      )}
+
+      <div
+        className={cn(
+          'flex-1 flex flex-col transition-all duration-300 overflow-x-hidden',
+          'ml-0',
+          sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-64'
+        )}
+      >
+        <StaffHeader
+          left={<NavSearch placeholder="Search orders..." styleVariant="operation" />}
+          right={<NavActions />}
+          containerWidth="100%"
+        />
+
+        <main className="h-full overflow-auto p-4 md:p-8 bg-mint-200 relative overflow-x-hidden">
+          <div key={location.pathname} className="animate-fade-in-up">
+            <Outlet />
+          </div>
+        </main>
+      </div>
+    </div>
   )
 }

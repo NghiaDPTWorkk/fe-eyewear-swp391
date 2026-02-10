@@ -72,7 +72,9 @@ export const OrderStatus = {
   APPROVED: 'APPROVED', // Đã phê duyệt
   ASSIGNED: 'ASSIGNED', // Đã phân công
   MAKING: 'MAKING', // Đang sản xuất
-  PACKAGED: 'PACKAGED', // Đã đóng gói
+  PACKAGING: 'PACKAGING', // Đang đóng gói
+  COMPLETED: 'COMPLETED', // Hoàn thành
+  IN_SHIPPING: 'IN_SHIPPING', // Đang giao hàng
   REJECTED: 'REJECTED', // Bị từ chối
   CANCEL: 'CANCEL' // Đã hủy
 } as const

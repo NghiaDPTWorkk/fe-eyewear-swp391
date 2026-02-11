@@ -37,6 +37,8 @@ export default function OperationLayout() {
     setCompletedLoadingState
   } = useOrderCountStore()
 
+  // Gọi API để hiển thị avt
+
   // Gọi API để lấy số lượng đơn hàng cho từng trạng thái
   const { data, isLoading, isError, error } = useAllOrders()
 

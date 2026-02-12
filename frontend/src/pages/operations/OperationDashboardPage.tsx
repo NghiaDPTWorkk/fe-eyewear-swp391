@@ -78,11 +78,12 @@ export default function OperationDashboardPage() {
         </div>
         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Operation Hub</h1>
         <p className="text-gray-500 mt-1">Monitor priority orders and technical station status.</p>
+
         <div className="mt-5">
           <DashboardMetrics />
         </div>
       </div>
-
+      <h4 className="text-primary-600 font-bold text-xl mb-4">Priority Orders</h4>
       <OrderTable hiddenColumns={['WAITING FOR']} role="operation" />
     </Container>
   )

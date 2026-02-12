@@ -1,100 +1,131 @@
 import { useQuery } from '@tanstack/react-query'
 import { salesService } from '../services/salesService'
-import type { Invoice, Order } from '../types'
-import type { AdminInvoiceListItem } from '@/shared/types'
 import { OrderType } from '@/shared/utils/enums/order.enum'
+import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
+import type { Invoice } from '../types'
 
 export function useSalesStaffInvoices(
   page: number = 1,
   limit: number = 10,
-  status: string = 'All'
+  status: string = 'All',
+  search?: string
 ) {
   const query = useQuery({
-    queryKey: ['sales', 'invoices', { page, limit, status }],
+    queryKey: ['sales', 'invoices', { page, limit, status, search }],
     queryFn: async () => {
-      const apiStatus = status === 'All' ? undefined : status
-      const response = await salesService.getDepositedInvoices(page, limit, apiStatus)
+      let apiStatus: string | undefined = undefined
+      let apiStatuses: string | undefined = undefined
 
-      // Extract data safely - httpClient returns response.data directly
+      if (status === 'APPROVED_OR_REJECTED') {
+        // Fetch all finalized/active statuses for the Approved tab
+        apiStatuses = [
+          InvoiceStatus.APPROVED,
+          InvoiceStatus.ONBOARD,
+          InvoiceStatus.READY_TO_SHIP,
+          InvoiceStatus.DELIVERING,
+          InvoiceStatus.DELIVERED,
+          InvoiceStatus.COMPLETED,
+          InvoiceStatus.REJECTED,
+          InvoiceStatus.CANCELED
+        ].join(',')
+      } else if (status === 'All') {
+        apiStatus = undefined
+      } else {
+        apiStatus = status
+      }
+
+      const response = await salesService.getDepositedInvoices(
+        page,
+        limit,
+        apiStatus,
+        apiStatuses,
+        search
+      )
+
+      // Extract data safely
       const apiData = response?.data
       const invoiceData = apiData?.invoiceList || []
       const pagination = apiData?.pagination || { totalPages: 1, total: 0 }
 
       // ENRICHMENT OPTIMIZATION:
       const enrichedInvoices = await Promise.all(
-        invoiceData.map(async (inv: AdminInvoiceListItem) => {
+        invoiceData.map(async (inv: { id?: string; _id?: string; orders?: unknown[] }) => {
           try {
-            const orderItems = inv.orders || []
+            const orderIds = (inv.orders || []) as (string | { id?: string; _id?: string })[]
 
-            const ordersWithDetails = await Promise.all(
-              orderItems.slice(0, 10).map(async (item) => {
-                const orderId = item.id
-                try {
-                  const detailRes = await salesService.getOrderById(orderId)
-                  // Handle different possible API response structures
-                  const orderData: Order =
-                    detailRes.data?.order || (detailRes.data as unknown as Order)
+            const ordersWithDetails = (
+              await Promise.all(
+                orderIds.map(async (item) => {
+                  const orderId = (typeof item === 'string' ? item : item.id || item._id) as string
+                  if (!orderId) return null
+                  try {
+                    const detailRes = await salesService.getOrderById(orderId)
+                    const o = detailRes.data.order
 
-                  if (!orderData || !orderData._id) {
-                    throw new Error('Invalid order data')
+                    const isMfg = (Array.isArray(o.type) ? o.type : [o.type]).some((t) =>
+                      String(t).includes(OrderType.MANUFACTURING)
+                    )
+
+                    const isVerified = [
+                      'VERIFIED',
+                      'APPROVE',
+                      'APPROVED',
+                      'WAITING_ASSIGN',
+                      'ASSIGNED',
+                      'MAKING',
+                      'PACKAGING',
+                      'COMPLETED',
+                      'ONBOARD',
+                      'DELIVERED',
+                      'DELIVERING',
+                      'SHIPPED',
+                      'PROCESSING'
+                    ].includes(o.status?.toUpperCase())
+
+                    return {
+                      id: o._id,
+                      type: o.type,
+                      status: o.status,
+                      isPrescription: isMfg,
+                      isVerified: isVerified
+                    }
+                  } catch {
+                    return {
+                      id: orderId,
+                      type: [],
+                      status: 'UNKNOWN',
+                      isPrescription: false,
+                      isVerified: false
+                    }
                   }
+                })
+              )
+            ).filter(Boolean) as {
+              id: string
+              type: unknown
+              status: string
+              isPrescription: boolean
+              isVerified: boolean
+            }[]
 
-                  const isMfg =
-                    orderData.type?.includes(OrderType.MANUFACTURING) ||
-                    orderData.isPrescription ||
-                    (Array.isArray(orderData.type) &&
-                      orderData.type.some((t: string) =>
-                        String(t).includes(OrderType.MANUFACTURING)
-                      ))
-
-                  return {
-                    id: orderData._id,
-                    type: orderData.type || [],
-                    status: orderData.status || 'PENDING',
-                    isPrescription: !!isMfg
-                  }
-                } catch (err) {
-                  console.error(`Failed to fetch order ${orderId}:`, err)
-                  // Fallback to basic info if detail fetch fails
-                  return {
-                    id: orderId,
-                    type: item.type || [],
-                    status: 'PENDING', // Default to PENDING instead of UNKNOWN
-                    isPrescription: item.type?.some((t) => String(t).includes('MANUFACTURING'))
-                  }
-                }
-              })
-            )
-
-            // Local Calculation: Normal orders are default approved.
-            // Mfg orders must be in one of the approved/verified statuses.
-            const totalOrdersCount = ordersWithDetails.length
-            const approvedOrdersCount = ordersWithDetails.filter((o) => {
-              if (!o.isPrescription) return true // Normal orders = default approved
-              return [
-                'VERIFIED',
-                'APPROVED',
-                'WAITING_ASSIGN',
-                'ASSIGNED',
-                'MAKING',
-                'PACKAGING',
-                'COMPLETED',
-                'ONBOARD',
-                'DELIVERED',
-                'DELIVERING'
-              ].includes(String(o.status).toUpperCase())
-            }).length
+            // approvedOrdersCount should include:
+            // 1. All prescription orders that are verified
+            // 2. All NON-prescription orders (considered approved by default)
+            const approvedCount = ordersWithDetails.filter(
+              (o) => o && (!o.isPrescription || o.isVerified)
+            ).length
 
             return {
               ...inv,
+              id: inv.id || inv._id,
               orders: ordersWithDetails,
-              totalOrdersCount,
-              approvedOrdersCount
-            } as Invoice
-          } catch (err) {
-            console.error('Failed to enrich invoice:', err)
+              totalOrdersCount: ordersWithDetails.length,
+              approvedOrdersCount: approvedCount
+            } as unknown as Invoice
+          } catch {
             return {
               ...inv,
+              id: inv.id || inv._id,
               orders: [],
               totalOrdersCount: 0,
               approvedOrdersCount: 0

@@ -132,7 +132,7 @@ export function NavActions({
   return (
     <div
       ref={containerRef}
-      className={cn('flex justify-end items-center gap-6 pr-4 relative', className)}
+      className={cn('flex justify-end items-center gap-6 relative', className)}
     >
       <div className="flex items-center gap-4 text-neutral-500">
         <button
@@ -159,7 +159,7 @@ export function NavActions({
           </button>
 
           {openDropdown === 'notifications' && (
-            <div className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-xl border border-neutral-100 py-4 z-50 animate-in fade-in zoom-in-95 duration-200">
+            <div className="absolute right-0 mt-6 w-80 bg-white rounded-2xl shadow-xl border border-neutral-100 py-4 z-50 animate-in fade-in zoom-in-95 duration-200">
               <div className="px-5 mb-4">
                 <h3 className="text-lg font-semibold text-neutral-900">Notifications</h3>
                 <p className="text-xs font-medium text-neutral-400">You have 4 unread messages</p>
@@ -214,7 +214,7 @@ export function NavActions({
         </button>
 
         {openDropdown === 'profile' && (
-          <div className="absolute right-0 mt-3 w-72 bg-white rounded-2xl shadow-xl border border-neutral-100 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+          <div className="absolute right-0 mt-6 w-72 bg-white rounded-2xl shadow-xl border border-neutral-100 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="p-6 bg-white border-b border-neutral-50">
               <div className="mb-3">
                 <h3 className="text-xl font-semibold text-neutral-900 leading-tight">{userName}</h3>

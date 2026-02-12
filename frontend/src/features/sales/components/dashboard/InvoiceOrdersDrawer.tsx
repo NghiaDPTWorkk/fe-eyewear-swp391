@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { IoArrowForward, IoClose } from 'react-icons/io5'
+import { useNavigate } from 'react-router-dom'
 
 import { Button, ConfirmationModal } from '@/shared/components/ui-core'
 import { OrderType } from '@/shared/utils/enums/order.enum'
@@ -18,6 +19,7 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
   onClose,
   invoice
 }) => {
+  const navigate = useNavigate()
   const { approveOrder, processing } = useSalesStaffAction()
   const [showConfirmModal, setShowConfirmModal] = useState(false)
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
@@ -101,11 +103,7 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
                     String(t).includes(OrderType.PRE_ORDER)
                   )
 
-                  const isApprovable =
-                    hasManufacturing &&
-                    !['APPROVED', 'COMPLETED', 'DELIVERED', 'ONBOARD'].includes(order.status)
-
-                  const getSimplifiedStatus = (order: { status: string }) => {
+                  const getSimplifiedStatus = (order: { status: string }, needsAction: boolean) => {
                     const status = (order.status || 'PENDING').toUpperCase()
                     const isRejected = ['REJECT', 'REJECTED', 'CANCELED'].includes(status)
 
@@ -116,23 +114,23 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
                       }
                     }
 
-                    // Normal orders or manufacturing orders in accepted states
-                    const isAccepted =
-                      !hasManufacturing ||
-                      [
-                        'VERIFIED',
-                        'APPROVED',
-                        'WAITING_ASSIGN',
-                        'ASSIGNED',
-                        'MAKING',
-                        'PACKAGING',
-                        'COMPLETED',
-                        'ONBOARD',
-                        'DELIVERED',
-                        'DELIVERING'
-                      ].includes(status)
+                    // All orders must be in one of the approved/verified states
+                    const isAccepted = [
+                      'VERIFIED',
+                      'APPROVE',
+                      'APPROVED',
+                      'WAITING_ASSIGN',
+                      'ASSIGNED',
+                      'MAKING',
+                      'PACKAGING',
+                      'COMPLETED',
+                      'ONBOARD',
+                      'DELIVERED',
+                      'DELIVERING'
+                    ].includes(status)
 
-                    if (isAccepted) {
+                    // For non-manufacturing orders, they are considered accepted by default
+                    if (!needsAction || isAccepted) {
                       return {
                         label: 'ACCEPTED',
                         className: 'bg-emerald-50 text-emerald-600 border-emerald-100'
@@ -145,7 +143,9 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
                     }
                   }
 
-                  const displayStatus = getSimplifiedStatus(order)
+                  const displayStatus = getSimplifiedStatus(order, hasManufacturing)
+
+                  const isApprovable = hasManufacturing && displayStatus.label === 'NEED VERIFY'
 
                   return (
                     <div
@@ -159,7 +159,7 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
                           pathSuffix = 'pre-order'
                         }
                         const path = `/salestaff/orders/${order.id}/${pathSuffix}`
-                        window.location.href = `${path}?from=${window.location.pathname}&invoiceId=${invoice.id}`
+                        navigate(`${path}?from=${window.location.pathname}&invoiceId=${invoice.id}`)
                       }}
                     >
                       <div className="flex items-start justify-between">
@@ -236,7 +236,9 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
           {/* Footer */}
           <div className="p-6 border-t border-neutral-100 bg-white">
             <button
-              onClick={() => (window.location.href = `/salestaff/orders?invoiceId=${invoice.id}`)}
+              onClick={() =>
+                navigate(`/salestaff/orders?status=${invoice.status}&search=${invoice.invoiceCode}`)
+              }
               className="w-full py-4 bg-primary-600 text-white rounded-2xl font-medium text-sm shadow-lg shadow-primary-100 hover:bg-primary-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3 tracking-tight group"
             >
               Manage All Orders in Invoice

@@ -5,9 +5,15 @@ import type { AdminInvoiceListApiResponse } from '@/shared/types'
 import type { Order } from '../types'
 
 export const salesService = {
-  getDepositedInvoices: async (page: number, limit: number, status?: string) => {
+  getDepositedInvoices: async (
+    page: number,
+    limit: number,
+    status?: string,
+    statuses?: string,
+    search?: string
+  ) => {
     return httpClient.get<AdminInvoiceListApiResponse>(
-      ENDPOINTS.ADMIN.INVOICES(page, limit, status)
+      ENDPOINTS.ADMIN.INVOICES(page, limit, status, statuses, search)
     )
   },
 

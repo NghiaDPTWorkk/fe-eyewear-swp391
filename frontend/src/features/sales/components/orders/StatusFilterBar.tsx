@@ -1,6 +1,6 @@
 import React from 'react'
-import { IoFilterOutline, IoSearchOutline } from 'react-icons/io5'
-import { Button } from '@/shared/components/ui-core'
+import { IoFilterOutline, IoSearchOutline, IoRepeatOutline } from 'react-icons/io5'
+import { cn } from '@/lib/utils'
 
 interface StatusTab {
   label: string
@@ -14,6 +14,8 @@ interface StatusFilterBarProps {
   searchQuery: string
   onSearchChange: (query: string) => void
   onToggleFilter: () => void
+  onReset: () => void
+  orderTypeFilter: string
 }
 
 export const StatusFilterBar: React.FC<StatusFilterBarProps> = ({
@@ -22,55 +24,72 @@ export const StatusFilterBar: React.FC<StatusFilterBarProps> = ({
   onStatusChange,
   searchQuery,
   onSearchChange,
-  onToggleFilter
+  onToggleFilter,
+  onReset,
+  orderTypeFilter
 }) => {
   return (
-    <div className="px-4 mb-6">
-      <div className="flex flex-col xl:flex-row justify-between gap-5">
-        {/* Status Tabs */}
-        <div className="flex items-center gap-1.5 p-1.5 bg-white rounded-2xl w-fit border border-neutral-200/60 shadow-sm overflow-x-auto">
+    <div className="flex flex-col gap-6 px-4 mb-8">
+      {/* Status Tabs */}
+      <div className="overflow-x-auto">
+        <div className="flex items-center gap-2 p-1.5 bg-neutral-100/50 rounded-2xl w-fit border border-neutral-100">
           {statusTabs.map((tab) => {
             const isActive = statusFilter === tab.value
             return (
               <button
                 key={tab.value}
                 onClick={() => onStatusChange(tab.value)}
-                className={`px-5 py-2.5 rounded-xl text-[11px] font-semibold uppercase tracking-wider transition-all whitespace-nowrap flex items-center gap-2 ${
+                className={cn(
+                  'px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap',
                   isActive
-                    ? 'bg-gradient-to-r from-mint-500 to-emerald-500 text-white shadow-md shadow-mint-500/20'
-                    : 'text-slate-400 hover:text-slate-700 hover:bg-slate-50'
-                }`}
+                    ? 'bg-white text-mint-600 shadow-sm border border-neutral-100'
+                    : 'text-neutral-500 hover:text-neutral-700'
+                )}
               >
-                {isActive && <div className="w-1.5 h-1.5 rounded-full bg-white/60 animate-pulse" />}
                 {tab.label}
               </button>
             )
           })}
         </div>
+      </div>
 
-        {/* Search + Filter */}
-        <div className="flex flex-col sm:flex-row items-center gap-3">
-          <div className="relative w-full sm:w-[320px] group">
-            <IoSearchOutline
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-300 group-focus-within:text-mint-500 transition-colors"
-              size={18}
-            />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
-              placeholder="Search by name, code or phone..."
-              className="w-full pl-11 pr-4 py-3 bg-white border border-neutral-200/60 rounded-2xl text-sm focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-400 transition-all shadow-sm placeholder:text-slate-300"
-            />
-          </div>
-          <Button
-            variant="outline"
-            className="px-5 py-3 rounded-2xl border-neutral-200/60 text-slate-500 hover:border-mint-400 hover:text-mint-600 hover:bg-mint-50/50 transition-all font-semibold flex items-center gap-2 w-full sm:w-auto shadow-sm text-xs uppercase tracking-wider"
+      {/* Search + Filter Row */}
+      <div className="bg-white border border-neutral-100 rounded-3xl p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-6 shadow-sm">
+        {/* Search input */}
+        <div className="flex-1 max-w-md relative">
+          <IoSearchOutline
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400"
+            size={18}
+          />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+            placeholder="Search by name, code or phone..."
+            className="w-full pl-11 pr-4 py-2.5 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all font-primary"
+          />
+        </div>
+
+        {/* Action buttons */}
+        <div className="flex items-center gap-3">
+          <button
             onClick={onToggleFilter}
+            className="flex items-center gap-2 px-4 py-2 border border-neutral-100 bg-neutral-50 text-neutral-600 rounded-xl text-sm font-semibold hover:bg-neutral-100 transition-all min-w-[160px] justify-between h-[42px]"
           >
-            <IoFilterOutline size={16} />
-            Filters
-          </Button>
+            <div className="flex items-center gap-2">
+              <IoFilterOutline className="text-neutral-400" size={16} />
+              <span className="capitalize">{orderTypeFilter.toLowerCase().replace('-', ' ')}</span>
+            </div>
+            <span className="text-neutral-400">{'>'}</span>
+          </button>
+
+          <button
+            onClick={onReset}
+            className="p-2.5 bg-white text-neutral-400 rounded-xl hover:text-mint-600 hover:border-mint-200 border border-neutral-200 transition-all shadow-sm h-[42px] w-[42px] flex items-center justify-center"
+            title="Reset Filters"
+          >
+            <IoRepeatOutline size={18} />
+          </button>
         </div>
       </div>
     </div>

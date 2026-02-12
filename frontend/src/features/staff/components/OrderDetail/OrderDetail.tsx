@@ -72,16 +72,18 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
     total: `${(realOrder.price || 0).toLocaleString()} ₫`,
     paymentMethod: 'Credit Card (Simulated)', // Placeholder as payment method might not be in this API response yet
     customer: {
-      name: realOrder.customerName || 'Guest',
+      name: realOrder.customerName || realOrder.invoice?.fullName || 'Guest',
       ordersCount: 1, // Placeholder
-      email: 'No email provided', // Placeholder
-      phone: realOrder.customerPhone || 'No phone provided',
-      avatar: (realOrder.customerName || 'G').charAt(0).toUpperCase(),
+      email: realOrder.invoice?.email || 'No email provided',
+      phone: realOrder.customerPhone || realOrder.invoice?.phone || 'No phone provided',
+      avatar: (realOrder.customerName || realOrder.invoice?.fullName || 'G')
+        .charAt(0)
+        .toUpperCase(),
       since: 'Member'
     },
     shippingAddress: {
       type: 'Home',
-      address: 'Store Pickup or Not provided' // Need address in API
+      address: realOrder.invoice?.address || 'Store Pickup or Not provided'
     },
     billingAddress: 'Same as shipping address',
     items: (realOrder.products || []).map(

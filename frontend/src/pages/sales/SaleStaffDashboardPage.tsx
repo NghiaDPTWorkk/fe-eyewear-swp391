@@ -118,8 +118,12 @@ export default function SaleStaffDashboardPage() {
     openDrawer(invoice.id)
   }
 
+  const filteredInvoicesForTable = useMemo(() => {
+    return invoices.filter((inv: Invoice) => inv.orders?.some((o) => o.isPrescription))
+  }, [invoices])
+
   return (
-    <Container maxWidth="none" className="pt-2 pb-8 px-4 md:px-6">
+    <Container maxWidth="none" className="pt-6 pb-8 px-6 md:px-8">
       <PageHeader
         title="Sales Overview"
         subtitle="Overview of store performance and daily sales operations."
@@ -138,7 +142,7 @@ export default function SaleStaffDashboardPage() {
 
       <Charts />
 
-      <Card className="p-8 border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50">
+      <Card className="p-8 border border-neutral-200">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8">
           <div className="space-y-1">
             <h3 className="text-xl font-medium text-gray-900 font-heading">Recent Transactions</h3>
@@ -146,13 +150,13 @@ export default function SaleStaffDashboardPage() {
               Latest invoices awaiting verification and approval.
             </p>
           </div>
-          <Button className="flex items-center gap-2.5 px-6 py-3 bg-mint-600 text-white rounded-2xl text-sm font-medium hover:bg-mint-700 hover:shadow-lg hover:shadow-mint-100 transition-all active:scale-95 group">
+          <Button className="flex items-center gap-2.5 px-6 py-3 bg-mint-600 text-white rounded-2xl text-sm font-medium hover:bg-mint-700 transition-all active:scale-95 group">
             <IoAdd size={22} className="group-hover:rotate-90 transition-transform duration-300" />
             New Transaction
           </Button>
         </div>
         <Table
-          invoices={invoices}
+          invoices={filteredInvoicesForTable}
           loading={loading}
           onInvoiceClick={handleInvoiceClick}
           onActionSuccess={fetchInvoices}

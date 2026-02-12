@@ -1,16 +1,18 @@
 import { useMemo, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { IoFlashOutline, IoCubeOutline, IoReceiptOutline, IoRepeatOutline } from 'react-icons/io5'
 import { useSearchParams } from 'react-router-dom'
+import { salesService } from '@/features/sales/services/salesService'
 
 import { InvoiceOrdersDrawer } from '@/features/sales/components/dashboard/InvoiceOrdersDrawer'
 import { OrderMetrics } from '@/features/sales/components/orders/OrderMetrics'
 import { OrderPagination } from '@/features/sales/components/orders/OrderPagination'
 import { OrderTable } from '@/features/sales/components/orders/OrderTable'
 import { StatusFilterBar } from '@/features/sales/components/orders/StatusFilterBar'
+import { PageHeader } from '@/features/sales/components/common'
 import { useSalesStaffAction } from '@/features/sales/hooks/useSalesStaffAction'
 import { useSalesStaffInvoices } from '@/features/sales/hooks/useSalesStaffInvoices'
 import { type Invoice } from '@/features/sales/types'
-import { PageHeader } from '@/features/staff'
 import { Container, ConfirmationModal } from '@/shared/components/ui-core'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import { OrderType } from '@/shared/utils/enums/order.enum'
@@ -19,21 +21,29 @@ export default function SaleStaffOrderPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const statusFilter = searchParams.get('status') ?? 'All'
   const orderTypeFilter = searchParams.get('orderType') ?? 'All'
+  const searchQuery = searchParams.get('search') ?? ''
+
   const { approveInvoice, processing } = useSalesStaffAction()
-  const [searchQuery, setSearchQuery] = useState('')
   const [page, setPage] = useState(1)
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<string | null>(null)
   const [showConfirmModal, setShowConfirmModal] = useState(false)
   const [invoiceToApprove, setInvoiceToApprove] = useState<string | null>(null)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
-  const limit = 10
+  const limit = 8
+
+  const setSearchQuery = (query: string) => {
+    const next = new URLSearchParams(searchParams)
+    if (query) next.set('search', query)
+    else next.delete('search')
+    setSearchParams(next)
+  }
 
   const {
     invoices: invoiceList,
-    pagination,
+    pagination: _pagination,
     loading: isLoading,
     fetchInvoices: refetch
-  } = useSalesStaffInvoices(page, limit, statusFilter)
+  } = useSalesStaffInvoices(page, limit, statusFilter, searchQuery)
 
   const selectedInvoice = useMemo(
     () => invoiceList.find((inv) => inv.id === selectedInvoiceId) ?? null,
@@ -42,6 +52,37 @@ export default function SaleStaffOrderPage() {
 
   const filteredInvoices = useMemo(() => {
     let list = invoiceList
+
+    // 1. Pending tab: only show invoices with manufacturing/prescription orders
+    if (statusFilter === InvoiceStatus.DEPOSITED) {
+      list = list.filter((inv: Invoice) => inv.orders?.some((o) => o.isPrescription))
+    }
+
+    // 2. Approved tab: strictly exclude any pending invoices and filter by relevant statuses
+    if (statusFilter === 'APPROVED_OR_REJECTED') {
+      const activeStatuses = [
+        InvoiceStatus.APPROVED,
+        InvoiceStatus.ONBOARD,
+        InvoiceStatus.READY_TO_SHIP,
+        InvoiceStatus.DELIVERING,
+        InvoiceStatus.DELIVERED,
+        InvoiceStatus.COMPLETED,
+        InvoiceStatus.REJECTED,
+        InvoiceStatus.CANCELED
+      ]
+      list = list.filter(
+        (inv: Invoice) =>
+          inv.status !== InvoiceStatus.DEPOSITED &&
+          activeStatuses.includes(inv.status as InvoiceStatus)
+      )
+    }
+
+    // 3. Refunded tab: only show refunded invoices
+    if (statusFilter === InvoiceStatus.REFUNDED) {
+      list = list.filter((inv: Invoice) => inv.status === InvoiceStatus.REFUNDED)
+    }
+
+    // 4. Search filtering
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase()
       list = list.filter(
@@ -51,6 +92,8 @@ export default function SaleStaffOrderPage() {
           inv.phone.includes(q)
       )
     }
+
+    // 5. Order type filter
     if (orderTypeFilter !== 'All') {
       list = list.filter((inv: Invoice) =>
         inv.orders?.some((order) => {
@@ -59,10 +102,26 @@ export default function SaleStaffOrderPage() {
         })
       )
     }
-    return list
-  }, [invoiceList, searchQuery, orderTypeFilter])
 
-  const totalPages = pagination?.totalPages || 1
+    // 6. Sort by newest first (most recent at the top)
+    list = list.sort((a: Invoice, b: Invoice) => {
+      const dateA = new Date(a.createdAt).getTime()
+      const dateB = new Date(b.createdAt).getTime()
+      return dateB - dateA // Descending order (newest first)
+    })
+
+    return list
+  }, [invoiceList, searchQuery, orderTypeFilter, statusFilter])
+
+  // Calculate pagination based on filtered results for accurate page count
+  const totalPages = Math.ceil(filteredInvoices.length / limit) || 1
+
+  // Apply client-side pagination to show exactly 'limit' items per page
+  const paginatedInvoices = useMemo(() => {
+    const startIndex = (page - 1) * limit
+    const endIndex = startIndex + limit
+    return filteredInvoices.slice(startIndex, endIndex)
+  }, [filteredInvoices, page, limit])
 
   const metrics = useMemo(() => {
     const counts: Record<string, number> = {
@@ -145,27 +204,103 @@ export default function SaleStaffOrderPage() {
     setIsFilterOpen(false)
   }
 
-  const statusTabs = [
-    { label: 'All Invoices', value: 'All' },
-    { label: 'Pending', value: InvoiceStatus.DEPOSITED },
-    { label: 'Approved', value: 'APPROVED_OR_REJECTED' },
-    { label: 'Refunded', value: InvoiceStatus.REFUNDED }
-  ]
+  const handleResetFilters = () => {
+    setSearchParams(new URLSearchParams())
+    setPage(1)
+  }
+
+  const { data: statusCounts } = useQuery({
+    queryKey: ['sales', 'status-counts'],
+    queryFn: async () => {
+      const tabs = [InvoiceStatus.DEPOSITED, 'APPROVED_OR_REJECTED', InvoiceStatus.REFUNDED]
+      const counts: Record<string, number> = {}
+      await Promise.all(
+        tabs.map(async (tab) => {
+          let apiStatus: string | undefined = undefined
+          let apiStatuses: string | undefined = undefined
+
+          if (tab === 'APPROVED_OR_REJECTED') {
+            apiStatuses = [
+              InvoiceStatus.APPROVED,
+              InvoiceStatus.ONBOARD,
+              InvoiceStatus.READY_TO_SHIP,
+              InvoiceStatus.DELIVERING,
+              InvoiceStatus.DELIVERED,
+              InvoiceStatus.COMPLETED,
+              InvoiceStatus.REJECTED,
+              InvoiceStatus.CANCELED
+            ].join(',')
+          } else if (tab === InvoiceStatus.REFUNDED) {
+            // If backend doesn't support REFUNDED yet, pass an empty list or specific status
+            apiStatus = InvoiceStatus.REFUNDED
+          } else {
+            apiStatus = tab as string
+          }
+
+          const res = await salesService.getDepositedInvoices(1, 1, apiStatus, apiStatuses)
+          counts[tab] = res.data.pagination.total
+        })
+      )
+      return counts
+    },
+    staleTime: 30000
+  })
+
+  const statusTabs = useMemo(() => {
+    const allTabs = [
+      { label: 'All Invoices', value: 'All' },
+      { label: 'Pending', value: InvoiceStatus.DEPOSITED },
+      { label: 'Approved', value: 'APPROVED_OR_REJECTED' },
+      { label: 'Refunded', value: InvoiceStatus.REFUNDED }
+    ]
+    return allTabs.filter((tab) => {
+      if (tab.value === 'All') return true
+      return (statusCounts?.[tab.value] ?? 0) > 0
+    })
+  }, [statusCounts])
 
   const getStatusBadgeProps = (invoice: Invoice) => {
     const s = invoice.status
-    const hasMfg = invoice.orders?.some((o) => o.type?.includes(OrderType.MANUFACTURING))
+    const hasMfg = invoice.orders?.some((o) =>
+      (Array.isArray(o.type) ? o.type : [o.type]).some((t) =>
+        String(t).includes(OrderType.MANUFACTURING)
+      )
+    )
+
+    if (statusFilter === 'APPROVED_OR_REJECTED') {
+      if (s === InvoiceStatus.REJECTED || s === 'REJECTED' || s === InvoiceStatus.CANCELED) {
+        return { label: 'Rejected', color: 'bg-rose-50 text-rose-600 border-rose-100' }
+      }
+      if (
+        [
+          InvoiceStatus.APPROVED,
+          InvoiceStatus.ONBOARD,
+          InvoiceStatus.READY_TO_SHIP,
+          InvoiceStatus.DELIVERING,
+          InvoiceStatus.DELIVERED,
+          InvoiceStatus.COMPLETED
+        ].includes(s as InvoiceStatus)
+      ) {
+        return { label: 'Accepted', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' }
+      }
+    }
+
     if (s === InvoiceStatus.DEPOSITED) {
+      if (invoice.totalOrdersCount && invoice.approvedOrdersCount === invoice.totalOrdersCount) {
+        return { label: 'Ready to Approve', color: 'bg-mint-50 text-mint-600 border-mint-200' }
+      }
       return hasMfg
-        ? { label: 'Wait Verify', color: 'bg-blue-50 text-blue-600 border-blue-100' }
+        ? { label: 'Wait Verify', color: 'bg-indigo-50 text-indigo-600 border-indigo-100' }
         : { label: 'Pending', color: 'bg-amber-50 text-amber-600 border-amber-100' }
     }
-    if (s === InvoiceStatus.APPROVED)
-      return { label: 'Approved', color: 'bg-mint-50 text-mint-600 border-mint-100' }
-    if (s === InvoiceStatus.REJECTED)
-      return { label: 'Rejected', color: 'bg-red-50 text-red-600 border-red-100' }
-    if (s === InvoiceStatus.REFUNDED)
+
+    if (s === InvoiceStatus.APPROVED || s === 'APPROVED')
+      return { label: 'Approved', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' }
+    if (s === InvoiceStatus.REJECTED || s === 'REJECTED')
+      return { label: 'Rejected', color: 'bg-rose-50 text-rose-600 border-rose-100' }
+    if (s === InvoiceStatus.REFUNDED || s === 'REFUNDED')
       return { label: 'Refunded', color: 'bg-purple-50 text-purple-600 border-purple-100' }
+
     return { label: String(s) || 'Unknown', color: 'bg-slate-50 text-slate-400 border-slate-100' }
   }
 
@@ -184,58 +319,60 @@ export default function SaleStaffOrderPage() {
   }
 
   return (
-    <Container className="pt-2 pb-8 px-2 max-w-none">
-      <PageHeader
-        title="Order Management"
-        subtitle="Consolidated view of all sales orders, pre-orders, and returns."
-        breadcrumbs={[{ label: 'Dashboard', path: '/salestaff/dashboard' }, { label: 'Orders' }]}
-      />
-      <OrderMetrics
-        metrics={metrics}
-        orderTypeFilter={orderTypeFilter}
-        onOrderTypeChange={handleOrderTypeChange}
-      />
-      <StatusFilterBar
-        statusTabs={statusTabs}
-        statusFilter={statusFilter}
-        onStatusChange={handleStatusChange}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        onToggleFilter={() => setIsFilterOpen(!isFilterOpen)}
-      />
-      <div className="mx-4 bg-white border border-neutral-200/60 rounded-3xl overflow-hidden shadow-xl shadow-neutral-100/50">
-        <OrderTable
-          invoices={filteredInvoices}
-          selectedInvoiceId={selectedInvoiceId}
-          setSelectedInvoiceId={setSelectedInvoiceId}
-          getStatusBadgeProps={getStatusBadgeProps}
-          handleApproveClick={handleApproveClick}
-          processing={processing}
+    <div className="min-h-screen bg-slate-50/30">
+      <Container maxWidth="none" className="pt-6 pb-8 px-6 md:px-8">
+        <PageHeader
+          title="Sales Orders"
+          breadcrumbs={[{ label: 'Dashboard', path: '/salestaff/dashboard' }, { label: 'Orders' }]}
+          subtitle="Consolidated view of all sales orders, pre-orders, and returns."
         />
-        <OrderPagination
-          filteredCount={filteredInvoices.length}
-          total={pagination?.total || 0}
-          page={page}
-          totalPages={totalPages}
-          isLoading={isLoading}
-          onPageChange={setPage}
+        <OrderMetrics
+          metrics={metrics}
+          orderTypeFilter={orderTypeFilter}
+          onOrderTypeChange={handleOrderTypeChange}
         />
-      </div>
-      <InvoiceOrdersDrawer
-        isOpen={!!selectedInvoiceId}
-        onClose={() => setSelectedInvoiceId(null)}
-        invoice={selectedInvoice}
-      />
-      <ConfirmationModal
-        isOpen={showConfirmModal}
-        onClose={() => setShowConfirmModal(false)}
-        onConfirm={confirmApproval}
-        title="Approve Invoice"
-        message="Are you sure you want to approve this invoice? All orders within this invoice will be marked as verified and proceed to the next stage."
-        confirmText="Approve Invoice"
-        type="info"
-        isLoading={processing}
-      />
-    </Container>
+        <StatusFilterBar
+          statusTabs={statusTabs}
+          statusFilter={statusFilter}
+          onStatusChange={handleStatusChange}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          onToggleFilter={() => setIsFilterOpen(!isFilterOpen)}
+          onReset={handleResetFilters}
+          orderTypeFilter={orderTypeFilter}
+        />
+        <div className="mx-4 bg-white border border-neutral-100 rounded-[32px] overflow-hidden shadow-sm">
+          <OrderTable
+            invoices={paginatedInvoices}
+            selectedInvoiceId={selectedInvoiceId}
+            setSelectedInvoiceId={setSelectedInvoiceId}
+            getStatusBadgeProps={getStatusBadgeProps}
+            handleApproveClick={handleApproveClick}
+            processing={processing}
+          />
+          <OrderPagination
+            page={page}
+            totalPages={totalPages}
+            isLoading={isLoading}
+            onPageChange={setPage}
+          />
+        </div>
+        <InvoiceOrdersDrawer
+          isOpen={!!selectedInvoiceId}
+          onClose={() => setSelectedInvoiceId(null)}
+          invoice={selectedInvoice}
+        />
+        <ConfirmationModal
+          isOpen={showConfirmModal}
+          onClose={() => setShowConfirmModal(false)}
+          onConfirm={confirmApproval}
+          title="Approve Invoice"
+          message="Are you sure you want to approve this invoice? All orders within this invoice will be marked as verified and proceed to the next stage."
+          confirmText="Approve Invoice"
+          type="info"
+          isLoading={processing}
+        />
+      </Container>
+    </div>
   )
 }

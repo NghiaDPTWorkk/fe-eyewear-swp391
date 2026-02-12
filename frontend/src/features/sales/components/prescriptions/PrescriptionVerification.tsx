@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
-import { IoCheckmark } from 'react-icons/io5'
+import { IoCheckmark, IoClose } from 'react-icons/io5'
 import { useSearchParams } from 'react-router-dom'
 
 import { useSalesStaffAction } from '@/features/sales/hooks/useSalesStaffAction'
@@ -85,8 +85,20 @@ export default function PrescriptionVerification({
     )
   }
 
-  const isApproved = ['APPROVED', 'VERIFIED', 'COMPLETED'].includes(order.status)
-  const isPending = ['WAITING_ASSIGN', 'PENDING', 'DEPOSITED'].includes(order.status)
+  const isApproved = [
+    'APPROVED',
+    'VERIFIED',
+    'COMPLETED',
+    'MAKING',
+    'PACKAGING',
+    'DELIVERING',
+    'DELIVERED'
+  ].includes(order.status?.toUpperCase())
+  const isPending = ['WAITING_ASSIGN', 'PENDING', 'DEPOSITED', 'WAITING_VERIFY'].includes(
+    order.status?.toUpperCase()
+  )
+  const isRejected = ['REJECTED', 'CANCELED', 'REJECT'].includes(order.status?.toUpperCase())
+
   const lens = order.products?.[0]?.lens
   const parameters = lens?.parameters
 
@@ -99,6 +111,10 @@ export default function PrescriptionVerification({
           {isApproved ? (
             <span className="px-3 py-1 bg-mint-50 text-mint-600 font-semibold rounded-full text-[10px] border border-mint-200 uppercase tracking-widest flex items-center gap-1.5 shadow-sm">
               <IoCheckmark size={14} className="text-mint-600" /> VERIFIED
+            </span>
+          ) : isRejected ? (
+            <span className="px-3 py-1 bg-rose-50 text-rose-600 font-semibold rounded-full text-[10px] border border-rose-200 uppercase tracking-widest shadow-sm">
+              <IoClose size={14} className="text-rose-600 inline mr-1" /> REJECTED
             </span>
           ) : isPending ? (
             <span className="px-3 py-1 bg-amber-50 text-amber-600 font-semibold rounded-full text-[10px] border border-amber-200 uppercase tracking-widest shadow-sm">
@@ -130,6 +146,7 @@ export default function PrescriptionVerification({
             parameters={parameters}
             isReadOnly={isReadOnly}
             isApproved={isApproved}
+            isRejected={isRejected}
             processing={processing}
             handleApprove={handleApprove}
             handleReject={handleReject}

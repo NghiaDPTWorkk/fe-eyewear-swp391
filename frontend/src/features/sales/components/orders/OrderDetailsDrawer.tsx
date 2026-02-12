@@ -2,11 +2,13 @@ import { useEffect, useState, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 
+import { OrderType } from '@/shared/utils/enums/order.enum'
+
 import { useSalesStaffAction } from '@/features/sales/hooks/useSalesStaffAction'
 import {
-  useSalesStaffOrders,
+  useSalesStaffInvoices as useSalesStaffOrders,
   useSalesStaffOrderDetail
-} from '@/features/sales/hooks/useSalesStaffOrders'
+} from '@/features/sales/hooks/useSalesStaffInvoices'
 import ConfirmationModal from '@/shared/components/ui-core/confirm-modal/ConfirmationModal'
 
 import { OrderDrawerActions } from './drawer/OrderDrawerActions'
@@ -25,8 +27,12 @@ export const OrderDetailsDrawer: React.FC<{
   onViewFullDetails?: () => void
 }> = ({ isOpen, onClose, orderId, onUpdate, onViewFullDetails }) => {
   const navigate = useNavigate()
-  const { invalidateOrders } = useSalesStaffOrders()
-  const { data: order, isLoading, refetch } = useSalesStaffOrderDetail(isOpen ? orderId : null)
+  const { fetchInvoices: invalidateOrders } = useSalesStaffOrders()
+  const {
+    data: order,
+    isLoading,
+    refetch
+  } = useSalesStaffOrderDetail(isOpen && orderId ? orderId : '')
   const { approveInvoice, rejectInvoice, approveOrder, rejectOrder, processing } =
     useSalesStaffAction()
 
@@ -103,7 +109,7 @@ export const OrderDetailsDrawer: React.FC<{
     ]
   }, [order])
 
-  const isPrescription = order?.type?.includes('MANUFACTURING') || false
+  const isPrescription = order?.type?.includes(OrderType.MANUFACTURING) || false
   const isApproved = ['APPROVED', 'VERIFIED', 'COMPLETED'].includes(order?.status || '')
 
   // Confirmation Modal State
@@ -167,7 +173,7 @@ export const OrderDetailsDrawer: React.FC<{
       const isVerified =
         order.status === 'VERIFIED' || order.status === 'APPROVED' || order.status === 'COMPLETED'
       navigate(`/salestaff/orders/${order._id}/verify-rx${isVerified ? '?mode=readonly' : ''}`)
-    } else if (order.type?.includes('PRE-ORDER')) {
+    } else if (order.type?.includes(OrderType.PRE_ORDER)) {
       navigate(`/salestaff/orders/${order._id}/pre-order`)
     } else {
       navigate(`/salestaff/orders/${order._id}/regular`)
@@ -187,7 +193,7 @@ export const OrderDetailsDrawer: React.FC<{
               orderTypeLabel={
                 isPrescription
                   ? 'Prescription'
-                  : order?.type?.includes('PRE-ORDER')
+                  : order?.type?.includes(OrderType.PRE_ORDER)
                     ? 'Pre-order'
                     : 'Regular'
               }

@@ -3,13 +3,13 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 import { PageHeader } from '@/features/sales/components/common'
 import PrescriptionVerification from '@/features/sales/components/prescriptions/PrescriptionVerification'
-import { useSalesStaffOrderDetail } from '@/features/sales/hooks/useSalesStaffOrders'
+import { useSalesStaffOrderDetail } from '@/features/sales/hooks/useSalesStaffInvoices'
 import { Button, Container } from '@/shared/components/ui-core'
 
 export default function SaleStaffRxVerificationPage() {
   const { orderId } = useParams<{ orderId: string }>()
   const navigate = useNavigate()
-  const { data: order } = useSalesStaffOrderDetail(orderId || null)
+  const { data: order } = useSalesStaffOrderDetail(orderId || '')
 
   const [searchParams] = useSearchParams()
 
@@ -34,7 +34,7 @@ export default function SaleStaffRxVerificationPage() {
   }
 
   return (
-    <Container className="pt-2 pb-8 px-2 max-w-none">
+    <Container maxWidth="none" className="pt-6 pb-8 px-6 md:px-8">
       <div className="flex items-center gap-4 mb-5">
         <Button
           onClick={handleBack}

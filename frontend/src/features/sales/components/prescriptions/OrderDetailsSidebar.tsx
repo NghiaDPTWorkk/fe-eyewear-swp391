@@ -26,8 +26,12 @@ export const OrderDetailsSidebar: React.FC<OrderDetailsSidebarProps> = ({ order 
           </div>
           <div>
             <p className="text-xs text-gray-500">Customer</p>
-            <p className="text-sm font-medium text-gray-900">{order.customerName || 'N/A'}</p>
-            <p className="text-[10px] text-gray-400">{order.customerPhone || 'N/A'}</p>
+            <p className="text-sm font-medium text-gray-900">
+              {order.customerName || order.invoice?.fullName || 'N/A'}
+            </p>
+            <p className="text-[10px] text-gray-400">
+              {order.customerPhone || order.invoice?.phone || 'N/A'}
+            </p>
           </div>
         </div>
         <div className="flex gap-3">

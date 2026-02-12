@@ -29,7 +29,7 @@ export default function SaleStaffRegularOrderDetailPage() {
   if (!orderId) return null
 
   return (
-    <Container className="pt-2 pb-8 px-2 max-w-none">
+    <Container maxWidth="none" className="pt-6 pb-8 px-6 md:px-8">
       <PageHeader
         title="Order Details"
         breadcrumbs={[

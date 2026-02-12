@@ -1,5 +1,6 @@
 import React from 'react'
 import { MetricCard } from '@/shared/components/staff/staff-core/metric-card'
+import { cn } from '@/lib/utils'
 interface OrderMetricsProps {
   metrics: {
     type: string
@@ -32,7 +33,12 @@ export const OrderMetrics: React.FC<OrderMetricsProps> = ({
             icon={m.icon}
             colorScheme={m.colorScheme}
             trend={m.trend}
-            className={orderTypeFilter === m.type ? 'ring-2 ring-mint-500 ring-offset-2' : ''}
+            className={cn(
+              'transition-all duration-300',
+              orderTypeFilter === m.type
+                ? 'border-mint-500 bg-mint-50/10 shadow-sm'
+                : 'hover:border-neutral-200'
+            )}
           />
         </div>
       ))}

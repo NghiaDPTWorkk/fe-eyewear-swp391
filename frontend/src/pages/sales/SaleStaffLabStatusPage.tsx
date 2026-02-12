@@ -59,7 +59,7 @@ export default function SaleStaffLabStatusPage() {
   ]
 
   return (
-    <Container className="pt-2 pb-8 px-2 max-w-none">
+    <Container maxWidth="none" className="pt-6 pb-8 px-6 md:px-8">
       <div className="flex items-center justify-between mb-6">
         <PageHeader
           title="Lab Status Tracking"

@@ -3,8 +3,6 @@ import { toast } from 'react-hot-toast'
 
 import { useQueryClient } from '@tanstack/react-query'
 
-import { httpClient } from '@/api/apiClients'
-
 import { salesService } from '../services/salesService'
 
 export const useSalesStaffAction = () => {
@@ -83,28 +81,18 @@ export const useSalesStaffAction = () => {
   )
 
   const rejectOrder = useCallback(
-    async (id: string, invoiceId?: string) => {
+    async (_id: string, invoiceId?: string) => {
       setProcessing(true)
       setError(null)
       try {
-        // 1. Reject the Order (we might need a service method for this if it's different)
-        // For now, if there is no specific rejectOrder in salesService, I'll use httpClient or add it.
-        // The user didn't give a specific endpoint for rejecting an order, just for invoice and approving order.
-        // Wait, the user said:
-        // {{base_url}}/admin/invoices/:id/status/reject -> Patch reject (đơn manufactor - id của invoices)
-        // I'll stick to what the user provided.
-
-        await httpClient.patch(`/admin/orders/${id}/status/reject`)
-
-        if (invoiceId) {
-          try {
-            await salesService.rejectInvoice(invoiceId)
-          } catch (invErr) {
-            console.error('Failed to auto-reject invoice:', invErr)
-          }
+        if (!invoiceId) {
+          throw new Error('Associated invoice ID not found')
         }
 
-        toast.success('Order rejected successfully')
+        // Rejecting any order in the invoice triggers rejection of the entire invoice
+        await salesService.rejectInvoice(invoiceId)
+
+        toast.success('Invoice and all associated orders rejected')
         invalidateSalesData()
         return true
       } catch (err: unknown) {

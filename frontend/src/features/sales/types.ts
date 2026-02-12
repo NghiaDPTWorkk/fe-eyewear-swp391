@@ -6,6 +6,7 @@ export interface Invoice {
   invoiceCode: string
   fullName: string
   phone: string
+  email?: string
   finalPrice: string
   status: InvoiceStatus | string
   address: string

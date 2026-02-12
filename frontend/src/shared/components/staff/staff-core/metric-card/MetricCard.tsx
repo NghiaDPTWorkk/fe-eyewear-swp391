@@ -51,20 +51,23 @@ export function MetricCard({
   }
 
   return (
-    <Card className={cn('p-6 border-none shadow-sm ring-1 ring-neutral-100/50', className)}>
+    <Card
+      className={cn(
+        'p-7 border border-neutral-100 rounded-[28px] bg-white transition-all',
+        className
+      )}
+    >
       <div className="flex justify-between items-start">
-        <div>
-          <p className="text-[12px] font-medium text-slate-400 tracking-wider whitespace-nowrap">
+        <div className="space-y-1.5">
+          <p className="text-[13px] font-medium text-slate-400 tracking-tight whitespace-nowrap">
             {label}
           </p>
-          <h3 className="text-2xl font-semibold mt-1.5 text-slate-900 font-heading tracking-tight">
-            {value}
-          </h3>
+          <h3 className="text-3xl font-bold text-slate-900 font-heading tracking-tight">{value}</h3>
         </div>
         {icon && (
           <div
             className={cn(
-              'p-3.5 rounded-2xl shadow-sm transition-transform hover:scale-105',
+              'p-4 rounded-2xl transition-all hover:scale-105 border border-transparent',
               getIconBgColor()
             )}
           >
@@ -74,36 +77,31 @@ export function MetricCard({
       </div>
 
       {(trend || subValue) && (
-        <div className="mt-4 flex items-center gap-2 text-sm">
+        <div className="mt-6 flex items-center gap-2 text-[12px]">
           {trend && (
-            <span
+            <div
               className={cn(
-                'font-medium flex items-center',
-                trend.isPositive ? 'text-emerald-600' : 'text-red-600'
+                'flex items-center gap-1.5 font-medium',
+                trend.isPositive ? 'text-emerald-500' : 'text-rose-500'
               )}
             >
-              {trend.isPositive ? '↗' : '↘'} {Math.abs(trend.value)}%
-            </span>
+              <span className="opacity-60 text-sm">↗</span>
+              <span>{Math.abs(trend.value)}%</span>
+            </div>
           )}
-          <span className="text-gray-500">{trend ? trend.label : subValue}</span>
+          <span className="text-slate-400 font-medium">{trend ? trend.label : subValue}</span>
         </div>
       )}
 
       {progress && (
-        <div className="mt-3 w-full bg-gray-100 rounded-full h-1.5">
+        <div className="mt-4 w-full bg-slate-50 rounded-full h-1.5 overflow-hidden">
           <div
-            className={cn('h-1.5 rounded-full', progress.colorClass || 'bg-blue-600')}
+            className={cn(
+              'h-full rounded-full transition-all duration-700',
+              progress.colorClass || 'bg-mint-500'
+            )}
             style={{ width: `${progress.value}%` }}
           />
-        </div>
-      )}
-
-      {!progress && label?.includes('Target') && subValue && (
-        <div className="mt-4 w-full bg-neutral-100 rounded-full h-2 overflow-hidden shadow-inner">
-          <div
-            className="bg-primary-500 h-full rounded-full transition-all duration-1000"
-            style={{ width: '85%' }}
-          ></div>
         </div>
       )}
     </Card>

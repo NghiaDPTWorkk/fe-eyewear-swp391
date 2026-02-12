@@ -12,6 +12,7 @@ interface TranscriptionFormProps {
   parameters: any
   isReadOnly: boolean
   isApproved: boolean
+  isRejected: boolean
   processing: boolean
   handleApprove: () => void
   handleReject: () => void
@@ -22,6 +23,7 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
   parameters,
   isReadOnly,
   isApproved,
+  isRejected,
   processing,
   handleApprove,
   handleReject,
@@ -189,7 +191,7 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
         </div>
       </div>
 
-      {!isReadOnly && !isApproved && (
+      {!isReadOnly && !isApproved && !isRejected && (
         <div className="bg-white p-6 flex gap-4 border-t border-slate-100">
           <Button
             isFullWidth
@@ -235,6 +237,37 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
                     Verified by
                   </p>
                   <p className="text-sm font-semibold text-slate-800 tracking-tight">
+                    {assignStaff || 'Sales Staff'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isRejected && (
+        <div className="p-6 bg-white border-t border-rose-50/50">
+          <div className="bg-rose-50/30 border border-rose-100/50 rounded-[3.5rem] p-10 transition-all hover:bg-rose-50/50 duration-500">
+            <div className="flex flex-col gap-6">
+              <div className="flex items-center gap-6">
+                <div className="w-16 h-16 rounded-[1.75rem] bg-rose-500 text-white flex items-center justify-center flex-shrink-0 shadow-lg shadow-rose-100/50 transition-transform hover:scale-105">
+                  <IoClose size={36} className="text-white stroke-[4]" />
+                </div>
+                <h3 className="text-2xl font-semibold text-rose-600 tracking-tight">
+                  Disputed and Rejected
+                </h3>
+              </div>
+
+              <div className="max-w-[18rem] bg-white border border-rose-100 rounded-[2rem] p-4 flex items-center gap-4 shadow-sm transition-all hover:shadow-md ml-[88px]">
+                <div className="w-12 h-12 rounded-2xl bg-rose-50 flex items-center justify-center border border-rose-100">
+                  <IoPersonOutline className="text-rose-300" size={20} />
+                </div>
+                <div>
+                  <p className="text-[10px] text-rose-400 font-medium uppercase tracking-[0.2em] mb-1">
+                    Rejected by
+                  </p>
+                  <p className="text-sm font-semibold text-rose-800 tracking-tight">
                     {assignStaff || 'Sales Staff'}
                   </p>
                 </div>

@@ -72,7 +72,13 @@ export const ENDPOINTS = {
 
   // Admin
   ADMIN: {
-    INVOICES: (page: number, limit: number, status?: string) => {
+    INVOICES: (
+      page: number,
+      limit: number,
+      status?: string,
+      statuses?: string,
+      search?: string
+    ) => {
       const params = new URLSearchParams({
         page: String(page),
         limit: String(limit)
@@ -80,6 +86,12 @@ export const ENDPOINTS = {
 
       if (status) {
         params.append('status', status)
+      }
+      if (statuses) {
+        params.append('statuses', statuses)
+      }
+      if (search) {
+        params.append('search', search)
       }
 
       return `/admin/invoices?${params.toString()}`

@@ -11,11 +11,11 @@ import { Container } from '@/shared/components/ui-core'
 
 export default function SaleStaffSettingsPage() {
   return (
-    <Container className="pt-2 pb-8 px-2 max-w-none">
+    <Container maxWidth="none" className="pt-6 pb-8 px-6 md:px-8">
       <PageHeader
         title="Settings"
         subtitle="Manage your account and preferences"
-        breadcrumbs={[{ label: 'Home', path: '/salestaff/dashboard' }, { label: 'Settings' }]}
+        breadcrumbs={[{ label: 'Dashboard', path: '/salestaff/dashboard' }, { label: 'Settings' }]}
       />
 
       <div className="mb-8 p-5 bg-amber-50/50 border border-amber-100 rounded-2xl flex gap-4 animate-in fade-in slide-in-from-top-4 duration-500">

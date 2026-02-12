@@ -106,7 +106,7 @@ export default function SaleStaffPreOrdersPage() {
   }
 
   return (
-    <Container className="pt-2 pb-8 px-2 max-w-none">
+    <Container maxWidth="none" className="pt-6 pb-8 px-6 md:px-8">
       <PageHeader
         title="Pre-order Tracking"
         subtitle="Manage outstanding orders and supplier ETA updates."

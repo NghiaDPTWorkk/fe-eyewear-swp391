@@ -49,10 +49,11 @@ export function StaffMainLayout({
           className={headerClassName}
         />
 
-        <main className={cn('h-full overflow-auto', mainClassName)}>
-          <div key={location.pathname} className="animate-fade-in-up">
-            <Outlet />
-          </div>
+        <main
+          className={cn('h-full overflow-auto animate-fade-in-up', mainClassName)}
+          key={location.pathname}
+        >
+          <Outlet />
         </main>
       </div>
     </div>

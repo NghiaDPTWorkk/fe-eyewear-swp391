@@ -3,16 +3,16 @@ import { useLayoutStore } from '@/store/layout.store'
 import { cn } from '@/lib/utils'
 
 interface UserWidgetWithLogoutProps {
-  userInitials: string
-  userName: string
-  userRole: string
+  userInitials?: string
+  userName?: string
+  userRole?: string
   onLogout?: () => void
 }
 
 export function UserWidgetWithLogout({
-  userInitials,
-  userName,
-  userRole,
+  userInitials = '...',
+  userName = 'Loading...',
+  userRole = 'Loading...',
   onLogout
 }: UserWidgetWithLogoutProps) {
   const { sidebarCollapsed } = useLayoutStore()

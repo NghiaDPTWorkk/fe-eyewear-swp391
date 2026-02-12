@@ -17,9 +17,26 @@ import {
   UserWidgetWithLogout
 } from '@/components/layout/staff/staff-core'
 import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layout/StaffMainLayout'
+import { useProfile } from '@/features/staff/hooks/useProfile'
+
+// Helper function to get initials from name
+const getInitials = (name: string): string => {
+  if (!name) return '...'
+  const words = name.trim().split(' ')
+  if (words.length === 1) return words[0].substring(0, 2).toUpperCase()
+  return (words[0][0] + words[words.length - 1][0]).toUpperCase()
+}
 
 export default function SaleStaffLayout() {
   const location = useLocation()
+  const { data: profileData } = useProfile()
+
+  // Extract profile data
+  const profile = profileData?.data
+  const userName = profile?.name || 'Loading...'
+  const userEmail = profile?.email || 'loading@example.com'
+  const userRole = profile?.role === 'SALE_STAFF' ? 'Sales Staff' : profile?.role || 'Loading...'
+  const userInitials = profile?.name ? getInitials(profile.name) : '...'
 
   const sidebar = (
     <SidebarStaff
@@ -34,11 +51,7 @@ export default function SaleStaffLayout() {
       storeName="Downtown Vision"
       storeIcon={<IoStorefront />}
       userWidget={
-        <UserWidgetWithLogout
-          userInitials="AM"
-          userName="Anna Morgan"
-          userRole="Operations Manager"
-        />
+        <UserWidgetWithLogout userInitials={userInitials} userName={userName} userRole={userRole} />
       }
     >
       <SidebarStaff.MenuSection label="GENERAL">
@@ -91,7 +104,14 @@ export default function SaleStaffLayout() {
     <StaffMainLayout
       sidebar={sidebar}
       headerLeft={<NavSearch inputContainerClassName="lg:pl-0" />}
-      headerRight={<NavActions />}
+      headerRight={
+        <NavActions
+          userName={userName}
+          userRole={userRole}
+          userInitials={userInitials}
+          userEmail={userEmail}
+        />
+      }
       mainClassName="bg-neutral-50"
       headerClassName=""
     />

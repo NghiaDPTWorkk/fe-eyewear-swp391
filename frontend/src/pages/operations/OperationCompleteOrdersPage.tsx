@@ -2,13 +2,19 @@ import { Container } from '@/components'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 import { OrderTable } from '@/components/staff'
 import { OrderStatus } from '@/shared/utils/enums/order.enum'
-import { useOrderCountStore } from '@/store'
+import { useOrders } from '@/features/staff/hooks/orders/useOrders'
+import { transformApiOrderToTableOrder } from '@/features/staff/components/OrderTable/orderTransformers'
+import { useMemo } from 'react'
 
 export default function OperationCompleteOrdersPage() {
-  const { orders } = useOrderCountStore()
+  // Fetch orders với status COMPLETED từ API
+  const { data, isLoading, isError } = useOrders(1, 100, OrderStatus.COMPLETED)
 
-  // Filter only completed orders
-  const completedOrders = orders.filter((order) => order.currentStatus === OrderStatus.COMPLETED)
+  // Transform data từ API sang format của OrderTable
+  const orders = useMemo(() => {
+    if (!data?.data?.orders?.data) return []
+    return data.data.orders.data.map(transformApiOrderToTableOrder)
+  }, [data])
 
   return (
     <Container>
@@ -19,7 +25,9 @@ export default function OperationCompleteOrdersPage() {
       </div>
 
       <OrderTable
-        orders={completedOrders}
+        orders={orders}
+        isLoading={isLoading}
+        isError={isError}
         hiddenColumns={['WAITING FOR', 'CUSTOMER']}
         role="operation"
       />

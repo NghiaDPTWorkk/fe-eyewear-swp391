@@ -23,6 +23,7 @@ import { useOrderCountStore } from '@/store'
 import { AiOutlineFileDone } from 'react-icons/ai'
 import { useAllOrders, useCompletedOrders } from '@/features/staff/hooks/orders/useOrders'
 import { transformApiOrderToTableOrder } from '@/features/staff/components/OrderTable/orderTransformers'
+import { useProfile } from '@/features/staff/hooks/useProfile'
 
 export default function OperationLayout() {
   const location = useLocation()
@@ -38,9 +39,10 @@ export default function OperationLayout() {
   } = useOrderCountStore()
 
   // Gọi API để hiển thị avt
+  const { data: profileData } = useProfile()
 
   // Gọi API để lấy số lượng đơn hàng cho từng trạng thái
-  const { data, isLoading, isError, error } = useAllOrders()
+  const { data: ordersData, isLoading, isError, error } = useAllOrders()
 
   // Gọi API riêng để lấy số đơn hàng COMPLETED
   const { data: completedData, isLoading: isLoadingCompleted } = useCompletedOrders()
@@ -49,10 +51,10 @@ export default function OperationLayout() {
     // Set loading và error states vào store
     setLoadingState(isLoading, isError)
 
-    if (data) {
+    if (ordersData) {
       console.log('Lấy thông tin từ order thành công:')
       // Transform data từ API sang format UI
-      const apiOrders = data?.data?.orders?.data || []
+      const apiOrders = ordersData?.data?.orders?.data || []
 
       // Transform order để nhét vô OrderTable á
       const transformedOrders = apiOrders.map(transformApiOrderToTableOrder)
@@ -66,7 +68,7 @@ export default function OperationLayout() {
     if (isError) {
       console.error('Lỗi API:', error)
     }
-  }, [data, isLoading, isError, error, initializeCounts, setOrders, setLoadingState])
+  }, [ordersData, isLoading, isError, error, initializeCounts, setOrders, setLoadingState])
 
   // Effect riêng để xử lý completed orders
   useEffect(() => {
@@ -87,6 +89,19 @@ export default function OperationLayout() {
     navigate('/admin/login')
   }
 
+  // Lấy thông tin profile từ API
+  const profile = profileData?.data
+  const userInitials = profile?.name
+    ? profile.name
+        .split(' ')
+        .map((word) => word[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2)
+    : 'OP'
+  const userName = profile?.name || 'Loading...'
+  const userRole = profile?.role || 'Staff'
+
   const sidebar = (
     <SidebarStaff
       logo={
@@ -99,9 +114,9 @@ export default function OperationLayout() {
       }
       userWidget={
         <UserWidgetWithLogout
-          userInitials="SL"
-          userName="Dr. Sarah L."
-          userRole="Head Optometrist"
+          userInitials={userInitials}
+          userName={userName}
+          userRole={userRole}
           onLogout={handleLogout}
         />
       }
@@ -183,7 +198,18 @@ export default function OperationLayout() {
     <StaffMainLayout
       sidebar={sidebar}
       headerLeft={<NavSearch placeholder="Search orders..." styleVariant="operation" />}
-      headerRight={<NavActions />}
+      headerRight={
+        <NavActions
+          userName={userName}
+          userRole={userRole}
+          userInitials={userInitials}
+          userAvatar={profile?.avatar}
+          userEmail={profile?.email}
+          roleBadge={profile?.role}
+          onLogout={handleLogout}
+          showMessageButton={false}
+        />
+      }
       mainClassName="p-4 md:p-8 bg-mint-200 relative overflow-x-hidden"
     />
   )

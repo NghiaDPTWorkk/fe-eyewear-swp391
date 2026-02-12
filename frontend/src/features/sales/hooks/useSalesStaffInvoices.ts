@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { salesService } from '../services/salesService'
-import type { Invoice } from '../types'
+import type { Invoice, Order } from '../types'
 import type { AdminInvoiceListItem } from '@/shared/types'
+import { OrderType } from '@/shared/utils/enums/order.enum'
 
 export function useSalesStaffInvoices(
   page: number = 1,
@@ -31,20 +32,23 @@ export function useSalesStaffInvoices(
                 try {
                   const detailRes = await salesService.getOrderById(orderId)
                   // Handle different possible API response structures
-                  const orderData = detailRes.data?.order || (detailRes.data as any)
+                  const orderData: Order =
+                    detailRes.data?.order || (detailRes.data as unknown as Order)
 
-                  if (!orderData || (!orderData._id && !orderData.id)) {
+                  if (!orderData || !orderData._id) {
                     throw new Error('Invalid order data')
                   }
 
                   const isMfg =
-                    orderData.type?.includes('MANUFACTURING') ||
+                    orderData.type?.includes(OrderType.MANUFACTURING) ||
                     orderData.isPrescription ||
                     (Array.isArray(orderData.type) &&
-                      orderData.type.some((t: any) => String(t).includes('MANUFACTURING')))
+                      orderData.type.some((t: string) =>
+                        String(t).includes(OrderType.MANUFACTURING)
+                      ))
 
                   return {
-                    id: orderData._id || orderData.id,
+                    id: orderData._id,
                     type: orderData.type || [],
                     status: orderData.status || 'PENDING',
                     isPrescription: !!isMfg
@@ -78,7 +82,7 @@ export function useSalesStaffInvoices(
                 'ONBOARD',
                 'DELIVERED',
                 'DELIVERING'
-              ].includes(o.status.toUpperCase())
+              ].includes(String(o.status).toUpperCase())
             }).length
 
             return {

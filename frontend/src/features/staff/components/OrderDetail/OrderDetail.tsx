@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { useSalesStaffOrderDetail } from '@/features/sales/hooks/useSalesStaffOrders'
+import { useSalesStaffOrderDetail } from '@/features/sales/hooks/useSalesStaffInvoices'
 
 import {
   IoPrintOutline,
@@ -84,52 +84,75 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
       address: 'Store Pickup or Not provided' // Need address in API
     },
     billingAddress: 'Same as shipping address',
-    items: (realOrder.products || []).map((p: any, idx: number) => ({
-      id: idx,
-      name: p.product?.product_name || p.product?.sku || 'Eyewear Product',
-      sku: p.product?.sku || 'N/A',
-      brand: 'Eyewear', // Placeholder
-      color: 'Standard', // Placeholder
-      price: `${(p.product?.pricePerUnit || 0).toLocaleString()} ₫`,
-      image: p.product?.product_id ? `https://api.eyewear.com/images/${p.product.product_id}` : '',
-      quantity: p.quantity,
-      specs: p.lens
-        ? {
-            eye: 'N/A',
-            bridge: 'N/A',
-            temple: 'N/A',
-            material: 'Lens'
+    items: (realOrder.products || []).map(
+      (
+        p: {
+          product?: {
+            product_name?: string
+            sku?: string
+            pricePerUnit?: number
+            product_id?: string
           }
-        : {
-            eye: 0,
-            bridge: 0,
-            temple: 0,
-            material: 'N/A'
-          },
-      prescription: p.lens
-        ? {
-            type: 'Prescription Lens',
-            coatings: [],
-            od: p.lens.parameters?.right
-              ? {
-                  sph: p.lens.parameters.right.SPH,
-                  cyl: p.lens.parameters.right.CYL,
-                  axis: p.lens.parameters.right.AXIS,
-                  add: '0.00'
-                }
-              : null,
-            os: p.lens.parameters?.left
-              ? {
-                  sph: p.lens.parameters.left.SPH,
-                  cyl: p.lens.parameters.left.CYL,
-                  axis: p.lens.parameters.left.AXIS,
-                  add: '0.00'
-                }
-              : null,
-            pd: p.lens.parameters?.PD || '63'
+          quantity?: number
+          lens?: {
+            parameters?: {
+              right?: { SPH?: string; CYL?: string; AXIS?: string }
+              left?: { SPH?: string; CYL?: string; AXIS?: string }
+              PD?: string
+            }
           }
-        : null
-    })),
+          prescriptionImageUrl?: string
+        },
+        idx: number
+      ) => ({
+        id: idx,
+        name: p.product?.product_name || p.product?.sku || 'Eyewear Product',
+        sku: p.product?.sku || 'N/A',
+        brand: 'Eyewear', // Placeholder
+        color: 'Standard', // Placeholder
+        price: `${(p.product?.pricePerUnit || 0).toLocaleString()} ₫`,
+        image: p.product?.product_id
+          ? `https://api.eyewear.com/images/${p.product.product_id}`
+          : '',
+        quantity: p.quantity,
+        specs: p.lens
+          ? {
+              eye: 'N/A',
+              bridge: 'N/A',
+              temple: 'N/A',
+              material: 'Lens'
+            }
+          : {
+              eye: 0,
+              bridge: 0,
+              temple: 0,
+              material: 'N/A'
+            },
+        prescription: p.lens
+          ? {
+              type: 'Prescription Lens',
+              coatings: [],
+              od: p.lens.parameters?.right
+                ? {
+                    sph: p.lens.parameters.right.SPH,
+                    cyl: p.lens.parameters.right.CYL,
+                    axis: p.lens.parameters.right.AXIS,
+                    add: '0.00'
+                  }
+                : null,
+              os: p.lens.parameters?.left
+                ? {
+                    sph: p.lens.parameters.left.SPH,
+                    cyl: p.lens.parameters.left.CYL,
+                    axis: p.lens.parameters.left.AXIS,
+                    add: '0.00'
+                  }
+                : null,
+              pd: p.lens.parameters?.PD || '63'
+            }
+          : null
+      })
+    ),
     timeline: [
       {
         title: 'Order Placed',

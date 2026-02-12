@@ -86,7 +86,7 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
               </div>
 
               <div className="space-y-4">
-                {invoice.orders?.map((order: any, idx) => {
+                {invoice.orders?.map((order, idx) => {
                   // Safely handle order.type which can be array, string, or undefined
                   const orderTypes = Array.isArray(order.type)
                     ? order.type
@@ -94,10 +94,10 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
                       ? [order.type]
                       : [OrderType.NORMAL]
 
-                  const hasManufacturing = orderTypes.some((t: any) =>
+                  const hasManufacturing = orderTypes.some((t: OrderType | string) =>
                     String(t).includes(OrderType.MANUFACTURING)
                   )
-                  const hasPreOrder = orderTypes.some((t: any) =>
+                  const hasPreOrder = orderTypes.some((t: OrderType | string) =>
                     String(t).includes(OrderType.PRE_ORDER)
                   )
 
@@ -105,7 +105,7 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
                     hasManufacturing &&
                     !['APPROVED', 'COMPLETED', 'DELIVERED', 'ONBOARD'].includes(order.status)
 
-                  const getSimplifiedStatus = (order: any) => {
+                  const getSimplifiedStatus = (order: { status: string }) => {
                     const status = (order.status || 'PENDING').toUpperCase()
                     const isRejected = ['REJECT', 'REJECTED', 'CANCELED'].includes(status)
 
@@ -149,7 +149,7 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
 
                   return (
                     <div
-                      key={order.id || order._id}
+                      key={order.id}
                       className="group relative bg-white border border-neutral-100 rounded-2xl p-5 hover:border-primary-300 hover:shadow-xl hover:shadow-primary-100/20 transition-all cursor-pointer ring-1 ring-transparent hover:ring-primary-100"
                       onClick={() => {
                         let pathSuffix = 'regular'
@@ -158,7 +158,7 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
                         } else if (hasPreOrder) {
                           pathSuffix = 'pre-order'
                         }
-                        const path = `/salestaff/orders/${order.id || order._id}/${pathSuffix}`
+                        const path = `/salestaff/orders/${order.id}/${pathSuffix}`
                         window.location.href = `${path}?from=${window.location.pathname}&invoiceId=${invoice.id}`
                       }}
                     >
@@ -185,7 +185,7 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
                               size="sm"
                               className="text-[9px] h-7 bg-emerald-500 hover:bg-emerald-600 text-white border-none shadow-sm mt-1"
                               disabled={processing}
-                              onClick={(e) => handleApproveOrder(e, order.id || order._id)}
+                              onClick={(e) => handleApproveOrder(e, order.id)}
                             >
                               Approve Order
                             </Button>

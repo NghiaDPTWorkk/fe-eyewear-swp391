@@ -25,8 +25,9 @@ export const useSalesStaffAction = () => {
         toast.success('Invoice approved successfully')
         invalidateSalesData()
         return true
-      } catch (err: any) {
-        const msg = err.response?.data?.message || err.message || 'Approval failed'
+      } catch (err: unknown) {
+        const error = err as { response?: { data?: { message?: string } }; message?: string }
+        const msg = error.response?.data?.message || error.message || 'Approval failed'
         setError(msg)
         toast.error(msg)
         return false
@@ -46,8 +47,9 @@ export const useSalesStaffAction = () => {
         toast.success('Invoice rejected successfully')
         invalidateSalesData()
         return true
-      } catch (err: any) {
-        const msg = err.response?.data?.message || err.message || 'Rejection failed'
+      } catch (err: unknown) {
+        const error = err as { response?: { data?: { message?: string } }; message?: string }
+        const msg = error.response?.data?.message || error.message || 'Rejection failed'
         setError(msg)
         toast.error(msg)
         return false
@@ -67,8 +69,9 @@ export const useSalesStaffAction = () => {
         toast.success('Order verified successfully')
         invalidateSalesData()
         return true
-      } catch (err: any) {
-        const msg = err.response?.data?.message || err.message || 'Verification failed'
+      } catch (err: unknown) {
+        const error = err as { response?: { data?: { message?: string } }; message?: string }
+        const msg = error.response?.data?.message || error.message || 'Verification failed'
         setError(msg)
         toast.error(msg)
         return false
@@ -104,8 +107,9 @@ export const useSalesStaffAction = () => {
         toast.success('Order rejected successfully')
         invalidateSalesData()
         return true
-      } catch (err: any) {
-        const msg = err.response?.data?.message || err.message || 'Rejection failed'
+      } catch (err: unknown) {
+        const error = err as { response?: { data?: { message?: string } }; message?: string }
+        const msg = error.response?.data?.message || error.message || 'Rejection failed'
         setError(msg)
         toast.error(msg)
         return false

@@ -2,8 +2,20 @@ import { Container } from '@/components'
 import { OrderTable } from '@/components/staff'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 import { OrderType } from '@/shared/utils/enums/order.enum'
+import { useOrders } from '@/features/staff/hooks/orders/useOrders'
+import { transformApiOrderToTableOrder } from '@/features/staff/components/OrderTable/orderTransformers'
+import { useMemo } from 'react'
 
 export default function OperationPrescriptionPage() {
+  // Fetch orders với type MANUFACTURING từ API
+  const { data, isLoading, isError } = useOrders(1, 100, undefined, OrderType.MANUFACTURING)
+
+  // Transform data từ API sang format của OrderTable
+  const orders = useMemo(() => {
+    if (!data?.data?.orders?.data) return []
+    return data.data.orders.data.map(transformApiOrderToTableOrder)
+  }, [data])
+
   return (
     <Container>
       <div className="mb-8">
@@ -15,6 +27,9 @@ export default function OperationPrescriptionPage() {
       </div>
 
       <OrderTable
+        orders={orders}
+        isLoading={isLoading}
+        isError={isError}
         hiddenColumns={['WAITING FOR']}
         filterType={OrderType.MANUFACTURING}
         role="operation"

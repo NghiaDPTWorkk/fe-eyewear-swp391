@@ -91,7 +91,8 @@ export function VariantsEditor(props: {
         {variants.map((v, variantIdx) => {
           const price = Number(v.priceText || 0)
           const finalPrice = Number(v.finalPriceText || 0)
-          const badFinal = v.priceText.trim().length && v.finalPriceText.trim().length && finalPrice > price
+          const badFinal =
+            v.priceText.trim().length && v.finalPriceText.trim().length && finalPrice > price
 
           return (
             <div
@@ -100,7 +101,9 @@ export function VariantsEditor(props: {
             >
               <div className="flex items-center justify-between gap-4 mb-4">
                 <div className="flex items-center gap-3">
-                  <span className="text-xs font-extrabold text-neutral-500">Variant #{variantIdx + 1}</span>
+                  <span className="text-xs font-extrabold text-neutral-500">
+                    Variant #{variantIdx + 1}
+                  </span>
                   <label className="flex items-center gap-2 text-xs font-bold text-gray-700">
                     <input
                       type="radio"
@@ -127,7 +130,11 @@ export function VariantsEditor(props: {
                 <input
                   value={v.sku}
                   onChange={(e) =>
-                    onChange(variants.map((vv, i) => (i === variantIdx ? { ...vv, sku: e.target.value } : vv)))
+                    onChange(
+                      variants.map((vv, i) =>
+                        i === variantIdx ? { ...vv, sku: e.target.value } : vv
+                      )
+                    )
                   }
                   placeholder="sku (optional)"
                   className={inputClassName}
@@ -135,7 +142,11 @@ export function VariantsEditor(props: {
                 <input
                   value={v.name}
                   onChange={(e) =>
-                    onChange(variants.map((vv, i) => (i === variantIdx ? { ...vv, name: e.target.value } : vv)))
+                    onChange(
+                      variants.map((vv, i) =>
+                        i === variantIdx ? { ...vv, name: e.target.value } : vv
+                      )
+                    )
                   }
                   placeholder="name (optional)"
                   className={inputClassName}
@@ -143,7 +154,11 @@ export function VariantsEditor(props: {
                 <input
                   value={v.slug}
                   onChange={(e) =>
-                    onChange(variants.map((vv, i) => (i === variantIdx ? { ...vv, slug: e.target.value } : vv)))
+                    onChange(
+                      variants.map((vv, i) =>
+                        i === variantIdx ? { ...vv, slug: e.target.value } : vv
+                      )
+                    )
                   }
                   placeholder="slug (optional)"
                   className={inputClassName}
@@ -180,7 +195,9 @@ export function VariantsEditor(props: {
                       className={`${inputClassName} ${badFinal ? 'border-red-300 focus:border-red-400' : ''}`}
                     />
                     {badFinal ? (
-                      <p className="text-[11px] font-bold text-red-500 ml-1">finalPrice must be &lt;= price</p>
+                      <p className="text-[11px] font-bold text-red-500 ml-1">
+                        finalPrice must be &lt;= price
+                      </p>
                     ) : null}
                   </div>
                   <div className="space-y-1">
@@ -205,11 +222,7 @@ export function VariantsEditor(props: {
                   <ImageUpload
                     images={v.imgs}
                     onChange={(imgs) =>
-                      onChange(
-                        variants.map((vv, i) =>
-                          i === variantIdx ? { ...vv, imgs } : vv
-                        )
-                      )
+                      onChange(variants.map((vv, i) => (i === variantIdx ? { ...vv, imgs } : vv)))
                     }
                   />
                 </div>
@@ -242,7 +255,9 @@ export function VariantsEditor(props: {
                                   : {
                                       ...vv,
                                       options: vv.options.map((oo, oi) =>
-                                        oi === optionIdx ? { ...oo, attributeId: e.target.value } : oo
+                                        oi === optionIdx
+                                          ? { ...oo, attributeId: e.target.value }
+                                          : oo
                                       )
                                     }
                               )
@@ -354,4 +369,3 @@ export function VariantsEditor(props: {
     </div>
   )
 }
-

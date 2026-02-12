@@ -29,7 +29,10 @@ export function ImageUpload({ images, onChange }: ImageUploadProps) {
     <div className="space-y-4">
       <div className="flex flex-wrap gap-4">
         {images.map((url, index) => (
-          <div key={index} className="relative w-24 h-24 rounded-2xl overflow-hidden border border-neutral-100 group">
+          <div
+            key={index}
+            className="relative w-24 h-24 rounded-2xl overflow-hidden border border-neutral-100 group"
+          >
             <img src={url} alt={`Product ${index}`} className="w-full h-full object-cover" />
             <button
               type="button"
@@ -40,7 +43,7 @@ export function ImageUpload({ images, onChange }: ImageUploadProps) {
             </button>
           </div>
         ))}
-        
+
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
@@ -50,7 +53,7 @@ export function ImageUpload({ images, onChange }: ImageUploadProps) {
           <span className="text-[10px] font-bold text-neutral-400 mt-1">Upload</span>
         </button>
       </div>
-      
+
       <input
         type="file"
         ref={fileInputRef}
@@ -62,4 +65,3 @@ export function ImageUpload({ images, onChange }: ImageUploadProps) {
     </div>
   )
 }
-

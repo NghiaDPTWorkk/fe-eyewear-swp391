@@ -1,7 +1,4 @@
-import type {
-  ProductCreateLensRequest,
-  ProductCreateSunglassRequest
-} from './product.types'
+import type { ProductCreateLensRequest, ProductCreateSunglassRequest } from './product.types'
 
 export type ProductCreateFormType = 'sunglass' | 'lens'
 
@@ -49,4 +46,3 @@ export interface ProductCreateFormState {
 }
 
 export type ProductCreateRequest = ProductCreateSunglassRequest | ProductCreateLensRequest
-

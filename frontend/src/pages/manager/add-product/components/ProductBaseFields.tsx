@@ -69,7 +69,9 @@ export function ProductBaseFields(props: {
       </div>
 
       <div className="space-y-2 md:col-span-2">
-        <label className="text-sm font-bold text-gray-700 ml-1">categories (comma separated ids)</label>
+        <label className="text-sm font-bold text-gray-700 ml-1">
+          categories (comma separated ids)
+        </label>
         <input
           value={state.categoriesText}
           onChange={(e) => onChange({ categoriesText: e.target.value })}
@@ -81,4 +83,3 @@ export function ProductBaseFields(props: {
     </div>
   )
 }
-

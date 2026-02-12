@@ -64,7 +64,9 @@ export function SunglassSpecFields(props: {
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-bold text-gray-700 ml-1">weight (nullable, &gt;0 if set)</label>
+          <label className="text-sm font-bold text-gray-700 ml-1">
+            weight (nullable, &gt;0 if set)
+          </label>
           <input
             value={specFrame.weightText}
             onChange={(e) => onChange({ ...specFrame, weightText: e.target.value })}
@@ -83,7 +85,9 @@ export function SunglassSpecFields(props: {
               type="checkbox"
               className="w-4 h-4"
             />
-            <span className="text-xs font-semibold text-neutral-500">Enable (unchecked = null)</span>
+            <span className="text-xs font-semibold text-neutral-500">
+              Enable (unchecked = null)
+            </span>
           </div>
         </div>
 
@@ -140,4 +144,3 @@ export function SunglassSpecFields(props: {
     </div>
   )
 }
-

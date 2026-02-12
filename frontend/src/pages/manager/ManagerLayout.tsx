@@ -15,7 +15,8 @@ import {
   IoSettings,
   IoHelpCircle,
   IoStorefront,
-  IoReader
+  IoReader,
+  IoAddCircle
 } from 'react-icons/io5'
 
 export default function ManagerLayout() {
@@ -61,6 +62,18 @@ export default function ManagerLayout() {
           label="Product"
           to="/manager/products"
           active={location.pathname.startsWith('/manager/products')}
+        />
+        <SidebarStaff.MenuItem
+          icon={<IoAddCircle />}
+          label="Add Product"
+          to="/manager/products/add"
+          active={location.pathname === '/manager/products/add'}
+        />
+        <SidebarStaff.MenuItem
+          icon={<IoAddCircle />}
+          label="Add Attribute"
+          to="/manager/attributes/add"
+          active={location.pathname === '/manager/attributes/add'}
         />
         <SidebarStaff.MenuItem
           icon={<IoReader />}

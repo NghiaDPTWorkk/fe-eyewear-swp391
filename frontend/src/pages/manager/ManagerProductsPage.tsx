@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Container } from '@/components'
 import { PageHeader } from '@/features/sales/components/common'
+import { useNavigate } from 'react-router-dom'
 import {
   IoSearchOutline,
   IoRefreshOutline,
@@ -76,6 +77,7 @@ const SummaryCard: React.FC<{
 )
 
 export default function ManagerProductsPage() {
+  const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
   const [products, setProducts] = useState([
     { id: '1', name: 'Rompi Berkancing', price: 119.99, stock: 25, sold: 320, active: true },
@@ -169,7 +171,10 @@ export default function ManagerProductsPage() {
             <button className="w-12 h-12 flex items-center justify-center bg-neutral-50 rounded-2xl text-neutral-400 hover:text-gray-900 transition-all">
               <IoRefreshOutline size={20} />
             </button>
-            <button className="hidden md:flex items-center gap-2 px-6 py-3 bg-mint-600 text-white rounded-2xl text-sm font-bold shadow-xl shadow-mint-100/50 hover:bg-mint-700 transition-all active:scale-95">
+            <button 
+              onClick={() => navigate('/manager/products/add')}
+              className="hidden md:flex items-center gap-2 px-6 py-3 bg-mint-600 text-white rounded-2xl text-sm font-bold shadow-xl shadow-mint-100/50 hover:bg-mint-700 transition-all active:scale-95"
+            >
               <IoAddOutline size={20} />
               Add Product
             </button>

@@ -40,7 +40,6 @@ export default function OperationLayout() {
 
   // Gọi API để hiển thị avt
   const { data: profileData } = useProfile()
-  console.log(`data Profile:` + profileData?.data?.name)
 
   // Gọi API để lấy số lượng đơn hàng cho từng trạng thái
   const { data: ordersData, isLoading, isError, error } = useAllOrders()

@@ -92,7 +92,7 @@ interface NavActionsProps {
 export function NavActions({
   className,
   userName = 'Anna Morgan',
-  userRole = 'Operations Manager',
+  userRole = 'Operations',
   userInitials = 'AM',
   userAvatar,
   userEmail = 'staff@opticview.com',

@@ -13,7 +13,9 @@ export function ProductLensSpecSection({
   return (
     <div className="space-y-6">
       <h3 className="text-sm font-extrabold text-gray-900 tracking-wide">LenSpec (nullable)</h3>
-      <p className="text-xs text-neutral-500">Nếu để trống cả feature + origin thì spec sẽ = null.</p>
+      <p className="text-xs text-neutral-500">
+        Nếu để trống cả feature + origin thì spec sẽ = null.
+      </p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2 md:col-span-2">
@@ -41,4 +43,3 @@ export function ProductLensSpecSection({
     </div>
   )
 }
-

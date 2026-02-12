@@ -1,5 +1,5 @@
-/* eslint-disable max-lines */
 import { useState } from 'react'
+import { toast } from 'react-hot-toast'
 import {
   IoInformationCircleOutline,
   IoCheckmark,
@@ -19,19 +19,17 @@ import {
   IoVideocamOutline,
   IoEllipsisHorizontal
 } from 'react-icons/io5'
-import { Card, Button, Input } from '@/components'
-import { useSalesStaffAction } from '@/features/sales/hooks/useSalesStaffAction'
-import { useSalesStaffOrderDetail } from '@/features/sales/hooks/useSalesStaffOrders'
 import { useSearchParams } from 'react-router-dom'
-import { toast } from 'react-hot-toast'
+
+import { useSalesStaffAction } from '@/features/sales/hooks/useSalesStaffAction'
+import { useSalesStaffOrderDetail } from '@/features/sales/hooks/useSalesStaffInvoices'
+import { Button, Card, ConfirmationModal, Input } from '@/shared/components/ui-core'
 
 interface PrescriptionVerificationProps {
   orderId: string
   onBack: () => void
   onActionSuccess?: () => void
 }
-
-import ConfirmationModal from '@/shared/components/ui/ConfirmationModal'
 
 export default function PrescriptionVerification({
   orderId,
@@ -83,7 +81,7 @@ export default function PrescriptionVerification({
     return (
       <div className="p-20 flex flex-col items-center justify-center text-gray-400">
         <div className="w-10 h-10 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin mb-4" />
-        <p className="text-sm font-medium">Fetching prescription details...</p>
+        <p className="text-sm font-normal">Fetching prescription details...</p>
       </div>
     )
   }
@@ -108,24 +106,24 @@ export default function PrescriptionVerification({
     <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
       {/* Status Badge */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <span className="font-medium">Order Status:</span>
+        <div className="flex items-center gap-2 text-sm text-slate-500">
+          <span className="font-normal">Order Status:</span>
           {isApproved ? (
-            <span className="px-3 py-1.5 bg-emerald-50 text-emerald-600 font-medium rounded-lg text-xs border border-emerald-200 uppercase tracking-wide flex items-center gap-1.5">
-              <IoCheckmark size={14} /> Verified
+            <span className="px-3 py-1 bg-mint-50 text-mint-600 font-semibold rounded-full text-[10px] border border-mint-200 uppercase tracking-widest flex items-center gap-1.5 shadow-sm">
+              <IoCheckmark size={14} className="text-mint-600" /> VERIFIED
             </span>
           ) : isPending ? (
-            <span className="px-3 py-1.5 bg-amber-50 text-amber-600 font-medium rounded-lg text-xs border border-amber-200 uppercase tracking-wide">
-              Pending Verification
+            <span className="px-3 py-1 bg-amber-50 text-amber-600 font-semibold rounded-full text-[10px] border border-amber-200 uppercase tracking-widest shadow-sm">
+              PENDING
             </span>
           ) : (
-            <span className="px-3 py-1.5 bg-orange-50 text-orange-600 font-medium rounded-lg text-xs border border-orange-200 uppercase tracking-wide">
+            <span className="px-3 py-1 bg-white text-slate-400 font-semibold rounded-full text-[10px] border border-neutral-100 uppercase tracking-widest">
               {order.status}
             </span>
           )}
         </div>
-        <div className="text-sm text-gray-500">
-          <span className="font-medium text-amber-600">24</span> Pending
+        <div className="text-[11px] font-semibold text-amber-500 uppercase tracking-widest">
+          <span className="text-amber-600">24</span> Pending
         </div>
       </div>
 
@@ -139,46 +137,62 @@ export default function PrescriptionVerification({
                 <IoEyeOutline /> PRESCRIPTION SCAN
               </h3>
               <div className="flex gap-2">
-                <button
+                <Button
                   onClick={() => setZoom((prev) => Math.min(prev + 10, 200))}
-                  className="p-1.5 hover:bg-white hover:shadow-sm rounded-lg text-gray-500 transition-all border border-transparent hover:border-gray-200"
+                  variant="ghost"
+                  colorScheme="neutral"
+                  className="p-1.5 hover:bg-white hover:shadow-sm rounded-lg text-slate-500 transition-all border border-transparent hover:border-slate-200"
                   title="Zoom In"
                 >
                   <IoAdd size={18} />
-                </button>
+                </Button>
                 <span className="text-xs font-mono font-medium text-gray-500 self-center w-12 text-center bg-white px-2 py-0.5 rounded border border-gray-100">
                   {zoom}%
                 </span>
-                <button
+                <Button
                   onClick={() => setZoom((prev) => Math.max(prev - 10, 50))}
-                  className="p-1.5 hover:bg-white hover:shadow-sm rounded-lg text-gray-500 transition-all border border-transparent hover:border-gray-200"
+                  variant="ghost"
+                  colorScheme="neutral"
+                  className="p-1.5 hover:bg-white hover:shadow-sm rounded-lg text-slate-500 transition-all border border-transparent hover:border-slate-200"
                   title="Zoom Out"
                 >
                   <IoRemove size={18} />
-                </button>
+                </Button>
                 <div className="w-px h-5 bg-gray-300 mx-1 self-center" />
-                <button
+                <Button
                   onClick={() => setRotation((prev) => prev + 90)}
-                  className="p-1.5 hover:bg-white hover:shadow-sm rounded-lg text-gray-500 transition-all border border-transparent hover:border-gray-200"
+                  variant="ghost"
+                  colorScheme="neutral"
+                  className="p-1.5 hover:bg-white hover:shadow-sm rounded-lg text-slate-500 transition-all border border-transparent hover:border-slate-200"
                   title="Rotate"
                 >
                   <IoRefresh size={18} />
-                </button>
+                </Button>
               </div>
             </div>
 
             <div className="flex-1 bg-neutral-100/50 flex items-center justify-center relative overflow-hidden">
               <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/graphy.png')] opacity-20" />
-              <div className="absolute inset-0 flex items-center justify-center p-6">
-                <img
-                  src={
-                    order.products?.[0]?.prescriptionImageUrl ||
-                    'https://placehold.co/600x800/png?text=Prescription+Scan'
-                  }
-                  alt="Prescription"
-                  className="max-w-full max-h-full object-contain shadow-2xl rounded-sm transition-transform duration-200 ease-out"
-                  style={{ transform: `rotate(${rotation}deg) scale(${zoom / 100})` }}
-                />
+              <div className="absolute inset-0 flex items-center justify-center p-6 transition-all duration-300">
+                {order.products?.[0]?.prescriptionImageUrl ? (
+                  <img
+                    src={order.products[0].prescriptionImageUrl}
+                    alt="Prescription"
+                    className="max-w-full max-h-full object-contain shadow-2xl rounded-sm transition-transform duration-200 ease-out"
+                    style={{ transform: `rotate(${rotation}deg) scale(${zoom / 100})` }}
+                  />
+                ) : (
+                  <div
+                    className="w-full max-w-sm aspect-[3/4] bg-neutral-100 border-2 border-dashed border-neutral-200 rounded-3xl flex flex-col items-center justify-center p-12 text-center group transition-all"
+                    style={{ transform: `rotate(${rotation}deg) scale(${zoom / 100})` }}
+                  >
+                    <div className="bg-neutral-200/50 px-6 py-12 rounded-2xl border border-neutral-200 shadow-inner">
+                      <p className="text-slate-400 font-semibold text-2xl tracking-tighter opacity-50">
+                        Prescription Scan
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </Card>
@@ -187,17 +201,15 @@ export default function PrescriptionVerification({
           <Card className="p-0 border border-gray-200 overflow-hidden shadow-sm rounded-xl bg-white">
             <div className="px-4 py-3 bg-white border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-mint-50 text-mint-600 flex items-center justify-center border border-mint-100/50 shadow-sm">
+                <div className="w-10 h-10 rounded-xl bg-white text-slate-300 flex items-center justify-center border border-slate-100 shadow-sm">
                   <IoInformationCircleOutline size={20} />
                 </div>
                 <div>
-                  <h3 className="text-base font-medium text-gray-900 leading-tight">
+                  <h3 className="text-base font-medium text-slate-800 tracking-tight">
                     Transcription Data
                   </h3>
-                  <p className="text-xs font-normal text-gray-400 mt-0.5">
-                    {isReadOnly
-                      ? 'Prescription details from customer'
-                      : 'Accurately transcribe prescription details'}
+                  <p className="text-[10px] font-normal text-slate-400 mt-0.5 uppercase tracking-wide">
+                    Prescription details from customer
                   </p>
                 </div>
               </div>
@@ -205,98 +217,98 @@ export default function PrescriptionVerification({
 
             <div className="p-4 bg-white space-y-4">
               {/* Right Eye (OD) */}
-              <div className="bg-mint-50/20 p-4 rounded-xl border border-mint-100/50">
-                <h4 className="font-medium text-sm text-mint-800 mb-4 flex items-center gap-2">
-                  <IoEyeOutline size={18} /> Right Eye (OD)
+              <div className="bg-white p-4 rounded-xl border border-slate-100">
+                <h4 className="font-medium text-[10px] text-mint-500 mb-5 flex items-center gap-2 uppercase tracking-[0.3em]">
+                  <IoEyeOutline size={16} className="text-mint-400" /> RIGHT EYE (OD)
                 </h4>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-medium text-mint-700 uppercase tracking-wide pl-1">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-medium text-slate-400 uppercase tracking-[0.15em] pl-1 block text-center">
                       SPH
                     </label>
                     <Input
                       readOnly={isReadOnly}
                       defaultValue={parameters?.right?.SPH || '0.00'}
-                      className="bg-white border-mint-200 focus:border-mint-500 font-medium text-mint-900 text-center h-10"
+                      className="bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-normal text-slate-700 text-center h-12 rounded-2xl shadow-sm transition-all"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[11px] font-semibold text-mint-700 uppercase tracking-widest pl-1">
+                    <label className="text-[10px] font-medium text-slate-400 uppercase tracking-[0.15em] pl-1 block text-center">
                       CYL
                     </label>
                     <Input
                       readOnly={isReadOnly}
                       defaultValue={parameters?.right?.CYL || '0.00'}
-                      className="bg-white border-mint-200 focus:border-mint-500 font-semibold text-mint-900 text-center h-11"
+                      className="bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-normal text-slate-700 text-center h-12 rounded-2xl shadow-sm transition-all"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[11px] font-semibold text-mint-700 uppercase tracking-widest pl-1">
+                    <label className="text-[10px] font-medium text-slate-400 uppercase tracking-[0.15em] pl-1 block text-center">
                       AXIS
                     </label>
                     <Input
                       readOnly={isReadOnly}
                       defaultValue={parameters?.right?.AXIS || '0'}
-                      className="bg-white border-mint-200 focus:border-mint-500 font-semibold text-mint-900 text-center h-11"
+                      className="bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-normal text-slate-700 text-center h-12 rounded-2xl shadow-sm transition-all"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[11px] font-semibold text-mint-700 uppercase tracking-widest pl-1">
+                    <label className="text-[10px] font-medium text-slate-400 uppercase tracking-[0.15em] pl-1 block text-center">
                       ADD
                     </label>
                     <Input
                       readOnly={isReadOnly}
                       defaultValue="-"
-                      className="bg-white border-mint-200 focus:border-mint-500 font-semibold text-mint-900 text-center h-11"
+                      className="bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-normal text-slate-700 text-center h-12 rounded-2xl shadow-sm transition-all"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Left Eye (OS) */}
-              <div className="bg-neutral-50/50 p-4 rounded-xl border border-neutral-100">
-                <h4 className="font-medium text-sm text-neutral-700 mb-4 flex items-center gap-2">
-                  <IoEyeOutline size={18} /> Left Eye (OS)
+              <div className="bg-white p-4 rounded-xl border border-slate-100">
+                <h4 className="font-medium text-[10px] text-mint-400 mb-5 flex items-center gap-2 uppercase tracking-[0.3em] opacity-80">
+                  <IoEyeOutline size={16} className="text-mint-400" /> LEFT EYE (OS)
                 </h4>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest pl-1">
+                    <label className="text-[10px] font-medium text-slate-400 uppercase tracking-[0.15em] pl-1 block text-center">
                       SPH
                     </label>
                     <Input
                       readOnly={isReadOnly}
                       defaultValue={parameters?.left?.SPH || '0.00'}
-                      className="bg-white border-neutral-200 font-semibold text-neutral-900 text-center h-11"
+                      className="bg-white border-neutral-200 font-normal text-slate-700 text-center h-12 rounded-2xl shadow-sm"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest pl-1">
+                    <label className="text-[10px] font-medium text-slate-400 uppercase tracking-[0.15em] pl-1 block text-center">
                       CYL
                     </label>
                     <Input
                       readOnly={isReadOnly}
                       defaultValue={parameters?.left?.CYL || '0.00'}
-                      className="bg-white border-neutral-200 font-semibold text-neutral-900 text-center h-11"
+                      className="bg-white border-neutral-200 font-normal text-slate-700 text-center h-12 rounded-2xl shadow-sm"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest pl-1">
+                    <label className="text-[10px] font-medium text-slate-400 uppercase tracking-[0.15em] pl-1 block text-center">
                       AXIS
                     </label>
                     <Input
                       readOnly={isReadOnly}
                       defaultValue={parameters?.left?.AXIS || '0'}
-                      className="bg-white border-neutral-200 font-semibold text-neutral-900 text-center h-11"
+                      className="bg-white border-neutral-200 font-normal text-slate-700 text-center h-12 rounded-2xl shadow-sm"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest pl-1">
+                    <label className="text-[10px] font-medium text-slate-400 uppercase tracking-[0.15em] pl-1 block text-center">
                       ADD
                     </label>
                     <Input
                       readOnly={isReadOnly}
                       defaultValue="-"
-                      className="bg-white border-neutral-200 font-semibold text-neutral-900 text-center h-11"
+                      className="bg-white border-neutral-200 font-normal text-slate-700 text-center h-12 rounded-2xl shadow-sm"
                     />
                   </div>
                 </div>
@@ -306,17 +318,17 @@ export default function PrescriptionVerification({
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start pt-2">
                 {/* PD Section */}
                 <div className="space-y-4">
-                  <label className="text-xs font-semibold text-neutral-500 uppercase tracking-widest pl-1 block">
-                    Pupillary Distance (PD)
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] pl-1 block">
+                    PUPILLARY DISTANCE (PD)
                   </label>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="relative">
                       <Input
                         readOnly={isReadOnly}
                         defaultValue={parameters?.PD || '31.5'}
-                        className="font-semibold text-center border-neutral-200 h-12 pr-8 rounded-xl focus:border-mint-500 focus:ring-mint-500/10"
+                        className="font-semibold text-slate-700 text-center border-slate-200 h-14 pr-8 rounded-2xl focus:border-mint-500 focus:ring-mint-500/10 shadow-sm"
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-mint-600 bg-mint-50 px-1.5 py-0.5 rounded-md border border-mint-100">
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-100">
                         R
                       </span>
                     </div>
@@ -324,9 +336,9 @@ export default function PrescriptionVerification({
                       <Input
                         readOnly={isReadOnly}
                         defaultValue={parameters?.PD || '31.5'}
-                        className="font-semibold text-center border-neutral-200 h-12 pr-8 rounded-xl focus:border-mint-500 focus:ring-mint-500/10"
+                        className="font-semibold text-slate-700 text-center border-slate-200 h-14 pr-8 rounded-2xl focus:border-mint-500 focus:ring-mint-500/10 shadow-sm"
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-mint-600 bg-mint-50 px-1.5 py-0.5 rounded-md border border-mint-100">
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-100">
                         L
                       </span>
                     </div>
@@ -335,12 +347,12 @@ export default function PrescriptionVerification({
 
                 {/* Notes Section */}
                 <div className="space-y-4">
-                  <label className="text-xs font-semibold text-neutral-500 uppercase tracking-widest pl-1 block">
-                    Notes
+                  <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.15em] pl-1 block">
+                    NOTES
                   </label>
                   <textarea
                     readOnly={isReadOnly}
-                    className="w-full h-12 p-3 rounded-xl border border-neutral-200 focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 text-sm font-medium resize-none bg-neutral-50/20 transition-all placeholder:text-neutral-300"
+                    className="w-full h-14 p-4 rounded-2xl border border-slate-200 focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 text-sm font-medium text-slate-700 resize-none bg-white transition-all placeholder:text-slate-300 shadow-sm"
                     placeholder="Enter special instructions for lab technician..."
                   ></textarea>
                 </div>
@@ -348,7 +360,7 @@ export default function PrescriptionVerification({
             </div>
 
             {!isReadOnly && !isApproved && (
-              <div className="bg-neutral-50/80 p-6 flex gap-4 border-t border-neutral-100">
+              <div className="bg-white p-6 flex gap-4 border-t border-slate-100">
                 <Button
                   isFullWidth
                   onClick={handleApprove}
@@ -363,7 +375,8 @@ export default function PrescriptionVerification({
                   onClick={handleReject}
                   isLoading={processing}
                   variant="outline"
-                  className="bg-white border-neutral-200 text-neutral-600 hover:text-red-600 hover:bg-red-50 hover:border-red-300 font-medium h-12 rounded-xl transition-all active:scale-95"
+                  colorScheme="neutral"
+                  className="bg-white border-slate-200 text-slate-400 hover:text-red-600 hover:bg-red-50 hover:border-red-200 font-medium h-12 rounded-xl transition-all active:scale-95 shadow-none"
                   leftIcon={<IoClose size={20} />}
                 >
                   Reject Order
@@ -371,56 +384,29 @@ export default function PrescriptionVerification({
               </div>
             )}
             {isApproved && (
-              <div className="p-6 bg-white border-t border-gray-200">
-                <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-200 rounded-2xl p-5 shadow-sm">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-emerald-500 text-white flex items-center justify-center flex-shrink-0 shadow-md">
-                      <IoCheckmark size={24} className="font-bold" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-3">
-                        <h3 className="text-lg font-bold text-emerald-900">
-                          ✓ Verified and Approved
-                        </h3>
+              <div className="p-6 bg-white border-t border-neutral-50/50">
+                <div className="bg-neutral-50/50 border border-neutral-100/50 rounded-[3.5rem] p-10 transition-all hover:bg-neutral-50 duration-500">
+                  <div className="flex flex-col gap-6">
+                    <div className="flex items-center gap-6">
+                      <div className="w-16 h-16 rounded-[1.75rem] bg-mint-200/60 text-white flex items-center justify-center flex-shrink-0 shadow-lg shadow-mint-100/50 transition-transform hover:scale-105">
+                        <IoCheckmark size={36} className="text-white stroke-[4]" />
                       </div>
+                      <h3 className="text-2xl font-semibold text-mint-600 tracking-tight">
+                        Verified and Approved
+                      </h3>
+                    </div>
 
-                      <div className="grid grid-cols-1 gap-3">
-                        {/* Verified By */}
-                        <div className="flex items-center gap-3 bg-white/60 rounded-lg p-3 border border-emerald-100">
-                          <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
-                            <IoPersonOutline className="text-emerald-600" size={16} />
-                          </div>
-                          <div>
-                            <p className="text-xs text-emerald-600 font-medium">Verified by</p>
-                            <p className="text-sm font-semibold text-emerald-900">
-                              {order.assignStaff || 'Sales Staff'}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Completion Time */}
-                        {order.completedAt && (
-                          <div className="flex items-center gap-3 bg-white/60 rounded-lg p-3 border border-emerald-100">
-                            <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
-                              <IoCalendarOutline className="text-emerald-600" size={16} />
-                            </div>
-                            <div>
-                              <p className="text-xs text-emerald-600 font-medium">Completed on</p>
-                              <p className="text-sm font-semibold text-emerald-900">
-                                {new Date(order.completedAt).toLocaleDateString('en-US', {
-                                  month: 'short',
-                                  day: 'numeric',
-                                  year: 'numeric'
-                                })}{' '}
-                                at{' '}
-                                {new Date(order.completedAt).toLocaleTimeString('en-US', {
-                                  hour: '2-digit',
-                                  minute: '2-digit'
-                                })}
-                              </p>
-                            </div>
-                          </div>
-                        )}
+                    <div className="max-w-[18rem] bg-white border border-neutral-100 rounded-[2rem] p-4 flex items-center gap-4 shadow-sm transition-all hover:shadow-md ml-[88px]">
+                      <div className="w-12 h-12 rounded-2xl bg-neutral-50 flex items-center justify-center border border-neutral-100">
+                        <IoPersonOutline className="text-slate-300" size={20} />
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-slate-400 font-medium uppercase tracking-[0.2em] mb-1">
+                          Verified by
+                        </p>
+                        <p className="text-sm font-semibold text-slate-800 tracking-tight">
+                          {order.assignStaff || 'Sales Staff'}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -435,8 +421,14 @@ export default function PrescriptionVerification({
           {/* Order Details Card */}
           <Card className="p-5 border border-gray-200 shadow-sm rounded-xl bg-white">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-medium text-gray-900 text-sm">Order Details</h3>
-              <button className="text-mint-600 text-xs font-medium hover:underline">Edit</button>
+              <h3 className="font-medium text-slate-800 text-sm">Order Details</h3>
+              <Button
+                variant="ghost"
+                colorScheme="neutral"
+                className="text-slate-400 text-[10px] font-medium hover:text-mint-600 hover:bg-mint-50/50 transition-all uppercase tracking-widest px-2 h-7"
+              >
+                Modify
+              </Button>
             </div>
             <div className="space-y-4">
               <div className="flex gap-3">
@@ -480,40 +472,48 @@ export default function PrescriptionVerification({
           {/* Customer Communication Hub */}
           <Card className="p-0 border border-gray-200 shadow-sm overflow-hidden bg-white rounded-xl">
             <div className="p-4 bg-white border-b border-gray-100 flex justify-between items-center">
-              <h3 className="font-medium text-gray-900 text-sm flex items-center gap-2">
-                <IoChatbubblesOutline className="text-mint-500" /> Communication
+              <h3 className="font-semibold text-slate-800 text-sm flex items-center gap-2">
+                <IoChatbubblesOutline className="text-slate-400" /> Communication
               </h3>
               <div className="flex gap-1">
-                <button className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+                <Button
+                  variant="ghost"
+                  colorScheme="neutral"
+                  className="p-1.5 rounded-lg hover:bg-slate-50 text-slate-400 hover:text-slate-600 transition-colors"
+                >
                   <IoEllipsisHorizontal />
-                </button>
+                </Button>
               </div>
             </div>
 
             {/* Tabs */}
-            <div className="flex border-b border-gray-100">
-              <button className="flex-1 py-2.5 text-xs font-medium text-mint-600 border-b-2 border-mint-500 bg-mint-50/30">
+            <div className="flex border-b border-neutral-100">
+              <Button className="flex-1 py-3 text-[10px] font-medium uppercase tracking-widest text-mint-600 border-b-2 border-mint-500 bg-white">
                 Chat (2)
-              </button>
-              <button className="flex-1 py-2.5 text-xs font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50">
+              </Button>
+              <Button
+                variant="ghost"
+                colorScheme="neutral"
+                className="flex-1 py-3 text-[10px] font-medium uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors bg-white hover:bg-slate-50"
+              >
                 Call
-              </button>
-              <button className="flex-1 py-2.5 text-xs font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50">
+              </Button>
+              <Button
+                variant="ghost"
+                colorScheme="neutral"
+                className="flex-1 py-3 text-[10px] font-medium uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors bg-white hover:bg-slate-50"
+              >
                 History
-              </button>
+              </Button>
             </div>
 
             {/* Chat View */}
             <div className="h-[240px] flex flex-col">
-              <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-gray-50/50">
+              <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-white">
                 {/* Incoming Message */}
                 <div className="flex gap-2 items-start max-w-[90%]">
-                  <div className="w-6 h-6 rounded-full bg-gray-200 shrink-0 overflow-hidden">
-                    <img
-                      src="https://i.pravatar.cc/100?img=12"
-                      alt="Customer"
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="w-6 h-6 rounded-full bg-slate-100 shrink-0 flex items-center justify-center text-[10px] font-bold text-slate-400 border border-slate-200 uppercase">
+                    {(order.customerName || 'C').charAt(0)}
                   </div>
                   <div>
                     <div className="bg-white p-2.5 rounded-2xl rounded-tl-none border border-gray-200 shadow-sm text-xs text-gray-600">
@@ -529,7 +529,7 @@ export default function PrescriptionVerification({
                     You
                   </div>
                   <div className="text-right">
-                    <div className="bg-mint-500 p-2.5 rounded-2xl rounded-tr-none text-xs text-white shadow-sm">
+                    <div className="bg-mint-500 p-2.5 rounded-2xl rounded-tr-none text-xs text-white shadow-sm font-medium">
                       Checking now. Please upload a selfie holding a card for reference if possible.
                     </div>
                     <span className="text-[9px] text-gray-400 mr-1">10:48 AM</span>
@@ -538,49 +538,56 @@ export default function PrescriptionVerification({
               </div>
 
               {/* Input Area */}
-              <div className="p-3 border-t border-gray-100 bg-white">
+              <div className="p-3 border-t border-slate-100 bg-white">
                 <div className="flex gap-2">
                   <div className="flex-1 relative">
                     <input
                       type="text"
                       placeholder="Type a message..."
-                      className="w-full pl-3 pr-3 py-2 rounded-full border border-gray-200 text-xs focus:outline-none focus:border-mint-300 focus:ring-2 focus:ring-mint-100 transition-all"
+                      className="w-full pl-4 pr-3 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-mint-300 focus:ring-4 focus:ring-mint-500/5 transition-all"
                     />
                   </div>
-                  <button className="p-2 bg-mint-500 text-white rounded-full hover:bg-mint-600 shadow-sm transition-transform active:scale-95">
-                    <IoSend size={14} />
-                  </button>
+                  <Button
+                    variant="solid"
+                    className="p-2.5 bg-mint-600 text-white rounded-xl hover:bg-mint-700 shadow-md shadow-mint-100 transition-all active:scale-95 border-none"
+                  >
+                    <IoSend size={14} className="text-white" />
+                  </Button>
                 </div>
               </div>
             </div>
 
-            <div className="p-3 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
+            <div className="p-3 bg-white border-t border-slate-100 flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-mint-500 animate-pulse"></div>
-                <span className="text-xs font-medium text-gray-600">Customer Online</span>
+                <span className="text-xs font-medium text-slate-400">Customer Online</span>
               </div>
               <div className="flex gap-2">
-                <button
-                  className="p-1.5 rounded-full bg-white border border-gray-200 text-gray-600 hover:text-mint-600 hover:border-mint-200 shadow-sm"
+                <Button
+                  variant="ghost"
+                  colorScheme="neutral"
+                  className="p-1.5 rounded-full bg-white border border-slate-100 text-slate-400 hover:text-mint-600 hover:border-mint-200 shadow-sm"
                   title="Voice Call"
                 >
                   <IoCallOutline />
-                </button>
-                <button
-                  className="p-1.5 rounded-full bg-white border border-gray-200 text-gray-600 hover:text-blue-600 hover:border-blue-200 shadow-sm"
+                </Button>
+                <Button
+                  variant="ghost"
+                  colorScheme="neutral"
+                  className="p-1.5 rounded-full bg-white border border-slate-100 text-slate-400 hover:text-mint-600 hover:border-mint-200 shadow-sm"
                   title="Video Call"
                 >
                   <IoVideocamOutline />
-                </button>
+                </Button>
               </div>
             </div>
           </Card>
 
           {/* Laboratory Operations Channel */}
           <Card className="p-0 border border-gray-200 shadow-sm overflow-hidden rounded-xl bg-white">
-            <div className="p-4 bg-mint-50/50 border-b border-mint-100 flex justify-between items-center">
-              <h3 className="font-medium text-mint-900 text-sm flex items-center gap-2">
-                <IoConstructOutline /> Lab Operations
+            <div className="p-4 bg-white border-b border-slate-100 flex justify-between items-center">
+              <h3 className="font-semibold text-slate-800 text-sm flex items-center gap-2">
+                <IoConstructOutline className="text-slate-400" /> Lab Operations
               </h3>
               <span className="w-2 h-2 bg-mint-500 rounded-full animate-pulse"></span>
             </div>
@@ -601,10 +608,14 @@ export default function PrescriptionVerification({
               </div>
             </div>
 
-            <div className="p-3 bg-gray-50 border-t border-gray-100 text-center">
-              <button className="text-xs font-medium text-mint-600 flex items-center justify-center gap-1 hover:underline">
-                <IoMailOutline /> Contact Lab Manager
-              </button>
+            <div className="p-3 bg-white border-t border-slate-50 text-center">
+              <Button
+                variant="outline"
+                colorScheme="neutral"
+                className="text-xs font-medium text-slate-400 flex items-center justify-center gap-2 hover:text-mint-600 hover:border-mint-200 transition-all uppercase tracking-widest w-full py-2 bg-white"
+              >
+                <IoMailOutline size={16} /> Contact Lab Manager
+              </Button>
             </div>
           </Card>
         </div>

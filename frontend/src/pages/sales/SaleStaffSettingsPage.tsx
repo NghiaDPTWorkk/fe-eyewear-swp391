@@ -1,12 +1,13 @@
-import { Container } from '@/components'
 import { IoWarningOutline } from 'react-icons/io5'
+
 import {
   ProfileForm,
   PasswordForm,
   NotificationPreferences,
   AccountInfoSidebar
-} from '@/features/sales/components/settings'
-import { PageHeader } from '@/features/sales/components/common'
+} from '@/features/staff/components/settings'
+import { PageHeader } from '@/features/staff/components/common'
+import { Container } from '@/shared/components/ui-core'
 
 export default function SaleStaffSettingsPage() {
   return (

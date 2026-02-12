@@ -166,4 +166,3 @@ export function validateProductCreateStrict(req: ProductCreateRequest): string[]
 
   return errors
 }
-

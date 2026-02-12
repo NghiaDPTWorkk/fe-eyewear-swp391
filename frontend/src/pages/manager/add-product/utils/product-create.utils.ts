@@ -54,7 +54,7 @@ export const buildVariant = (v: ProductCreateFormState['variants'][number]): Var
     price: Number(v.priceText || 0),
     finalPrice: Number(v.finalPriceText || 0),
     stock: Number(v.stockText || 0),
-    imgs: v.imgs, 
+    imgs: v.imgs,
     isDefault: v.isDefault
   }
 }
@@ -161,4 +161,3 @@ export const validateStrict = (
 
   return errors
 }
-

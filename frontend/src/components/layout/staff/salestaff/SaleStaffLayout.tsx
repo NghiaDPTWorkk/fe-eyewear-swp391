@@ -1,11 +1,3 @@
-import { useLocation } from 'react-router-dom'
-import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layout/StaffMainLayout'
-import { NavActions, NavSearch } from '@/components/layout/staff/staff-core/navbar/NavListStaff'
-import {
-  SidebarStaff,
-  ThemeToggle,
-  UserWidgetWithLogout
-} from '@/components/layout/staff/staff-core/sidebar'
 import {
   IoGrid,
   IoReceipt,
@@ -15,6 +7,16 @@ import {
   IoHelpCircle,
   IoStorefront
 } from 'react-icons/io5'
+import { useLocation } from 'react-router-dom'
+
+import {
+  NavActions,
+  NavSearch,
+  SidebarStaff,
+  ThemeToggle,
+  UserWidgetWithLogout
+} from '@/components/layout/staff/staff-core'
+import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layout/StaffMainLayout'
 
 export default function SaleStaffLayout() {
   const location = useLocation()
@@ -49,33 +51,9 @@ export default function SaleStaffLayout() {
         <SidebarStaff.MenuItem
           icon={<IoReceipt />}
           label="Orders"
-          hasDropdown
+          to="/salestaff/orders"
           active={location.pathname.startsWith('/salestaff/orders')}
-        >
-          <SidebarStaff.SubMenuItem
-            label="All Orders"
-            to="/salestaff/orders"
-            active={location.pathname === '/salestaff/orders'}
-          />
-          <SidebarStaff.SubMenuItem
-            label="Prescription Orders"
-            to="/salestaff/orders/prescription-orders"
-            badge={24}
-            active={location.pathname === '/salestaff/orders/prescription-orders'}
-          />
-          <SidebarStaff.SubMenuItem
-            label="Pre-orders"
-            to="/salestaff/orders/pre-orders"
-            badge={15}
-            active={location.pathname === '/salestaff/orders/pre-orders'}
-          />
-          <SidebarStaff.SubMenuItem
-            label="Returns"
-            to="/salestaff/orders/returns"
-            badge={8}
-            active={location.pathname === '/salestaff/orders/returns'}
-          />
-        </SidebarStaff.MenuItem>
+        />
 
         <SidebarStaff.MenuItem
           icon={<IoPeople />}

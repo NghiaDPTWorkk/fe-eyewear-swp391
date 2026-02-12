@@ -233,29 +233,8 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
               {order.items.map((item) => (
                 <div key={item.id} className="p-6 transition-colors hover:bg-gray-50/30">
                   <div className="flex gap-6">
-                    <div className="w-24 h-24 bg-white rounded-xl overflow-hidden shrink-0 border border-neutral-100 p-2 flex items-center justify-center">
-                      {item.image ? (
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className="max-w-full max-h-full object-contain mix-blend-multiply"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none'
-                            e.currentTarget.parentElement?.classList.add(
-                              'bg-gray-50',
-                              'text-gray-300'
-                            )
-                            const icon = document.createElement('div')
-                            icon.innerHTML =
-                              '<svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="32" width="32" xmlns="http://www.w3.org/2000/svg"><path d="M448 80H64c-35.3 0-64 28.7-64 64v224c0 35.3 28.7 64 64 64h384c35.3 0 64-28.7 64-64V144c0-35.3-28.7-64-64-64zM64 128h384c8.8 0 16 7.2 16 16v176L306.4 162.4c-6.1-6.1-16.3-6-22.3 0L160 286.8l-37.6-37.6c-6.1-6.1-16.3-6.1-22.3 0L48 301.3V144c0-8.8 7.2-16 16-16zm384 272H64c-8.8 0-16-7.2-16-16V346.6l73.4-73.4 37.6 37.6c6.1 6.1 16.3 6.1 22.3 0L305.6 186.5l158.4 158.4V384c0 8.8-7.2 16-16 16z"></path></svg>'
-                            e.currentTarget.parentElement?.appendChild(icon)
-                          }}
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-300 bg-gray-50">
-                          <IoGlassesOutline size={32} />
-                        </div>
-                      )}
+                    <div className="w-24 h-24 bg-neutral-50 rounded-xl overflow-hidden shrink-0 border border-neutral-100 p-2 flex items-center justify-center text-slate-300">
+                      <IoGlassesOutline size={32} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-start mb-2">

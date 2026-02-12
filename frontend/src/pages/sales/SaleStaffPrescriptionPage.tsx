@@ -11,7 +11,8 @@ import type { Order } from '@/features/sales/types'
 import { useDebounce } from '@/shared/hooks'
 
 export default function SaleStaffPrescriptionPage() {
-  const { rxOrders, loading, fetchOrders } = useSalesStaffOrders()
+  // Limit to 15 prescription orders per load for better performance
+  const { rxOrders, loading, fetchOrders } = useSalesStaffOrders(1, 15)
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [filter, setFilter] = useState('All')

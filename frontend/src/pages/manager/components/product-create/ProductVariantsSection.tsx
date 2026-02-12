@@ -1,6 +1,9 @@
 import React from 'react'
 import { IoAddOutline, IoTrashOutline } from 'react-icons/io5'
-import { PRODUCT_CREATE_INPUT_CLASSNAME, toNumberOrUndefined } from '@/shared/utils/product-create.utils'
+import {
+  PRODUCT_CREATE_INPUT_CLASSNAME,
+  toNumberOrUndefined
+} from '@/shared/utils/product-create.utils'
 
 export function ProductVariantsSection({
   variants,
@@ -58,10 +61,15 @@ export function ProductVariantsSection({
           const badFinal = typeof fp === 'number' && typeof p === 'number' && fp > p
 
           return (
-            <div key={variantIdx} className="border border-neutral-100 rounded-[24px] p-5 bg-neutral-50/20">
+            <div
+              key={variantIdx}
+              className="border border-neutral-100 rounded-[24px] p-5 bg-neutral-50/20"
+            >
               <div className="flex items-center justify-between gap-4 mb-4">
                 <div className="flex items-center gap-3">
-                  <span className="text-xs font-extrabold text-neutral-500">Variant #{variantIdx + 1}</span>
+                  <span className="text-xs font-extrabold text-neutral-500">
+                    Variant #{variantIdx + 1}
+                  </span>
                   <label className="flex items-center gap-2 text-xs font-bold text-gray-700">
                     <input
                       type="radio"
@@ -115,7 +123,9 @@ export function ProductVariantsSection({
                   <div>
                     <input
                       value={v.finalPriceText}
-                      onChange={(e) => onChangeVariant(variantIdx, 'finalPriceText', e.target.value)}
+                      onChange={(e) =>
+                        onChangeVariant(variantIdx, 'finalPriceText', e.target.value)
+                      }
                       type="number"
                       placeholder="finalPrice"
                       className={`${PRODUCT_CREATE_INPUT_CLASSNAME} ${
@@ -123,7 +133,9 @@ export function ProductVariantsSection({
                       }`}
                     />
                     {badFinal ? (
-                      <p className="text-[11px] font-bold text-red-500 ml-1">finalPrice must be <= price</p>
+                      <p className="text-[11px] font-bold text-red-500 ml-1">
+                        finalPrice must be {'<='} price
+                      </p>
                     ) : null}
                   </div>
                   <input
@@ -167,7 +179,9 @@ export function ProductVariantsSection({
                       <div key={optionIdx} className="grid grid-cols-1 md:grid-cols-6 gap-3">
                         <input
                           value={o.attributeId}
-                          onChange={(e) => onChangeOption(variantIdx, optionIdx, 'attributeId', e.target.value)}
+                          onChange={(e) =>
+                            onChangeOption(variantIdx, optionIdx, 'attributeId', e.target.value)
+                          }
                           placeholder="attributeId"
                           className={PRODUCT_CREATE_INPUT_CLASSNAME}
                         />
@@ -181,13 +195,17 @@ export function ProductVariantsSection({
                         />
                         <input
                           value={o.label}
-                          onChange={(e) => onChangeOption(variantIdx, optionIdx, 'label', e.target.value)}
+                          onChange={(e) =>
+                            onChangeOption(variantIdx, optionIdx, 'label', e.target.value)
+                          }
                           placeholder="label"
                           className={PRODUCT_CREATE_INPUT_CLASSNAME}
                         />
                         <select
                           value={o.showType}
-                          onChange={(e) => onChangeOption(variantIdx, optionIdx, 'showType', e.target.value)}
+                          onChange={(e) =>
+                            onChangeOption(variantIdx, optionIdx, 'showType', e.target.value)
+                          }
                           className={PRODUCT_CREATE_INPUT_CLASSNAME}
                         >
                           <option value="text">text</option>
@@ -195,7 +213,9 @@ export function ProductVariantsSection({
                         </select>
                         <input
                           value={o.value}
-                          onChange={(e) => onChangeOption(variantIdx, optionIdx, 'value', e.target.value)}
+                          onChange={(e) =>
+                            onChangeOption(variantIdx, optionIdx, 'value', e.target.value)
+                          }
                           placeholder={o.showType === 'color' ? '#000000' : 'value'}
                           className={PRODUCT_CREATE_INPUT_CLASSNAME}
                         />
@@ -220,4 +240,3 @@ export function ProductVariantsSection({
     </div>
   )
 }
-

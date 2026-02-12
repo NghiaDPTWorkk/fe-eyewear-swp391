@@ -1,11 +1,30 @@
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
+
 import { Container } from '@/components'
-import OrderDetail from '@/features/staff/components/OrderDetail/OrderDetail'
 import { PageHeader } from '@/features/sales/components/common'
+import { useSalesStaffOrderDetail } from '@/features/sales/hooks'
+import OrderDetail from '@/features/staff/components/OrderDetail/OrderDetail'
 
 export default function SaleStaffRegularOrderDetailPage() {
   const { orderId } = useParams<{ orderId: string }>()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const { data: order } = useSalesStaffOrderDetail(orderId as string)
+
+  const handleBack = () => {
+    const fromPath = searchParams.get('from')
+    const invoiceId = searchParams.get('invoiceId') || order?.invoiceId
+
+    if (fromPath && invoiceId) {
+      navigate(`${fromPath}?invoiceId=${invoiceId}`)
+    } else if (fromPath) {
+      navigate(fromPath)
+    } else if (invoiceId) {
+      navigate(`/salestaff/dashboard?invoiceId=${invoiceId}`)
+    } else {
+      navigate(-1)
+    }
+  }
 
   if (!orderId) return null
 
@@ -19,7 +38,7 @@ export default function SaleStaffRegularOrderDetailPage() {
           { label: 'Order Details' }
         ]}
       />
-      <OrderDetail orderId={orderId} onBack={() => navigate(-1)} />
+      <OrderDetail orderId={orderId} onBack={handleBack} />
     </Container>
   )
 }

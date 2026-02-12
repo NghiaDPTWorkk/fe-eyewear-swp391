@@ -9,7 +9,7 @@ export const ENDPOINTS = {
     LOGOUT: '/auth/logout',
     REFRESH_TOKEN: '/auth/refresh-token',
     PROFILE: '/customer',
-    GET_PROFILE: '/admin/auth/profile', // Get admin/staff profile
+    GET_PROFILE: '/admin/auth/profile', // Get admin/staff profile - Keep from target
     ADDRESS_LIST: '/customer/profile/address',
     ADDRESS_ADD: '/customer/profile/address',
     CHANGE_DEFAULT: (id: string) => `/customer/profile/address/change-default/${id}`
@@ -42,17 +42,16 @@ export const ENDPOINTS = {
     CANCEL: (id: string) => `/orders/${id}/cancel`,
     TRACKING: (id: string) => `/orders/${id}/tracking`,
     LIST_WITH_PARAMS: (page: number, limit: number, status?: string, type?: string) => {
-      let endpoint = `/admin/orders?page=${page}&limit=${limit}`
-      if (status) {
-        endpoint += `&status=${status}`
-      }
-      if (type) {
-        endpoint += `&type=${type}`
-      }
-      return endpoint
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: String(limit)
+      })
+      if (status) params.append('status', status)
+      if (type) params.append('type', type)
+      return `/admin/orders?${params.toString()}`
     },
     UPDATE: (id: string) => `/admin/orders/${id}`,
-    UPDATE_STATUS_MAKING: (id: string) => `/admin/orders/${id}/status/making`,
+    UPDATE_STATUS_MAKING: (id: string) => `/admin/orders/${id}/status/making`, // Keep from target
     UPDATE_STATUS_PACKAGING: (id: string) => `/admin/orders/${id}/status/packaging`,
     UPDATE_STATUS_COMPLETED: (id: string) => `/admin/orders/${id}/status/complete`
   },
@@ -89,13 +88,31 @@ export const ENDPOINTS = {
     INVOICES_COMPLETE: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/complete`,
     INVOICES_DELIVERING: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/delivering`,
     ORDER_DETAIL: (orderId: string) => `/admin/orders/${orderId}`,
-    ORDER_ASSIGN: (orderId: string) => `/admin/orders/${orderId}/status/assign`
+    ORDER_ASSIGN: (orderId: string) => `/admin/orders/${orderId}/status/assign`,
+    INVOICES_DEPOSITED: (page: number, limit: number, status?: string) => {
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: String(limit)
+      })
+      if (status) params.append('status', status)
+      return `/admin/invoices/deposited?${params.toString()}`
+    },
+    INVOICE_REJECT: (id: string) => `/admin/invoices/${id}/status/reject`,
+    INVOICE_APPROVE: (id: string) => `/admin/invoices/${id}/status/approve`,
+    ORDERS_TOTAL: (invoiceId: string, status?: string) => {
+      const params = new URLSearchParams({ invoiceId })
+      if (status) params.append('status', status)
+      return `/admin/orders/total?${params.toString()}`
+    },
+    ORDER_APPROVE: (id: string) => `/admin/orders/${id}/status/approve`
   },
 
   ADMINS: {
     GET_ADMIN: (role?: string) => {
-      if (!role) return '/admin/staff/admins'
-      return `/admin/staff/admins?role=${role}`
+      const params = new URLSearchParams()
+      if (role) params.append('role', role)
+      const queryString = params.toString()
+      return queryString ? `/admin/staff/admins?${queryString}` : '/admin/staff/admins'
     },
     INVOICES_ONBOARD: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/onboard`
   },

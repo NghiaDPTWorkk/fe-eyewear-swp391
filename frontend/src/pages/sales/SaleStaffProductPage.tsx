@@ -1,37 +1,51 @@
-import { Container, Button } from '@/components'
 import {
   IoAdd,
-  IoChevronDown,
   IoFilterOutline,
   IoSettingsOutline,
-  IoEllipsisVertical,
-  IoChevronForward
+  IoChevronForward,
+  IoChevronDown,
+  IoEllipsisVertical
 } from 'react-icons/io5'
 
-import { PageHeader } from '@/features/sales/components/common'
+import { Container, Button } from '@/components'
+import { PageHeader, StatsCard } from '@/features/staff'
 
 export default function SaleStaffProductPage() {
   const metrics = [
-    // ... metrics
-    { title: 'Total Products', value: '1,240', trend: '+12%', subtext: '+48 from last month' },
+    {
+      title: 'Total Products',
+      value: '1,240',
+      trend: '+12%',
+      isUp: true,
+      subtext: '+48 from last month'
+    },
     {
       title: 'Low Stock Items',
       value: '12',
       trend: '+5%',
-      trendColor: 'text-rose-500 bg-rose-50',
+      isUp: true,
+      trendColor: 'bg-rose-50 text-rose-500',
       subtext: '+2 compared to last week'
     },
     {
       title: 'Out of Stock',
       value: '6',
       trend: '-2%',
-      trendColor: 'text-emerald-500 bg-emerald-50',
+      isUp: false,
+      trendColor: 'bg-emerald-50 text-emerald-500',
       subtext: '-3 compared to yesterday'
     },
-    { title: 'Avg. Profit Margin', value: '42%', trend: '+0.5%', subtext: '+2% from last year' }
+    {
+      title: 'Avg. Profit Margin',
+      value: '42%',
+      trend: '+0.5%',
+      isUp: true,
+      subtext: '+2% from last year'
+    }
   ]
 
   const products = [
+    // ... existing products (same as before)
     {
       id: '1004',
       category: 'Backpack',
@@ -91,18 +105,13 @@ export default function SaleStaffProductPage() {
       {/* Metrics Row */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         {metrics.map((m, idx) => (
-          <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm border border-neutral-100">
-            <div className="text-sm font-medium text-neutral-500 mb-4">{m.title}</div>
-            <div className="flex items-center gap-3 mb-2">
-              <span className="text-3xl font-semibold text-neutral-800">{m.value}</span>
-              <span
-                className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${m.trendColor || 'text-emerald-500 bg-emerald-50'}`}
-              >
-                {m.trend}
-              </span>
-            </div>
-            <div className="text-xs text-neutral-400 font-medium">{m.subtext}</div>
-          </div>
+          <StatsCard
+            key={idx}
+            label={m.title}
+            value={m.value}
+            trend={{ value: m.trend, isUp: m.isUp, colorClass: m.trendColor }}
+            subtext={m.subtext}
+          />
         ))}
       </div>
 

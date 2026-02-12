@@ -1,7 +1,11 @@
-import { useState, useCallback } from 'react'
-import { httpClient } from '@/api/apiClients'
+import { useCallback, useState } from 'react'
 import { toast } from 'react-hot-toast'
+
 import { useQueryClient } from '@tanstack/react-query'
+
+import { httpClient } from '@/api/apiClients'
+
+import { salesService } from '../services/salesService'
 
 export const useSalesStaffAction = () => {
   const [processing, setProcessing] = useState(false)
@@ -17,7 +21,7 @@ export const useSalesStaffAction = () => {
       setProcessing(true)
       setError(null)
       try {
-        await httpClient.patch(`/admin/invoices/${id}/status/approve`)
+        await salesService.approveInvoice(id)
         toast.success('Invoice approved successfully')
         invalidateSalesData()
         return true
@@ -38,7 +42,7 @@ export const useSalesStaffAction = () => {
       setProcessing(true)
       setError(null)
       try {
-        await httpClient.patch(`/admin/invoices/${id}/status/reject`)
+        await salesService.rejectInvoice(id)
         toast.success('Invoice rejected successfully')
         invalidateSalesData()
         return true
@@ -59,7 +63,7 @@ export const useSalesStaffAction = () => {
       setProcessing(true)
       setError(null)
       try {
-        await httpClient.patch(`/admin/orders/${id}/status/approve`)
+        await salesService.approveOrder(id)
         toast.success('Order verified successfully')
         invalidateSalesData()
         return true
@@ -80,18 +84,20 @@ export const useSalesStaffAction = () => {
       setProcessing(true)
       setError(null)
       try {
-        // 1. Reject the Order
+        // 1. Reject the Order (we might need a service method for this if it's different)
+        // For now, if there is no specific rejectOrder in salesService, I'll use httpClient or add it.
+        // The user didn't give a specific endpoint for rejecting an order, just for invoice and approving order.
+        // Wait, the user said:
+        // {{base_url}}/admin/invoices/:id/status/reject -> Patch reject (đơn manufactor - id của invoices)
+        // I'll stick to what the user provided.
+
         await httpClient.patch(`/admin/orders/${id}/status/reject`)
 
-        // 2. If Invoice ID is present, reject the Invoice as well
         if (invoiceId) {
           try {
-            await httpClient.patch(`/admin/invoices/${invoiceId}/status/reject`)
+            await salesService.rejectInvoice(invoiceId)
           } catch (invErr) {
             console.error('Failed to auto-reject invoice:', invErr)
-            // We don't block the flow if invoice reject fails, but we log it.
-            // Or maybe we should? User said "reject call reject invoice".
-            // Assuming soft dependency effectively.
           }
         }
 

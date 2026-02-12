@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import OrderHeaderTable from './OrderHeaderTable'
@@ -6,6 +6,7 @@ import OrderList from './OrderList'
 import { Button } from '@/components'
 import { IoTimeOutline, IoChevronForward, IoEyeOutline } from 'react-icons/io5'
 import { PATHS } from '@/routes/paths'
+import { useOrderCountStore } from '@/store'
 import { OrderType, OrderStatus } from '@/shared/utils/enums/order.enum'
 
 export interface Order {
@@ -39,6 +40,7 @@ interface OrderTableProps {
   hiddenColumns?: string[]
   filterType?: string
   role?: 'sales' | 'operation'
+  pageType?: 'technical' | 'logistics' | 'packing' | 'all'
 }
 
 const getOrderTypeStyles = (type: string, role: string) => {
@@ -83,10 +85,12 @@ export default function OrderTable({
   columns,
   hiddenColumns = [],
   filterType,
-  role = 'operation'
+  role = 'operation',
+  pageType
 }: OrderTableProps) {
   const isSales = role === 'sales'
   const navigate = useNavigate()
+  const { setCount } = useOrderCountStore()
 
   const handleViewOrder = (orderId: string) => {
     navigate(PATHS.OPERATIONSTAFF.ORDER_DETAIL(orderId))
@@ -99,6 +103,13 @@ export default function OrderTable({
     ? orders.filter((order) => order.orderType === filterType)
     : orders
 
+  // Cập nhật count vào store khi có pageType
+  useEffect(() => {
+    if (pageType) {
+      setCount(pageType, filteredOrders.length)
+    }
+  }, [filteredOrders.length, pageType, setCount])
+
   const defaultColumns: Column<Order>[] = [
     {
       header: 'ORDER ID',
@@ -108,7 +119,7 @@ export default function OrderTable({
             className={cn('font-bold text-neutral-900 cursor-pointer', !isSales && 'font-medium')}
             onClick={() => handleViewOrder(order.id)}
           >
-            {order.orderCode}
+            {order.id}
           </div>
           <div
             className={cn(
@@ -140,6 +151,12 @@ export default function OrderTable({
       ),
       headerClassName: isSales ? 'text-center' : '',
       className: isSales ? 'text-center' : ''
+    },
+    {
+      header: 'CUSTOMER',
+      render: (order) => (
+        <div className={cn('text-neutral-900', isSales ? 'font-medium' : '')}>{order.customer}</div>
+      )
     },
     {
       header: 'ITEMS',
@@ -241,33 +258,6 @@ export default function OrderTable({
   const activeColumns = (columns || defaultColumns).filter(
     (col) => !hiddenColumns.includes(col.header as string)
   )
-
-  // Nếu không có orders, hiển thị empty state
-  if (filteredOrders.length === 0) {
-    return (
-      <div className="overflow-x-auto bg-white rounded-lg shadow">
-        <table className="w-full text-left border-collapse">
-          <OrderHeaderTable columns={activeColumns} role={role} />
-        </table>
-        <div className="flex flex-col items-center justify-center py-16">
-          <div className="text-gray-400 mb-3">
-            <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-          </div>
-          <p className="text-gray-600 font-semibold text-lg">No orders to process</p>
-          <p className="text-gray-400 text-sm mt-1">
-            There are currently no orders in this category
-          </p>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="overflow-x-auto bg-white rounded-lg shadow">

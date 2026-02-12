@@ -21,7 +21,8 @@ import { useDebounce } from '@/shared/hooks'
 
 export default function SaleStaffPreOrdersPage() {
   const navigate = useNavigate()
-  const { orders, loading, fetchOrders } = useSalesStaffOrders()
+  // Limit to 15 orders per fetch to improve performance
+  const { orders, loading, fetchOrders } = useSalesStaffOrders(1, 15)
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [search, setSearch] = useState('')

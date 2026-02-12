@@ -1,61 +1,128 @@
 import { useQuery } from '@tanstack/react-query'
-import { httpClient } from '@/api/apiClients'
+import { salesService } from '../services/salesService'
 import type { Invoice } from '../types'
+import type { AdminInvoiceListItem } from '@/shared/types'
 
-export const useSalesStaffInvoices = () => {
-  const {
-    data: invoices = [],
-    isLoading: loading,
-    error,
-    refetch: fetchInvoices
-  } = useQuery({
-    queryKey: ['sales', 'invoices'],
+export function useSalesStaffInvoices(
+  page: number = 1,
+  limit: number = 10,
+  status: string = 'All'
+) {
+  const query = useQuery({
+    queryKey: ['sales', 'invoices', { page, limit, status }],
     queryFn: async () => {
-      const response = await httpClient.get<any>('/admin/invoices/deposited')
-      const rawData = response.data?.data || response.data || []
+      const apiStatus = status === 'All' ? undefined : status
+      const response = await salesService.getDepositedInvoices(page, limit, apiStatus)
 
-      // Parallelize checking orders for each invoice
-      const mappedInvoices = await Promise.all(
-        (Array.isArray(rawData) ? rawData : []).map(async (inv: any) => {
-          const total = inv.orders?.length || 0
-          let approved = 0
+      // Extract data safely - httpClient returns response.data directly
+      const apiData = response?.data
+      const invoiceData = apiData?.invoiceList || []
+      const pagination = apiData?.pagination || { totalPages: 1, total: 0 }
 
-          if (inv.orders && inv.orders.length > 0) {
-            try {
-              // We need order details to check status
-              // Optimization: Use Promise.all to fetch in parallel
-              const orderPromises = inv.orders.map((o: any) =>
-                httpClient.get(`/admin/orders/${o.id}`).catch(() => null)
-              )
-              const orderResults = await Promise.all(orderPromises)
+      // ENRICHMENT OPTIMIZATION:
+      const enrichedInvoices = await Promise.all(
+        invoiceData.map(async (inv: AdminInvoiceListItem) => {
+          try {
+            const orderItems = inv.orders || []
 
-              approved = orderResults.filter((res: any) => {
-                if (!res) return false
-                const order = res.data?.data?.order || res.data?.order || res.data?.data
-                return (
-                  order?.status === 'APPROVED' ||
-                  order?.status === 'COMPLETED' ||
-                  order?.status === 'VERIFIED'
-                )
-              }).length
-            } catch (err) {
-              console.error('Error fetching details for invoice', inv.id, err)
-            }
+            const ordersWithDetails = await Promise.all(
+              orderItems.slice(0, 10).map(async (item) => {
+                const orderId = item.id
+                try {
+                  const detailRes = await salesService.getOrderById(orderId)
+                  // Handle different possible API response structures
+                  const orderData = detailRes.data?.order || (detailRes.data as any)
+
+                  if (!orderData || (!orderData._id && !orderData.id)) {
+                    throw new Error('Invalid order data')
+                  }
+
+                  const isMfg =
+                    orderData.type?.includes('MANUFACTURING') ||
+                    orderData.isPrescription ||
+                    (Array.isArray(orderData.type) &&
+                      orderData.type.some((t: any) => String(t).includes('MANUFACTURING')))
+
+                  return {
+                    id: orderData._id || orderData.id,
+                    type: orderData.type || [],
+                    status: orderData.status || 'PENDING',
+                    isPrescription: !!isMfg
+                  }
+                } catch (err) {
+                  console.error(`Failed to fetch order ${orderId}:`, err)
+                  // Fallback to basic info if detail fetch fails
+                  return {
+                    id: orderId,
+                    type: item.type || [],
+                    status: 'PENDING', // Default to PENDING instead of UNKNOWN
+                    isPrescription: item.type?.some((t) => String(t).includes('MANUFACTURING'))
+                  }
+                }
+              })
+            )
+
+            // Local Calculation: Normal orders are default approved.
+            // Mfg orders must be in one of the approved/verified statuses.
+            const totalOrdersCount = ordersWithDetails.length
+            const approvedOrdersCount = ordersWithDetails.filter((o) => {
+              if (!o.isPrescription) return true // Normal orders = default approved
+              return [
+                'VERIFIED',
+                'APPROVED',
+                'WAITING_ASSIGN',
+                'ASSIGNED',
+                'MAKING',
+                'PACKAGING',
+                'COMPLETED',
+                'ONBOARD',
+                'DELIVERED',
+                'DELIVERING'
+              ].includes(o.status.toUpperCase())
+            }).length
+
+            return {
+              ...inv,
+              orders: ordersWithDetails,
+              totalOrdersCount,
+              approvedOrdersCount
+            } as Invoice
+          } catch (err) {
+            console.error('Failed to enrich invoice:', err)
+            return {
+              ...inv,
+              orders: [],
+              totalOrdersCount: 0,
+              approvedOrdersCount: 0
+            } as unknown as Invoice
           }
-
-          return {
-            ...inv,
-            totalOrdersCount: total,
-            approvedOrdersCount: approved
-          } as Invoice
         })
       )
 
-      return mappedInvoices
+      return {
+        invoices: enrichedInvoices,
+        pagination
+      }
     },
-    staleTime: 1000 * 60 * 1, // Cache for 1 minute
-    refetchOnWindowFocus: true
+    staleTime: 60000 // Cache for 1 minute
   })
 
-  return { invoices, loading, error: error ? (error as Error).message : null, fetchInvoices }
+  return {
+    invoices: query.data?.invoices || [],
+    pagination: query.data?.pagination || null,
+    loading: query.isLoading,
+    error: query.error ? (query.error as Error).message : null,
+    fetchInvoices: query.refetch
+  }
+}
+
+export function useSalesStaffOrderDetail(orderId: string) {
+  return useQuery({
+    queryKey: ['sales', 'order', orderId],
+    queryFn: async () => {
+      const response = await salesService.getOrderById(orderId)
+      return response.data.order
+    },
+    enabled: !!orderId
+  })
 }

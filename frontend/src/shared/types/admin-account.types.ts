@@ -19,3 +19,9 @@ export interface AdminAccountListApiResponse {
     admins: AdminAccount[]
   }
 }
+
+export interface ProfileApiResponse {
+  success: boolean
+  message: string
+  data: AdminAccount
+}

@@ -67,18 +67,40 @@ export function NavSearch({
   )
 }
 
+interface Notification {
+  id: number
+  title: string
+  description: string
+  time: string
+  color: string
+}
+
 interface NavActionsProps {
   className?: string
   userName?: string
   userRole?: string
   userInitials?: string
+  userAvatar?: string
+  userEmail?: string
+  roleBadge?: string // Role badge text (e.g., "OPERATION_STAFF", "SALES_STAFF")
+  onLogout?: () => void // Logout handler
+  onMessageClick?: () => void // Message button click handler
+  notifications?: Notification[] // Notifications from API
+  showMessageButton?: boolean // Show/hide message button
 }
 
 export function NavActions({
   className,
   userName = 'Anna Morgan',
   userRole = 'Operations Manager',
-  userInitials = 'AM'
+  userInitials = 'AM',
+  userAvatar,
+  userEmail = 'staff@opticview.com',
+  roleBadge,
+  onLogout,
+  onMessageClick,
+  notifications,
+  showMessageButton = true
 }: NavActionsProps) {
   const [openDropdown, setOpenDropdown] = useState<'notifications' | 'profile' | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -98,7 +120,8 @@ export function NavActions({
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const notifications = [
+  // Default notifications nếu không được truyền từ component cha
+  const defaultNotifications: Notification[] = [
     {
       id: 1,
       title: 'Return Request',
@@ -129,19 +152,25 @@ export function NavActions({
     }
   ]
 
+  const displayNotifications = notifications || defaultNotifications
+  const unreadCount = displayNotifications.length
+
   return (
     <div
       ref={containerRef}
       className={cn('flex justify-end items-center gap-6 pr-4 relative', className)}
     >
       <div className="flex items-center gap-4 text-neutral-500">
-        <button
-          className="relative p-1 hover:text-primary-500 transition-colors cursor-pointer"
-          title="View Messages"
-        >
-          <FiMail className="text-2xl" />
-          <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-danger-500 ring-2 ring-white"></span>
-        </button>
+        {showMessageButton && (
+          <button
+            onClick={onMessageClick}
+            className="relative p-1 hover:text-primary-500 transition-colors cursor-pointer"
+            title="View Messages"
+          >
+            <FiMail className="text-2xl" />
+            <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-danger-500 ring-2 ring-white"></span>
+          </button>
+        )}
 
         <div className="relative">
           <button
@@ -161,12 +190,13 @@ export function NavActions({
           {openDropdown === 'notifications' && (
             <div className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-xl border border-neutral-100 py-4 z-50 animate-in fade-in zoom-in-95 duration-200">
               <div className="px-5 mb-4">
-                <h3 className="text-lg font-semibold text-neutral-900">Notifications</h3>
-                <p className="text-xs font-medium text-neutral-400">You have 4 unread messages</p>
+                <p className="text-xs font-medium text-neutral-400">
+                  You have {unreadCount} unread message{unreadCount !== 1 ? 's' : ''}
+                </p>
               </div>
 
               <div className="divide-y divide-neutral-50">
-                {notifications.map((n) => (
+                {displayNotifications.map((n) => (
                   <div
                     key={n.id}
                     className="px-5 py-4 hover:bg-neutral-50 cursor-pointer transition-colors group"
@@ -208,9 +238,17 @@ export function NavActions({
             <div className="text-sm font-semibold text-neutral-900 leading-tight">{userName}</div>
             <div className="text-xs text-neutral-400 font-medium">{userRole}</div>
           </div>
-          <div className="w-10 h-10 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center font-semibold border border-primary-100 shadow-sm shadow-primary-50">
-            {userInitials}
-          </div>
+          {userAvatar ? (
+            <img
+              src={userAvatar}
+              alt={userName}
+              className="w-10 h-10 rounded-full object-cover border border-primary-100 shadow-sm shadow-primary-50"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center font-semibold border border-primary-100 shadow-sm shadow-primary-50">
+              {userInitials}
+            </div>
+          )}
         </button>
 
         {openDropdown === 'profile' && (
@@ -218,12 +256,10 @@ export function NavActions({
             <div className="p-6 bg-white border-b border-neutral-50">
               <div className="mb-3">
                 <h3 className="text-xl font-semibold text-neutral-900 leading-tight">{userName}</h3>
-                <p className="text-sm font-medium text-neutral-500 truncate mt-1">
-                  anna.morgan@opsview.com
-                </p>
+                <p className="text-sm font-medium text-neutral-500 truncate mt-1">{userEmail}</p>
               </div>
               <span className="px-3 py-1 bg-primary-100/50 text-primary-600 text-[11px] font-semibold uppercase tracking-wider rounded-lg border border-primary-200/30">
-                {isOperation ? 'Manager' : 'Staff'}
+                {roleBadge || (isOperation ? 'Manager' : 'Staff')}
               </span>
             </div>
 
@@ -255,7 +291,10 @@ export function NavActions({
             <div className="p-3 bg-neutral-50/50 border-t border-neutral-50">
               <button
                 className="flex items-center gap-3 w-full px-4 py-3 rounded-xl hover:bg-red-50 group transition-all"
-                onClick={() => setOpenDropdown(null)}
+                onClick={() => {
+                  setOpenDropdown(null)
+                  onLogout?.()
+                }}
               >
                 <div className="w-9 h-9 rounded-lg bg-red-50/50 flex items-center justify-center group-hover:bg-white text-red-500 shadow-sm border border-red-100/30">
                   <IoLogOutOutline className="text-lg" />

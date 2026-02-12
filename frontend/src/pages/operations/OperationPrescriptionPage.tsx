@@ -7,7 +7,7 @@ import { transformApiOrderToTableOrder } from '@/features/staff/components/Order
 import { useMemo } from 'react'
 
 export default function OperationPrescriptionPage() {
-  // Fetch orders với type MANUFACTURING từ API
+  // Fetch orders với type MANUFACTURING từ API to display
   const { data, isLoading, isError } = useOrders(1, 100, undefined, OrderType.MANUFACTURING)
 
   // Transform data từ API sang format của OrderTable

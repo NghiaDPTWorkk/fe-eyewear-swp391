@@ -10,7 +10,8 @@ import {
 } from '@/features/staff/hooks/orders/useOrders'
 import toast from 'react-hot-toast'
 import { useProductDetails } from '@/features/staff/hooks/products/useProductDetails'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQueryClient, useQuery } from '@tanstack/react-query'
+import { productsService } from '@/features/staff/services/products.service'
 import type { OrderResponse, OrderProductItem } from '@/shared/types'
 import LensNormalOrder from '@/components/layout/staff/staff-core/technicaldetail/LensNormalOrder'
 import LensSpecifications from '@/components/layout/staff/staff-core/technicaldetail/LensSpecifications'
@@ -18,12 +19,11 @@ import FrameSpecifications from '@/components/layout/staff/staff-core/technicald
 import { PATHS } from '@/routes/paths'
 import { ProcessTracker } from '@/components/layout/staff/staff-core/processtracker'
 import { IoArrowBack } from 'react-icons/io5'
-
 export default function OperationOrderDetailPage() {
   const { orderId } = useParams<{ orderId: string }>()
   const navigate = useNavigate()
 
-  // Bước 1: Fetch Order Data
+  // Lấy Data từ Order hay Order Detail
   const { data: orderData, isLoading, isError } = useOrderDetail(orderId!)
   // console.log('📦 Order Detail:', JSON.stringify(orderData, null, 2))
 
@@ -52,9 +52,9 @@ export default function OperationOrderDetailPage() {
     )
   }
 
-  // Extract order data
+  // Tách List order từ json order
   const order = (orderData as OrderResponse)?.data?.order
-  console.log('📦 Order Detail:', JSON.stringify(order, null, 2))
+  console.log('📦List Order + Detail:', JSON.stringify(order, null, 2))
 
   if (!order) {
     return (
@@ -209,6 +209,17 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
         ? [frameObject.product_id]
         : []
 
+  // Gọi API lấy variant detail nếu là NORMAL order và có frame
+  const frameForApi = orderType === 'NORMAL' && framesList.length > 0 ? framesList[0] : null
+  const frameIdApi = frameForApi?.product_id
+  const frameSkuApi = frameForApi?.sku
+
+  const { data: variantResponse } = useQuery({
+    queryKey: ['productVariant', frameIdApi, frameSkuApi],
+    queryFn: () => productsService.getProductVariant(frameIdApi, frameSkuApi!),
+    enabled: !!frameIdApi && !!frameSkuApi
+  })
+
   const productQueries = useProductDetails(productIdsToFetch)
   const productsLoading = productQueries.some((q: any) => q.isLoading)
   const productsError = productQueries.some((q: any) => q.isError)
@@ -271,6 +282,10 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
   // NORMAL Order - Frame
   if (orderType === 'NORMAL' && framesList.length > 0) {
     const frameItem = framesList[0]
+    // CHỖ NÀY CẦN GỌI API TRUYỀN ProductID và sku để lấy object nằm trong data options của data trả ra sau khi gọi api
+    const frameOptionsVariantDetailList = variantResponse?.data?.variantDetail?.options || []
+    console.log(frameOptionsVariantDetailList); // đúng rồi đúng options
+
     const frameIndex = productIdsToFetch.indexOf(frameItem.product_id)
     const frameProductDetail = (productQueries[frameIndex]?.data as any)?.data
 
@@ -287,7 +302,9 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
           {
             label: 'Color',
             value:
-              frameVariant?.options?.find((o: any) => o.attributeName === 'Color')?.value || 'N/A'
+              frameOptionsVariantDetailList?.find((o: any) => o.attributeName === 'Color')?.value ||
+              frameVariant?.options?.find((o: any) => o.attributeName === 'Color')?.value ||
+              'N/A'
           },
           { label: 'Price', value: `$${frameItem.pricePerUnit}` }
         ],

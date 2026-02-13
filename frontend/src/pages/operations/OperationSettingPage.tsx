@@ -1,13 +1,14 @@
 import { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
 import { Container, Button, Input } from '@/components'
 import { IoCameraOutline } from 'react-icons/io5'
-import { useProfile } from '@/features/staff/hooks/useProfile'
+import { useAuthStore } from '@/store/auth.store'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
+import type { AdminAccount } from '@/shared/types'
 
 export default function OperationSettingPage() {
-  const { data: profileData, isLoading } = useProfile()
-  const profile = profileData?.data
+  const { user, isLoading } = useAuthStore()
+  // Cast user to AdminAccount since this is staff page
+  const profile = user as AdminAccount | null
 
   // Dùng useMemo để xử lý dữ liệu profile, tránh tính toán lại vô ích
   const initialValues = useMemo(() => {
@@ -24,7 +25,7 @@ export default function OperationSettingPage() {
   // Hoặc dùng chính dữ liệu này để khởi tạo State mà KHÔNG cần useEffect.
   return (
     <SettingForm
-      key={profile?.id || 'loading'} // Khi profile.id có, component sẽ reset sạch state theo data mới
+      key={profile?._id || 'loading'} // Khi profile._id có (dữ liệu đã load), component sẽ reset sạch state theo data mới
       initialData={initialValues}
       profile={profile}
       isLoading={isLoading}
@@ -126,7 +127,6 @@ function SettingForm({ initialData, profile, isLoading }: any) {
           </div>
         </div>
 
-
         {/* Change Password Section */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="mb-6">
@@ -155,7 +155,8 @@ function SettingForm({ initialData, profile, isLoading }: any) {
           {/* Password Requirements Notice */}
           <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
             <p className="text-xs text-amber-800 font-medium">
-              ⚠️ Password must be at least 8 characters and include uppercase, lowercase, number, and special character.
+              ⚠️ Password must be at least 8 characters and include uppercase, lowercase, number,
+              and special character.
             </p>
           </div>
         </div>

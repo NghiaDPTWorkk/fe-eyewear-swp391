@@ -23,7 +23,9 @@ import { useOrderCountStore } from '@/store'
 import { AiOutlineFileDone } from 'react-icons/ai'
 import { useAllOrders, useCompletedOrders } from '@/features/staff/hooks/orders/useOrders'
 import { transformApiOrderToTableOrder } from '@/features/staff/components/OrderTable/orderTransformers'
+import { useAuthStore } from '@/store/auth.store'
 import { useProfile } from '@/features/staff/hooks/useProfile'
+import type { AdminAccount } from '@/shared/types'
 
 export default function OperationLayout() {
   const location = useLocation()
@@ -38,8 +40,17 @@ export default function OperationLayout() {
     setCompletedLoadingState
   } = useOrderCountStore()
 
-  // Gọi API để hiển thị avt
+  // Gọi API để hiển thị avt thông qua Zustand store
+  const { user, setUser } = useAuthStore()
   const { data: profileData } = useProfile()
+  const profile = user as AdminAccount | null
+
+  useEffect(() => {
+    // Sync data from React Query to Zustand Store
+    if (profileData?.data) {
+      setUser(profileData.data)
+    }
+  }, [profileData, setUser])
 
   // Gọi API để lấy số lượng đơn hàng cho từng trạng thái
   const { data: ordersData, isLoading, isError, error } = useAllOrders()
@@ -83,14 +94,15 @@ export default function OperationLayout() {
   }, [completedData, isLoadingCompleted, setCount, setCompletedLoadingState])
 
   const handleLogout = () => {
+    const { logout } = useAuthStore.getState()
+    logout() // Clear store
     localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN)
     localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN)
     localStorage.removeItem(STORAGE_KEYS.USER_INFO)
     navigate('/admin/login')
   }
 
-  // Lấy thông tin profile từ API
-  const profile = profileData?.data
+  // Lấy thông tin profile từ store
   const userInitials = profile?.name
     ? profile.name
         .split(' ')

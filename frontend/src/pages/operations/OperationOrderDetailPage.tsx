@@ -285,7 +285,7 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
     // CHỖ NÀY CẦN GỌI API TRUYỀN ProductID và sku để lấy object nằm trong data options của data trả ra sau khi gọi api
     const frameOptionsVariantDetailList = variantResponse?.data?.variantDetail?.options || []
     console.log(frameOptionsVariantDetailList); // đúng rồi đúng options
-
+    
     const frameIndex = productIdsToFetch.indexOf(frameItem.product_id)
     const frameProductDetail = (productQueries[frameIndex]?.data as any)?.data
 
@@ -299,13 +299,11 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
           { label: 'Brand', value: frameProductDetail.brand || 'N/A' },
           { label: 'Material', value: frameSpec.material || 'N/A' },
           { label: 'Shape', value: frameSpec.shape || 'N/A' },
-          {
-            label: 'Color',
-            value:
-              frameOptionsVariantDetailList?.find((o: any) => o.attributeName === 'Color')?.value ||
-              frameVariant?.options?.find((o: any) => o.attributeName === 'Color')?.value ||
-              'N/A'
-          },
+          // Map dynamic options (Color, Size, etc.)
+          ...(frameOptionsVariantDetailList?.map((opt: any) => ({
+            label: opt.attributeName,
+            value: opt.label // Use label as value per request (e.g. "Green" instead of hex)
+          })) || []),
           { label: 'Price', value: `$${frameItem.pricePerUnit}` }
         ],
         imageSrc: frameVariant?.imgs?.[0] || frameProductDetail?.variants?.[0]?.imgs?.[0]

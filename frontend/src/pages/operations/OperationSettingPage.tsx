@@ -6,6 +6,7 @@ import { IoCameraOutline } from 'react-icons/io5'
 import { useAuthStore } from '@/store/auth.store'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 import type { AdminAccount } from '@/shared/types'
+import { ERROR_MESSAGES } from '@/shared/constants'
 
 export default function OperationSettingPage() {
   const { user, isLoading } = useAuthStore()
@@ -130,7 +131,7 @@ function SettingForm({ initialData, profile, isLoading }: any) {
 
           <div className="mb-6 p-3 bg-blue-50 border border-blue-200 rounded-lg">
             <p className="text-xs text-blue-700 font-medium">
-              ℹ️ Name must contain only letters and spaces. Special characters are not allowed.
+              ℹ️ {ERROR_MESSAGES.AUTH.INVALID_NAME}
             </p>
           </div>
 
@@ -175,8 +176,7 @@ function SettingForm({ initialData, profile, isLoading }: any) {
           {/* Password Requirements Notice */}
           <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
             <p className="text-xs text-amber-800 font-medium">
-              ⚠️ Password must be at least 8 characters and include uppercase, lowercase, number,
-              and special character.
+              ⚠️ {ERROR_MESSAGES.AUTH.PASSWORD_COMPLEXITY}
             </p>
           </div>
         </div>

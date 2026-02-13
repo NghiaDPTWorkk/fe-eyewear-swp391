@@ -10,7 +10,8 @@ import {
 } from '@/features/staff/hooks/orders/useOrders'
 import toast from 'react-hot-toast'
 import { useProductDetails } from '@/features/staff/hooks/products/useProductDetails'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQueryClient, useQuery } from '@tanstack/react-query'
+import { productsService } from '@/features/staff/services/products.service'
 import type { OrderResponse, OrderProductItem } from '@/shared/types'
 import LensNormalOrder from '@/components/layout/staff/staff-core/technicaldetail/LensNormalOrder'
 import LensSpecifications from '@/components/layout/staff/staff-core/technicaldetail/LensSpecifications'
@@ -18,12 +19,11 @@ import FrameSpecifications from '@/components/layout/staff/staff-core/technicald
 import { PATHS } from '@/routes/paths'
 import { ProcessTracker } from '@/components/layout/staff/staff-core/processtracker'
 import { IoArrowBack } from 'react-icons/io5'
-
 export default function OperationOrderDetailPage() {
   const { orderId } = useParams<{ orderId: string }>()
   const navigate = useNavigate()
 
-  // Bước 1: Fetch Order Data
+  // Lấy Data từ Order hay Order Detail
   const { data: orderData, isLoading, isError } = useOrderDetail(orderId!)
   // console.log('📦 Order Detail:', JSON.stringify(orderData, null, 2))
 
@@ -52,9 +52,9 @@ export default function OperationOrderDetailPage() {
     )
   }
 
-  // Extract order data
+  // Tách List order từ json order
   const order = (orderData as OrderResponse)?.data?.order
-  console.log('📦 Order Detail:', JSON.stringify(order, null, 2))
+  console.log('📦List Order + Detail:', JSON.stringify(order, null, 2))
 
   if (!order) {
     return (
@@ -209,6 +209,24 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
         ? [frameObject.product_id]
         : []
 
+  // Gọi API lấy variant detail cho NORMAL order hoặc MANUFACTURING order
+  let frameIdApi: string | undefined
+  let frameSkuApi: string | undefined
+
+  if (orderType === 'NORMAL' && framesList.length > 0) {
+    frameIdApi = framesList[0].product_id
+    frameSkuApi = framesList[0].sku
+  } else if (orderType === 'MANUFACTURING' && frameObject) {
+    frameIdApi = frameObject.product_id
+    frameSkuApi = frameObject.sku
+  }
+
+  const { data: variantResponse } = useQuery({
+    queryKey: ['productVariant', frameIdApi, frameSkuApi],
+    queryFn: () => productsService.getProductVariant(frameIdApi!, frameSkuApi!),
+    enabled: !!frameIdApi && !!frameSkuApi
+  })
+
   const productQueries = useProductDetails(productIdsToFetch)
   const productsLoading = productQueries.some((q: any) => q.isLoading)
   const productsError = productQueries.some((q: any) => q.isError)
@@ -271,26 +289,22 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
   // NORMAL Order - Frame
   if (orderType === 'NORMAL' && framesList.length > 0) {
     const frameItem = framesList[0]
+    // CHỖ NÀY CẦN GỌI API TRUYỀN ProductID và sku để lấy object nằm trong data options của data trả ra sau khi gọi api
+    const frameOptionsVariantDetailList = variantResponse?.data?.variantDetail?.options || []
+    console.log(frameOptionsVariantDetailList); // đúng rồi đúng options
+
     const frameIndex = productIdsToFetch.indexOf(frameItem.product_id)
     const frameProductDetail = (productQueries[frameIndex]?.data as any)?.data
 
     if (frameProductDetail) {
       const frameVariant = frameProductDetail?.variants?.find((v: any) => v.sku === frameItem.sku)
-      const frameSpec = frameProductDetail?.spec || {}
 
       const frameData = {
-        data: [
-          { label: 'Frame Code', value: frameItem.sku },
-          { label: 'Brand', value: frameProductDetail.brand || 'N/A' },
-          { label: 'Material', value: frameSpec.material || 'N/A' },
-          { label: 'Shape', value: frameSpec.shape || 'N/A' },
-          {
-            label: 'Color',
-            value:
-              frameVariant?.options?.find((o: any) => o.attributeName === 'Color')?.value || 'N/A'
-          },
-          { label: 'Price', value: `$${frameItem.pricePerUnit}` }
-        ],
+        data:
+          frameOptionsVariantDetailList?.map((attr) => ({
+            key: attr.attributeName,
+            value: attr.label
+          })) || [],
         imageSrc: frameVariant?.imgs?.[0] || frameProductDetail?.variants?.[0]?.imgs?.[0]
       }
 
@@ -336,21 +350,17 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
 
     if (frameProductDetail) {
       const frameVariant = frameProductDetail?.variants?.find((v: any) => v.sku === frameObject.sku)
-      const frameSpec = frameProductDetail?.spec || {}
+
+
+      // Map dynamic options (Color, Size, etc.)
+      const frameOptionsVariantDetailList = variantResponse?.data?.variantDetail?.options || []
 
       const frameData = {
-        data: [
-          { label: 'Frame Code', value: frameObject.sku },
-          { label: 'Brand', value: frameProductDetail.brand || 'N/A' },
-          { label: 'Material', value: frameSpec.material || 'N/A' },
-          { label: 'Shape', value: frameSpec.shape || 'N/A' },
-          {
-            label: 'Color',
-            value:
-              frameVariant?.options?.find((o: any) => o.attributeName === 'Color')?.value || 'N/A'
-          },
-          { label: 'Price', value: `$${frameObject.pricePerUnit}` }
-        ],
+        data:
+          frameOptionsVariantDetailList?.map((attr: any) => ({
+            key: attr.attributeName,
+            value: attr.label
+          })) || [],
         imageSrc: frameVariant?.imgs?.[0] || frameProductDetail?.variants?.[0]?.imgs?.[0]
       }
 

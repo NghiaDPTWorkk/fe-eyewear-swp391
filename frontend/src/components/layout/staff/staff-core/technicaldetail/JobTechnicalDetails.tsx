@@ -48,7 +48,7 @@ interface ProductDetail {
 }
 
 interface FrameDataItem {
-  label: string
+  key: string
   value: string
 }
 

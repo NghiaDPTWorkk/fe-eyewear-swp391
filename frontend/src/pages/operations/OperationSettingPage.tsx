@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import { Container } from '@/components'
 import { Button } from '@/shared/components/ui/button/Button'
 import { Input } from '@/shared/components/ui/input/Input'
+import { Switch } from '@/shared/components/ui'
 import { IoCameraOutline } from 'react-icons/io5'
 import { useAuthStore } from '@/store/auth.store'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
@@ -196,7 +197,7 @@ function SettingForm({ initialData, profile, isLoading }: any) {
                   Play a sound when you receive a new notification.
                 </p>
               </div>
-              <Switch checked={notificationSound} onChange={setNotificationSound} />
+              <Switch checked={notificationSound} onCheckedChange={setNotificationSound} />
             </div>
 
             <div className="flex items-center justify-between pt-6 border-t border-gray-100">
@@ -208,7 +209,7 @@ function SettingForm({ initialData, profile, isLoading }: any) {
                   Receive a desktop notification when a new order comes in.
                 </p>
               </div>
-              <Switch checked={desktopAlerts} onChange={setDesktopAlerts} />
+              <Switch checked={desktopAlerts} onCheckedChange={setDesktopAlerts} />
             </div>
           </div>
         </div>
@@ -223,19 +224,5 @@ function SettingForm({ initialData, profile, isLoading }: any) {
         </div>
       </div>
     </Container>
-  )
-}
-
-function Switch({ checked, onChange }: { checked: boolean; onChange: (checked: boolean) => void }) {
-  return (
-    <button
-      type="button"
-      onClick={() => onChange(!checked)}
-      className={`relative inline-flex h-6 w-11 rounded-full transition-colors ${checked ? 'bg-emerald-500' : 'bg-gray-200'}`}
-    >
-      <span
-        className={`inline-block h-5 w-5 transform rounded-full bg-white transition ${checked ? 'translate-x-5' : 'translate-x-0'}`}
-      />
-    </button>
   )
 }

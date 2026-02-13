@@ -94,12 +94,12 @@ export default function OperationLayout() {
   }, [completedData, isLoadingCompleted, setCount, setCompletedLoadingState])
 
   const handleLogout = () => {
+    navigate('/admin/login')
     const { logout } = useAuthStore.getState()
     logout() // Clear store
     localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN)
     localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN)
     localStorage.removeItem(STORAGE_KEYS.USER_INFO)
-    navigate('/admin/login')
   }
 
   // Lấy thông tin profile từ store

@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import {
   IoMailOutline,
   IoCallOutline,
@@ -9,24 +8,13 @@ import {
 } from 'react-icons/io5'
 import ContactSupportTeam from '@/shared/components/ui/contactsupportteam'
 import { Container } from '@/components'
+import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 
-interface StaffSupportPageProps {
-  homeUrl?: string // URL to navigate when clicking "Home" in breadcrumb
-}
-
-export default function StaffSupportPage({
-  homeUrl = '/salesstaff/dashboard'
-}: StaffSupportPageProps) {
+export default function StaffSupportPage() {
   return (
     <Container>
       <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm mb-2 font-medium">
-          <Link to={homeUrl} className="text-neutral-400 hover:text-primary-500 transition-colors">
-            Home
-          </Link>
-          <span className="text-neutral-300">/</span>
-          <span className="text-primary-500 font-bold">Support</span>
-        </div>
+        <BreadcrumbPath paths={['Dashboard', 'Supports']} />
         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Staff Support Center</h1>
         <p className="text-gray-500 mt-1">
           Get help with technical issues or operational questions.

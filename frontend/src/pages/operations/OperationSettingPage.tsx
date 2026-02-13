@@ -13,13 +13,27 @@ export default function OperationSettingPage() {
   // Dùng useMemo để xử lý dữ liệu profile, tránh tính toán lại vô ích
   const initialValues = useMemo(() => {
     const nameParts = profile?.name?.split(' ') || []
+    const lastName = nameParts.length > 0 ? nameParts[nameParts.length - 1] : ''
+    const firstName = nameParts.length > 1 ? nameParts.slice(0, -1).join(' ') : ''
+
     return {
-      firstName: nameParts[0] || '',
-      lastName: nameParts.slice(1).join(' ') || '',
-      email: profile?.email || ''
+      firstName,
+      lastName,
+      email: profile?.email || '',
+      phone: profile?.phone || '',
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
     }
   }, [profile])
 
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+      </div>
+    )
+  }
   // GIẢI PHÁP TRIỆT ĐỂ:
   // Truyền initialValues vào một component con xử lý Form.
   // Hoặc dùng chính dữ liệu này để khởi tạo State mà KHÔNG cần useEffect.

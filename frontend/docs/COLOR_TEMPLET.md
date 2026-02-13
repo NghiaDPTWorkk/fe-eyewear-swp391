@@ -2,7 +2,7 @@
 
 Documentation of color variables defined in `index.css`.
 
-## Mint Colors (Brand)
+## Mint Colors ( Brand )
 
 | Variable               | Hex Code  | Preview                                                                                           |
 | ---------------------- | --------- | ------------------------------------------------------------------------------------------------- |

@@ -7,7 +7,10 @@ export const ERROR_MESSAGES = {
     PASSWORD_MIN_LENGTH: 'Password must be at least 8 characters long',
     PASSWORD_UPPERCASE: 'Password must contain at least 1 uppercase letter',
     PASSWORD_NUMBER: 'Password must contain at least 1 number',
-    UNAUTHORIZED: 'Session expired. Please log in again.'
+    UNAUTHORIZED: 'Session expired. Please log in again.',
+    INVALID_NAME: 'Name must contain only letters and spaces. Special characters are not allowed.',
+    PASSWORD_COMPLEXITY:
+      'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.'
   },
   CART: {
     ADD_FAILED: 'Failed to add to cart',

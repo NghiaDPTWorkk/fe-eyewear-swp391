@@ -126,12 +126,69 @@ function SettingForm({ initialData, profile, isLoading }: any) {
           </div>
         </div>
 
-        {/* --- Các phần Password và Notification giữ nguyên như cũ --- */}
+
+        {/* Change Password Section */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-6">Change Password</h2>
+          <div className="mb-6">
+            <h2 className="text-lg font-bold text-gray-900">Change Password</h2>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Input type="password" placeholder="Current Password" />
-            <Input type="password" placeholder="New Password" />
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-700">Current Password</label>
+              <Input
+                type="password"
+                placeholder="Enter current password"
+                className="bg-white border-gray-200 focus:border-primary-500"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-700">New Password</label>
+              <Input
+                type="password"
+                placeholder="Enter new password"
+                className="bg-white border-gray-200 focus:border-primary-500"
+              />
+            </div>
+          </div>
+
+          {/* Password Requirements Notice */}
+          <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+            <p className="text-xs text-amber-800 font-medium">
+              ⚠️ Password must be at least 8 characters and include uppercase, lowercase, number, and special character.
+            </p>
+          </div>
+        </div>
+
+        {/* Notification Preferences */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="mb-6">
+            <h2 className="text-lg font-bold text-gray-900">Notification Preferences</h2>
+            <p className="text-sm text-gray-500">Manage how you receive notifications.</p>
+          </div>
+
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900">Notification Sounds</h3>
+                <p className="text-sm text-gray-500">
+                  Play a sound when you receive a new notification.
+                </p>
+              </div>
+              <Switch checked={notificationSound} onChange={setNotificationSound} />
+            </div>
+
+            <div className="flex items-center justify-between pt-6 border-t border-gray-100">
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900">
+                  Desktop Alerts for New Orders
+                </h3>
+                <p className="text-sm text-gray-500">
+                  Receive a desktop notification when a new order comes in.
+                </p>
+              </div>
+              <Switch checked={desktopAlerts} onChange={setDesktopAlerts} />
+            </div>
           </div>
         </div>
 

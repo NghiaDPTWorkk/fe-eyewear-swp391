@@ -1,4 +1,3 @@
-import React from 'react'
 import { IoCloseOutline, IoChevronForward } from 'react-icons/io5'
 
 // Định nghĩa lại các interface cần thiết để component này độc lập

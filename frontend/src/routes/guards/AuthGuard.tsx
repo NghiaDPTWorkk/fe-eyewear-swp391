@@ -15,7 +15,14 @@ export function AuthGuard({ children }: AuthGuardProps) {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />
+    const isStaffRoute =
+      location.pathname.startsWith('/admin') ||
+      location.pathname.startsWith('/operationstaff') ||
+      location.pathname.startsWith('/salestaff') ||
+      location.pathname.startsWith('/manager')
+
+    const redirectPath = isStaffRoute ? '/admin/login' : '/login'
+    return <Navigate to={redirectPath} state={{ from: location }} replace />
   }
 
   return <>{children}</>

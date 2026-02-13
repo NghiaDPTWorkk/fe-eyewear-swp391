@@ -319,13 +319,13 @@ export default function SaleStaffOrderPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50/30">
-      <Container maxWidth="none" className="pt-6 pb-8 px-6 md:px-8">
-        <PageHeader
-          title="Sales Orders"
-          breadcrumbs={[{ label: 'Dashboard', path: '/salestaff/dashboard' }, { label: 'Orders' }]}
-          subtitle="Consolidated view of all sales orders, pre-orders, and returns."
-        />
+    <Container maxWidth="none" className="pt-2 pb-8 px-2">
+      <PageHeader
+        title="Order Management"
+        breadcrumbs={[{ label: 'Dashboard', path: '/salestaff/dashboard' }, { label: 'Orders' }]}
+        subtitle="Consolidated view of all sales orders, pre-orders, and returns."
+      />
+      <div className="px-4">
         <OrderMetrics
           metrics={metrics}
           orderTypeFilter={orderTypeFilter}
@@ -341,7 +341,7 @@ export default function SaleStaffOrderPage() {
           onReset={handleResetFilters}
           orderTypeFilter={orderTypeFilter}
         />
-        <div className="mx-4 bg-white border border-neutral-100 rounded-[32px] overflow-hidden shadow-sm">
+        <div className="bg-white border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 rounded-[32px] overflow-hidden">
           <OrderTable
             invoices={paginatedInvoices}
             selectedInvoiceId={selectedInvoiceId}
@@ -357,22 +357,23 @@ export default function SaleStaffOrderPage() {
             onPageChange={setPage}
           />
         </div>
-        <InvoiceOrdersDrawer
-          isOpen={!!selectedInvoiceId}
-          onClose={() => setSelectedInvoiceId(null)}
-          invoice={selectedInvoice}
-        />
-        <ConfirmationModal
-          isOpen={showConfirmModal}
-          onClose={() => setShowConfirmModal(false)}
-          onConfirm={confirmApproval}
-          title="Approve Invoice"
-          message="Are you sure you want to approve this invoice? All orders within this invoice will be marked as verified and proceed to the next stage."
-          confirmText="Approve Invoice"
-          type="info"
-          isLoading={processing}
-        />
-      </Container>
-    </div>
+      </div>
+
+      <InvoiceOrdersDrawer
+        isOpen={!!selectedInvoiceId}
+        onClose={() => setSelectedInvoiceId(null)}
+        invoice={selectedInvoice}
+      />
+      <ConfirmationModal
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={confirmApproval}
+        title="Approve Invoice"
+        message="Are you sure you want to approve this invoice? All orders within this invoice will be marked as verified and proceed to the next stage."
+        confirmText="Approve Invoice"
+        type="info"
+        isLoading={processing}
+      />
+    </Container>
   )
 }

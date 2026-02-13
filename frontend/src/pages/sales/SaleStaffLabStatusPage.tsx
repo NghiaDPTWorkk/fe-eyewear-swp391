@@ -4,7 +4,7 @@ import { LabStatusMetrics } from '@/features/sales/components/lab/LabStatusMetri
 import { LensSpecificationsCard } from '@/features/sales/components/lab/LensSpecificationsCard'
 import { ActiveLabOrdersTable } from '@/features/sales/components/lab/ActiveLabOrdersTable'
 import { PageHeader } from '@/features/staff'
-import { Button, Container } from '@/shared/components/ui-core'
+import { Container } from '@/shared/components/ui-core'
 
 export default function SaleStaffLabStatusPage() {
   const labOrders = [
@@ -59,56 +59,44 @@ export default function SaleStaffLabStatusPage() {
   ]
 
   return (
-    <Container maxWidth="none" className="pt-6 pb-8 px-6 md:px-8">
-      <div className="flex items-center justify-between mb-6">
-        <PageHeader
-          title="Lab Status Tracking"
-          subtitle="Monitor production stages, urgent requests, and lens specifications."
-          breadcrumbs={[
-            { label: 'Dashboard', path: '/salestaff/dashboard' },
-            { label: 'Lab Status' }
-          ]}
-          noMargin={true}
-        />
-        <div className="flex gap-2">
-          <div className="flex gap-2 bg-white p-1 rounded-xl border border-neutral-100 shadow-sm">
-            <Button
-              size="sm"
-              variant="ghost"
-              colorScheme="neutral"
-              rightIcon={<IoFilter />}
-              className="text-neutral-50 px-3"
-            >
-              All Urgencies
-            </Button>
-            <div className="w-px h-6 bg-neutral-100"></div>
-            <Button
-              size="sm"
-              variant="ghost"
-              colorScheme="neutral"
-              rightIcon={<IoFilter />}
-              className="text-neutral-50 px-3"
-            >
-              All Stations
-            </Button>
+    <Container maxWidth="none" className="pt-2 pb-8 px-2">
+      <div className="px-4">
+        <div className="flex items-center justify-between mb-8">
+          <PageHeader
+            title="Lab Status Tracking"
+            subtitle="Monitor production stages, urgent requests, and lens specifications."
+            breadcrumbs={[
+              { label: 'Dashboard', path: '/salestaff/dashboard' },
+              { label: 'Lab Status' }
+            ]}
+            noMargin={true}
+          />
+          <div className="flex gap-4">
+            <div className="flex gap-2 bg-white p-1.5 rounded-2xl border border-neutral-100 shadow-sm shadow-neutral-100/50">
+              <button className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-neutral-600 hover:bg-neutral-50 rounded-xl transition-all">
+                All Urgencies
+                <IoFilter className="text-neutral-400" />
+              </button>
+              <div className="w-px h-6 bg-neutral-100 my-auto"></div>
+              <button className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-neutral-600 hover:bg-neutral-50 rounded-xl transition-all">
+                All Stations
+                <IoFilter className="text-neutral-400" />
+              </button>
+            </div>
+            <button className="flex items-center gap-2 px-6 py-2.5 bg-mint-600 text-white rounded-2xl text-sm font-semibold hover:bg-mint-700 hover:shadow-lg hover:shadow-mint-100 transition-all active:scale-95 group">
+              <IoRefresh className="group-hover:rotate-180 transition-transform duration-500" />
+              Refresh
+            </button>
           </div>
-          <Button
-            variant="solid"
-            colorScheme="primary"
-            leftIcon={<IoRefresh />}
-            className="rounded-xl font-semibold px-4"
-          >
-            Refresh
-          </Button>
         </div>
-      </div>
 
-      <div className="grid grid-cols-12 gap-6 mb-8">
-        <LabStatusMetrics />
-        <LensSpecificationsCard selectedOrderId="#ORD-7352" />
-      </div>
+        <div className="grid grid-cols-12 gap-6 mb-8">
+          <LabStatusMetrics />
+          <LensSpecificationsCard selectedOrderId="#ORD-7352" />
+        </div>
 
-      <ActiveLabOrdersTable orders={labOrders} />
+        <ActiveLabOrdersTable orders={labOrders} />
+      </div>
     </Container>
   )
 }

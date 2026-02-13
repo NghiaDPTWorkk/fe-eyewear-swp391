@@ -8,14 +8,13 @@ import {
 } from 'react-icons/io5'
 import { useSearchParams } from 'react-router-dom'
 
-import { PageHeader } from '@/features/sales/components/common'
+import { PageHeader, SalesMetricCard } from '@/features/sales/components/common'
 import { Charts } from '@/features/sales/components/dashboard/Charts'
 import { InvoiceOrdersDrawer } from '@/features/sales/components/dashboard/InvoiceOrdersDrawer'
 import { Table } from '@/features/sales/components/dashboard/Table'
 
 import type { Invoice } from '@/features/sales/types'
-import { Button, Card, Container } from '@/shared/components/ui-core'
-import { MetricCard } from '@/shared/components/staff/staff-core/metric-card'
+import { Card, Container } from '@/shared/components/ui-core'
 import { useDashboard, useSalesStaffInvoices } from '@/features/sales/hooks'
 
 export default function SaleStaffDashboardPage() {
@@ -123,16 +122,16 @@ export default function SaleStaffDashboardPage() {
   }, [invoices])
 
   return (
-    <Container maxWidth="none" className="pt-6 pb-8 px-6 md:px-8">
+    <Container maxWidth="none" className="pt-2 pb-8 px-2">
       <PageHeader
         title="Sales Overview"
         subtitle="Overview of store performance and daily sales operations."
         breadcrumbs={[{ label: 'Dashboard' }]}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 px-4">
         {metrics.map((m, i) => (
-          <MetricCard
+          <SalesMetricCard
             key={i}
             {...m}
             colorScheme={m.colorScheme === 'primary' ? 'mint' : m.colorScheme}
@@ -140,28 +139,35 @@ export default function SaleStaffDashboardPage() {
         ))}
       </div>
 
-      <Charts />
+      <div className="px-4">
+        <Charts />
 
-      <Card className="p-8 border border-neutral-200">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8">
-          <div className="space-y-1">
-            <h3 className="text-xl font-medium text-gray-900 font-heading">Recent Transactions</h3>
-            <p className="text-sm text-gray-500 font-normal tracking-tight">
-              Latest invoices awaiting verification and approval.
-            </p>
+        <Card className="p-8 border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 bg-white rounded-[32px]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8">
+            <div className="space-y-1">
+              <h3 className="text-xl font-medium text-gray-900 font-heading">
+                Recent Transactions
+              </h3>
+              <p className="text-sm text-gray-500 font-normal tracking-tight">
+                Latest invoices awaiting verification and approval.
+              </p>
+            </div>
+            <button className="flex items-center gap-2.5 px-6 py-3 bg-mint-600 text-white rounded-2xl text-sm font-medium hover:bg-mint-700 hover:shadow-lg hover:shadow-mint-100 transition-all active:scale-95 group">
+              <IoAdd
+                size={22}
+                className="group-hover:rotate-90 transition-transform duration-300"
+              />
+              New Transaction
+            </button>
           </div>
-          <Button className="flex items-center gap-2.5 px-6 py-3 bg-mint-600 text-white rounded-2xl text-sm font-medium hover:bg-mint-700 transition-all active:scale-95 group">
-            <IoAdd size={22} className="group-hover:rotate-90 transition-transform duration-300" />
-            New Transaction
-          </Button>
-        </div>
-        <Table
-          invoices={filteredInvoicesForTable}
-          loading={loading}
-          onInvoiceClick={handleInvoiceClick}
-          onActionSuccess={fetchInvoices}
-        />
-      </Card>
+          <Table
+            invoices={filteredInvoicesForTable}
+            loading={loading}
+            onInvoiceClick={handleInvoiceClick}
+            onActionSuccess={fetchInvoices}
+          />
+        </Card>
+      </div>
 
       <InvoiceOrdersDrawer
         isOpen={isDrawerOpen}

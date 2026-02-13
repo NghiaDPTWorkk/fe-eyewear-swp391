@@ -1,5 +1,5 @@
 // Barrel export for common staff components
 export { default as PageHeader } from './PageHeader'
-export { MetricCard } from '@/shared/components/staff/staff-core/metric-card'
+export { SalesMetricCard } from './SalesMetricCard'
 export { default as StatusBadge } from './StatusBadge'
 export { default as Pagination } from './Pagination'

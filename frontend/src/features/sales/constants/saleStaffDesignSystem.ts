@@ -44,18 +44,18 @@ export const COLORS = {
 // ─────────────────────────────────────────────────────────────────────────────
 export const TYPOGRAPHY = {
   // Heading styles
-  pageTitle: 'text-2xl font-semibold text-gray-900 tracking-tight',
+  pageTitle: 'text-2xl font-bold text-gray-900 tracking-tight',
   pageSubtitle: 'text-gray-500 text-sm font-normal leading-relaxed',
-  sectionTitle: 'text-lg font-medium text-gray-900',
-  cardTitle: 'text-sm font-medium text-gray-900',
+  sectionTitle: 'text-lg font-semibold text-gray-900',
+  cardTitle: 'text-sm font-semibold text-gray-900',
   // Body text
   body: 'text-sm text-gray-600',
   bodySmall: 'text-xs text-gray-500',
   // Labels
-  label: 'text-xs font-medium text-gray-400 tracking-wider',
-  labelSmall: 'text-[10px] font-medium text-gray-400 tracking-widest',
+  label: 'text-xs font-semibold text-gray-400 tracking-wider',
+  labelSmall: 'text-[10px] font-semibold text-gray-400 tracking-widest',
   // Table headers
-  tableHeader: 'text-[10px] font-medium text-gray-400 uppercase tracking-widest'
+  tableHeader: 'text-[10px] font-semibold text-gray-400 uppercase tracking-widest'
 } as const
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -64,7 +64,7 @@ export const TYPOGRAPHY = {
 export const STYLES = {
   // Breadcrumb
   breadcrumbLink: 'text-neutral-400 hover:text-neutral-600 transition-colors font-normal',
-  breadcrumbActive: 'text-mint-600 font-normal',
+  breadcrumbActive: 'text-mint-600 font-medium',
   breadcrumbSeparator: 'text-neutral-300 mx-1',
   // Cards
   card: 'p-5 border border-neutral-200 shadow-sm rounded-xl',
@@ -73,14 +73,14 @@ export const STYLES = {
   tableRow: 'hover:bg-emerald-50/30 transition-colors cursor-pointer',
   tableCell: 'px-6 py-4 align-middle',
   // Buttons
-  primaryButton: 'bg-emerald-500 hover:bg-emerald-600 text-white font-medium',
+  primaryButton: 'bg-emerald-500 hover:bg-emerald-600 text-white font-semibold',
   secondaryButton: 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50',
   // Status badges
-  statusBadge: 'px-3 py-1 rounded-full text-[10px] font-medium uppercase tracking-wide border',
+  statusBadge: 'px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wide border',
   // Metric cards
   metricCard: 'p-5 border border-neutral-100 flex flex-col justify-between shadow-sm',
-  metricValue: 'text-3xl font-medium text-gray-900 mt-2',
-  metricLabel: 'text-xs font-medium text-gray-400 uppercase tracking-wider'
+  metricValue: 'text-3xl font-semibold text-gray-900 mt-2',
+  metricLabel: 'text-xs font-semibold text-gray-400 uppercase tracking-wider'
 } as const
 
 // ─────────────────────────────────────────────────────────────────────────────

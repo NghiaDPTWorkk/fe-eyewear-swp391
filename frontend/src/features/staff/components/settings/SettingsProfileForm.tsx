@@ -1,12 +1,32 @@
-import { IoSaveOutline } from 'react-icons/io5'
-
-import { Card, Button } from '@/components'
+import { useProfile } from '@/features/staff/hooks/useProfile'
+import { Card } from '@/shared/components'
 
 /**
  * ProfileForm Component
- * Profile information form with submit for approval
+ * Displays profile information as read-only
  */
 export default function ProfileForm() {
+  const { data: profileData, isLoading } = useProfile()
+  const profile = profileData?.data
+
+  if (isLoading) {
+    return (
+      <Card className="p-8 border-none shadow-sm shadow-neutral-200/50">
+        <div className="animate-pulse space-y-8">
+          <div className="h-7 w-48 bg-neutral-200 rounded-lg"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="space-y-3">
+                <div className="h-3 w-20 bg-neutral-100 rounded"></div>
+                <div className="h-12 w-full bg-neutral-50 rounded-xl"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Card>
+    )
+  }
+
   return (
     <Card className="p-8 border-none shadow-sm shadow-neutral-200/50">
       <div className="flex items-center justify-between mb-8">
@@ -19,8 +39,9 @@ export default function ProfileForm() {
           </label>
           <input
             type="text"
-            defaultValue="Staff Name"
-            className="w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium text-neutral-900 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 focus:bg-white transition-all"
+            value={profile?.name || ''}
+            readOnly
+            className="w-full px-4 py-3 bg-neutral-100 border border-neutral-200 rounded-xl text-sm font-medium text-neutral-500 cursor-default focus:outline-none"
           />
         </div>
         <div className="space-y-2">
@@ -29,9 +50,9 @@ export default function ProfileForm() {
           </label>
           <input
             type="text"
-            defaultValue="Operations Staff"
+            value={profile?.role === 'SALE_STAFF' ? 'Sales Staff' : profile?.role || ''}
             readOnly
-            className="w-full px-4 py-3 bg-neutral-100 border border-neutral-200 rounded-xl text-sm font-medium text-neutral-400 cursor-not-allowed"
+            className="w-full px-4 py-3 bg-neutral-100 border border-neutral-200 rounded-xl text-sm font-medium text-neutral-500 cursor-default focus:outline-none"
           />
         </div>
         <div className="space-y-2">
@@ -40,8 +61,9 @@ export default function ProfileForm() {
           </label>
           <input
             type="email"
-            defaultValue="staff@opspanel.com"
-            className="w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium text-neutral-900 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 focus:bg-white transition-all"
+            value={profile?.email || ''}
+            readOnly
+            className="w-full px-4 py-3 bg-neutral-100 border border-neutral-200 rounded-xl text-sm font-medium text-neutral-500 cursor-default focus:outline-none"
           />
         </div>
         <div className="space-y-2">
@@ -50,20 +72,11 @@ export default function ProfileForm() {
           </label>
           <input
             type="text"
-            defaultValue="+1 (555) 123-4567"
-            className="w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium text-neutral-900 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 focus:bg-white transition-all"
+            value={profile?.phone || ''}
+            readOnly
+            className="w-full px-4 py-3 bg-neutral-100 border border-neutral-200 rounded-xl text-sm font-medium text-neutral-500 cursor-default focus:outline-none"
           />
         </div>
-      </div>
-      <div className="mt-8 flex justify-end">
-        <Button
-          variant="solid"
-          colorScheme="primary"
-          leftIcon={<IoSaveOutline size={18} />}
-          className="h-11 rounded-xl font-semibold px-6 bg-primary-500 hover:bg-primary-600 shadow-md shadow-primary-100 transition-all active:scale-95 border-none"
-        >
-          Submit for Approval
-        </Button>
       </div>
     </Card>
   )

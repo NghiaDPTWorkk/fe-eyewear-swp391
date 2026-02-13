@@ -23,14 +23,14 @@ export function StaffMainLayout({
   const { sidebarCollapsed, toggleSidebar } = useLayoutStore()
 
   return (
-    <div className="flex h-screen bg-slate-50/50 overflow-hidden">
+    <div className="flex h-screen bg-white overflow-hidden">
       {/* Sidebar - fixed and handles its own transitions */}
       {sidebar}
 
       {/* Overlay for mobile */}
       {!sidebarCollapsed && (
         <div
-          className="fixed inset-0 bg-slate-900/60 z-40 lg:hidden backdrop-blur-sm transition-all duration-300"
+          className="fixed inset-0 bg-neutral-900/40 z-40 lg:hidden backdrop-blur-sm transition-all duration-300"
           onClick={toggleSidebar}
         />
       )}

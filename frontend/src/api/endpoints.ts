@@ -10,6 +10,7 @@ export const ENDPOINTS = {
     REFRESH_TOKEN: '/auth/refresh-token',
     PROFILE: '/customer',
     GET_PROFILE: '/admin/auth/profile', // Get admin/staff profile - Keep from target
+    CHANGE_PASSWORD: '/admin/auth/profile/change-password',
     ADDRESS_LIST: '/customer/profile/address',
     ADDRESS_ADD: '/customer/profile/address',
     CHANGE_DEFAULT: (id: string) => `/customer/profile/address/change-default/${id}`

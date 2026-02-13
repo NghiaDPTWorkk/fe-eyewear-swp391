@@ -11,6 +11,7 @@ import { useLocation, Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { HiMenuAlt2 } from 'react-icons/hi'
 import { useLayoutStore } from '@/store/layout.store'
+import { useLogout } from '@/shared/hooks/useLogout'
 import { Button, Input } from '@/shared/components'
 
 export interface NavSearchProps {
@@ -130,6 +131,8 @@ export function NavActions({
       color: 'bg-emerald-500'
     }
   ]
+
+  const { handleLogout } = useLogout()
 
   return (
     <div
@@ -254,8 +257,11 @@ export function NavActions({
 
             <div className="p-3 bg-neutral-50/50 border-t border-neutral-50">
               <button
-                className="flex items-center gap-3 w-full px-4 py-3 rounded-xl hover:bg-red-50 group transition-all"
-                onClick={() => setOpenDropdown(null)}
+                className="flex items-center gap-3 w-full px-4 py-3 rounded-xl hover:bg-red-50 group transition-all cursor-pointer"
+                onClick={() => {
+                  setOpenDropdown(null)
+                  handleLogout()
+                }}
               >
                 <div className="w-9 h-9 rounded-lg bg-red-50/50 flex items-center justify-center group-hover:bg-white text-red-500 shadow-sm border border-red-100/30">
                   <IoLogOutOutline className="text-lg" />

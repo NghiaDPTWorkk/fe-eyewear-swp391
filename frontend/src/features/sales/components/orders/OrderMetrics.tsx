@@ -1,5 +1,4 @@
-import React from 'react'
-import { MetricCard } from '@/shared/components/staff/staff-core/metric-card'
+import { SalesMetricCard } from '@/features/sales/components/common'
 import { cn } from '@/lib/utils'
 interface OrderMetricsProps {
   metrics: {
@@ -27,7 +26,7 @@ export const OrderMetrics: React.FC<OrderMetricsProps> = ({
           className="cursor-pointer transition-transform active:scale-95"
           onClick={() => onOrderTypeChange(m.type)}
         >
-          <MetricCard
+          <SalesMetricCard
             label={m.label}
             value={m.value}
             icon={m.icon}
@@ -36,8 +35,8 @@ export const OrderMetrics: React.FC<OrderMetricsProps> = ({
             className={cn(
               'transition-all duration-300',
               orderTypeFilter === m.type
-                ? 'border-mint-500 bg-mint-50/10 shadow-sm'
-                : 'hover:border-neutral-200'
+                ? 'ring-2 ring-mint-500 ring-offset-4 shadow-2xl shadow-mint-100/50 scale-[1.02]'
+                : ''
             )}
           />
         </div>

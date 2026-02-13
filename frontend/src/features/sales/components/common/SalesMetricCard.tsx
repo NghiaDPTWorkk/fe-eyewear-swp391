@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 import { Card } from '@/shared/components/ui-core'
 
-export interface MetricCardProps {
+export interface SalesMetricCardProps {
   label: string
   value: string | number
   subValue?: string
@@ -20,7 +20,7 @@ export interface MetricCardProps {
   }
 }
 
-export function MetricCard({
+export function SalesMetricCard({
   label,
   value,
   subValue,
@@ -29,7 +29,7 @@ export function MetricCard({
   colorScheme = 'primary',
   className,
   progress
-}: MetricCardProps) {
+}: SalesMetricCardProps) {
   const getIconBgColor = () => {
     switch (colorScheme) {
       case 'primary':
@@ -53,23 +53,23 @@ export function MetricCard({
   return (
     <Card
       className={cn(
-        'p-7 border border-neutral-100 dark:border-neutral-800 rounded-[28px] bg-white dark:bg-neutral-900 transition-all',
+        'p-6 border-none shadow-sm ring-1 ring-neutral-100/50 bg-white rounded-3xl',
         className
       )}
     >
       <div className="flex justify-between items-start">
-        <div className="space-y-1.5">
-          <p className="text-[13px] font-medium text-slate-400 dark:text-neutral-500 tracking-tight whitespace-nowrap">
+        <div>
+          <p className="text-[12px] font-bold text-slate-400 tracking-wider whitespace-nowrap uppercase">
             {label}
           </p>
-          <h3 className="text-3xl font-bold text-slate-900 dark:text-neutral-50 font-heading tracking-tight">
+          <h3 className="text-2xl font-bold mt-1.5 text-slate-900 font-heading tracking-tight">
             {value}
           </h3>
         </div>
         {icon && (
           <div
             className={cn(
-              'p-4 rounded-2xl transition-all hover:scale-105 border border-transparent',
+              'p-3.5 rounded-2xl shadow-sm transition-transform hover:scale-105',
               getIconBgColor()
             )}
           >
@@ -79,31 +79,25 @@ export function MetricCard({
       </div>
 
       {(trend || subValue) && (
-        <div className="mt-6 flex items-center gap-2 text-[12px]">
+        <div className="mt-4 flex items-center gap-2 text-sm">
           {trend && (
-            <div
+            <span
               className={cn(
-                'flex items-center gap-1.5 font-medium',
-                trend.isPositive ? 'text-emerald-500' : 'text-rose-500'
+                'font-bold flex items-center',
+                trend.isPositive ? 'text-emerald-600' : 'text-red-600'
               )}
             >
-              <span className="opacity-60 text-sm">↗</span>
-              <span>{Math.abs(trend.value)}%</span>
-            </div>
+              {trend.isPositive ? '↗' : '↘'} {Math.abs(trend.value)}%
+            </span>
           )}
-          <span className="text-slate-400 dark:text-neutral-500 font-medium">
-            {trend ? trend.label : subValue}
-          </span>
+          <span className="text-gray-500">{trend ? trend.label : subValue}</span>
         </div>
       )}
 
       {progress && (
-        <div className="mt-4 w-full bg-slate-50 dark:bg-neutral-800 rounded-full h-1.5 overflow-hidden">
+        <div className="mt-3 w-full bg-gray-100 rounded-full h-1.5">
           <div
-            className={cn(
-              'h-full rounded-full transition-all duration-700',
-              progress.colorClass || 'bg-mint-500'
-            )}
+            className={cn('h-1.5 rounded-full', progress.colorClass || 'bg-blue-600')}
             style={{ width: `${progress.value}%` }}
           />
         </div>

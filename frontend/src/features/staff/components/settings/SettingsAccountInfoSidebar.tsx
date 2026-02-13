@@ -1,8 +1,5 @@
-/**
- * AccountInfoSidebar Component
- * Account info with status and session security
- */
-import { Card, Button } from '@/components'
+import { useProfile } from '@/features/staff/hooks/useProfile'
+import { Card, Button } from '@/shared/components'
 import {
   IoStorefrontOutline,
   IoCalendarOutline,
@@ -12,6 +9,33 @@ import {
 } from 'react-icons/io5'
 
 export default function AccountInfoSidebar() {
+  const { data: profileData, isLoading } = useProfile()
+  const profile = profileData?.data
+
+  const getInitials = (name: string): string => {
+    if (!name) return '??'
+    const words = name.trim().split(' ')
+    if (words.length === 1) return words[0].substring(0, 2).toUpperCase()
+    return (words[0][0] + words[words.length - 1][0]).toUpperCase()
+  }
+
+  if (isLoading) {
+    return (
+      <Card className="p-8 border-none shadow-sm shadow-neutral-200/50 bg-white">
+        <div className="animate-pulse space-y-6">
+          <div className="h-4 w-24 bg-neutral-100 rounded"></div>
+          <div className="flex items-center gap-4 p-4 bg-neutral-50 rounded-2xl border border-neutral-100">
+            <div className="w-12 h-12 rounded-xl bg-neutral-200"></div>
+            <div className="space-y-2">
+              <div className="h-4 w-32 bg-neutral-200 rounded"></div>
+              <div className="h-3 w-20 bg-neutral-100 rounded"></div>
+            </div>
+          </div>
+        </div>
+      </Card>
+    )
+  }
+
   return (
     <div className="space-y-8">
       {/* Account Info */}
@@ -22,12 +46,14 @@ export default function AccountInfoSidebar() {
 
         <div className="flex items-center gap-4 mb-8 p-4 bg-neutral-50 rounded-2xl border border-neutral-100">
           <div className="w-12 h-12 rounded-xl bg-primary-100/50 text-primary-600 flex items-center justify-center font-semibold text-lg border border-primary-200/50">
-            SN
+            {profile ? getInitials(profile.name) : '??'}
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-neutral-900">Staff Name</h3>
+            <h3 className="text-sm font-semibold text-neutral-900">
+              {profile?.name || 'Staff Member'}
+            </h3>
             <p className="text-[10px] font-medium text-primary-600 uppercase tracking-wider mt-0.5">
-              ID: #STF-2024-001
+              ID: #{profile?._id.substring(profile._id.length - 8).toUpperCase() || 'STF-XXXX'}
             </p>
           </div>
         </div>
@@ -37,7 +63,7 @@ export default function AccountInfoSidebar() {
             <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-widest mb-2.5 px-1">
               Account Status
             </p>
-            <span className="px-4 py-1.5 bg-primary-50 text-primary-600 text-[11px] font-medium rounded-full uppercase tracking-wider border border-primary-100 shadow-sm shadow-primary-50">
+            <span className="px-4 py-1.5 bg-green-50 text-green-600 text-[11px] font-medium rounded-full uppercase tracking-wider border border-green-100 shadow-sm shadow-green-50">
               Active
             </span>
           </div>
@@ -51,7 +77,7 @@ export default function AccountInfoSidebar() {
                 <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-widest mb-0.5">
                   Store Location
                 </p>
-                <p className="text-sm font-semibold text-neutral-700">Downtown Branch #4</p>
+                <p className="text-sm font-semibold text-neutral-700">Downtown Branch</p>
               </div>
             </div>
             <div className="flex items-start gap-3.5">
@@ -59,10 +85,18 @@ export default function AccountInfoSidebar() {
                 <IoCalendarOutline className="text-neutral-500" size={16} />
               </div>
               <div>
-                <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-widest mb-0.5">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">
                   Member Since
                 </p>
-                <p className="text-sm font-semibold text-neutral-700">January 1, 2024</p>
+                <p className="text-sm font-bold text-slate-700">
+                  {profile?.createdAt && !isNaN(new Date(profile.createdAt).getTime())
+                    ? new Date(profile.createdAt).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                      })
+                    : 'Jan 10, 2024'}
+                </p>
               </div>
             </div>
             <div className="flex items-start gap-3.5">
@@ -70,13 +104,15 @@ export default function AccountInfoSidebar() {
                 <IoTimeOutline className="text-neutral-500" size={16} />
               </div>
               <div>
-                <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-widest mb-0.5">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">
                   Last Login
                 </p>
-                <p className="text-sm font-semibold text-neutral-700 leading-tight">
+                <p className="text-sm font-bold text-slate-700 leading-tight">
                   Jan 15, 2026
                   <br />
-                  <span className="text-[11px] text-neutral-400 font-normal">09:00 AM</span>
+                  <span className="text-[11px] text-slate-400 font-medium tracking-tight">
+                    09:00 AM
+                  </span>
                 </p>
               </div>
             </div>

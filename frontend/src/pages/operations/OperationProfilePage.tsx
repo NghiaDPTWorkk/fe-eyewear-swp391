@@ -102,55 +102,63 @@ export default function OperationStaffProfilePage() {
 
           {/* Profile Details */}
           <div className="p-8">
-            <h3 className="text-lg font-semibold text-neutral-900 mb-6">Account Information</h3>
+            <h3 className="text-lg font-semibold text-neutral-900 mb-6 select-none">
+              Account Information
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-neutral-500 mb-2">Full Name</label>
-                <div className="px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200">
-                  <p className="text-neutral-900 font-medium">{profile.name}</p>
+                <label className="block text-sm font-medium text-neutral-500 mb-2 select-none">
+                  Full Name
+                </label>
+                <div className="px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 cursor-default">
+                  <p className="text-neutral-900 font-medium select-none">{profile.name}</p>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-neutral-500 mb-2">
+                <label className="block text-sm font-medium text-neutral-500 mb-2 select-none">
                   Email Address
                 </label>
-                <div className="px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200">
-                  <p className="text-neutral-900 font-medium">{profile.email}</p>
+                <div className="px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 cursor-default">
+                  <p className="text-neutral-900 font-medium select-none">{profile.email}</p>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-neutral-500 mb-2">
+                <label className="block text-sm font-medium text-neutral-500 mb-2 select-none">
                   Phone Number
                 </label>
-                <div className="px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200">
-                  <p className="text-neutral-900 font-medium">{profile.phone}</p>
+                <div className="px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 cursor-default">
+                  <p className="text-neutral-900 font-medium select-none">{profile.phone}</p>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-neutral-500 mb-2">
+                <label className="block text-sm font-medium text-neutral-500 mb-2 select-none">
                   Citizen ID
                 </label>
-                <div className="px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200">
-                  <p className="text-neutral-900 font-medium">{profile.citizenId}</p>
+                <div className="px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 cursor-default">
+                  <p className="text-neutral-900 font-medium select-none">{profile.citizenId}</p>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-neutral-500 mb-2">Role</label>
-                <div className="px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200">
-                  <p className="text-neutral-900 font-medium">{profile.role.replace('_', ' ')}</p>
+                <label className="block text-sm font-medium text-neutral-500 mb-2 select-none">
+                  Role
+                </label>
+                <div className="px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 cursor-default">
+                  <p className="text-neutral-900 font-medium select-none">
+                    {profile.role.replace('_', ' ')}
+                  </p>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-neutral-500 mb-2">
+                <label className="block text-sm font-medium text-neutral-500 mb-2 select-none">
                   Account Created
                 </label>
-                <div className="px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200">
-                  <p className="text-neutral-900 font-medium">{profile.createdAt}</p>
+                <div className="px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 cursor-default">
+                  <p className="text-neutral-900 font-medium select-none">{profile.createdAt}</p>
                 </div>
               </div>
             </div>

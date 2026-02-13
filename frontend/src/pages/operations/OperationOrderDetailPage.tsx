@@ -223,7 +223,7 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
 
   const { data: variantResponse } = useQuery({
     queryKey: ['productVariant', frameIdApi, frameSkuApi],
-    queryFn: () => productsService.getProductVariant(frameIdApi, frameSkuApi!),
+    queryFn: () => productsService.getProductVariant(frameIdApi!, frameSkuApi!),
     enabled: !!frameIdApi && !!frameSkuApi
   })
 
@@ -350,21 +350,17 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
 
     if (frameProductDetail) {
       const frameVariant = frameProductDetail?.variants?.find((v: any) => v.sku === frameObject.sku)
-      const frameSpec = frameProductDetail?.spec || {}
+
+
+      // Map dynamic options (Color, Size, etc.)
+      const frameOptionsVariantDetailList = variantResponse?.data?.variantDetail?.options || []
 
       const frameData = {
-        data: [
-          { key: 'Frame Code', value: frameObject.sku },
-          { key: 'Brand', value: frameProductDetail.brand || 'N/A' },
-          { key: 'Material', value: frameSpec.material || 'N/A' },
-          { key: 'Shape', value: frameSpec.shape || 'N/A' },
-          {
-            key: 'Color',
-            value:
-              frameVariant?.options?.find((o: any) => o.attributeName === 'Color')?.value || 'N/A'
-          },
-          { key: 'Price', value: `$${frameObject.pricePerUnit}` }
-        ],
+        data:
+          frameOptionsVariantDetailList?.map((attr: any) => ({
+            key: attr.attributeName,
+            value: attr.label
+          })) || [],
         imageSrc: frameVariant?.imgs?.[0] || frameProductDetail?.variants?.[0]?.imgs?.[0]
       }
 

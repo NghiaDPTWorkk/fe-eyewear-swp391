@@ -1,5 +1,7 @@
 import { useState, useMemo } from 'react'
-import { Container, Button, Input } from '@/components'
+import { Container } from '@/components'
+import { Button } from '@/shared/components/ui/button/Button'
+import { Input } from '@/shared/components/ui/input/Input'
 import { IoCameraOutline } from 'react-icons/io5'
 import { useAuthStore } from '@/store/auth.store'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
@@ -58,7 +60,7 @@ function SettingForm({ initialData, profile, isLoading }: any) {
 
   return (
     <Container>
-      <div className="mb-8">
+      <div className="mb-4">
         <BreadcrumbPath paths={['Dashboard', 'Settings']} />
         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Staff System Settings</h1>
         <p className="text-gray-500 mt-1">Manage your profile, preferences, and display options.</p>
@@ -134,7 +136,7 @@ function SettingForm({ initialData, profile, isLoading }: any) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={isLoading}
-              leftElement={<span className="text-gray-400 pl-3">@</span>}
+              leftElement={<span className="text-gray-400">@</span>} // Removed pl-3 as it might be handled by Input component or require adjustment
               className="bg-white border-gray-200 focus:border-primary-500"
               placeholder="Enter email"
             />

@@ -86,9 +86,13 @@ function SettingForm({ initialData, profile, isLoading }: any) {
                   />
                 )}
               </div>
-              <button className="absolute bottom-0 right-0 p-1.5 bg-white rounded-full shadow border border-gray-200 text-gray-600 hover:text-primary-500">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="absolute bottom-0 right-0 h-auto w-auto p-1.5 bg-white rounded-full shadow border border-gray-200 text-gray-600 hover:text-primary-500 hover:bg-gray-50"
+              >
                 <IoCameraOutline size={14} />
-              </button>
+              </Button>
             </div>
 
             <div className="flex-1">

@@ -1,5 +1,5 @@
 interface FrameItem {
-  label: string
+  key: string
   value: string
 }
 
@@ -22,7 +22,7 @@ const FrameSpecifications = ({
       <div className="w- md:w-fit grid grid-cols-2 gap-x-12 gap-y-4">
         {data.map((item, idx) => (
           <div key={idx} className="min-w-[120px] py-3 px-8">
-            <p className="text-xs text-gray-500">{item.label}</p>
+            <p className="text-xs text-gray-500">{item.key}</p>
             <p className="text-sm font-semibold text-gray-900">{item.value}</p>
           </div>
         ))}

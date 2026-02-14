@@ -1,16 +1,14 @@
-interface LensOption {
-  attributeName: string
-  label?: string
-  value?: string
+interface LensItem {
+  key: string
+  value: string
 }
 
 interface LensProps {
-  lensOptions: LensOption[]
+  data: LensItem[]
   imageSrc?: string
 }
-
 const LensNormalOrder = ({
-  lensOptions,
+  data,
   imageSrc = 'https://via.placeholder.com/400x300?text=Lens'
 }: LensProps) => {
   return (
@@ -19,11 +17,11 @@ const LensNormalOrder = ({
         <img src={imageSrc} alt="Lens" className="max-w-full h-auto object-contain" />
       </div>
 
-      <div className="w- md:w-fit grid grid-cols-2 gap-x-12 gap-y-4">
-        {lensOptions.map((item, idx) => (
+      <div className="w-full md:w-fit grid grid-cols-2 gap-x-12 gap-y-4">
+        {data.map((item, idx) => (
           <div key={idx} className="min-w-[120px] py-3 px-8">
-            <p className="text-xs text-gray-500">{item.attributeName}</p>
-            <p className="text-sm font-semibold text-gray-900">{item.label || item.value}</p>
+            <p className="text-xs text-gray-500">{item.key}</p>
+            <p className="text-sm font-semibold text-gray-900">{item.value}</p>
           </div>
         ))}
       </div>

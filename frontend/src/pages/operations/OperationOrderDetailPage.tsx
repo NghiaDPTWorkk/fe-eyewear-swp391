@@ -289,23 +289,23 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
   // NORMAL Order - Frame
   if (orderType === 'NORMAL' && framesList.length > 0) {
     const frameItem = framesList[0]
+    const frameImg = variantResponse?.data?.variantDetail?.imgs?.[0]
+
     // CHỖ NÀY CẦN GỌI API TRUYỀN ProductID và sku để lấy object nằm trong data options của data trả ra sau khi gọi api
     const frameOptionsVariantDetailList = variantResponse?.data?.variantDetail?.options || []
-    console.log(frameOptionsVariantDetailList); // đúng rồi đúng options
+    console.log(frameOptionsVariantDetailList) // đúng rồi đúng options
 
     const frameIndex = productIdsToFetch.indexOf(frameItem.product_id)
     const frameProductDetail = (productQueries[frameIndex]?.data as any)?.data
 
     if (frameProductDetail) {
-      const frameVariant = frameProductDetail?.variants?.find((v: any) => v.sku === frameItem.sku)
-
       const frameData = {
         data:
           frameOptionsVariantDetailList?.map((attr) => ({
             key: attr.attributeName,
             value: attr.label
           })) || [],
-        imageSrc: frameVariant?.imgs?.[0] || frameProductDetail?.variants?.[0]?.imgs?.[0]
+        imageSrc: frameImg
       }
 
       frameComponent = <FrameSpecifications {...frameData} />
@@ -349,19 +349,18 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
     const frameProductDetail = (productQueries[0]?.data as any)?.data
 
     if (frameProductDetail) {
-      const frameVariant = frameProductDetail?.variants?.find((v: any) => v.sku === frameObject.sku)
-
+      // const frameVariant = frameProductDetail?.variants?.find((v: any) => v.sku === frameObject.sku)
 
       // Map dynamic options (Color, Size, etc.)
       const frameOptionsVariantDetailList = variantResponse?.data?.variantDetail?.options || []
-
+      const frameImg = variantResponse?.data?.variantDetail?.imgs?.[0]
       const frameData = {
         data:
           frameOptionsVariantDetailList?.map((attr: any) => ({
             key: attr.attributeName,
             value: attr.label
           })) || [],
-        imageSrc: frameVariant?.imgs?.[0] || frameProductDetail?.variants?.[0]?.imgs?.[0]
+        imageSrc: frameImg
       }
 
       frameComponent = <FrameSpecifications {...frameData} />

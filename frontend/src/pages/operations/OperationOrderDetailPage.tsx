@@ -270,38 +270,14 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
     lensComponent = (
       <div className="space-y-8">
         {lensList.map((lensItem, idx) => {
-          const lensIndex = productIdsToFetch.indexOf(lensItem.product_id)
-          const lensProductDetail = (productQueries[lensIndex]?.data as any)?.data
+          const lensOptionsVariantDetailList = variantResponse?.data?.variantDetail.options || []
+          const lensImg = variantResponse?.data?.variantDetail.imgs?.[0]
 
-          const lensOptionsVariantDetailList = variantResponse?.data?.variantDetail?.options || []
-          const lensImg = variantResponse?.data?.variantDetail?.imgs?.[0]
-
-          if (lensProductDetail) {
-            // const variantDetail = lensProductDetail?.variants?.find(
-            //   (v: any) => v.sku === lensItem.sku
-            // )
-            // const finalVariant = variantDetail || lensProductDetail?.variants?.[0]
-
-            if (lensOptionsVariantDetailList) {
-              const lensData = {
-                data:
-                  lensOptionsVariantDetailList.map((attr: any) => ({
-                    key: attr.attributeName,
-                    value: attr.label || attr.value
-                  })) || [],
-                imageSrc: lensImg
-              }
-              return (
-                <div key={idx} className="border-b border-gray-100 last:border-0 pb-6 last:pb-0">
-                  <LensNormalOrder {...lensData} />
-                </div>
-              )
-            } else {
-              console.warn('⚠️ No variant found for lens SKU:', lensItem.sku)
-              return null
-            }
-          }
-          return null
+          return (
+            <div key={idx} className="border-b border-gray-100 last:border-0 pb-6 last:pb-0">
+              <LensNormalOrder lensOptions={lensOptionsVariantDetailList} imageSrc={lensImg} />
+            </div>
+          )
         })}
       </div>
     )

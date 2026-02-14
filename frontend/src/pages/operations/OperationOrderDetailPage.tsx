@@ -273,20 +273,23 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
           const lensIndex = productIdsToFetch.indexOf(lensItem.product_id)
           const lensProductDetail = (productQueries[lensIndex]?.data as any)?.data
 
-          if (lensProductDetail) {
-            const variantDetail = lensProductDetail?.variants?.find(
-              (v: any) => v.sku === lensItem.sku
-            )
-            const finalVariant = variantDetail || lensProductDetail?.variants?.[0]
+          const lensOptionsVariantDetailList = variantResponse?.data?.variantDetail?.options || []
+          const lensImg = variantResponse?.data?.variantDetail?.imgs?.[0]
 
-            if (finalVariant) {
+          if (lensProductDetail) {
+            // const variantDetail = lensProductDetail?.variants?.find(
+            //   (v: any) => v.sku === lensItem.sku
+            // )
+            // const finalVariant = variantDetail || lensProductDetail?.variants?.[0]
+
+            if (lensOptionsVariantDetailList) {
               const lensData = {
                 data:
-                  finalVariant.options?.map((attr: any) => ({
+                  lensOptionsVariantDetailList.map((attr: any) => ({
                     key: attr.attributeName,
                     value: attr.label || attr.value
                   })) || [],
-                imageSrc: finalVariant?.imgs?.[0] || lensProductDetail?.variants?.[0]?.imgs?.[0]
+                imageSrc: lensImg
               }
               return (
                 <div key={idx} className="border-b border-gray-100 last:border-0 pb-6 last:pb-0">

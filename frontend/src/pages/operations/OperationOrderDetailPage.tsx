@@ -321,7 +321,7 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
             // Use local options from the variant itself
             const frameOptionsVariantDetailList =
               variantResponse?.data?.variantDetail?.options || []
-            const frameImg = frameVariant?.imgs?.[0] || frameProductDetail?.variants?.[0]?.imgs?.[0]
+            const frameImg = variantResponse?.data?.variantDetail?.imgs?.[0]
 
             const frameData = {
               data:

@@ -5,6 +5,7 @@ import { authApi } from '../services/auth.api.legacy'
 import toast from 'react-hot-toast'
 import { useAuthStore } from '@/store/auth.store'
 import { useCartStore } from '@/store/cart.store'
+import { showError, showSuccess } from '@/features/sales/utils/errorHandler'
 
 // Helper function to map roles to their corresponding paths
 const getRolePath = (
@@ -52,7 +53,11 @@ export const useLogin = () => {
 
       if (!token) {
         console.error('No token found in response:', response)
-        toast.error('Invalid login response: Token missing')
+        if (isStaffLogin()) {
+          showError('Invalid login response: Token missing')
+        } else {
+          toast.error('Invalid login response: Token missing')
+        }
         return
       }
 
@@ -77,7 +82,12 @@ export const useLogin = () => {
         // Continue anyway, cart will be fetched when user visits cart page
       }
 
-      toast.success('Login successful!')
+      // Use appropriate success message based on login type
+      if (isStaffLogin()) {
+        showSuccess('Login successful! Welcome to OpticView Staff Portal')
+      } else {
+        toast.success('Login successful!')
+      }
 
       // Get role from store (it was automatically extracted from JWT by setToken)
       const roleFromToken = useAuthStore.getState().role
@@ -103,7 +113,12 @@ export const useLogin = () => {
       }
     },
     onError: (error: any) => {
-      toast.error(error.message || 'Login failed. Please try again.')
+      // Use Sales Staff error handler for staff login, regular toast for customer login
+      if (isStaffLogin()) {
+        showError(error, 'Login failed. Please check your credentials and try again.')
+      } else {
+        toast.error(error.message || 'Login failed. Please try again.')
+      }
       console.error('Login failed', error)
     }
   })

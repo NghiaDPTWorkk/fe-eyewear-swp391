@@ -1,9 +1,9 @@
 import { useCallback, useState } from 'react'
-import { toast } from 'react-hot-toast'
 
 import { useQueryClient } from '@tanstack/react-query'
 
 import { salesService } from '../services/salesService'
+import { showError, showSuccess } from '../utils/errorHandler'
 
 export const useSalesStaffAction = () => {
   const [processing, setProcessing] = useState(false)
@@ -20,14 +20,13 @@ export const useSalesStaffAction = () => {
       setError(null)
       try {
         await salesService.approveInvoice(id)
-        toast.success('Invoice approved successfully')
+        showSuccess('Invoice approved successfully')
         invalidateSalesData()
         return true
       } catch (err: unknown) {
-        const error = err as { response?: { data?: { message?: string } }; message?: string }
-        const msg = error.response?.data?.message || error.message || 'Approval failed'
+        const msg = 'Failed to approve invoice'
         setError(msg)
-        toast.error(msg)
+        showError(err, msg)
         return false
       } finally {
         setProcessing(false)
@@ -42,14 +41,13 @@ export const useSalesStaffAction = () => {
       setError(null)
       try {
         await salesService.rejectInvoice(id, note)
-        toast.success('Invoice rejected successfully')
+        showSuccess('Invoice rejected successfully')
         invalidateSalesData()
         return true
       } catch (err: unknown) {
-        const error = err as { response?: { data?: { message?: string } }; message?: string }
-        const msg = error.response?.data?.message || error.message || 'Rejection failed'
+        const msg = 'Failed to reject invoice'
         setError(msg)
-        toast.error(msg)
+        showError(err, msg)
         return false
       } finally {
         setProcessing(false)
@@ -94,14 +92,13 @@ export const useSalesStaffAction = () => {
         }
 
         await salesService.approveOrder(id, finalData)
-        toast.success('Order verified successfully')
+        showSuccess('Order verified successfully')
         invalidateSalesData()
         return true
       } catch (err: unknown) {
-        const error = err as { response?: { data?: { message?: string } }; message?: string }
-        const msg = error.response?.data?.message || error.message || 'Verification failed'
+        const msg = 'Failed to verify order'
         setError(msg)
-        toast.error(msg)
+        showError(err, msg)
         return false
       } finally {
         setProcessing(false)
@@ -122,14 +119,13 @@ export const useSalesStaffAction = () => {
         // Rejecting any order in the invoice triggers rejection of the entire invoice
         await salesService.rejectInvoice(invoiceId, note)
 
-        toast.success('Invoice and all associated orders rejected')
+        showSuccess('Invoice and all associated orders rejected')
         invalidateSalesData()
         return true
       } catch (err: unknown) {
-        const error = err as { response?: { data?: { message?: string } }; message?: string }
-        const msg = error.response?.data?.message || error.message || 'Rejection failed'
+        const msg = 'Failed to reject order'
         setError(msg)
-        toast.error(msg)
+        showError(err, msg)
         return false
       } finally {
         setProcessing(false)

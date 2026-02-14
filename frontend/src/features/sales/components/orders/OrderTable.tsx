@@ -4,8 +4,7 @@ import {
   IoPersonCircleOutline,
   IoShieldCheckmarkOutline,
   IoTimeOutline,
-  IoEyeOutline,
-  IoCloseCircleOutline
+  IoEyeOutline
 } from 'react-icons/io5'
 
 import { Button } from '@/shared/components/ui-core'
@@ -19,7 +18,6 @@ interface OrderTableProps {
   setSelectedInvoiceId: (id: string | null) => void
   getStatusBadgeProps: (invoice: Invoice) => { label: string; color: string }
   handleApproveClick: (invoiceId: string) => void
-  handleRejectClick: (invoiceId: string) => void
   processing: boolean
 }
 
@@ -29,7 +27,6 @@ export const OrderTable: React.FC<OrderTableProps> = ({
   setSelectedInvoiceId,
   getStatusBadgeProps,
   handleApproveClick,
-  handleRejectClick,
   processing
 }) => {
   return (
@@ -148,37 +145,30 @@ export const OrderTable: React.FC<OrderTableProps> = ({
                   {/* Actions */}
                   <td className="px-6 py-5 text-center" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center justify-center gap-2 w-fit mx-auto">
-                      {/* Fixed width container for shield to prevent shifting */}
-                      <div className="w-10 flex justify-center shrink-0">
-                        {isReadyToApprove && (
-                          <>
-                            <button
-                              className="p-2 text-emerald-500 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl transition-all"
-                              title="Approve Invoice"
-                              onClick={() => handleApproveClick(inv.id)}
-                              disabled={processing}
-                            >
-                              <IoShieldCheckmarkOutline size={18} />
-                            </button>
-                            <button
-                              className="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition-all"
-                              title="Reject Invoice"
-                              onClick={() => handleRejectClick(inv.id)}
-                              disabled={processing}
-                            >
-                              <IoCloseCircleOutline size={18} />
-                            </button>
-                          </>
-                        )}
-                      </div>
-
+                      {/* Main action button - changes based on state */}
                       <Button
                         size="sm"
-                        className="rounded-xl font-bold text-[10px] bg-mint-500/10 hover:bg-mint-500/20 text-mint-600 uppercase tracking-widest px-4 h-9 transition-all active:scale-95 whitespace-nowrap border-none min-w-[120px] shadow-none"
-                        onClick={() => setSelectedInvoiceId(inv.id)}
-                        leftIcon={<IoEyeOutline size={14} />}
+                        className={cn(
+                          'rounded-xl font-bold text-[10px] uppercase tracking-widest px-4 h-9 transition-all active:scale-95 whitespace-nowrap border-none min-w-[140px] shadow-none',
+                          isReadyToApprove
+                            ? 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-700 border border-emerald-200/50'
+                            : 'bg-mint-500/10 hover:bg-mint-500/20 text-mint-600'
+                        )}
+                        onClick={() =>
+                          isReadyToApprove
+                            ? handleApproveClick(inv.id)
+                            : setSelectedInvoiceId(inv.id)
+                        }
+                        disabled={processing}
+                        leftIcon={
+                          isReadyToApprove ? (
+                            <IoShieldCheckmarkOutline size={14} />
+                          ) : (
+                            <IoEyeOutline size={14} />
+                          )
+                        }
                       >
-                        VIEW DETAILS
+                        {isReadyToApprove ? 'FINAL APPROVE' : 'VIEW DETAILS'}
                       </Button>
                     </div>
                   </td>

@@ -165,12 +165,16 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
       if (sku.startsWith('FRAME') || sku.startsWith('SG')) {
         framesList.push({
           product_id: item.product.product_id,
-          sku: item.product.sku
+          sku: item.product.sku,
+          pricePerUnit: item.product.pricePerUnit,
+          quantity: item.quantity
         })
       } else if (sku.startsWith('LENS')) {
         lensList.push({
           product_id: item.product.product_id,
-          sku: item.product.sku
+          sku: item.product.sku,
+          pricePerUnit: item.product.pricePerUnit,
+          quantity: item.quantity
         })
       }
     })
@@ -263,58 +267,81 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
 
   // NORMAL Order - Lens
   if (orderType === 'NORMAL' && lensList.length > 0) {
-    const lensItem = lensList[0]
-    const lensIndex = productIdsToFetch.indexOf(lensItem.product_id)
-    const lensProductDetail = (productQueries[lensIndex]?.data as any)?.data
-    const lensOptionsVariantDetailList = variantResponse?.data?.variantDetail?.options || []
-    const lensImg = variantResponse?.data?.variantDetail?.imgs?.[0]
-    if (lensProductDetail) {
-      const variantDetail = lensProductDetail?.variants?.find((v: any) => v.sku === lensItem.sku)
-      const finalVariant = variantDetail || lensProductDetail?.variants?.[0]
+    lensComponent = (
+      <div className="space-y-8">
+        {lensList.map((lensItem, idx) => {
+          const lensIndex = productIdsToFetch.indexOf(lensItem.product_id)
+          const lensProductDetail = (productQueries[lensIndex]?.data as any)?.data
 
-      // Chỉ render nếu có variant detail
-      if (finalVariant) {
-        const lensData = {
-          data:
-            lensOptionsVariantDetailList?.map((attr: any) => ({
-              key: attr.attributeName,
-              value: attr.label
-            })) || [],
-          imageSrc: lensImg
-        }
-        lensComponent = <LensNormalOrder {...lensData} />
-      } else {
-        console.warn('⚠️ No variant found for lens SKU:', lensItem.sku)
-      }
-    }
+          if (lensProductDetail) {
+            const variantDetail = lensProductDetail?.variants?.find(
+              (v: any) => v.sku === lensItem.sku
+            )
+            const finalVariant = variantDetail || lensProductDetail?.variants?.[0]
+
+            if (finalVariant) {
+              const lensData = {
+                data:
+                  finalVariant.options?.map((attr: any) => ({
+                    key: attr.attributeName,
+                    value: attr.label || attr.value
+                  })) || [],
+                imageSrc: finalVariant?.imgs?.[0] || lensProductDetail?.variants?.[0]?.imgs?.[0]
+              }
+              return (
+                <div key={idx} className="border-b border-gray-100 last:border-0 pb-6 last:pb-0">
+                  <LensNormalOrder {...lensData} />
+                </div>
+              )
+            } else {
+              console.warn('⚠️ No variant found for lens SKU:', lensItem.sku)
+              return null
+            }
+          }
+          return null
+        })}
+      </div>
+    )
   }
 
   // NORMAL Order - SunGlass
 
   // NORMAL Order - Frame
   if (orderType === 'NORMAL' && framesList.length > 0) {
-    const frameItem = framesList[0]
-    const frameImg = variantResponse?.data?.variantDetail?.imgs?.[0]
+    frameComponent = (
+      <div className="space-y-8">
+        {framesList.map((frameItem, idx) => {
+          const frameIndex = productIdsToFetch.indexOf(frameItem.product_id)
+          const frameProductDetail = (productQueries[frameIndex]?.data as any)?.data
 
-    // CHỖ NÀY CẦN GỌI API TRUYỀN ProductID và sku để lấy object nằm trong data options của data trả ra sau khi gọi api
-    const frameOptionsVariantDetailList = variantResponse?.data?.variantDetail?.options || []
-    console.log(frameOptionsVariantDetailList) // đúng rồi đúng options
+          if (frameProductDetail) {
+            const frameVariant = frameProductDetail?.variants?.find(
+              (v: any) => v.sku === frameItem.sku
+            )
+            // Use local options from the variant itself
+            const frameOptionsVariantDetailList =
+              variantResponse?.data?.variantDetail?.options || []
+            const frameImg = frameVariant?.imgs?.[0] || frameProductDetail?.variants?.[0]?.imgs?.[0]
 
-    const frameIndex = productIdsToFetch.indexOf(frameItem.product_id)
-    const frameProductDetail = (productQueries[frameIndex]?.data as any)?.data
+            const frameData = {
+              data:
+                frameOptionsVariantDetailList?.map((attr: any) => ({
+                  key: attr.attributeName,
+                  value: attr.label
+                })) || [],
+              imageSrc: frameImg
+            }
 
-    if (frameProductDetail) {
-      const frameData = {
-        data:
-          frameOptionsVariantDetailList?.map((attr) => ({
-            key: attr.attributeName,
-            value: attr.label
-          })) || [],
-        imageSrc: frameImg
-      }
-
-      frameComponent = <FrameSpecifications {...frameData} />
-    }
+            return (
+              <div key={idx} className="border-b border-gray-100 last:border-0 pb-6 last:pb-0">
+                <FrameSpecifications {...frameData} />
+              </div>
+            )
+          }
+          return null
+        })}
+      </div>
+    )
   }
 
   // MANUFACTURING Order - Lens

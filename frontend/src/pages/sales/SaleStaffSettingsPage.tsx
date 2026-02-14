@@ -7,18 +7,17 @@ import {
   AccountInfoSidebar
 } from '@/features/staff/components/settings'
 import { PageHeader } from '@/features/staff/components/common'
-import { Container } from '@/shared/components/ui-core'
 
 export default function SaleStaffSettingsPage() {
   return (
-    <Container maxWidth="none" className="pt-2 pb-8 px-2">
+    <div className="space-y-8">
       <PageHeader
         title="Settings"
         subtitle="Manage your account and preferences"
-        breadcrumbs={[{ label: 'Home', path: '/salestaff/dashboard' }, { label: 'Settings' }]}
+        breadcrumbs={[{ label: 'Dashboard', path: '/salestaff/dashboard' }, { label: 'Settings' }]}
       />
 
-      <div className="px-4">
+      <div>
         <div className="mb-8 p-5 bg-amber-50/50 border border-amber-100 rounded-2xl flex gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
           <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
             <IoWarningOutline className="text-amber-600" size={20} />
@@ -50,6 +49,6 @@ export default function SaleStaffSettingsPage() {
           </div>
         </div>
       </div>
-    </Container>
+    </div>
   )
 }

@@ -1,4 +1,3 @@
-import { Container } from '@/shared/components/ui-core'
 import { PageHeader, SupportContent } from '@/features/staff'
 
 export default function SaleStaffSupportPage() {
@@ -71,7 +70,7 @@ export default function SaleStaffSupportPage() {
   ]
 
   return (
-    <Container maxWidth="none" className="pt-2 pb-8 px-2 space-y-8">
+    <div className="space-y-6">
       <PageHeader
         title="Support & Risk Guidelines"
         subtitle="Important guidelines and bug reporting"
@@ -85,6 +84,6 @@ export default function SaleStaffSupportPage() {
         criticalReminder="Violation of data security policies or financial transaction guidelines may result in immediate suspension and legal action. When in doubt, always escalate to your supervisor."
         accentColor="primary"
       />
-    </Container>
+    </div>
   )
 }

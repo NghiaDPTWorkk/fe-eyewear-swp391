@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom'
 
 import { useSalesStaffAction } from '@/features/sales/hooks/useSalesStaffAction'
 import { useSalesStaffOrderDetail } from '@/features/sales/hooks/useSalesStaffInvoices'
+import { useProfile } from '@/features/staff/hooks/useProfile'
 import { Button, ConfirmationModal } from '@/shared/components/ui-core'
 
 import { ImageViewer } from './ImageViewer'
@@ -12,11 +13,28 @@ import { TranscriptionForm } from './TranscriptionForm'
 import { OrderDetailsSidebar } from './OrderDetailsSidebar'
 import { CommunicationHub } from './CommunicationHub'
 import { LabOperationsTimeline } from './LabOperationsTimeline'
+import { RejectionModal } from '../common/RejectionModal'
 
 interface PrescriptionVerificationProps {
   orderId: string
   onBack: () => void
   onActionSuccess?: () => void
+}
+
+const formatDate = (dateString?: string) => {
+  if (!dateString) return ''
+  try {
+    return new Date(dateString).toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    })
+  } catch {
+    return dateString
+  }
 }
 
 export default function PrescriptionVerification({
@@ -25,6 +43,7 @@ export default function PrescriptionVerification({
   onActionSuccess
 }: PrescriptionVerificationProps) {
   const { approveOrder, rejectOrder, processing } = useSalesStaffAction()
+  const { data: profileData } = useProfile()
   const [searchParams] = useSearchParams()
   const mode = searchParams.get('mode')
   const isReadOnly = mode === 'readonly'
@@ -32,6 +51,9 @@ export default function PrescriptionVerification({
   const { data: order, isLoading: loading, refetch } = useSalesStaffOrderDetail(orderId)
   const [rotation, setRotation] = useState(0)
   const [zoom, setZoom] = useState(100)
+
+  // Prescription Parameters State
+  const [localParameters, setLocalParameters] = useState<Record<string, any> | null>(null)
 
   // Confirmation Modal State
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
@@ -48,17 +70,19 @@ export default function PrescriptionVerification({
   }
 
   const handleConfirm = async () => {
-    let success = false
-    if (confirmAction === 'approve') {
-      success = await approveOrder(orderId)
-    } else if (confirmAction === 'reject') {
-      success = await rejectOrder(orderId, order?.invoiceId)
-    }
-
+    const success = await approveOrder(orderId, { parameters: localParameters })
     if (success) {
-      if (confirmAction === 'approve') toast.success('Prescription approved')
-      if (confirmAction === 'reject') toast.success('Prescription rejected')
+      toast.success('Prescription approved')
+      setIsConfirmOpen(false)
+      refetch()
+      onActionSuccess?.()
+    }
+  }
 
+  const handleConfirmReject = async (note: string) => {
+    const success = await rejectOrder(orderId, order?.invoiceId, note)
+    if (success) {
+      toast.success('Prescription rejected')
       setIsConfirmOpen(false)
       refetch()
       onActionSuccess?.()
@@ -143,7 +167,8 @@ export default function PrescriptionVerification({
           />
 
           <TranscriptionForm
-            parameters={parameters}
+            parameters={localParameters || parameters}
+            onParametersChange={setLocalParameters}
             isReadOnly={isReadOnly}
             isApproved={isApproved}
             isRejected={isRejected}
@@ -151,6 +176,13 @@ export default function PrescriptionVerification({
             handleApprove={handleApprove}
             handleReject={handleReject}
             assignStaff={order.assignStaff || undefined}
+            staffName={order.staffName || profileData?.data?.name}
+            actionTime={formatDate(
+              isApproved
+                ? order.approvedAt || order.completedAt || order.updatedAt
+                : order.rejectedAt || order.updatedAt
+            )}
+            rejectionNote={order.rejectionNote || (order.invoice as any)?.note}
           />
         </div>
 
@@ -163,17 +195,23 @@ export default function PrescriptionVerification({
       </div>
 
       <ConfirmationModal
-        isOpen={isConfirmOpen}
+        isOpen={isConfirmOpen && confirmAction === 'approve'}
         onClose={() => setIsConfirmOpen(false)}
         onConfirm={handleConfirm}
-        title={confirmAction === 'approve' ? 'Approve Prescription' : 'Reject Prescription'}
-        message={
-          confirmAction === 'approve'
-            ? 'Are you sure you want to approve this prescription? This will move the order to the next stage.'
-            : 'Are you sure you want to reject this prescription? This action cannot be undone and will reject the associated invoice.'
-        }
-        confirmText={confirmAction === 'approve' ? 'Approve' : 'Reject'}
-        type={confirmAction === 'approve' ? 'info' : 'danger'}
+        title="Approve Prescription"
+        message="Are you sure you want to approve this prescription? This will move the order to the next stage."
+        confirmText="Approve"
+        type="info"
+        isLoading={processing}
+      />
+
+      <RejectionModal
+        isOpen={isConfirmOpen && confirmAction === 'reject'}
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirm={handleConfirmReject}
+        title="Reject Prescription"
+        message="Are you sure you want to reject this prescription? This will reject the entire invoice."
+        confirmText="Reject Now"
         isLoading={processing}
       />
     </div>

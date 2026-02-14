@@ -29,7 +29,7 @@ export const StatusFilterBar: React.FC<StatusFilterBarProps> = ({
   orderTypeFilter
 }) => {
   return (
-    <div className="flex flex-col gap-6 px-4 mb-8">
+    <div className="flex flex-col gap-6 mb-8">
       {/* Status Tabs */}
       <div className="overflow-x-auto">
         <div className="flex items-center gap-2 p-1.5 bg-neutral-100/50 rounded-2xl w-fit border border-neutral-100">

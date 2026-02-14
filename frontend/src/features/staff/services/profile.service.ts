@@ -3,7 +3,8 @@ import { ENDPOINTS } from '@/api/endpoints'
 import type {
   ChangePasswordRequest,
   GenericApiResponse,
-  ProfileApiResponse
+  ProfileApiResponse,
+  ProfileUpdateRequest
 } from '@/shared/types/admin-account.types'
 
 export const profileService = {
@@ -22,5 +23,13 @@ export const profileService = {
    */
   changePassword: async (data: ChangePasswordRequest) => {
     return httpClient.post<GenericApiResponse>(ENDPOINTS.AUTH.CHANGE_PASSWORD, data)
+  },
+
+  /**
+   * Tạo yêu cầu cập nhật profile (cần Admin/Manager duyệt)
+   * Endpoint: POST /admin/profile-requests
+   */
+  requestProfileUpdate: async (data: ProfileUpdateRequest) => {
+    return httpClient.post<GenericApiResponse>(ENDPOINTS.ADMIN.PROFILE_REQUESTS, data)
   }
 }

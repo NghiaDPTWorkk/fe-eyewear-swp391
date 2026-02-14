@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { IoCheckmarkCircleOutline } from 'react-icons/io5'
+import { IoShieldCheckmarkOutline, IoEllipse } from 'react-icons/io5'
 
 import { cn } from '@/lib/utils'
 import { ConfirmationModal } from '@/shared/components/ui-core'
@@ -66,13 +66,13 @@ export const Row: React.FC<RowProps> = ({ invoice, onClick, onActionSuccess }) =
           <div className="flex items-center justify-center">
             {!isApprovable ? (
               <span className="px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-amber-50 text-amber-600 border border-amber-100 flex items-center gap-1.5 animate-pulse">
-                <div className="w-1 h-1 rounded-full bg-amber-500" />
+                <IoEllipse size={6} className="text-amber-500" />
                 Needs Verification
               </span>
             ) : (
               <span className="px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-mint-50 text-mint-600 border border-mint-100 flex items-center gap-1.5">
-                <IoCheckmarkCircleOutline size={12} />
-                Ready to Approve
+                <IoShieldCheckmarkOutline size={12} className="text-mint-600" />
+                Ready to Approve Final
               </span>
             )}
           </div>
@@ -94,19 +94,10 @@ export const Row: React.FC<RowProps> = ({ invoice, onClick, onActionSuccess }) =
               disabled={!isApprovable || processing}
               onClick={handleApprove}
             >
-              {isApprovable ? (
-                <>
-                  <IoCheckmarkCircleOutline size={18} />
-                  <span>Approve Final</span>
-                </>
-              ) : (
-                <>
-                  <div className="w-1.5 h-1.5 rounded-full bg-neutral-300 mr-1" />
-                  <span>
-                    {approvedCount}/{totalCount} Verified
-                  </span>
-                </>
-              )}
+              <IoShieldCheckmarkOutline size={18} />
+              <span>
+                {isApprovable ? 'Approve Final' : `${approvedCount}/${totalCount} Verified`}
+              </span>
             </button>
           </div>
         </td>

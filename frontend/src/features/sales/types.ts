@@ -56,6 +56,11 @@ export interface OrderDetail {
   isPrescription?: boolean
   invoice?: Invoice
   assignStaff?: string | null
+  staffName?: string
+  rejectionNote?: string
+  rejectedAt?: string
+  approvedAt?: string
+  updatedAt?: string
 }
 
 export type Order = OrderDetail

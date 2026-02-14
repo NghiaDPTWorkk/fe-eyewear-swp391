@@ -11,6 +11,8 @@ interface StaffMainLayoutProps {
   headerContainerWidth?: string
   mainClassName?: string
   headerClassName?: string
+  headerContainerClassName?: string
+  contentMaxWidth?: string
 }
 
 export function StaffMainLayout({
@@ -18,7 +20,10 @@ export function StaffMainLayout({
   headerLeft,
   headerRight,
   mainClassName = 'p-4 md:p-6 bg-neutral-50',
-  headerClassName
+  headerClassName,
+  headerContainerClassName,
+  headerContainerWidth = 'none',
+  contentMaxWidth = 'max-w-[1600px]'
 }: StaffMainLayoutProps) {
   const { sidebarCollapsed, toggleSidebar } = useLayoutStore()
 
@@ -43,14 +48,15 @@ export function StaffMainLayout({
         )}
       >
         <StaffHeader
-          containerWidth="none"
+          containerWidth={headerContainerWidth}
           left={headerLeft}
           right={headerRight}
           className={headerClassName}
+          containerClassName={headerContainerClassName}
         />
 
         <main className={cn('flex-1 overflow-y-auto overflow-x-hidden relative', mainClassName)}>
-          <div className="w-full max-w-[1600px] mx-auto min-h-full">
+          <div className={cn('w-full mx-auto min-h-full', contentMaxWidth)}>
             <Outlet />
           </div>
         </main>

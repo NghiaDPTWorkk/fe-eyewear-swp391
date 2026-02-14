@@ -14,7 +14,7 @@ export const useLogout = () => {
     try {
       logout()
       toast.success('Logged out successfully')
-      navigate('/') // Redirect to home page
+      navigate('/admin/login') // Redirect to admin login page
     } catch (error) {
       console.error('Logout failed:', error)
       toast.error('Logout failed. Please try again.')

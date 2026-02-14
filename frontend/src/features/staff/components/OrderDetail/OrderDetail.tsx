@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom'
 import { useSalesStaffOrderDetail } from '@/features/sales/hooks/useSalesStaffInvoices'
 
 import {
@@ -13,14 +12,14 @@ import {
   IoDocumentTextOutline,
   IoCubeOutline,
   IoWalletOutline,
-  IoPersonOutline,
   IoArrowBackOutline,
-  IoAirplaneOutline,
-  IoBusinessOutline,
-  IoStorefrontOutline,
-  IoGlassesOutline
+  IoGlassesOutline,
+  IoListOutline,
+  IoTimeOutline,
+  IoInformationCircleOutline
 } from 'react-icons/io5'
-import { Card, Button } from '@/components'
+import { Card, Button } from '@/shared/components/ui-core'
+import { cn } from '@/lib/utils'
 
 interface OrderDetailProps {
   orderId: string
@@ -28,16 +27,14 @@ interface OrderDetailProps {
   isPreOrder?: boolean
 }
 
-export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetailProps) {
-  const navigate = useNavigate()
-
+export default function OrderDetail({ orderId, onBack }: OrderDetailProps) {
   const { data: realOrder, isLoading, error } = useSalesStaffOrderDetail(orderId)
 
   if (isLoading) {
     return (
-      <div className="flex h-96 items-center justify-center">
+      <div className="flex h-96 items-center justify-center bg-white rounded-3xl border border-slate-100 shadow-sm">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-mint-500/20 border-t-mint-500 rounded-full animate-spin" />
           <p className="text-slate-400 font-medium animate-pulse">Loading order details...</p>
         </div>
       </div>
@@ -46,16 +43,19 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
 
   if (error || !realOrder) {
     return (
-      <div className="flex h-96 items-center justify-center flex-col gap-4">
-        <p className="text-red-500 font-medium">Failed to load order details</p>
-        <Button onClick={onBack} variant="outline">
+      <div className="flex h-96 items-center justify-center flex-col gap-4 bg-white rounded-3xl border border-slate-100 shadow-sm">
+        <div className="w-16 h-16 rounded-full bg-rose-50 flex items-center justify-center text-rose-500">
+          <IoInformationCircleOutline size={32} />
+        </div>
+        <p className="text-slate-600 font-semibold">Failed to load order details</p>
+        <Button onClick={onBack} variant="outline" colorScheme="neutral">
           Go Back
         </Button>
       </div>
     )
   }
 
-  // Transform real data to match the component's expected structure
+  // Transform data
   const order = {
     id: realOrder.orderCode || realOrder._id,
     date: realOrder.createdAt
@@ -65,15 +65,14 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
           year: 'numeric'
         })
       : 'N/A',
-    status: realOrder.status,
+    status: realOrder.status?.toUpperCase() || 'PENDING',
+    priceVal: realOrder.price || 0,
     subtotal: `${(realOrder.price || 0).toLocaleString()} ₫`,
-    shipping: '0 ₫', // Assuming free shipping for now or needs to be in API
-    tax: '0 ₫', // Needs API field
+    shipping: '0 ₫',
+    tax: '0 ₫',
     total: `${(realOrder.price || 0).toLocaleString()} ₫`,
-    paymentMethod: 'Credit Card (Simulated)', // Placeholder as payment method might not be in this API response yet
     customer: {
-      name: realOrder.customerName || realOrder.invoice?.fullName || 'Guest',
-      ordersCount: 1, // Placeholder
+      name: realOrder.customerName || realOrder.invoice?.fullName || 'Guest Customer',
       email: realOrder.invoice?.email || 'No email provided',
       phone: realOrder.customerPhone || realOrder.invoice?.phone || 'No phone provided',
       avatar: (realOrder.customerName || realOrder.invoice?.fullName || 'G')
@@ -81,161 +80,109 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
         .toUpperCase(),
       since: 'Member'
     },
-    shippingAddress: {
-      type: 'Home',
-      address: realOrder.invoice?.address || 'Store Pickup or Not provided'
-    },
-    billingAddress: 'Same as shipping address',
-    items: (realOrder.products || []).map(
-      (
-        p: {
-          product?: {
-            product_name?: string
-            sku?: string
-            pricePerUnit?: number
-            product_id?: string
-          }
-          quantity?: number
-          lens?: {
-            parameters?: {
-              right?: { SPH?: string; CYL?: string; AXIS?: string }
-              left?: { SPH?: string; CYL?: string; AXIS?: string }
-              PD?: string
-            }
-          }
-          prescriptionImageUrl?: string
-        },
-        idx: number
-      ) => ({
-        id: idx,
-        name: p.product?.product_name || p.product?.sku || 'Eyewear Product',
-        sku: p.product?.sku || 'N/A',
-        brand: 'Eyewear', // Placeholder
-        color: 'Standard', // Placeholder
-        price: `${(p.product?.pricePerUnit || 0).toLocaleString()} ₫`,
-        image: p.product?.product_id
-          ? `https://api.eyewear.com/images/${p.product.product_id}`
-          : '',
-        quantity: p.quantity,
-        specs: p.lens
-          ? {
-              eye: 'N/A',
-              bridge: 'N/A',
-              temple: 'N/A',
-              material: 'Lens'
-            }
-          : {
-              eye: 0,
-              bridge: 0,
-              temple: 0,
-              material: 'N/A'
-            },
-        prescription: p.lens
-          ? {
-              type: 'Prescription Lens',
-              coatings: [],
-              od: p.lens.parameters?.right
-                ? {
-                    sph: p.lens.parameters.right.SPH,
-                    cyl: p.lens.parameters.right.CYL,
-                    axis: p.lens.parameters.right.AXIS,
-                    add: '0.00'
-                  }
-                : null,
-              os: p.lens.parameters?.left
-                ? {
-                    sph: p.lens.parameters.left.SPH,
-                    cyl: p.lens.parameters.left.CYL,
-                    axis: p.lens.parameters.left.AXIS,
-                    add: '0.00'
-                  }
-                : null,
-              pd: p.lens.parameters?.PD || '63'
-            }
-          : null
-      })
-    ),
+    shippingAddress: realOrder.invoice?.address || 'Store Pickup',
+    items: (realOrder.products || []).map((p: any, idx: number) => ({
+      id: idx,
+      name: p.product?.product_name || p.product?.sku || 'Eyewear Product',
+      sku: p.product?.sku || 'N/A',
+      brand: 'Premium collection',
+      price: `${(p.product?.pricePerUnit || 0).toLocaleString()} ₫`,
+      quantity: p.quantity,
+      lens: p.lens
+    })),
     timeline: [
       {
-        title: 'Order Placed',
+        title: 'Order Created',
         time: realOrder.createdAt
           ? new Date(realOrder.createdAt).toLocaleTimeString([], {
               hour: '2-digit',
               minute: '2-digit'
             })
           : '',
-        desc: 'Order received',
-        icon: IoDocumentTextOutline,
-        active: true
+        desc: 'New order registered in system',
+        icon: IoDocumentTextOutline
       },
       {
-        title: 'Current Status',
-        time: 'Now',
-        desc: `Order is currently ${realOrder.status}`,
-        icon: IoCubeOutline,
-        active: true
+        title: 'Current Stage',
+        time: 'Active',
+        desc: `Order is currently in ${realOrder.status} stage`,
+        icon: IoTimeOutline
       }
     ],
     transactions: [
-      // Placeholder transaction based on total
       {
-        id: `TRX-${(realOrder.orderCode || '').slice(-4)}`,
+        id: `TRX-${(realOrder.orderCode || '').slice(-6)}`,
         date: realOrder.createdAt ? new Date(realOrder.createdAt).toLocaleDateString() : 'N/A',
-        method: 'System',
+        method: 'Bank Transfer',
         amount: `${(realOrder.price || 0).toLocaleString()} ₫`,
-        status: ['DEPOSITED', 'APPROVED', 'COMPLETED'].includes(realOrder.status)
-          ? 'Success'
-          : 'Pending'
+        status: 'Success'
       }
     ]
   }
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'COMPLETED':
+      case 'DELIVERED':
+        return 'bg-emerald-50 text-emerald-600 border-emerald-100'
+      case 'REJECTED':
+      case 'CANCELED':
+        return 'bg-rose-50 text-rose-600 border-rose-100'
+      case 'MAKING':
+      case 'PROCESSING':
+        return 'bg-indigo-50 text-indigo-600 border-indigo-100'
+      default:
+        return 'bg-amber-50 text-amber-600 border-amber-100'
+    }
+  }
+
   return (
-    <div className="space-y-6 pb-20 animate-in fade-in slide-in-from-right-4 duration-300 font-sans">
-      {/* Top Navigation Bar */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-6">
+    <div className="space-y-8 pb-24 animate-in fade-in slide-in-from-right-4 duration-500 font-sans bg-transparent">
+      {/* Header Profile Section */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div className="flex items-center gap-5">
           <button
             onClick={onBack}
-            className="p-2.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all duration-200 group cursor-pointer shadow-sm hover:shadow"
+            className="w-12 h-12 flex items-center justify-center text-slate-400 hover:text-slate-900 bg-white border border-slate-100 rounded-2xl transition-all hover:shadow-md active:scale-95 shrink-0"
           >
-            <IoArrowBackOutline
-              size={22}
-              className="group-hover:-translate-x-1 transition-transform duration-200"
-            />
+            <IoArrowBackOutline size={22} />
           </button>
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-4">
-              <h1 className="text-3xl font-semibold text-neutral-900 tracking-tight">
+          <div className="space-y-1">
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
                 Order #{order.id}
               </h1>
-              <span className="px-5 py-2 bg-[#dcfce7] text-[#15803d] text-[10px] font-semibold tracking-widest rounded-full border border-[#bbf7d0] cursor-pointer">
+              <span
+                className={cn(
+                  'px-3 py-1 text-[10px] font-semibold uppercase tracking-widest rounded-lg border',
+                  getStatusColor(order.status)
+                )}
+              >
                 {order.status}
               </span>
             </div>
-            <div className="flex items-center gap-5 mt-1.5">
-              <div className="flex items-center gap-2 text-[14px] font-medium text-slate-500">
-                <IoCalendarOutline className="text-slate-400" size={18} />
-                {order.date}
-              </div>
-              <div className="w-1.5 h-1.5 bg-slate-200 rounded-full" />
-              <div className="flex items-center gap-2 text-[14px] font-medium text-slate-500">
-                <IoCubeOutline className="text-slate-400" size={18} />
-                {order.items.length} Items
-              </div>
+            <div className="flex items-center gap-4 text-xs font-medium text-slate-400 uppercase tracking-widest">
+              <span className="flex items-center gap-1.5">
+                <IoCalendarOutline size={14} /> {order.date}
+              </span>
+              <span className="w-1 h-1 bg-slate-300 rounded-full" />
+              <span className="flex items-center gap-1.5">
+                <IoCubeOutline size={14} /> {order.items.length} Items
+              </span>
             </div>
           </div>
         </div>
-        <div className="flex gap-4">
+        <div className="flex items-center gap-3">
           <Button
             variant="outline"
-            className="border-slate-200 text-slate-600 bg-white hover:bg-slate-50 hover:text-slate-900 font-semibold rounded-2xl px-6 h-12 transition-all border-2"
+            colorScheme="neutral"
+            className="bg-white border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-semibold rounded-2xl px-6 h-12 transition-all border shadow-sm"
             leftIcon={<IoPrintOutline size={20} />}
           >
-            Invoice
+            Print Invoice
           </Button>
           <Button
-            className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-2xl px-6 h-12 transition-all active:scale-95 border-none"
+            className="bg-mint-600 hover:bg-mint-700 text-white font-semibold rounded-2xl px-6 h-12 transition-all shadow-lg shadow-mint-100 active:scale-[0.98] border-none"
             leftIcon={<IoPencilOutline size={20} />}
           >
             Update Status
@@ -243,99 +190,90 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
         </div>
       </div>
 
-      <div className="grid grid-cols-12 gap-8">
-        {/* Main Content Column */}
-        <div className="col-span-12 lg:col-span-8 space-y-8">
-          {/* Order Items Card */}
-          <Card className="overflow-hidden border border-neutral-100 shadow-sm rounded-2xl">
-            <div className="p-6 border-b border-gray-50 bg-gray-50/30 flex justify-between items-center">
-              <h2 className="text-lg font-semibold text-gray-800">Order Items</h2>
-              <span className="text-sm text-emerald-600 font-medium cursor-pointer hover:underline">
-                Download Specs
-              </span>
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+        {/* Main Information */}
+        <div className="xl:col-span-8 space-y-8">
+          {/* Order Items Table-style Card */}
+          <Card className="p-0 overflow-hidden border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 bg-white rounded-[32px]">
+            <div className="px-8 py-6 border-b border-slate-50 bg-slate-50/20 flex justify-between items-center">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-white rounded-xl shadow-sm text-mint-600 border border-slate-100">
+                  <IoListOutline size={20} />
+                </div>
+                <h2 className="text-lg font-semibold text-slate-800 tracking-tight">
+                  Order Summary
+                </h2>
+              </div>
+              <button className="text-xs font-semibold text-mint-600 uppercase tracking-widest hover:text-mint-700 transition-colors">
+                Export Details
+              </button>
             </div>
-            <div className="divide-y divide-gray-50">
-              {order.items.map((item) => (
-                <div key={item.id} className="p-6 transition-colors hover:bg-gray-50/30">
-                  <div className="flex gap-6">
-                    <div className="w-24 h-24 bg-neutral-50 rounded-xl overflow-hidden shrink-0 border border-neutral-100 p-2 flex items-center justify-center text-slate-300">
-                      <IoGlassesOutline size={32} />
+
+            <div className="p-2">
+              {order.items.map((item, i) => (
+                <div
+                  key={i}
+                  className="p-6 rounded-[24px] hover:bg-slate-50/40 transition-all duration-300 group"
+                >
+                  <div className="flex items-start gap-6">
+                    <div className="w-28 h-28 bg-white border border-slate-100 rounded-2xl flex items-center justify-center text-slate-200 shadow-sm">
+                      <IoGlassesOutline size={48} />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex justify-between items-start mb-2">
+                    <div className="flex-1 space-y-3">
+                      <div className="flex justify-between items-start">
                         <div>
-                          <div className="text-xs font-semibold text-emerald-600 mb-1">
+                          <p className="text-[10px] font-semibold text-mint-500 uppercase tracking-[0.2em] mb-1">
                             {item.brand}
-                          </div>
-                          <h3 className="text-lg font-medium text-gray-900 truncate">
+                          </p>
+                          <h3 className="text-base font-semibold text-slate-800 tracking-tight group-hover:text-mint-600 transition-colors">
                             {item.name}
                           </h3>
-                          <div className="flex gap-4 mt-1">
-                            <span className="text-sm text-gray-500">
-                              Color: <span className="text-gray-900">{item.color}</span>
-                            </span>
-                            <span className="text-sm text-gray-500">
-                              SKU: <span className="text-gray-900">{item.sku}</span>
-                            </span>
-                          </div>
                         </div>
-                        <span className="text-lg font-medium text-gray-900">{item.price}</span>
+                        <span className="text-base font-bold text-slate-900 tracking-tight">
+                          {item.price}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-6">
+                        <div className="text-xs">
+                          <span className="text-slate-400 font-medium">SKU:</span>
+                          <span className="text-slate-700 font-semibold ml-1.5 font-mono">
+                            {item.sku}
+                          </span>
+                        </div>
+                        <div className="text-xs">
+                          <span className="text-slate-400 font-medium tracking-tight">
+                            Quantity:
+                          </span>
+                          <span className="text-slate-700 font-semibold ml-1.5 uppercase tracking-widest text-[11px]">
+                            x{item.quantity}
+                          </span>
+                        </div>
                       </div>
 
-                      {/* Technical Specs & Rx */}
-                      {item.specs && (
-                        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="bg-gray-50 rounded-lg p-3">
-                            <h4 className="text-xs font-semibold text-gray-400 tracking-wider mb-2">
-                              Frame Measurements
-                            </h4>
-                            <div className="flex justify-between text-sm">
-                              <div className="text-center">
-                                <span className="block font-medium text-gray-700">
-                                  {item.specs.eye}
-                                </span>
-                                <span className="text-[10px] text-gray-400">Eye</span>
-                              </div>
-                              <div className="w-px bg-gray-200 mx-2" />
-                              <div className="text-center">
-                                <span className="block font-medium text-gray-700">
-                                  {item.specs.bridge}
-                                </span>
-                                <span className="text-[10px] text-gray-400">Bridge</span>
-                              </div>
-                              <div className="w-px bg-gray-200 mx-2" />
-                              <div className="text-center">
-                                <span className="block font-medium text-gray-700">
-                                  {item.specs.temple}
-                                </span>
-                                <span className="text-[10px] text-gray-400">Temple</span>
-                              </div>
+                      {/* Lens configuration */}
+                      {item.lens && (
+                        <div className="mt-4 p-4 bg-emerald-50/30 rounded-2xl border border-emerald-100/40 space-y-3">
+                          <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest flex items-center gap-2">
+                            <IoEyeOutline size={14} /> Prescription details included
+                          </p>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="bg-white/60 p-2.5 rounded-xl border border-white">
+                              <p className="text-[9px] font-semibold text-slate-400 uppercase mb-1">
+                                Right Eye (OD)
+                              </p>
+                              <p className="text-[11px] font-semibold text-slate-700">
+                                SPH: {item.lens.parameters?.right?.SPH || '0.00'}
+                              </p>
+                            </div>
+                            <div className="bg-white/60 p-2.5 rounded-xl border border-white">
+                              <p className="text-[9px] font-semibold text-slate-400 uppercase mb-1">
+                                Left Eye (OS)
+                              </p>
+                              <p className="text-[11px] font-semibold text-slate-700">
+                                SPH: {item.lens.parameters?.left?.SPH || '0.00'}
+                              </p>
                             </div>
                           </div>
-
-                          {item.prescription && (
-                            <div className="bg-emerald-50/50 border border-emerald-100/50 rounded-lg p-3">
-                              <h4 className="text-xs font-semibold text-emerald-600 tracking-wider mb-2 flex items-center gap-1.5">
-                                <IoEyeOutline /> Prescription Lens
-                              </h4>
-                              <p
-                                className="text-sm text-gray-700 line-clamp-1"
-                                title={item.prescription.type}
-                              >
-                                {item.prescription.type}
-                              </p>
-                              <div className="flex flex-wrap gap-1 mt-1.5">
-                                {item.prescription.coatings.map((c) => (
-                                  <span
-                                    key={c}
-                                    className="text-[10px] px-1.5 py-0.5 bg-white text-emerald-700 border border-emerald-100 rounded shadow-sm"
-                                  >
-                                    {c}
-                                  </span>
-                                ))}
-                              </div>
-                            </div>
-                          )}
                         </div>
                       )}
                     </div>
@@ -344,287 +282,212 @@ export default function OrderDetail({ orderId, onBack, isPreOrder }: OrderDetail
               ))}
             </div>
 
-            {/* Payment Summary */}
-            <div className="bg-gray-50/50 p-6 border-t border-gray-100 flex flex-col md:flex-row gap-8 justify-end">
-              <div className="flex-1 max-w-sm ml-auto space-y-2">
-                <div className="flex justify-between text-sm items-center">
-                  <span className="text-gray-500">Subtotal</span>
-                  <span className="text-gray-900 font-medium">{order.subtotal}</span>
+            {/* Price Footer */}
+            <div className="px-8 py-8 bg-slate-50/30 border-t border-slate-50">
+              <div className="max-w-xs ml-auto space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
+                    Subtotal
+                  </span>
+                  <span className="text-sm font-bold text-slate-700">{order.subtotal}</span>
                 </div>
-                <div className="flex justify-between text-sm items-center">
-                  <span className="text-gray-500">Shipping</span>
-                  <span className="text-gray-900 font-medium">{order.shipping}</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
+                    Shipping
+                  </span>
+                  <span className="text-sm font-bold text-slate-700">{order.shipping}</span>
                 </div>
-                <div className="flex justify-between text-sm items-center">
-                  <span className="text-gray-500">Tax</span>
-                  <span className="text-gray-900 font-medium">{order.tax}</span>
+                <div className="flex justify-between items-center pb-2">
+                  <span className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
+                    Tax
+                  </span>
+                  <span className="text-sm font-bold text-slate-700">{order.tax}</span>
                 </div>
-                <div className="border-t border-gray-200 my-2 pt-3 flex justify-between items-center">
-                  <span className="text-gray-900 font-medium text-base">Total Due</span>
-                  <span className="text-emerald-600 font-bold text-xl">{order.total}</span>
+                <div className="pt-5 border-t border-slate-200/60 flex justify-between items-center">
+                  <span className="text-sm font-semibold text-slate-900 uppercase tracking-widest">
+                    Total Amount
+                  </span>
+                  <span className="text-2xl font-bold text-mint-600 tracking-tight">
+                    {order.total}
+                  </span>
                 </div>
               </div>
             </div>
           </Card>
 
-          {/* Supply Chain & Logistics Section (Only for Pre-orders) */}
-          {isPreOrder ? (
-            <Card className="p-8 border border-neutral-100 shadow-sm rounded-2xl overflow-hidden relative">
-              <div className="flex justify-between items-center mb-8">
-                <div>
-                  <h2 className="text-lg font-medium text-gray-800 flex items-center gap-2">
-                    <IoAirplaneOutline className="text-emerald-500" />
-                    Shipment Journey
-                  </h2>
-                  <p className="text-sm text-gray-500 mt-1">
-                    Tracking ID: <span className="font-mono text-gray-900">#TRK-8892-IT</span> (DHL
-                    Express)
-                  </p>
-                </div>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  leftIcon={<IoLocationOutline />}
-                  onClick={() => navigate('/salestaff/live-map/TRK-8892-IT')}
-                >
-                  Live Map
-                </Button>
-              </div>
-
-              {/* Visual Stepper */}
-              <div className="relative flex justify-between mb-12 px-4">
-                {/* Progress Bar Background */}
-                <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-100 -z-10 -translate-y-1/2 rounded-full"></div>
-                {/* Active Progress */}
-                <div className="absolute top-1/2 left-0 w-[60%] h-1 bg-emerald-400 -z-10 -translate-y-1/2 rounded-full"></div>
-
-                {/* Steps */}
-                <div className="flex flex-col items-center gap-2 relative z-10">
-                  <div className="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center border-4 border-white shadow-sm">
-                    <IoBusinessOutline />
-                  </div>
-                  <span className="text-xs font-semibold text-emerald-600">Supplier (Italy)</span>
-                </div>
-                <div className="flex flex-col items-center gap-2 relative z-10">
-                  <div className="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center border-4 border-white shadow-sm">
-                    <IoAirplaneOutline />
-                  </div>
-                  <span className="text-xs font-semibold text-emerald-600">In Transit</span>
-                </div>
-                <div className="flex flex-col items-center gap-2 relative z-10">
-                  <div className="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center border-4 border-white shadow-sm">
-                    <IoCheckmarkCircle />
-                  </div>
-                  <span className="text-xs font-semibold text-emerald-600">Customs</span>
-                </div>
-                <div className="flex flex-col items-center gap-2 relative z-10">
-                  <div className="w-10 h-10 rounded-full bg-white border-2 border-emerald-500 text-emerald-500 flex items-center justify-center border-4 border-white shadow-sm">
-                    <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse"></div>
-                  </div>
-                  <span className="text-xs font-semibold text-gray-800">Dist. Center</span>
-                </div>
-                <div className="flex flex-col items-center gap-2 relative z-10">
-                  <div className="w-10 h-10 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center border-4 border-white">
-                    <IoStorefrontOutline />
-                  </div>
-                  <span className="text-xs font-medium text-gray-400">Store</span>
-                </div>
-              </div>
-
-              {/* Detailed Logs */}
-              <div className="bg-gray-50/50 rounded-xl border border-gray-100 overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead className="bg-gray-50 border-b border-gray-100 text-gray-500 font-medium">
-                    <tr>
-                      <th className="px-6 py-3 text-left">Date & Time</th>
-                      <th className="px-6 py-3 text-left">Location</th>
-                      <th className="px-6 py-3 text-left">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    <tr>
-                      <td className="px-6 py-4 text-gray-900 font-medium">Oct 25, 08:30 AM</td>
-                      <td className="px-6 py-4 text-gray-600">Ho Chi Minh City, VN</td>
-                      <td className="px-6 py-4">
-                        <span className="text-emerald-600 flex items-center gap-1.5">
-                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> Arrived at
-                          Distribution Center
-                        </span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="px-6 py-4 text-gray-500">Oct 24, 10:15 PM</td>
-                      <td className="px-6 py-4 text-gray-500">Tan Son Nhat Int. Airport</td>
-                      <td className="px-6 py-4 text-gray-500">Customs Clearance Completed</td>
-                    </tr>
-                    <tr>
-                      <td className="px-6 py-4 text-gray-500">Oct 23, 04:20 PM</td>
-                      <td className="px-6 py-4 text-gray-500">Milan Malpensa, IT</td>
-                      <td className="px-6 py-4 text-gray-500">Departed from Origin</td>
-                    </tr>
-                    <tr>
-                      <td className="px-6 py-4 text-gray-500">Oct 22, 09:00 AM</td>
-                      <td className="px-6 py-4 text-gray-500">Luxottica Factory, IT</td>
-                      <td className="px-6 py-4 text-gray-500">Order Picked Up by Carrier</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </Card>
-          ) : (
-            /* Regular Activity Timeline */
-            <Card className="p-8 border border-neutral-100 shadow-sm rounded-2xl">
-              <h2 className="text-lg font-medium text-gray-800 mb-6">Order Activity</h2>
-              <div className="relative border-l border-emerald-100 ml-3.5 space-y-8">
-                {order.timeline.map((act, i) => (
-                  <div key={i} className="relative pl-8">
-                    <div className="absolute -left-[9px] top-0 w-[18px] h-[18px] bg-white rounded-full border-2 border-emerald-400 flex items-center justify-center">
-                      <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-                    </div>
-                    <div className="group">
-                      <span className="text-xs font-semibold text-emerald-600 tracking-widest mb-1 block">
-                        {act.time}
+          {/* Activity Timeline */}
+          <Card className="p-8 border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 bg-white rounded-[32px]">
+            <h2 className="text-lg font-semibold text-slate-800 tracking-tight mb-8">
+              Activity Flow
+            </h2>
+            <div className="relative space-y-8 pl-4">
+              <div className="absolute left-[23px] top-2 bottom-2 w-0.5 bg-slate-100" />
+              {order.timeline.map((item, i) => (
+                <div key={i} className="relative flex gap-6 group">
+                  <div className="relative z-10 w-5 h-5 rounded-full bg-white border-4 border-mint-500 shadow-sm" />
+                  <div className="flex-1 -mt-1">
+                    <div className="flex justify-between items-center mb-1">
+                      <h4 className="text-sm font-semibold text-slate-800">{item.title}</h4>
+                      <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest bg-slate-50 px-2 py-1 rounded-md">
+                        {item.time}
                       </span>
-                      <h4 className="text-base font-medium text-gray-900 group-hover:text-emerald-700 transition-colors">
-                        {act.title}
-                      </h4>
-                      <p className="text-sm text-gray-500 mt-1 leading-relaxed">{act.desc}</p>
                     </div>
+                    <p className="text-sm text-slate-500 leading-relaxed font-normal">
+                      {item.desc}
+                    </p>
                   </div>
-                ))}
-              </div>
-            </Card>
-          )}
-
-          {/* Transaction History Section (New) */}
-          <Card className="overflow-hidden border border-neutral-100 shadow-sm rounded-2xl">
-            <div className="p-6 border-b border-gray-50">
-              <h2 className="text-lg font-medium text-gray-800">Transactions</h2>
+                </div>
+              ))}
             </div>
-            <table className="w-full text-sm text-left">
-              <thead className="bg-gray-50/50 text-gray-500 font-medium">
-                <tr>
-                  <th className="px-6 py-3">Transaction ID</th>
-                  <th className="px-6 py-3">Date</th>
-                  <th className="px-6 py-3">Method</th>
-                  <th className="px-6 py-3">Amount</th>
-                  <th className="px-6 py-3 text-right">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50">
-                {order.transactions.map((trx) => (
-                  <tr key={trx.id}>
-                    <td className="px-6 py-4 font-medium text-gray-900">{trx.id}</td>
-                    <td className="px-6 py-4 text-gray-500">{trx.date}</td>
-                    <td className="px-6 py-4 text-gray-500 flex items-center gap-2">
-                      <IoWalletOutline /> {trx.method}
-                    </td>
-                    <td className="px-6 py-4 font-medium text-gray-900">{trx.amount}</td>
-                    <td className="px-6 py-4 text-right">
-                      <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700">
-                        {trx.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
           </Card>
         </div>
 
-        {/* Sidebar Info Column */}
-        <div className="col-span-12 lg:col-span-4 space-y-6">
+        {/* Sidebar */}
+        <div className="xl:col-span-4 space-y-8">
           {/* Customer Card */}
-          <Card className="p-6 border border-neutral-100 shadow-sm rounded-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 opacity-10">
-              <IoPersonOutline size={100} />
-            </div>
-            <h2 className="text-sm font-semibold text-gray-400 tracking-wider mb-6 relative z-10">
-              Customer
+          <Card className="p-8 border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 bg-white rounded-[32px] overflow-hidden relative group">
+            <div className="absolute -right-4 -top-4 w-32 h-32 bg-mint-50 rounded-full opacity-50 group-hover:scale-110 transition-transform duration-500" />
+            <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-[0.2em] mb-6 relative">
+              Customer Profile
             </h2>
-            <div className="relative z-10">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center font-semibold text-xl shadow-inner border-2 border-white">
-                  {order.customer.avatar}
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 text-lg">{order.customer.name}</h3>
-                  <p className="text-xs text-emerald-600 font-medium bg-emerald-50 px-2 py-0.5 rounded-full inline-block mt-1">
-                    {order.customer.since}
-                  </p>
-                </div>
-              </div>
 
-              <div className="space-y-4 pt-4 border-t border-gray-100">
-                <div className="flex items-center gap-3.5 text-sm group cursor-pointer">
-                  <div className="w-9 h-9 rounded-full bg-gray-50 text-gray-500 flex items-center justify-center shrink-0 group-hover:bg-emerald-50 group-hover:text-emerald-500 transition-colors">
-                    <IoMailOutline size={16} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs text-gray-400 font-medium">Email Address</p>
-                    <p className="text-gray-700 font-medium truncate">{order.customer.email}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3.5 text-sm group cursor-pointer">
-                  <div className="w-9 h-9 rounded-full bg-gray-50 text-gray-500 flex items-center justify-center shrink-0 group-hover:bg-emerald-50 group-hover:text-emerald-500 transition-colors">
-                    <IoCallOutline size={16} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs text-gray-400 font-medium">Phone Number</p>
-                    <p className="text-gray-700 font-medium">{order.customer.phone}</p>
-                  </div>
-                </div>
+            <div className="relative flex flex-col items-center text-center pb-8 border-b border-slate-100">
+              <div className="w-20 h-20 bg-mint-100 text-mint-600 rounded-[28px] flex items-center justify-center font-semibold text-2xl border-4 border-white shadow-xl mb-4 transition-all">
+                {order.customer.avatar}
               </div>
+              <h3 className="text-lg font-semibold text-slate-900 tracking-tight">
+                {order.customer.name}
+              </h3>
+              <p className="px-3 py-1 bg-mint-50 text-mint-600 text-[10px] font-semibold uppercase tracking-widest rounded-full mt-2">
+                {order.customer.since}
+              </p>
+            </div>
 
-              <button className="w-full mt-6 py-2.5 text-sm font-medium text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition-colors">
-                View Full Profile
+            <div className="space-y-5 pt-8">
+              <div className="flex flex-col gap-1.5">
+                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                  <IoMailOutline /> Email
+                </p>
+                <p className="text-sm font-semibold text-slate-700 truncate">
+                  {order.customer.email}
+                </p>
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                  <IoCallOutline /> Contact
+                </p>
+                <p className="text-sm font-semibold text-slate-700">{order.customer.phone}</p>
+              </div>
+              <button className="w-full mt-4 py-3 text-xs font-semibold text-mint-600 bg-mint-50/50 hover:bg-mint-50 border border-mint-100/50 rounded-xl transition-all uppercase tracking-widest active:scale-95">
+                View History
               </button>
             </div>
           </Card>
 
-          {/* Delivery & Billing */}
-          <Card className="p-6 border border-neutral-100 shadow-sm rounded-2xl">
-            <h2 className="text-sm font-semibold text-gray-400 tracking-wider mb-6">
-              Delivery Details
+          {/* Delivery & Address */}
+          <Card className="p-8 border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 bg-white rounded-[32px]">
+            <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-[0.2em] mb-6">
+              Fulfillment Details
             </h2>
-
             <div className="space-y-6">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <IoLocationOutline className="text-emerald-500" />
-                  <span className="text-sm font-medium text-gray-900">
-                    {order.shippingAddress.type} Address
-                  </span>
+              <div className="flex gap-4">
+                <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-mint-500 shrink-0 shadow-sm border border-slate-100">
+                  <IoLocationOutline size={20} />
                 </div>
-                <p className="text-sm text-gray-500 leading-relaxed pl-6">
-                  {order.shippingAddress.address}
-                </p>
+                <div className="space-y-1">
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">
+                    Shipping Address
+                  </p>
+                  <p className="text-sm font-semibold text-slate-700 leading-relaxed">
+                    {order.shippingAddress}
+                  </p>
+                </div>
               </div>
-
-              <div className="pt-4 border-t border-gray-100">
-                <h3 className="text-xs font-semibold text-gray-400 tracking-wider mb-3">
-                  Billing Address
-                </h3>
-                <div className="flex items-center gap-2 text-sm">
-                  <IoCheckmarkCircle className="text-emerald-500 text-lg" />
-                  <span className="text-gray-600 font-medium">{order.billingAddress}</span>
+              <div className="flex gap-4 pt-6 border-t border-slate-50">
+                <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-mint-500 shrink-0 shadow-sm border border-slate-100">
+                  <IoWalletOutline size={20} />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">
+                    Billing Method
+                  </p>
+                  <p className="text-sm font-semibold text-slate-700 leading-relaxed">
+                    Same as Shipping
+                  </p>
+                  <span className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-500 uppercase tracking-widest h-6">
+                    <IoCheckmarkCircle /> Verified
+                  </span>
                 </div>
               </div>
             </div>
           </Card>
+        </div>
+      </div>
 
-          {/* Notes */}
-          <Card className="p-6 border border-neutral-100 shadow-sm rounded-2xl bg-amber-50/30 border-amber-100/50">
-            <h2 className="text-sm font-semibold text-amber-700/70 tracking-wider mb-3">
-              Order Notes
+      {/* Transactions & Memo Row */}
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
+        {/* Transactions Section - Now at bottom left */}
+        <div className="xl:col-span-8">
+          <Card className="p-0 overflow-hidden border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 bg-white rounded-[32px]">
+            <div className="px-8 py-6 border-b border-slate-50 flex items-center gap-3">
+              <div className="p-2 bg-slate-50 rounded-xl text-slate-500">
+                <IoWalletOutline size={20} />
+              </div>
+              <h2 className="text-lg font-semibold text-slate-800 tracking-tight">
+                Transaction History
+              </h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead className="bg-slate-50/50 text-[10px] uppercase font-semibold text-slate-400 tracking-[0.15em]">
+                  <tr>
+                    <th className="px-8 py-5">TXN ID</th>
+                    <th className="px-8 py-5">DATE</th>
+                    <th className="px-8 py-5 text-right">AMOUNT</th>
+                    <th className="px-8 py-5 text-center">STATUS</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50">
+                  {order.transactions.map((trx, j) => (
+                    <tr key={j} className="hover:bg-slate-50/30 transition-colors">
+                      <td className="px-8 py-6 font-mono text-xs font-semibold text-slate-900 uppercase">
+                        {trx.id}
+                      </td>
+                      <td className="px-8 py-6 text-xs font-medium text-slate-500">{trx.date}</td>
+                      <td className="px-8 py-6 text-right font-semibold text-slate-900">
+                        {trx.amount}
+                      </td>
+                      <td className="px-8 py-6 text-center">
+                        <span className="px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-semibold uppercase tracking-widest rounded-lg border border-emerald-100">
+                          {trx.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </div>
+
+        {/* Internal Memo - Now at bottom right */}
+        <div className="xl:col-span-4 h-full">
+          <Card className="h-full p-8 border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 bg-amber-50/40 rounded-[32px] border border-amber-50 relative overflow-hidden flex flex-col">
+            <div className="absolute top-0 right-0 p-4 opacity-5">
+              <IoDocumentTextOutline size={120} />
+            </div>
+            <h2 className="text-[10px] font-semibold text-amber-600/70 uppercase tracking-[0.2em] mb-4 flex items-center gap-2 relative">
+              <div className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
+              Staff Memo
             </h2>
             <textarea
-              className="w-full min-h-[100px] p-3 rounded-xl border border-amber-200/50 bg-white/50 focus:outline-none focus:ring-2 focus:ring-amber-200/50 text-sm resize-none text-gray-600 placeholder:text-gray-400"
-              placeholder="Add a note about this order..."
-            ></textarea>
-            <div className="flex justify-end mt-2">
-              <button className="text-xs font-semibold text-amber-600 hover:text-amber-700">
-                Save Note
+              className="w-full flex-1 min-h-[150px] p-4 rounded-3xl border border-amber-100 bg-white/60 focus:outline-none focus:ring-4 focus:ring-amber-200/20 text-sm font-semibold text-slate-700 resize-none shadow-inner"
+              placeholder="Add private staff instructions..."
+              style={{ scrollbarWidth: 'none' }}
+            />
+            <div className="flex justify-end mt-4">
+              <button className="text-[10px] font-semibold text-amber-700 uppercase tracking-[0.2em] hover:text-amber-900 transition-colors">
+                Save Changes
               </button>
             </div>
           </Card>

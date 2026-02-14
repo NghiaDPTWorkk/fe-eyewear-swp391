@@ -85,10 +85,10 @@ export default function AccountInfoSidebar() {
                 <IoCalendarOutline className="text-neutral-500" size={16} />
               </div>
               <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">
+                <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-widest mb-0.5">
                   Member Since
                 </p>
-                <p className="text-sm font-bold text-slate-700">
+                <p className="text-sm font-semibold text-neutral-700">
                   {profile?.createdAt && !isNaN(new Date(profile.createdAt).getTime())
                     ? new Date(profile.createdAt).toLocaleDateString('en-US', {
                         month: 'short',
@@ -104,10 +104,10 @@ export default function AccountInfoSidebar() {
                 <IoTimeOutline className="text-neutral-500" size={16} />
               </div>
               <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">
+                <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-widest mb-0.5">
                   Last Login
                 </p>
-                <p className="text-sm font-bold text-slate-700 leading-tight">
+                <p className="text-sm font-semibold text-neutral-700 leading-tight">
                   Jan 15, 2026
                   <br />
                   <span className="text-[11px] text-slate-400 font-medium tracking-tight">

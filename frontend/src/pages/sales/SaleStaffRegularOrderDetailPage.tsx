@@ -1,6 +1,5 @@
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 
-import { Container } from '@/components'
 import { PageHeader } from '@/features/sales/components/common'
 import { useSalesStaffOrderDetail } from '@/features/sales/hooks'
 import OrderDetail from '@/features/staff/components/OrderDetail/OrderDetail'
@@ -29,7 +28,7 @@ export default function SaleStaffRegularOrderDetailPage() {
   if (!orderId) return null
 
   return (
-    <Container maxWidth="none" className="pt-6 pb-8 px-6 md:px-8">
+    <div className="space-y-6">
       <PageHeader
         title="Order Details"
         breadcrumbs={[
@@ -39,6 +38,6 @@ export default function SaleStaffRegularOrderDetailPage() {
         ]}
       />
       <OrderDetail orderId={orderId} onBack={handleBack} />
-    </Container>
+    </div>
   )
 }

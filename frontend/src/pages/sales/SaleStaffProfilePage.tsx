@@ -1,5 +1,5 @@
 import { useProfile } from '@/features/staff/hooks/useProfile'
-import { Card, Button, Container } from '@/shared/components'
+import { Card, Button } from '@/shared/components'
 import { Link, useNavigate } from 'react-router-dom'
 import { IoChevronForward, IoPencil } from 'react-icons/io5'
 
@@ -47,7 +47,7 @@ export default function SaleStaffProfilePage() {
   const profile = profileData.data
 
   return (
-    <Container maxWidth="none" className="pt-6 pb-8 px-6 md:px-8">
+    <div className="space-y-6">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm mb-6">
         <Link
@@ -165,6 +165,6 @@ export default function SaleStaffProfilePage() {
           </div>
         </Card>
       </div>
-    </Container>
+    </div>
   )
 }

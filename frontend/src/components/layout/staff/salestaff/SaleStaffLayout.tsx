@@ -18,6 +18,8 @@ import {
 } from '@/components/layout/staff/staff-core'
 import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layout/StaffMainLayout'
 import { useProfile } from '@/features/staff/hooks/useProfile'
+import { LAYOUT } from '@/features/sales/constants/saleStaffDesignSystem'
+import { cn } from '@/lib/utils'
 
 // Helper function to get initials from name
 const getInitials = (name: string): string => {
@@ -112,8 +114,10 @@ export default function SaleStaffLayout() {
           userEmail={userEmail}
         />
       }
-      mainClassName="p-4 md:p-6 bg-neutral-50"
-      headerClassName="px-4 md:px-6"
+      mainClassName={cn(LAYOUT.px, LAYOUT.py, 'bg-neutral-50')}
+      headerContainerClassName="pl-6 pr-4"
+      headerContainerWidth="100%"
+      contentMaxWidth={LAYOUT.maxWidth}
     />
   )
 }

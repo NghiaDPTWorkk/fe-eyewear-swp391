@@ -4,7 +4,8 @@ import {
   IoPersonCircleOutline,
   IoShieldCheckmarkOutline,
   IoTimeOutline,
-  IoEyeOutline
+  IoEyeOutline,
+  IoCloseCircleOutline
 } from 'react-icons/io5'
 
 import { Button } from '@/shared/components/ui-core'
@@ -18,6 +19,7 @@ interface OrderTableProps {
   setSelectedInvoiceId: (id: string | null) => void
   getStatusBadgeProps: (invoice: Invoice) => { label: string; color: string }
   handleApproveClick: (invoiceId: string) => void
+  handleRejectClick: (invoiceId: string) => void
   processing: boolean
 }
 
@@ -27,6 +29,7 @@ export const OrderTable: React.FC<OrderTableProps> = ({
   setSelectedInvoiceId,
   getStatusBadgeProps,
   handleApproveClick,
+  handleRejectClick,
   processing
 }) => {
   return (
@@ -103,10 +106,13 @@ export const OrderTable: React.FC<OrderTableProps> = ({
                   <td className="px-6 py-5">
                     <span
                       className={cn(
-                        'inline-flex items-center px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border',
+                        'inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border',
                         badge.color
                       )}
                     >
+                      {badge.label === 'Ready to Approve Final' && (
+                        <IoShieldCheckmarkOutline size={12} />
+                      )}
                       {badge.label}
                     </span>
                   </td>
@@ -145,21 +151,32 @@ export const OrderTable: React.FC<OrderTableProps> = ({
                       {/* Fixed width container for shield to prevent shifting */}
                       <div className="w-10 flex justify-center shrink-0">
                         {isReadyToApprove && (
-                          <button
-                            className="p-2 text-emerald-500 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl transition-all"
-                            title="Approve Invoice"
-                            onClick={() => handleApproveClick(inv.id)}
-                            disabled={processing}
-                          >
-                            <IoShieldCheckmarkOutline size={18} />
-                          </button>
+                          <>
+                            <button
+                              className="p-2 text-emerald-500 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl transition-all"
+                              title="Approve Invoice"
+                              onClick={() => handleApproveClick(inv.id)}
+                              disabled={processing}
+                            >
+                              <IoShieldCheckmarkOutline size={18} />
+                            </button>
+                            <button
+                              className="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition-all"
+                              title="Reject Invoice"
+                              onClick={() => handleRejectClick(inv.id)}
+                              disabled={processing}
+                            >
+                              <IoCloseCircleOutline size={18} />
+                            </button>
+                          </>
                         )}
                       </div>
 
                       <Button
                         size="sm"
-                        className="rounded-xl font-bold text-[10px] bg-mint-500 hover:bg-mint-600 text-white shadow-lg shadow-mint-500/30 uppercase tracking-widest px-4 h-9 transition-all active:scale-95 whitespace-nowrap border-none min-w-[120px]"
+                        className="rounded-xl font-bold text-[10px] bg-mint-500/10 hover:bg-mint-500/20 text-mint-600 uppercase tracking-widest px-4 h-9 transition-all active:scale-95 whitespace-nowrap border-none min-w-[120px] shadow-none"
                         onClick={() => setSelectedInvoiceId(inv.id)}
+                        leftIcon={<IoEyeOutline size={14} />}
                       >
                         VIEW DETAILS
                       </Button>

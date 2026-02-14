@@ -34,6 +34,14 @@ export const orderService = {
   },
 
   /**
+   * Cập nhật trạng thái order sang MAKING
+   * @param id - Order ID
+   */
+  updateStatusToMaking: async (id: string) => {
+    return httpClient.patch(ENDPOINTS.ORDERS.UPDATE_STATUS_MAKING(id), {})
+  },
+
+  /**
    * Cập nhật trạng thái order sang PACKAGING
    * @param id - Order ID
    */
@@ -47,5 +55,14 @@ export const orderService = {
    */
   updateStatusToCompleted: async (id: string) => {
     return httpClient.patch(ENDPOINTS.ORDERS.UPDATE_STATUS_COMPLETED(id), {})
+  },
+
+  /**
+   * Approve order với các thông số prescription
+   * @param id - Order ID
+   * @param data - Dữ liệu parameters (left, right, PD)
+   */
+  approveOrder: async (id: string, data: { parameters: any }) => {
+    return httpClient.patch(ENDPOINTS.ADMIN.ORDER_APPROVE(id), data)
   }
 }

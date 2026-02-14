@@ -21,8 +21,10 @@ export const salesService = {
     return httpClient.get<{ success: boolean; data: { order: Order } }>(ENDPOINTS.ORDERS.DETAIL(id))
   },
 
-  rejectInvoice: async (id: string) => {
-    return httpClient.patch(ENDPOINTS.ADMIN.INVOICE_REJECT(id), {})
+  rejectInvoice: async (id: string, note?: string) => {
+    return httpClient.patch(ENDPOINTS.ADMIN.INVOICE_REJECT(id), {
+      note: note || 'Rejected by staff'
+    })
   },
 
   approveInvoice: async (id: string) => {
@@ -35,7 +37,7 @@ export const salesService = {
     )
   },
 
-  approveOrder: async (id: string) => {
-    return httpClient.patch(ENDPOINTS.ADMIN.ORDER_APPROVE(id), {})
+  approveOrder: async (id: string, data?: { parameters: any }) => {
+    return httpClient.patch(ENDPOINTS.ADMIN.ORDER_APPROVE(id), data || {})
   }
 }

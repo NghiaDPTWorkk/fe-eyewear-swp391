@@ -10,6 +10,7 @@ interface StaffHeaderProps {
   center?: ReactNode
   right: ReactNode
   className?: string
+  containerClassName?: string
 }
 
 export function StaffHeader({
@@ -18,7 +19,8 @@ export function StaffHeader({
   left,
   center,
   right,
-  className
+  className,
+  containerClassName
 }: StaffHeaderProps) {
   return (
     <header
@@ -27,7 +29,11 @@ export function StaffHeader({
         className
       )}
     >
-      <Container maxWidth={containerWidth} justify={containerJustify} className="px-6 md:px-8">
+      <Container
+        maxWidth={containerWidth}
+        justify={containerJustify}
+        className={containerClassName}
+      >
         <div className="flex items-center justify-between w-full h-[72px] gap-8">
           <div className="flex items-center flex-1 min-w-0">
             {left && <div className="w-full max-w-xl">{left}</div>}

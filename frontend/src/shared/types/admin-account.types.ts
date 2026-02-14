@@ -36,3 +36,9 @@ export interface GenericApiResponse {
   success: boolean
   message: string
 }
+
+export interface ProfileUpdateRequest {
+  email: string
+  phone: string
+  name: string
+}

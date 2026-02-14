@@ -4,7 +4,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { PageHeader } from '@/features/sales/components/common'
 import PrescriptionVerification from '@/features/sales/components/prescriptions/PrescriptionVerification'
 import { useSalesStaffOrderDetail } from '@/features/sales/hooks/useSalesStaffInvoices'
-import { Button, Container } from '@/shared/components/ui-core'
+import { Button } from '@/shared/components/ui-core'
 
 export default function SaleStaffRxVerificationPage() {
   const { orderId } = useParams<{ orderId: string }>()
@@ -34,8 +34,8 @@ export default function SaleStaffRxVerificationPage() {
   }
 
   return (
-    <Container maxWidth="none" className="pt-6 pb-8 px-6 md:px-8">
-      <div className="flex items-center gap-4 mb-5">
+    <div className="space-y-6">
+      <div className="flex items-center gap-4">
         <Button
           onClick={handleBack}
           className="p-2.5 bg-white hover:bg-mint-50 rounded-xl transition-all text-gray-500 hover:text-mint-600 border border-gray-200 hover:border-mint-200 shadow-sm"
@@ -57,6 +57,6 @@ export default function SaleStaffRxVerificationPage() {
         onBack={handleBack}
         onActionSuccess={handleActionSuccess}
       />
-    </Container>
+    </div>
   )
 }

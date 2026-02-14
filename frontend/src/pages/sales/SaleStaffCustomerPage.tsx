@@ -7,7 +7,7 @@ import { CustomerInboxList } from '@/features/sales/components/customer/Customer
 import { CustomerProfileInsights } from '@/features/sales/components/customer/CustomerProfileInsights'
 import { PageHeader } from '@/features/staff'
 import { cn } from '@/lib/utils'
-import { Button, Card, Container } from '@/shared/components/ui-core'
+import { Button, Card } from '@/shared/components/ui-core'
 
 interface Customer {
   id: string
@@ -76,17 +76,14 @@ export default function SaleStaffCustomerPage() {
   const selectedCustomer = customers.find((c) => c.id === selectedCustomerId) || null
 
   return (
-    <Container
-      maxWidth="none"
-      className="pt-6 pb-1 px-6 md:px-8 h-screen flex flex-col overflow-hidden"
-    >
+    <div className="h-[calc(100vh-140px)] flex flex-col space-y-6">
       <PageHeader
         title="Customer Inbox"
         subtitle="Manage communications and provide personalized support to your clients."
         breadcrumbs={[{ label: 'Dashboard', path: '/salestaff/dashboard' }, { label: 'Customers' }]}
       />
 
-      <Card className="flex-1 flex overflow-hidden border border-neutral-200 p-0 rounded-[32px] bg-white">
+      <Card className="flex-1 flex overflow-hidden border border-neutral-200 p-0 rounded-[32px] bg-white shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50">
         <CustomerInboxList
           customers={customers}
           selectedCustomerId={selectedCustomerId}
@@ -155,6 +152,6 @@ export default function SaleStaffCustomerPage() {
           )}
         </main>
       </Card>
-    </Container>
+    </div>
   )
 }

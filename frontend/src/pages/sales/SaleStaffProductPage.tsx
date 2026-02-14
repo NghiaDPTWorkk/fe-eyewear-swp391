@@ -7,7 +7,7 @@ import {
   IoEllipsisVertical
 } from 'react-icons/io5'
 
-import { Container, Button } from '@/components'
+import { Button } from '@/components'
 import { PageHeader, StatsCard } from '@/features/staff'
 
 export default function SaleStaffProductPage() {
@@ -45,7 +45,6 @@ export default function SaleStaffProductPage() {
   ]
 
   const products = [
-    // ... existing products (same as before)
     {
       id: '1004',
       category: 'Backpack',
@@ -93,7 +92,7 @@ export default function SaleStaffProductPage() {
   ]
 
   return (
-    <Container maxWidth="none" className="pt-6 pb-8 px-6 md:px-8">
+    <div className="space-y-8">
       <PageHeader
         title="Product Management"
         breadcrumbs={[
@@ -103,7 +102,7 @@ export default function SaleStaffProductPage() {
       />
 
       {/* Metrics Row */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {metrics.map((m, idx) => (
           <StatsCard
             key={idx}
@@ -230,6 +229,6 @@ export default function SaleStaffProductPage() {
           <span className="opacity-80">Page 1 of 10</span>
         </div>
       </div>
-    </Container>
+    </div>
   )
 }

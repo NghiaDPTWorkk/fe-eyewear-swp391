@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Container, Button, Card } from '@/components'
+import { Button, Card } from '@/components'
 import ReturnDetails from '@/features/sales/components/returns/ReturnDetails'
 import {
   IoSearchOutline,
@@ -15,15 +15,11 @@ export default function SaleStaffReturnsPage() {
   const [selectedReturnId, setSelectedReturnId] = useState<string | null>(null)
 
   if (selectedReturnId) {
-    return (
-      <Container maxWidth="none" className="pt-6 pb-8 px-6 md:px-8">
-        <ReturnDetails returnId={selectedReturnId} onBack={() => setSelectedReturnId(null)} />
-      </Container>
-    )
+    return <ReturnDetails returnId={selectedReturnId} onBack={() => setSelectedReturnId(null)} />
   }
 
   return (
-    <Container maxWidth="none" className="pt-2 pb-8 px-2">
+    <div className="space-y-8">
       <PageHeader
         title="Returns Management"
         subtitle="Process customer returns and refunds."
@@ -34,7 +30,7 @@ export default function SaleStaffReturnsPage() {
         ]}
       />
 
-      <div className="px-4 space-y-6">
+      <div className="space-y-6">
         {/* Controls */}
         <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
           <div className="relative flex-1 max-w-md w-full">
@@ -198,6 +194,6 @@ export default function SaleStaffReturnsPage() {
           </div>
         </Card>
       </div>
-    </Container>
+    </div>
   )
 }

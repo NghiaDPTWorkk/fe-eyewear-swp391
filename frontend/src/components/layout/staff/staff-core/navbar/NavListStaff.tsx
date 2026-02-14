@@ -137,7 +137,7 @@ export function NavActions({
   return (
     <div
       ref={containerRef}
-      className={cn('flex justify-end items-center gap-6 relative', className)}
+      className={cn('flex justify-end items-center gap-4 relative', className)}
     >
       <div className="flex items-center gap-4 text-neutral-500">
         <button

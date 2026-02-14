@@ -117,7 +117,8 @@ export const ENDPOINTS = {
       if (status) params.append('status', status)
       return `/admin/orders/total?${params.toString()}`
     },
-    ORDER_APPROVE: (id: string) => `/admin/orders/${id}/status/approve`
+    ORDER_APPROVE: (id: string) => `/admin/orders/${id}/status/approve`,
+    PROFILE_REQUESTS: '/admin/profile-requests'
   },
 
   ADMINS: {

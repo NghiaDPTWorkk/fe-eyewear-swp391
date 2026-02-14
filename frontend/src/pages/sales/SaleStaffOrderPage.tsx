@@ -9,11 +9,11 @@ import { OrderMetrics } from '@/features/sales/components/orders/OrderMetrics'
 import { OrderPagination } from '@/features/sales/components/orders/OrderPagination'
 import { OrderTable } from '@/features/sales/components/orders/OrderTable'
 import { StatusFilterBar } from '@/features/sales/components/orders/StatusFilterBar'
-import { PageHeader } from '@/features/sales/components/common'
+import { PageHeader, RejectionModal } from '@/features/sales/components/common'
 import { useSalesStaffAction } from '@/features/sales/hooks/useSalesStaffAction'
 import { useSalesStaffInvoices } from '@/features/sales/hooks/useSalesStaffInvoices'
 import { type Invoice } from '@/features/sales/types'
-import { Container, ConfirmationModal } from '@/shared/components/ui-core'
+import { ConfirmationModal } from '@/shared/components/ui-core'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import { OrderType } from '@/shared/utils/enums/order.enum'
 
@@ -23,11 +23,12 @@ export default function SaleStaffOrderPage() {
   const orderTypeFilter = searchParams.get('orderType') ?? 'All'
   const searchQuery = searchParams.get('search') ?? ''
 
-  const { approveInvoice, processing } = useSalesStaffAction()
+  const { approveInvoice, rejectInvoice, processing } = useSalesStaffAction()
   const [page, setPage] = useState(1)
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<string | null>(null)
   const [showConfirmModal, setShowConfirmModal] = useState(false)
-  const [invoiceToApprove, setInvoiceToApprove] = useState<string | null>(null)
+  const [showRejectModal, setShowRejectModal] = useState(false)
+  const [invoiceToProcess, setInvoiceToProcess] = useState<string | null>(null)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const limit = 8
 
@@ -287,7 +288,10 @@ export default function SaleStaffOrderPage() {
 
     if (s === InvoiceStatus.DEPOSITED) {
       if (invoice.totalOrdersCount && invoice.approvedOrdersCount === invoice.totalOrdersCount) {
-        return { label: 'Ready to Approve', color: 'bg-mint-50 text-mint-600 border-mint-200' }
+        return {
+          label: 'Ready to Approve Final',
+          color: 'bg-mint-50 text-mint-600 border-mint-200'
+        }
       }
       return hasMfg
         ? { label: 'Wait Verify', color: 'bg-indigo-50 text-indigo-600 border-indigo-100' }
@@ -305,27 +309,41 @@ export default function SaleStaffOrderPage() {
   }
 
   const handleApproveClick = (invoiceId: string) => {
-    setInvoiceToApprove(invoiceId)
+    setInvoiceToProcess(invoiceId)
     setShowConfirmModal(true)
   }
 
+  const handleRejectClick = (invoiceId: string) => {
+    setInvoiceToProcess(invoiceId)
+    setShowRejectModal(true)
+  }
+
   const confirmApproval = async () => {
-    if (invoiceToApprove) {
-      await approveInvoice(invoiceToApprove)
+    if (invoiceToProcess) {
+      await approveInvoice(invoiceToProcess)
       refetch()
       setShowConfirmModal(false)
-      setInvoiceToApprove(null)
+      setInvoiceToProcess(null)
+    }
+  }
+
+  const confirmRejection = async (note: string) => {
+    if (invoiceToProcess) {
+      await rejectInvoice(invoiceToProcess, note)
+      refetch()
+      setShowRejectModal(false)
+      setInvoiceToProcess(null)
     }
   }
 
   return (
-    <Container maxWidth="none" className="pt-2 pb-8 px-2">
+    <div className="space-y-6">
       <PageHeader
         title="Order Management"
         breadcrumbs={[{ label: 'Dashboard', path: '/salestaff/dashboard' }, { label: 'Orders' }]}
         subtitle="Consolidated view of all sales orders, pre-orders, and returns."
       />
-      <div className="px-4">
+      <div className="space-y-6">
         <OrderMetrics
           metrics={metrics}
           orderTypeFilter={orderTypeFilter}
@@ -348,6 +366,7 @@ export default function SaleStaffOrderPage() {
             setSelectedInvoiceId={setSelectedInvoiceId}
             getStatusBadgeProps={getStatusBadgeProps}
             handleApproveClick={handleApproveClick}
+            handleRejectClick={handleRejectClick}
             processing={processing}
           />
           <OrderPagination
@@ -374,6 +393,12 @@ export default function SaleStaffOrderPage() {
         type="info"
         isLoading={processing}
       />
-    </Container>
+      <RejectionModal
+        isOpen={showRejectModal}
+        onClose={() => setShowRejectModal(false)}
+        onConfirm={confirmRejection}
+        isLoading={processing}
+      />
+    </div>
   )
 }

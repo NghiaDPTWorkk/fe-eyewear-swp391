@@ -19,7 +19,7 @@ export const OrderMetrics: React.FC<OrderMetricsProps> = ({
   onOrderTypeChange
 }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 px-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
       {metrics.map((m, i) => (
         <div
           key={i}

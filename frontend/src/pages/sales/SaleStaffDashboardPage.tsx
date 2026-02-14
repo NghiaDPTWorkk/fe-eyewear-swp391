@@ -14,7 +14,7 @@ import { InvoiceOrdersDrawer } from '@/features/sales/components/dashboard/Invoi
 import { Table } from '@/features/sales/components/dashboard/Table'
 
 import type { Invoice } from '@/features/sales/types'
-import { Card, Container } from '@/shared/components/ui-core'
+import { Card } from '@/shared/components/ui-core'
 import { useDashboard, useSalesStaffInvoices } from '@/features/sales/hooks'
 
 export default function SaleStaffDashboardPage() {
@@ -122,14 +122,14 @@ export default function SaleStaffDashboardPage() {
   }, [invoices])
 
   return (
-    <Container maxWidth="none" className="pt-2 pb-8 px-2">
+    <div className="space-y-8">
       <PageHeader
         title="Sales Overview"
         subtitle="Overview of store performance and daily sales operations."
         breadcrumbs={[{ label: 'Dashboard' }]}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 px-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {metrics.map((m, i) => (
           <SalesMetricCard
             key={i}
@@ -139,7 +139,7 @@ export default function SaleStaffDashboardPage() {
         ))}
       </div>
 
-      <div className="px-4">
+      <div className="space-y-8">
         <Charts />
 
         <Card className="p-8 border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 bg-white rounded-[32px]">
@@ -174,6 +174,6 @@ export default function SaleStaffDashboardPage() {
         onClose={handleCloseDrawer}
         invoice={selectedInvoice}
       />
-    </Container>
+    </div>
   )
 }

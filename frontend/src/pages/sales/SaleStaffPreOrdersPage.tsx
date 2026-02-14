@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { PATHS } from '@/routes/paths'
-import { Container, Button, Card } from '@/components'
+import { Button, Card } from '@/components'
 import { OrderList } from '@/features/sales/components/orders/OrderList'
 import { OrderDetailsDrawer } from '@/features/sales/components/orders/OrderDetailsDrawer'
 import { OrderFilterBar } from '@/features/sales/components/orders/OrderFilterBar'
@@ -104,12 +104,11 @@ export default function SaleStaffPreOrdersPage() {
 
   const handleChat = (order: Order) => {
     const customerId = order.invoiceId
-    // console.log('Opening chat with customer:', customerId)
     alert(`Chat with ${order.customerName} (ID: ${customerId})`)
   }
 
   return (
-    <Container maxWidth="none" className="pt-2 pb-8 px-2">
+    <div className="space-y-8">
       <PageHeader
         title="Pre-order Tracking"
         subtitle="Manage outstanding orders and supplier ETA updates."
@@ -120,8 +119,8 @@ export default function SaleStaffPreOrdersPage() {
         ]}
       />
 
-      <div className="px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <SalesMetricCard
             label="Pending Orders"
             value={loading ? '...' : pendingCount.toString()}
@@ -173,7 +172,7 @@ export default function SaleStaffPreOrdersPage() {
           onAdd={() => {}}
         />
 
-        <Card className="p-0 overflow-hidden border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 bg-white rounded-[32px] mt-8">
+        <Card className="p-0 overflow-hidden border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 bg-white rounded-[32px]">
           <OrderList
             orders={paginatedOrders}
             loading={loading}
@@ -183,7 +182,7 @@ export default function SaleStaffPreOrdersPage() {
           />
         </Card>
 
-        <div className="flex items-center justify-between px-2 text-sm text-gray-500 mt-6 bottom-0">
+        <div className="flex items-center justify-between px-2 text-sm text-gray-500 mt-6">
           <span>
             Showing {filteredOrders.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}-
             {Math.min(currentPage * itemsPerPage, filteredOrders.length)} of {filteredOrders.length}{' '}
@@ -226,6 +225,6 @@ export default function SaleStaffPreOrdersPage() {
         onUpdate={fetchOrders}
         onViewFullDetails={handleViewFullDetails}
       />
-    </Container>
+    </div>
   )
 }

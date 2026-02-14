@@ -315,9 +315,6 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
           const frameProductDetail = (productQueries[frameIndex]?.data as any)?.data
 
           if (frameProductDetail) {
-            const frameVariant = frameProductDetail?.variants?.find(
-              (v: any) => v.sku === frameItem.sku
-            )
             // Use local options from the variant itself
             const frameOptionsVariantDetailList =
               variantResponse?.data?.variantDetail?.options || []

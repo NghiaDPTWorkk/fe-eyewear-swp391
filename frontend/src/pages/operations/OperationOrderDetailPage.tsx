@@ -162,7 +162,7 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
     products.forEach((item: OrderProductItem) => {
       const sku = item.product?.sku || ''
 
-      if (sku.startsWith('FRAME')) {
+      if (sku.startsWith('FRAME') || sku.startsWith('SG')) {
         framesList.push({
           product_id: item.product.product_id,
           sku: item.product.sku,
@@ -285,6 +285,8 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
       }
     }
   }
+
+  // NORMAL Order - SunGlass
 
   // NORMAL Order - Frame
   if (orderType === 'NORMAL' && framesList.length > 0) {

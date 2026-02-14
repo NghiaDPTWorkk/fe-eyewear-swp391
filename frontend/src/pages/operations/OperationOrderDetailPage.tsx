@@ -165,23 +165,18 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
       if (sku.startsWith('FRAME') || sku.startsWith('SG')) {
         framesList.push({
           product_id: item.product.product_id,
-          sku: item.product.sku,
-          pricePerUnit: item.product.pricePerUnit,
-          quantity: item.quantity
+          sku: item.product.sku
         })
       } else if (sku.startsWith('LENS')) {
         lensList.push({
           product_id: item.product.product_id,
-          sku: item.product.sku,
-          pricePerUnit: item.product.pricePerUnit,
-          quantity: item.quantity
+          sku: item.product.sku
         })
       }
     })
   } else if (orderType === 'MANUFACTURING') {
     // MANUFACTURING Order: Lấy products[0]
     const firstProduct = products[0]
-
     if (firstProduct) {
       frameObject = {
         product_id: firstProduct.product.product_id,
@@ -213,9 +208,14 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
   let frameIdApi: string | undefined
   let frameSkuApi: string | undefined
 
-  if (orderType === 'NORMAL' && framesList.length > 0) {
-    frameIdApi = framesList[0].product_id
-    frameSkuApi = framesList[0].sku
+  if (orderType === 'NORMAL') {
+    if (framesList.length > 0) {
+      frameIdApi = framesList[0].product_id
+      frameSkuApi = framesList[0].sku
+    } else if (lensList.length > 0) {
+      frameIdApi = lensList[0].product_id
+      frameSkuApi = lensList[0].sku
+    }
   } else if (orderType === 'MANUFACTURING' && frameObject) {
     frameIdApi = frameObject.product_id
     frameSkuApi = frameObject.sku
@@ -266,7 +266,8 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
     const lensItem = lensList[0]
     const lensIndex = productIdsToFetch.indexOf(lensItem.product_id)
     const lensProductDetail = (productQueries[lensIndex]?.data as any)?.data
-
+    const lensOptionsVariantDetailList = variantResponse?.data?.variantDetail?.options || []
+    const lensImg = variantResponse?.data?.variantDetail?.imgs?.[0]
     if (lensProductDetail) {
       const variantDetail = lensProductDetail?.variants?.find((v: any) => v.sku === lensItem.sku)
       const finalVariant = variantDetail || lensProductDetail?.variants?.[0]
@@ -274,10 +275,12 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
       // Chỉ render nếu có variant detail
       if (finalVariant) {
         const lensData = {
-          productDetail: lensProductDetail,
-          variantDetail: finalVariant,
-          quantity: lensItem.quantity,
-          pricePerUnit: lensItem.pricePerUnit
+          data:
+            lensOptionsVariantDetailList?.map((attr: any) => ({
+              key: attr.attributeName,
+              value: attr.label
+            })) || [],
+          imageSrc: lensImg
         }
         lensComponent = <LensNormalOrder {...lensData} />
       } else {

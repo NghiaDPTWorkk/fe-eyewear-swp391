@@ -1,14 +1,14 @@
 import { httpClient } from '@/api/apiClients'
 import { ENDPOINTS } from '@/api/endpoints'
-import type { ProductDetailApiResponse } from '@/shared/types'
+import type { ProductDetailApiResponse, Product, Variant } from '@/shared/types'
 
 // Response type based on test.ts
 export interface ProductVariantResponse {
   success: boolean
   message: string
   data: {
-    productDetail: import('@/shared/types').Product
-    variantDetail: import('@/shared/types').Variant
+    productDetail: Product
+    variantDetail: Variant
   }
 }
 

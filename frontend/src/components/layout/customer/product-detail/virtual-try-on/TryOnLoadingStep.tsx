@@ -3,36 +3,42 @@ import { Video, ShieldCheck } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 
 interface TryOnLoadingStepProps {
-  onStreamReady: (stream: MediaStream) => void
+  onReady: (stream: MediaStream) => void
   onError: () => void
+  initModel: () => Promise<void>
 }
 
-export default function TryOnLoadingStep({ onStreamReady, onError }: TryOnLoadingStepProps) {
+export default function TryOnLoadingStep({ onReady, onError, initModel }: TryOnLoadingStepProps) {
   const hasRequested = useRef(false)
 
   useEffect(() => {
     if (hasRequested.current) return
     hasRequested.current = true
 
-    const requestCamera = async () => {
+    const initialize = async () => {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
-          audio: false
-        })
+        // Run camera + model init in parallel
+        const [stream] = await Promise.all([
+          navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
+            audio: false
+          }),
+          initModel()
+        ])
+
         // Small delay so the user sees the loading animation
-        setTimeout(() => onStreamReady(stream), 800)
+        setTimeout(() => onReady(stream), 500)
       } catch (err) {
-        console.error('Camera access denied:', err)
+        console.error('Initialization failed:', err)
         toast.error(
-          'Camera access is required for Virtual Try-On. Please allow camera permissions.'
+          'Failed to initialize Virtual Try-On. Please allow camera permissions and try again.'
         )
         onError()
       }
     }
 
-    requestCamera()
-  }, [onStreamReady, onError])
+    initialize()
+  }, [onReady, onError, initModel])
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-md p-4">
@@ -50,7 +56,7 @@ export default function TryOnLoadingStep({ onStreamReady, onError }: TryOnLoadin
             Initializing AI Engine
           </h2>
           <p className="text-sm text-gray-eyewear mb-6">
-            Calibrating your camera for a perfect virtual fit...
+            Loading face detection model & calibrating camera...
           </p>
 
           {/* Animated dots */}

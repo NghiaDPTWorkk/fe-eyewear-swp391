@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { X, Heart, Camera, ShoppingCart } from 'lucide-react'
 import { Button } from '@/shared/components/ui'
+import type { NormalizedLandmark } from '@mediapipe/tasks-vision'
+import GlassesOverlay from './GlassesOverlay'
 
 interface TryOnWebcamViewProps {
   onClose: () => void
@@ -8,6 +10,9 @@ interface TryOnWebcamViewProps {
   productName: string
   productImage: string
   productPrice: number
+  startDetection: (video: HTMLVideoElement) => void
+  stopDetection: () => void
+  landmarksRef: React.RefObject<NormalizedLandmark[][]>
 }
 
 export default function TryOnWebcamView({
@@ -15,7 +20,10 @@ export default function TryOnWebcamView({
   stream,
   productName,
   productImage,
-  productPrice
+  productPrice,
+  startDetection,
+  stopDetection,
+  landmarksRef
 }: TryOnWebcamViewProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
 
@@ -24,12 +32,19 @@ export default function TryOnWebcamView({
     if (!video || !stream) return
 
     video.srcObject = stream
-    video.play().catch(console.error)
+    video
+      .play()
+      .then(() => {
+        // Start face detection once video is playing
+        startDetection(video)
+      })
+      .catch(console.error)
 
     return () => {
+      stopDetection()
       video.srcObject = null
     }
-  }, [stream])
+  }, [stream, startDetection, stopDetection])
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
@@ -61,7 +76,7 @@ export default function TryOnWebcamView({
           </div>
         </div>
 
-        {/* Webcam feed */}
+        {/* Webcam feed + glasses overlay */}
         <div className="relative aspect-[3/4] w-full overflow-hidden">
           <video
             ref={videoRef}
@@ -71,7 +86,14 @@ export default function TryOnWebcamView({
             className="w-full h-full object-cover scale-x-[-1]"
           />
 
-          {/* Face guide overlay */}
+          {/* Glasses overlay canvas */}
+          <GlassesOverlay
+            videoRef={videoRef}
+            landmarksRef={landmarksRef}
+            glassesImageUrl={productImage}
+          />
+
+          {/* Face guide overlay (hidden once landmarks detected) */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="w-44 h-56 rounded-[50%] border-2 border-dashed border-white/15" />
           </div>

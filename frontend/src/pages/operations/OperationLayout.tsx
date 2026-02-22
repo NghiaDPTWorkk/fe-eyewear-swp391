@@ -215,11 +215,7 @@ export default function OperationLayout() {
           userName={userName}
           userRole={userRole}
           userInitials={userInitials}
-          userAvatar={profile?.avatar}
-          userEmail={profile?.email}
-          roleBadge={profile?.role}
-          onLogout={handleLogout}
-          showMessageButton={false}
+          userEmail={profile?.email || 'loading@example.com'}
         />
       }
       mainClassName="p-4 md:p-8 bg-mint-200 relative overflow-x-hidden"

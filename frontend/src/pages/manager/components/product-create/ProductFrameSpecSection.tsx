@@ -75,7 +75,7 @@ export function ProductFrameSpecSection({
 
         <div className="space-y-2">
           <label className="text-sm font-bold text-gray-700 ml-1">
-            weight (nullable, &gt;0 if set)
+            weight (nullable, {'>'}0 if set)
           </label>
           <input
             value={weightText}

@@ -1,11 +1,3 @@
-import { useLocation } from 'react-router-dom'
-import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layout/StaffMainLayout'
-import { NavActions, NavSearch } from '@/components/layout/staff/staff-core/navbar/NavListStaff'
-import {
-  SidebarStaff,
-  ThemeToggle,
-  UserWidgetWithLogout
-} from '@/components/layout/staff/staff-core/sidebar'
 import {
   IoGrid,
   IoReceipt,
@@ -15,9 +7,38 @@ import {
   IoHelpCircle,
   IoStorefront
 } from 'react-icons/io5'
+import { useLocation } from 'react-router-dom'
+
+import {
+  NavActions,
+  NavSearch,
+  SidebarStaff,
+  ThemeToggle,
+  UserWidgetWithLogout
+} from '@/components/layout/staff/staff-core'
+import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layout/StaffMainLayout'
+import { useProfile } from '@/features/staff/hooks/useProfile'
+import { LAYOUT } from '@/features/sales/constants/saleStaffDesignSystem'
+import { cn } from '@/lib/utils'
+
+// Helper function to get initials from name
+const getInitials = (name: string): string => {
+  if (!name) return '...'
+  const words = name.trim().split(' ')
+  if (words.length === 1) return words[0].substring(0, 2).toUpperCase()
+  return (words[0][0] + words[words.length - 1][0]).toUpperCase()
+}
 
 export default function SaleStaffLayout() {
   const location = useLocation()
+  const { data: profileData } = useProfile()
+
+  // Extract profile data
+  const profile = profileData?.data
+  const userName = profile?.name || 'Loading...'
+  const userEmail = profile?.email || 'loading@example.com'
+  const userRole = profile?.role === 'SALE_STAFF' ? 'Sales Staff' : profile?.role || 'Loading...'
+  const userInitials = profile?.name ? getInitials(profile.name) : '...'
 
   const sidebar = (
     <SidebarStaff
@@ -32,11 +53,7 @@ export default function SaleStaffLayout() {
       storeName="Downtown Vision"
       storeIcon={<IoStorefront />}
       userWidget={
-        <UserWidgetWithLogout
-          userInitials="AM"
-          userName="Anna Morgan"
-          userRole="Operations Manager"
-        />
+        <UserWidgetWithLogout userInitials={userInitials} userName={userName} userRole={userRole} />
       }
     >
       <SidebarStaff.MenuSection label="GENERAL">
@@ -49,33 +66,9 @@ export default function SaleStaffLayout() {
         <SidebarStaff.MenuItem
           icon={<IoReceipt />}
           label="Orders"
-          hasDropdown
+          to="/salestaff/orders"
           active={location.pathname.startsWith('/salestaff/orders')}
-        >
-          <SidebarStaff.SubMenuItem
-            label="All Orders"
-            to="/salestaff/orders"
-            active={location.pathname === '/salestaff/orders'}
-          />
-          <SidebarStaff.SubMenuItem
-            label="Prescription Orders"
-            to="/salestaff/orders/prescription-orders"
-            badge={24}
-            active={location.pathname === '/salestaff/orders/prescription-orders'}
-          />
-          <SidebarStaff.SubMenuItem
-            label="Pre-orders"
-            to="/salestaff/orders/pre-orders"
-            badge={15}
-            active={location.pathname === '/salestaff/orders/pre-orders'}
-          />
-          <SidebarStaff.SubMenuItem
-            label="Returns"
-            to="/salestaff/orders/returns"
-            badge={8}
-            active={location.pathname === '/salestaff/orders/returns'}
-          />
-        </SidebarStaff.MenuItem>
+        />
 
         <SidebarStaff.MenuItem
           icon={<IoPeople />}
@@ -113,9 +106,18 @@ export default function SaleStaffLayout() {
     <StaffMainLayout
       sidebar={sidebar}
       headerLeft={<NavSearch inputContainerClassName="lg:pl-0" />}
-      headerRight={<NavActions />}
-      mainClassName="p-4 md:p-6 bg-neutral-50"
-      headerClassName="px-4 md:px-6"
+      headerRight={
+        <NavActions
+          userName={userName}
+          userRole={userRole}
+          userInitials={userInitials}
+          userEmail={userEmail}
+        />
+      }
+      mainClassName={cn(LAYOUT.px, LAYOUT.py, 'bg-neutral-50')}
+      headerContainerClassName="pl-6 pr-4"
+      headerContainerWidth="100%"
+      contentMaxWidth={LAYOUT.maxWidth}
     />
   )
 }

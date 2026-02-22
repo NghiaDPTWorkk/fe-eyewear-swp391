@@ -9,9 +9,10 @@ import {
 } from 'react-icons/io5'
 import { useLocation, Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
-import { Input } from '@/shared/components/ui'
 import { HiMenuAlt2 } from 'react-icons/hi'
 import { useLayoutStore } from '@/store/layout.store'
+import { useLogout } from '@/shared/hooks/useLogout'
+import { Button, Input } from '@/shared/components'
 
 export interface NavSearchProps {
   className?: string
@@ -44,12 +45,12 @@ export function NavSearch({
 
   return (
     <div className={cn('flex items-center gap-3 w-full pr-2', className)}>
-      <button
+      <Button
         onClick={toggleSidebar}
         className="lg:hidden p-2 rounded-lg text-neutral-500 hover:bg-neutral-50 transition-colors"
       >
         <HiMenuAlt2 className="text-2xl" />
-      </button>
+      </Button>
 
       <div className={cn('max-w-lg flex-1 lg:pl-6', inputContainerClassName)}>
         <Input
@@ -67,40 +68,20 @@ export function NavSearch({
   )
 }
 
-interface Notification {
-  id: number
-  title: string
-  description: string
-  time: string
-  color: string
-}
-
 interface NavActionsProps {
   className?: string
   userName?: string
   userRole?: string
   userInitials?: string
-  userAvatar?: string
   userEmail?: string
-  roleBadge?: string // Role badge text (e.g., "OPERATION_STAFF", "SALES_STAFF")
-  onLogout?: () => void // Logout handler
-  onMessageClick?: () => void // Message button click handler
-  notifications?: Notification[] // Notifications from API
-  showMessageButton?: boolean // Show/hide message button
 }
 
 export function NavActions({
   className,
-  userName = 'Anna Morgan',
-  userRole = 'Operations',
-  userInitials = 'AM',
-  userAvatar,
-  userEmail = 'staff@opticview.com',
-  roleBadge,
-  onLogout,
-  onMessageClick,
-  notifications,
-  showMessageButton = true
+  userName = 'Loading...',
+  userRole = 'Loading...',
+  userInitials = '...',
+  userEmail = 'loading@example.com'
 }: NavActionsProps) {
   const [openDropdown, setOpenDropdown] = useState<'notifications' | 'profile' | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -120,8 +101,7 @@ export function NavActions({
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // Default notifications nếu không được truyền từ component cha
-  const defaultNotifications: Notification[] = [
+  const notifications = [
     {
       id: 1,
       title: 'Return Request',
@@ -152,25 +132,21 @@ export function NavActions({
     }
   ]
 
-  const displayNotifications = notifications || defaultNotifications
-  const unreadCount = displayNotifications.length
+  const { handleLogout } = useLogout()
 
   return (
     <div
       ref={containerRef}
-      className={cn('flex justify-end items-center gap-6 pr-4 relative', className)}
+      className={cn('flex justify-end items-center gap-4 relative', className)}
     >
       <div className="flex items-center gap-4 text-neutral-500">
-        {showMessageButton && (
-          <button
-            onClick={onMessageClick}
-            className="relative p-1 hover:text-primary-500 transition-colors cursor-pointer"
-            title="View Messages"
-          >
-            <FiMail className="text-2xl" />
-            <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-danger-500 ring-2 ring-white"></span>
-          </button>
-        )}
+        <button
+          className="relative p-1 hover:text-primary-500 transition-colors cursor-pointer"
+          title="View Messages"
+        >
+          <FiMail className="text-2xl" />
+          <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-danger-500 ring-2 ring-white"></span>
+        </button>
 
         <div className="relative">
           <button
@@ -188,15 +164,14 @@ export function NavActions({
           </button>
 
           {openDropdown === 'notifications' && (
-            <div className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-xl border border-neutral-100 py-4 z-50 animate-in fade-in zoom-in-95 duration-200">
+            <div className="absolute right-0 mt-6 w-80 bg-white rounded-2xl shadow-xl border border-neutral-100 py-4 z-50 animate-in fade-in zoom-in-95 duration-200">
               <div className="px-5 mb-4">
-                <p className="text-xs font-medium text-neutral-400">
-                  You have {unreadCount} unread message{unreadCount !== 1 ? 's' : ''}
-                </p>
+                <h3 className="text-lg font-semibold text-neutral-900">Notifications</h3>
+                <p className="text-xs font-medium text-neutral-400">You have 4 unread messages</p>
               </div>
 
               <div className="divide-y divide-neutral-50">
-                {displayNotifications.map((n) => (
+                {notifications.map((n) => (
                   <div
                     key={n.id}
                     className="px-5 py-4 hover:bg-neutral-50 cursor-pointer transition-colors group"
@@ -238,28 +213,20 @@ export function NavActions({
             <div className="text-sm font-semibold text-neutral-900 leading-tight">{userName}</div>
             <div className="text-xs text-neutral-400 font-medium">{userRole}</div>
           </div>
-          {userAvatar ? (
-            <img
-              src={userAvatar}
-              alt={userName}
-              className="w-10 h-10 rounded-full object-cover border border-primary-100 shadow-sm shadow-primary-50"
-            />
-          ) : (
-            <div className="w-10 h-10 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center font-semibold border border-primary-100 shadow-sm shadow-primary-50">
-              {userInitials}
-            </div>
-          )}
+          <div className="w-10 h-10 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center font-semibold border border-primary-100 shadow-sm shadow-primary-50">
+            {userInitials}
+          </div>
         </button>
 
         {openDropdown === 'profile' && (
-          <div className="absolute right-0 mt-3 w-72 bg-white rounded-2xl shadow-xl border border-neutral-100 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+          <div className="absolute right-0 mt-6 w-72 bg-white rounded-2xl shadow-xl border border-neutral-100 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="p-6 bg-white border-b border-neutral-50">
               <div className="mb-3">
                 <h3 className="text-xl font-semibold text-neutral-900 leading-tight">{userName}</h3>
                 <p className="text-sm font-medium text-neutral-500 truncate mt-1">{userEmail}</p>
               </div>
               <span className="px-3 py-1 bg-primary-100/50 text-primary-600 text-[11px] font-semibold uppercase tracking-wider rounded-lg border border-primary-200/30">
-                {roleBadge || (isOperation ? 'Manager' : 'Staff')}
+                {isOperation ? 'Manager' : 'Staff'}
               </span>
             </div>
 
@@ -290,10 +257,10 @@ export function NavActions({
 
             <div className="p-3 bg-neutral-50/50 border-t border-neutral-50">
               <button
-                className="flex items-center gap-3 w-full px-4 py-3 rounded-xl hover:bg-red-50 group transition-all"
+                className="flex items-center gap-3 w-full px-4 py-3 rounded-xl hover:bg-red-50 group transition-all cursor-pointer"
                 onClick={() => {
                   setOpenDropdown(null)
-                  onLogout?.()
+                  handleLogout()
                 }}
               >
                 <div className="w-9 h-9 rounded-lg bg-red-50/50 flex items-center justify-center group-hover:bg-white text-red-500 shadow-sm border border-red-100/30">

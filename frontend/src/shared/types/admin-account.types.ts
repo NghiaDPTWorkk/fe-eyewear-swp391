@@ -25,3 +25,20 @@ export interface ProfileApiResponse {
   message: string
   data: AdminAccount
 }
+
+export interface ChangePasswordRequest {
+  currentPassword?: string
+  newPassword?: string
+  oldPassword?: string // API might use oldPassword instead of currentPassword, including both for safety or checking documentation
+}
+
+export interface GenericApiResponse {
+  success: boolean
+  message: string
+}
+
+export interface ProfileUpdateRequest {
+  email: string
+  phone: string
+  name: string
+}

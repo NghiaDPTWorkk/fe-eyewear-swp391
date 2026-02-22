@@ -1,10 +1,12 @@
 export interface AdminInvoiceListOrderItem {
   id: string
+  _id?: string
   type: string[]
 }
 
 export interface AdminInvoiceListItem {
   id: string
+  _id?: string
   invoiceCode: string
   fullName: string
   phone: string

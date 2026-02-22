@@ -79,6 +79,9 @@
 
   /* ===== BORDER RADIUS ===== */
   --radius-4xl: 2rem;
+
+  /* ===== DARK MODE: only via .dark class, NOT OS preference ===== */
+  --dark-mode: selector;
 }
 
 /* Base styles */
@@ -89,23 +92,25 @@
 
   html {
     scroll-behavior: smooth;
+    color-scheme: light only;
   }
 
   body {
     font-family: var(--font-sans);
     color: var(--color-mint-1200);
-    background-color: var(--color-mint-200); /* Ví dụ đặt nền mặc định là mint-200 */
+    background-color: var(--color-mint-200);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-}
-.caret-transparent {
-  caret-color: transparent;
 }
 
 #root {
   background-color: white;
   min-height: 100vh;
+}
+
+.caret-transparent {
+  caret-color: transparent;
 }
 
 /* Animations */

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Container, Card } from '@/components'
+import { Card } from '@/components'
 import { OrderDetailsDrawer } from '@/features/sales/components/orders/OrderDetailsDrawer'
 import { OrderFilterBar } from '@/features/sales/components/orders/OrderFilterBar'
 import { SalesStaffRxTable } from '@/features/sales/components/prescriptions/RxTable'
@@ -11,7 +11,8 @@ import type { Order } from '@/features/sales/types'
 import { useDebounce } from '@/shared/hooks'
 
 export default function SaleStaffPrescriptionPage() {
-  const { rxOrders, loading, fetchOrders } = useSalesStaffOrders()
+  // Limit to 15 prescription orders per load for better performance
+  const { rxOrders, loading, fetchOrders } = useSalesStaffOrders(1, 15)
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [filter, setFilter] = useState('All')
@@ -45,7 +46,7 @@ export default function SaleStaffPrescriptionPage() {
   )
 
   return (
-    <Container className="pt-2 pb-8 px-2 max-w-none">
+    <div className="space-y-6">
       <PageHeader
         title="Prescription Orders"
         breadcrumbs={[
@@ -54,39 +55,41 @@ export default function SaleStaffPrescriptionPage() {
           { label: 'Prescriptions' }
         ]}
       />
-      <SalesStaffRxMetrics />
-      <OrderFilterBar
-        search={search}
-        setSearch={setSearch}
-        filter={filter}
-        setFilter={setFilter}
-        isFilterOpen={isFilterOpen}
-        setIsFilterOpen={setIsFilterOpen}
-        filterOptions={[
-          { label: 'All Orders', value: 'All' },
-          { label: 'Need Verify', value: 'NEED_VERIFY' },
-          { label: 'Verified', value: 'VERIFIED' },
-          { label: 'Processing', value: 'PROCESSING' }
-        ]}
-        placeholder="Search by Order Code, Customer Name..."
-        onAdd={() => {}}
-      />
-      <Card className="p-0 overflow-hidden border border-gray-200 shadow-sm rounded-xl">
-        <SalesStaffRxTable
-          orders={filteredOrders}
-          loading={loading}
-          onVerify={(o: Order) => {
-            setSelectedOrderId(o._id)
-            setIsDrawerOpen(true)
-          }}
+      <div className="space-y-6">
+        <SalesStaffRxMetrics />
+        <OrderFilterBar
+          search={search}
+          setSearch={setSearch}
+          filter={filter}
+          setFilter={setFilter}
+          isFilterOpen={isFilterOpen}
+          setIsFilterOpen={setIsFilterOpen}
+          filterOptions={[
+            { label: 'All Orders', value: 'All' },
+            { label: 'Need Verify', value: 'NEED_VERIFY' },
+            { label: 'Verified', value: 'VERIFIED' },
+            { label: 'Processing', value: 'PROCESSING' }
+          ]}
+          placeholder="Search by Order Code, Customer Name..."
+          onAdd={() => {}}
         />
-      </Card>
+        <Card className="p-0 overflow-hidden border border-gray-200 shadow-sm rounded-xl">
+          <SalesStaffRxTable
+            orders={filteredOrders}
+            loading={loading}
+            onVerify={(o: Order) => {
+              setSelectedOrderId(o._id)
+              setIsDrawerOpen(true)
+            }}
+          />
+        </Card>
+      </div>
       <OrderDetailsDrawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
         orderId={selectedOrderId}
         onUpdate={fetchOrders}
       />
-    </Container>
+    </div>
   )
 }

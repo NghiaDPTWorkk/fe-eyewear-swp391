@@ -76,7 +76,7 @@ export function useRxVerification(): UseRxVerificationReturn {
 
   // Approve prescription (staff verified image matches user data)
   const approveRx = useCallback((id: string, notes?: string) => {
-    console.log(`[RxVerification] APPROVED: ${id}`, notes)
+    console.warn(`[RxVerification] APPROVED: ${id}`, notes)
     // TODO: API call to approve and send to packaging
     setSelectedRxId(null)
     setIsComparing(false)
@@ -84,7 +84,7 @@ export function useRxVerification(): UseRxVerificationReturn {
 
   // Reject prescription (mismatch found)
   const rejectRx = useCallback((id: string, reason: string) => {
-    console.log(`[RxVerification] REJECTED: ${id}`, reason)
+    console.warn(`[RxVerification] REJECTED: ${id}`, reason)
     // TODO: API call to reject and notify customer
     setSelectedRxId(null)
     setIsComparing(false)

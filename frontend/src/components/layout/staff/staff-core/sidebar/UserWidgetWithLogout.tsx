@@ -1,21 +1,25 @@
 import { IoLogOut } from 'react-icons/io5'
 import { useLayoutStore } from '@/store/layout.store'
+import { useLogout } from '@/shared/hooks/useLogout'
 import { cn } from '@/lib/utils'
 
 interface UserWidgetWithLogoutProps {
-  userInitials: string
-  userName: string
-  userRole: string
+  userInitials?: string
+  userName?: string
+  userRole?: string
   onLogout?: () => void
 }
 
 export function UserWidgetWithLogout({
-  userInitials,
-  userName,
-  userRole,
+  userInitials = '...',
+  userName = 'Loading...',
+  userRole = 'Loading...',
   onLogout
 }: UserWidgetWithLogoutProps) {
   const { sidebarCollapsed } = useLayoutStore()
+  const { handleLogout } = useLogout()
+
+  const logoutAction = onLogout || handleLogout
 
   return (
     <div>
@@ -35,7 +39,7 @@ export function UserWidgetWithLogout({
               <div className="text-xs text-gray-500 truncate">{userRole}</div>
             </div>
             <button
-              onClick={onLogout}
+              onClick={logoutAction}
               className="p-2 hover:bg-red-50 rounded-lg transition-colors text-red-500"
               title="Logout"
             >

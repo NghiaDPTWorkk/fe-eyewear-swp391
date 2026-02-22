@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { PATHS } from '@/routes/paths'
-import { Container, Button, Card } from '@/components'
+import { Button, Card } from '@/components'
 import { OrderList } from '@/features/sales/components/orders/OrderList'
 import { OrderDetailsDrawer } from '@/features/sales/components/orders/OrderDetailsDrawer'
 import { OrderFilterBar } from '@/features/sales/components/orders/OrderFilterBar'
@@ -14,14 +14,15 @@ import {
   IoCalendarOutline,
   IoWalletOutline
 } from 'react-icons/io5'
-import { PageHeader } from '@/features/sales/components/common'
-import MetricCard from '@/features/sales/components/common/MetricCard'
+import { PageHeader, SalesMetricCard } from '@/features/sales/components/common'
 import type { Order } from '@/features/sales/types'
+import { OrderType } from '@/shared/utils/enums/order.enum'
 import { useDebounce } from '@/shared/hooks'
 
 export default function SaleStaffPreOrdersPage() {
   const navigate = useNavigate()
-  const { orders, loading, fetchOrders } = useSalesStaffOrders()
+  // Limit to 15 orders per fetch to improve performance
+  const { orders, loading, fetchOrders } = useSalesStaffOrders(1, 15)
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [search, setSearch] = useState('')
@@ -38,7 +39,10 @@ export default function SaleStaffPreOrdersPage() {
   const itemsPerPage = 20
 
   // Filter only pre-orders
-  const preOrders = useMemo(() => orders.filter((o) => o.type?.includes('PRE-ORDER')), [orders])
+  const preOrders = useMemo(
+    () => orders.filter((o: Order) => o.type?.includes(OrderType.PRE_ORDER)),
+    [orders]
+  )
 
   const filteredOrders = useMemo(
     () =>
@@ -100,12 +104,11 @@ export default function SaleStaffPreOrdersPage() {
 
   const handleChat = (order: Order) => {
     const customerId = order.invoiceId
-    // console.log('Opening chat with customer:', customerId)
     alert(`Chat with ${order.customerName} (ID: ${customerId})`)
   }
 
   return (
-    <Container className="pt-2 pb-8 px-2 max-w-none">
+    <div className="space-y-8">
       <PageHeader
         title="Pre-order Tracking"
         subtitle="Manage outstanding orders and supplier ETA updates."
@@ -116,108 +119,102 @@ export default function SaleStaffPreOrdersPage() {
         ]}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <MetricCard
-          label="Pending Orders"
-          value={loading ? '...' : pendingCount.toString()}
-          icon={<IoHourglassOutline size={20} />}
-          trend="+12% this week"
-          trendColor="text-emerald-500"
-          iconBg="bg-amber-50"
-          iconColor="text-amber-500"
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <SalesMetricCard
+            label="Pending Orders"
+            value={loading ? '...' : pendingCount.toString()}
+            icon={<IoHourglassOutline size={20} />}
+            trend={{ label: 'this week', value: 12, isPositive: true }}
+            colorScheme="warning"
+          />
+
+          <SalesMetricCard
+            label="Overdue ETA"
+            value={overdueCount.toString()}
+            icon={<IoWarningOutline size={20} />}
+            subValue="Action required"
+            colorScheme="danger"
+          />
+
+          <SalesMetricCard
+            label="Arriving Soon"
+            value={arrivingSoonCount.toString()}
+            icon={<IoCalendarOutline size={20} />}
+            subValue="Within 3 days"
+            colorScheme="success"
+          />
+
+          <SalesMetricCard
+            label="Total Deposits"
+            value={`$${totalDeposits.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+            icon={<IoWalletOutline size={20} />}
+            subValue="Held securely"
+            colorScheme="info"
+          />
+        </div>
+
+        <OrderFilterBar
+          search={search}
+          setSearch={setSearch}
+          filter={statusFilter}
+          setFilter={setStatusFilter}
+          isFilterOpen={isFilterOpen}
+          setIsFilterOpen={setIsFilterOpen}
+          filterOptions={[
+            { label: 'All Status', value: 'All' },
+            { label: 'Waiting Assign', value: 'WAITING_ASSIGN' },
+            { label: 'Processing', value: 'PROCESSING' },
+            { label: 'Completed', value: 'COMPLETED' }
+          ]}
+          placeholder="Search by Order ID, Customer Name..."
+          onExport={() => {}}
+          onAdd={() => {}}
         />
 
-        <MetricCard
-          label="Overdue ETA"
-          value={overdueCount.toString()}
-          icon={<IoWarningOutline size={20} />}
-          trend="Action required"
-          trendColor="text-red-500"
-          iconBg="bg-red-50"
-          iconColor="text-red-500"
-        />
+        <Card className="p-0 overflow-hidden border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 bg-white rounded-[32px]">
+          <OrderList
+            orders={paginatedOrders}
+            loading={loading}
+            onVerify={handleVerify}
+            onViewDetail={handleOpenDrawer}
+            onChat={handleChat}
+          />
+        </Card>
 
-        <MetricCard
-          label="Arriving Soon"
-          value={arrivingSoonCount.toString()}
-          icon={<IoCalendarOutline size={20} />}
-          trend="Within 3 days"
-          trendColor="text-neutral-500"
-          iconBg="bg-emerald-50"
-          iconColor="text-emerald-500"
-        />
-
-        <MetricCard
-          label="Total Deposits"
-          value={`$${totalDeposits.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-          icon={<IoWalletOutline size={20} />}
-          trend="Held securely"
-          trendColor="text-neutral-500"
-          iconBg="bg-blue-50"
-          iconColor="text-blue-500"
-        />
-      </div>
-
-      <OrderFilterBar
-        search={search}
-        setSearch={setSearch}
-        filter={statusFilter}
-        setFilter={setStatusFilter}
-        isFilterOpen={isFilterOpen}
-        setIsFilterOpen={setIsFilterOpen}
-        filterOptions={[
-          { label: 'All Status', value: 'All' },
-          { label: 'Waiting Assign', value: 'WAITING_ASSIGN' },
-          { label: 'Processing', value: 'PROCESSING' },
-          { label: 'Completed', value: 'COMPLETED' }
-        ]}
-        placeholder="Search by Order ID, Customer Name..."
-        onExport={() => {}}
-        onAdd={() => {}}
-      />
-
-      <Card className="p-0 overflow-hidden border border-neutral-200 shadow-sm bg-white rounded-xl mt-6">
-        <OrderList
-          orders={paginatedOrders}
-          loading={loading}
-          onVerify={handleVerify}
-          onViewDetail={handleOpenDrawer}
-          onChat={handleChat}
-        />
-      </Card>
-
-      <div className="flex items-center justify-between px-2 text-sm text-gray-500 mt-6 bottom-0">
-        <span>
-          Showing {filteredOrders.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}-
-          {Math.min(currentPage * itemsPerPage, filteredOrders.length)} of {filteredOrders.length}{' '}
-          orders
-        </span>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="px-2 border-neutral-200"
-            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            disabled={currentPage === 1}
-          >
-            <IoChevronBackOutline />
-          </Button>
-          <span className="flex items-center px-2 font-semibold text-primary">
-            Page {currentPage} of {Math.ceil(filteredOrders.length / itemsPerPage) || 1}
+        <div className="flex items-center justify-between px-2 text-sm text-gray-500 mt-6">
+          <span>
+            Showing {filteredOrders.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}-
+            {Math.min(currentPage * itemsPerPage, filteredOrders.length)} of {filteredOrders.length}{' '}
+            orders
           </span>
-          <Button
-            variant="outline"
-            size="sm"
-            className="px-2 border-neutral-200"
-            onClick={() =>
-              setCurrentPage((p) =>
-                Math.min(Math.ceil(filteredOrders.length / itemsPerPage), p + 1)
-              )
-            }
-            disabled={currentPage >= Math.ceil(filteredOrders.length / itemsPerPage)}
-          >
-            <IoChevronForwardOutline />
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="px-2 border-neutral-200"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              <IoChevronBackOutline />
+            </Button>
+            <span className="flex items-center px-2 font-semibold text-primary">
+              Page {currentPage} of {Math.ceil(filteredOrders.length / itemsPerPage) || 1}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              className="px-2 border-neutral-200"
+              onClick={() =>
+                setCurrentPage((p) =>
+                  Math.min(Math.ceil(filteredOrders.length / itemsPerPage), p + 1)
+                )
+              }
+              disabled={currentPage >= Math.ceil(filteredOrders.length / itemsPerPage)}
+            >
+              <IoChevronForwardOutline />
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -228,6 +225,6 @@ export default function SaleStaffPreOrdersPage() {
         onUpdate={fetchOrders}
         onViewFullDetails={handleViewFullDetails}
       />
-    </Container>
+    </div>
   )
 }

@@ -59,6 +59,7 @@ const SaleStaffSettingsPage = lazy(() => import('@/pages/sales/SaleStaffSettings
 
 const SaleStaffSupportPage = lazy(() => import('@/pages/sales/SaleStaffSupportPage'))
 const SaleStaffRxVerificationPage = lazy(() => import('@/pages/sales/SaleStaffRxVerificationPage'))
+const SaleStaffProfilePage = lazy(() => import('@/pages/sales/SaleStaffProfilePage'))
 
 const RegularOrderDetailPage = lazy(() => import('@/pages/sales/SaleStaffRegularOrderDetailPage'))
 
@@ -92,6 +93,10 @@ const OperationSettingPage = lazy(() =>
 
 const OperationSupportPage = lazy(() =>
   import('@/pages/operations/OperationSupportPage').then((m) => ({ default: m.default }))
+)
+
+const OperationProfilePage = lazy(() =>
+  import('@/pages/operations/OperationProfilePage').then((m) => ({ default: m.default }))
 )
 
 const ManagerLayout = lazy(() =>
@@ -438,6 +443,14 @@ export const router = createBrowserRouter([
         )
       },
       {
+        path: 'profile',
+        element: (
+          <LazyPage>
+            <SaleStaffProfilePage />
+          </LazyPage>
+        )
+      },
+      {
         path: 'settings',
         element: (
           <LazyPage>
@@ -554,6 +567,14 @@ export const router = createBrowserRouter([
         element: (
           <LazyPage>
             <OperationShippingHandoverPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'profile',
+        element: (
+          <LazyPage>
+            <OperationProfilePage />
           </LazyPage>
         )
       },

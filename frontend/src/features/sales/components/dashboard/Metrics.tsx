@@ -2,14 +2,15 @@
  * Metrics Component
  * Displays key performance metrics for the dashboard
  */
-import { MetricCard } from '@/shared/components/ui/metric-card'
+import type { ReactNode } from 'react'
 import {
   IoClipboardOutline,
   IoWalletOutline,
   IoTicketOutline,
   IoFlagOutline
 } from 'react-icons/io5'
-import type { ReactNode } from 'react'
+
+import { MetricCard } from '@/shared/components'
 
 interface Metric {
   title: string

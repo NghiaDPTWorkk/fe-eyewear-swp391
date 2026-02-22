@@ -1,61 +1,163 @@
 import { useQuery } from '@tanstack/react-query'
-import { httpClient } from '@/api/apiClients'
+import { salesService } from '../services/salesService'
+import { OrderType } from '@/shared/utils/enums/order.enum'
+import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import type { Invoice } from '../types'
 
-export const useSalesStaffInvoices = () => {
-  const {
-    data: invoices = [],
-    isLoading: loading,
-    error,
-    refetch: fetchInvoices
-  } = useQuery({
-    queryKey: ['sales', 'invoices'],
+export function useSalesStaffInvoices(
+  page: number = 1,
+  limit: number = 10,
+  status: string = 'All',
+  search?: string
+) {
+  const query = useQuery({
+    queryKey: ['sales', 'invoices', { page, limit, status, search }],
     queryFn: async () => {
-      const response = await httpClient.get<any>('/admin/invoices/deposited')
-      const rawData = response.data?.data || response.data || []
+      let apiStatus: string | undefined = undefined
+      let apiStatuses: string | undefined = undefined
 
-      // Parallelize checking orders for each invoice
-      const mappedInvoices = await Promise.all(
-        (Array.isArray(rawData) ? rawData : []).map(async (inv: any) => {
-          const total = inv.orders?.length || 0
-          let approved = 0
+      if (status === 'APPROVED_OR_REJECTED') {
+        // Fetch all finalized/active statuses for the Approved tab
+        apiStatuses = [
+          InvoiceStatus.APPROVED,
+          InvoiceStatus.ONBOARD,
+          InvoiceStatus.READY_TO_SHIP,
+          InvoiceStatus.DELIVERING,
+          InvoiceStatus.DELIVERED,
+          InvoiceStatus.COMPLETED,
+          InvoiceStatus.REJECTED,
+          InvoiceStatus.CANCELED
+        ].join(',')
+      } else if (status === 'All') {
+        apiStatus = undefined
+      } else {
+        apiStatus = status
+      }
 
-          if (inv.orders && inv.orders.length > 0) {
-            try {
-              // We need order details to check status
-              // Optimization: Use Promise.all to fetch in parallel
-              const orderPromises = inv.orders.map((o: any) =>
-                httpClient.get(`/admin/orders/${o.id}`).catch(() => null)
+      const response = await salesService.getDepositedInvoices(
+        page,
+        limit,
+        apiStatus,
+        apiStatuses,
+        search
+      )
+
+      // Extract data safely
+      const apiData = response?.data
+      const invoiceData = apiData?.invoiceList || []
+      const pagination = apiData?.pagination || { totalPages: 1, total: 0 }
+
+      // ENRICHMENT OPTIMIZATION:
+      const enrichedInvoices = await Promise.all(
+        invoiceData.map(async (inv: { id?: string; _id?: string; orders?: unknown[] }) => {
+          try {
+            const orderIds = (inv.orders || []) as (string | { id?: string; _id?: string })[]
+
+            const ordersWithDetails = (
+              await Promise.all(
+                orderIds.map(async (item) => {
+                  const orderId = (typeof item === 'string' ? item : item.id || item._id) as string
+                  if (!orderId) return null
+                  try {
+                    const detailRes = await salesService.getOrderById(orderId)
+                    const o = detailRes.data.order
+
+                    const isMfg = (Array.isArray(o.type) ? o.type : [o.type]).some((t) =>
+                      String(t).includes(OrderType.MANUFACTURING)
+                    )
+
+                    const isVerified = [
+                      'VERIFIED',
+                      'APPROVE',
+                      'APPROVED',
+                      'WAITING_ASSIGN',
+                      'ASSIGNED',
+                      'MAKING',
+                      'PACKAGING',
+                      'COMPLETED',
+                      'ONBOARD',
+                      'DELIVERED',
+                      'DELIVERING',
+                      'SHIPPED',
+                      'PROCESSING'
+                    ].includes(o.status?.toUpperCase())
+
+                    return {
+                      id: o._id,
+                      type: o.type,
+                      status: o.status,
+                      isPrescription: isMfg,
+                      isVerified: isVerified
+                    }
+                  } catch {
+                    return {
+                      id: orderId,
+                      type: [],
+                      status: 'UNKNOWN',
+                      isPrescription: false,
+                      isVerified: false
+                    }
+                  }
+                })
               )
-              const orderResults = await Promise.all(orderPromises)
+            ).filter(Boolean) as {
+              id: string
+              type: unknown
+              status: string
+              isPrescription: boolean
+              isVerified: boolean
+            }[]
 
-              approved = orderResults.filter((res: any) => {
-                if (!res) return false
-                const order = res.data?.data?.order || res.data?.order || res.data?.data
-                return (
-                  order?.status === 'APPROVED' ||
-                  order?.status === 'COMPLETED' ||
-                  order?.status === 'VERIFIED'
-                )
-              }).length
-            } catch (err) {
-              console.error('Error fetching details for invoice', inv.id, err)
-            }
+            // approvedOrdersCount should include:
+            // 1. All prescription orders that are verified
+            // 2. All NON-prescription orders (considered approved by default)
+            const approvedCount = ordersWithDetails.filter(
+              (o) => o && (!o.isPrescription || o.isVerified)
+            ).length
+
+            return {
+              ...inv,
+              id: inv.id || inv._id,
+              orders: ordersWithDetails,
+              totalOrdersCount: ordersWithDetails.length,
+              approvedOrdersCount: approvedCount
+            } as unknown as Invoice
+          } catch {
+            return {
+              ...inv,
+              id: inv.id || inv._id,
+              orders: [],
+              totalOrdersCount: 0,
+              approvedOrdersCount: 0
+            } as unknown as Invoice
           }
-
-          return {
-            ...inv,
-            totalOrdersCount: total,
-            approvedOrdersCount: approved
-          } as Invoice
         })
       )
 
-      return mappedInvoices
+      return {
+        invoices: enrichedInvoices,
+        pagination
+      }
     },
-    staleTime: 1000 * 60 * 1, // Cache for 1 minute
-    refetchOnWindowFocus: true
+    staleTime: 60000 // Cache for 1 minute
   })
 
-  return { invoices, loading, error: error ? (error as Error).message : null, fetchInvoices }
+  return {
+    invoices: query.data?.invoices || [],
+    pagination: query.data?.pagination || null,
+    loading: query.isLoading,
+    error: query.error ? (query.error as Error).message : null,
+    fetchInvoices: query.refetch
+  }
+}
+
+export function useSalesStaffOrderDetail(orderId: string) {
+  return useQuery({
+    queryKey: ['sales', 'order', orderId],
+    queryFn: async () => {
+      const response = await salesService.getOrderById(orderId)
+      return response.data.order
+    },
+    enabled: !!orderId
+  })
 }

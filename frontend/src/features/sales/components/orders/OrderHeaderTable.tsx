@@ -1,8 +1,14 @@
+import type { ReactNode } from 'react'
+
 import { cn } from '@/lib/utils'
-import type { Column, Order } from './OrdersOrderTable'
+
+interface ColumnHeader {
+  header: string | ReactNode
+  headerClassName?: string
+}
 
 interface OrderHeaderTableProps {
-  columns: Column<Order>[]
+  columns: ColumnHeader[]
   role?: 'sales' | 'operation'
 }
 

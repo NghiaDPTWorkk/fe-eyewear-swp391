@@ -1,131 +1,404 @@
-import { useState, useEffect, useMemo } from 'react'
-import { useSearchParams, useNavigate } from 'react-router-dom'
-import { Container, Card, Button } from '@/components'
-import { OrderList } from '@/features/sales/components/orders/OrderList'
-import { OrderDetailsDrawer } from '@/features/sales/components/orders/OrderDetailsDrawer'
-import { OrderFilterBar } from '@/features/sales/components/orders/OrderFilterBar'
-import { IoChevronBackOutline, IoChevronForwardOutline } from 'react-icons/io5'
-import type { Order } from '@/features/sales/types'
-import { useSalesStaffOrders } from '@/features/sales/hooks'
-import { PageHeader } from '@/features/sales/components/common'
-import { useDebounce } from '@/shared/hooks'
+import { useMemo, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { IoFlashOutline, IoCubeOutline, IoReceiptOutline, IoRepeatOutline } from 'react-icons/io5'
+import { useSearchParams } from 'react-router-dom'
+import { salesService } from '@/features/sales/services/salesService'
+
+import { InvoiceOrdersDrawer } from '@/features/sales/components/dashboard/InvoiceOrdersDrawer'
+import { OrderMetrics } from '@/features/sales/components/orders/OrderMetrics'
+import { OrderPagination } from '@/features/sales/components/orders/OrderPagination'
+import { OrderTable } from '@/features/sales/components/orders/OrderTable'
+import { StatusFilterBar } from '@/features/sales/components/orders/StatusFilterBar'
+import { PageHeader, RejectionModal } from '@/features/sales/components/common'
+import { useSalesStaffAction } from '@/features/sales/hooks/useSalesStaffAction'
+import { useSalesStaffInvoices } from '@/features/sales/hooks/useSalesStaffInvoices'
+import { type Invoice } from '@/features/sales/types'
+import { ConfirmationModal } from '@/shared/components/ui-core'
+import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
+import { OrderType } from '@/shared/utils/enums/order.enum'
 
 export default function SaleStaffOrderPage() {
-  const { orders, loading, fetchOrders } = useSalesStaffOrders()
-  const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
-  const invoiceIdParam = searchParams.get('invoiceId')
-  const orderIdParam = searchParams.get('orderId')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const statusFilter = searchParams.get('status') ?? 'All'
+  const orderTypeFilter = searchParams.get('orderType') ?? 'All'
+  const searchQuery = searchParams.get('search') ?? ''
 
-  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(orderIdParam)
-  const [isDrawerOpen, setIsDrawerOpen] = useState(!!orderIdParam)
-  const [typeFilter, setTypeFilter] = useState('All')
-  const [search, setSearch] = useState('')
-  const debouncedSearch = useDebounce(search, 300)
+  const { approveInvoice, rejectInvoice, processing } = useSalesStaffAction()
+  const [page, setPage] = useState(1)
+  const [selectedInvoiceId, setSelectedInvoiceId] = useState<string | null>(null)
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
+  const [showRejectModal, setShowRejectModal] = useState(false)
+  const [invoiceToProcess, setInvoiceToProcess] = useState<string | null>(null)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
+  const limit = 8
 
-  useEffect(() => {
-    fetchOrders()
-  }, [fetchOrders])
+  const setSearchQuery = (query: string) => {
+    const next = new URLSearchParams(searchParams)
+    if (query) next.set('search', query)
+    else next.delete('search')
+    setSearchParams(next)
+  }
 
-  const filteredOrders = useMemo(
-    () =>
-      orders.filter(
-        (o) =>
-          (invoiceIdParam ? o.invoiceId === invoiceIdParam : true) &&
-          ((o._id || '').toString().toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-            o.customerName?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-            o.orderCode?.toLowerCase().includes(debouncedSearch.toLowerCase())) &&
-          (typeFilter === 'All' ||
-            (typeFilter === 'Prescription' &&
-              (o.type?.includes('MANUFACTURING') || o.isPrescription)) ||
-            (typeFilter === 'Pre-order' && o.type?.includes('PRE-ORDER')) ||
-            (typeFilter === 'Regular' &&
-              !o.type?.includes('MANUFACTURING') &&
-              !o.type?.includes('PRE-ORDER') &&
-              !o.isPrescription))
-      ),
-    [orders, debouncedSearch, typeFilter, invoiceIdParam]
+  const {
+    invoices: invoiceList,
+    pagination: _pagination,
+    loading: isLoading,
+    fetchInvoices: refetch
+  } = useSalesStaffInvoices(page, limit, statusFilter, searchQuery)
+
+  const selectedInvoice = useMemo(
+    () => invoiceList.find((inv) => inv.id === selectedInvoiceId) ?? null,
+    [invoiceList, selectedInvoiceId]
   )
 
-  const handleOpenDrawer = (o: Order) => {
-    setSelectedOrderId(o._id)
-    setIsDrawerOpen(true)
+  const filteredInvoices = useMemo(() => {
+    let list = invoiceList
+
+    // 1. Pending tab: only show invoices with manufacturing/prescription orders
+    if (statusFilter === InvoiceStatus.DEPOSITED) {
+      list = list.filter((inv: Invoice) => inv.orders?.some((o) => o.isPrescription))
+    }
+
+    // 2. Approved tab: strictly exclude any pending invoices and filter by relevant statuses
+    if (statusFilter === 'APPROVED_OR_REJECTED') {
+      const activeStatuses = [
+        InvoiceStatus.APPROVED,
+        InvoiceStatus.ONBOARD,
+        InvoiceStatus.READY_TO_SHIP,
+        InvoiceStatus.DELIVERING,
+        InvoiceStatus.DELIVERED,
+        InvoiceStatus.COMPLETED,
+        InvoiceStatus.REJECTED,
+        InvoiceStatus.CANCELED
+      ]
+      list = list.filter(
+        (inv: Invoice) =>
+          inv.status !== InvoiceStatus.DEPOSITED &&
+          activeStatuses.includes(inv.status as InvoiceStatus)
+      )
+    }
+
+    // 3. Refunded tab: only show refunded invoices
+    if (statusFilter === InvoiceStatus.REFUNDED) {
+      list = list.filter((inv: Invoice) => inv.status === InvoiceStatus.REFUNDED)
+    }
+
+    // 4. Search filtering
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase()
+      list = list.filter(
+        (inv: Invoice) =>
+          inv.fullName.toLowerCase().includes(q) ||
+          inv.invoiceCode.toLowerCase().includes(q) ||
+          inv.phone.includes(q)
+      )
+    }
+
+    // 5. Order type filter
+    if (orderTypeFilter !== 'All') {
+      list = list.filter((inv: Invoice) =>
+        inv.orders?.some((order) => {
+          const types = Array.isArray(order.type) ? order.type : [order.type]
+          return types.some((t: OrderType | string) => String(t).includes(orderTypeFilter))
+        })
+      )
+    }
+
+    // 6. Sort by newest first (most recent at the top)
+    list = list.sort((a: Invoice, b: Invoice) => {
+      const dateA = new Date(a.createdAt).getTime()
+      const dateB = new Date(b.createdAt).getTime()
+      return dateB - dateA // Descending order (newest first)
+    })
+
+    return list
+  }, [invoiceList, searchQuery, orderTypeFilter, statusFilter])
+
+  // Calculate pagination based on filtered results for accurate page count
+  const totalPages = Math.ceil(filteredInvoices.length / limit) || 1
+
+  // Apply client-side pagination to show exactly 'limit' items per page
+  const paginatedInvoices = useMemo(() => {
+    const startIndex = (page - 1) * limit
+    const endIndex = startIndex + limit
+    return filteredInvoices.slice(startIndex, endIndex)
+  }, [filteredInvoices, page, limit])
+
+  const metrics = useMemo(() => {
+    const counts: Record<string, number> = {
+      [OrderType.NORMAL]: 0,
+      [OrderType.MANUFACTURING]: 0,
+      [OrderType.RETURN]: 0,
+      [OrderType.PRE_ORDER]: 0
+    }
+    invoiceList.forEach((inv: Invoice) => {
+      if (inv.orders && inv.orders.length > 0) {
+        inv.orders.forEach((o) => {
+          const types = Array.isArray(o.type) ? o.type : [o.type]
+          if (types.some((t: OrderType | string) => String(t).includes(OrderType.NORMAL)))
+            counts[OrderType.NORMAL]++
+          if (types.some((t: OrderType | string) => String(t).includes(OrderType.MANUFACTURING)))
+            counts[OrderType.MANUFACTURING]++
+          if (types.some((t: OrderType | string) => String(t).includes(OrderType.RETURN)))
+            counts[OrderType.RETURN]++
+          if (types.some((t: OrderType | string) => String(t).includes(OrderType.PRE_ORDER)))
+            counts[OrderType.PRE_ORDER]++
+        })
+      } else {
+        counts[OrderType.NORMAL]++
+      }
+    })
+    const totalOrders = Object.values(counts).reduce((a, b) => a + b, 0) || 1
+    const pct = (key: string) => Math.round((counts[key] / totalOrders) * 100)
+    return [
+      {
+        type: OrderType.NORMAL,
+        label: 'Regular Orders',
+        value: counts[OrderType.NORMAL],
+        icon: <IoReceiptOutline className="text-2xl" />,
+        colorScheme: 'mint' as const,
+        trend: { label: 'of total', value: pct(OrderType.NORMAL), isPositive: true }
+      },
+      {
+        type: OrderType.MANUFACTURING,
+        label: 'Consultations',
+        value: counts[OrderType.MANUFACTURING],
+        icon: <IoFlashOutline className="text-2xl" />,
+        colorScheme: 'secondary' as const,
+        trend: { label: 'of total', value: pct(OrderType.MANUFACTURING), isPositive: true }
+      },
+      {
+        type: OrderType.RETURN,
+        label: 'Returns',
+        value: counts[OrderType.RETURN],
+        icon: <IoRepeatOutline className="text-2xl" />,
+        colorScheme: 'danger' as const,
+        trend: { label: 'of total', value: pct(OrderType.RETURN), isPositive: false }
+      },
+      {
+        type: OrderType.PRE_ORDER,
+        label: 'Pre-Orders',
+        value: counts[OrderType.PRE_ORDER],
+        icon: <IoCubeOutline className="text-2xl" />,
+        colorScheme: 'info' as const,
+        trend: { label: 'of total', value: pct(OrderType.PRE_ORDER), isPositive: true }
+      }
+    ]
+  }, [invoiceList])
+
+  const handleStatusChange = (status: string) => {
+    setSearchParams((prev) => {
+      if (status === 'All') prev.delete('status')
+      else prev.set('status', status)
+      return prev
+    })
+    setPage(1)
   }
 
-  const handleVerify = (order: Order) => {
-    navigate(`/salestaff/orders/${order._id || order._id}/verify-rx`)
+  const handleOrderTypeChange = (type: string) => {
+    setSearchParams((prev) => {
+      if (type === 'All') prev.delete('orderType')
+      else prev.set('orderType', type)
+      return prev
+    })
+    setPage(1)
+    setIsFilterOpen(false)
   }
 
-  const handleChat = (order: Order) => {
-    const customerId = order.invoiceId
-    console.log('Opening chat with customer:', customerId)
-    alert(`Chat with ${order.customerName} (ID: ${customerId})`)
+  const handleResetFilters = () => {
+    setSearchParams(new URLSearchParams())
+    setPage(1)
+  }
+
+  const { data: statusCounts } = useQuery({
+    queryKey: ['sales', 'status-counts'],
+    queryFn: async () => {
+      const tabs = [InvoiceStatus.DEPOSITED, 'APPROVED_OR_REJECTED', InvoiceStatus.REFUNDED]
+      const counts: Record<string, number> = {}
+      await Promise.all(
+        tabs.map(async (tab) => {
+          let apiStatus: string | undefined = undefined
+          let apiStatuses: string | undefined = undefined
+
+          if (tab === 'APPROVED_OR_REJECTED') {
+            apiStatuses = [
+              InvoiceStatus.APPROVED,
+              InvoiceStatus.ONBOARD,
+              InvoiceStatus.READY_TO_SHIP,
+              InvoiceStatus.DELIVERING,
+              InvoiceStatus.DELIVERED,
+              InvoiceStatus.COMPLETED,
+              InvoiceStatus.REJECTED,
+              InvoiceStatus.CANCELED
+            ].join(',')
+          } else if (tab === InvoiceStatus.REFUNDED) {
+            // If backend doesn't support REFUNDED yet, pass an empty list or specific status
+            apiStatus = InvoiceStatus.REFUNDED
+          } else {
+            apiStatus = tab as string
+          }
+
+          const res = await salesService.getDepositedInvoices(1, 1, apiStatus, apiStatuses)
+          counts[tab] = res.data.pagination.total
+        })
+      )
+      return counts
+    },
+    staleTime: 30000
+  })
+
+  const statusTabs = useMemo(() => {
+    const allTabs = [
+      { label: 'All Invoices', value: 'All' },
+      { label: 'Pending', value: InvoiceStatus.DEPOSITED },
+      { label: 'Approved', value: 'APPROVED_OR_REJECTED' },
+      { label: 'Refunded', value: InvoiceStatus.REFUNDED }
+    ]
+    return allTabs.filter((tab) => {
+      if (tab.value === 'All') return true
+      return (statusCounts?.[tab.value] ?? 0) > 0
+    })
+  }, [statusCounts])
+
+  const getStatusBadgeProps = (invoice: Invoice) => {
+    const s = invoice.status
+    const hasMfg = invoice.orders?.some((o) =>
+      (Array.isArray(o.type) ? o.type : [o.type]).some((t) =>
+        String(t).includes(OrderType.MANUFACTURING)
+      )
+    )
+
+    if (statusFilter === 'APPROVED_OR_REJECTED') {
+      if (s === InvoiceStatus.REJECTED || s === 'REJECTED' || s === InvoiceStatus.CANCELED) {
+        return { label: 'Rejected', color: 'bg-rose-50 text-rose-600 border-rose-100' }
+      }
+      if (
+        [
+          InvoiceStatus.APPROVED,
+          InvoiceStatus.ONBOARD,
+          InvoiceStatus.READY_TO_SHIP,
+          InvoiceStatus.DELIVERING,
+          InvoiceStatus.DELIVERED,
+          InvoiceStatus.COMPLETED
+        ].includes(s as InvoiceStatus)
+      ) {
+        return { label: 'Accepted', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' }
+      }
+    }
+
+    if (s === InvoiceStatus.DEPOSITED) {
+      if (invoice.totalOrdersCount && invoice.approvedOrdersCount === invoice.totalOrdersCount) {
+        return {
+          label: 'Ready to Approve Final',
+          color: 'bg-mint-50 text-mint-600 border-mint-200'
+        }
+      }
+      return hasMfg
+        ? { label: 'Wait Verify', color: 'bg-indigo-50 text-indigo-600 border-indigo-100' }
+        : { label: 'Pending', color: 'bg-amber-50 text-amber-600 border-amber-100' }
+    }
+
+    if (s === InvoiceStatus.APPROVED || s === 'APPROVED')
+      return { label: 'Approved', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' }
+    if (s === InvoiceStatus.REJECTED || s === 'REJECTED')
+      return { label: 'Rejected', color: 'bg-rose-50 text-rose-600 border-rose-100' }
+    if (s === InvoiceStatus.REFUNDED || s === 'REFUNDED')
+      return { label: 'Refunded', color: 'bg-purple-50 text-purple-600 border-purple-100' }
+
+    return { label: String(s) || 'Unknown', color: 'bg-slate-50 text-slate-400 border-slate-100' }
+  }
+
+  const handleApproveClick = (invoiceId: string) => {
+    setInvoiceToProcess(invoiceId)
+    setShowConfirmModal(true)
+  }
+
+  const handleRejectClick = (invoiceId: string) => {
+    setInvoiceToProcess(invoiceId)
+    setShowRejectModal(true)
+  }
+
+  const confirmApproval = async () => {
+    if (invoiceToProcess) {
+      await approveInvoice(invoiceToProcess)
+      refetch()
+      setShowConfirmModal(false)
+      setInvoiceToProcess(null)
+    }
+  }
+
+  const confirmRejection = async (note: string) => {
+    if (invoiceToProcess) {
+      await rejectInvoice(invoiceToProcess, note)
+      refetch()
+      setShowRejectModal(false)
+      setInvoiceToProcess(null)
+    }
   }
 
   return (
-    <Container className="pt-2 pb-8 px-2 max-w-none">
+    <div className="space-y-6">
       <PageHeader
         title="Order Management"
         breadcrumbs={[{ label: 'Dashboard', path: '/salestaff/dashboard' }, { label: 'Orders' }]}
+        subtitle="Consolidated view of all sales orders, pre-orders, and returns."
       />
-
-      <OrderFilterBar
-        search={search}
-        setSearch={setSearch}
-        filter={typeFilter}
-        setFilter={setTypeFilter}
-        isFilterOpen={isFilterOpen}
-        setIsFilterOpen={setIsFilterOpen}
-        filterOptions={[
-          { label: 'All Orders', value: 'All' },
-          { label: 'Prescription', value: 'Prescription' },
-          { label: 'Pre-order', value: 'Pre-order' },
-          { label: 'Regular', value: 'Regular' }
-        ]}
-        placeholder="Search by Order Code, Customer Name..."
-        onExport={() => {}}
-        onAdd={() => {}}
-      />
-
-      <Card className="p-0 overflow-hidden border border-gray-200 shadow-sm bg-white rounded-xl mt-6">
-        <OrderList
-          orders={filteredOrders}
-          loading={loading}
-          onVerify={handleVerify}
-          onViewDetail={handleOpenDrawer}
-          onChat={handleChat}
+      <div className="space-y-6">
+        <OrderMetrics
+          metrics={metrics}
+          orderTypeFilter={orderTypeFilter}
+          onOrderTypeChange={handleOrderTypeChange}
         />
-      </Card>
-
-      <div className="flex items-center justify-between px-2 text-sm text-gray-500 mt-6 bottom-0">
-        <span>
-          Showing 1-{filteredOrders.length} of {orders.length} orders
-        </span>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="px-2 border-gray-200">
-            <IoChevronBackOutline />
-          </Button>
-          <Button
-            variant="solid"
-            colorScheme="primary"
-            size="sm"
-            className="min-w-[32px] font-semibold"
-          >
-            1
-          </Button>
-          <Button variant="outline" size="sm" className="px-2 border-gray-200">
-            <IoChevronForwardOutline />
-          </Button>
+        <StatusFilterBar
+          statusTabs={statusTabs}
+          statusFilter={statusFilter}
+          onStatusChange={handleStatusChange}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          onToggleFilter={() => setIsFilterOpen(!isFilterOpen)}
+          onReset={handleResetFilters}
+          orderTypeFilter={orderTypeFilter}
+        />
+        <div className="bg-white border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 rounded-[32px] overflow-hidden">
+          <OrderTable
+            invoices={paginatedInvoices}
+            selectedInvoiceId={selectedInvoiceId}
+            setSelectedInvoiceId={setSelectedInvoiceId}
+            getStatusBadgeProps={getStatusBadgeProps}
+            handleApproveClick={handleApproveClick}
+            handleRejectClick={handleRejectClick}
+            processing={processing}
+          />
+          <OrderPagination
+            page={page}
+            totalPages={totalPages}
+            isLoading={isLoading}
+            onPageChange={setPage}
+          />
         </div>
       </div>
 
-      <OrderDetailsDrawer
-        isOpen={isDrawerOpen}
-        onClose={() => setIsDrawerOpen(false)}
-        orderId={selectedOrderId}
-        onUpdate={fetchOrders}
+      <InvoiceOrdersDrawer
+        isOpen={!!selectedInvoiceId}
+        onClose={() => setSelectedInvoiceId(null)}
+        invoice={selectedInvoice}
       />
-    </Container>
+      <ConfirmationModal
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={confirmApproval}
+        title="Approve Invoice"
+        message="Are you sure you want to approve this invoice? All orders within this invoice will be marked as verified and proceed to the next stage."
+        confirmText="Approve Invoice"
+        type="info"
+        isLoading={processing}
+      />
+      <RejectionModal
+        isOpen={showRejectModal}
+        onClose={() => setShowRejectModal(false)}
+        onConfirm={confirmRejection}
+        isLoading={processing}
+      />
+    </div>
   )
 }

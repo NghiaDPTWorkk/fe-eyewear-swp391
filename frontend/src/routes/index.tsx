@@ -133,6 +133,31 @@ const ManagerAddAttributePage = lazy(() =>
   import('@/pages/manager/ManagerAddAttributePage').then((m) => ({ default: m.default }))
 )
 
+// Admin Pages
+const AdminLayout = lazy(() =>
+  import('@/pages/admin/AdminLayout').then((m) => ({ default: m.default }))
+)
+
+const AdminDashboardPage = lazy(() =>
+  import('@/pages/admin/AdminDashboardPage').then((m) => ({ default: m.default }))
+)
+
+const AdminUsersPage = lazy(() =>
+  import('@/pages/admin/AdminUsersPage').then((m) => ({ default: m.default }))
+)
+
+const AdminStaffPage = lazy(() =>
+  import('@/pages/admin/AdminStaffPage').then((m) => ({ default: m.default }))
+)
+
+const AdminSettingsPage = lazy(() =>
+  import('@/pages/admin/AdminSettingsPage').then((m) => ({ default: m.default }))
+)
+
+const AdminSupportPage = lazy(() =>
+  import('@/pages/admin/AdminSupportPage').then((m) => ({ default: m.default }))
+)
+
 const OperationCompleteOrdersPage = lazy(() =>
   import('@/pages/operations/OperationCompleteOrdersPage').then((m) => ({
     default: m.default
@@ -328,14 +353,60 @@ export const router = createBrowserRouter([
     )
   },
   {
-    path: '/admin/dashboard',
+    path: '/admin',
     element: (
       <AuthGuard>
         <LazyPage>
-          <CustomerHomePage />
+          <AdminLayout />
         </LazyPage>
       </AuthGuard>
-    )
+    ),
+    children: [
+      {
+        index: true,
+        element: <Navigate to="/admin/dashboard" replace />
+      },
+      {
+        path: 'dashboard',
+        element: (
+          <LazyPage>
+            <AdminDashboardPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'users',
+        element: (
+          <LazyPage>
+            <AdminUsersPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'staff',
+        element: (
+          <LazyPage>
+            <AdminStaffPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'settings',
+        element: (
+          <LazyPage>
+            <AdminSettingsPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'support',
+        element: (
+          <LazyPage>
+            <AdminSupportPage />
+          </LazyPage>
+        )
+      }
+    ]
   },
   {
     path: '/salestaff',

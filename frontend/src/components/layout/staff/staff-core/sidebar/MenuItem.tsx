@@ -11,6 +11,7 @@ interface MenuItemProps {
   active?: boolean
   badge?: string
   badgeVariant?: 'default' | 'primary' | 'danger'
+  isLoading?: boolean
   hasDropdown?: boolean
   children?: ReactNode
   onClick?: () => void
@@ -28,7 +29,8 @@ export function MenuItem({
   hasDropdown,
   children,
   onClick,
-  isOpen: defaultIsOpen = false
+  isOpen: defaultIsOpen = false,
+  isLoading = false
 }: MenuItemProps) {
   const { sidebarCollapsed } = useLayoutStore()
   const hasActiveChild = Children.toArray(children).some(
@@ -74,16 +76,20 @@ export function MenuItem({
           <span className="flex-1 text-left truncate transition-opacity duration-300 font-medium">
             {label}
           </span>
-          {badge && (
+          {badge !== undefined && (
             <span
               className={cn(
-                'px-2 py-0.5 text-xs rounded-full font-semibold shrink-0 min-w-[28px] text-center',
+                'px-2 py-0.5 text-xs rounded-full font-semibold shrink-0 min-w-[28px] text-center flex items-center justify-center',
                 badgeVariant === 'primary' && 'bg-primary-100 text-primary-700',
                 badgeVariant === 'danger' && 'bg-red-100 text-red-700',
                 badgeVariant === 'default' && 'bg-gray-100 text-gray-700'
               )}
             >
-              {badge}
+              {isLoading ? (
+                <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
+              ) : (
+                badge
+              )}
             </span>
           )}
           {hasDropdown && (

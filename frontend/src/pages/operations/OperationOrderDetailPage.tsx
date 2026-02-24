@@ -162,7 +162,7 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
     products.forEach((item: OrderProductItem) => {
       const sku = item.product?.sku || ''
 
-      if (sku.startsWith('FRAME')) {
+      if (sku.startsWith('FRAME') || sku.startsWith('SG')) {
         framesList.push({
           product_id: item.product.product_id,
           sku: item.product.sku,
@@ -181,7 +181,6 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
   } else if (orderType === 'MANUFACTURING') {
     // MANUFACTURING Order: Lấy products[0]
     const firstProduct = products[0]
-
     if (firstProduct) {
       frameObject = {
         product_id: firstProduct.product.product_id,
@@ -213,9 +212,14 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
   let frameIdApi: string | undefined
   let frameSkuApi: string | undefined
 
-  if (orderType === 'NORMAL' && framesList.length > 0) {
-    frameIdApi = framesList[0].product_id
-    frameSkuApi = framesList[0].sku
+  if (orderType === 'NORMAL') {
+    if (framesList.length > 0) {
+      frameIdApi = framesList[0].product_id
+      frameSkuApi = framesList[0].sku
+    } else if (lensList.length > 0) {
+      frameIdApi = lensList[0].product_id
+      frameSkuApi = lensList[0].sku
+    }
   } else if (orderType === 'MANUFACTURING' && frameObject) {
     frameIdApi = frameObject.product_id
     frameSkuApi = frameObject.sku
@@ -262,54 +266,171 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
   let frameComponent = null
 
   // NORMAL Order - Lens
+  // Lấy ra variantsList: any[] = variantResponse?.data?.productDetail?.variants || []
+  // nó sẽ có format như sau
+  /**
+   * "variants": [
+                {
+                    "sku": "LENS-001-01",
+                    "name": "Rodenstock Anti-Scratch Lens 1 - 1.50 - Premium",
+                    "slug": "rodenstock-anti-scratch-lens-1-150-premium",
+                    "options": [
+                        {
+                            "attributeId": "69658896e8bf7da827177ac1",
+                            "attributeName": "Thickness",
+                            "label": "1.50",
+                            "showType": "text",
+                            "value": "1.50"
+                        },
+                        {
+                            "attributeId": "69658896e8bf7da827177ac2",
+                            "attributeName": "Coating",
+                            "label": "Premium",
+                            "showType": "text",
+                            "value": "Premium"
+                        }
+                    ],
+                    "price": 132,
+                    "finalPrice": 132,
+                    "stock": 30,
+                    "imgs": [
+                        "https://picsum.photos/seed/lens1v0a/400/400",
+                        "https://picsum.photos/seed/lens1v0b/400/400"
+                    ],
+                    "isDefault": true
+                },
+                {
+                    "sku": "LENS-001-02",
+                    "name": "Rodenstock Anti-Scratch Lens 1 - 1.56 - Ultra",
+                    "slug": "rodenstock-anti-scratch-lens-1-156-ultra",
+                    "options": [
+                        {
+                            "attributeId": "69658896e8bf7da827177ac1",
+                            "attributeName": "Thickness",
+                            "label": "1.56",
+                            "showType": "text",
+                            "value": "1.56"
+                        },
+                        {
+                            "attributeId": "69658896e8bf7da827177ac2",
+                            "attributeName": "Coating",
+                            "label": "Ultra",
+                            "showType": "text",
+                            "value": "Ultra"
+                        }
+                    ],
+                    "price": 239,
+                    "finalPrice": 239,
+                    "stock": 28,
+                    "imgs": [
+                        "https://picsum.photos/seed/lens1v1a/400/400",
+                        "https://picsum.photos/seed/lens1v1b/400/400"
+                    ],
+                    "isDefault": false
+                },
+                {
+                    "sku": "LENS-001-03",
+                    "name": "Rodenstock Anti-Scratch Lens 1 - 1.56 - Premium",
+                    "slug": "rodenstock-anti-scratch-lens-1-156-premium",
+                    "options": [
+                        {
+                            "attributeId": "69658896e8bf7da827177ac1",
+                            "attributeName": "Thickness",
+                            "label": "1.56",
+                            "showType": "text",
+                            "value": "1.56"
+                        },
+                        {
+                            "attributeId": "69658896e8bf7da827177ac2",
+                            "attributeName": "Coating",
+                            "label": "Premium",
+                            "showType": "text",
+                            "value": "Premium"
+                        }
+                    ],
+                    "price": 175,
+                    "finalPrice": 175,
+                    "stock": 30,
+                    "imgs": [
+                        "https://picsum.photos/seed/lens1v2a/400/400",
+                        "https://picsum.photos/seed/lens1v2b/400/400"
+                    ],
+                    "isDefault": false
+                }
+            ],
+   *
+   */
+  // lúc này nó sẽ map và add vô lensList
+  // sau khi add xong thì mới cho lensList map tiếp để lấy data truyền vô LensNormalOrder
+
   if (orderType === 'NORMAL' && lensList.length > 0) {
-    const lensItem = lensList[0]
-    const lensIndex = productIdsToFetch.indexOf(lensItem.product_id)
-    const lensProductDetail = (productQueries[lensIndex]?.data as any)?.data
+    const variantsList: any[] = variantResponse?.data?.productDetail?.variants || []
+    variantsList.forEach((lensItem) => {
+      lensList.push({
+        product_id: lensItem.product_id,
+        sku: lensItem.sku
+      })
+    })
 
-    if (lensProductDetail) {
-      const variantDetail = lensProductDetail?.variants?.find((v: any) => v.sku === lensItem.sku)
-      const finalVariant = variantDetail || lensProductDetail?.variants?.[0]
+    lensComponent = (
+      <div className="space-y-8">
+        {lensList.map((lensItem, idx) => {
+          const lensOptionsVariantDetailList = variantResponse?.data?.variantDetail?.options || []
+          const lensImg = variantResponse?.data?.variantDetail?.imgs?.[0]
 
-      // Chỉ render nếu có variant detail
-      if (finalVariant) {
-        const lensData = {
-          productDetail: lensProductDetail,
-          variantDetail: finalVariant,
-          quantity: lensItem.quantity,
-          pricePerUnit: lensItem.pricePerUnit
-        }
-        lensComponent = <LensNormalOrder {...lensData} />
-      } else {
-        console.warn('⚠️ No variant found for lens SKU:', lensItem.sku)
-      }
-    }
+          const lensData = {
+            data:
+              lensOptionsVariantDetailList?.map((attr: any) => ({
+                key: attr.attributeName,
+                value: attr.label
+              })) || [],
+            imageSrc: lensImg
+          }
+          return (
+            <div key={idx} className="border-b border-gray-100 last:border-0 pb-6 last:pb-0">
+              <LensNormalOrder {...lensData} />
+            </div>
+          )
+        })}
+      </div>
+    )
   }
+
+  // NORMAL Order - SunGlass
 
   // NORMAL Order - Frame
   if (orderType === 'NORMAL' && framesList.length > 0) {
-    const frameItem = framesList[0]
-    const frameImg = variantResponse?.data?.variantDetail?.imgs?.[0]
+    frameComponent = (
+      <div className="space-y-8">
+        {framesList.map((frameItem, idx) => {
+          const frameIndex = productIdsToFetch.indexOf(frameItem.product_id)
+          const frameProductDetail = (productQueries[frameIndex]?.data as any)?.data
 
-    // CHỖ NÀY CẦN GỌI API TRUYỀN ProductID và sku để lấy object nằm trong data options của data trả ra sau khi gọi api
-    const frameOptionsVariantDetailList = variantResponse?.data?.variantDetail?.options || []
-    console.log(frameOptionsVariantDetailList) // đúng rồi đúng options
+          if (frameProductDetail) {
+            // Use local options from the variant itself
+            const frameOptionsVariantDetailList =
+              variantResponse?.data?.variantDetail?.options || []
+            const frameImg = variantResponse?.data?.variantDetail?.imgs?.[0]
 
-    const frameIndex = productIdsToFetch.indexOf(frameItem.product_id)
-    const frameProductDetail = (productQueries[frameIndex]?.data as any)?.data
+            const frameData = {
+              data:
+                frameOptionsVariantDetailList?.map((attr: any) => ({
+                  key: attr.attributeName,
+                  value: attr.label
+                })) || [],
+              imageSrc: frameImg
+            }
 
-    if (frameProductDetail) {
-      const frameData = {
-        data:
-          frameOptionsVariantDetailList?.map((attr) => ({
-            key: attr.attributeName,
-            value: attr.label
-          })) || [],
-        imageSrc: frameImg
-      }
-
-      frameComponent = <FrameSpecifications {...frameData} />
-    }
+            return (
+              <div key={idx} className="border-b border-gray-100 last:border-0 pb-6 last:pb-0">
+                <FrameSpecifications {...frameData} />
+              </div>
+            )
+          }
+          return null
+        })}
+      </div>
+    )
   }
 
   // MANUFACTURING Order - Lens

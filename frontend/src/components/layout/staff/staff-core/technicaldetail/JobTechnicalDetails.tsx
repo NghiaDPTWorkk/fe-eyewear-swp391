@@ -94,10 +94,8 @@ const JobTechnicalDetails = ({ lensData, frameData }: JobTechnicalDetailsProps) 
           <LensSpecifications prescription={lensData.prescription} details={lensData.additional} />
         ) : (
           <LensNormalOrder
-            productDetail={lensData.productDetail}
-            variantDetail={lensData.variantDetail}
-            quantity={lensData.quantity}
-            pricePerUnit={lensData.pricePerUnit}
+            lensOptions={lensData.variantDetail.options}
+            imageSrc={lensData.variantDetail.imgs?.[0]}
           />
         )}
       </section>

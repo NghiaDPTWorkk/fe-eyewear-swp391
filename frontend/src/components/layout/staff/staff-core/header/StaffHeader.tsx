@@ -34,7 +34,7 @@ export function StaffHeader({
         justify={containerJustify}
         className={containerClassName}
       >
-        <div className="flex items-center justify-between w-full h-[72px] gap-8">
+        <div className="flex items-center justify-between w-full h-[63px] gap-8">
           <div className="flex items-center flex-1 min-w-0">
             {left && <div className="w-full max-w-xl">{left}</div>}
           </div>

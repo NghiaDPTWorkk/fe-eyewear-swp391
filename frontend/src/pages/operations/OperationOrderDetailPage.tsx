@@ -69,8 +69,8 @@ export default function OperationOrderDetailPage() {
     )
   }
 
-  // Extract orderCode from order (use type assertion since API returns OperationOrder)
-  const orderCode = (order as any).orderCode || order._id
+  // Extract orderCode from order — prefer BE field orderCode, fallback to _id
+  const orderCode = (order as any).orderCode ?? (order as any).code ?? order._id
 
   // Render với order data
   return <OrderDetailContent order={order} orderCode={orderCode} navigate={navigate} />

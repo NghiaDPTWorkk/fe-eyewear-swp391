@@ -16,6 +16,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { Button } from '@/shared/components/ui'
 import LensSelectionModal from './lenses/LensSelectionModal'
 import type { LensSelectionState } from './lenses/types'
+import VirtualTryOnModal from './virtual-try-on/VirtualTryOnModal'
 import { useProductVariants } from '@/shared/hooks/products/useProductVariants'
 import { cn } from '@/lib/utils'
 
@@ -47,6 +48,7 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
   const navigate = useNavigate()
   const location = useLocation()
   const [isLensModalOpen, setIsLensModalOpen] = useState(false)
+  const [isTryOnOpen, setIsTryOnOpen] = useState(false)
 
   const isFavorite = isInWishlist(productId)
 
@@ -354,6 +356,7 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
           colorScheme="neutral"
           className="h-16 rounded-2xl border-mint-300 hover:bg-mint-50 px-0"
           leftIcon={<Video className="w-6 h-6 text-primary-500" />}
+          onClick={() => setIsTryOnOpen(true)}
         >
           Virtual Try-On
         </Button>
@@ -393,6 +396,14 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
         productType={(product as any).type || 'frame'}
         productId={productId}
         sku={currentVariant?.sku || ''}
+      />
+
+      <VirtualTryOnModal
+        isOpen={isTryOnOpen}
+        onClose={() => setIsTryOnOpen(false)}
+        productName={product.nameBase}
+        productImage={currentVariant?.imgs?.[0] || images[0] || ''}
+        productPrice={finalPrice}
       />
     </div>
   )

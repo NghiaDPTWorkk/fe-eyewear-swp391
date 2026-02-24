@@ -17,9 +17,18 @@ import {
 } from 'react-icons/io5'
 import { TbTruckDelivery } from 'react-icons/tb'
 import { FaBoxesPacking } from 'react-icons/fa6'
+import { useOrderCountStore } from '@/store/orderCount.store'
 
 export default function OperationLayout() {
   const location = useLocation()
+  const { counts } = useOrderCountStore()
+
+  // Hiện "0" ngay khi load, sau đó cập nhật từ API
+  const allBadge = String(counts.all)
+  const technicalBadge = String(counts.technical)
+  const logisticsBadge = String(counts.logistics)
+  const packingBadge = String(counts.packing)
+  const completedBadge = String(counts.completed)
 
   const sidebar = (
     <SidebarStaff
@@ -51,30 +60,40 @@ export default function OperationLayout() {
           label="All Orders"
           to="/operationstaff/all"
           active={location.pathname === '/operationstaff/all'}
+          badge={allBadge}
+          badgeVariant="primary"
         />
         <SidebarStaff.MenuItem
           icon={<IoBuildOutline />}
-          label="Technical Stations"
+          label="Technical Stati..."
           to="/operationstaff/prescription-orders"
           active={location.pathname === '/operationstaff/prescription-orders'}
+          badge={technicalBadge}
+          badgeVariant="primary"
         />
         <SidebarStaff.MenuItem
           icon={<IoCarOutline />}
-          label="Logistics Waiting Station"
+          label="Logistics Waiti..."
           to="/operationstaff/pre-orders"
           active={location.pathname === '/operationstaff/pre-orders'}
+          badge={logisticsBadge}
+          badgeVariant="primary"
         />
         <SidebarStaff.MenuItem
           icon={<FaBoxesPacking />}
           label="Packing Station"
           to="/operationstaff/packing"
           active={location.pathname === '/operationstaff/packing'}
+          badge={packingBadge}
+          badgeVariant="primary"
         />
         <SidebarStaff.MenuItem
           icon={<TbTruckDelivery />}
-          label="Delivery Handover"
+          label="Complete Ord..."
           to="/operationstaff/delivery-orders"
           active={location.pathname === '/operationstaff/delivery-orders'}
+          badge={completedBadge}
+          badgeVariant="primary"
         />
       </SidebarStaff.MenuSection>
 

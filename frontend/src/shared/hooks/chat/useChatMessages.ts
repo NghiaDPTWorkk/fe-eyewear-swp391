@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect, type KeyboardEvent } from 'react'
 import { chatService } from '@/shared/services/chat/chatService'
 import type { AiMessage } from '@/shared/types/chat.types'
-import { useAuth } from '@/features/auth/hooks/useAuth'
+import { useAuthStore } from '@/store/auth.store'
 
 export interface ChatMessage {
   id: string
@@ -35,7 +35,7 @@ function mapApiMessages(apiMessages: AiMessage[]): ChatMessage[] {
 }
 
 export const useChatMessages = (): UseChatMessagesReturn => {
-  const { user, isAuthenticated } = useAuth()
+  const { user, isAuthenticated } = useAuthStore()
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)

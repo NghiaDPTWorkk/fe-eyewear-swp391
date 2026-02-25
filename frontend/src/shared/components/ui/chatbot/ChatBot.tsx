@@ -71,7 +71,7 @@ export const ChatBot = () => {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 bg-mint-50">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 space-y-4 bg-mint-50">
           {/* Auth required state */}
           {!isAuthenticated && (
             <div className="flex flex-col items-center justify-center py-12 px-6 text-center h-full">
@@ -138,10 +138,10 @@ export const ChatBot = () => {
                   )}
 
                   <div
-                    className={`max-w-[75%] flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
+                    className={`max-w-[85%] flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
                   >
                     <div
-                      className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-line ${
+                      className={`w-full px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-line break-words ${
                         msg.sender === 'user'
                           ? 'bg-primary-500 text-white rounded-br-md'
                           : 'bg-white text-mint-1200 rounded-bl-md shadow-sm border border-mint-300'

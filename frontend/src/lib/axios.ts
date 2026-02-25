@@ -1,5 +1,6 @@
 import { authEventEmitter } from '@/shared/utils/auth.events'
 import { getOrCreateDeviceId } from '@/shared/utils/device.utils'
+import { useAuthStore } from '@/store/auth.store'
 import axios, {
   type AxiosError,
   type AxiosInstance,
@@ -97,14 +98,26 @@ export const apiClient: AxiosInstance = axios.create({
 apiClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     const deviceId = getOrCreateDeviceId()
+    config.headers['x-device-id'] = deviceId
+
+    const url = config.url || ''
+
+    // Security check: if logging in, clear all old auth data first
+    // fix tam thoi nha <3
+    if (url.toLowerCase().includes('login')) {
+      localStorage.removeItem('access_token')
+      localStorage.removeItem('accessToken')
+      localStorage.removeItem('auth-storage')
+      // Reset the zustand store state
+      useAuthStore.getState().logout()
+    }
+
     let token =
       localStorage.getItem('access_token') ??
       localStorage.getItem('accessToken') ??
       localStorage.getItem('token')
-    config.headers['x-device-id'] = deviceId
 
     const publicRoutes = ['/auth/login', '/admin/auth/login', '/products', '/auth/refresh-token']
-    const url = config.url || ''
     const isPublicRoute = publicRoutes.some((route) => url.startsWith(route))
 
     if (config.skipAuth || isPublicRoute) {

@@ -27,7 +27,7 @@ export default function OperationPackingPage() {
         orders={orders}
         isLoading={isLoading}
         isError={isError}
-        hiddenColumns={['WAITING FOR']}
+        hiddenColumns={['WAITING FOR', 'CUSTOMER']}
         role="operation"
       />
     </Container>

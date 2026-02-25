@@ -67,9 +67,16 @@ export default function OperationOrderDetailPage() {
   }
 
   // Lấy orderCode từ order — ưu tiên orderCode của BE
-  const orderCode = (orderDetailData as any).orderCode ?? (orderDetailData as any).code ?? orderDetailData._id
+  const orderCode =
+    (orderDetailData as any).orderCode ?? (orderDetailData as any).code ?? orderDetailData._id
 
-  return <OrderDetailContent orderDetailData={orderDetailData} orderCode={orderCode} navigate={navigate} />
+  return (
+    <OrderDetailContent
+      orderDetailData={orderDetailData}
+      orderCode={orderCode}
+      navigate={navigate}
+    />
+  )
 }
 
 // Component xử lý transform data và render UI
@@ -144,10 +151,10 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
   const orderTypeFromApi = orderDetailData?.type?.[0] || orderDetailData?.type
 
   // Phân loại products theo loại đơn hàng
-  let normalOrderFrameItems: any[] = []   // NORMAL: chứa các item Frame / SunGlass
-  let normalOrderLensItems: any[] = []    // NORMAL: chứa các item Lens
-  let manufacturingOrderFrameItem: any = null   // MANUFACTURING: frame duy nhất
-  let manufacturingOrderLensParams: any = null  // MANUFACTURING: thông số kính cận
+  let normalOrderFrameItems: any[] = [] // NORMAL: chứa các item Frame / SunGlass
+  let normalOrderLensItems: any[] = [] // NORMAL: chứa các item Lens
+  let manufacturingOrderFrameItem: any = null // MANUFACTURING: frame duy nhất
+  let manufacturingOrderLensParams: any = null // MANUFACTURING: thông số kính cận
 
   if (orderTypeFromApi === 'NORMAL') {
     // NORMAL Order: phân loại từng item trong orderProductItems theo SKU prefix
@@ -159,14 +166,14 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
           product_id: item.product.product_id,
           sku: item.product.sku,
           pricePerUnit: item.product.pricePerUnit,
-          quantity: item.quantity  // quantity lấy thẳng từ API order
+          quantity: item.quantity // quantity lấy thẳng từ API order
         })
       } else if (sku.startsWith('LENS')) {
         normalOrderLensItems.push({
           product_id: item.product.product_id,
           sku: item.product.sku,
           pricePerUnit: item.product.pricePerUnit,
-          quantity: item.quantity  // quantity lấy thẳng từ API order
+          quantity: item.quantity // quantity lấy thẳng từ API order
         })
       }
     })
@@ -236,9 +243,13 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
   // NORMAL Order - Lens: chỉ render 1 component, quantity = tổng số lượng từ order
   if (orderTypeFromApi === 'NORMAL' && normalOrderLensItems.length > 0) {
     // Cộng tổng quantity từ tất cả lens items (cùng SKU) trong order
-    const totalLensQtyFromOrder = normalOrderLensItems.reduce((sum, item) => sum + (item.quantity || 1), 0)
+    const totalLensQtyFromOrder = normalOrderLensItems.reduce(
+      (sum, item) => sum + (item.quantity || 1),
+      0
+    )
     // Options và ảnh lấy từ variantDetail của API /products/:id/variants/:sku
-    const lensOptionsFromVariantDetail = productVariantApiResponse?.data?.variantDetail?.options || []
+    const lensOptionsFromVariantDetail =
+      productVariantApiResponse?.data?.variantDetail?.options || []
     const lensImgFromVariantDetail = productVariantApiResponse?.data?.variantDetail?.imgs?.[0]
 
     const lensComponentProps = {
@@ -261,9 +272,13 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
   // NORMAL Order - Frame/SunGlass: chỉ render 1 component, quantity = tổng số lượng từ order
   if (orderTypeFromApi === 'NORMAL' && normalOrderFrameItems.length > 0) {
     // Cộng tổng quantity từ tất cả frame items (cùng SKU) trong order
-    const totalFrameQtyFromOrder = normalOrderFrameItems.reduce((sum, item) => sum + (item.quantity || 1), 0)
+    const totalFrameQtyFromOrder = normalOrderFrameItems.reduce(
+      (sum, item) => sum + (item.quantity || 1),
+      0
+    )
     // Options và ảnh lấy từ variantDetail của API /products/:id/variants/:sku
-    const frameOptionsFromVariantDetail = productVariantApiResponse?.data?.variantDetail?.options || []
+    const frameOptionsFromVariantDetail =
+      productVariantApiResponse?.data?.variantDetail?.options || []
     const frameImgFromVariantDetail = productVariantApiResponse?.data?.variantDetail?.imgs?.[0]
 
     const frameComponentProps = {
@@ -308,7 +323,7 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
       details: [
         { label: 'PD (Pupillary Distance)', value: `${parameters.PD} mm` },
         { label: 'Lens SKU', value: manufacturingOrderLensParams.sku },
-        { label: 'Price Per Unit', value: `$${manufacturingOrderLensParams.pricePerUnit}` }
+        { label: 'Price Per Unit', value: `${manufacturingOrderLensParams.pricePerUnit}` }
       ]
     }
 
@@ -317,7 +332,8 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
 
   // MANUFACTURING Order - Frame (options/ảnh lấy từ variantDetail của API /products/:id/variants/:sku)
   if (orderTypeFromApi === 'MANUFACTURING' && manufacturingOrderFrameItem) {
-    const frameOptionsFromVariantDetail = productVariantApiResponse?.data?.variantDetail?.options || []
+    const frameOptionsFromVariantDetail =
+      productVariantApiResponse?.data?.variantDetail?.options || []
     const frameImgFromVariantDetail = productVariantApiResponse?.data?.variantDetail?.imgs?.[0]
     const frameComponentProps = {
       data:

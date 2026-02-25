@@ -94,7 +94,10 @@ const JobTechnicalDetails = ({ lensData, frameData }: JobTechnicalDetailsProps) 
           <LensSpecifications prescription={lensData.prescription} details={lensData.additional} />
         ) : (
           <LensNormalOrder
-            lensOptions={lensData.variantDetail.options}
+            data={lensData.variantDetail.options.map((opt) => ({
+              key: opt.attributeName,
+              value: opt.value
+            }))}
             imageSrc={lensData.variantDetail.imgs?.[0]}
           />
         )}

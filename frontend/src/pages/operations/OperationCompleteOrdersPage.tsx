@@ -1,20 +1,28 @@
+import { useState, useMemo } from 'react'
 import { Container } from '@/components'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 import { OrderTable } from '@/components/staff'
 import { OrderStatus } from '@/shared/utils/enums/order.enum'
 import { useOrders } from '@/features/staff/hooks/orders/useOrders'
 import { transformApiOrderToTableOrder } from '@/features/staff/components/OrderTable/orderTransformers'
-import { useMemo } from 'react'
+import OperationPagination from '@/pages/operations/OperationPagination'
+
+const PAGE_LIMIT = 10
 
 export default function OperationCompleteOrdersPage() {
-  // Fetch orders với status COMPLETED từ API
-  const { data, isLoading, isError } = useOrders(1, 100, OrderStatus.COMPLETED)
+  const [currentPage, setCurrentPage] = useState(1)
+
+  // Fetch orders với status COMPLETED từ API — có phân trang
+  const { data, isLoading, isError } = useOrders(currentPage, PAGE_LIMIT, OrderStatus.COMPLETED)
+
+  // Pagination meta từ BE
+  const paginationMeta = data?.data?.orders
 
   // Transform data từ API sang format của OrderTable
   const orders = useMemo(() => {
-    if (!data?.data?.orders?.data) return []
-    return data.data.orders.data.map(transformApiOrderToTableOrder)
-  }, [data])
+    if (!paginationMeta?.data) return []
+    return paginationMeta.data.map(transformApiOrderToTableOrder)
+  }, [paginationMeta])
 
   return (
     <Container>
@@ -31,6 +39,17 @@ export default function OperationCompleteOrdersPage() {
         hiddenColumns={['WAITING FOR', 'CUSTOMER']}
         role="operation"
       />
+
+      {paginationMeta && orders.length > 0 && (
+        <OperationPagination
+          page={paginationMeta.page}
+          totalPages={paginationMeta.totalPages}
+          total={paginationMeta.total}
+          limit={paginationMeta.limit}
+          itemsOnPage={orders.length}
+          onPageChange={setCurrentPage}
+        />
+      )}
     </Container>
   )
 }

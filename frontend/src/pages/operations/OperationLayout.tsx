@@ -52,7 +52,7 @@ export default function OperationLayout() {
     }
   }, [profileData, setUser])
 
-  // Gọi API để lấy số lượng đơn hàng cho từng trạng thái
+  // Gọi API để lấy số lượng đơn hàng để xíu lọc theo từng trạng thái
   const { data: ordersData, isLoading, isError, error } = useAllOrders()
 
   // Gọi API riêng để lấy số đơn hàng COMPLETED
@@ -94,7 +94,7 @@ export default function OperationLayout() {
   const handleLogout = () => {
     navigate('/admin/login')
     const { logout } = useAuthStore.getState()
-    logout() 
+    logout()
     localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN)
     localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN)
     localStorage.removeItem(STORAGE_KEYS.USER_INFO)

@@ -1,14 +1,13 @@
 import { create } from 'zustand'
-// ========== START NEW CODE ==========
 import type { Order } from '@/features/staff/components/OrderTable/OrderTable'
 import { OrderType, OrderStatus } from '@/shared/utils/enums/order.enum'
-// ========== END NEW CODE ==========
+
 
 interface OrderCountStore {
   counts: {
     technical: number // Số đơn Manufacturing
     logistics: number // Số đơn Pre-order
-    packing: number // Số đơn có status packing
+    packing: number // Số đơn đang PACKING
     all: number
     completed: number
   }
@@ -36,10 +35,10 @@ export const useOrderCountStore = create<OrderCountStore>((set) => ({
     completed: 0
   },
 
-  orders: [], // Khởi tạo empty array
-  isLoading: false, // Mặc định không loading
-  isError: false, // Mặc định không có lỗi
-  isLoadingCompleted: false, // Mặc định không loading completed
+  orders: [],
+  isLoading: false,
+  isError: false,
+  isLoadingCompleted: false,
 
   setOrders: (orders) => set({ orders }), // Action để set orders
 
@@ -70,7 +69,7 @@ export const useOrderCountStore = create<OrderCountStore>((set) => ({
         logistics,
         packing,
         all: orders.length,
-        completed: state.counts.completed // ← Giữ nguyên giá trị completed hiện tại
+        completed: state.counts.completed //  Giữ nguyên giá trị completed hiện tại
       }
     }))
   },

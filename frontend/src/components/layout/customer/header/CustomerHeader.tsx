@@ -9,6 +9,7 @@ import { ProfileDropdown as ProjectProfileDropdown } from './ProfileDropdown'
 
 export default function CustomerHeader() {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false)
+  const [searchValue, setSearchValue] = useState('')
   const searchRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
   const location = useLocation()
@@ -31,6 +32,21 @@ export default function CustomerHeader() {
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [isSearchExpanded])
+
+  const handleSearchSubmit = () => {
+    const trimmed = searchValue.trim()
+    if (trimmed) {
+      navigate(`/eyeglasses?search=${encodeURIComponent(trimmed)}`)
+      setIsSearchExpanded(false)
+      setSearchValue('')
+    }
+  }
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearchSubmit()
+    }
+  }
 
   // Helper function to check if link is active
   const isActive = (path: string) => {
@@ -120,6 +136,9 @@ export default function CustomerHeader() {
               placeholder={'Search glasses, frames...'}
               size="sm"
               autoFocus
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
               leftElement={
                 <span className="pointer-events-none flex items-center justify-center">
                   <Search className="text-gray-eyewear" />
@@ -151,6 +170,9 @@ export default function CustomerHeader() {
               <Input
                 placeholder={'Search glasses, frames...'}
                 size="sm"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                onKeyDown={handleSearchKeyDown}
                 leftElement={
                   <span className="pointer-events-none flex items-center justify-center">
                     <Search className="text-gray-eyewear" />

@@ -1,12 +1,13 @@
 import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
 import { useGetProductWithType } from '@/shared/hooks/products/useGetProductWithType'
+import { useSearchProducts } from '@/shared/hooks/products/useSearchProducts'
 import { ProductFilters } from '@/shared/components/ui/product-filters'
 import { FilterTags, type FilterTag } from '@/shared/components/ui/filter-tags'
 import { ProductCard } from '@/shared/components/ui/product-card'
 
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 // Static data for filters
 const categories = [
@@ -32,8 +33,12 @@ const colors = [
 export const CustomerProductPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [page, setPage] = useState(1)
   const limit = 12
+
+  // Read search query from URL
+  const searchQuery = searchParams.get('search') || ''
 
   const productType = useMemo(() => {
     const path = location.pathname
@@ -49,6 +54,13 @@ export const CustomerProductPage = () => {
     setPage(1)
   }
 
+  // Reset page when search query changes
+  const [prevSearch, setPrevSearch] = useState(searchQuery)
+  if (searchQuery !== prevSearch) {
+    setPrevSearch(searchQuery)
+    setPage(1)
+  }
+
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [selectedPriceRanges, setSelectedPriceRanges] = useState<string[]>([])
   const [selectedColors, setSelectedColors] = useState<string[]>([])
@@ -58,11 +70,21 @@ export const CustomerProductPage = () => {
   }>({ min: null, max: null })
   const [priceResetKey, setPriceResetKey] = useState(0)
 
-  // const allProductsData = useGetProductWithPagination(page, limit)
+  // search hook when search is active, otherwise use type-based hook
   const typedProductsData = useGetProductWithType(page, limit, productType || '')
+  const searchProductsData = useSearchProducts(page, limit, searchQuery)
+
+  const isSearching = searchQuery.trim().length > 0
 
   // Select the appropriate data source
-  const { products, loading, error, totalPages, currentPage } = typedProductsData
+  const { products, loading, error, totalPages, currentPage } = isSearching
+    ? searchProductsData
+    : typedProductsData
+
+  const handleClearSearch = () => {
+    setSearchParams({})
+    setPage(1)
+  }
 
   const canPrev = useMemo(() => currentPage > 1, [currentPage])
   const canNext = useMemo(() => currentPage < totalPages, [currentPage, totalPages])
@@ -151,6 +173,22 @@ export const CustomerProductPage = () => {
 
             {/* Product Grid */}
             <div className="flex-1">
+              {/* Search Results Header */}
+              {isSearching && (
+                <div className="mb-6 flex items-center gap-3">
+                  <h2 className="text-lg font-semibold text-mint-1200">
+                    Results for &ldquo;{searchQuery}&rdquo;
+                  </h2>
+                  <button
+                    onClick={handleClearSearch}
+                    className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-mint-300 text-sm text-mint-1200 hover:bg-mint-400 transition-colors"
+                  >
+                    <X className="w-3 h-3" />
+                    Clear
+                  </button>
+                </div>
+              )}
+
               {/* Filter Tags */}
               {filterTags.length > 0 && (
                 <div className="mb-6">

@@ -24,7 +24,20 @@ export const ENDPOINTS = {
       `/products?page=${page}&limit=${limit}&search=${search}`,
     DETAIL: (id: string) => `/products/${id}`,
     VARIANT: (id: string, sku: string) => `/products/${id}/variants/${sku}`,
-    SPECS: '/products/specs'
+    SPECS: '/products/specs',
+    FILTER: (params: Record<string, string | number | string[] | undefined>) => {
+      const query = new URLSearchParams()
+      Object.entries(params).forEach(([key, value]) => {
+        if (value === undefined || value === '' || (Array.isArray(value) && value.length === 0))
+          return
+        if (Array.isArray(value)) {
+          value.forEach((v) => query.append(key, v))
+        } else {
+          query.append(key, String(value))
+        }
+      })
+      return `/products?${query.toString()}`
+    }
   },
 
   // Cart

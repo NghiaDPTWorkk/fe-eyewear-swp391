@@ -55,5 +55,10 @@ export const productService = {
   // get product specs for filters
   getProductSpecs() {
     return httpClient.get<ApiResponse<ProductSpecs>>(ENDPOINTS.PRODUCTS.SPECS)
+  },
+
+  // filter products by specs
+  filterProducts(params: Record<string, string | number | string[] | undefined>) {
+    return httpClient.get<ApiResponse<ProductListData>>(ENDPOINTS.PRODUCTS.FILTER(params))
   }
 }

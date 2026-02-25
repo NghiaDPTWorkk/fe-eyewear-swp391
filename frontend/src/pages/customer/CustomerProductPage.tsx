@@ -1,6 +1,5 @@
 import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
-import { useGetProductWithType } from '@/shared/hooks/products/useGetProductWithType'
-import { useSearchProducts } from '@/shared/hooks/products/useSearchProducts'
+import { useFilteredProducts } from '@/shared/hooks/products/useFilteredProducts'
 import { useProductSpecs } from '@/shared/hooks/products/useProductSpecs'
 import { ProductFilters } from '@/shared/components/ui/product-filters'
 import { FilterTags, type FilterTag } from '@/shared/components/ui/filter-tags'
@@ -89,16 +88,24 @@ export const CustomerProductPage = () => {
     }))
   }, [specs])
 
-  // search hook when search is active, otherwise use type-based hook
-  const typedProductsData = useGetProductWithType(page, limit, productType || '')
-  const searchProductsData = useSearchProducts(page, limit, searchQuery)
+  // Reset page when any filter changes
+  const handleFilterChange = <T,>(setter: React.Dispatch<React.SetStateAction<T>>, value: T) => {
+    setter(value)
+    setPage(1)
+  }
 
-  const isSearching = searchQuery.trim().length > 0
-
-  // Select the appropriate data source
-  const { products, loading, error, totalPages, currentPage } = isSearching
-    ? searchProductsData
-    : typedProductsData
+  // Single unified hook for fetching products with all filters
+  const { products, loading, error, totalPages, currentPage } = useFilteredProducts({
+    page,
+    limit,
+    type: productType,
+    search: searchQuery || undefined,
+    brand: selectedBrands.length > 0 ? selectedBrands : undefined,
+    material: selectedMaterials.length > 0 ? selectedMaterials : undefined,
+    shape: selectedShapes.length > 0 ? selectedShapes : undefined,
+    style: selectedStyles.length > 0 ? selectedStyles : undefined,
+    gender: selectedCategories.length > 0 ? selectedCategories : undefined
+  })
 
   const handleClearSearch = () => {
     setSearchParams({})
@@ -174,25 +181,43 @@ export const CustomerProductPage = () => {
   const handleRemoveTag = (tagId: string) => {
     if (tagId.startsWith('cat-')) {
       const catId = tagId.replace('cat-', '')
-      setSelectedCategories((prev) => prev.filter((id) => id !== catId))
+      handleFilterChange(
+        setSelectedCategories,
+        selectedCategories.filter((id) => id !== catId)
+      )
     } else if (tagId.startsWith('brand-')) {
       const brand = tagId.replace('brand-', '')
-      setSelectedBrands((prev) => prev.filter((b) => b !== brand))
+      handleFilterChange(
+        setSelectedBrands,
+        selectedBrands.filter((b) => b !== brand)
+      )
     } else if (tagId.startsWith('material-')) {
       const material = tagId.replace('material-', '')
-      setSelectedMaterials((prev) => prev.filter((m) => m !== material))
+      handleFilterChange(
+        setSelectedMaterials,
+        selectedMaterials.filter((m) => m !== material)
+      )
     } else if (tagId.startsWith('shape-')) {
       const shape = tagId.replace('shape-', '')
-      setSelectedShapes((prev) => prev.filter((s) => s !== shape))
+      handleFilterChange(
+        setSelectedShapes,
+        selectedShapes.filter((s) => s !== shape)
+      )
     } else if (tagId.startsWith('style-')) {
       const style = tagId.replace('style-', '')
-      setSelectedStyles((prev) => prev.filter((s) => s !== style))
+      handleFilterChange(
+        setSelectedStyles,
+        selectedStyles.filter((s) => s !== style)
+      )
     } else if (tagId.startsWith('color-')) {
       const colorId = tagId.replace('color-', '')
-      setSelectedColors((prev) => prev.filter((id) => id !== colorId))
+      handleFilterChange(
+        setSelectedColors,
+        selectedColors.filter((id) => id !== colorId)
+      )
     } else if (tagId === 'price-custom') {
       setCustomPriceRange({ min: null, max: null })
-      setPriceResetKey((prev) => prev + 1) // Trigger component re-mount
+      setPriceResetKey((prev) => prev + 1)
     }
   }
 
@@ -205,7 +230,8 @@ export const CustomerProductPage = () => {
     setSelectedPriceRanges([])
     setSelectedColors([])
     setCustomPriceRange({ min: null, max: null })
-    setPriceResetKey((prev) => prev + 1) // Trigger component re-mount
+    setPriceResetKey((prev) => prev + 1)
+    setPage(1)
   }
 
   const handleCustomPriceApply = (min: number | null, max: number | null) => {
@@ -223,19 +249,19 @@ export const CustomerProductPage = () => {
               <ProductFilters
                 categories={categories}
                 selectedCategories={selectedCategories}
-                onCategoryChange={setSelectedCategories}
+                onCategoryChange={(v) => handleFilterChange(setSelectedCategories, v)}
                 brands={specs?.brands || []}
                 selectedBrands={selectedBrands}
-                onBrandChange={setSelectedBrands}
+                onBrandChange={(v) => handleFilterChange(setSelectedBrands, v)}
                 materials={specs?.materials || []}
                 selectedMaterials={selectedMaterials}
-                onMaterialChange={setSelectedMaterials}
+                onMaterialChange={(v) => handleFilterChange(setSelectedMaterials, v)}
                 shapes={specs?.shapes || []}
                 selectedShapes={selectedShapes}
-                onShapeChange={setSelectedShapes}
+                onShapeChange={(v) => handleFilterChange(setSelectedShapes, v)}
                 styles={specs?.styles || []}
                 selectedStyles={selectedStyles}
-                onStyleChange={setSelectedStyles}
+                onStyleChange={(v) => handleFilterChange(setSelectedStyles, v)}
                 priceRanges={priceRanges}
                 selectedPriceRanges={selectedPriceRanges}
                 onPriceRangeChange={setSelectedPriceRanges}
@@ -250,7 +276,7 @@ export const CustomerProductPage = () => {
             {/* Product Grid */}
             <div className="flex-1">
               {/* Search Results Header */}
-              {isSearching && (
+              {searchQuery && (
                 <div className="mb-6 flex items-center gap-3">
                   <h2 className="text-lg font-semibold text-mint-1200">
                     Results for &ldquo;{searchQuery}&rdquo;

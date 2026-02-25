@@ -9,7 +9,6 @@ import {
   useUpdateStatusToMaking
 } from '@/features/staff/hooks/orders/useOrders'
 import toast from 'react-hot-toast'
-import { useProductDetails } from '@/features/staff/hooks/products/useProductDetails'
 import { useQueryClient, useQuery } from '@tanstack/react-query'
 import { productsService } from '@/features/staff/services/products.service'
 import type { OrderResponse, OrderProductItem } from '@/shared/types'
@@ -198,15 +197,8 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
     }
   }
 
-  // Fetch product details from product id ang sku
-  const productIdsToFetch =
-    orderType === 'NORMAL'
-      ? [...framesList.map((f) => f.product_id), ...lensList.map((l) => l.product_id)]
-      : frameObject
-        ? [frameObject.product_id]
-        : []
-
-  // Gọi API lấy variant detail cho NORMAL order hoặc MANUFACTURING order
+  // Gọi API lấy variant detail — data hiển thị frame/lens lấy từ variantDetail
+  // Endpoint: GET /products/:id/variants/:sku
   let frameIdApi: string | undefined
   let frameSkuApi: string | undefined
 
@@ -223,18 +215,17 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
     frameSkuApi = frameObject.sku
   }
 
-  const { data: variantResponse } = useQuery({
+  // Gọi API: GET /products/:id/variants/:sku
+  // Data frame/lens lấy từ response.data.variantDetail
+  const { data: variantResponse, isLoading: variantLoading } = useQuery({
     queryKey: ['productVariant', frameIdApi, frameSkuApi],
     queryFn: () => productsService.getProductVariant(frameIdApi!, frameSkuApi!),
     enabled: !!frameIdApi && !!frameSkuApi
   })
 
-  const productQueries = useProductDetails(productIdsToFetch)
-  const productsLoading = productQueries.some((q: any) => q.isLoading)
-  const productsError = productQueries.some((q: any) => q.isError)
 
-  // Loading state cho product details
-  if (productsLoading) {
+  // Loading state cho variant
+  if (variantLoading) {
     return (
       <Container>
         <div className="flex flex-col items-center justify-center py-12">
@@ -245,28 +236,11 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
     )
   }
 
-  // Error state cho product details
-  if (productsError) {
-    return (
-      <Container>
-        <div className="flex flex-col items-center justify-center py-12">
-          <p className="text-red-600 font-semibold">Unable to load product details</p>
-          <Button onClick={() => navigate(-1)} className="mt-4">
-            Go Back
-          </Button>
-        </div>
-      </Container>
-    )
-  }
-
   // Transform data theo order type
   let lensComponent = null
   let frameComponent = null
 
-  // NORMAL Order - Lens
-
-  // NORMAL Order - Lens: chỉ render 1 component duy nhất (tất cả item đều cùng SKU)
-  // quantity là tổng số lượng của tất cả item trong lensList
+  // NORMAL Order - Lens: chỉ render 1 component, quantity = tổng số lượng
   if (orderType === 'NORMAL' && lensList.length > 0) {
     const totalLensQty = lensList.reduce((sum, item) => sum + (item.quantity || 1), 0)
     const lensOptionsVariantDetailList = variantResponse?.data?.variantDetail?.options || []
@@ -289,33 +263,27 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
     )
   }
 
-  // NORMAL Order - Frame - SunGlass : chỉ render 1 component duy nhất (tất cả item đều cùng SKU)
-  // quantity là tổng số lượng của tất cả item trong framesList
+  // NORMAL Order - Frame/SunGlass: chỉ render 1 component, quantity = tổng số lượng
   if (orderType === 'NORMAL' && framesList.length > 0) {
     const totalFrameQty = framesList.reduce((sum, item) => sum + (item.quantity || 1), 0)
-    const frameIndex = productIdsToFetch.indexOf(framesList[0].product_id)
-    const frameProductDetail = (productQueries[frameIndex]?.data as any)?.data
+    const frameOptionsVariantDetailList = variantResponse?.data?.variantDetail?.options || []
+    const frameImg = variantResponse?.data?.variantDetail?.imgs?.[0]
 
-    if (frameProductDetail) {
-      const frameOptionsVariantDetailList = variantResponse?.data?.variantDetail?.options || []
-      const frameImg = variantResponse?.data?.variantDetail?.imgs?.[0]
-
-      const frameData = {
-        data:
-          frameOptionsVariantDetailList?.map((attr: any) => ({
-            key: attr.attributeName,
-            value: attr.label
-          })) || [],
-        imageSrc: frameImg,
-        quantity: totalFrameQty
-      }
-
-      frameComponent = (
-        <div className="space-y-8">
-          <FrameSpecifications {...frameData} />
-        </div>
-      )
+    const frameData = {
+      data:
+        frameOptionsVariantDetailList?.map((attr: any) => ({
+          key: attr.attributeName,
+          value: attr.label
+        })) || [],
+      imageSrc: frameImg,
+      quantity: totalFrameQty
     }
+
+    frameComponent = (
+      <div className="space-y-8">
+        <FrameSpecifications {...frameData} />
+      </div>
+    )
   }
 
   // MANUFACTURING Order - Lens
@@ -352,25 +320,18 @@ function OrderDetailContent({ order, orderCode, navigate }: OrderDetailContentPr
 
   // MANUFACTURING Order - Frame
   if (orderType === 'MANUFACTURING' && frameObject) {
-    const frameProductDetail = (productQueries[0]?.data as any)?.data
-
-    if (frameProductDetail) {
-      // const frameVariant = frameProductDetail?.variants?.find((v: any) => v.sku === frameObject.sku)
-
-      // Map dynamic options (Color, Size, etc.)
-      const frameOptionsVariantDetailList = variantResponse?.data?.variantDetail?.options || []
-      const frameImg = variantResponse?.data?.variantDetail?.imgs?.[0]
-      const frameData = {
-        data:
-          frameOptionsVariantDetailList?.map((attr: any) => ({
-            key: attr.attributeName,
-            value: attr.label
-          })) || [],
-        imageSrc: frameImg
-      }
-
-      frameComponent = <FrameSpecifications {...frameData} />
+    const frameOptionsVariantDetailList = variantResponse?.data?.variantDetail?.options || []
+    const frameImg = variantResponse?.data?.variantDetail?.imgs?.[0]
+    const frameData = {
+      data:
+        frameOptionsVariantDetailList?.map((attr: any) => ({
+          key: attr.attributeName,
+          value: attr.label
+        })) || [],
+      imageSrc: frameImg
     }
+
+    frameComponent = <FrameSpecifications {...frameData} />
   }
 
   return (

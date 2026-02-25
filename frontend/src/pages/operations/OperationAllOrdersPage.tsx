@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Container } from '@/components'
 import { OrderTable, FilterButtonList } from '@/components/staff'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
@@ -7,7 +7,16 @@ import type { Order } from '@/features/staff/components/OrderTable/OrderTable'
 import { OrderType } from '@/shared/utils/enums/order.enum'
 
 export default function OperationAllOrdersPage() {
-  const [filter, setFilter] = useState('all')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const filter = searchParams.get('filter') ?? 'all'
+
+  const setFilter = (value: string) => {
+    if (value === 'all') {
+      setSearchParams({})
+    } else {
+      setSearchParams({ filter: value })
+    }
+  }
 
   // Lấy orders, isLoading, isError từ Zustand store (đã được fetch ở OperationLayout)
   const { orders, isLoading, isError } = useOrderCountStore()
@@ -46,7 +55,7 @@ export default function OperationAllOrdersPage() {
         orders={orders}
         isLoading={isLoading}
         isError={isError}
-        hiddenColumns={['WAITING FOR']}
+        hiddenColumns={['WAITING FOR','CUSTOMER']}
         filterType={filter === 'all' ? undefined : filter}
         role="operation"
       />

@@ -28,6 +28,7 @@ export default function OperationPreOrdersPage() {
         orders={orders}
         isLoading={isLoading}
         isError={isError}
+        hiddenColumns={['CUSTOMER']}
         filterType={OrderType.PRE_ORDER}
         role="operation"
       />

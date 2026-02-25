@@ -56,7 +56,10 @@ export function StaffMainLayout({
         />
 
         <main className={cn('flex-1 overflow-y-auto overflow-x-hidden relative', mainClassName)}>
-          <div className={cn('w-full mx-auto min-h-full', contentMaxWidth)}>
+          <div
+            key={location.pathname}
+            className={cn('w-full mx-auto min-h-full animate-fade-in-up', contentMaxWidth)}
+          >
             <Outlet />
           </div>
         </main>

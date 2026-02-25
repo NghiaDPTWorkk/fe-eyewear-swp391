@@ -4,7 +4,7 @@ import type { ProductCreateFormState } from '../types/product-create.types'
 const inputClassName =
   'w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-2xl text-[14px] focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all'
 
-export function SunglassSpecFields(props: {
+export function FrameSpecFields(props: {
   specFrame: ProductCreateFormState['specFrame']
   onChange: (specFrame: ProductCreateFormState['specFrame']) => void
 }) {

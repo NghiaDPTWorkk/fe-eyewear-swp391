@@ -19,7 +19,7 @@ export function ProductBaseFields(props: {
           onChange={(e) => onChange({ type: e.target.value as ProductCreateFormType })}
           className={inputClassName}
         >
-          <option value="sunglass">sunglass</option>
+          <option value="frame">frame</option>
           <option value="lens">lens</option>
         </select>
       </div>
@@ -42,28 +42,6 @@ export function ProductBaseFields(props: {
           onChange={(e) => onChange({ nameBase: e.target.value })}
           type="text"
           placeholder="Kính râm ABC Classic"
-          className={inputClassName}
-        />
-      </div>
-
-      <div className="space-y-2">
-        <label className="text-sm font-bold text-gray-700 ml-1">slugBase (optional)</label>
-        <input
-          value={state.slugBase}
-          onChange={(e) => onChange({ slugBase: e.target.value })}
-          type="text"
-          placeholder="kinh-ram-abc-classic"
-          className={inputClassName}
-        />
-      </div>
-
-      <div className="space-y-2">
-        <label className="text-sm font-bold text-gray-700 ml-1">skuBase (optional)</label>
-        <input
-          value={state.skuBase}
-          onChange={(e) => onChange({ skuBase: e.target.value })}
-          type="text"
-          placeholder="SUN-ABC-BASE"
           className={inputClassName}
         />
       </div>

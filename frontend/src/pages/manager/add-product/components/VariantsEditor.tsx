@@ -128,18 +128,6 @@ export function VariantsEditor(props: {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input
-                  value={v.sku}
-                  onChange={(e) =>
-                    onChange(
-                      variants.map((vv, i) =>
-                        i === variantIdx ? { ...vv, sku: e.target.value } : vv
-                      )
-                    )
-                  }
-                  placeholder="sku (optional)"
-                  className={inputClassName}
-                />
-                <input
                   value={v.name}
                   onChange={(e) =>
                     onChange(
@@ -149,19 +137,7 @@ export function VariantsEditor(props: {
                     )
                   }
                   placeholder="name (optional)"
-                  className={inputClassName}
-                />
-                <input
-                  value={v.slug}
-                  onChange={(e) =>
-                    onChange(
-                      variants.map((vv, i) =>
-                        i === variantIdx ? { ...vv, slug: e.target.value } : vv
-                      )
-                    )
-                  }
-                  placeholder="slug (optional)"
-                  className={inputClassName}
+                  className={inputClassName + ' md:col-span-2'}
                 />
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:col-span-2">

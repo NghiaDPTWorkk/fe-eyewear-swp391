@@ -38,5 +38,10 @@ export const PATHS = {
     PACKING_PROCESS: (orderId: string) => `/operationstaff/orders/${orderId}/process`,
     PACKING_SUCCESS: (orderId: string) => `/operationstaff/orders/${orderId}/success`
   },
+  MANAGER: {
+    DASHBOARD: '/manager/dashboard',
+    PRODUCTS: '/manager/products',
+    ADD_PRODUCT: '/manager/products/add'
+  },
   NOT_FOUND: '*'
 }

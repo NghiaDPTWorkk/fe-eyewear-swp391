@@ -18,6 +18,12 @@ const LoginPage = lazy(() =>
   import('@/pages/auth/customer/CustomerLoginPage').then((m) => ({ default: m.CustomerLoginPage }))
 )
 
+const GoogleCallbackPage = lazy(() =>
+  import('@/pages/auth/customer/GoogleCallbackPage').then((m) => ({
+    default: m.GoogleCallbackPage
+  }))
+)
+
 const LoginStaffPage = lazy(() =>
   import('@/pages/auth/staff/StaffLoginPage').then((m) => ({ default: m.StaffLoginPage }))
 )
@@ -336,6 +342,14 @@ export const router = createBrowserRouter([
     element: (
       <LazyPage>
         <LoginStaffPage />
+      </LazyPage>
+    )
+  },
+  {
+    path: '/google/oauth/callback',
+    element: (
+      <LazyPage>
+        <GoogleCallbackPage />
       </LazyPage>
     )
   },

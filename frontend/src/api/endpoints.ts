@@ -12,7 +12,8 @@ export const ENDPOINTS = {
     GET_PROFILE: '/admin/auth/profile', // Get admin/staff profile
     ADDRESS_LIST: '/customer/profile/address',
     ADDRESS_ADD: '/customer/profile/address',
-    CHANGE_DEFAULT: (id: string) => `/customer/profile/address/change-default/${id}`
+    CHANGE_DEFAULT: (id: string) => `/customer/profile/address/change-default/${id}`,
+    GOOGLE: '/auth/google'
   },
 
   // Products

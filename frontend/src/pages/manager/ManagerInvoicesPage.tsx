@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Container, MetricCard, Button } from '@/components'
+import { Container, Button } from '@/components'
 import { useAdminInvoices } from '@/features/manager/hooks/useAdminInvoices'
 import { useComplete } from '@/features/manager/hooks/useComplete'
 import { useDelivering } from '@/features/manager/hooks/useDelivering'
@@ -24,6 +24,66 @@ import {
   IoSearchOutline
 } from 'react-icons/io5'
 
+const ManagerMetricCard: React.FC<{
+  label: string
+  value: number
+  icon: React.ReactNode
+  colorScheme: string
+  trend: { label: string; value: number; isPositive: boolean }
+  isActive: boolean
+  onClick: () => void
+}> = ({ label, value, icon, colorScheme, trend, isActive, onClick }) => {
+  const getIconBg = () => {
+    switch (colorScheme) {
+      case 'mint':
+        return 'bg-mint-50 text-mint-700'
+      case 'secondary':
+        return 'bg-purple-50 text-purple-600'
+      case 'danger':
+        return 'bg-red-50 text-red-600'
+      case 'info':
+        return 'bg-sky-50 text-sky-600'
+      default:
+        return 'bg-gray-50 text-gray-600'
+    }
+  }
+
+  return (
+    <div
+      onClick={onClick}
+      className={`bg-white p-6 rounded-3xl border-none shadow-sm ring-1 ring-neutral-100/50 transition-all cursor-pointer active:scale-95 ${
+        isActive
+          ? 'ring-2 ring-mint-500 ring-offset-4 shadow-2xl shadow-mint-100/50 scale-[1.02]'
+          : 'hover:shadow-md'
+      }`}
+    >
+      <div className="flex justify-between items-start">
+        <div>
+          <p className="text-[12px] font-bold text-slate-400 tracking-wider whitespace-nowrap uppercase">
+            {label}
+          </p>
+          <h3 className="text-2xl font-bold mt-1.5 text-slate-900 tracking-tight">{value}</h3>
+        </div>
+        {icon && (
+          <div
+            className={`p-3.5 rounded-2xl shadow-sm transition-transform hover:scale-105 ${getIconBg()}`}
+          >
+            {icon}
+          </div>
+        )}
+      </div>
+      <div className="mt-4 flex items-center gap-2 text-sm">
+        <span
+          className={`font-bold flex items-center ${trend.isPositive ? 'text-emerald-600' : 'text-red-600'}`}
+        >
+          {trend.isPositive ? '↗' : '↘'} {Math.abs(trend.value)}%
+        </span>
+        <span className="text-gray-500">{trend.label}</span>
+      </div>
+    </div>
+  )
+}
+
 export default function ManagerInvoicesPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const statusFilter = searchParams.get('status') ?? 'All'
@@ -41,7 +101,7 @@ export default function ManagerInvoicesPage() {
   const apiStatus = statusFilter === 'All' ? undefined : statusFilter
   const { data, isLoading, isError, error, refetch } = useAdminInvoices(page, limit, apiStatus)
 
-  const invoiceList = data?.data.invoiceList ?? []
+  const invoiceList = useMemo(() => data?.data.invoiceList ?? [], [data])
   const pagination = data?.data.pagination
 
   const selectedInvoice = useMemo(
@@ -53,16 +113,21 @@ export default function ManagerInvoicesPage() {
     let list = invoiceList
 
     if (orderTypeFilter !== 'All') {
-      list = list.filter((inv) => inv.orders?.some((o) => o.type.includes(orderTypeFilter)))
+      list = list.filter((inv) =>
+        inv.orders?.some((o) => {
+          const types = Array.isArray(o.type) ? o.type : [o.type]
+          return types.some((t: string) => String(t).includes(orderTypeFilter))
+        })
+      )
     }
 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase()
       list = list.filter(
         (inv) =>
-          inv.fullName.toLowerCase().includes(q) ||
-          inv.invoiceCode.toLowerCase().includes(q) ||
-          inv.phone.includes(q)
+          inv.fullName?.toLowerCase().includes(q) ||
+          inv.invoiceCode?.toLowerCase().includes(q) ||
+          inv.phone?.includes(q)
       )
     }
 
@@ -70,7 +135,7 @@ export default function ManagerInvoicesPage() {
   }, [invoiceList, orderTypeFilter, searchQuery])
 
   const metrics = useMemo(() => {
-    const counts = {
+    const counts: Record<string, number> = {
       [OrderType.NORMAL]: 0,
       [OrderType.MANUFACTURING]: 0,
       [OrderType.RETURN]: 0,
@@ -78,15 +143,25 @@ export default function ManagerInvoicesPage() {
     }
 
     invoiceList.forEach((inv) => {
-      inv.orders?.forEach((o) => {
-        if (o.type.includes(OrderType.NORMAL)) counts[OrderType.NORMAL]++
-        if (o.type.includes(OrderType.MANUFACTURING)) counts[OrderType.MANUFACTURING]++
-        if (o.type.includes(OrderType.RETURN)) counts[OrderType.RETURN]++
-        if (o.type.includes(OrderType.PRE_ORDER)) counts[OrderType.PRE_ORDER]++
-      })
+      if (inv.orders && inv.orders.length > 0) {
+        inv.orders.forEach((o) => {
+          const types = Array.isArray(o.type) ? o.type : [o.type]
+          if (types.some((t: string) => String(t).includes(OrderType.NORMAL)))
+            counts[OrderType.NORMAL]++
+          if (types.some((t: string) => String(t).includes(OrderType.MANUFACTURING)))
+            counts[OrderType.MANUFACTURING]++
+          if (types.some((t: string) => String(t).includes(OrderType.RETURN)))
+            counts[OrderType.RETURN]++
+          if (types.some((t: string) => String(t).includes(OrderType.PRE_ORDER)))
+            counts[OrderType.PRE_ORDER]++
+        })
+      } else {
+        counts[OrderType.NORMAL]++
+      }
     })
 
     const totalOrders = Object.values(counts).reduce((a, b) => a + b, 0) || 1
+    const pct = (key: string) => Math.round((counts[key] / totalOrders) * 100)
 
     return [
       {
@@ -95,11 +170,7 @@ export default function ManagerInvoicesPage() {
         value: counts[OrderType.NORMAL],
         icon: <IoReceiptOutline className="text-2xl" />,
         colorScheme: 'mint' as const,
-        trend: {
-          label: 'of total',
-          value: Math.round((counts[OrderType.NORMAL] / totalOrders) * 100),
-          isPositive: true
-        }
+        trend: { label: 'of total', value: pct(OrderType.NORMAL), isPositive: true }
       },
       {
         type: OrderType.MANUFACTURING,
@@ -107,11 +178,7 @@ export default function ManagerInvoicesPage() {
         value: counts[OrderType.MANUFACTURING],
         icon: <IoFlashOutline className="text-2xl" />,
         colorScheme: 'secondary' as const,
-        trend: {
-          label: 'of total',
-          value: Math.round((counts[OrderType.MANUFACTURING] / totalOrders) * 100),
-          isPositive: true
-        }
+        trend: { label: 'of total', value: pct(OrderType.MANUFACTURING), isPositive: true }
       },
       {
         type: OrderType.RETURN,
@@ -119,11 +186,7 @@ export default function ManagerInvoicesPage() {
         value: counts[OrderType.RETURN],
         icon: <IoRepeatOutline className="text-2xl" />,
         colorScheme: 'danger' as const,
-        trend: {
-          label: 'of total',
-          value: Math.round((counts[OrderType.RETURN] / totalOrders) * 100),
-          isPositive: false
-        }
+        trend: { label: 'of total', value: pct(OrderType.RETURN), isPositive: false }
       },
       {
         type: OrderType.PRE_ORDER,
@@ -131,11 +194,7 @@ export default function ManagerInvoicesPage() {
         value: counts[OrderType.PRE_ORDER],
         icon: <IoCubeOutline className="text-2xl" />,
         colorScheme: 'info' as const,
-        trend: {
-          label: 'of total',
-          value: Math.round((counts[OrderType.PRE_ORDER] / totalOrders) * 100),
-          isPositive: true
-        }
+        trend: { label: 'of total', value: pct(OrderType.PRE_ORDER), isPositive: true }
       }
     ]
   }, [invoiceList])
@@ -180,11 +239,11 @@ export default function ManagerInvoicesPage() {
   ]
 
   const errorMessage = isError
-    ? (error as any)?.message || 'Không lấy được danh sách invoice'
+    ? (error as { message?: string })?.message || 'Không lấy được danh sách invoice'
     : null
 
   return (
-    <Container className="pt-2 pb-8 px-2 max-w-none">
+    <Container className="max-w-none space-y-8">
       <PageHeader
         title="Order Management"
         subtitle="Manage customer invoices and manufacturing tasks."
@@ -192,27 +251,23 @@ export default function ManagerInvoicesPage() {
       />
 
       {/* Metrics Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 px-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {metrics.map((m, i) => (
-          <div
+          <ManagerMetricCard
             key={i}
-            className="cursor-pointer transition-transform active:scale-95"
+            label={m.label}
+            value={m.value}
+            icon={m.icon}
+            colorScheme={m.colorScheme}
+            trend={m.trend}
+            isActive={orderTypeFilter === m.type}
             onClick={() => handleOrderTypeChange(m.type)}
-          >
-            <MetricCard
-              label={m.label}
-              value={m.value}
-              icon={m.icon}
-              colorScheme={m.colorScheme}
-              trend={m.trend}
-              className={orderTypeFilter === m.type ? 'ring-2 ring-mint-500 ring-offset-2' : ''}
-            />
-          </div>
+          />
         ))}
       </div>
 
       {/* Status Filter Tabs */}
-      <div className="px-4 mb-6 overflow-x-auto">
+      <div className="overflow-x-auto">
         <div className="flex items-center gap-2 p-1.5 bg-neutral-100/50 rounded-2xl w-fit border border-neutral-100">
           {statusTabs.map((tab) => (
             <button
@@ -231,7 +286,7 @@ export default function ManagerInvoicesPage() {
       </div>
 
       {/* Table Section */}
-      <div className="bg-white rounded-3xl border border-neutral-100 shadow-sm overflow-hidden mx-4">
+      <div className="bg-white rounded-3xl border border-neutral-100 shadow-sm overflow-hidden">
         <div className="p-6 border-b border-neutral-50 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="flex-1 max-w-md relative">
             <IoSearchOutline

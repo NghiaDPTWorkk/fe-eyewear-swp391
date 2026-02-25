@@ -8,50 +8,44 @@ import {
   IoEyeOutline,
   IoSearchOutline,
   IoRefreshOutline,
-  IoChevronDownOutline,
-  IoEllipsisHorizontal
+  IoChevronDownOutline
 } from 'react-icons/io5'
 
-// Custom Metric Card matching the image's style but with Manager theme
-const ReportMetricCard: React.FC<{
+const ManagerReportMetricCard: React.FC<{
   label: string
   value: string
   trend: { value: string; isPositive: boolean }
   icon: React.ReactNode
   subValue: string
-}> = ({ label, value, trend, icon, subValue }) => (
-  <div className="bg-white p-6 rounded-3xl border border-neutral-100 shadow-sm transition-all hover:shadow-md">
-    <div className="flex justify-between items-start mb-4">
-      <div className="space-y-1">
-        <p className="text-[10px] font-semibold text-neutral-400 uppercase tracking-widest leading-none">
+  iconBg?: string
+}> = ({ label, value, trend, icon, subValue, iconBg = 'bg-mint-50 text-mint-700' }) => (
+  <div className="bg-white p-6 rounded-3xl border-none shadow-sm ring-1 ring-neutral-100/50 transition-all hover:shadow-md group">
+    <div className="flex justify-between items-start">
+      <div>
+        <p className="text-[12px] font-bold text-slate-400 tracking-wider whitespace-nowrap uppercase">
           {label}
         </p>
-        <div className="flex items-center gap-2 mt-1">
-          <h3 className="text-2xl font-bold text-gray-900 font-primary">{value}</h3>
-          <span
-            className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold ${
-              trend.isPositive ? 'bg-mint-50 text-mint-600' : 'bg-red-50 text-red-600'
-            }`}
-          >
-            {trend.isPositive ? '↑' : '↓'} {trend.value}
-          </span>
-        </div>
+        <h3 className="text-2xl font-bold mt-1.5 text-slate-900 tracking-tight">{value}</h3>
       </div>
-      <div className="w-10 h-10 rounded-2xl bg-neutral-50 flex items-center justify-center text-neutral-400 border border-neutral-100">
+      <div
+        className={`p-3.5 rounded-2xl shadow-sm transition-transform group-hover:scale-105 ${iconBg}`}
+      >
         {icon}
       </div>
     </div>
-    <div className="flex items-center justify-between">
-      <p className="text-xs text-neutral-400 font-medium font-primary">
-        <span className="font-semibold text-neutral-500">
+    <div className="mt-4 flex items-center gap-2 text-sm">
+      <span
+        className={`font-bold flex items-center ${trend.isPositive ? 'text-emerald-600' : 'text-red-600'}`}
+      >
+        {trend.isPositive ? '↗' : '↘'} {trend.value}
+      </span>
+      <span className="text-gray-500">
+        <span className={trend.isPositive ? 'text-emerald-600' : 'text-red-600'}>
           {trend.isPositive ? '+' : '-'}
           {subValue}
         </span>{' '}
         from last month
-      </p>
-      <button className="text-neutral-300 hover:text-mint-500 transition-colors">
-        <IoEllipsisHorizontal size={14} />
-      </button>
+      </span>
     </div>
   </div>
 )
@@ -68,57 +62,58 @@ export default function ManagerReportsPage() {
   ]
 
   return (
-    <Container className="pt-2 pb-8 px-2 max-w-none">
+    <Container className="max-w-none space-y-8">
       <PageHeader
         title="Sales Report"
-        subtitle="Detailed analysis of your store's sales performance."
+        subtitle="Detailed analysis of your store's sales performance and metrics."
         breadcrumbs={[{ label: 'Dashboard', path: '/manager/dashboard' }, { label: 'Reports' }]}
       />
 
-      {/* Top Metrics Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 px-4">
-        <ReportMetricCard
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <ManagerReportMetricCard
           label="New Net Income"
           value="$53,765"
           trend={{ value: '10.5%', isPositive: true }}
           icon={<IoTrendingUpOutline size={20} />}
           subValue="$2,158"
+          iconBg="bg-mint-50 text-mint-700"
         />
-        <ReportMetricCard
+        <ManagerReportMetricCard
           label="Average Sales"
           value="$12,680"
           trend={{ value: '3.4%', isPositive: true }}
           icon={<IoBarChartOutline size={20} />}
           subValue="$1,042"
+          iconBg="bg-purple-50 text-purple-600"
         />
-        <ReportMetricCard
+        <ManagerReportMetricCard
           label="Total Order"
           value="11,294"
           trend={{ value: '0.5%', isPositive: false }}
           icon={<IoBagHandleOutline size={20} />}
           subValue="1,450"
+          iconBg="bg-orange-50 text-orange-600"
         />
-        <ReportMetricCard
+        <ManagerReportMetricCard
           label="Impression"
           value="456K"
           trend={{ value: '15.2%', isPositive: false }}
           icon={<IoEyeOutline size={20} />}
           subValue="89.4K"
+          iconBg="bg-sky-50 text-sky-600"
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8 px-4">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Overall Sales Chart */}
-        <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl border border-neutral-100 shadow-sm relative overflow-hidden">
+        <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl border-none shadow-sm ring-1 ring-neutral-100/50 relative overflow-hidden">
           <div className="flex flex-col sm:flex-row justify-between items-start gap-6 mb-10">
             <div>
-              <p className="text-[10px] font-semibold text-neutral-400 uppercase tracking-widest mb-1 leading-none">
+              <p className="text-[12px] font-bold text-slate-400 tracking-wider uppercase mb-1 leading-none">
                 Overall Sales
               </p>
               <div className="flex items-center gap-2 mt-1">
-                <h3 className="text-2xl md:text-3xl font-bold text-gray-900 font-primary leading-tight">
-                  $83,125
-                </h3>
+                <h3 className="text-2xl font-bold text-slate-900 tracking-tight">$83,125</h3>
                 <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-mint-50 text-mint-600">
                   ↑ 7.7%
                 </span>
@@ -184,7 +179,7 @@ export default function ManagerReportsPage() {
               />
               <circle cx="400" cy="70" r="6" fill="#4ad7b0" stroke="white" strokeWidth="2" />
             </svg>
-            <div className="flex justify-between mt-4 text-[10px] font-bold text-neutral-400 uppercase tracking-widest pl-2 font-primary opacity-60">
+            <div className="flex justify-between mt-4 text-[11px] font-medium text-slate-400 tracking-wider pl-2 opacity-60">
               <span>Aug 01, 2024</span>
               <span>Aug 31, 2024</span>
             </div>
@@ -192,20 +187,20 @@ export default function ManagerReportsPage() {
         </div>
 
         {/* Conversion Rate */}
-        <div className="lg:col-span-4 bg-white p-8 rounded-3xl border border-neutral-100 shadow-sm">
-          <div className="flex justify-between items-center mb-10">
-            <h3 className="text-[10px] font-semibold text-neutral-400 uppercase tracking-widest leading-none">
+        <div className="lg:col-span-4 bg-white p-8 rounded-3xl border-none shadow-sm ring-1 ring-neutral-100/50">
+          <div className="flex justify-between items-center mb-8">
+            <p className="text-[12px] font-bold text-slate-400 tracking-wider uppercase leading-none">
               Conversion Rate
-            </h3>
-            <div className="w-8 h-8 rounded-xl bg-neutral-50 flex items-center justify-center border border-neutral-100">
-              <IoBarChartOutline className="text-neutral-400" />
+            </p>
+            <div className="p-3 rounded-2xl bg-emerald-50 text-emerald-600 shadow-sm">
+              <IoBarChartOutline size={18} />
             </div>
           </div>
 
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-2">
-              <h4 className="text-3xl font-bold text-gray-900 font-primary leading-tight">4.55%</h4>
-              <span className="text-[10px] font-semibold text-mint-600 bg-mint-50 px-1.5 py-0.5 rounded-full">
+              <h4 className="text-2xl font-bold text-slate-900 tracking-tight">4.55%</h4>
+              <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">
                 ↑ 0.5%
               </span>
             </div>
@@ -219,9 +214,9 @@ export default function ManagerReportsPage() {
               { label: 'Completed purchases', percent: '2.75%', value: '1,200' }
             ].map((item, idx) => (
               <div key={idx} className="space-y-2">
-                <div className="flex justify-between text-xs font-semibold text-gray-700 font-primary">
+                <div className="flex justify-between text-xs font-medium text-slate-600">
                   <span>{item.label}</span>
-                  <span className="font-bold">{item.value}</span>
+                  <span className="font-semibold text-slate-800">{item.value}</span>
                 </div>
                 <div className="w-full h-1.5 bg-neutral-100 rounded-full overflow-hidden">
                   <div
@@ -229,7 +224,7 @@ export default function ManagerReportsPage() {
                     style={{ width: item.percent }}
                   />
                 </div>
-                <span className="text-[10px] font-semibold text-neutral-400 uppercase tracking-tight">
+                <span className="text-[10px] font-semibold text-neutral-400 tracking-tight">
                   {item.percent}
                 </span>
               </div>
@@ -238,21 +233,19 @@ export default function ManagerReportsPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 px-4">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Upgrade Content */}
-        <div className="lg:col-span-3 bg-white p-6 sm:p-8 rounded-3xl border border-neutral-100 shadow-sm flex flex-col justify-between min-w-0 overflow-hidden">
+        <div className="lg:col-span-3 bg-white p-6 sm:p-8 rounded-3xl border-none shadow-sm ring-1 ring-neutral-100/50 flex flex-col justify-between min-w-0 overflow-hidden">
           <div className="mb-6">
             <div className="flex justify-between items-center mb-6 gap-2">
-              <span className="text-[10px] font-semibold text-neutral-400 uppercase tracking-widest whitespace-nowrap">
+              <p className="text-[12px] font-bold text-slate-400 tracking-wider uppercase whitespace-nowrap">
                 Upgrade
-              </span>
-              <button className="px-4 py-1.5 bg-slate-800 text-white rounded-xl text-[10px] font-bold uppercase tracking-wider hover:bg-slate-900 transition-all shrink-0">
+              </p>
+              <button className="px-4 py-1.5 bg-slate-800 text-white rounded-xl text-[11px] font-semibold tracking-wider hover:bg-slate-900 transition-all shrink-0">
                 Upgrade
               </button>
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4 font-primary leading-tight">
-              Premium Plan
-            </h3>
+            <h3 className="text-xl font-bold text-slate-900 mb-4 tracking-tight">Premium Plan</h3>
             <p className="text-xs text-neutral-400 leading-relaxed font-medium mb-8">
               Supercharge your sales management and unlock your full potential for extraordinary
               success.
@@ -261,32 +254,30 @@ export default function ManagerReportsPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-3 sm:gap-4">
             <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-100 min-w-0">
-              <p className="text-[10px] font-semibold text-neutral-400 uppercase mb-1 leading-none truncate">
+              <p className="text-[11px] font-medium text-slate-400 mb-1 leading-none truncate">
                 Performance
               </p>
-              <p className="text-lg font-bold text-gray-900 font-primary">↑ 79%</p>
+              <p className="text-lg font-semibold text-slate-800">↑ 79%</p>
             </div>
             <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-100 min-w-0">
-              <p className="text-[10px] font-semibold text-neutral-400 uppercase mb-1 leading-none truncate">
+              <p className="text-[11px] font-medium text-slate-400 mb-1 leading-none truncate">
                 Tools
               </p>
-              <p className="text-lg font-bold text-gray-900 font-primary">30+</p>
+              <p className="text-lg font-semibold text-slate-800">30+</p>
             </div>
           </div>
         </div>
 
         {/* Product List */}
-        <div className="lg:col-span-9 bg-white rounded-3xl border border-neutral-100 shadow-sm overflow-hidden">
+        <div className="lg:col-span-9 bg-white rounded-3xl border-none shadow-sm ring-1 ring-neutral-100/50 overflow-hidden">
           <div className="p-6 border-b border-neutral-50 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
-              <h3 className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest leading-none">
+              <p className="text-[12px] font-bold text-slate-400 tracking-wider uppercase leading-none">
                 Product List
-              </h3>
+              </p>
               <div className="flex items-center gap-2 mt-1.5">
-                <span className="text-2xl font-bold text-gray-900 font-primary leading-none">
-                  390
-                </span>
-                <span className="bg-mint-50 text-mint-600 text-[10px] font-semibold px-1.5 py-0.5 rounded-full tracking-tight">
+                <span className="text-xl font-bold text-slate-900 leading-none">390</span>
+                <span className="bg-mint-50 text-mint-600 text-[10px] font-semibold px-1.5 py-0.5 rounded-full">
                   +12
                 </span>
               </div>
@@ -307,7 +298,7 @@ export default function ManagerReportsPage() {
               </div>
               <button className="flex items-center justify-center gap-2 px-4 h-10 bg-neutral-50 rounded-xl border border-neutral-100 text-neutral-400 hover:text-mint-600 transition-colors">
                 <IoRefreshOutline />
-                <span className="md:hidden text-xs font-semibold text-neutral-500 uppercase tracking-widest">
+                <span className="md:hidden text-xs font-semibold text-neutral-500 tracking-widest">
                   Refresh
                 </span>
               </button>
@@ -315,8 +306,8 @@ export default function ManagerReportsPage() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left font-primary">
-              <thead className="bg-neutral-50/50 text-[10px] text-neutral-400 font-bold uppercase tracking-widest border-b border-neutral-100">
+            <table className="w-full text-left">
+              <thead className="bg-neutral-50/50 text-[11px] text-slate-400 font-semibold tracking-wider uppercase border-b border-neutral-100">
                 <tr>
                   <th className="px-6 py-4">Product Info</th>
                   <th className="px-6 py-4">Price</th>
@@ -333,12 +324,12 @@ export default function ManagerReportsPage() {
                         <div className="w-10 h-10 rounded-xl bg-neutral-100 border border-neutral-200 overflow-hidden flex items-center justify-center text-neutral-400">
                           <IoBagHandleOutline size={20} />
                         </div>
-                        <span className="text-xs font-bold text-gray-800">{p.name}</span>
+                        <span className="text-xs font-semibold text-slate-700">{p.name}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-xs font-medium text-neutral-600">{p.price}</td>
-                    <td className="px-6 py-4 text-xs font-medium text-neutral-600">{p.stock}</td>
-                    <td className="px-6 py-4 text-xs font-bold text-gray-700">{p.sold}</td>
+                    <td className="px-6 py-4 text-xs font-medium text-slate-500">{p.price}</td>
+                    <td className="px-6 py-4 text-xs font-medium text-slate-500">{p.stock}</td>
+                    <td className="px-6 py-4 text-xs font-semibold text-slate-700">{p.sold}</td>
                     <td className="px-6 py-4 text-center">
                       <div
                         className={`w-8 h-4 rounded-full p-0.5 ml-auto mr-auto cursor-pointer transition-colors ${p.active ? 'bg-mint-500' : 'bg-neutral-200'}`}

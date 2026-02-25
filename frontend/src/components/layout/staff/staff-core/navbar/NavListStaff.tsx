@@ -89,7 +89,8 @@ export function NavActions({
 
   // Determine base path for dynamic links
   const isOperation = location.pathname.startsWith('/operationstaff')
-  const basePrefix = isOperation ? '/operationstaff' : '/salestaff'
+  const isManager = location.pathname.startsWith('/manager')
+  const basePrefix = isManager ? '/manager' : isOperation ? '/operationstaff' : '/salestaff'
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -226,7 +227,7 @@ export function NavActions({
                 <p className="text-sm font-medium text-neutral-500 truncate mt-1">{userEmail}</p>
               </div>
               <span className="px-3 py-1 bg-primary-100/50 text-primary-600 text-[11px] font-semibold uppercase tracking-wider rounded-lg border border-primary-200/30">
-                {isOperation ? 'Manager' : 'Staff'}
+                {isManager ? 'Manager' : isOperation ? 'Staff' : 'Staff'}
               </span>
             </div>
 

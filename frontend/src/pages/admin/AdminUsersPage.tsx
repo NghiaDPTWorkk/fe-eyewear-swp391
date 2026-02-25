@@ -1,9 +1,8 @@
 import { useState, useMemo } from 'react'
 import { Container } from '@/components'
 import { PageHeader } from '@/features/sales/components/common'
-import { UserTable } from './components/users/UserTable'
+import { UserTable, type UserData } from './components/users/UserTable'
 import { UserDetailDrawer } from './components/users/UserDetailDrawer'
-import type { UserData } from './components/users/UserTable'
 import {
   IoSearchOutline,
   IoRefreshOutline,

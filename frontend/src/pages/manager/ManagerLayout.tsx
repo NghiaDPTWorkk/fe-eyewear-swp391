@@ -14,14 +14,29 @@ import {
   IoBarChart,
   IoSettings,
   IoHelpCircle,
-  IoStorefront,
-  IoReader,
-  IoAddCircle
+  IoStorefront
 } from 'react-icons/io5'
+
+import { useProfile } from '@/features/staff/hooks/useProfile'
+
+// Helper function to get initials from name
+const getInitials = (name: string): string => {
+  if (!name) return '...'
+  const words = name.trim().split(' ')
+  if (words.length === 1) return words[0].substring(0, 2).toUpperCase()
+  return (words[0][0] + words[words.length - 1][0]).toUpperCase()
+}
 
 export default function ManagerLayout() {
   const location = useLocation()
   const navigate = useNavigate()
+  const { data: profileData } = useProfile()
+
+  // Extract profile data
+  const profile = profileData?.data
+  const userName = profile?.name || 'Loading...'
+  const userRole = profile?.role === 'MANAGER' ? 'Manager' : profile?.role || 'Loading...'
+  const userInitials = profile?.name ? getInitials(profile.name) : '...'
 
   const sidebar = (
     <SidebarStaff
@@ -37,10 +52,10 @@ export default function ManagerLayout() {
       storeIcon={<IoStorefront />}
       userWidget={
         <UserWidgetWithLogout
-          userInitials="GH"
-          userName="Guy Hawkins"
-          userRole="Admin"
-          onLogout={() => navigate('/login')}
+          userInitials={userInitials}
+          userName={userName}
+          userRole={userRole}
+          onLogout={() => navigate('/admin/login')}
         />
       }
     >
@@ -62,24 +77,6 @@ export default function ManagerLayout() {
           label="Product"
           to="/manager/products"
           active={location.pathname.startsWith('/manager/products')}
-        />
-        <SidebarStaff.MenuItem
-          icon={<IoAddCircle />}
-          label="Add Product"
-          to="/manager/products/add"
-          active={location.pathname === '/manager/products/add'}
-        />
-        <SidebarStaff.MenuItem
-          icon={<IoAddCircle />}
-          label="Add Attribute"
-          to="/manager/attributes/add"
-          active={location.pathname === '/manager/attributes/add'}
-        />
-        <SidebarStaff.MenuItem
-          icon={<IoReader />}
-          label="Transaction"
-          to="/manager/transactions"
-          active={location.pathname.startsWith('/manager/transactions')}
         />
         <SidebarStaff.MenuItem
           icon={<IoBarChart />}
@@ -117,9 +114,17 @@ export default function ManagerLayout() {
           inputContainerClassName="lg:pl-0"
         />
       }
-      headerRight={<NavActions />}
-      mainClassName="p-4 md:p-6 bg-neutral-50"
-      headerClassName="px-4 md:px-6"
+      headerRight={
+        <NavActions
+          userName={userName}
+          userRole={userRole}
+          userInitials={userInitials}
+          userEmail={profile?.email}
+        />
+      }
+      mainClassName="px-4 md:px-8 lg:px-10 py-6 md:py-8 bg-neutral-50/50"
+      headerClassName="pl-6 pr-4"
+      contentMaxWidth="max-w-[1600px]"
     />
   )
 }

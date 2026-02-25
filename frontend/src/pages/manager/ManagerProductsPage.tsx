@@ -2,253 +2,342 @@ import React, { useState } from 'react'
 import { Container } from '@/components'
 import { PageHeader } from '@/features/sales/components/common'
 import { useNavigate } from 'react-router-dom'
+import { useAdminProducts } from '@/features/manager/hooks/useAdminProducts'
 import {
   IoSearchOutline,
   IoRefreshOutline,
   IoAddOutline,
-  IoTrendingUpOutline,
-  IoTrendingDownOutline,
   IoCubeOutline,
   IoShirtOutline,
   IoSparklesOutline,
   IoAlertCircleOutline,
   IoChevronBackOutline,
-  IoChevronForwardOutline
+  IoChevronForwardOutline,
+  IoEyeOutline
 } from 'react-icons/io5'
 
-// Toggle Switch Component
-const ToggleSwitch: React.FC<{ checked: boolean; onChange: () => void }> = ({
-  checked,
-  onChange
-}) => (
-  <button
-    onClick={(e) => {
-      e.stopPropagation()
-      onChange()
-    }}
-    className={`w-10 h-5 rounded-full transition-all duration-300 relative ${
-      checked ? 'bg-mint-500' : 'bg-neutral-200'
-    }`}
-  >
-    <div
-      className={`absolute top-1 w-3 h-3 rounded-full bg-white transition-all duration-300 ${
-        checked ? 'left-6' : 'left-1'
-      }`}
-    />
-  </button>
-)
-
-// Summary Card Component
+// ─── Summary Card ───
 const SummaryCard: React.FC<{
   label: string
-  value: string
+  value: string | number
   percent: string
   isUp: boolean
   icon: React.ReactNode
   iconBg: string
-  iconColor: string
-}> = ({ label, value, percent, isUp, icon, iconBg, iconColor }) => (
-  <div className="bg-white p-6 rounded-3xl border border-neutral-100 shadow-sm hover:shadow-md transition-all">
-    <div className="flex justify-between items-start mb-6">
-      <div className="flex items-center gap-3">
-        <div
-          className={`w-10 h-10 rounded-xl flex items-center justify-center ${iconBg} ${iconColor}`}
-        >
-          {React.cloneElement(icon as React.ReactElement<any>, { size: 20 })}
-        </div>
-        <span className="text-xs font-semibold text-neutral-400 line-clamp-1">{label}</span>
+}> = ({ label, value, percent, isUp, icon, iconBg }) => (
+  <div className="bg-white p-6 rounded-3xl border-none shadow-sm ring-1 ring-neutral-100/50 hover:shadow-md transition-all group">
+    <div className="flex justify-between items-start">
+      <div>
+        <p className="text-[12px] font-bold text-slate-400 tracking-wider uppercase whitespace-nowrap">
+          {label}
+        </p>
+        <h3 className="text-2xl font-bold mt-1.5 text-slate-900 tracking-tight">{value}</h3>
       </div>
       <div
-        className={`flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold ${
-          isUp ? 'bg-mint-50 text-mint-600' : 'bg-red-50 text-red-600'
-        }`}
+        className={`p-3.5 rounded-2xl shadow-sm transition-transform group-hover:scale-105 ${iconBg}`}
       >
-        {isUp ? <IoTrendingUpOutline /> : <IoTrendingDownOutline />}
-        {percent}
+        {icon}
       </div>
     </div>
-    <div className="mt-4">
-      <h3 className="text-3xl font-bold text-gray-900 font-primary leading-tight mb-4">{value}</h3>
-      <p className="text-[10px] font-medium text-neutral-400 capitalize">
-        From Jan 01 - Jul 30, 2024
-      </p>
+    <div className="mt-4 flex items-center gap-2 text-sm">
+      <span className={`font-bold flex items-center ${isUp ? 'text-emerald-600' : 'text-red-600'}`}>
+        {isUp ? '↗' : '↘'} {percent}
+      </span>
+      <span className="text-gray-500">from last period</span>
     </div>
   </div>
 )
 
+// ─── Format price ───
+function formatPrice(price: number) {
+  if (price >= 1_000_000) {
+    return new Intl.NumberFormat('vi-VN').format(price) + '₫'
+  }
+  return '$' + price.toFixed(2)
+}
+
 export default function ManagerProductsPage() {
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
-  const [products, setProducts] = useState([
-    { id: '1', name: 'Rompi Berkancing', price: 119.99, stock: 25, sold: 320, active: true },
-    { id: '2', name: 'Casual Blazer', price: 89.5, stock: 12, sold: 150, active: true },
-    { id: '3', name: 'Silk Scarf', price: 45.0, stock: 48, sold: 89, active: false },
-    { id: '4', name: 'Leather Boots', price: 199.0, stock: 8, sold: 210, active: true },
-    { id: '5', name: 'Vintage Shades', price: 155.0, stock: 15, sold: 45, active: true }
-  ])
+  const [typeFilter, setTypeFilter] = useState<string | undefined>(undefined)
+  const [page, setPage] = useState(1)
+  const limit = 10
 
-  const toggleProduct = (id: string) => {
-    setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, active: !p.active } : p)))
-  }
+  const { data, isLoading, refetch } = useAdminProducts(
+    page,
+    limit,
+    typeFilter,
+    undefined,
+    searchQuery || undefined
+  )
+
+  const products = data?.data?.productList ?? []
+  const pagination = data?.data?.pagination
+
+  // Compute summary counts from data
+  const totalProducts = pagination?.total ?? 0
+  const frameCount = products.filter((p) => p.type === 'frame').length
+  const sunglassCount = products.filter(
+    (p) => p.type === 'sunglasses' || p.type === 'sunglass'
+  ).length
+  const lowStockCount = products.filter((p) => p.totalVariants <= 1).length
+
+  const typeTabs = [
+    { label: 'All', value: undefined },
+    { label: 'Frame', value: 'frame' },
+    { label: 'Sunglasses', value: 'sunglasses' },
+    { label: 'Lens', value: 'lens' }
+  ]
 
   return (
-    <Container className="pt-2 pb-8 px-2 max-w-[1600px] mx-auto space-y-8">
-      <div className="px-4">
-        <PageHeader
-          title="Inventory"
-          subtitle="Manage and track all store product inventory."
-          breadcrumbs={[{ label: 'Dashboard', path: '/manager/dashboard' }, { label: 'Products' }]}
-        />
-      </div>
+    <Container className="max-w-none space-y-8">
+      <PageHeader
+        title="Inventory"
+        subtitle="Manage and track all store product inventory."
+        breadcrumbs={[{ label: 'Dashboard', path: '/manager/dashboard' }, { label: 'Products' }]}
+      />
 
-      {/* Summary Cards Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 px-4">
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         <SummaryCard
           label="Total Products"
-          value="23"
-          percent="24.5%"
+          value={totalProducts}
+          percent="—"
           isUp={true}
-          icon={<IoCubeOutline />}
-          iconBg="bg-mint-50"
-          iconColor="text-mint-600"
+          icon={<IoCubeOutline className="text-xl" />}
+          iconBg="bg-mint-50 text-mint-700"
+        />
+        <SummaryCard
+          label="Frames"
+          value={frameCount}
+          percent={totalProducts ? Math.round((frameCount / totalProducts) * 100) + '%' : '0%'}
+          isUp={true}
+          icon={<IoShirtOutline className="text-xl" />}
+          iconBg="bg-purple-50 text-purple-600"
         />
         <SummaryCard
           label="Sunglasses"
-          value="231"
-          percent="4.5%"
+          value={sunglassCount}
+          percent={totalProducts ? Math.round((sunglassCount / totalProducts) * 100) + '%' : '0%'}
           isUp={false}
-          icon={<IoSparklesOutline />}
-          iconBg="bg-blue-50"
-          iconColor="text-blue-600"
+          icon={<IoSparklesOutline className="text-xl" />}
+          iconBg="bg-sky-50 text-sky-600"
         />
         <SummaryCard
-          label="Eyeglasses"
-          value="1200"
-          percent="4.5%"
+          label="Low Variant"
+          value={lowStockCount}
+          percent="—"
           isUp={false}
-          icon={<IoShirtOutline />}
-          iconBg="bg-purple-50"
-          iconColor="text-purple-600"
-        />
-        <SummaryCard
-          label="Stock Alerts"
-          value="1200"
-          percent="24.5%"
-          isUp={true}
-          icon={<IoAlertCircleOutline />}
-          iconBg="bg-orange-50"
-          iconColor="text-orange-600"
+          icon={<IoAlertCircleOutline className="text-xl" />}
+          iconBg="bg-orange-50 text-orange-600"
         />
       </div>
 
-      <div className="bg-white rounded-[32px] border border-neutral-100 shadow-sm mx-4 overflow-hidden">
-        {/* Minimalist Dashboard Header from Image */}
-        <div className="p-8 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-6">
+      {/* Type Filter Tabs */}
+      <div className="flex items-center gap-2">
+        {typeTabs.map((tab) => (
+          <button
+            key={tab.label}
+            onClick={() => {
+              setTypeFilter(tab.value)
+              setPage(1)
+            }}
+            className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+              typeFilter === tab.value
+                ? 'bg-mint-500 text-white shadow-lg shadow-mint-100/50'
+                : 'bg-white text-slate-500 ring-1 ring-neutral-100 hover:bg-neutral-50'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Product List Table */}
+      <div className="bg-white rounded-[32px] border-none shadow-sm ring-1 ring-neutral-100/50 overflow-hidden">
+        <div className="p-6 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
-            <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
+            <p className="text-[12px] font-bold text-slate-400 uppercase tracking-wider">
               Product List
             </p>
-            <div className="flex items-baseline gap-3">
-              <h2 className="text-4xl font-bold text-gray-900 font-primary">390</h2>
-              <span className="text-xs font-bold text-mint-500">+12</span>
+            <div className="flex items-baseline gap-2">
+              <h2 className="text-xl font-bold text-slate-900 tracking-tight">
+                {pagination?.total ?? '—'}
+              </h2>
+              <span className="text-[11px] font-medium text-slate-400">products</span>
             </div>
           </div>
-
           <div className="flex items-center gap-3">
             <div className="relative">
               <IoSearchOutline
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400"
-                size={18}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
+                size={16}
               />
               <input
                 type="text"
                 placeholder="Search product..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full md:w-64 pl-12 pr-4 py-3 bg-neutral-50/50 border border-neutral-100 rounded-2xl text-[13px] font-medium focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all"
+                onChange={(e) => {
+                  setSearchQuery(e.target.value)
+                  setPage(1)
+                }}
+                className="w-full md:w-64 pl-10 pr-4 py-2 bg-neutral-50 border border-neutral-100 rounded-xl text-xs font-medium focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all h-10"
               />
             </div>
-            <button className="w-12 h-12 flex items-center justify-center bg-neutral-50 rounded-2xl text-neutral-400 hover:text-gray-900 transition-all">
-              <IoRefreshOutline size={20} />
+            <button
+              onClick={() => refetch()}
+              className="flex items-center justify-center gap-2 px-4 h-10 bg-neutral-50 rounded-xl border border-neutral-100 text-neutral-400 hover:text-mint-600 transition-colors"
+            >
+              <IoRefreshOutline />
             </button>
             <button
               onClick={() => navigate('/manager/products/add')}
-              className="hidden md:flex items-center gap-2 px-6 py-3 bg-mint-600 text-white rounded-2xl text-sm font-bold shadow-xl shadow-mint-100/50 hover:bg-mint-700 transition-all active:scale-95"
+              className="hidden md:flex items-center gap-2 px-5 h-10 bg-mint-600 text-white rounded-xl text-xs font-semibold shadow-lg shadow-mint-100/50 hover:bg-mint-700 transition-all active:scale-95"
             >
-              <IoAddOutline size={20} />
+              <IoAddOutline size={16} />
               Add Product
             </button>
           </div>
         </div>
 
-        {/* Minimalist Table matching the requested Image */}
-        <div className="overflow-x-auto p-2">
-          <table className="w-full text-left border-collapse">
-            <thead className="text-[10px] text-slate-400 font-bold tracking-widest uppercase">
-              <tr>
-                <th className="px-8 py-8 w-1/3">Product Info</th>
-                <th className="px-6 py-8 text-center">Price</th>
-                <th className="px-6 py-8 text-center">Stock</th>
-                <th className="px-6 py-8 text-center">Sold</th>
-                <th className="px-8 py-8 text-center w-24">Active</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-neutral-50">
-              {products.map((p) => (
-                <tr key={p.id} className="group hover:bg-neutral-50/30 transition-colors">
-                  <td className="px-8 py-6">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-neutral-50 border border-neutral-100 flex items-center justify-center text-neutral-400 shrink-0">
-                        <IoCubeOutline size={22} />
-                      </div>
-                      <span className="text-[15px] font-bold text-gray-900 group-hover:text-mint-600 transition-colors">
-                        {p.name}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-6 text-center text-sm font-semibold text-gray-700">
-                    ${p.price.toFixed(2)}
-                  </td>
-                  <td className="px-6 py-6 text-center text-sm font-semibold text-gray-700">
-                    {p.stock}
-                  </td>
-                  <td className="px-6 py-6 text-center text-sm font-bold text-gray-900">
-                    {p.sold}
-                  </td>
-                  <td className="px-8 py-6 text-center">
-                    <ToggleSwitch checked={p.active} onChange={() => toggleProduct(p.id)} />
-                  </td>
+        {isLoading ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="w-8 h-8 border-4 border-mint-200 border-t-mint-600 rounded-full animate-spin" />
+          </div>
+        ) : products.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 text-slate-400">
+            <IoCubeOutline size={48} className="mb-4 opacity-30" />
+            <p className="text-sm font-medium">No products found</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className="bg-neutral-50/50 text-[11px] text-slate-400 font-semibold tracking-wider uppercase border-b border-neutral-100">
+                <tr>
+                  <th className="px-6 py-4 w-[35%]">Product</th>
+                  <th className="px-6 py-4">Brand</th>
+                  <th className="px-6 py-4">Type</th>
+                  <th className="px-6 py-4 text-right">Price</th>
+                  <th className="px-6 py-4 text-center">Variants</th>
+                  <th className="px-6 py-4 text-center">Action</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-neutral-50">
+                {products.map((p) => (
+                  <tr
+                    key={p.id}
+                    className="group hover:bg-neutral-50/30 transition-colors cursor-pointer"
+                    onClick={() => navigate(`/manager/products/${p.id}`)}
+                  >
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-neutral-100 border border-neutral-200 overflow-hidden flex items-center justify-center shrink-0">
+                          {p.defaultVariantImage ? (
+                            <img
+                              src={p.defaultVariantImage}
+                              alt={p.nameBase}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                ;(e.target as HTMLImageElement).style.display = 'none'
+                              }}
+                            />
+                          ) : (
+                            <IoCubeOutline className="text-neutral-400" size={20} />
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-slate-700 truncate group-hover:text-mint-600 transition-colors">
+                            {p.nameBase}
+                          </p>
+                          <p className="text-[10px] text-slate-400 font-medium">{p.skuBase}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="text-xs font-medium text-slate-500">{p.brand}</span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="inline-flex px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-slate-50 text-slate-600 ring-1 ring-slate-100 capitalize">
+                        {p.type}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div>
+                        <p className="text-xs font-semibold text-slate-800">
+                          {formatPrice(p.defaultVariantFinalPrice)}
+                        </p>
+                        {p.defaultVariantPrice !== p.defaultVariantFinalPrice && (
+                          <p className="text-[10px] text-slate-400 line-through">
+                            {formatPrice(p.defaultVariantPrice)}
+                          </p>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-mint-50 text-mint-700 text-xs font-bold">
+                        {p.totalVariants}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          navigate(`/manager/products/${p.id}`)
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold text-mint-600 bg-mint-50 hover:bg-mint-100 transition-colors"
+                      >
+                        <IoEyeOutline size={14} />
+                        View
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
-        {/* Minimalist Pagination/Footer */}
-        <div className="p-8 border-t border-neutral-50 flex items-center justify-between">
-          <p className="text-xs font-semibold text-neutral-400 uppercase tracking-widest">
-            Showing 1-{products.length} of 390 Products
-          </p>
-          <div className="flex items-center gap-2">
-            <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-neutral-100 text-neutral-400 hover:text-mint-600 transition-all">
-              <IoChevronBackOutline />
-            </button>
-            <div className="flex gap-1">
-              <button className="w-10 h-10 rounded-xl bg-mint-500 text-white text-xs font-bold shadow-lg shadow-mint-100">
-                1
+        {/* Pagination */}
+        {pagination && pagination.totalPages > 1 && (
+          <div className="p-6 border-t border-neutral-50 flex items-center justify-between">
+            <p className="text-xs font-medium text-slate-400">
+              Page {pagination.page} of {pagination.totalPages} ({pagination.total} products)
+            </p>
+            <div className="flex items-center gap-2">
+              <button
+                disabled={page <= 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                className="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-neutral-100 text-neutral-400 hover:text-mint-600 transition-all disabled:opacity-30"
+              >
+                <IoChevronBackOutline />
               </button>
-              <button className="w-10 h-10 rounded-xl bg-white text-neutral-400 text-xs font-bold hover:bg-neutral-50">
-                2
-              </button>
-              <button className="w-10 h-10 rounded-xl bg-white text-neutral-400 text-xs font-bold hover:bg-neutral-50">
-                3
+              <div className="flex gap-1">
+                {Array.from({ length: Math.min(pagination.totalPages, 5) }, (_, i) => i + 1).map(
+                  (p) => (
+                    <button
+                      key={p}
+                      onClick={() => setPage(p)}
+                      className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${
+                        page === p
+                          ? 'bg-mint-500 text-white shadow-lg shadow-mint-100'
+                          : 'bg-white text-neutral-400 hover:bg-neutral-50'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  )
+                )}
+              </div>
+              <button
+                disabled={page >= pagination.totalPages}
+                onClick={() => setPage((p) => p + 1)}
+                className="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-neutral-100 text-neutral-400 hover:text-mint-600 transition-all disabled:opacity-30"
+              >
+                <IoChevronForwardOutline />
               </button>
             </div>
-            <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-neutral-100 text-neutral-400 hover:text-mint-600 transition-all">
-              <IoChevronForwardOutline />
-            </button>
           </div>
-        </div>
+        )}
       </div>
     </Container>
   )

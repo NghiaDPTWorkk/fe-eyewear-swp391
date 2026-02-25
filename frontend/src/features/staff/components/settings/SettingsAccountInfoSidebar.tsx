@@ -77,7 +77,9 @@ export default function AccountInfoSidebar() {
                 <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-widest mb-0.5">
                   Store Location
                 </p>
-                <p className="text-sm font-semibold text-neutral-700">Downtown Branch</p>
+                <p className="text-sm font-semibold text-neutral-700">
+                  {profile?.role === 'SALE_STAFF' ? 'Main Store' : 'Central Office'}
+                </p>
               </div>
             </div>
             <div className="flex items-start gap-3.5">
@@ -108,10 +110,21 @@ export default function AccountInfoSidebar() {
                   Last Login
                 </p>
                 <p className="text-sm font-semibold text-neutral-700 leading-tight">
-                  Jan 15, 2026
+                  {profile?.updatedAt && !isNaN(new Date(profile.updatedAt).getTime())
+                    ? new Date(profile.updatedAt).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                      })
+                    : 'Recently'}
                   <br />
                   <span className="text-[11px] text-slate-400 font-medium tracking-tight">
-                    09:00 AM
+                    {profile?.updatedAt && !isNaN(new Date(profile.updatedAt).getTime())
+                      ? new Date(profile.updatedAt).toLocaleTimeString('en-US', {
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })
+                      : 'Just now'}
                   </span>
                 </p>
               </div>

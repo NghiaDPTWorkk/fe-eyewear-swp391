@@ -119,7 +119,24 @@ export const ENDPOINTS = {
       return `/admin/orders/total?${params.toString()}`
     },
     ORDER_APPROVE: (id: string) => `/admin/orders/${id}/status/approve`,
-    PROFILE_REQUESTS: '/admin/profile-requests'
+    PROFILE_REQUESTS: '/admin/profile-requests',
+    PRODUCTS_LIST: (
+      page?: number,
+      limit?: number,
+      type?: string,
+      brand?: string,
+      search?: string
+    ) => {
+      const params = new URLSearchParams()
+      if (page) params.append('page', String(page))
+      if (limit) params.append('limit', String(limit))
+      if (type) params.append('type', type)
+      if (brand) params.append('brand', brand)
+      if (search) params.append('search', search)
+      const qs = params.toString()
+      return qs ? `/admin/products?${qs}` : '/admin/products'
+    },
+    PRODUCT_DETAIL: (id: string) => `/admin/products/${id}`
   },
 
   ADMINS: {

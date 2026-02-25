@@ -23,7 +23,8 @@ export const ENDPOINTS = {
     SEARCH: (page: number, limit: number, search: string) =>
       `/products?page=${page}&limit=${limit}&search=${search}`,
     DETAIL: (id: string) => `/products/${id}`,
-    VARIANT: (id: string, sku: string) => `/products/${id}/variants/${sku}`
+    VARIANT: (id: string, sku: string) => `/products/${id}/variants/${sku}`,
+    SPECS: '/products/specs'
   },
 
   // Cart

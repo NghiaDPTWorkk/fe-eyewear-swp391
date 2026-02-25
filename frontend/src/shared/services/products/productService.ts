@@ -1,6 +1,7 @@
 import { ENDPOINTS, httpClient } from '@/api'
 import type { ApiResponse } from '@/shared/types/response.types'
 import type { ProductListData, ProductDetailApiResponse } from '@/shared/types/product.types'
+import type { ProductSpecs } from '@/shared/types/productSpecs.types'
 
 export const productService = {
   //get all product and pagination
@@ -49,5 +50,10 @@ export const productService = {
    */
   getProductDetail(id: string) {
     return httpClient.get<ProductDetailApiResponse>(ENDPOINTS.PRODUCTS.DETAIL(id))
+  },
+
+  // get product specs for filters
+  getProductSpecs() {
+    return httpClient.get<ApiResponse<ProductSpecs>>(ENDPOINTS.PRODUCTS.SPECS)
   }
 }

@@ -1,21 +1,16 @@
 import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
 import { useGetProductWithType } from '@/shared/hooks/products/useGetProductWithType'
 import { useSearchProducts } from '@/shared/hooks/products/useSearchProducts'
+import { useProductSpecs } from '@/shared/hooks/products/useProductSpecs'
 import { ProductFilters } from '@/shared/components/ui/product-filters'
 import { FilterTags, type FilterTag } from '@/shared/components/ui/filter-tags'
 import { ProductCard } from '@/shared/components/ui/product-card'
 
-import { ArrowRight, X } from 'lucide-react'
+import { ArrowRight, X, Loader2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 // Static data for filters
-const categories = [
-  { id: 'men', name: 'Men' },
-  { id: 'women', name: 'Women' },
-  { id: 'unisex', name: 'Unisex' }
-]
-
 const priceRanges = [
   { id: 'range1', label: '$20.00 - $50.00', min: 20, max: 50 },
   { id: 'range2', label: '$50.00 - $100.00', min: 50, max: 100 },
@@ -29,6 +24,14 @@ const colors = [
   { id: 'gray', name: 'Gray', hex: '#808080' },
   { id: 'white', name: 'White', hex: '#FFFFFF' }
 ]
+
+// Gender mapping from API codes to labels
+const GENDER_MAP: Record<string, string> = {
+  M: 'Men',
+  F: 'Women',
+  N: 'Non-binary',
+  unisex: 'Unisex'
+}
 
 export const CustomerProductPage = () => {
   const navigate = useNavigate()
@@ -62,6 +65,10 @@ export const CustomerProductPage = () => {
   }
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([])
+  const [selectedMaterials, setSelectedMaterials] = useState<string[]>([])
+  const [selectedShapes, setSelectedShapes] = useState<string[]>([])
+  const [selectedStyles, setSelectedStyles] = useState<string[]>([])
   const [selectedPriceRanges, setSelectedPriceRanges] = useState<string[]>([])
   const [selectedColors, setSelectedColors] = useState<string[]>([])
   const [customPriceRange, setCustomPriceRange] = useState<{
@@ -69,6 +76,18 @@ export const CustomerProductPage = () => {
     max: number | null
   }>({ min: null, max: null })
   const [priceResetKey, setPriceResetKey] = useState(0)
+
+  // Fetch product specs for dynamic filters
+  const { specs } = useProductSpecs()
+
+  // Build gender categories from specs
+  const categories = useMemo(() => {
+    if (!specs?.genders) return []
+    return specs.genders.map((g) => ({
+      id: g,
+      name: GENDER_MAP[g] || g
+    }))
+  }, [specs])
 
   // search hook when search is active, otherwise use type-based hook
   const typedProductsData = useGetProductWithType(page, limit, productType || '')
@@ -101,6 +120,26 @@ export const CustomerProductPage = () => {
       }
     })
 
+    // Add brand tags
+    selectedBrands.forEach((brand) => {
+      tags.push({ id: `brand-${brand}`, label: brand, type: 'brand' })
+    })
+
+    // Add material tags
+    selectedMaterials.forEach((material) => {
+      tags.push({ id: `material-${material}`, label: material, type: 'material' })
+    })
+
+    // Add shape tags
+    selectedShapes.forEach((shape) => {
+      tags.push({ id: `shape-${shape}`, label: shape, type: 'shape' })
+    })
+
+    // Add style tags
+    selectedStyles.forEach((style) => {
+      tags.push({ id: `style-${style}`, label: style, type: 'style' })
+    })
+
     // Add color tags
     selectedColors.forEach((colorId) => {
       const color = colors.find((c) => c.id === colorId)
@@ -121,12 +160,33 @@ export const CustomerProductPage = () => {
     }
 
     return tags
-  }, [selectedCategories, selectedColors, customPriceRange, categories, colors])
+  }, [
+    selectedCategories,
+    selectedBrands,
+    selectedMaterials,
+    selectedShapes,
+    selectedStyles,
+    selectedColors,
+    customPriceRange,
+    categories
+  ])
 
   const handleRemoveTag = (tagId: string) => {
     if (tagId.startsWith('cat-')) {
       const catId = tagId.replace('cat-', '')
       setSelectedCategories((prev) => prev.filter((id) => id !== catId))
+    } else if (tagId.startsWith('brand-')) {
+      const brand = tagId.replace('brand-', '')
+      setSelectedBrands((prev) => prev.filter((b) => b !== brand))
+    } else if (tagId.startsWith('material-')) {
+      const material = tagId.replace('material-', '')
+      setSelectedMaterials((prev) => prev.filter((m) => m !== material))
+    } else if (tagId.startsWith('shape-')) {
+      const shape = tagId.replace('shape-', '')
+      setSelectedShapes((prev) => prev.filter((s) => s !== shape))
+    } else if (tagId.startsWith('style-')) {
+      const style = tagId.replace('style-', '')
+      setSelectedStyles((prev) => prev.filter((s) => s !== style))
     } else if (tagId.startsWith('color-')) {
       const colorId = tagId.replace('color-', '')
       setSelectedColors((prev) => prev.filter((id) => id !== colorId))
@@ -138,6 +198,10 @@ export const CustomerProductPage = () => {
 
   const handleReset = () => {
     setSelectedCategories([])
+    setSelectedBrands([])
+    setSelectedMaterials([])
+    setSelectedShapes([])
+    setSelectedStyles([])
     setSelectedPriceRanges([])
     setSelectedColors([])
     setCustomPriceRange({ min: null, max: null })
@@ -160,6 +224,18 @@ export const CustomerProductPage = () => {
                 categories={categories}
                 selectedCategories={selectedCategories}
                 onCategoryChange={setSelectedCategories}
+                brands={specs?.brands || []}
+                selectedBrands={selectedBrands}
+                onBrandChange={setSelectedBrands}
+                materials={specs?.materials || []}
+                selectedMaterials={selectedMaterials}
+                onMaterialChange={setSelectedMaterials}
+                shapes={specs?.shapes || []}
+                selectedShapes={selectedShapes}
+                onShapeChange={setSelectedShapes}
+                styles={specs?.styles || []}
+                selectedStyles={selectedStyles}
+                onStyleChange={setSelectedStyles}
                 priceRanges={priceRanges}
                 selectedPriceRanges={selectedPriceRanges}
                 onPriceRangeChange={setSelectedPriceRanges}
@@ -201,7 +277,10 @@ export const CustomerProductPage = () => {
               )}
 
               {loading ? (
-                <div className="text-center text-gray-eyewear py-10">Loading products...</div>
+                <div className="flex flex-col items-center justify-center py-20">
+                  <Loader2 className="w-10 h-10 animate-spin text-primary-500 mb-4" />
+                  <p className="text-gray-eyewear">Loading products...</p>
+                </div>
               ) : error ? (
                 <div className="text-center text-red-600 py-10">Failed to load products.</div>
               ) : products.length === 0 ? (

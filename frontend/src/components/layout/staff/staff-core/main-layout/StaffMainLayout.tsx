@@ -22,8 +22,7 @@ export function StaffMainLayout({
   mainClassName = 'p-4 md:p-6 bg-neutral-50',
   headerClassName,
   headerContainerClassName,
-  headerContainerWidth = 'none',
-  contentMaxWidth = 'max-w-[1600px]'
+  headerContainerWidth = 'none'
 }: StaffMainLayoutProps) {
   const { sidebarCollapsed, toggleSidebar } = useLayoutStore()
 
@@ -55,13 +54,11 @@ export function StaffMainLayout({
           containerClassName={headerContainerClassName}
         />
 
-        <main className={cn('flex-1 overflow-y-auto overflow-x-hidden relative', mainClassName)}>
-          <div
-            key={location.pathname}
-            className={cn('w-full mx-auto min-h-full animate-fade-in-up', contentMaxWidth)}
-          >
-            <Outlet />
-          </div>
+        <main
+          className={cn('h-full overflow-auto animate-fade-in-up', mainClassName)}
+          key={location.pathname}
+        >
+          <Outlet />
         </main>
       </div>
     </div>

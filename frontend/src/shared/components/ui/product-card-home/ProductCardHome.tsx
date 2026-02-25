@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 
 export interface ProductCardHomeProps {
   id: string
@@ -79,11 +80,11 @@ export function ProductCardHome({
         <div className="flex items-center justify-center gap-2">
           {hasSale && (
             <span className="text-xs text-gray-400 line-through">
-              ${originalPrice.toLocaleString()}
+              <VNDPrice amount={originalPrice} />
             </span>
           )}
           <span className="text-base font-bold text-primary-500">
-            ${finalPrice.toLocaleString()}
+            <VNDPrice amount={finalPrice} />
           </span>
         </div>
       </div>

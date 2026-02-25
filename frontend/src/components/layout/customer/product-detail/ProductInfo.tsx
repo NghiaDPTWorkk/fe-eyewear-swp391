@@ -8,6 +8,7 @@ import {
   RotateCcw,
   PenTool
 } from 'lucide-react'
+import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 import { useState } from 'react'
 import type { Product, StandardProduct } from '@/shared/types/product.types'
 import { useCartStore, useAuthStore, useWishlistStore } from '@/store'
@@ -198,12 +199,12 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
 
       <div className="flex items-baseline gap-4 mb-8">
         <span className="text-3xl font-bold text-mint-1200">
-          ${finalPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+          <VNDPrice amount={finalPrice} />
         </span>
         {hasDiscount && (
           <>
             <span className="text-xl text-gray-eyewear line-through">
-              ${price.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              <VNDPrice amount={price} />
             </span>
             <span className="px-2 py-1 bg-red-100 text-red-600 rounded-full text-xs font-bold">
               -{discountPercentage}%

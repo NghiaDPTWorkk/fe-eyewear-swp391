@@ -7,6 +7,7 @@ import { ProductType } from '@/shared/types/enums'
 import { toast } from 'react-hot-toast'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '@/store'
+import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 
 export interface ProductCardProps {
   id: string
@@ -159,11 +160,11 @@ export function ProductCard({
           <div className="flex flex-col">
             {hasSale && (
               <span className="text-xs text-gray-eyewear line-through">
-                ${price.toLocaleString()}
+                <VNDPrice amount={price} />
               </span>
             )}
             <span className="text-primary-500 font-bold text-xl">
-              ${finalPrice.toLocaleString()}
+              <VNDPrice amount={finalPrice} />
             </span>
           </div>
           {onAddToCart && (

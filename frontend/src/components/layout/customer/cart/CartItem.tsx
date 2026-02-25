@@ -1,4 +1,5 @@
 import { Minus, Plus, ChevronDown, ChevronUp } from 'lucide-react'
+import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 import { useState } from 'react'
 import type { CartItem as CartItemType } from '@/shared/types'
 import { useCartStore } from '@/store/cart.store'
@@ -65,10 +66,10 @@ export const CartItem = ({ item }: CartItemProps) => {
 
             <div className="text-right">
               <p className="text-sm text-gray-300 line-through mb-1">
-                ${originalPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                <VNDPrice amount={originalPrice} />
               </p>
               <p className="text-xl font-bold text-[#000000]">
-                ${item.price.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                <VNDPrice amount={item.price} />
               </p>
             </div>
           </div>
@@ -180,14 +181,10 @@ export const CartItem = ({ item }: CartItemProps) => {
             </span>
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-300 line-through">
-                $
-                {(originalPrice * item.quantity).toLocaleString('en-US', {
-                  minimumFractionDigits: 2
-                })}
+                <VNDPrice amount={originalPrice * item.quantity} />
               </span>
               <span className="text-xl font-bold text-[#000000]">
-                $
-                {(item.price * item.quantity).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                <VNDPrice amount={item.price * item.quantity} />
               </span>
             </div>
           </div>

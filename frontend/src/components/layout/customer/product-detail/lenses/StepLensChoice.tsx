@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Glasses, Loader2, AlertCircle } from 'lucide-react'
+import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 import { Card, Button } from '@/shared/components/ui'
 import { useGetProductWithType } from '@/shared/hooks/products/useGetProductWithType'
 import { productService } from '@/shared/services/products/productService'
@@ -117,11 +118,11 @@ export default function StepLensChoice({ onSelect }: StepLensChoiceProps) {
                     </div>
                     <div className="text-right">
                       <span className="font-bold text-primary-600 block text-lg">
-                        {price === 0 ? 'FREE' : `$${price.toFixed(2)}`}
+                        {price === 0 ? 'MIỄN PHÍ' : <VNDPrice amount={price} />}
                       </span>
                       {price < originalPrice && (
                         <span className="text-xs text-gray-400 line-through">
-                          ${originalPrice.toFixed(2)}
+                          <VNDPrice amount={originalPrice} />
                         </span>
                       )}
                     </div>

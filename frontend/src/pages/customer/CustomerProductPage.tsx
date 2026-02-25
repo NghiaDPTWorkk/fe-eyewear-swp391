@@ -1,6 +1,7 @@
 import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
 import { useFilteredProducts } from '@/shared/hooks/products/useFilteredProducts'
 import { useProductSpecs } from '@/shared/hooks/products/useProductSpecs'
+
 import { ProductFilters } from '@/shared/components/ui/product-filters'
 import { FilterTags, type FilterTag } from '@/shared/components/ui/filter-tags'
 import { ProductCard } from '@/shared/components/ui/product-card'
@@ -11,9 +12,9 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 // Static data for filters
 const priceRanges = [
-  { id: 'range1', label: '$20.00 - $50.00', min: 20, max: 50 },
-  { id: 'range2', label: '$50.00 - $100.00', min: 50, max: 100 },
-  { id: 'range3', label: '$100.00 - $1200.00', min: 100, max: 1200 }
+  { id: 'range1', label: '200.000đ - 500.000đ', min: 200000, max: 500000 },
+  { id: 'range2', label: '500.000đ - 1.000.000đ', min: 500000, max: 1000000 },
+  { id: 'range3', label: '1.000.000đ - 12.000.000đ', min: 1000000, max: 12000000 }
 ]
 
 const colors = [
@@ -157,8 +158,14 @@ export const CustomerProductPage = () => {
 
     // Add custom price range tag
     if (customPriceRange.min !== null || customPriceRange.max !== null) {
-      const minLabel = customPriceRange.min !== null ? `$${customPriceRange.min}` : 'Any'
-      const maxLabel = customPriceRange.max !== null ? `$${customPriceRange.max}` : 'Any'
+      const minLabel =
+        customPriceRange.min !== null
+          ? customPriceRange.min.toLocaleString('vi-VN') + 'đ'
+          : 'Bất kỳ'
+      const maxLabel =
+        customPriceRange.max !== null
+          ? customPriceRange.max.toLocaleString('vi-VN') + 'đ'
+          : 'Bất kỳ'
       tags.push({
         id: 'price-custom',
         label: `${minLabel} - ${maxLabel}`,

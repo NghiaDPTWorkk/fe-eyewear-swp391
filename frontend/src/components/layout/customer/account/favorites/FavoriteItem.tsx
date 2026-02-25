@@ -1,6 +1,7 @@
 import { Card } from '@/shared/components/ui/card'
 import { Button } from '@/shared/components/ui/button'
 import { PriceTag } from '@/shared/components/ui/price-tag'
+import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 import { Trash2 } from 'lucide-react'
 
 interface FavoriteItemProps {
@@ -87,7 +88,7 @@ export function FavoriteItem({
               <div className="flex items-baseline gap-2">
                 {originalPrice && (
                   <span className="text-xs text-gray-300 line-through font-bold">
-                    ${originalPrice.toFixed(2)}
+                    <VNDPrice amount={originalPrice} />
                   </span>
                 )}
                 <PriceTag price={price} className="text-xl font-bold text-mint-1200" />

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { X, Heart, Camera, ShoppingCart } from 'lucide-react'
 import { Button } from '@/shared/components/ui'
+import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 import type { NormalizedLandmark } from '@mediapipe/tasks-vision'
 import GlassesOverlay from './GlassesOverlay'
 
@@ -116,7 +117,7 @@ export default function TryOnWebcamView({
             <div className="min-w-0">
               <p className="text-xs font-bold text-mint-1200 truncate">{productName}</p>
               <p className="text-xs text-gray-eyewear">
-                ${productPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                <VNDPrice amount={productPrice} />
               </p>
             </div>
           </div>

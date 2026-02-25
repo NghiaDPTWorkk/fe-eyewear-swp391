@@ -126,5 +126,11 @@ export const ENDPOINTS = {
     GET: '/wishlist',
     ADD: (id: string) => `/wishlist/products/${id}`,
     REMOVE: (id: string) => `/wishlist/products/${id}`
+  },
+  // AI Chat
+  AI_CHAT: {
+    GET_MESSAGES: (lastMessageAt?: number) =>
+      lastMessageAt ? `/ai-message?lastMessageAt=${lastMessageAt}` : '/ai-message',
+    SEND_MESSAGE: '/ai-conversation/chat'
   }
 } as const

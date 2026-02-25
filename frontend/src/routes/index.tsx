@@ -182,14 +182,138 @@ const CustomerOrderDetailPage = lazy(() =>
   }))
 )
 
+// Main Layout Wrapper
+const CustomerLayout = lazy(() => import('@/components/layout/customer/CustomerLayout'))
+
 export const router = createBrowserRouter([
   {
-    path: '/',
     element: (
       <LazyPage>
-        <LandingPage />
+        <CustomerLayout />
       </LazyPage>
-    )
+    ),
+    children: [
+      {
+        path: '/',
+        element: (
+          <LazyPage>
+            <LandingPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: '/products',
+        element: (
+          <LazyPage>
+            <CustomerProductPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: '/products/:id',
+        element: (
+          <LazyPage>
+            <ProductDetailPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: '/cart',
+        element: (
+          <LazyPage>
+            <CartPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: '/account',
+        element: (
+          <AuthGuard>
+            <LazyPage>
+              <AccountLayout />
+            </LazyPage>
+          </AuthGuard>
+        ),
+        children: [
+          {
+            index: true,
+            element: <Navigate to="/account/settings" replace />
+          },
+          {
+            path: 'settings',
+            element: (
+              <LazyPage>
+                <AccountSettingsPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'orders',
+            element: (
+              <LazyPage>
+                <OrdersPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'orders/:invoiceId',
+            element: (
+              <LazyPage>
+                <CustomerOrderDetailPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'addresses',
+            element: (
+              <LazyPage>
+                <AddressesPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'prescriptions',
+            element: (
+              <LazyPage>
+                <PrescriptionsPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'favorites',
+            element: (
+              <LazyPage>
+                <FavoritesPage />
+              </LazyPage>
+            )
+          }
+        ]
+      },
+      {
+        path: '/eyeglasses',
+        element: (
+          <LazyPage>
+            <CustomerProductPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: '/sunglasses',
+        element: (
+          <LazyPage>
+            <CustomerProductPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: '/lenses',
+        element: (
+          <LazyPage>
+            <CustomerProductPage />
+          </LazyPage>
+        )
+      }
+    ]
   },
   {
     path: '/login',
@@ -204,118 +328,6 @@ export const router = createBrowserRouter([
     element: (
       <LazyPage>
         <RegisterPage />
-      </LazyPage>
-    )
-  },
-  {
-    path: '/products',
-    element: (
-      <LazyPage>
-        <CustomerProductPage />
-      </LazyPage>
-    )
-  },
-  {
-    path: '/products/:id',
-    element: (
-      <LazyPage>
-        <ProductDetailPage />
-      </LazyPage>
-    )
-  },
-  {
-    path: '/cart',
-    element: (
-      <LazyPage>
-        <CartPage />
-      </LazyPage>
-    )
-  },
-  {
-    path: '/account',
-    element: (
-      <AuthGuard>
-        <LazyPage>
-          <AccountLayout />
-        </LazyPage>
-      </AuthGuard>
-    ),
-    children: [
-      {
-        index: true,
-        element: <Navigate to="/account/settings" replace />
-      },
-      {
-        path: 'settings',
-        element: (
-          <LazyPage>
-            <AccountSettingsPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'orders',
-        element: (
-          <LazyPage>
-            <OrdersPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'orders/:invoiceId',
-        element: (
-          <LazyPage>
-            <CustomerOrderDetailPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'addresses',
-        element: (
-          <LazyPage>
-            <AddressesPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'prescriptions',
-        element: (
-          <LazyPage>
-            <PrescriptionsPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'favorites',
-        element: (
-          <LazyPage>
-            <FavoritesPage />
-          </LazyPage>
-        )
-      }
-    ]
-  },
-  {
-    path: '/eyeglasses',
-    element: (
-      <LazyPage>
-        <CustomerProductPage />
-      </LazyPage>
-    )
-  },
-  {
-    path: '/sunglasses',
-    element: (
-      <LazyPage>
-        <CustomerProductPage />
-      </LazyPage>
-    )
-  },
-  {
-    path: '/lenses',
-    element: (
-      <LazyPage>
-        <CustomerProductPage />
       </LazyPage>
     )
   },

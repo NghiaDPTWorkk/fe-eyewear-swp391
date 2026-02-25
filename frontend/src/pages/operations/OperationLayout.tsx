@@ -63,7 +63,6 @@ export default function OperationLayout() {
     setLoadingState(isLoading, isError)
 
     if (ordersData) {
-      console.log('Lấy thông tin từ order thành công:')
       // Transform data từ API sang format UI
       const apiOrders = ordersData?.data?.orders?.data || []
 
@@ -77,11 +76,10 @@ export default function OperationLayout() {
       initializeCounts(transformedOrders)
     }
     if (isError) {
-      console.error('Lỗi API:', error)
+      console.error('Error when calling API:', error)
     }
   }, [ordersData, isLoading, isError, error, initializeCounts, setOrders, setLoadingState])
 
-  // Effect riêng để xử lý completed orders
   useEffect(() => {
     // Set loading state cho completed
     setCompletedLoadingState(isLoadingCompleted)
@@ -96,7 +94,7 @@ export default function OperationLayout() {
   const handleLogout = () => {
     navigate('/admin/login')
     const { logout } = useAuthStore.getState()
-    logout() // Clear store
+    logout() 
     localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN)
     localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN)
     localStorage.removeItem(STORAGE_KEYS.USER_INFO)

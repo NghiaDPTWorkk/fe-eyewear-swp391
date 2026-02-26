@@ -70,6 +70,20 @@ export const useSearchOrders = (orderCode: string) => {
 }
 
 /**
+ * Hook lấy chi tiết invoice theo invoiceId
+ * @param invoiceId - Invoice ID (lấy từ order.invoiceId)
+ */
+export const useInvoiceDetail = (invoiceId?: string) => {
+  return useQuery({
+    queryKey: ['invoice', invoiceId],
+    queryFn: () => orderService.getInvoiceById(invoiceId!),
+    enabled: !!invoiceId,
+    staleTime: 60000,
+    refetchOnWindowFocus: false
+  })
+}
+
+/**
  * Hook cập nhật trạng thái sang MAKING
  */
 export const useUpdateStatusToMaking = () => {

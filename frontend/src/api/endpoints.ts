@@ -136,7 +136,8 @@ export const ENDPOINTS = {
       return `/admin/orders/total?${params.toString()}`
     },
     ORDER_APPROVE: (id: string) => `/admin/orders/${id}/status/approve`,
-    PROFILE_REQUESTS: '/admin/profile-requests'
+    PROFILE_REQUESTS: '/admin/profile-requests',
+    INVOICE_DETAIL: (id: string) => `/admin/invoices/${id}`
   },
 
   ADMINS: {

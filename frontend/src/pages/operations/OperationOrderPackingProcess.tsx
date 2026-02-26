@@ -183,7 +183,7 @@ export default function OperationOrderPackingProcess() {
           className={`col-span-12 lg:col-span-5 space-y-6 transition-all duration-500 ease-in-out ${allChecked || isCompleted ? 'opacity-100 translate-y-0' : 'opacity-30 translate-y-4 pointer-events-none grayscale'}`}
         >
           {/* Shipping Info */}
-          <ShippingLabel />
+          <ShippingLabel orderId={orderId} />
 
           {/* Order Summary */}
           <OrderSumary orderId={orderId} />

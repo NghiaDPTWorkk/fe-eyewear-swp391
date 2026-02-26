@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils'
 import { HiMenuAlt2 } from 'react-icons/hi'
 import { useLayoutStore } from '@/store/layout.store'
 import { useLogout } from '@/shared/hooks/useLogout'
-import { Button, Input } from '@/shared/components'
+import { Button, Input } from '@/shared/components/ui-core'
 
 export interface NavSearchProps {
   className?: string
@@ -52,10 +52,11 @@ export function NavSearch({
         <HiMenuAlt2 className="text-2xl" />
       </Button>
 
-      <div className={cn('max-w-lg flex-1 lg:pl-6', inputContainerClassName)}>
+      <div className={cn('max-w-lg flex-1', inputContainerClassName)}>
         <Input
           placeholder={placeholder || 'Search orders, customers, or frames...'}
           size="md"
+          autoComplete="off"
           leftElement={
             <span className="pointer-events-none flex items-center justify-center ml-2">
               <FiSearch className={cn('text-xl', iconColor)} />
@@ -81,7 +82,7 @@ export function NavActions({
   userName = 'Loading...',
   userRole = 'Loading...',
   userInitials = '...',
-  userEmail = 'loading@example.com'
+  userEmail = ''
 }: NavActionsProps) {
   const [openDropdown, setOpenDropdown] = useState<'notifications' | 'profile' | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)

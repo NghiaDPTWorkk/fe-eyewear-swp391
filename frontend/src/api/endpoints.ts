@@ -160,5 +160,9 @@ export const ENDPOINTS = {
     GET: '/wishlist',
     ADD: (id: string) => `/wishlist/products/${id}`,
     REMOVE: (id: string) => `/wishlist/products/${id}`
+  },
+  // Categories
+  CATEGORIES: {
+    TREE: '/categories/tree'
   }
 } as const

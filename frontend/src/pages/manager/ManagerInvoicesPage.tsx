@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Container, Button } from '@/components'
+import { Container, Button } from '@/shared/components/ui-core'
 import { useAdminInvoices } from '@/features/manager/hooks/useAdminInvoices'
 import { useComplete } from '@/features/manager/hooks/useComplete'
 import { useDelivering } from '@/features/manager/hooks/useDelivering'
@@ -286,8 +286,8 @@ export default function ManagerInvoicesPage() {
       </div>
 
       {/* Table Section */}
-      <div className="bg-white rounded-3xl border border-neutral-100 shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-neutral-50 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      <div className="bg-white rounded-3xl border border-neutral-50/50 shadow-sm overflow-hidden">
+        <div className="p-6 border-b border-neutral-50/30 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="flex-1 max-w-md relative">
             <IoSearchOutline
               className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400"
@@ -368,7 +368,7 @@ export default function ManagerInvoicesPage() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
-            <thead className="bg-neutral-50/50 text-[11px] text-neutral-400 font-semibold tracking-widest uppercase border-b border-neutral-50">
+            <thead className="bg-white text-[11px] text-neutral-400 font-semibold tracking-widest uppercase border-b border-neutral-50/50">
               <tr>
                 <th className="px-6 py-5">Customer</th>
                 <th className="px-6 py-5">Status</th>
@@ -482,7 +482,7 @@ export default function ManagerInvoicesPage() {
         </div>
 
         {/* Pagination Section */}
-        <div className="p-6 bg-neutral-50/50 border-t border-neutral-50 flex items-center justify-between font-primary">
+        <div className="p-6 bg-white border-t border-neutral-50/50 flex items-center justify-between font-primary">
           <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest pl-2">
             {pagination ? `Page ${pagination.page} of ${pagination.totalPages}` : `Page ${page}`}
           </p>

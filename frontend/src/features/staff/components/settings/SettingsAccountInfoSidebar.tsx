@@ -1,5 +1,5 @@
 import { useProfile } from '@/features/staff/hooks/useProfile'
-import { Card, Button } from '@/shared/components'
+import { Card, Button } from '@/shared/components/ui-core'
 import {
   IoStorefrontOutline,
   IoCalendarOutline,
@@ -200,7 +200,7 @@ export default function AccountInfoSidebar() {
       </Card>
 
       {/* Danger Zone */}
-      <Card className="p-8 border border-red-100 shadow-sm shadow-red-50 bg-red-50/10 rounded-2xl">
+      <Card className="p-8 border border-red-100 shadow-sm shadow-red-50 bg-white rounded-2xl">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center shrink-0">
             <IoTrashOutline className="text-red-600" size={20} />

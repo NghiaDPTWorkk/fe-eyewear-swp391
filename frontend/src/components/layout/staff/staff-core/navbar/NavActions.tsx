@@ -1,72 +1,15 @@
 import { useState, useRef, useEffect } from 'react'
-import { FiSearch, FiMail } from 'react-icons/fi'
-import { HiMenuAlt2 } from 'react-icons/hi'
+import { FiMail } from 'react-icons/fi'
+import { MdOutlineNotifications } from 'react-icons/md'
 import {
   IoPersonOutline,
   IoSettingsOutline,
   IoLogOutOutline,
   IoChevronForward
 } from 'react-icons/io5'
-import { MdOutlineNotifications } from 'react-icons/md'
 import { useLocation, Link } from 'react-router-dom'
-
 import { cn } from '@/lib/utils'
-import { Button, Input } from '@/shared/components/ui-core'
-import { useLayoutStore } from '@/store/layout.store'
-
-export interface NavSearchProps {
-  className?: string
-  inputContainerClassName?: string
-  placeholder?: string
-  styleVariant?: 'default' | 'operation' | 'manager'
-}
-
-export function NavSearch({
-  className,
-  inputContainerClassName,
-  placeholder,
-  styleVariant = 'default'
-}: NavSearchProps) {
-  const { toggleSidebar } = useLayoutStore()
-
-  const inputStyles =
-    styleVariant === 'operation'
-      ? 'bg-mint-200 border-mint-500 rounded-xl'
-      : styleVariant === 'manager'
-        ? 'bg-mint-50 border-mint-200 rounded-xl shadow-sm'
-        : 'bg-neutral-50 border-neutral-100 rounded-xl'
-
-  const iconColor =
-    styleVariant === 'operation'
-      ? 'text-mint-700'
-      : styleVariant === 'manager'
-        ? 'text-mint-600'
-        : 'text-neutral-400'
-
-  return (
-    <div className={cn('flex items-center gap-3 w-full pr-2', className)}>
-      <Button
-        onClick={toggleSidebar}
-        className="lg:hidden p-2 rounded-lg text-neutral-500 hover:bg-neutral-50 transition-colors"
-      >
-        <HiMenuAlt2 className="text-2xl" />
-      </Button>
-
-      <div className={cn('max-w-lg flex-1 lg:pl-6', inputContainerClassName)}>
-        <Input
-          placeholder={placeholder || 'Search orders, customers, or frames...'}
-          size="md"
-          leftElement={
-            <span className="pointer-events-none flex items-center justify-center ml-2">
-              <FiSearch className={cn('text-xl', iconColor)} />
-            </span>
-          }
-          className={cn('w-full', inputStyles)}
-        />
-      </div>
-    </div>
-  )
-}
+import { useLogout } from '@/shared/hooks/useLogout'
 
 interface NavActionsProps {
   className?: string
@@ -78,9 +21,9 @@ interface NavActionsProps {
 
 export function NavActions({
   className,
-  userName = 'Anna Morgan',
-  userRole = 'Operations Manager',
-  userInitials = 'AM',
+  userName = 'Loading...',
+  userRole = 'Loading...',
+  userInitials = '...',
   userEmail = ''
 }: NavActionsProps) {
   const [openDropdown, setOpenDropdown] = useState<'notifications' | 'profile' | null>(null)
@@ -89,7 +32,8 @@ export function NavActions({
 
   // Determine base path for dynamic links
   const isOperation = location.pathname.startsWith('/operationstaff')
-  const basePrefix = isOperation ? '/operationstaff' : '/salestaff'
+  const isManager = location.pathname.startsWith('/manager')
+  const basePrefix = isManager ? '/manager' : isOperation ? '/operationstaff' : '/salestaff'
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -132,10 +76,12 @@ export function NavActions({
     }
   ]
 
+  const { handleLogout } = useLogout()
+
   return (
     <div
       ref={containerRef}
-      className={cn('flex justify-end items-center gap-6 pr-4 relative', className)}
+      className={cn('flex justify-end items-center gap-4 relative', className)}
     >
       <div className="flex items-center gap-4 text-neutral-500">
         <button
@@ -162,7 +108,7 @@ export function NavActions({
           </button>
 
           {openDropdown === 'notifications' && (
-            <div className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-xl border border-neutral-100 py-4 z-50 animate-in fade-in zoom-in-95 duration-200">
+            <div className="absolute right-0 mt-6 w-80 bg-white rounded-2xl shadow-xl border border-neutral-100 py-4 z-50 animate-in fade-in zoom-in-95 duration-200">
               <div className="px-5 mb-4">
                 <h3 className="text-lg font-semibold text-neutral-900">Notifications</h3>
                 <p className="text-xs font-medium text-neutral-400">You have 4 unread messages</p>
@@ -217,14 +163,14 @@ export function NavActions({
         </button>
 
         {openDropdown === 'profile' && (
-          <div className="absolute right-0 mt-3 w-72 bg-white rounded-2xl shadow-xl border border-neutral-100 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+          <div className="absolute right-0 mt-6 w-72 bg-white rounded-2xl shadow-xl border border-neutral-100 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="p-6 bg-white border-b border-neutral-50">
               <div className="mb-3">
                 <h3 className="text-xl font-semibold text-neutral-900 leading-tight">{userName}</h3>
                 <p className="text-sm font-medium text-neutral-500 truncate mt-1">{userEmail}</p>
               </div>
               <span className="px-3 py-1 bg-primary-100/50 text-primary-600 text-[11px] font-semibold uppercase tracking-wider rounded-lg border border-primary-200/30">
-                {isOperation ? 'Manager' : 'Staff'}
+                {isManager ? 'Manager' : isOperation ? 'Staff' : 'Staff'}
               </span>
             </div>
 
@@ -255,8 +201,11 @@ export function NavActions({
 
             <div className="p-3 bg-neutral-50/50 border-t border-neutral-50">
               <button
-                className="flex items-center gap-3 w-full px-4 py-3 rounded-xl hover:bg-red-50 group transition-all"
-                onClick={() => setOpenDropdown(null)}
+                className="flex items-center gap-3 w-full px-4 py-3 rounded-xl hover:bg-red-50 group transition-all cursor-pointer"
+                onClick={() => {
+                  setOpenDropdown(null)
+                  handleLogout()
+                }}
               >
                 <div className="w-9 h-9 rounded-lg bg-red-50/50 flex items-center justify-center group-hover:bg-white text-red-500 shadow-sm border border-red-100/30">
                   <IoLogOutOutline className="text-lg" />

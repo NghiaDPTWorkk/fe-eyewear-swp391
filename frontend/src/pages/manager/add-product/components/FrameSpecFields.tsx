@@ -1,8 +1,10 @@
-import React from 'react'
+import { DynamicSelectField } from './DynamicSelectField'
+import { MultiSelectField } from './MultiSelectField'
 import type { ProductCreateFormState } from '../types/product-create.types'
+import { Select } from '@/shared/components/ui-core'
 
 const inputClassName =
-  'w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-2xl text-[14px] focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all'
+  'w-full px-4 py-3 bg-neutral-50/50 border border-neutral-100 rounded-2xl text-[14px] focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all'
 
 export function FrameSpecFields(props: {
   specFrame: ProductCreateFormState['specFrame']
@@ -10,136 +12,168 @@ export function FrameSpecFields(props: {
 }) {
   const { specFrame, onChange } = props
 
+  const materialOptions = [
+    { id: 'acetate', name: 'Acetate' },
+    { id: 'metal', name: 'Metal' },
+    { id: 'plastic', name: 'Plastic' },
+    { id: 'titanium', name: 'Titanium' },
+    { id: 'wood', name: 'Wood' }
+  ]
+
+  const shapeOptions = [
+    { id: 'aviator', name: 'Aviator' },
+    { id: 'rectangle', name: 'Rectangle' },
+    { id: 'round', name: 'Round' },
+    { id: 'square', name: 'Square' },
+    { id: 'wayfarer', name: 'Wayfarer' },
+    { id: 'cat-eye', name: 'Cat Eye' },
+    { id: 'irregular', name: 'Irregular' }
+  ]
+
+  const styleOptions = [
+    { id: 'classic', name: 'Classic' },
+    { id: 'modern', name: 'Modern' },
+    { id: 'vintage', name: 'Vintage' },
+    { id: 'sporty', name: 'Sporty' },
+    { id: 'minimalist', name: 'Minimalist' }
+  ]
+
+  const selectedMaterials = specFrame.materialText
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 pt-6 border-t border-neutral-100">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-extrabold text-gray-900 tracking-wide">FrameSpec</h3>
+        <h3 className="text-lg font-bold text-gray-900 tracking-tight">Frame Specifications</h3>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-2 md:col-span-2">
-          <label className="text-sm font-bold text-gray-700 ml-1">material (comma separated)</label>
-          <input
-            value={specFrame.materialText}
-            onChange={(e) => onChange({ ...specFrame, materialText: e.target.value })}
-            type="text"
-            placeholder="acetate, metal"
-            className={inputClassName}
-          />
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+        <MultiSelectField
+          className="md:col-span-2"
+          label="Materials"
+          values={selectedMaterials}
+          options={materialOptions}
+          onChange={(vals) => onChange({ ...specFrame, materialText: vals.join(', ') })}
+          placeholder="Select or enter materials..."
+        />
+
+        <DynamicSelectField
+          label="Shape"
+          value={specFrame.shape}
+          options={shapeOptions}
+          onChange={(val) => onChange({ ...specFrame, shape: val })}
+        />
+
+        <DynamicSelectField
+          label="Style"
+          value={specFrame.style}
+          options={styleOptions}
+          onChange={(val) => onChange({ ...specFrame, style: val })}
+          helperText="Nullable"
+        />
 
         <div className="space-y-2">
-          <label className="text-sm font-bold text-gray-700 ml-1">shape</label>
-          <input
-            value={specFrame.shape}
-            onChange={(e) => onChange({ ...specFrame, shape: e.target.value })}
-            type="text"
-            placeholder="aviator"
-            className={inputClassName}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-bold text-gray-700 ml-1">style (nullable)</label>
-          <input
-            value={specFrame.style}
-            onChange={(e) => onChange({ ...specFrame, style: e.target.value })}
-            type="text"
-            placeholder="(trống = null)"
-            className={inputClassName}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-bold text-gray-700 ml-1">gender</label>
-          <select
+          <label className="text-sm font-bold text-gray-700 ml-1">Gender</label>
+          <Select
             value={specFrame.gender}
             onChange={(e) => onChange({ ...specFrame, gender: e.target.value as 'F' | 'M' | 'N' })}
-            className={inputClassName}
+            className="bg-neutral-50/50 border-neutral-100 rounded-2xl"
           >
-            <option value="F">F</option>
-            <option value="M">M</option>
-            <option value="N">N</option>
-          </select>
+            <option value="F">Female (Nữ)</option>
+            <option value="M">Male (Nam)</option>
+            <option value="N">Unisex (Cả hai)</option>
+          </Select>
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-bold text-gray-700 ml-1">
-            weight (nullable, &gt;0 if set)
-          </label>
+          <label className="text-sm font-bold text-gray-700 ml-1">Weight (g)</label>
           <input
             value={specFrame.weightText}
             onChange={(e) => onChange({ ...specFrame, weightText: e.target.value })}
             type="number"
-            placeholder="28.5"
+            placeholder="e.g. 28.5"
             className={inputClassName}
           />
         </div>
 
-        <div className="space-y-2 md:col-span-2">
-          <label className="text-sm font-bold text-gray-700 ml-1">dimensions</label>
-          <div className="flex items-center gap-3">
-            <input
-              checked={specFrame.dimensionsEnabled}
-              onChange={(e) => onChange({ ...specFrame, dimensionsEnabled: e.target.checked })}
-              type="checkbox"
-              className="w-4 h-4"
-            />
-            <span className="text-xs font-semibold text-neutral-500">
-              Enable (unchecked = null)
-            </span>
+        <div className="space-y-4 md:col-span-2 p-6 bg-neutral-50/50 rounded-3xl border border-neutral-100">
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-bold text-gray-700">Dimensions (mm)</label>
+            <div className="flex items-center gap-3">
+              <input
+                id="dim-toggle"
+                checked={specFrame.dimensionsEnabled}
+                onChange={(e) => onChange({ ...specFrame, dimensionsEnabled: e.target.checked })}
+                type="checkbox"
+                className="w-4 h-4 rounded text-mint-600 focus:ring-mint-500 cursor-pointer"
+              />
+              <label
+                htmlFor="dim-toggle"
+                className="text-xs font-semibold text-neutral-500 cursor-pointer"
+              >
+                Enable dimensions
+              </label>
+            </div>
           </div>
-        </div>
 
-        {specFrame.dimensionsEnabled ? (
-          <>
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700 ml-1">width</label>
-              <input
-                value={specFrame.dimensions.widthText}
-                onChange={(e) =>
-                  onChange({
-                    ...specFrame,
-                    dimensions: { ...specFrame.dimensions, widthText: e.target.value }
-                  })
-                }
-                type="number"
-                placeholder="140"
-                className={inputClassName}
-              />
+          {specFrame.dimensionsEnabled && (
+            <div className="grid grid-cols-3 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-neutral-400 uppercase ml-1">
+                  Width
+                </label>
+                <input
+                  value={specFrame.dimensions.widthText}
+                  onChange={(e) =>
+                    onChange({
+                      ...specFrame,
+                      dimensions: { ...specFrame.dimensions, widthText: e.target.value }
+                    })
+                  }
+                  type="number"
+                  placeholder="140"
+                  className={inputClassName}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-neutral-400 uppercase ml-1">
+                  Height
+                </label>
+                <input
+                  value={specFrame.dimensions.heightText}
+                  onChange={(e) =>
+                    onChange({
+                      ...specFrame,
+                      dimensions: { ...specFrame.dimensions, heightText: e.target.value }
+                    })
+                  }
+                  type="number"
+                  placeholder="45"
+                  className={inputClassName}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-neutral-400 uppercase ml-1">
+                  Depth
+                </label>
+                <input
+                  value={specFrame.dimensions.depthText}
+                  onChange={(e) =>
+                    onChange({
+                      ...specFrame,
+                      dimensions: { ...specFrame.dimensions, depthText: e.target.value }
+                    })
+                  }
+                  type="number"
+                  placeholder="145"
+                  className={inputClassName}
+                />
+              </div>
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700 ml-1">height</label>
-              <input
-                value={specFrame.dimensions.heightText}
-                onChange={(e) =>
-                  onChange({
-                    ...specFrame,
-                    dimensions: { ...specFrame.dimensions, heightText: e.target.value }
-                  })
-                }
-                type="number"
-                placeholder="45"
-                className={inputClassName}
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700 ml-1">depth</label>
-              <input
-                value={specFrame.dimensions.depthText}
-                onChange={(e) =>
-                  onChange({
-                    ...specFrame,
-                    dimensions: { ...specFrame.dimensions, depthText: e.target.value }
-                  })
-                }
-                type="number"
-                placeholder="145"
-                className={inputClassName}
-              />
-            </div>
-          </>
-        ) : null}
+          )}
+        </div>
       </div>
     </div>
   )

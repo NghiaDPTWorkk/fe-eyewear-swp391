@@ -63,7 +63,6 @@ export default function OperationLayout() {
     setLoadingState(isLoading, isError)
 
     if (ordersData) {
-      console.log('Lấy thông tin từ order thành công:')
       // Transform data từ API sang format UI
       const apiOrders = ordersData?.data?.orders?.data || []
 
@@ -215,10 +214,12 @@ export default function OperationLayout() {
           userName={userName}
           userRole={userRole}
           userInitials={userInitials}
-          userEmail={profile?.email || 'loading@example.com'}
+          userEmail={profile?.email || ''}
         />
       }
-      mainClassName="p-4 md:p-8 bg-mint-200 relative overflow-x-hidden"
+      headerContainerClassName="px-4 md:px-8 lg:px-10"
+      headerContainerWidth="max-w-[1600px]"
+      contentMaxWidth="max-w-[1600px]"
     />
   )
 }

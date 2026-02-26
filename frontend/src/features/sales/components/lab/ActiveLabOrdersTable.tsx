@@ -21,8 +21,8 @@ interface ActiveLabOrdersTableProps {
 
 export const ActiveLabOrdersTable: React.FC<ActiveLabOrdersTableProps> = ({ orders }) => {
   return (
-    <Card className="p-0 overflow-hidden border border-neutral-100 shadow-sm rounded-2xl bg-white">
-      <div className="px-8 py-5 border-b border-neutral-100 flex justify-between items-center bg-white">
+    <Card className="p-0 overflow-hidden border border-neutral-50/50 shadow-sm rounded-2xl bg-white">
+      <div className="px-8 py-5 border-b border-neutral-50/50 flex justify-between items-center bg-white">
         <h3 className="text-[11px] font-semibold text-[#a4a9c1] uppercase tracking-widest">
           Active Lab Orders
         </h3>
@@ -37,7 +37,7 @@ export const ActiveLabOrdersTable: React.FC<ActiveLabOrdersTableProps> = ({ orde
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-white border-b border-neutral-100">
+            <tr className="bg-white border-b border-neutral-50/50">
               <th className="pl-10 px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] tracking-widest align-middle">
                 Order ID
               </th>

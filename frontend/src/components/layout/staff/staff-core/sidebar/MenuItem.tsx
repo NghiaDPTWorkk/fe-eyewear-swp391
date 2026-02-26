@@ -16,6 +16,7 @@ interface MenuItemProps {
   onClick?: () => void
   menuOpen?: boolean
   isOpen?: boolean
+  isLoading?: boolean
 }
 
 export function MenuItem({
@@ -28,7 +29,8 @@ export function MenuItem({
   hasDropdown,
   children,
   onClick,
-  isOpen: defaultIsOpen = false
+  isOpen: defaultIsOpen = false,
+  isLoading
 }: MenuItemProps) {
   const { sidebarCollapsed } = useLayoutStore()
   const hasActiveChild = Children.toArray(children).some(
@@ -62,12 +64,16 @@ export function MenuItem({
       )}
       <span
         className={cn(
-          'text-xl transition-colors relative z-10',
+          'text-xl transition-colors relative z-10 flex items-center justify-center',
           active || (hasDropdown && isOpen) ? 'text-primary-500' : 'text-neutral-400',
           sidebarCollapsed && 'group-hover:text-primary-500'
         )}
       >
-        {icon}
+        {isLoading ? (
+          <div className="w-5 h-5 border-2 border-primary-500/20 border-t-primary-500 rounded-full animate-spin" />
+        ) : (
+          icon
+        )}
       </span>
       {!sidebarCollapsed && (
         <>

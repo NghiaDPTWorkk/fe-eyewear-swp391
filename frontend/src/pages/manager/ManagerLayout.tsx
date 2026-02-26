@@ -1,12 +1,12 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layout/StaffMainLayout'
 import {
-  SidebarStaff,
-  UserWidgetWithLogout,
-  ThemeToggle,
   NavActions,
-  NavSearch
-} from '@/components/staff'
+  NavSearch,
+  SidebarStaff,
+  ThemeToggle,
+  UserWidgetWithLogout
+} from '@/components/layout/staff/staff-core'
 import {
   IoGrid,
   IoCube,
@@ -119,11 +119,12 @@ export default function ManagerLayout() {
           userName={userName}
           userRole={userRole}
           userInitials={userInitials}
-          userEmail={profile?.email}
+          userEmail={profile?.email || ''}
         />
       }
-      mainClassName="px-4 md:px-8 lg:px-10 py-6 md:py-8 bg-neutral-50/50"
-      headerClassName="pl-6 pr-4"
+      mainClassName="px-4 md:px-8 lg:px-10 py-6 md:py-8 bg-white"
+      headerContainerClassName="px-4 md:px-8 lg:px-10"
+      headerContainerWidth="max-w-[1600px]"
       contentMaxWidth="max-w-[1600px]"
     />
   )

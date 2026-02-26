@@ -4,7 +4,7 @@
  */
 import { IoFilter, IoAdd } from 'react-icons/io5'
 
-import { Card } from '@/shared/components'
+import { Card } from '@/shared/components/ui-core'
 
 import { OrderTable } from '../orders'
 

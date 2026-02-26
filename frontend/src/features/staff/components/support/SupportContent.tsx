@@ -7,7 +7,7 @@ import {
   IoChatbubblesOutline,
   IoChevronForwardOutline
 } from 'react-icons/io5'
-import { Card, Button } from '@/shared/components'
+import { Card, Button } from '@/shared/components/ui-core'
 
 interface SupportGuideline {
   title: string
@@ -56,7 +56,7 @@ export default function SupportContent({
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 px-4">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
       <div className="lg:col-span-8 space-y-8">
         <Card className="p-8 border-none shadow-sm shadow-neutral-200/50 bg-white rounded-3xl">
           <div className="flex items-center gap-4 mb-10">
@@ -115,7 +115,7 @@ export default function SupportContent({
             {contacts.map((contact) => (
               <div
                 key={contact.role}
-                className={`p-6 bg-slate-50/50 border border-slate-100 rounded-2xl transition-all group hover:scale-[1.02] ${hoverBorderClass}`}
+                className={`p-6 bg-white border border-neutral-100 rounded-2xl shadow-sm transition-all group hover:scale-[1.02] ${hoverBorderClass}`}
               >
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="font-bold text-slate-800 tracking-tight">{contact.role}</h4>
@@ -154,7 +154,7 @@ export default function SupportContent({
               <input
                 type="text"
                 placeholder="Brief description of the issue"
-                className={`w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-semibold text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-4 transition-all ${accentColor === 'mint' ? 'focus:ring-mint-500/10 focus:border-mint-500' : 'focus:ring-primary-500/10 focus:border-primary-500'}`}
+                className={`w-full px-5 py-3.5 bg-neutral-50 border border-neutral-100 rounded-2xl text-sm font-semibold text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-4 transition-all ${accentColor === 'mint' ? 'focus:ring-mint-500/10 focus:border-mint-500' : 'focus:ring-primary-500/10 focus:border-primary-500'}`}
               />
             </div>
 
@@ -163,7 +163,7 @@ export default function SupportContent({
                 Priority
               </label>
               <select
-                className={`w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold text-slate-700 appearance-none transition-all cursor-pointer ${accentColor === 'mint' ? 'focus:ring-mint-500/10 focus:border-mint-500' : 'focus:ring-primary-500/10 focus:border-primary-500'}`}
+                className={`w-full px-5 py-3.5 bg-neutral-50 border border-neutral-100 rounded-2xl text-sm font-bold text-slate-700 appearance-none transition-all cursor-pointer ${accentColor === 'mint' ? 'focus:ring-mint-500/10 focus:border-mint-500' : 'focus:ring-primary-500/10 focus:border-primary-500'}`}
               >
                 <option>Low - Cosmetic issue</option>
                 <option defaultValue="Medium">Medium - Affects workflow</option>
@@ -178,7 +178,7 @@ export default function SupportContent({
               <textarea
                 rows={4}
                 placeholder="Describe the bug in detail..."
-                className={`w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-semibold text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-4 transition-all resize-none ${accentColor === 'mint' ? 'focus:ring-mint-500/10 focus:border-mint-500' : 'focus:ring-primary-500/10 focus:border-primary-500'}`}
+                className={`w-full px-5 py-3.5 bg-neutral-50 border border-neutral-100 rounded-2xl text-sm font-semibold text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-4 transition-all resize-none ${accentColor === 'mint' ? 'focus:ring-mint-500/10 focus:border-mint-500' : 'focus:ring-primary-500/10 focus:border-primary-500'}`}
               />
             </div>
 
@@ -221,7 +221,7 @@ export default function SupportContent({
               {recentReports.map((report) => (
                 <div
                   key={report.title}
-                  className={`flex justify-between items-start p-4 bg-slate-50/50 border border-slate-100 rounded-2xl transition-all group hover:scale-[1.02] cursor-pointer ${accentColor === 'mint' ? 'hover:border-mint-200 hover:bg-white hover:shadow-md hover:shadow-slate-200/50' : 'hover:border-primary-200'}`}
+                  className={`flex justify-between items-start p-4 bg-white border border-neutral-100 rounded-2xl shadow-sm transition-all group hover:scale-[1.02] cursor-pointer ${accentColor === 'mint' ? 'hover:border-mint-200 hover:bg-white hover:shadow-md hover:shadow-slate-200/50' : 'hover:border-primary-200'}`}
                 >
                   <div className="flex-1 pr-3">
                     <h4 className="text-sm font-bold text-slate-800 group-hover:text-primary-600 transition-colors line-clamp-1">

@@ -1,8 +1,6 @@
-import React from 'react'
+import { DynamicSelectField } from './DynamicSelectField'
+import { MultiSelectField } from './MultiSelectField'
 import type { ProductCreateFormState } from '../types/product-create.types'
-
-const inputClassName =
-  'w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-2xl text-[14px] focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all'
 
 export function LensSpecFields(props: {
   specLens: ProductCreateFormState['specLens']
@@ -10,35 +8,57 @@ export function LensSpecFields(props: {
 }) {
   const { specLens, onChange } = props
 
+  const featureOptions = [
+    { id: 'blue-cut', name: 'Blue Cut' },
+    { id: 'uv400', name: 'UV400 Protection' },
+    { id: 'photochromic', name: 'Photochromic (Đổi màu)' },
+    { id: 'polarized', name: 'Polarized (Phân cực)' },
+    { id: 'anti-reflective', name: 'Anti-Reflective' },
+    { id: 'scratch-resistant', name: 'Scratch Resistant' }
+  ]
+
+  const originOptions = [
+    { id: 'France', name: 'France' },
+    { id: 'Japan', name: 'Japan' },
+    { id: 'Germany', name: 'Germany' },
+    { id: 'Korea', name: 'Korea' },
+    { id: 'Vietnam', name: 'Vietnam' },
+    { id: 'USA', name: 'USA' }
+  ]
+
+  const selectedFeatures = specLens.featureText
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
+
   return (
-    <div className="space-y-6">
-      <h3 className="text-sm font-extrabold text-gray-900 tracking-wide">LenSpec (nullable)</h3>
-      <p className="text-xs text-neutral-500">
-        Nếu để trống cả feature + origin thì spec sẽ = null.
-      </p>
+    <div className="space-y-8 pt-6 border-t border-neutral-100">
+      <div className="flex flex-col gap-1">
+        <h3 className="text-lg font-bold text-gray-900 tracking-tight">Lens Specifications</h3>
+        <p className="text-xs text-neutral-400 font-medium">
+          Note: If both feature and origin are empty, specifications will be saved as null.
+        </p>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-2 md:col-span-2">
-          <label className="text-sm font-bold text-gray-700 ml-1">feature (comma separated)</label>
-          <input
-            value={specLens.featureText}
-            onChange={(e) => onChange({ ...specLens, featureText: e.target.value })}
-            type="text"
-            placeholder="blue-cut, uv400"
-            className={inputClassName}
-          />
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <MultiSelectField
+          className="md:col-span-2"
+          label="Features"
+          values={selectedFeatures}
+          options={featureOptions}
+          onChange={(vals) => onChange({ ...specLens, featureText: vals.join(', ') })}
+          placeholder="Select or enter lens features..."
+        />
 
-        <div className="space-y-2 md:col-span-2">
-          <label className="text-sm font-bold text-gray-700 ml-1">origin (nullable)</label>
-          <input
-            value={specLens.origin}
-            onChange={(e) => onChange({ ...specLens, origin: e.target.value })}
-            type="text"
-            placeholder="France (trống = null)"
-            className={inputClassName}
-          />
-        </div>
+        <DynamicSelectField
+          className="md:col-span-2"
+          label="Origin"
+          value={specLens.origin}
+          options={originOptions}
+          onChange={(val) => onChange({ ...specLens, origin: val })}
+          placeholder="Select or enter country of origin..."
+          helperText="Nullable"
+        />
       </div>
     </div>
   )

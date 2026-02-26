@@ -1,26 +1,24 @@
 import { IoCloseOutline, IoChevronForward } from 'react-icons/io5'
-
-// Định nghĩa lại các interface cần thiết để component này độc lập
-export interface Order {
-  id: string
-  code: string
-  item: string
-}
-
-export interface InvoiceDisplayAllInvoices {
-  id: string
-  invoiceCode: string
-  status: string
-  orderCount: number
-  totalAmount: number
-  orders: Order[]
-}
+import type { OperationInvoiceListItem } from '@/shared/types'
 
 interface OperationInvoicePopupProps {
-  selectedInvoice: InvoiceDisplayAllInvoices | null
+  selectedInvoice: OperationInvoiceListItem | null
   isOpen: boolean
   onClose: () => void
   onNext: (invoiceId: string) => void
+}
+
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'COMPLETED':
+      return 'bg-yellow-100 text-yellow-600'
+    case 'READY_TO_SHIP':
+      return 'bg-mint-100 text-mint-600'
+    case 'SHIPPED':
+      return 'bg-blue-100 text-blue-600'
+    default:
+      return 'bg-gray-100 text-gray-600'
+  }
 }
 
 export default function OperationInvoicePopup({
@@ -29,20 +27,6 @@ export default function OperationInvoicePopup({
   onClose,
   onNext
 }: OperationInvoicePopupProps) {
-  // Helper function để lấy màu status (giữ nguyên logic của bạn)
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'READY_TO_SHIP':
-        return 'bg-mint-100 text-mint-600'
-      case 'PENDING':
-        return 'bg-yellow-100 text-yellow-600'
-      case 'SHIPPED':
-        return 'bg-blue-100 text-blue-600'
-      default:
-        return 'bg-gray-100 text-gray-600'
-    }
-  }
-
   return (
     <>
       {/* Overlay */}
@@ -55,7 +39,7 @@ export default function OperationInvoicePopup({
 
       {/* Sidebar Panel - Right Side */}
       <div
-        className={`fixed right-0 top-0 h-full w-[450px] bg-white shadow-2xl z-[50] transform transition-transform duration-300 ease-out border-l border-neutral-100 flex flex-col ${
+        className={`fixed right-0 top-0 h-full w-[600px] bg-white shadow-2xl z-[50] transform transition-transform duration-300 ease-out border-l border-neutral-100 flex flex-col ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -64,10 +48,10 @@ export default function OperationInvoicePopup({
             {/* Header */}
             <div className="px-4 py-6 border-b border-neutral-100 bg-white flex justify-between items-start">
               <div>
-                <h2 className="text-2xl font-bold text-neutral-900 tracking-tight">
+                <h2 className="text-2xl font-bold ps-5 text-mint-800 tracking-tight">
                   {selectedInvoice.invoiceCode}
                 </h2>
-                <p className="text-sm text-neutral-500 mt-1 font-medium">Invoice Summary</p>
+                <p className="text-sm ps-5 text-neutral-500 mt-1 font-medium">Invoice Summary</p>
               </div>
               <button
                 onClick={onClose}
@@ -79,45 +63,91 @@ export default function OperationInvoicePopup({
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto px-8 py-6 space-y-8 bg-neutral-50/50">
-              {/* Status Section */}
+              {/* Customer Info */}
+              <div>
+                <h3 className="text-xs font-bold text-neutral-400 uppercase tracking-widest mb-3">
+                  CUSTOMER INFO
+                </h3>
+                <div className="p-4 bg-white rounded-xl border border-neutral-100 shadow-sm space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-sm text-neutral-500">Name</span>
+                    <span className="text-md font-semibold text-neutral-800">
+                      {selectedInvoice.fullName}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-neutral-500">Phone</span>
+                    <span className="text-sm font-semibold text-neutral-800">
+                      {selectedInvoice.phone}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-neutral-500">Address</span>
+                    <span className="text-sm font-semibold text-neutral-800">
+                      {selectedInvoice.address}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Status + Created At Section */}
               <div>
                 <h3 className="text-xs font-bold text-neutral-400 uppercase tracking-widest mb-3">
                   CURRENT STATUS
                 </h3>
-                <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-neutral-100 shadow-sm">
-                  <span className="text-sm font-semibold text-neutral-700">Payment Status</span>
-                  <span
-                    className={`px-4 py-1.5 rounded-full text-xs font-bold shadow-sm ${getStatusColor(
-                      selectedInvoice.status
-                    )}`}
-                  >
-                    {selectedInvoice.status.replace('_', ' ')}
-                  </span>
+                <div className="bg-white rounded-xl border border-neutral-100 shadow-sm overflow-hidden">
+                  {/* Status row */}
+                  <div className="flex items-center justify-between px-4 py-3">
+                    <span className="text-sm font-semibold text-neutral-700">Invoice Status</span>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(selectedInvoice.status)}`}
+                    >
+                      {selectedInvoice.status.replace(/_/g, ' ')}
+                    </span>
+                  </div>
+
+                  <div className="border-t border-neutral-100" />
+
+                  {/* Created At row */}
+                  <div className="flex items-center justify-between px-4 py-3">
+                    <span className="text-sm font-semibold text-neutral-700">Created At</span>
+                    <span className="text-sm text-neutral-500 font-mono bg-neutral-50 border border-neutral-100 px-3 py-1 rounded-lg">
+                      {(() => {
+                        const d = new Date(selectedInvoice.createdAt)
+                        return isNaN(d.getTime())
+                          ? selectedInvoice.createdAt
+                          : d.toLocaleString('vi-VN', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })
+                      })()}
+                    </span>
+                  </div>
                 </div>
               </div>
 
               {/* Orders List */}
               <div>
                 <h3 className="text-xs font-bold text-neutral-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                  ORDERS INCLUDED ({selectedInvoice.orders.length})
+                  ORDERS INCLUDED ({selectedInvoice.orders?.length ?? 0})
                 </h3>
                 <div className="space-y-3">
-                  {selectedInvoice.orders.map((order, index) => (
+                  {(selectedInvoice.orders ?? []).map((orderId, index) => (
                     <div
-                      key={index}
+                      key={orderId}
                       className="group p-5 bg-white border border-neutral-100 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 hover:border-mint-100"
                     >
-                      <div className="flex justify-between items-start mb-2">
+                      <div className="flex justify-between items-center">
                         <span className="font-bold text-mint-600 text-sm bg-mint-50 px-2 py-0.5 rounded-md group-hover:bg-mint-100 transition-colors">
-                          {order.code}
+                          Order {index + 1}
                         </span>
-                        <span className="text-[10px] text-neutral-400 font-mono border border-neutral-100 px-1.5 py-0.5 rounded">
-                          {order.id}
+                        <span className="text-[16px] text-neutral-400 font-mono border border-neutral-300 px-1.5 py-0.5 rounded">
+                          ID: {orderId.slice(-8).toUpperCase()}
                         </span>
                       </div>
-                      <p className="text-sm text-neutral-700 font-medium leading-relaxed">
-                        {order.item}
-                      </p>
                     </div>
                   ))}
                 </div>
@@ -128,7 +158,7 @@ export default function OperationInvoicePopup({
                 <div className="flex justify-between items-end">
                   <span className="text-neutral-500 font-medium text-sm mb-1">Total Amount</span>
                   <span className="text-3xl font-bold text-neutral-900 tracking-tight">
-                    {selectedInvoice.totalAmount.toLocaleString('vi-VN')}{' '}
+                    {parseFloat(selectedInvoice.finalPrice ?? '0').toLocaleString('vi-VN')}{' '}
                     <span className="text-lg text-neutral-400 font-normal">₫</span>
                   </span>
                 </div>
@@ -147,7 +177,6 @@ export default function OperationInvoicePopup({
             </div>
           </>
         ) : (
-          /* Empty State khi chưa có selectedInvoice nhưng sidebar vẫn mở (trường hợp hiếm) */
           <div className="flex h-full items-center justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-mint-500"></div>
           </div>

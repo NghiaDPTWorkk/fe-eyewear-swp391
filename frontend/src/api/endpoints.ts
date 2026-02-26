@@ -168,5 +168,17 @@ export const ENDPOINTS = {
     GET_MESSAGES: (lastMessageAt?: number) =>
       lastMessageAt ? `/ai-message?lastMessageAt=${lastMessageAt}` : '/ai-message',
     SEND_MESSAGE: '/ai-conversation/chat'
+  },
+
+  // Operation Staff
+  OPERATION_STAFF: {
+    INVOICES_HANDLE_DELIVERY: (page: number, limit: number, status?: string) => {
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: String(limit)
+      })
+      if (status) params.append('status', status)
+      return `/admin/invoices/handle-delivery?${params.toString()}`
+    }
   }
 } as const

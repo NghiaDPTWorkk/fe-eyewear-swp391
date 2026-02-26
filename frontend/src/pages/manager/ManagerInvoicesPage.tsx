@@ -53,7 +53,7 @@ export default function ManagerInvoicesPage() {
     let list = invoiceList
 
     if (orderTypeFilter !== 'All') {
-      list = list.filter((inv) => inv.orders?.some((o) => o.type.includes(orderTypeFilter)))
+      list = list.filter((inv) => inv.orders?.some((o) => o.type?.includes(orderTypeFilter)))
     }
 
     if (searchQuery.trim()) {
@@ -79,10 +79,10 @@ export default function ManagerInvoicesPage() {
 
     invoiceList.forEach((inv) => {
       inv.orders?.forEach((o) => {
-        if (o.type.includes(OrderType.NORMAL)) counts[OrderType.NORMAL]++
-        if (o.type.includes(OrderType.MANUFACTURING)) counts[OrderType.MANUFACTURING]++
-        if (o.type.includes(OrderType.RETURN)) counts[OrderType.RETURN]++
-        if (o.type.includes(OrderType.PRE_ORDER)) counts[OrderType.PRE_ORDER]++
+        if (o.type?.includes(OrderType.NORMAL)) counts[OrderType.NORMAL]++
+        if (o.type?.includes(OrderType.MANUFACTURING)) counts[OrderType.MANUFACTURING]++
+        if (o.type?.includes(OrderType.RETURN)) counts[OrderType.RETURN]++
+        if (o.type?.includes(OrderType.PRE_ORDER)) counts[OrderType.PRE_ORDER]++
       })
     })
 

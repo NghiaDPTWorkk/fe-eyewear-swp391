@@ -6,9 +6,9 @@ import {
   SidebarStaff,
   UserWidgetWithLogout,
   ThemeToggle,
-  NavActions,
-  NavSearch
+  NavActions
 } from '@/components/staff'
+import OperationNavSearch from '@/components/layout/staff/operationstaff/OperationNavSearch'
 import {
   IoGridOutline,
   IoReceipt,
@@ -207,7 +207,7 @@ export default function OperationLayout() {
   return (
     <StaffMainLayout
       sidebar={sidebar}
-      headerLeft={<NavSearch placeholder="Search orders..." styleVariant="operation" />}
+      headerLeft={<OperationNavSearch />}
       headerRight={
         <NavActions
           userName={userName}

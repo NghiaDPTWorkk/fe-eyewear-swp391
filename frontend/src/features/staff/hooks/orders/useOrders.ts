@@ -56,6 +56,20 @@ export const useOrderDetail = (orderId: string) => {
 }
 
 /**
+ * Hook search orders theo orderCode (dùng cho thanh search)
+ * @param orderCode - Mã đơn hàng cần tìm
+ */
+export const useSearchOrders = (orderCode: string) => {
+  return useQuery({
+    queryKey: ['orders', 'search', orderCode],
+    queryFn: () => orderService.searchByOrderCode(orderCode),
+    enabled: orderCode.trim().length >= 2, // Chỉ gọi khi nhập >= 2 ký tự
+    staleTime: 10000,
+    refetchOnWindowFocus: false
+  })
+}
+
+/**
  * Hook cập nhật trạng thái sang MAKING
  */
 export const useUpdateStatusToMaking = () => {

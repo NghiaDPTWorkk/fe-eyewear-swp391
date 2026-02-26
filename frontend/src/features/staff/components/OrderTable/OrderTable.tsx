@@ -116,8 +116,7 @@ export default function OrderTable({
       render: (order) => (
         <div className={isSales ? 'flex flex-col items-center' : ''}>
           <div
-            className={cn('font-bold text-neutral-900 cursor-pointer', !isSales && 'font-medium')}
-            onClick={() => handleViewOrder(order.orderCode || order.id)}
+            className={cn('font-bold text-neutral-900', !isSales && 'font-medium')}
           >
             {order.orderCode || order.id}
           </div>

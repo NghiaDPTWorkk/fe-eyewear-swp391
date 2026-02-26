@@ -24,9 +24,8 @@ export const useSalesStaffAction = () => {
         invalidateSalesData()
         return true
       } catch (err: unknown) {
-        const msg = 'Failed to approve invoice'
-        setError(msg)
-        showError(err, msg)
+        setError('Failed to approve invoice')
+        showError(err)
         return false
       } finally {
         setProcessing(false)
@@ -45,9 +44,8 @@ export const useSalesStaffAction = () => {
         invalidateSalesData()
         return true
       } catch (err: unknown) {
-        const msg = 'Failed to reject invoice'
-        setError(msg)
-        showError(err, msg)
+        setError('Failed to reject invoice')
+        showError(err)
         return false
       } finally {
         setProcessing(false)
@@ -57,36 +55,19 @@ export const useSalesStaffAction = () => {
   )
 
   const approveOrder = useCallback(
-    async (id: string, data?: { parameters: any }) => {
+    async (id: string, data?: { parameters: Record<string, any> }) => {
       setProcessing(true)
       setError(null)
       try {
         let finalData = data
 
-        // If no data provided (e.g. from quick approve in drawer), fetch existing parameters
-        if (!finalData) {
-          try {
-            const response = await salesService.getOrderById(id)
-            const order = response.data.order
-            const productWithLens = order.products?.find((p) => p.lens?.parameters)
-            const existingParams = productWithLens?.lens?.parameters
-
-            finalData = {
-              parameters: existingParams || {
-                left: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
-                right: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
-                PD: 64
-              }
-            }
-          } catch (fetchErr) {
-            console.error('Failed to fetch order details for quick approve:', fetchErr)
-            // Fallback to default parameters if fetch fails
-            finalData = {
-              parameters: {
-                left: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
-                right: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
-                PD: 64
-              }
+        // Use standard default parameters for approval if none provided or parameters is null
+        if (!finalData || !finalData.parameters) {
+          finalData = {
+            parameters: {
+              left: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
+              right: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
+              PD: 64
             }
           }
         }
@@ -96,9 +77,8 @@ export const useSalesStaffAction = () => {
         invalidateSalesData()
         return true
       } catch (err: unknown) {
-        const msg = 'Failed to verify order'
-        setError(msg)
-        showError(err, msg)
+        setError('Failed to verify order')
+        showError(err)
         return false
       } finally {
         setProcessing(false)
@@ -116,16 +96,13 @@ export const useSalesStaffAction = () => {
           throw new Error('Associated invoice ID not found')
         }
 
-        // Rejecting any order in the invoice triggers rejection of the entire invoice
         await salesService.rejectInvoice(invoiceId, note)
-
         showSuccess('Invoice and all associated orders rejected')
         invalidateSalesData()
         return true
       } catch (err: unknown) {
-        const msg = 'Failed to reject order'
-        setError(msg)
-        showError(err, msg)
+        setError('Failed to reject order')
+        showError(err)
         return false
       } finally {
         setProcessing(false)

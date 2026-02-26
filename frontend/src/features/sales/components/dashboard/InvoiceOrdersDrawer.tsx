@@ -103,7 +103,7 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
                     String(t).includes(OrderType.PRE_ORDER)
                   )
 
-                  const getSimplifiedStatus = (order: { status: string }, needsAction: boolean) => {
+                  const getSimplifiedStatus = (order: { status: string }) => {
                     const status = (order.status || 'PENDING').toUpperCase()
                     const isRejected = ['REJECT', 'REJECTED', 'CANCELED'].includes(status)
 
@@ -126,11 +126,12 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
                       'COMPLETED',
                       'ONBOARD',
                       'DELIVERED',
-                      'DELIVERING'
+                      'DELIVERING',
+                      'SHIPPED',
+                      'PROCESSING'
                     ].includes(status)
 
-                    // For non-manufacturing orders, they are considered accepted by default
-                    if (!needsAction || isAccepted) {
+                    if (isAccepted) {
                       return {
                         label: 'ACCEPTED',
                         className: 'bg-emerald-50 text-emerald-600 border-emerald-100'
@@ -143,9 +144,9 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
                     }
                   }
 
-                  const displayStatus = getSimplifiedStatus(order, hasManufacturing)
+                  const displayStatus = getSimplifiedStatus(order)
 
-                  const isApprovable = hasManufacturing && displayStatus.label === 'NEED VERIFY'
+                  const isApprovable = displayStatus.label === 'NEED VERIFY'
 
                   return (
                     <div

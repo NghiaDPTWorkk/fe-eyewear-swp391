@@ -118,7 +118,7 @@ export default function SaleStaffDashboardPage() {
   }
 
   const filteredInvoicesForTable = useMemo(() => {
-    return invoices.filter((inv: Invoice) => inv.orders?.some((o) => o.isPrescription))
+    return invoices
   }, [invoices])
 
   return (

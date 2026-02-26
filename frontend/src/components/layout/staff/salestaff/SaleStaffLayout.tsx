@@ -19,6 +19,7 @@ import {
 import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layout/StaffMainLayout'
 import { useProfile } from '@/features/staff/hooks/useProfile'
 import { LAYOUT } from '@/features/sales/constants/saleStaffDesignSystem'
+import { getInitials } from '@/shared/utils'
 import { cn } from '@/lib/utils'
 
 export default function SaleStaffLayout() {
@@ -30,7 +31,7 @@ export default function SaleStaffLayout() {
   const userName = profile?.name || 'Loading...'
   const userEmail = profile?.email || ''
   const userRole = profile?.role === 'SALE_STAFF' ? 'Sales Staff' : profile?.role || 'Loading...'
-  const userInitials = profile?.name?.slice(0, 2).toUpperCase() || '...'
+  const userInitials = getInitials(userName)
 
   const sidebar = (
     <SidebarStaff
@@ -107,8 +108,8 @@ export default function SaleStaffLayout() {
         />
       }
       mainClassName={cn(LAYOUT.px, LAYOUT.py, 'bg-white')}
-      headerContainerClassName="px-4 md:px-8 lg:px-10"
-      headerContainerWidth={LAYOUT.maxWidth}
+      headerContainerClassName="pl-4 md:pl-8 lg:pl-10 pr-2 md:pr-4"
+      headerContainerWidth="none"
       contentMaxWidth={LAYOUT.maxWidth}
     />
   )

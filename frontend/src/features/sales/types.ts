@@ -19,6 +19,7 @@ export interface Invoice {
   }[]
   approvedOrdersCount?: number
   totalOrdersCount?: number
+  hasManufacturing?: boolean
 }
 
 export interface OrderDetail {

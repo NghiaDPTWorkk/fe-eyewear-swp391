@@ -39,5 +39,11 @@ export const salesService = {
 
   approveOrder: async (id: string, data?: { parameters: any }) => {
     return httpClient.patch(ENDPOINTS.ADMIN.ORDER_APPROVE(id), data || {})
+  },
+
+  getManufacturingOrders: async (page: number = 1, limit: number = 10) => {
+    return httpClient.get<any>(
+      ENDPOINTS.ORDERS.LIST_WITH_PARAMS(page, limit, undefined, 'MANUFACTURING')
+    )
   }
 }

@@ -25,6 +25,7 @@ import { transformApiOrderToTableOrder } from '@/features/staff/components/Order
 import { useAuthStore } from '@/store/auth.store'
 import { useProfile } from '@/features/staff/hooks/useProfile'
 import type { AdminAccount } from '@/shared/types'
+import { getInitials } from '@/shared/utils'
 
 export default function OperationLayout() {
   const location = useLocation()
@@ -91,14 +92,7 @@ export default function OperationLayout() {
   }, [completedData, isLoadingCompleted, setCount, setCompletedLoadingState])
 
   // Lấy thông tin profile từ store
-  const userInitials = profile?.name
-    ? profile.name
-        .split(' ')
-        .map((word) => word[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2)
-    : 'OP'
+  const userInitials = profile?.name ? getInitials(profile.name) : 'OP'
   const userName = profile?.name || 'Loading...'
   const userRole = profile?.role || 'Staff'
 
@@ -202,8 +196,8 @@ export default function OperationLayout() {
         />
       }
       mainClassName="px-4 md:px-8 lg:px-10 py-6 md:py-8 bg-white"
-      headerContainerClassName="px-4 md:px-8 lg:px-10"
-      headerContainerWidth="max-w-[1600px]"
+      headerContainerClassName="pl-4 md:pl-8 lg:pl-10 pr-2 md:pr-4"
+      headerContainerWidth="none"
       contentMaxWidth="max-w-[1600px]"
     />
   )

@@ -20,7 +20,7 @@ export const Row: React.FC<RowProps> = ({ invoice, onClick, onActionSuccess }) =
   // Calculate approvable status directly from fetched data
   const approvedCount = invoice.approvedOrdersCount || 0
   const totalCount = invoice.totalOrdersCount || 0
-  const isApprovable = approvedCount === totalCount && totalCount > 0
+  const isApprovable = invoice.hasManufacturing && approvedCount === totalCount && totalCount > 0
 
   const handleApprove = async (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -65,10 +65,16 @@ export const Row: React.FC<RowProps> = ({ invoice, onClick, onActionSuccess }) =
         <td className="px-6 py-5">
           <div className="flex items-center justify-center">
             {!isApprovable ? (
-              <span className="px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-amber-50 text-amber-600 border border-amber-100 flex items-center gap-1.5 animate-pulse">
-                <IoEllipse size={6} className="text-amber-500" />
-                Needs Verification
-              </span>
+              invoice.hasManufacturing ? (
+                <span className="px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-amber-50 text-amber-600 border border-amber-100 flex items-center gap-1.5 animate-pulse">
+                  <IoEllipse size={6} className="text-amber-500" />
+                  Wait Verify
+                </span>
+              ) : (
+                <span className="px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-slate-50 text-slate-400 border border-slate-100 flex items-center gap-1.5">
+                  Pending
+                </span>
+              )
             ) : (
               <span className="px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-mint-50 text-mint-600 border border-mint-100 flex items-center gap-1.5">
                 <IoShieldCheckmarkOutline size={12} className="text-mint-600" />
@@ -96,7 +102,11 @@ export const Row: React.FC<RowProps> = ({ invoice, onClick, onActionSuccess }) =
             >
               <IoShieldCheckmarkOutline size={18} />
               <span>
-                {isApprovable ? 'Approve Final' : `${approvedCount}/${totalCount} Verified`}
+                {isApprovable
+                  ? 'Approve Final'
+                  : invoice.hasManufacturing
+                    ? `${approvedCount}/${totalCount} Verified`
+                    : 'View Orders'}
               </span>
             </button>
           </div>

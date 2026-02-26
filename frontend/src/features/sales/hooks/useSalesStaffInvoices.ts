@@ -108,19 +108,18 @@ export function useSalesStaffInvoices(
               isVerified: boolean
             }[]
 
-            // approvedOrdersCount should include:
-            // 1. All prescription orders that are verified
-            // 2. All NON-prescription orders (considered approved by default)
-            const approvedCount = ordersWithDetails.filter(
-              (o) => o && (!o.isPrescription || o.isVerified)
-            ).length
+            // All orders must be explicitly verified or in a processing/completed state
+            // Normal orders are NOT considered approved by default if the backend rejects them.
+            const approvedCount = ordersWithDetails.filter((o) => o && o.isVerified).length
+            const hasManufacturing = ordersWithDetails.some((o) => o.isPrescription)
 
             return {
               ...inv,
               id: inv.id || inv._id,
               orders: ordersWithDetails,
               totalOrdersCount: ordersWithDetails.length,
-              approvedOrdersCount: approvedCount
+              approvedOrdersCount: approvedCount,
+              hasManufacturing
             } as unknown as Invoice
           } catch {
             return {
@@ -159,5 +158,82 @@ export function useSalesStaffOrderDetail(orderId: string) {
       return response.data.order
     },
     enabled: !!orderId
+  })
+}
+
+export function useSalesStaffLabOrders(page: number = 1, limit: number = 10) {
+  return useQuery({
+    queryKey: ['sales', 'lab-orders', { page, limit }],
+    queryFn: async () => {
+      const response = await salesService.getManufacturingOrders(page, limit)
+      const data = response?.data?.orders || { data: [], total: 0 }
+
+      const mappedOrders = (data.data || []).map((o: any) => {
+        const status = o.status?.toUpperCase()
+        let progress = 0
+        let progressColor = 'bg-neutral-200'
+        let station = 'Pending'
+        let stationColor = 'bg-neutral-100 text-neutral-500'
+
+        // Mapping logic based on user's 25/50/75/100 request
+        if (status === 'WAITING_ASSIGN') {
+          progress = 25
+          progressColor = 'bg-amber-400'
+          station = 'Wait Assign'
+          stationColor = 'bg-amber-100 text-amber-600'
+        } else if (status === 'ASSIGNED') {
+          progress = 50
+          progressColor = 'bg-purple-400'
+          station = 'Assigned'
+          stationColor = 'bg-purple-100 text-purple-600'
+        } else if (status === 'MAKING') {
+          progress = 75
+          progressColor = 'bg-blue-400'
+          station = 'Production'
+          stationColor = 'bg-blue-100 text-blue-600'
+        } else if (status === 'PACKAGING' || status === 'COMPLETED') {
+          progress = 100
+          progressColor = 'bg-emerald-400'
+          station = status === 'PACKAGING' ? 'Packaging' : 'Finished'
+          stationColor = 'bg-emerald-100 text-emerald-600'
+        } else if (status === 'APPROVED' || status === 'PENDING') {
+          progress = 10
+          progressColor = 'bg-slate-300'
+          station = 'Verified'
+          stationColor = 'bg-slate-100 text-slate-500'
+        } else if (status === 'CANCELED' || status === 'REJECTED') {
+          progress = 0
+          progressColor = 'bg-rose-400'
+          station = status === 'CANCELED' ? 'Canceled' : 'Rejected'
+          stationColor = 'bg-rose-100 text-rose-600'
+        }
+
+        return {
+          id: `#${o.orderCode?.split('_')[1] || o._id.slice(-4)}`,
+          orderCode: o.orderCode,
+          fullId: o._id,
+          type: o.products?.[0]?.product?.sku || 'Custom Lens',
+          material: o.products?.[0]?.lens?.sku || 'Standard Material',
+          station,
+          stationColor,
+          progress,
+          progressColor,
+          time: o.updatedAt
+            ? new Date(o.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            : 'Active',
+          order: o
+        }
+      })
+
+      return {
+        orders: mappedOrders,
+        pagination: {
+          total: data.total,
+          page: data.page,
+          totalPages: data.totalPages
+        }
+      }
+    },
+    staleTime: 30000
   })
 }

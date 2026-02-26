@@ -17,15 +17,8 @@ import {
   IoStorefront
 } from 'react-icons/io5'
 
+import { getInitials } from '@/shared/utils'
 import { useProfile } from '@/features/staff/hooks/useProfile'
-
-// Helper function to get initials from name
-const getInitials = (name: string): string => {
-  if (!name) return '...'
-  const words = name.trim().split(' ')
-  if (words.length === 1) return words[0].substring(0, 2).toUpperCase()
-  return (words[0][0] + words[words.length - 1][0]).toUpperCase()
-}
 
 export default function ManagerLayout() {
   const location = useLocation()
@@ -117,8 +110,8 @@ export default function ManagerLayout() {
         />
       }
       mainClassName="px-4 md:px-8 lg:px-10 py-6 md:py-8 bg-white"
-      headerContainerClassName="px-4 md:px-8 lg:px-10"
-      headerContainerWidth="max-w-[1600px]"
+      headerContainerClassName="pl-4 md:pl-8 lg:pl-10 pr-2 md:pr-4"
+      headerContainerWidth="none"
       contentMaxWidth="max-w-[1600px]"
     />
   )

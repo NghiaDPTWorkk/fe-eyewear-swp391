@@ -425,6 +425,10 @@ export const router = createBrowserRouter([
         ),
         children: [
           {
+            index: true,
+            element: <Navigate to="/salestaff/dashboard" replace />
+          },
+          {
             path: 'dashboard',
             element: (
               <LazyPage>

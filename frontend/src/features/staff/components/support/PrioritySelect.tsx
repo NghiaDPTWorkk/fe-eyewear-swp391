@@ -54,7 +54,7 @@ export function PrioritySelect({ value, onChange, accentColor = 'mint' }: Priori
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
-            'w-full px-5 py-4 bg-white border-2 border-slate-900 rounded-[24px] text-sm font-semibold text-slate-900 flex items-center justify-between transition-all cursor-pointer',
+            'w-full px-5 py-3.5 bg-neutral-50 border border-neutral-100 rounded-2xl text-sm font-semibold text-slate-700 flex items-center justify-between transition-all cursor-pointer',
             activeRingClass
           )}
         >

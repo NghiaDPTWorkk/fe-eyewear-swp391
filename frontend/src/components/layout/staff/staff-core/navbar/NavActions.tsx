@@ -82,7 +82,7 @@ export function NavActions({
   return (
     <div
       ref={containerRef}
-      className={cn('flex justify-end items-center gap-4 relative', className)}
+      className={cn('flex justify-end items-center gap-4 relative w-full', className)}
     >
       <div className="flex items-center gap-4 text-neutral-500">
         <button
@@ -147,9 +147,9 @@ export function NavActions({
         </div>
       </div>
 
-      <div className="h-8 w-px bg-neutral-100" />
+      <div className="h-8 w-px bg-neutral-100 ml-2" />
 
-      <div className="relative">
+      <div className="relative ml-auto sm:ml-0">
         <button
           onClick={() => setOpenDropdown(openDropdown === 'profile' ? null : 'profile')}
           className="flex items-center gap-3 group transition-opacity hover:opacity-80 cursor-pointer"

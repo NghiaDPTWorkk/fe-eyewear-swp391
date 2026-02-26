@@ -13,7 +13,8 @@ export const ENDPOINTS = {
     CHANGE_PASSWORD: '/admin/auth/profile/change-password',
     ADDRESS_LIST: '/customer/profile/address',
     ADDRESS_ADD: '/customer/profile/address',
-    CHANGE_DEFAULT: (id: string) => `/customer/profile/address/change-default/${id}`
+    CHANGE_DEFAULT: (id: string) => `/customer/profile/address/change-default/${id}`,
+    GOOGLE: '/auth/google'
   },
 
   // Products
@@ -24,7 +25,21 @@ export const ENDPOINTS = {
     SEARCH: (page: number, limit: number, search: string) =>
       `/products?page=${page}&limit=${limit}&search=${search}`,
     DETAIL: (id: string) => `/products/${id}`,
-    VARIANT: (id: string, sku: string) => `/products/${id}/variants/${sku}`
+    VARIANT: (id: string, sku: string) => `/products/${id}/variants/${sku}`,
+    SPECS: '/products/specs',
+    FILTER: (params: Record<string, string | number | string[] | undefined>) => {
+      const query = new URLSearchParams()
+      Object.entries(params).forEach(([key, value]) => {
+        if (value === undefined || value === '' || (Array.isArray(value) && value.length === 0))
+          return
+        if (Array.isArray(value)) {
+          value.forEach((v) => query.append(key, v))
+        } else {
+          query.append(key, String(value))
+        }
+      })
+      return `/products?${query.toString()}`
+    }
   },
 
   // Cart
@@ -145,5 +160,12 @@ export const ENDPOINTS = {
     GET: '/wishlist',
     ADD: (id: string) => `/wishlist/products/${id}`,
     REMOVE: (id: string) => `/wishlist/products/${id}`
+  },
+  // AI Chat
+  AI_CHAT: {
+    GET_CONVERSATION: '/ai-conversation',
+    GET_MESSAGES: (lastMessageAt?: number) =>
+      lastMessageAt ? `/ai-message?lastMessageAt=${lastMessageAt}` : '/ai-message',
+    SEND_MESSAGE: '/ai-conversation/chat'
   }
 } as const

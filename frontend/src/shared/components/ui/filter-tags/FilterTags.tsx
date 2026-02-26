@@ -5,7 +5,7 @@ import { Button } from '../button'
 export interface FilterTag {
   id: string
   label: string
-  type: 'color' | 'price' | 'category' | 'other'
+  type: 'color' | 'price' | 'category' | 'brand' | 'material' | 'shape' | 'style' | 'other'
 }
 
 export interface FilterTagsProps {

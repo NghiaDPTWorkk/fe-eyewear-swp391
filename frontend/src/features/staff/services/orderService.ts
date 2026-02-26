@@ -1,6 +1,7 @@
 import { httpClient } from '@/api/apiClients'
 import { ENDPOINTS } from '@/api/endpoints'
 import type { OrdersResponse } from '@/shared/types/operationOrder.types'
+import type { AdminInvoiceDetailResponse } from '@/shared/types/admin-invoice.types'
 
 export const orderService = {
   /**
@@ -30,6 +31,14 @@ export const orderService = {
    */
   searchByOrderCode: async (orderCode: string) => {
     return httpClient.get<OrdersResponse>(ENDPOINTS.ORDERS.SEARCH_BY_CODE(orderCode))
+  },
+
+  /**
+   * Lấy chi tiết invoice theo invoiceId
+   * @param invoiceId - Invoice ID lấy từ order.invoiceId
+   */
+  getInvoiceById: async (invoiceId: string) => {
+    return httpClient.get<AdminInvoiceDetailResponse>(ENDPOINTS.ADMIN.INVOICE_DETAIL(invoiceId))
   },
 
   /**

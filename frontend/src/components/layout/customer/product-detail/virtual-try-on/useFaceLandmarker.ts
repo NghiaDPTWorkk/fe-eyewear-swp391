@@ -7,6 +7,7 @@ const MODEL_CDN =
 
 export interface FaceLandmarks {
   landmarks: NormalizedLandmark[][]
+  transformationMatrices?: any[]
 }
 
 export function useFaceLandmarker() {
@@ -15,7 +16,7 @@ export function useFaceLandmarker() {
   const landmarkerRef = useRef<FaceLandmarker | null>(null)
   const animFrameRef = useRef<number>(0)
   const landmarksRef = useRef<NormalizedLandmark[][]>([])
-  const [landmarks, setLandmarks] = useState<NormalizedLandmark[][]>([])
+  const transformationMatricesRef = useRef<any[]>([])
 
   const initModel = useCallback(async () => {
     if (landmarkerRef.current) {
@@ -34,7 +35,7 @@ export function useFaceLandmarker() {
         runningMode: 'VIDEO',
         numFaces: 1,
         outputFaceBlendshapes: false,
-        outputFacialTransformationMatrixes: false
+        outputFacialTransformationMatrixes: true
       })
       landmarkerRef.current = faceLandmarker
       setIsModelReady(true)
@@ -62,10 +63,10 @@ export function useFaceLandmarker() {
 
           if (result.faceLandmarks && result.faceLandmarks.length > 0) {
             landmarksRef.current = result.faceLandmarks
-            setLandmarks(result.faceLandmarks)
+            transformationMatricesRef.current = result.facialTransformationMatrixes || []
           } else {
             landmarksRef.current = []
-            setLandmarks([])
+            transformationMatricesRef.current = []
           }
         }
       }
@@ -89,14 +90,13 @@ export function useFaceLandmarker() {
       landmarkerRef.current = null
     }
     setIsModelReady(false)
-    setLandmarks([])
   }, [stopDetection])
 
   return {
     isModelLoading,
     isModelReady,
-    landmarks,
     landmarksRef,
+    transformationMatricesRef,
     initModel,
     startDetection,
     stopDetection,

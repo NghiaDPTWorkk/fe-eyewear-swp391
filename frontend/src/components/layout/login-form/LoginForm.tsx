@@ -10,9 +10,7 @@ export const LoginForm = () => {
 
   const handleGoogleLogin = () => {
     const deviceId = getOrCreateDeviceId()
-    const baseUrl = import.meta.env.DEV
-      ? 'http://localhost:5000/api/v1'
-      : `${import.meta.env.VITE_API_URL}/api/v1`
+    const baseUrl = `${import.meta.env.VITE_API_URL}/api/v1`
     const googleAuthUrl = `${baseUrl}${ENDPOINTS.AUTH.GOOGLE}?state=${deviceId}`
     window.location.href = googleAuthUrl
   }

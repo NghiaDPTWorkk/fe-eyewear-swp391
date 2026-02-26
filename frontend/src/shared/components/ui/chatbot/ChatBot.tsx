@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { MessageCircle, X, Send, Glasses, Bot, Loader2 } from 'lucide-react'
 import { IconButton } from '@/shared/components/ui/icon-button'
 import { Input } from '@/shared/components/ui/input'
@@ -10,7 +10,7 @@ export const ChatBot = () => {
   const { isAuthenticated } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
   const [unread, setUnread] = useState(0)
-  const [prevScrollHeight, setPrevScrollHeight] = useState<number>(0)
+  const prevScrollHeightRef = useRef<number>(0)
 
   const {
     messages,
@@ -25,27 +25,25 @@ export const ChatBot = () => {
     fetchInitialMessages,
     messagesEndRef,
     scrollContainerRef,
-    scrollToBottom,
     inputRef
   } = useChatMessages()
 
-
   // Preserve scroll position when loading more messages
   useEffect(() => {
-    if (!isLoading && prevScrollHeight > 0 && scrollContainerRef.current) {
+    if (!isLoading && prevScrollHeightRef.current > 0 && scrollContainerRef.current) {
       const currentScrollHeight = scrollContainerRef.current.scrollHeight
-      const heightDifference = currentScrollHeight - prevScrollHeight
+      const heightDifference = currentScrollHeight - prevScrollHeightRef.current
       if (heightDifference > 0) {
         scrollContainerRef.current.scrollTop = heightDifference
       }
-      setPrevScrollHeight(0)
+      prevScrollHeightRef.current = 0
     }
-  }, [isLoading, prevScrollHeight, scrollContainerRef])
+  }, [isLoading, scrollContainerRef])
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const target = e.currentTarget
     if (target.scrollTop < 20 && hasMore && !isLoading) {
-      setPrevScrollHeight(target.scrollHeight)
+      prevScrollHeightRef.current = target.scrollHeight
       handleLoadMore()
     }
   }

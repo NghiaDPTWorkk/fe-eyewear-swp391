@@ -55,7 +55,9 @@ export const ENDPOINTS = {
     UPDATE: (id: string) => `/admin/orders/${id}`,
     UPDATE_STATUS_MAKING: (id: string) => `/admin/orders/${id}/status/making`, // Keep from target
     UPDATE_STATUS_PACKAGING: (id: string) => `/admin/orders/${id}/status/packaging`,
-    UPDATE_STATUS_COMPLETED: (id: string) => `/admin/orders/${id}/status/complete`
+    UPDATE_STATUS_COMPLETED: (id: string) => `/admin/orders/${id}/status/complete`,
+    SEARCH_BY_CODE: (orderCode: string) =>
+      `/admin/orders?orderCode=${encodeURIComponent(orderCode)}`
   },
 
   // Prescription (Custom Lens)

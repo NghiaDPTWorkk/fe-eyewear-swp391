@@ -25,6 +25,14 @@ export const orderService = {
   },
 
   /**
+   * Tìm kiếm orders theo orderCode
+   * @param orderCode - Mã đơn hàng cần tìm (e.g. "OD_55")
+   */
+  searchByOrderCode: async (orderCode: string) => {
+    return httpClient.get<OrdersResponse>(ENDPOINTS.ORDERS.SEARCH_BY_CODE(orderCode))
+  },
+
+  /**
    * Cập nhật thông tin order (status, ...)
    * @param id - Order ID
    * @param data - Dữ liệu cần update

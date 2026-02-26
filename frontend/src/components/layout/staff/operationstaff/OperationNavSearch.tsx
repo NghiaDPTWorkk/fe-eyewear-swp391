@@ -61,11 +61,12 @@ export default function OperationNavSearch() {
     orderCode: o.orderCode
   }))
 
-  // Đóng dropdown khi click bên ngoài
+  // Đóng dropdown và reset input khi click bên ngoài
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
         setIsOpen(false)
+        setInputValue('') // Reset về rỗng để thanh search trở về trạng thái ban đầu
       }
     }
     document.addEventListener('mousedown', handleClickOutside)

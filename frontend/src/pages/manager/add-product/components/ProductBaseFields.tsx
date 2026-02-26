@@ -6,7 +6,6 @@ import {
   useCategoriesTree,
   type CategoryNode
 } from '../../../../features/staff/hooks/useCategories'
-import { Select } from '@/shared/components/ui-core'
 
 const inputClassName =
   'w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-2xl text-[14px] focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all'
@@ -54,17 +53,16 @@ export function ProductBaseFields(props: {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-      <div className="space-y-2">
-        <label className="text-sm font-bold text-gray-700 ml-1">Product Type</label>
-        <Select
-          value={state.type}
-          onChange={(e) => onChange({ type: e.target.value as ProductCreateFormType })}
-          className="bg-neutral-50/50 border-neutral-100 rounded-2xl"
-        >
-          <option value="frame">Frame (Gọng kính)</option>
-          <option value="lens">Lens (Tròng kính)</option>
-        </Select>
-      </div>
+      <DynamicSelectField
+        label="Product Type"
+        value={state.type}
+        options={[
+          { id: 'frame', name: 'Frame (Gọng kính)' },
+          { id: 'lens', name: 'Lens (Tròng kính)' }
+        ]}
+        onChange={(val) => onChange({ type: val as ProductCreateFormType })}
+        allowCustom={false}
+      />
 
       <DynamicSelectField
         label="Brand"

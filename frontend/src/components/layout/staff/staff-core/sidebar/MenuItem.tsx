@@ -48,7 +48,7 @@ export function MenuItem({
   }
 
   const commonClasses = cn(
-    'w-full flex items-center transition-all duration-300 relative group',
+    'w-full flex items-center transition-all duration-300 relative group cursor-pointer',
     sidebarCollapsed ? 'justify-center py-2 px-0' : 'justify-start px-3 py-2.5 rounded-lg gap-3',
     !sidebarCollapsed && active
       ? 'bg-primary-50 text-primary-700'

@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { STORAGE_KEYS } from '@/shared/constants/storage'
+import { useLocation } from 'react-router-dom'
 import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layout/StaffMainLayout'
 import {
   SidebarStaff,
@@ -29,7 +28,6 @@ import type { AdminAccount } from '@/shared/types'
 
 export default function OperationLayout() {
   const location = useLocation()
-  const navigate = useNavigate()
 
   const {
     counts,
@@ -92,15 +90,6 @@ export default function OperationLayout() {
     }
   }, [completedData, isLoadingCompleted, setCount, setCompletedLoadingState])
 
-  const handleLogout = () => {
-    navigate('/admin/login')
-    const { logout } = useAuthStore.getState()
-    logout() // Clear store
-    localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN)
-    localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN)
-    localStorage.removeItem(STORAGE_KEYS.USER_INFO)
-  }
-
   // Lấy thông tin profile từ store
   const userInitials = profile?.name
     ? profile.name
@@ -124,66 +113,61 @@ export default function OperationLayout() {
         </div>
       }
       userWidget={
-        <UserWidgetWithLogout
-          userInitials={userInitials}
-          userName={userName}
-          userRole={userRole}
-          onLogout={handleLogout}
-        />
+        <UserWidgetWithLogout userInitials={userInitials} userName={userName} userRole={userRole} />
       }
     >
       <SidebarStaff.MenuSection label="WORK STATIONS">
         <SidebarStaff.MenuItem
           icon={<IoGridOutline />}
           label="Dashboard"
+          to="/operationstaff/dashboard"
           active={location.pathname === '/operationstaff/dashboard'}
-          onClick={() => navigate('/operationstaff/dashboard')}
         />
         <SidebarStaff.MenuItem
           icon={<IoReceipt />}
           label="All Orders"
+          to="/operationstaff/all"
           active={location.pathname === '/operationstaff/all'}
-          onClick={() => navigate('/operationstaff/all')}
           badge={counts.all > 0 ? counts.all.toString() : undefined}
           isLoading={isLoading}
         />
         <SidebarStaff.MenuItem
           icon={<IoBuildOutline />}
           label="Technical Stations"
+          to="/operationstaff/prescription-orders"
           active={location.pathname === '/operationstaff/prescription-orders'}
-          onClick={() => navigate('/operationstaff/prescription-orders')}
           badge={counts.technical.toString()}
           isLoading={isLoading}
         />
         <SidebarStaff.MenuItem
           icon={<IoCarOutline />}
           label="Logistics Waiting Station"
+          to="/operationstaff/pre-orders"
           active={location.pathname === '/operationstaff/pre-orders'}
-          onClick={() => navigate('/operationstaff/pre-orders')}
           badge={counts.logistics > 0 ? counts.logistics.toString() : undefined}
           isLoading={isLoading}
         />
         <SidebarStaff.MenuItem
           icon={<FaBoxesPacking />}
           label="Packing Station"
+          to="/operationstaff/packing"
           active={location.pathname === '/operationstaff/packing'}
-          onClick={() => navigate('/operationstaff/packing')}
           badge={counts.packing > 0 ? counts.packing.toString() : undefined}
           isLoading={isLoading}
         />
         <SidebarStaff.MenuItem
           icon={<AiOutlineFileDone />}
           label="Complete Orders"
+          to="/operationstaff/packed-success"
           active={location.pathname === '/operationstaff/packed-success'}
-          onClick={() => navigate('/operationstaff/packed-success')}
           badge={counts.completed.toString()}
           isLoading={isLoadingCompleted}
         />
         <SidebarStaff.MenuItem
           icon={<IoAirplaneOutline />}
           label="Shipping Handover"
+          to="/operationstaff/shipping-handover"
           active={location.pathname === '/operationstaff/shipping-handover'}
-          onClick={() => navigate('/operationstaff/shipping-handover')}
         />
       </SidebarStaff.MenuSection>
 
@@ -191,14 +175,14 @@ export default function OperationLayout() {
         <SidebarStaff.MenuItem
           icon={<IoSettingsOutline />}
           label="Settings"
+          to="/operationstaff/settings"
           active={location.pathname === '/operationstaff/settings'}
-          onClick={() => navigate('/operationstaff/settings')}
         />
         <SidebarStaff.MenuItem
           icon={<IoHelpCircleOutline />}
           label="Support"
-          active={location.pathname === '/operationstaff/packed-success'}
-          onClick={() => navigate('/operationstaff/support')}
+          to="/operationstaff/support"
+          active={location.pathname === '/operationstaff/support'}
         />
         <ThemeToggle />
       </SidebarStaff.MenuSection>
@@ -217,6 +201,7 @@ export default function OperationLayout() {
           userEmail={profile?.email || ''}
         />
       }
+      mainClassName="px-4 md:px-8 lg:px-10 py-6 md:py-8 bg-white"
       headerContainerClassName="px-4 md:px-8 lg:px-10"
       headerContainerWidth="max-w-[1600px]"
       contentMaxWidth="max-w-[1600px]"

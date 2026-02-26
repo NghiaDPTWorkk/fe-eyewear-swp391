@@ -1,7 +1,7 @@
-import React from 'react'
 import { IoAddOutline, IoTrashOutline } from 'react-icons/io5'
 import type { ProductCreateFormState } from '../types/product-create.types'
 import { ImageUpload } from './ImageUpload'
+import { DynamicSelectField } from './DynamicSelectField'
 
 const inputClassName =
   'w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-2xl text-[14px] focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all'
@@ -282,9 +282,14 @@ export function VariantsEditor(props: {
                           placeholder="label"
                           className={inputClassName}
                         />
-                        <select
+                        <DynamicSelectField
+                          label="Show Type"
                           value={o.showType}
-                          onChange={(e) =>
+                          options={[
+                            { id: 'text', name: 'text' },
+                            { id: 'color', name: 'color' }
+                          ]}
+                          onChange={(val: string) =>
                             onChange(
                               variants.map((vv, i) =>
                                 i !== variantIdx
@@ -293,18 +298,16 @@ export function VariantsEditor(props: {
                                       ...vv,
                                       options: vv.options.map((oo, oi) =>
                                         oi === optionIdx
-                                          ? { ...oo, showType: e.target.value as 'color' | 'text' }
+                                          ? { ...oo, showType: val as 'color' | 'text' }
                                           : oo
                                       )
                                     }
                               )
                             )
                           }
-                          className={inputClassName}
-                        >
-                          <option value="text">text</option>
-                          <option value="color">color</option>
-                        </select>
+                          allowCustom={false}
+                          className="md:col-span-1"
+                        />
                         <input
                           value={o.value}
                           onChange={(e) =>

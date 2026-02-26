@@ -2,17 +2,10 @@ import React from 'react'
 import { IoPersonCircleOutline, IoCalendarOutline, IoTimeOutline } from 'react-icons/io5'
 import { Button } from '@/shared/components/ui-core'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
-
-interface Invoice {
-  id: string
-  fullName: string
-  invoiceCode: string
-  status: InvoiceStatus
-  createdAt: string
-}
+import type { EnrichedInvoice } from '@/features/manager/hooks/useAdminInvoices'
 
 interface ManagerInvoiceTableProps {
-  invoices: Invoice[]
+  invoices: EnrichedInvoice[]
   isLoading: boolean
   errorMessage: string | null
   selectedInvoiceId: string | null

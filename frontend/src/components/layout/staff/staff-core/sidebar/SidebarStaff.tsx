@@ -45,7 +45,7 @@ export function SidebarStaff({
           onClick={toggleSidebar}
           title={sidebarCollapsed ? 'Open Sidebar' : 'Close Sidebar'}
           className={cn(
-            'p-2 rounded-lg text-neutral-400 hover:bg-neutral-50 transition-colors shrink-0',
+            'p-2 rounded-lg text-neutral-400 hover:bg-neutral-50 transition-colors shrink-0 cursor-pointer',
             sidebarCollapsed && 'text-primary-500'
           )}
         >

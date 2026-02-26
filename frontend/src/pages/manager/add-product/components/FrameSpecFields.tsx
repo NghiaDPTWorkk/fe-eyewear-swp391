@@ -1,7 +1,6 @@
 import { DynamicSelectField } from './DynamicSelectField'
 import { MultiSelectField } from './MultiSelectField'
 import type { ProductCreateFormState } from '../types/product-create.types'
-import { Select } from '@/shared/components/ui-core'
 
 const inputClassName =
   'w-full px-4 py-3 bg-neutral-50/50 border border-neutral-100 rounded-2xl text-[14px] focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all'
@@ -55,7 +54,7 @@ export function FrameSpecFields(props: {
           label="Materials"
           values={selectedMaterials}
           options={materialOptions}
-          onChange={(vals) => onChange({ ...specFrame, materialText: vals.join(', ') })}
+          onChange={(vals: string[]) => onChange({ ...specFrame, materialText: vals.join(', ') })}
           placeholder="Select or enter materials..."
         />
 
@@ -74,18 +73,17 @@ export function FrameSpecFields(props: {
           helperText="Nullable"
         />
 
-        <div className="space-y-2">
-          <label className="text-sm font-bold text-gray-700 ml-1">Gender</label>
-          <Select
-            value={specFrame.gender}
-            onChange={(e) => onChange({ ...specFrame, gender: e.target.value as 'F' | 'M' | 'N' })}
-            className="bg-neutral-50/50 border-neutral-100 rounded-2xl"
-          >
-            <option value="F">Female (Nữ)</option>
-            <option value="M">Male (Nam)</option>
-            <option value="N">Unisex (Cả hai)</option>
-          </Select>
-        </div>
+        <DynamicSelectField
+          label="Gender"
+          value={specFrame.gender}
+          options={[
+            { id: 'F', name: 'Female (Nữ)' },
+            { id: 'M', name: 'Male (Nam)' },
+            { id: 'N', name: 'Unisex (Cả hai)' }
+          ]}
+          onChange={(val) => onChange({ ...specFrame, gender: val as 'F' | 'M' | 'N' })}
+          allowCustom={false}
+        />
 
         <div className="space-y-2">
           <label className="text-sm font-bold text-gray-700 ml-1">Weight (g)</label>

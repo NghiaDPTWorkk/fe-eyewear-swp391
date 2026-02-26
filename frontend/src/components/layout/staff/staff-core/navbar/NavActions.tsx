@@ -5,7 +5,8 @@ import {
   IoPersonOutline,
   IoSettingsOutline,
   IoLogOutOutline,
-  IoChevronForward
+  IoChevronForward,
+  IoTicketOutline
 } from 'react-icons/io5'
 import { useLocation, Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
@@ -137,7 +138,7 @@ export function NavActions({
               </div>
 
               <div className="px-5 pt-4 mt-2 border-t border-neutral-100">
-                <button className="w-full py-2 text-sm font-semibold text-primary-500 hover:text-primary-600 transition-colors flex items-center justify-center gap-1">
+                <button className="w-full py-2 text-sm font-semibold text-primary-500 hover:text-primary-600 transition-colors flex items-center justify-center gap-1 cursor-pointer">
                   View All Notifications
                 </button>
               </div>
@@ -177,6 +178,11 @@ export function NavActions({
             <div className="p-3">
               {[
                 { icon: IoPersonOutline, label: 'My Profile', to: `${basePrefix}/profile` },
+                {
+                  icon: IoTicketOutline,
+                  label: 'Report History',
+                  to: `${basePrefix}/support?tab=history`
+                },
                 { icon: IoSettingsOutline, label: 'Settings', to: `${basePrefix}/settings` }
               ].map((item) => (
                 <Link

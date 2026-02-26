@@ -95,6 +95,7 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
   const handleStartProcessing = () => {
     const orderTypeFromApi = orderDetailData?.type?.[0] || orderDetailData?.type
 
+    // Đơn đang PACKAGING → navigate thẳng vào packing process, không gọi API
     if (orderDetailData.status === 'PACKAGING') {
       navigate(PATHS.OPERATIONSTAFF.PACKING_PROCESS(orderDetailData._id), {
         state: {
@@ -105,6 +106,19 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
       return
     }
 
+    // ✅ FIX: Đơn đã là MAKING rồi → navigate thẳng, KHÔNG gọi API updateMaking nữa
+    if (orderDetailData.status === 'MAKING') {
+      navigate(PATHS.OPERATIONSTAFF.MANUFACTURING_PROCESS(orderDetailData._id), {
+        state: {
+          status: 'MAKING',
+          products: orderDetailData.products || [],
+          orderType: 'MANUFACTURING'
+        }
+      })
+      return
+    }
+
+    // Đơn MANUFACTURING chưa bắt đầu (ASSIGNED/PENDING) → gọi API đổi sang MAKING rồi navigate
     if (orderTypeFromApi === 'MANUFACTURING') {
       updateMaking.mutate(orderDetailData._id, {
         onSuccess: () => {
@@ -127,6 +141,7 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
       return
     }
 
+    // NORMAL order → gọi API PACKAGING rồi navigate
     updatePackaging.mutate(orderDetailData._id, {
       onSuccess: () => {
         toast.success('Order status updated to PACKAGING')

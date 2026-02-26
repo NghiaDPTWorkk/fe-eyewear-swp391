@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { IoChevronBackOutline, IoSaveOutline } from 'react-icons/io5'
-import { PageHeader } from '@/features/sales/components/common'
+import { IoSaveOutline } from 'react-icons/io5'
+import { PageHeader } from '@/features/staff/components/common'
 
 import { ProductBaseFields } from './add-product/components/ProductBaseFields'
 import { FrameSpecFields } from './add-product/components/FrameSpecFields'
@@ -149,23 +149,15 @@ export default function ManagerAddProductPage() {
 
   return (
     <div className="space-y-8 max-w-[1600px] mx-auto">
-      <div className="flex items-center gap-4">
-        <button
-          onClick={() => navigate(-1)}
-          className="p-2 hover:bg-neutral-100 rounded-xl transition-colors shrink-0"
-        >
-          <IoChevronBackOutline size={24} />
-        </button>
-        <PageHeader
-          title="Add Product"
-          subtitle="Configure base fields, specifications, and variants."
-          breadcrumbs={[
-            { label: 'Dashboard', path: '/manager/dashboard' },
-            { label: 'Products', path: '/manager/products' },
-            { label: 'Add Product' }
-          ]}
-        />
-      </div>
+      <PageHeader
+        title="Add Product"
+        subtitle="Configure base fields, specifications, and variants."
+        breadcrumbs={[
+          { label: 'Dashboard', path: '/manager/dashboard' },
+          { label: 'Products', path: '/manager/products' },
+          { label: 'Add Product' }
+        ]}
+      />
 
       <div className="bg-white rounded-[32px] border border-neutral-100 shadow-sm overflow-hidden p-6 md:p-8 lg:p-10">
         <form
@@ -194,14 +186,14 @@ export default function ManagerAddProductPage() {
               type="button"
               onClick={() => navigate(-1)}
               disabled={isSubmitting}
-              className="px-8 py-4 border border-neutral-200 text-gray-700 rounded-2xl text-sm font-bold hover:bg-neutral-50 transition-all active:scale-95 disabled:opacity-50"
+              className="px-8 py-4 border border-neutral-200 text-gray-700 rounded-2xl text-sm font-bold hover:bg-neutral-50 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 px-8 py-4 bg-mint-600 text-white rounded-2xl text-sm font-bold shadow-xl shadow-mint-100/30 hover:bg-mint-700 transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50"
+              className="flex-1 px-8 py-4 bg-mint-600 text-white rounded-2xl text-sm font-bold shadow-xl shadow-mint-100/30 hover:bg-mint-700 transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
             >
               <IoSaveOutline size={20} />
               {isSubmitting ? 'Saving...' : 'Save Product'}

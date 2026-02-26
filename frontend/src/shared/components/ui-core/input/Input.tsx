@@ -64,7 +64,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           disabled={isDisabled}
           className={cn(
-            'flex-1 bg-transparent px-3 outline-none',
+            'flex-1 bg-transparent px-3 outline-none cursor-pointer',
             'placeholder:text-neutral-400',
             'disabled:cursor-not-allowed'
           )}

@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { STORAGE_KEYS } from '@/shared/constants/storage'
+import { useLocation } from 'react-router-dom'
 import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layout/StaffMainLayout'
 import {
   SidebarStaff,
@@ -29,7 +28,6 @@ import type { AdminAccount } from '@/shared/types'
 
 export default function OperationLayout() {
   const location = useLocation()
-  const navigate = useNavigate()
 
   const {
     counts,
@@ -92,15 +90,6 @@ export default function OperationLayout() {
     }
   }, [completedData, isLoadingCompleted, setCount, setCompletedLoadingState])
 
-  const handleLogout = () => {
-    navigate('/admin/login')
-    const { logout } = useAuthStore.getState()
-    logout() // Clear store
-    localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN)
-    localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN)
-    localStorage.removeItem(STORAGE_KEYS.USER_INFO)
-  }
-
   // Lấy thông tin profile từ store
   const userInitials = profile?.name
     ? profile.name
@@ -124,12 +113,7 @@ export default function OperationLayout() {
         </div>
       }
       userWidget={
-        <UserWidgetWithLogout
-          userInitials={userInitials}
-          userName={userName}
-          userRole={userRole}
-          onLogout={handleLogout}
-        />
+        <UserWidgetWithLogout userInitials={userInitials} userName={userName} userRole={userRole} />
       }
     >
       <SidebarStaff.MenuSection label="WORK STATIONS">

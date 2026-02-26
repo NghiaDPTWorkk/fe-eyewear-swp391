@@ -213,7 +213,7 @@ export default function AccountInfoSidebar() {
         <Button
           variant="solid"
           colorScheme="danger"
-          className="w-full h-11 rounded-xl font-normal shadow-md shadow-red-200 hover:shadow-red-300 transition-all active:scale-95 bg-red-600 hover:bg-red-700 border-none px-6"
+          className="w-full h-11 rounded-xl font-normal shadow-md shadow-red-200 hover:shadow-red-300 transition-all active:scale-95 bg-red-600 hover:bg-red-700 border-none px-6 cursor-pointer"
         >
           Delete Account
         </Button>

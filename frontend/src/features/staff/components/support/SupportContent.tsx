@@ -154,7 +154,7 @@ export default function SupportContent({
               <input
                 type="text"
                 placeholder="Brief description of the issue"
-                className={`w-full px-5 py-3.5 bg-neutral-50 border border-neutral-100 rounded-2xl text-sm font-semibold text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-4 transition-all ${accentColor === 'mint' ? 'focus:ring-mint-500/10 focus:border-mint-500' : 'focus:ring-primary-500/10 focus:border-primary-500'}`}
+                className={`w-full px-5 py-3.5 bg-neutral-50 border border-neutral-100 rounded-2xl text-sm font-semibold text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-4 transition-all cursor-pointer ${accentColor === 'mint' ? 'focus:ring-mint-500/10 focus:border-mint-500' : 'focus:ring-primary-500/10 focus:border-primary-500'}`}
               />
             </div>
 
@@ -178,7 +178,7 @@ export default function SupportContent({
               <textarea
                 rows={4}
                 placeholder="Describe the bug in detail..."
-                className={`w-full px-5 py-3.5 bg-neutral-50 border border-neutral-100 rounded-2xl text-sm font-semibold text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-4 transition-all resize-none ${accentColor === 'mint' ? 'focus:ring-mint-500/10 focus:border-mint-500' : 'focus:ring-primary-500/10 focus:border-primary-500'}`}
+                className={`w-full px-5 py-3.5 bg-neutral-50 border border-neutral-100 rounded-2xl text-sm font-semibold text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-4 transition-all resize-none cursor-pointer ${accentColor === 'mint' ? 'focus:ring-mint-500/10 focus:border-mint-500' : 'focus:ring-primary-500/10 focus:border-primary-500'}`}
               />
             </div>
 
@@ -237,7 +237,7 @@ export default function SupportContent({
                 </div>
               ))}
             </div>
-            <button className="w-full py-3 text-xs font-bold text-primary-600 hover:text-primary-700 flex items-center justify-center gap-1 transition-colors">
+            <button className="w-full py-3 text-xs font-bold text-primary-600 hover:text-primary-700 flex items-center justify-center gap-1 transition-colors cursor-pointer">
               View All History <IoChevronForwardOutline />
             </button>
           </div>

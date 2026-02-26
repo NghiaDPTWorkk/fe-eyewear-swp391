@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layout/StaffMainLayout'
 import {
   NavActions,
@@ -29,7 +29,6 @@ const getInitials = (name: string): string => {
 
 export default function ManagerLayout() {
   const location = useLocation()
-  const navigate = useNavigate()
   const { data: profileData } = useProfile()
 
   // Extract profile data
@@ -51,12 +50,7 @@ export default function ManagerLayout() {
       storeName="Kanky Store"
       storeIcon={<IoStorefront />}
       userWidget={
-        <UserWidgetWithLogout
-          userInitials={userInitials}
-          userName={userName}
-          userRole={userRole}
-          onLogout={() => navigate('/admin/login')}
-        />
+        <UserWidgetWithLogout userInitials={userInitials} userName={userName} userRole={userRole} />
       }
     >
       <SidebarStaff.MenuSection label="GENERAL">

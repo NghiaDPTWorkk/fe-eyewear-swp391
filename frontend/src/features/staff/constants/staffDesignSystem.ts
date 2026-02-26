@@ -62,9 +62,10 @@ export const TYPOGRAPHY = {
 // ─────────────────────────────────────────────────────────────────────────────
 export const STYLES = {
   // Breadcrumb
-  breadcrumbLink: 'text-neutral-400 hover:text-neutral-600 transition-colors font-normal',
-  breadcrumbActive: 'text-mint-600 font-medium',
-  breadcrumbSeparator: 'text-neutral-300 mx-1',
+  breadcrumbLink:
+    'text-neutral-400 hover:text-neutral-600 transition-colors font-normal cursor-pointer',
+  breadcrumbActive: 'text-mint-600 font-medium cursor-default',
+  breadcrumbSeparator: 'text-neutral-300 mx-1 cursor-default',
   // Cards
   card: 'p-5 border border-neutral-200 shadow-sm rounded-xl',
   cardHover: 'hover:shadow-md transition-shadow cursor-pointer',
@@ -72,10 +73,11 @@ export const STYLES = {
   tableRow: 'hover:bg-emerald-50/30 transition-colors cursor-pointer',
   tableCell: 'px-6 py-4 align-middle',
   // Buttons
-  primaryButton: 'bg-emerald-500 hover:bg-emerald-600 text-white font-semibold',
-  secondaryButton: 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50',
+  primaryButton: 'bg-emerald-500 hover:bg-emerald-600 text-white font-semibold cursor-pointer',
+  secondaryButton: 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50 cursor-pointer',
   // Status badges
-  statusBadge: 'px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wide border',
+  statusBadge:
+    'px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wide border cursor-default',
   // Metric cards
   metricCard: 'p-5 border border-neutral-100 flex flex-col justify-between shadow-sm',
   metricValue: 'text-3xl font-semibold text-gray-900 mt-2',

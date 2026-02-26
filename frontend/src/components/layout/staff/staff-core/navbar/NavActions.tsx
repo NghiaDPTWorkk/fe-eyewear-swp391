@@ -137,7 +137,7 @@ export function NavActions({
               </div>
 
               <div className="px-5 pt-4 mt-2 border-t border-neutral-100">
-                <button className="w-full py-2 text-sm font-semibold text-primary-500 hover:text-primary-600 transition-colors flex items-center justify-center gap-1">
+                <button className="w-full py-2 text-sm font-semibold text-primary-500 hover:text-primary-600 transition-colors flex items-center justify-center gap-1 cursor-pointer">
                   View All Notifications
                 </button>
               </div>

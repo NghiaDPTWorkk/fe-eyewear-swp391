@@ -103,6 +103,9 @@ export default function ManagerProfileForm() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Anti-autofill dummy fields */}
+        <input type="text" style={{ display: 'none' }} aria-hidden="true" />
+        <input type="email" style={{ display: 'none' }} aria-hidden="true" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">
@@ -113,7 +116,7 @@ export default function ManagerProfileForm() {
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 transition-all focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5"
+              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 transition-all focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5 cursor-pointer"
             />
           </div>
           <div className="space-y-2">
@@ -136,7 +139,7 @@ export default function ManagerProfileForm() {
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 transition-all focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5"
+              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 transition-all focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5 cursor-pointer"
             />
           </div>
           <div className="space-y-2">
@@ -148,7 +151,7 @@ export default function ManagerProfileForm() {
               name="phone"
               value={formData.phone}
               onChange={handleInputChange}
-              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 transition-all focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5"
+              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 transition-all focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5 cursor-pointer"
             />
           </div>
         </div>

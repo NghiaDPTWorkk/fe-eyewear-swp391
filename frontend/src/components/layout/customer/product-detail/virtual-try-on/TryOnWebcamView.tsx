@@ -14,6 +14,7 @@ interface TryOnWebcamViewProps {
   startDetection: (video: HTMLVideoElement) => void
   stopDetection: () => void
   landmarksRef: React.RefObject<NormalizedLandmark[][]>
+  transformationMatricesRef: React.RefObject<Float32Array[]>
 }
 
 export default function TryOnWebcamView({
@@ -24,7 +25,8 @@ export default function TryOnWebcamView({
   productPrice,
   startDetection,
   stopDetection,
-  landmarksRef
+  landmarksRef,
+  transformationMatricesRef
 }: TryOnWebcamViewProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
 
@@ -39,7 +41,11 @@ export default function TryOnWebcamView({
         // Start face detection once video is playing
         startDetection(video)
       })
-      .catch(console.error)
+      .catch((error) => {
+        if (error.name !== 'AbortError') {
+          console.error('Video play error:', error)
+        }
+      })
 
     return () => {
       stopDetection()
@@ -91,6 +97,7 @@ export default function TryOnWebcamView({
           <GlassesOverlay
             videoRef={videoRef}
             landmarksRef={landmarksRef}
+            transformationMatricesRef={transformationMatricesRef}
             glassesImageUrl={productImage}
           />
 

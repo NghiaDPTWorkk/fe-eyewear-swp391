@@ -81,6 +81,7 @@ export default function VirtualTryOnModal({
           startDetection={faceLandmarker.startDetection}
           stopDetection={faceLandmarker.stopDetection}
           landmarksRef={faceLandmarker.landmarksRef}
+          transformationMatricesRef={faceLandmarker.transformationMatricesRef}
         />
       )}
     </>

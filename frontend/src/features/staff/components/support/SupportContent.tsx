@@ -43,7 +43,6 @@ export default function SupportContent({
   criticalReminder,
   accentColor = 'mint'
 }: SupportContentProps) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [selectedTicket, setSelectedTicket] = useState<any>(null)
   const [formData, setFormData] = useState({
     title: '',
@@ -213,10 +212,10 @@ export default function SupportContent({
                       className="hover:bg-neutral-50/50 transition-colors group cursor-pointer"
                     >
                       <td className="px-6 py-5 max-w-xs md:max-w-sm lg:max-w-md">
-                        <h4 className="text-sm font-semibold text-slate-800 group-hover:text-primary-600 transition-colors break-words">
+                        <h4 className="text-sm font-semibold text-slate-800 group-hover:text-primary-600 transition-colors break-all">
                           {report.title}
                         </h4>
-                        <p className="text-xs text-slate-500 line-clamp-2 mt-1 font-medium break-words">
+                        <p className="text-xs text-slate-500 line-clamp-2 mt-1 font-medium break-all">
                           {report.description}
                         </p>
                       </td>

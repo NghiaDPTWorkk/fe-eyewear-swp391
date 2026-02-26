@@ -1,61 +1,42 @@
+import React from 'react'
 import { IoFilter, IoRefresh } from 'react-icons/io5'
 
 import { LabStatusMetrics } from '@/features/sales/components/lab/LabStatusMetrics'
 import { LensSpecificationsCard } from '@/features/sales/components/lab/LensSpecificationsCard'
 import { ActiveLabOrdersTable } from '@/features/sales/components/lab/ActiveLabOrdersTable'
 import { PageHeader } from '@/features/staff'
+import { OrderPagination } from '@/features/sales/components/orders/OrderPagination'
+import { useSalesStaffLabOrders } from '@/features/sales/hooks/useSalesStaffInvoices'
+import { ExpediteRequestModal } from '@/features/sales/components/lab/ExpediteRequestModal'
 
 export default function SaleStaffLabStatusPage() {
-  const labOrders = [
-    {
-      id: '#ORD-7352',
-      type: 'Progressive Digital',
-      material: 'HI 1.67 • AR Coating',
-      station: 'Coating',
-      stationColor: 'bg-blue-100 text-blue-600',
-      progress: 75,
-      progressColor: 'bg-blue-400',
-      time: '00:45:12',
-      urgency: 'Normal',
-      urgencyColor: 'bg-neutral-100 text-neutral-500'
-    },
-    {
-      id: '#ORD-7351',
-      type: 'Single Vision',
-      material: 'Polycarb • Scratch Resist',
-      station: 'Grinding',
-      stationColor: 'bg-purple-100 text-purple-600',
-      progress: 30,
-      progressColor: 'bg-purple-400',
-      time: '00:12:05',
-      urgency: 'Urgent',
-      urgencyColor: 'bg-orange-100 text-orange-600'
-    },
-    {
-      id: '#ORD-7350',
-      type: 'Bifocal Flat Top',
-      material: 'CR-39 • Tinted',
-      station: 'QC Check',
-      stationColor: 'bg-emerald-100 text-emerald-600',
-      progress: 90,
-      progressColor: 'bg-emerald-400',
-      time: '00:05:30',
-      urgency: 'Normal',
-      urgencyColor: 'bg-neutral-100 text-neutral-500'
-    },
-    {
-      id: '#ORD-7349',
-      type: 'Progressive Standard',
-      material: 'Trivex • Transitions',
-      station: 'Polishing',
-      stationColor: 'bg-amber-100 text-amber-600',
-      progress: 55,
-      progressColor: 'bg-amber-400',
-      time: '02:15:00',
-      urgency: 'Late',
-      urgencyColor: 'bg-red-100 text-red-600'
+  const [page, setPage] = React.useState(1)
+  const { data, isLoading, refetch } = useSalesStaffLabOrders(page, 5)
+  const [selectedOrder, setSelectedOrder] = React.useState<any>(null)
+  const [isExpediteModalOpen, setIsExpediteModalOpen] = React.useState(false)
+  const [orderToExpedite, setOrderToExpedite] = React.useState<any>(null)
+
+  const labOrders = React.useMemo(() => data?.orders || [], [data])
+  const totalPages = React.useMemo(() => {
+    if (labOrders.length === 0 && page === 1) return 1
+    return data?.pagination?.totalPages || 1
+  }, [data, labOrders, page])
+
+  // Set first order as default selection when data loads
+  React.useEffect(() => {
+    if (labOrders.length > 0 && !selectedOrder) {
+      setSelectedOrder(labOrders[0])
     }
-  ]
+  }, [labOrders, selectedOrder])
+
+  if (isLoading) {
+    return (
+      <div className="p-20 flex flex-col items-center justify-center text-gray-400">
+        <div className="w-10 h-10 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin mb-4" />
+        <p className="text-sm font-medium animate-pulse mt-4">Tracking production status...</p>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-8">
@@ -81,7 +62,10 @@ export default function SaleStaffLabStatusPage() {
               <IoFilter className="text-neutral-400" />
             </button>
           </div>
-          <button className="flex items-center gap-2 px-6 py-2.5 bg-mint-600 text-white rounded-2xl text-sm font-semibold hover:bg-mint-700 hover:shadow-lg hover:shadow-mint-100 transition-all active:scale-95 group">
+          <button
+            onClick={() => refetch()}
+            className="flex items-center gap-2 px-6 py-2.5 bg-mint-600 text-white rounded-2xl text-sm font-semibold hover:bg-mint-700 hover:shadow-lg hover:shadow-mint-100 transition-all active:scale-95 group"
+          >
             <IoRefresh className="group-hover:rotate-180 transition-transform duration-500" />
             Refresh
           </button>
@@ -89,11 +73,36 @@ export default function SaleStaffLabStatusPage() {
       </div>
 
       <div className="grid grid-cols-12 gap-6">
-        <LabStatusMetrics />
-        <LensSpecificationsCard selectedOrderId="#ORD-7352" />
+        <LabStatusMetrics orders={labOrders} />
+        <LensSpecificationsCard selectedOrder={selectedOrder} />
       </div>
 
-      <ActiveLabOrdersTable orders={labOrders} />
+      <div className="bg-white border border-neutral-50/50 shadow-sm rounded-2xl overflow-hidden">
+        <ActiveLabOrdersTable
+          orders={labOrders}
+          selectedOrderId={selectedOrder?.id || null}
+          onOrderSelect={(order) => setSelectedOrder(order)}
+          onAction={(order) => {
+            setOrderToExpedite(order)
+            setIsExpediteModalOpen(true)
+          }}
+        />
+        <OrderPagination
+          page={page}
+          totalPages={totalPages}
+          isLoading={isLoading}
+          onPageChange={setPage}
+        />
+      </div>
+
+      <ExpediteRequestModal
+        isOpen={isExpediteModalOpen}
+        onClose={() => {
+          setIsExpediteModalOpen(false)
+          setOrderToExpedite(null)
+        }}
+        order={orderToExpedite}
+      />
     </div>
   )
 }

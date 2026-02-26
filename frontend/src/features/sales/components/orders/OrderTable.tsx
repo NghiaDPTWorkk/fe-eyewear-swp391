@@ -69,6 +69,7 @@ export const OrderTable: React.FC<OrderTableProps> = ({
               const badge = getStatusBadgeProps(inv)
               const isSelected = selectedInvoiceId === inv.id
               const isReadyToApprove =
+                inv.hasManufacturing &&
                 inv.status === InvoiceStatus.DEPOSITED &&
                 (inv.totalOrdersCount || 0) > 0 &&
                 (inv.approvedOrdersCount || 0) === (inv.totalOrdersCount || 0)
@@ -118,13 +119,7 @@ export const OrderTable: React.FC<OrderTableProps> = ({
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-2 text-[12px] text-slate-500">
                       <IoCalendarOutline className="text-slate-300" size={14} />
-                      <span>
-                        {new Date(inv.createdAt).toLocaleDateString('en-GB', {
-                          day: 'numeric',
-                          month: 'numeric',
-                          year: 'numeric'
-                        })}
-                      </span>
+                      <span>{inv.createdAt ? inv.createdAt.split(' ')[0] : 'N/A'}</span>
                     </div>
                   </td>
 
@@ -132,13 +127,7 @@ export const OrderTable: React.FC<OrderTableProps> = ({
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-2 text-[12px] text-slate-500">
                       <IoTimeOutline className="text-slate-300" size={14} />
-                      <span>
-                        {new Date(inv.createdAt).toLocaleTimeString([], {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                          hour12: true
-                        })}
-                      </span>
+                      <span>{inv.createdAt ? inv.createdAt.split(' ')[1] : 'N/A'}</span>
                     </div>
                   </td>
 

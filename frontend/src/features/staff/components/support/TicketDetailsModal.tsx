@@ -1,7 +1,6 @@
 import { IoCloseOutline } from 'react-icons/io5'
 
 interface TicketDetailsModalProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ticket: any
   isOpen: boolean
   onClose: () => void
@@ -58,7 +57,9 @@ export function TicketDetailsModal({
             <h4 className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-2">
               Title
             </h4>
-            <p className="text-xl text-slate-900 font-semibold">{ticket.title}</p>
+            <p className="text-xl text-slate-900 font-semibold break-all whitespace-pre-wrap">
+              {ticket.title}
+            </p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-6 p-5 bg-neutral-50/50 rounded-2xl border border-neutral-100">
@@ -100,7 +101,7 @@ export function TicketDetailsModal({
             <h4 className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-3">
               Description
             </h4>
-            <div className="p-5 bg-white rounded-2xl border border-neutral-100 shadow-sm leading-relaxed text-slate-700 text-sm whitespace-pre-wrap break-words min-h-[100px]">
+            <div className="p-5 bg-white rounded-2xl border border-neutral-100 shadow-sm leading-relaxed text-slate-700 text-sm whitespace-pre-wrap break-all min-h-[100px]">
               {ticket.description}
             </div>
           </div>

@@ -13,9 +13,14 @@ import {
   IoCheckmarkCircle,
   IoCloseCircle,
   IoChevronForwardOutline,
-  IoChevronBackOutline
+  IoChevronBackOutline,
+  IoPencilOutline,
+  IoTrashOutline
 } from 'react-icons/io5'
 import type { AdminProductVariant } from '@/shared/types'
+import { httpClient } from '@/api/apiClients'
+import { ENDPOINTS } from '@/api/endpoints'
+import { toast } from 'react-hot-toast'
 
 // ─── Format price ───
 function formatPrice(price: number) {
@@ -47,6 +52,28 @@ export default function ManagerProductDetailPage() {
   const product = data?.data?.product
   const [selectedVariantIdx, setSelectedVariantIdx] = useState(0)
   const [imgIdx, setImgIdx] = useState(0)
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  const handleDelete = async () => {
+    if (!id) return
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${product?.nameBase}"? This action cannot be undone.`
+    )
+    if (!confirmed) return
+
+    setIsDeleting(true)
+    try {
+      await httpClient.delete(ENDPOINTS.ADMIN.PRODUCT_DETAIL(id))
+      toast.success('Product deleted successfully!')
+      navigate('/manager/products')
+    } catch (error: unknown) {
+      console.error('Delete product failed:', error)
+      const message = error instanceof Error ? error.message : 'Failed to delete product'
+      toast.error(message)
+    } finally {
+      setIsDeleting(false)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -95,14 +122,31 @@ export default function ManagerProductDetailPage() {
         ]}
       />
 
-      {/* Back button */}
-      <button
-        onClick={() => navigate('/manager/products')}
-        className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-mint-600 transition-colors"
-      >
-        <IoArrowBackOutline size={16} />
-        Back to Products
-      </button>
+      {/* Back + Edit + Delete buttons */}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={() => navigate('/manager/products')}
+          className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-mint-600 transition-colors"
+        >
+          <IoArrowBackOutline size={16} />
+          Back to Products
+        </button>
+        <button
+          onClick={() => navigate(`/manager/products/${id}/edit`)}
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-mint-600 text-white rounded-xl text-sm font-semibold shadow-lg shadow-mint-100/50 hover:bg-mint-700 transition-all active:scale-95"
+        >
+          <IoPencilOutline size={16} />
+          Edit Product
+        </button>
+        <button
+          onClick={handleDelete}
+          disabled={isDeleting}
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-red-50 text-red-600 rounded-xl text-sm font-semibold ring-1 ring-red-100 hover:bg-red-100 transition-all active:scale-95 disabled:opacity-50"
+        >
+          <IoTrashOutline size={16} />
+          {isDeleting ? 'Deleting...' : 'Delete'}
+        </button>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* ─── LEFT: Image Gallery ─── */}

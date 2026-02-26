@@ -136,7 +136,8 @@ export const ENDPOINTS = {
       const qs = params.toString()
       return qs ? `/admin/products?${qs}` : '/admin/products'
     },
-    PRODUCT_DETAIL: (id: string) => `/admin/products/${id}`
+    PRODUCT_DETAIL: (id: string) => `/admin/products/${id}`,
+    ATTRIBUTES: '/admin/attributes'
   },
 
   ADMINS: {

@@ -51,7 +51,15 @@ export default function ManagerAddProductPage() {
         isDefault: true,
         options: []
       }
-    ]
+    ],
+    isPreOrder: false,
+    preOrderConfig: {
+      description: '',
+      targetDate: '',
+      targetQuantity: '',
+      startedDate: '',
+      endedDate: ''
+    }
   })
 
   const handleBaseChange = (patch: Partial<ProductCreateFormState>) => {
@@ -135,8 +143,73 @@ export default function ManagerAddProductPage() {
         }
       }
 
-      await httpClient.post('/admin/products', payload)
-      toast.success('Product created successfully!')
+      const endpoint = state.isPreOrder ? '/admin/products/pre-order' : '/admin/products'
+      console.log('Creating product at:', endpoint, 'Payload:', payload)
+      const response = (await httpClient.post(endpoint, payload)) as any
+      console.log('Create product response (Object):', response)
+      console.log('Create product response (JSON):', JSON.stringify(response))
+
+      if (state.isPreOrder && response.success) {
+        // Try to find variantSkus in multiple possible locations
+        let variantSkus: string[] = []
+
+        if (Array.isArray(response.data?.variantSkus)) {
+          variantSkus = response.data.variantSkus
+        } else if (Array.isArray(response.variantSkus)) {
+          variantSkus = response.variantSkus
+        } else if (Array.isArray(response.data)) {
+          // If data is directly the array of SKUs
+          variantSkus = response.data.filter((item: any) => typeof item === 'string')
+        } else if (response.data && typeof response.data === 'object') {
+          // Check for any property that might be the array
+          const possibleArray = Object.values(response.data).find((val) => Array.isArray(val))
+          if (Array.isArray(possibleArray)) {
+            variantSkus = possibleArray.filter((item) => typeof item === 'string')
+          }
+        }
+
+        console.log('Discovered variant SKUs:', variantSkus)
+
+        const config = state.preOrderConfig!
+        console.log('Initializing pre-order imports for skus:', variantSkus)
+
+        const importPromises = variantSkus.map((sku: string) => {
+          const toISO = (d: string) => {
+            const date = new Date(d)
+            return d && !isNaN(date.getTime()) ? date.toISOString() : new Date().toISOString()
+          }
+          return httpClient.post('/admin/pre-order-imports', {
+            sku,
+            description: config.description || 'Pre-order import',
+            targetDate: toISO(config.targetDate),
+            targetQuantity: Number(config.targetQuantity) || 1,
+            startedDate: toISO(config.startedDate),
+            endedDate: toISO(config.endedDate)
+          })
+        })
+
+        try {
+          if (importPromises.length > 0) {
+            await Promise.all(importPromises)
+            toast.success('Product and Pre-order imports created successfully!')
+          } else {
+            console.warn('No variant SKUs returned for pre-order import.')
+            toast.success('Product created, but no variants were found for pre-order.')
+          }
+        } catch (importError) {
+          console.error('Pre-order imports failed:', importError)
+          toast.error('Product created but some pre-order imports failed to initialize.')
+        }
+      } else if (state.isPreOrder && !response.success) {
+        console.error('Product creation returned failure:', response)
+        toast.error(response.message || 'Failed to create pre-order product')
+        return // Stop if pre-order creation failed
+      } else {
+        toast.success(
+          state.isPreOrder ? 'Pre-order product created!' : 'Product created successfully!'
+        )
+      }
+
       navigate('/manager/products')
     } catch (error: unknown) {
       console.error('Create product failed:', error)
@@ -180,7 +253,112 @@ export default function ManagerAddProductPage() {
           {/* 3. Variants Editor */}
           <VariantsEditor variants={state.variants} onChange={handleVariantsChange} />
 
-          {/* 4. Action Buttons */}
+          {/* 4. Pre-order Configuration */}
+          <div className="border-t border-neutral-100 pt-10 space-y-6">
+            <label className="flex items-center gap-3 cursor-pointer group">
+              <div className="relative inline-flex items-center">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  checked={state.isPreOrder}
+                  onChange={(e) => handleBaseChange({ isPreOrder: e.target.checked })}
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-mint-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-mint-600 group-hover:opacity-90 transition-opacity"></div>
+              </div>
+              <div>
+                <h3 className="text-sm font-extrabold text-gray-900 group-hover:text-mint-700 transition-colors">
+                  Create as Pre-order
+                </h3>
+                <p className="text-xs text-neutral-500">
+                  Enable this if you want to allow pre-ordering for this product.
+                </p>
+              </div>
+            </label>
+
+            {state.isPreOrder && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-mint-50/30 rounded-[24px] border border-mint-100/50 animate-in fade-in slide-in-from-top-2 duration-300">
+                <div className="md:col-span-2 space-y-2">
+                  <label className="text-xs font-bold text-gray-700 ml-1">
+                    Pre-order Description
+                  </label>
+                  <textarea
+                    value={state.preOrderConfig?.description}
+                    onChange={(e) =>
+                      setState((prev) => ({
+                        ...prev,
+                        preOrderConfig: { ...prev.preOrderConfig!, description: e.target.value }
+                      }))
+                    }
+                    placeholder="e.g. Pre-order 100 units for summer collection"
+                    className="w-full px-4 py-3 bg-white border border-neutral-100 rounded-2xl text-[14px] focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all min-h-[100px]"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-gray-700 ml-1">Target Quantity</label>
+                  <input
+                    type="number"
+                    value={state.preOrderConfig?.targetQuantity}
+                    onChange={(e) =>
+                      setState((prev) => ({
+                        ...prev,
+                        preOrderConfig: { ...prev.preOrderConfig!, targetQuantity: e.target.value }
+                      }))
+                    }
+                    placeholder="100"
+                    className="w-full px-4 py-3 bg-white border border-neutral-100 rounded-2xl text-[14px] focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-gray-700 ml-1">Target Date</label>
+                  <input
+                    type="date"
+                    value={state.preOrderConfig?.targetDate}
+                    onChange={(e) =>
+                      setState((prev) => ({
+                        ...prev,
+                        preOrderConfig: { ...prev.preOrderConfig!, targetDate: e.target.value }
+                      }))
+                    }
+                    className="w-full px-4 py-3 bg-white border border-neutral-100 rounded-2xl text-[14px] focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-gray-700 ml-1">Start Date</label>
+                  <input
+                    type="date"
+                    value={state.preOrderConfig?.startedDate}
+                    onChange={(e) =>
+                      setState((prev) => ({
+                        ...prev,
+                        preOrderConfig: { ...prev.preOrderConfig!, startedDate: e.target.value }
+                      }))
+                    }
+                    className="w-full px-4 py-3 bg-white border border-neutral-100 rounded-2xl text-[14px] focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-gray-700 ml-1">End Date</label>
+                  <input
+                    type="date"
+                    value={state.preOrderConfig?.endedDate}
+                    onChange={(e) =>
+                      setState((prev) => ({
+                        ...prev,
+                        preOrderConfig: { ...prev.preOrderConfig!, endedDate: e.target.value }
+                      }))
+                    }
+                    className="w-full px-4 py-3 bg-white border border-neutral-100 rounded-2xl text-[14px] focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 5. Action Buttons */}
           <div className="pt-6 flex gap-4 border-t border-neutral-50">
             <button
               type="button"

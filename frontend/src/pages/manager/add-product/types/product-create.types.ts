@@ -41,4 +41,12 @@ export interface ProductCreateFormState {
       value: string
     }>
   }>
+  isPreOrder?: boolean
+  preOrderConfig?: {
+    description: string
+    targetDate: string
+    targetQuantity: string
+    startedDate: string
+    endedDate: string
+  }
 }

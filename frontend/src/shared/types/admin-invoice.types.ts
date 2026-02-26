@@ -87,10 +87,11 @@ export interface OperationInvoiceListItem {
   invoiceCode: string
   fullName: string
   phone: string
+  address?: string
   finalPrice: string
   status: string
   createdAt: string
-  orders: OperationInvoiceOrder[]
+  orders: string[]
 }
 
 export interface OperationInvoiceListPagination {

@@ -10,10 +10,10 @@ interface OperationInvoicePopupProps {
 
 const getStatusColor = (status: string) => {
   switch (status) {
+    case 'COMPLETED':
+      return 'bg-yellow-100 text-yellow-600'
     case 'READY_TO_SHIP':
       return 'bg-mint-100 text-mint-600'
-    case 'PENDING':
-      return 'bg-yellow-100 text-yellow-600'
     case 'SHIPPED':
       return 'bg-blue-100 text-blue-600'
     default:
@@ -39,7 +39,7 @@ export default function OperationInvoicePopup({
 
       {/* Sidebar Panel - Right Side */}
       <div
-        className={`fixed right-0 top-0 h-full w-[450px] bg-white shadow-2xl z-[50] transform transition-transform duration-300 ease-out border-l border-neutral-100 flex flex-col ${
+        className={`fixed right-0 top-0 h-full w-[600px] bg-white shadow-2xl z-[50] transform transition-transform duration-300 ease-out border-l border-neutral-100 flex flex-col ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -48,10 +48,10 @@ export default function OperationInvoicePopup({
             {/* Header */}
             <div className="px-4 py-6 border-b border-neutral-100 bg-white flex justify-between items-start">
               <div>
-                <h2 className="text-2xl font-bold text-neutral-900 tracking-tight">
+                <h2 className="text-2xl font-bold ps-5 text-mint-800 tracking-tight">
                   {selectedInvoice.invoiceCode}
                 </h2>
-                <p className="text-sm text-neutral-500 mt-1 font-medium">Invoice Summary</p>
+                <p className="text-sm ps-5 text-neutral-500 mt-1 font-medium">Invoice Summary</p>
               </div>
               <button
                 onClick={onClose}
@@ -71,7 +71,7 @@ export default function OperationInvoicePopup({
                 <div className="p-4 bg-white rounded-xl border border-neutral-100 shadow-sm space-y-2">
                   <div className="flex justify-between">
                     <span className="text-sm text-neutral-500">Name</span>
-                    <span className="text-sm font-semibold text-neutral-800">
+                    <span className="text-md font-semibold text-neutral-800">
                       {selectedInvoice.fullName}
                     </span>
                   </div>
@@ -81,23 +81,51 @@ export default function OperationInvoicePopup({
                       {selectedInvoice.phone}
                     </span>
                   </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-neutral-500">Address</span>
+                    <span className="text-sm font-semibold text-neutral-800">
+                      {selectedInvoice.address}
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              {/* Status Section */}
+              {/* Status + Created At Section */}
               <div>
                 <h3 className="text-xs font-bold text-neutral-400 uppercase tracking-widest mb-3">
                   CURRENT STATUS
                 </h3>
-                <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-neutral-100 shadow-sm">
-                  <span className="text-sm font-semibold text-neutral-700">Invoice Status</span>
-                  <span
-                    className={`px-4 py-1.5 rounded-full text-xs font-bold shadow-sm ${getStatusColor(
-                      selectedInvoice.status
-                    )}`}
-                  >
-                    {selectedInvoice.status.replace(/_/g, ' ')}
-                  </span>
+                <div className="bg-white rounded-xl border border-neutral-100 shadow-sm overflow-hidden">
+                  {/* Status row */}
+                  <div className="flex items-center justify-between px-4 py-3">
+                    <span className="text-sm font-semibold text-neutral-700">Invoice Status</span>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(selectedInvoice.status)}`}
+                    >
+                      {selectedInvoice.status.replace(/_/g, ' ')}
+                    </span>
+                  </div>
+
+                  <div className="border-t border-neutral-100" />
+
+                  {/* Created At row */}
+                  <div className="flex items-center justify-between px-4 py-3">
+                    <span className="text-sm font-semibold text-neutral-700">Created At</span>
+                    <span className="text-sm text-neutral-500 font-mono bg-neutral-50 border border-neutral-100 px-3 py-1 rounded-lg">
+                      {(() => {
+                        const d = new Date(selectedInvoice.createdAt)
+                        return isNaN(d.getTime())
+                          ? selectedInvoice.createdAt
+                          : d.toLocaleString('vi-VN', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })
+                      })()}
+                    </span>
+                  </div>
                 </div>
               </div>
 
@@ -107,26 +135,19 @@ export default function OperationInvoicePopup({
                   ORDERS INCLUDED ({selectedInvoice.orders?.length ?? 0})
                 </h3>
                 <div className="space-y-3">
-                  {(selectedInvoice.orders ?? []).map((order, index) => (
+                  {(selectedInvoice.orders ?? []).map((orderId, index) => (
                     <div
-                      key={order.id ?? index}
+                      key={orderId}
                       className="group p-5 bg-white border border-neutral-100 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 hover:border-mint-100"
                     >
-                      <div className="flex justify-between items-start mb-2">
+                      <div className="flex justify-between items-center">
                         <span className="font-bold text-mint-600 text-sm bg-mint-50 px-2 py-0.5 rounded-md group-hover:bg-mint-100 transition-colors">
-                          {order.orderCode ?? `Order ${index + 1}`}
+                          Order {index + 1}
                         </span>
-                        {order.status && (
-                          <span className="text-[10px] text-neutral-400 font-mono border border-neutral-100 px-1.5 py-0.5 rounded">
-                            {order.status}
-                          </span>
-                        )}
+                        <span className="text-[16px] text-neutral-400 font-mono border border-neutral-300 px-1.5 py-0.5 rounded">
+                          ID: {orderId.slice(-8).toUpperCase()}
+                        </span>
                       </div>
-                      {order.type && order.type.length > 0 && (
-                        <p className="text-sm text-neutral-700 font-medium leading-relaxed">
-                          {order.type.join(', ')}
-                        </p>
-                      )}
                     </div>
                   ))}
                 </div>

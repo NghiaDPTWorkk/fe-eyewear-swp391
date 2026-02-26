@@ -9,10 +9,10 @@ interface InvoiceTableDataProps {
 
 const getStatusColor = (status: string) => {
   switch (status) {
+    case 'COMPLETED':
+      return 'bg-yellow-100 text-yellow-600'
     case 'READY_TO_SHIP':
       return 'bg-mint-100 text-mint-600'
-    case 'PENDING':
-      return 'bg-yellow-100 text-yellow-600'
     case 'SHIPPED':
       return 'bg-blue-100 text-blue-600'
     default:
@@ -68,9 +68,9 @@ export default function InvoiceTableData({ invoice, onView, onNext }: InvoiceTab
           {/* Next Button */}
           <button
             onClick={() => onNext(invoice.id)}
-            disabled={invoice.status !== 'READY_TO_SHIP'}
+            disabled={invoice.status === 'READY_TO_SHIP'}
             className={`p-2 rounded-lg transition-all border ${
-              invoice.status === 'READY_TO_SHIP'
+              invoice.status !== 'READY_TO_SHIP'
                 ? 'bg-mint-50 hover:bg-mint-100 text-mint-600 border-mint-200'
                 : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
             }`}

@@ -130,6 +130,7 @@ export const ENDPOINTS = {
   },
   // AI Chat
   AI_CHAT: {
+    GET_CONVERSATION: '/ai-conversation',
     GET_MESSAGES: (lastMessageAt?: number) =>
       lastMessageAt ? `/ai-message?lastMessageAt=${lastMessageAt}` : '/ai-message',
     SEND_MESSAGE: '/ai-conversation/chat'

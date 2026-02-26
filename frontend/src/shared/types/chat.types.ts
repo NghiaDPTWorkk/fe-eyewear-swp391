@@ -17,6 +17,20 @@ export interface AiMessageListData {
   pagination: AiMessagePagination
 }
 
+export interface AiConversation {
+  _id: string
+  customerId: string
+  stage: 'DISCOVERY' | string
+  lastInteractionAt: string
+  createdAt: string
+  updatedAt: string
+  __v: number
+}
+
+export interface AiConversationData {
+  conversation: AiConversation
+}
+
 export interface ChatReplyData {
   message: string
 }

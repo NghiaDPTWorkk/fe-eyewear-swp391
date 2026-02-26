@@ -22,6 +22,8 @@ interface UseChatMessagesReturn {
   handleLoadMore: () => void
   fetchInitialMessages: () => void
   messagesEndRef: React.RefObject<HTMLDivElement | null>
+  scrollContainerRef: React.RefObject<HTMLDivElement | null>
+  scrollToBottom: (behavior?: ScrollBehavior) => void
   inputRef: React.RefObject<HTMLInputElement | null>
 }
 
@@ -45,6 +47,7 @@ export const useChatMessages = (): UseChatMessagesReturn => {
 
   const hasFetchedInitial = useRef(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
   // Reset state when user changes
@@ -55,10 +58,13 @@ export const useChatMessages = (): UseChatMessagesReturn => {
     hasFetchedInitial.current = false
   }, [user?._id])
 
-  // Auto-scroll on new message
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, isTyping])
+  const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior })
+    } else if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight
+    }
+  }, [])
 
   const fetchMessages = useCallback(
     async (cursor?: number) => {
@@ -73,6 +79,8 @@ export const useChatMessages = (): UseChatMessagesReturn => {
             setMessages((prev) => [...mapped, ...prev])
           } else {
             setMessages(mapped)
+            // Scroll to bottom on initial load
+            setTimeout(() => scrollToBottom('auto'), 100)
           }
           setHasMore(res.data.pagination.hasNext)
           setLastItem(res.data.pagination.lastItem)
@@ -83,14 +91,23 @@ export const useChatMessages = (): UseChatMessagesReturn => {
         setIsLoading(false)
       }
     },
-    [isAuthenticated]
+    [isAuthenticated, scrollToBottom]
   )
 
-  const fetchInitialMessages = useCallback(() => {
+  const fetchInitialMessages = useCallback(async () => {
     if (!isAuthenticated) return
     if (!hasFetchedInitial.current) {
       hasFetchedInitial.current = true
-      fetchMessages()
+      setIsLoading(true)
+      try {
+        // 1st: get/create conversation to avoid 404 on getMessages
+        await chatService.getConversation()
+        await fetchMessages()
+      } catch (error) {
+        console.error('Failed to initialize conversation:', error)
+      } finally {
+        setIsLoading(false)
+      }
     }
   }, [fetchMessages, isAuthenticated])
 
@@ -117,6 +134,8 @@ export const useChatMessages = (): UseChatMessagesReturn => {
       setMessages((prev) => [...prev, userMsg])
       setInput('')
       setIsTyping(true)
+      // Scroll to bottom when user sends a message
+      setTimeout(() => scrollToBottom('smooth'), 100)
 
       try {
         const res = await chatService.sendMessage(msg)
@@ -128,6 +147,8 @@ export const useChatMessages = (): UseChatMessagesReturn => {
             timestamp: new Date()
           }
           setMessages((prev) => [...prev, botMsg])
+          // Scroll to bottom on bot response
+          setTimeout(() => scrollToBottom('smooth'), 100)
         }
       } catch (error) {
         console.error('Failed to send message:', error)
@@ -135,7 +156,7 @@ export const useChatMessages = (): UseChatMessagesReturn => {
         setIsTyping(false)
       }
     },
-    [input, isAuthenticated]
+    [input, isAuthenticated, scrollToBottom]
   )
 
   const handleKeyDown = useCallback(
@@ -160,6 +181,8 @@ export const useChatMessages = (): UseChatMessagesReturn => {
     handleLoadMore,
     fetchInitialMessages,
     messagesEndRef,
+    scrollContainerRef,
+    scrollToBottom,
     inputRef
   }
 }

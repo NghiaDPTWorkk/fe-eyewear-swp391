@@ -10,6 +10,7 @@ export const ChatBot = () => {
   const { isAuthenticated } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
   const [unread, setUnread] = useState(0)
+  const [prevScrollHeight, setPrevScrollHeight] = useState<number>(0)
 
   const {
     messages,
@@ -23,8 +24,31 @@ export const ChatBot = () => {
     handleLoadMore,
     fetchInitialMessages,
     messagesEndRef,
+    scrollContainerRef,
+    scrollToBottom,
     inputRef
   } = useChatMessages()
+
+
+  // Preserve scroll position when loading more messages
+  useEffect(() => {
+    if (!isLoading && prevScrollHeight > 0 && scrollContainerRef.current) {
+      const currentScrollHeight = scrollContainerRef.current.scrollHeight
+      const heightDifference = currentScrollHeight - prevScrollHeight
+      if (heightDifference > 0) {
+        scrollContainerRef.current.scrollTop = heightDifference
+      }
+      setPrevScrollHeight(0)
+    }
+  }, [isLoading, prevScrollHeight, scrollContainerRef])
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const target = e.currentTarget
+    if (target.scrollTop < 20 && hasMore && !isLoading) {
+      setPrevScrollHeight(target.scrollHeight)
+      handleLoadMore()
+    }
+  }
 
   useEffect(() => {
     if (isOpen) {
@@ -71,7 +95,11 @@ export const ChatBot = () => {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 space-y-4 bg-mint-50">
+        <div
+          ref={scrollContainerRef}
+          onScroll={handleScroll}
+          className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 space-y-4 bg-mint-50"
+        >
           {/* Auth required state */}
           {!isAuthenticated && (
             <div className="flex flex-col items-center justify-center py-12 px-6 text-center h-full">
@@ -94,20 +122,10 @@ export const ChatBot = () => {
 
           {isAuthenticated && (
             <>
-              {/* Load more button */}
-              {hasMore && (
-                <div className="flex justify-center">
-                  <button
-                    onClick={handleLoadMore}
-                    disabled={isLoading}
-                    className="text-xs text-primary-600 hover:text-primary-700 font-medium py-1 px-3 rounded-full bg-primary-50 hover:bg-primary-100 transition-colors cursor-pointer disabled:opacity-50"
-                  >
-                    {isLoading ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      'Load older messages'
-                    )}
-                  </button>
+              {/* History Loading Spinner */}
+              {isLoading && messages.length > 0 && (
+                <div className="flex justify-center py-2">
+                  <Loader2 className="w-5 h-5 animate-spin text-primary-500" />
                 </div>
               )}
 

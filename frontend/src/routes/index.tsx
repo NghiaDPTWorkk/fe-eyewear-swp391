@@ -136,6 +136,10 @@ const ManagerAddProductPage = lazy(() =>
   import('@/pages/manager/ManagerAddProductPage').then((m) => ({ default: m.default }))
 )
 
+const ManagerEditProductPage = lazy(() =>
+  import('@/pages/manager/ManagerEditProductPage').then((m) => ({ default: m.default }))
+)
+
 // Admin Pages
 const AdminLayout = lazy(() =>
   import('@/pages/admin/AdminLayout').then((m) => ({ default: m.default }))
@@ -749,6 +753,14 @@ export const router = createBrowserRouter([
             element: (
               <LazyPage>
                 <ManagerProductDetailPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'products/:id/edit',
+            element: (
+              <LazyPage>
+                <ManagerEditProductPage />
               </LazyPage>
             )
           }

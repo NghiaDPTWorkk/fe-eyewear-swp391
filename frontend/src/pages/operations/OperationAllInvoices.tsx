@@ -49,19 +49,38 @@ export default function OperationAllInvoices() {
         {/* Invoice Table */}
         <div className="bg-white rounded-lg shadow-sm border border-neutral-100 overflow-hidden">
           {isLoading ? (
-            <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-mint-500 mx-auto mb-4" />
-              <p className="text-gray-400 text-sm">Loading invoices...</p>
+            /* ── Loading state ── */
+            <div className="flex flex-col items-center justify-center py-20 gap-4">
+              <div className="relative">
+                <div className="w-14 h-14 rounded-full border-4 border-neutral-100" />
+                <div className="absolute inset-0 w-14 h-14 rounded-full border-4 border-t-mint-500 animate-spin" />
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-semibold text-neutral-700">Loading invoices</p>
+                <p className="text-xs text-neutral-400 mt-0.5">Please wait a moment...</p>
+              </div>
             </div>
           ) : isError ? (
-            <div className="text-center py-12">
-              <IoAirplaneOutline className="mx-auto text-red-400 mb-4" size={48} />
-              <p className="text-red-500">Failed to load invoices. Please try again.</p>
+            /* ── Error state ── */
+            <div className="flex flex-col items-center justify-center py-20 gap-4">
+              <div className="w-16 h-16 rounded-full bg-red-50 border border-red-100 flex items-center justify-center">
+                <IoAirplaneOutline className="text-red-400" size={32} />
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-semibold text-neutral-700">Failed to load invoices</p>
+                <p className="text-xs text-neutral-400 mt-0.5">Check your connection and try refreshing the page.</p>
+              </div>
             </div>
           ) : invoices.length === 0 ? (
-            <div className="text-center py-12">
-              <IoAirplaneOutline className="mx-auto text-gray-400 mb-4" size={48} />
-              <p className="text-gray-500">No invoices found</p>
+            /* ── Empty state ── */
+            <div className="flex flex-col items-center justify-center py-20 gap-4">
+              <div className="w-16 h-16 rounded-full bg-neutral-50 border border-neutral-100 flex items-center justify-center">
+                <IoAirplaneOutline className="text-neutral-300" size={32} />
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-semibold text-neutral-600">No invoices found</p>
+                <p className="text-xs text-neutral-400 mt-0.5">There are currently no invoices ready for shipping handover.</p>
+              </div>
             </div>
           ) : (
             <InvoiceTable

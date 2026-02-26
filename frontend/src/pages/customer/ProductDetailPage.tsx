@@ -1,5 +1,4 @@
 import { useParams } from 'react-router-dom'
-import { MessageCircle } from 'lucide-react'
 import { useGetProductDetail } from '@/shared/hooks/products/useGetProductDetail'
 import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
 import { ImageGallery, ProductInfo } from '@/components/layout/customer/product-detail'
@@ -85,15 +84,6 @@ export const ProductDetailPage = () => {
 
       <Newsletter />
       <Footer />
-
-      {/* Floating Chat Button */}
-      <button
-        className="fixed bottom-8 right-8 w-16 h-16 bg-primary-500 text-white rounded-full shadow-2xl flex items-center justify-center hover:bg-primary-600 hover:scale-110 transition-all duration-300 z-50 group"
-        aria-label="Chat with us"
-      >
-        <MessageCircle className="w-8 h-8 group-hover:rotate-12 transition-transform" />
-        <span className="absolute -top-1 -right-1 w-5 h-5 bg-mint-400 border-2 border-white rounded-full animate-pulse"></span>
-      </button>
     </div>
   )
 }

@@ -41,7 +41,8 @@ export const PATHS = {
   MANAGER: {
     DASHBOARD: '/manager/dashboard',
     PRODUCTS: '/manager/products',
-    ADD_PRODUCT: '/manager/products/add'
+    ADD_PRODUCT: '/manager/products/add',
+    SUPPORT: '/manager/support'
   },
   NOT_FOUND: '*'
 }

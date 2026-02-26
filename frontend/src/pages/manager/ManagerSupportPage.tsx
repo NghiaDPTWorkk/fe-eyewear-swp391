@@ -64,11 +64,6 @@ export default function ManagerSupportPage() {
     }
   ]
 
-  const recentReports = [
-    { title: 'Manager report sync issue', date: 'Submitted 1 day ago', status: 'Pending' },
-    { title: 'Inventory dashboard error', date: 'Submitted 4 days ago', status: 'Resolved' }
-  ]
-
   return (
     <div className="space-y-6">
       <PageHeader
@@ -80,8 +75,7 @@ export default function ManagerSupportPage() {
       <SupportContent
         guidelines={guidelines}
         contacts={contacts}
-        recentReports={recentReports}
-        criticalReminder="Violation of data security policies or financial transaction guidelines may result in immediate suspension and legal action. When in doubt, always escalate to your superior."
+        criticalReminder="Violation of data security policies or financial transaction guidelines may result in immediate suspension and legal action. When in doubt, always escalate to your supervisor."
         accentColor="primary"
       />
     </div>

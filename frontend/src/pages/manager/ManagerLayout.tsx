@@ -90,8 +90,8 @@ export default function ManagerLayout() {
         <SidebarStaff.MenuItem
           icon={<IoHelpCircle />}
           label="Support"
-          to="/manager/help"
-          active={location.pathname.startsWith('/manager/help')}
+          to="/manager/support"
+          active={location.pathname.startsWith('/manager/support')}
         />
         <ThemeToggle />
       </SidebarStaff.MenuSection>

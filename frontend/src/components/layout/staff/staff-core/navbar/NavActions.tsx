@@ -5,7 +5,8 @@ import {
   IoPersonOutline,
   IoSettingsOutline,
   IoLogOutOutline,
-  IoChevronForward
+  IoChevronForward,
+  IoTicketOutline
 } from 'react-icons/io5'
 import { useLocation, Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
@@ -177,6 +178,11 @@ export function NavActions({
             <div className="p-3">
               {[
                 { icon: IoPersonOutline, label: 'My Profile', to: `${basePrefix}/profile` },
+                {
+                  icon: IoTicketOutline,
+                  label: 'Report History',
+                  to: `${basePrefix}/support?tab=history`
+                },
                 { icon: IoSettingsOutline, label: 'Settings', to: `${basePrefix}/settings` }
               ].map((item) => (
                 <Link

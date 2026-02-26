@@ -164,5 +164,10 @@ export const ENDPOINTS = {
   // Categories
   CATEGORIES: {
     TREE: '/categories/tree'
+  },
+  // Support
+  SUPPORT: {
+    REPORT_TICKETS: '/admin/report-tickets',
+    MY_HISTORY: '/admin/report-tickets/my-history'
   }
 } as const

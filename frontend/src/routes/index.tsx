@@ -701,7 +701,7 @@ export const router = createBrowserRouter([
             )
           },
           {
-            path: 'help',
+            path: 'support',
             element: (
               <LazyPage>
                 <ManagerSupportPage />

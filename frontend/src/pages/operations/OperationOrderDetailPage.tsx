@@ -94,9 +94,12 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
   const queryClient = useQueryClient()
 
   const handleStartProcessing = () => {
+    // orderTypeFromApi: lấy type của đơn hàng ('NORMAL' | 'MANUFACTURING'...)
+    // BE có thể trả về type là mảng ['MANUFACTURING'] hoặc chuỗi 'MANUFACTURING'
     const orderTypeFromApi = orderDetailData?.type?.[0] || orderDetailData?.type
 
-    // Đơn đang PACKAGING → navigate thẳng vào packing process, không gọi API
+    // Bước 1: Nếu đơn đang PACKAGING → navigate thẳng vào trang packing, KHÔNG gọi API
+    // (đơn đã được chuyển sang PACKAGING trước đó rồi, chỉ cần vào xem tiếp)
     if (orderDetailData.status === 'PACKAGING') {
       navigate(PATHS.OPERATIONSTAFF.PACKING_PROCESS(orderDetailData._id), {
         state: {
@@ -107,7 +110,8 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
       return
     }
 
-    //  Đơn đã là MAKING rồi → navigate thẳng, KHÔNG gọi API updateMaking nữa
+    // Bước 2: Nếu đơn đang MAKING → navigate thẳng vào trang manufacturing, KHÔNG gọi API
+    // Lý do: gọi API updateMaking khi status đã là MAKING sẽ bị lỗi 400/409 từ BE
     if (orderDetailData.status === 'MAKING') {
       navigate(PATHS.OPERATIONSTAFF.MANUFACTURING_PROCESS(orderDetailData._id), {
         state: {
@@ -119,7 +123,8 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
       return
     }
 
-    // Đơn MANUFACTURING chưa bắt đầu (ASSIGNED/PENDING) → gọi API đổi sang MAKING rồi navigate
+    //  Đơn MANUFACTURING status ASSIGNED
+    // gọi API PATCH /status/making để đổi sang MAKING, sau đó navigate
     if (orderTypeFromApi === 'MANUFACTURING') {
       updateMaking.mutate(orderDetailData._id, {
         onSuccess: () => {
@@ -142,7 +147,8 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
       return
     }
 
-    // NORMAL order → gọi API PACKAGING rồi navigate
+    //  NORMAL order (hoặc các loại còn lại)
+    // → gọi API PATCH /status/packaging để đổi sang PACKAGING, sau đó navigate vào packing
     updatePackaging.mutate(orderDetailData._id, {
       onSuccess: () => {
         toast.success('Order status updated to PACKAGING')
@@ -166,7 +172,8 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
   const orderProductItems: OrderProductItem[] = orderDetailData?.products || []
   const orderTypeFromApi = orderDetailData?.type?.[0] || orderDetailData?.type
 
-  // MANUFACTURING Order state
+  // ── Xử lý MANUFACTURING order ──────────────────────────────────
+  // Khai báo 2 biến để lưu data frame & lens params của đơn MANUFACTURING.
   let manufacturingOrderFrameItem: {
     product_id: string
     sku: string
@@ -176,12 +183,12 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
   let manufacturingOrderLensParams: {
     lens_id: string
     sku: string
-    parameters: LensParameters
+    parameters: LensParameters // Thông số kính: SPH, CYL, AXIS, ADD, PD
     pricePerUnit: number
   } | null = null
 
   if (orderTypeFromApi === 'MANUFACTURING') {
-    // MANUFACTURING Order: chỉ lấy products[0]
+    // MANUFACTURING order luôn có đúng 1 sản phẩm trong products[]
     const manufacturingFirstProduct = orderProductItems[0]
     if (manufacturingFirstProduct) {
       manufacturingOrderFrameItem = {
@@ -191,6 +198,7 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
         quantity: manufacturingFirstProduct.quantity
       }
 
+      // lens là optional (có thể chưa có nếu chưa được assign thông số)
       if (manufacturingFirstProduct.lens) {
         manufacturingOrderLensParams = {
           lens_id: manufacturingFirstProduct.lens.lens_id,
@@ -202,9 +210,12 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
     }
   }
 
-  // Xác định product_id và SKU để gọi variant API
-  // NORMAL: luôn dùng products[0] — type sẽ lấy từ productDetail.type trong response
-  // MANUFACTURING: luôn dùng products[0] (frame)
+  // ──  Chọn item để gọi variant API ────────────────────────────────
+  // Variant API: GET /products/:product_id/variants/:sku
+  //Trả về productDetail (có .type: 'frame'|'sunglass'|'lens') + variantDetail (options, imgs)
+  //
+  // NORMAL:        dùng products[0] — loại sản phẩm sẽ xác định qua productDetail.type
+  // MANUFACTURING: dùng products[0] — luôn là frame
   let variantApiProductId: string | undefined
   let variantApiProductSku: string | undefined
 
@@ -235,40 +246,43 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
     )
   }
 
-  // Lấy type từ productDetail để quyết định render component nào
-  // 'frame' | 'sunglass' -> FrameSpecifications
-  // 'lens'              -> LensNormalOrder
+  // Lấy type từ productDetail để quyết định render component ────
+  //   'frame'     render FrameSpecifications
+  //   'sunglass'  render FrameSpecifications (cùng UI với frame)
+  //   'lens'      render LensNormalOrder
   const productType = (productVariantApiResponse as any)?.data?.productDetail?.type as
     | 'frame'
     | 'sunglass'
     | 'lens'
     | undefined
 
+  // options & ảnh từ variantDetail để truyền vào component hiển thị
   const variantOptions = (productVariantApiResponse as any)?.data?.variantDetail?.options || []
   const variantImg = (productVariantApiResponse as any)?.data?.variantDetail?.imgs?.[0]
 
-  // Chuẩn bị JSX component để render
+  // Khai báo trước null, sẽ được gán bên dưới theo từng loại đơn
   let renderedLensComponent: React.ReactNode = null
   let renderedFrameComponent: React.ReactNode = null
 
-  // NORMAL Order - dùng productDetail.type thay vì SKU prefix
   if (orderTypeFromApi === 'NORMAL' && orderProductItems[0]) {
-    // const firstItem = orderProductItems[0]
+    // Cộng tổng quantity của tất cả items trong order
     const totalQty = orderProductItems.reduce((sum, item) => sum + (item.quantity || 1), 0)
 
+    // Map options về dạng { key: attributeName, value: label } cho component hiển thị
     const mappedOptions = variantOptions.map((attr: any) => ({
       key: attr.attributeName,
       value: attr.label
     }))
 
     if (productType === 'lens') {
+      // Đơn mua mỗi tròng á -> hiển thị LensNormalOrder
       renderedLensComponent = (
         <div className="space-y-8">
           <LensNormalOrder data={mappedOptions} imageSrc={variantImg} quantity={totalQty} />
         </div>
       )
     } else {
-      // 'frame' | 'sunglass' | undefined (fallback)
+      // 'frame' | 'sunglass' | other → hiển thị FrameSpecifications
       renderedFrameComponent = (
         <div className="space-y-8">
           <FrameSpecifications data={mappedOptions} imageSrc={variantImg} quantity={totalQty} />

@@ -74,3 +74,41 @@ export interface AdminInvoiceDetailResponse {
   data: AdminInvoiceDetail
 }
 
+/** Shape of GET /admin/invoices/handle-delivery */
+export interface OperationInvoiceOrder {
+  id: string
+  orderCode?: string
+  status?: string
+  type?: string[]
+}
+
+export interface OperationInvoiceListItem {
+  id: string
+  invoiceCode: string
+  fullName: string
+  phone: string
+  address?: string
+  finalPrice: string
+  status: string
+  createdAt: string
+  orders: string[]
+}
+
+export interface OperationInvoiceListPagination {
+  page: number
+  limit: number
+  total: number
+  totalPages: number
+}
+
+export interface OperationInvoiceListData {
+  pagination: OperationInvoiceListPagination
+  invoiceList: OperationInvoiceListItem[]
+}
+
+export interface OperationInvoiceListApiResponse {
+  success: boolean
+  message: string
+  data: OperationInvoiceListData
+}
+

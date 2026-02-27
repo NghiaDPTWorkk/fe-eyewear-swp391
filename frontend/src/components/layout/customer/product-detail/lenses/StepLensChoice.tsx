@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Glasses, Loader2, AlertCircle } from 'lucide-react'
 import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
-import { Card, Button } from '@/shared/components/ui'
+import { Card, Button } from '@/shared/components/ui-core'
 import { useGetProductWithType } from '@/shared/hooks/products/useGetProductWithType'
 import { productService } from '@/shared/services/products/productService'
 import type { Product } from '@/shared/types/product.types'

@@ -1,6 +1,6 @@
 import { useAuthStore } from '@/store'
 import { PenTool, Database, Lock } from 'lucide-react'
-import { Card, Button } from '@/shared/components/ui'
+import { Card, Button } from '@/shared/components/ui-core'
 
 interface StepPrescriptionOptionProps {
   onSelect: (option: 'manual' | 'saved') => void

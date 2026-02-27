@@ -64,7 +64,7 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
       return
     }
 
-    const type = (product as any).type || 'frame'
+    const type = product.type || 'frame'
 
     if (type === 'frame') {
       setIsLensModalOpen(true)
@@ -94,11 +94,9 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
       return
     }
 
-    const productAny = product as any
-
-    // Prioritize the MongoDB ID from the product object if available
+    // Prioritize the product ID from the product object if available
     // Otherwise fallback to the ID from the URL prop
-    const finalProductId = productAny._id || productAny.id || productId
+    const finalProductId = product.id || productId
 
     if (!finalProductId) {
       toast.error('Unable to add to cart: Product ID not found')
@@ -143,10 +141,9 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
     try {
       // Ensure we have all necessary fields for StandardProduct
       const productToSave: StandardProduct = {
-        ...(product as StandardProduct),
-        _id: (product as any)._id || productId,
-        id: (product as any).id || productId,
-        defaultVariantImage: (product as any).defaultVariantImage || images[0],
+        ...product,
+        id: product.id || productId,
+        defaultVariantImage: product.defaultVariantImage || images[0],
         defaultVariantPrice: price,
         defaultVariantFinalPrice: finalPrice
       }
@@ -158,10 +155,9 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
   }
 
   // Get product description
-  const productAny = product as any
   const description =
-    productAny.description ||
-    productAny.shortDescription ||
+    product.description ||
+    product.shortDescription ||
     'A modern interpretation of the classic square silhouette. Crafted from premium Italian acetate with a subtle translucent finish that catches the light from every angle.'
 
   // Calculate discount percentage if applicable
@@ -346,7 +342,7 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
               ? 'Select Options'
               : !isInStock
                 ? 'Out of Stock'
-                : (product as any).type === 'frame'
+                : product.type === 'frame'
                   ? 'Select Lenses'
                   : 'Add to Cart'}
         </Button>
@@ -394,7 +390,7 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
         onConfirm={handleLensConfirm}
         productName={product.nameBase}
         productImage={currentVariant?.imgs?.[0] || images[0] || ''}
-        productType={(product as any).type || 'frame'}
+        productType={product.type || 'frame'}
         productId={productId}
         sku={currentVariant?.sku || ''}
       />

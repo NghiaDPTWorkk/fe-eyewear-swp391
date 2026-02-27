@@ -320,8 +320,8 @@ export const CustomerProductPage = () => {
                 <div className="text-center text-gray-eyewear py-10">No products found.</div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {products.map((product, index) => {
-                    const productId = product._id || product.id || `product-${index}`
+                  {products.map((product) => {
+                    const productId = product.id
                     const originalPrice = product.defaultVariantPrice || 0
                     const finalPrice = product.defaultVariantFinalPrice || originalPrice
 

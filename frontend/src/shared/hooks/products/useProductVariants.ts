@@ -1,32 +1,6 @@
 import { useState, useMemo } from 'react'
 import type { Product } from '@/shared/types/product.types'
-
-/**
- * Interface cho variant option từ API
- */
-interface VariantOption {
-  attributeId: string
-  attributeName: string
-  label: string
-  showType: 'text' | 'color' | 'image'
-  value: string
-  colorCode?: string // Optional: for color type
-}
-
-/**
- * Interface cho variant từ API
- */
-interface ProductVariant {
-  sku: string
-  name: string
-  slug: string
-  options: VariantOption[]
-  price: number
-  finalPrice: number
-  stock: number
-  imgs: string[]
-  isDefault: boolean
-}
+import type { Variant } from '@/shared/types/variant.types'
 
 /**
  * Cấu trúc attribute được extract từ variants
@@ -48,7 +22,7 @@ type SelectedOptions = Record<string, string> // { attributeName: value }
  */
 interface UseProductVariantsReturn {
   // Current state
-  currentVariant: ProductVariant | null
+  currentVariant: Variant | null
   selectedOptions: SelectedOptions
   attributes: AttributeInfo[]
 
@@ -74,8 +48,7 @@ interface UseProductVariantsReturn {
  * @returns Variant state và helper functions
  */
 export const useProductVariants = (product: Product): UseProductVariantsReturn => {
-  const productAny = product as any
-  const variants: ProductVariant[] = productAny.variants || []
+  const variants: Variant[] = product.variants || []
 
   /**
    * STEP 1: Initialize selected options với default variant
@@ -128,7 +101,7 @@ export const useProductVariants = (product: Product): UseProductVariantsReturn =
   /**
    * STEP 3: Find matching variant based on selected options
    */
-  const currentVariant = useMemo((): ProductVariant | null => {
+  const currentVariant = useMemo((): Variant | null => {
     // Nếu chưa có options nào được chọn, return null
     if (Object.keys(selectedOptions).length === 0) {
       return null

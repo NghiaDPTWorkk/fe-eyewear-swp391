@@ -33,22 +33,15 @@ export const ProductDetailPage = () => {
     )
   }
 
-  const productAny = product as any
-
   // Extract and deduplicate images from variants and other fields
-  const defaultVariant =
-    productAny.variants?.find((v: any) => v.isDefault) || productAny.variants?.[0]
+  const defaultVariant = product.variants?.find((v) => v.isDefault) || product.variants?.[0]
   const imageSet = new Set<string>()
 
-  if (productAny.defaultVariantImage) imageSet.add(productAny.defaultVariantImage)
-  if (productAny.imageUrl) imageSet.add(productAny.imageUrl)
+  if (product.defaultVariantImage) imageSet.add(product.defaultVariantImage)
+  if (product.imageUrl) imageSet.add(product.imageUrl)
 
   if (defaultVariant?.imgs) {
     defaultVariant.imgs.forEach((img: string) => imageSet.add(img))
-  }
-
-  if (productAny.images) {
-    productAny.images.forEach((img: string) => imageSet.add(img))
   }
 
   const images = Array.from(imageSet).filter(Boolean)
@@ -68,17 +61,15 @@ export const ProductDetailPage = () => {
             Products
           </a>
           <span>/</span>
-          <span className="text-mint-1200 font-semibold">
-            {productAny.nameBase || productAny.name}
-          </span>
+          <span className="text-mint-1200 font-semibold">{product.nameBase}</span>
         </nav>
 
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
           {/* Left Column: Image Gallery - use key to force reset state on product change */}
-          <ImageGallery key={productAny._id || productAny.id || id} images={images as string[]} />
+          <ImageGallery key={product.id || id} images={images as string[]} />
 
           {/* Right Column: Product Info */}
-          <ProductInfo product={product} productId={id || ''} />
+          <ProductInfo product={product} productId={product.id || id || ''} />
         </div>
       </main>
 

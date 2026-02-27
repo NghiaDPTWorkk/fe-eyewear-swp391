@@ -72,7 +72,6 @@ export function ProductGrid({
           image={product.image}
           price={product.price}
           discountPrice={product.discountPrice}
-          rating={product.rating}
           onAddToCart={onAddToCart}
         />
       ))}

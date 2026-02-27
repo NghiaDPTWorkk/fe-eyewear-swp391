@@ -1,8 +1,19 @@
 import { useRef, useMemo } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { Canvas, useFrame, type ThreeElements, type RootState } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
 import type { NormalizedLandmark } from '@mediapipe/tasks-vision'
 import * as THREE from 'three'
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace React {
+    // eslint-disable-next-line @typescript-eslint/no-namespace
+    namespace JSX {
+      // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+      interface IntrinsicElements extends ThreeElements {}
+    }
+  }
+}
 
 interface GlassesOverlayProps {
   videoRef: React.RefObject<HTMLVideoElement | null>
@@ -78,10 +89,10 @@ function GlassesModel({
     const clone = scene.clone(true)
     const box = new THREE.Box3().setFromObject(clone)
     const center = box.getCenter(new THREE.Vector3())
-    clone.children.forEach((child) => {
+    clone.children.forEach((child: THREE.Object3D) => {
       child.position.sub(center)
     })
-    clone.traverse((child) => {
+    clone.traverse((child: THREE.Object3D) => {
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh
         mesh.renderOrder = 1
@@ -95,7 +106,7 @@ function GlassesModel({
     return clone
   }, [scene])
 
-  useFrame(({ viewport }) => {
+  useFrame(({ viewport }: RootState) => {
     const group = groupRef.current
     const faces = landmarksRef.current
     const video = videoRef.current

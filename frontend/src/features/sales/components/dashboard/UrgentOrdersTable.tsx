@@ -6,7 +6,7 @@ import { IoFilter, IoAdd } from 'react-icons/io5'
 
 import { Card } from '@/shared/components/ui-core'
 
-import { OrderTable } from '../orders'
+import OrderTable from '@/components/staff/ordertable/OrderTable'
 
 interface UrgentOrdersTableProps {
   onRowClick: (id: string) => void

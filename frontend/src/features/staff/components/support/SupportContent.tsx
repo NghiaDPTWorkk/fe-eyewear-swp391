@@ -3,7 +3,8 @@ import {
   IoAlertCircleOutline,
   IoChevronForwardOutline,
   IoChevronBackOutline,
-  IoSearchOutline
+  IoSearchOutline,
+  IoTimeOutline
 } from 'react-icons/io5'
 import { Card, Button } from '@/shared/components/ui-core'
 import { useState, useRef, useMemo } from 'react'
@@ -145,62 +146,67 @@ export default function SupportContent({
           onClose={() => setSelectedTicket(null)}
           accentColor={accentColor}
         />
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <Button
             variant="ghost"
             onClick={() => {
               searchParams.delete('tab')
               setSearchParams(searchParams)
             }}
-            className="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-semibold"
+            className="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-bold transition-all"
           >
             <IoChevronBackOutline /> Back to Reporting
           </Button>
-          <div className="flex gap-2">
-            <div className="relative">
-              <IoSearchOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <div className="flex gap-2 w-full sm:w-auto">
+            <div className="relative flex-1 sm:flex-initial">
+              <IoSearchOutline className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
                 placeholder="Search reports..."
-                className="pl-10 pr-4 py-2 bg-white border border-neutral-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/10 placeholder:text-slate-400 font-medium"
+                className="w-full pl-11 pr-4 py-2.5 bg-white border border-slate-100 rounded-2xl text-sm focus:outline-none focus:ring-4 focus:ring-primary-500/5 focus:border-primary-500 transition-all placeholder:text-slate-400 font-semibold shadow-sm"
               />
             </div>
           </div>
         </div>
 
-        <Card className="p-0 border-none shadow-sm shadow-neutral-200/50 bg-white rounded-3xl overflow-hidden">
-          <div className="p-6 border-b border-neutral-50 flex items-center justify-between bg-neutral-50/30">
-            <h2 className="text-xl font-semibold text-slate-900 tracking-tight">Report History</h2>
-            <span className="px-3 py-1 bg-white border border-neutral-200 rounded-full text-[10px] font-semibold text-slate-500 uppercase tracking-widest shadow-sm">
-              {sortedHistory.length} Total Reports
+        <Card className="p-0 border-none shadow-xl shadow-slate-200/40 bg-white rounded-[2rem] overflow-hidden">
+          <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/30">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900 tracking-tight">Report History</h2>
+              <p className="text-xs text-slate-400 font-semibold mt-1">
+                Manage and track your submitted tickets
+              </p>
+            </div>
+            <span className="px-4 py-1.5 bg-white border border-slate-100 rounded-xl text-[10px] font-bold text-slate-500 uppercase tracking-widest shadow-sm">
+              {sortedHistory.length} Total
             </span>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="bg-neutral-50/50">
-                  <th className="px-6 py-4 text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
-                    Ticket Info
+                <tr className="bg-slate-50/50">
+                  <th className="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">
+                    Ticket Information
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
+                  <th className="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] text-center">
                     Priority
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
-                    Status
+                  <th className="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] text-center">
+                    Current Status
                   </th>
-                  <th className="px-6 py-4 text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
-                    Submitted
+                  <th className="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] text-right">
+                    Date Submitted
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-50">
+              <tbody className="divide-y divide-slate-50">
                 {isHistoryLoading ? (
                   Array.from({ length: 3 }).map((_, i) => (
                     <tr key={i} className="animate-pulse">
-                      <td colSpan={4} className="px-6 py-8">
-                        <div className="h-4 bg-neutral-100 rounded-full w-48 mb-2" />
-                        <div className="h-3 bg-neutral-50 rounded-full w-96" />
+                      <td colSpan={4} className="px-8 py-8">
+                        <div className="h-4 bg-slate-100 rounded-full w-48 mb-3" />
+                        <div className="h-3 bg-slate-50 rounded-full w-96" />
                       </td>
                     </tr>
                   ))
@@ -209,51 +215,56 @@ export default function SupportContent({
                     <tr
                       key={report.id}
                       onClick={() => setSelectedTicket(report)}
-                      className="hover:bg-neutral-50/50 transition-colors group cursor-pointer"
+                      className="hover:bg-slate-50/50 transition-all group cursor-pointer"
                     >
-                      <td className="px-6 py-5 max-w-xs md:max-w-sm lg:max-w-md">
-                        <h4 className="text-sm font-semibold text-slate-800 group-hover:text-primary-600 transition-colors break-all">
-                          {report.title}
-                        </h4>
-                        <p className="text-xs text-slate-500 line-clamp-2 mt-1 font-medium break-all">
-                          {report.description}
-                        </p>
+                      <td className="px-8 py-6 max-w-xs md:max-w-md">
+                        <div className="flex flex-col gap-1.5">
+                          <h4 className="text-sm font-bold text-slate-800 group-hover:text-primary-600 transition-colors line-clamp-1">
+                            {report.title}
+                          </h4>
+                          <p className="text-xs text-slate-500 line-clamp-2 font-medium leading-relaxed">
+                            {report.description}
+                          </p>
+                        </div>
                       </td>
-                      <td className="px-6 py-5">
+                      <td className="px-8 py-6 text-center">
                         <span
-                          className={`px-2.5 py-1 rounded-lg text-[9px] font-semibold uppercase tracking-widest border ${
+                          className={`px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider border inline-block ${
                             report.priorityLevel === 'HIGH'
-                              ? 'bg-rose-50 text-rose-600 border-rose-100'
+                              ? 'bg-rose-50 text-rose-600 border-rose-100 shadow-sm shadow-rose-100/50'
                               : report.priorityLevel === 'MEDIUM'
-                                ? 'bg-amber-50 text-amber-600 border-amber-100'
+                                ? 'bg-amber-50 text-amber-600 border-amber-100 shadow-sm shadow-amber-100/50'
                                 : 'bg-slate-50 text-slate-600 border-slate-100'
                           }`}
                         >
                           {report.priorityLevel}
                         </span>
                       </td>
-                      <td className="px-6 py-5">
+                      <td className="px-8 py-6 text-center">
                         <span
-                          className={`px-2.5 py-1 rounded-lg text-[9px] font-semibold uppercase tracking-widest border ${statusClass(report.status)}`}
+                          className={`px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider border inline-block ${statusClass(report.status)} shadow-sm`}
                         >
                           {report.status}
                         </span>
                       </td>
-                      <td className="px-6 py-5">
-                        <p className="text-xs text-slate-400 font-semibold">{report.createdAt}</p>
+                      <td className="px-8 py-6 text-right">
+                        <p className="text-xs text-slate-400 font-bold">{report.createdAt}</p>
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={4} className="px-6 py-20 text-center">
-                      <div className="max-w-xs mx-auto space-y-3">
-                        <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-300 mx-auto">
-                          <IoAlertCircleOutline size={24} />
+                    <td colSpan={4} className="px-8 py-24 text-center">
+                      <div className="max-w-xs mx-auto space-y-4">
+                        <div className="w-16 h-16 rounded-[2rem] bg-slate-50 flex items-center justify-center text-slate-300 mx-auto shadow-inner">
+                          <IoAlertCircleOutline size={32} />
                         </div>
-                        <p className="text-sm font-semibold text-slate-400">
-                          No report history found
-                        </p>
+                        <div>
+                          <p className="text-sm font-bold text-slate-900">No report history</p>
+                          <p className="text-xs text-slate-400 font-medium mt-1">
+                            You haven't submitted any bug reports yet.
+                          </p>
+                        </div>
                       </div>
                     </td>
                   </tr>
@@ -386,37 +397,40 @@ export default function SupportContent({
               <h3 className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest pl-1">
                 Recent Reports
               </h3>
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {isHistoryLoading ? (
-                  <div className="p-8 text-center bg-neutral-50 rounded-2xl">
+                  <div className="p-8 text-center bg-slate-50 rounded-2xl">
                     <div className="animate-spin rounded-full h-8 w-8 border-4 border-primary-500 border-t-transparent mx-auto" />
                   </div>
                 ) : historyList && historyList.length > 0 ? (
-                  historyList.slice(0, 5).map((report) => (
+                  historyList.slice(0, 4).map((report) => (
                     <div
                       key={report.id}
                       onClick={() => setSelectedTicket(report)}
-                      className="flex justify-between items-start p-4 bg-white border border-neutral-100 rounded-2xl shadow-sm transition-all group hover:scale-[1.02] cursor-pointer hover:border-neutral-200"
+                      className="flex justify-between items-start p-5 bg-white border border-slate-100 rounded-[1.5rem] shadow-sm transition-all group hover:scale-[1.03] cursor-pointer hover:border-primary-200 hover:shadow-xl hover:shadow-primary-500/5"
                     >
-                      <div className="flex-1 pr-3 min-w-0">
-                        <h4 className="text-sm font-semibold text-slate-800 transition-colors truncate">
+                      <div className="flex-1 pr-4 min-w-0">
+                        <h4 className="text-sm font-bold text-slate-800 transition-colors truncate group-hover:text-primary-600">
                           {report.title}
                         </h4>
-                        <p className="text-[10px] text-slate-400 mt-1 font-semibold">
-                          {report.createdAt}
-                        </p>
+                        <div className="flex items-center gap-2 mt-1.5">
+                          <IoTimeOutline size={12} className="text-slate-400" />
+                          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                            {report.createdAt.split(' ').pop()}
+                          </p>
+                        </div>
                       </div>
                       <span
-                        className={`px-3 py-1 rounded-xl text-[9px] font-semibold uppercase tracking-widest border shrink-0 ${statusClass(report.status)}`}
+                        className={`px-3 py-1 rounded-xl text-[9px] font-bold uppercase tracking-widest border shrink-0 ${statusClass(report.status)}`}
                       >
                         {report.status}
                       </span>
                     </div>
                   ))
                 ) : (
-                  <p className="text-xs text-slate-400 text-center py-4 font-semibold">
-                    No history available
-                  </p>
+                  <div className="text-center py-6 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
+                    <p className="text-xs text-slate-400 font-bold">No history available</p>
+                  </div>
                 )}
               </div>
               <button
@@ -425,9 +439,9 @@ export default function SupportContent({
                   searchParams.set('tab', 'history')
                   setSearchParams(searchParams)
                 }}
-                className="w-full py-3 text-xs font-semibold text-primary-600 hover:text-primary-700 flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                className="w-full py-4 text-xs font-bold text-primary-600 hover:text-primary-700 flex items-center justify-center gap-2 transition-all hover:bg-primary-50 rounded-2xl cursor-pointer active:scale-95"
               >
-                View All History <IoChevronForwardOutline />
+                View Full History <IoChevronForwardOutline />
               </button>
             </div>
           </Card>

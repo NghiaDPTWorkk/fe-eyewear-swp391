@@ -3,6 +3,7 @@ import { useGetProductDetail } from '@/shared/hooks/products/useGetProductDetail
 import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
 import { ImageGallery, ProductInfo } from '@/components/layout/customer/product-detail'
 import { Newsletter, Footer } from '@/components/layout/customer/homepage/components'
+import { useProductVariants } from '@/shared/hooks/products/useProductVariants'
 
 export const ProductDetailPage = () => {
   const { id } = useParams<{ id: string }>()
@@ -33,18 +34,19 @@ export const ProductDetailPage = () => {
     )
   }
 
-  // Extract and deduplicate images from variants and other fields
-  const defaultVariant = product.variants?.find((v) => v.isDefault) || product.variants?.[0]
-  const imageSet = new Set<string>()
+  return <ProductDetailContent product={product} productId={product.id || id || ''} />
+}
 
-  if (product.defaultVariantImage) imageSet.add(product.defaultVariantImage)
-  if (product.imageUrl) imageSet.add(product.imageUrl)
+// Separate component so useProductVariants hook can be called after product is loaded
+import type { Product } from '@/shared/types/product.types'
 
-  if (defaultVariant?.imgs) {
-    defaultVariant.imgs.forEach((img: string) => imageSet.add(img))
-  }
+interface ProductDetailContentProps {
+  product: Product
+  productId: string
+}
 
-  const images = Array.from(imageSet).filter(Boolean)
+const ProductDetailContent = ({ product, productId }: ProductDetailContentProps) => {
+  const variantState = useProductVariants(product)
 
   return (
     <div className="min-h-screen bg-mint-200">
@@ -65,11 +67,11 @@ export const ProductDetailPage = () => {
         </nav>
 
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
-          {/* Left Column: Image Gallery - use key to force reset state on product change */}
-          <ImageGallery key={product.id || id} images={images as string[]} />
+          {/* Left Column: Image Gallery - images from current variant */}
+          <ImageGallery images={variantState.images} />
 
-          {/* Right Column: Product Info */}
-          <ProductInfo product={product} productId={product.id || id || ''} />
+          {/* Right Column: Product Info - pass shared variant state */}
+          <ProductInfo product={product} productId={productId} variantState={variantState} />
         </div>
       </main>
 

@@ -5,10 +5,15 @@ import type { Variant } from '@/shared/types/variant.types'
 /**
  * Cấu trúc attribute được extract từ variants
  */
-interface AttributeInfo {
+export interface AttributeValue {
+  value: string
+  label: string
+}
+
+export interface AttributeInfo {
   name: string // attributeName
   showType: 'text' | 'color' | 'image'
-  values: string[] // unique values
+  values: AttributeValue[] // unique values with labels
   attributeId: string
 }
 
@@ -20,7 +25,7 @@ type SelectedOptions = Record<string, string> // { attributeName: value }
 /**
  * Return type của hook
  */
-interface UseProductVariantsReturn {
+export interface UseProductVariantsReturn {
   // Current state
   currentVariant: Variant | null
   selectedOptions: SelectedOptions
@@ -89,8 +94,11 @@ export const useProductVariants = (product: Product): UseProductVariantsReturn =
         }
 
         const attr = attributesMap.get(option.attributeName)!
-        if (!attr.values.includes(option.value)) {
-          attr.values.push(option.value)
+        if (!attr.values.some((v) => v.value === option.value)) {
+          attr.values.push({
+            value: option.value,
+            label: option.label
+          })
         }
       })
     })

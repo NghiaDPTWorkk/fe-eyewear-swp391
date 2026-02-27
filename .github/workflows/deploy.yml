@@ -27,10 +27,13 @@ jobs:
             git checkout develop
             git pull origin develop
 
-            # Tạo file .env cho frontend (nếu chưa có)
-            if [ ! -f frontend/.env ]; then
-              echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" > frontend/.env
-              echo "VITE_APP_NAME=Eyewear Shop" >> frontend/.env
+            # Vào thư mục frontend để chạy Docker
+            cd frontend
+
+            # Tạo file .env (nếu chưa có)
+            if [ ! -f .env ]; then
+              echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" > .env
+              echo "VITE_APP_NAME=Eyewear Shop" >> .env
             fi
 
             # Build lại container và khởi chạy

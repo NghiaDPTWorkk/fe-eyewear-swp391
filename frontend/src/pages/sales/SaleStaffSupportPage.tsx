@@ -64,11 +64,6 @@ export default function SaleStaffSupportPage() {
     }
   ]
 
-  const recentReports = [
-    { title: 'Order search not working', date: 'Submitted 2 days ago', status: 'Pending' },
-    { title: 'Print function error', date: 'Submitted 5 days ago', status: 'Resolved' }
-  ]
-
   return (
     <div className="space-y-6">
       <PageHeader
@@ -80,7 +75,6 @@ export default function SaleStaffSupportPage() {
       <SupportContent
         guidelines={guidelines}
         contacts={contacts}
-        recentReports={recentReports}
         criticalReminder="Violation of data security policies or financial transaction guidelines may result in immediate suspension and legal action. When in doubt, always escalate to your supervisor."
         accentColor="primary"
       />

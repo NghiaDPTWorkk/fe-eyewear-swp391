@@ -1,9 +1,8 @@
 import { useState, useMemo } from 'react'
 import { Container } from '@/components'
 import { PageHeader } from '@/features/sales/components/common'
-import { StaffTable } from './components/staff/StaffTable'
+import { StaffTable, type StaffData } from './components/staff/StaffTable'
 import { StaffDetailDrawer } from './components/staff/StaffDetailDrawer'
-import type { StaffData } from './components/staff/StaffTable'
 import {
   IoSearchOutline,
   IoRefreshOutline,

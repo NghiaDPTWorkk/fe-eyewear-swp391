@@ -73,13 +73,15 @@ interface NavActionsProps {
   userName?: string
   userRole?: string
   userInitials?: string
+  userEmail?: string
 }
 
 export function NavActions({
   className,
   userName = 'Anna Morgan',
   userRole = 'Operations Manager',
-  userInitials = 'AM'
+  userInitials = 'AM',
+  userEmail = ''
 }: NavActionsProps) {
   const [openDropdown, setOpenDropdown] = useState<'notifications' | 'profile' | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -219,9 +221,7 @@ export function NavActions({
             <div className="p-6 bg-white border-b border-neutral-50">
               <div className="mb-3">
                 <h3 className="text-xl font-semibold text-neutral-900 leading-tight">{userName}</h3>
-                <p className="text-sm font-medium text-neutral-500 truncate mt-1">
-                  anna.morgan@opsview.com
-                </p>
+                <p className="text-sm font-medium text-neutral-500 truncate mt-1">{userEmail}</p>
               </div>
               <span className="px-3 py-1 bg-primary-100/50 text-primary-600 text-[11px] font-semibold uppercase tracking-wider rounded-lg border border-primary-200/30">
                 {isOperation ? 'Manager' : 'Staff'}

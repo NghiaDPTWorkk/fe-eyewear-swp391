@@ -40,7 +40,7 @@ export function UserWidgetWithLogout({
             </div>
             <button
               onClick={logoutAction}
-              className="p-2 hover:bg-red-50 rounded-lg transition-colors text-red-500"
+              className="p-2 hover:bg-red-50 rounded-lg transition-colors text-red-500 cursor-pointer"
               title="Logout"
             >
               <IoLogOut className="w-5 h-5" />

@@ -1,5 +1,5 @@
 import { useProfile } from '@/features/staff/hooks/useProfile'
-import { Card, Button } from '@/shared/components'
+import { Card, Button } from '@/shared/components/ui-core'
 import {
   IoStorefrontOutline,
   IoCalendarOutline,
@@ -77,7 +77,9 @@ export default function AccountInfoSidebar() {
                 <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-widest mb-0.5">
                   Store Location
                 </p>
-                <p className="text-sm font-semibold text-neutral-700">Downtown Branch</p>
+                <p className="text-sm font-semibold text-neutral-700">
+                  {profile?.role === 'SALE_STAFF' ? 'Main Store' : 'Central Office'}
+                </p>
               </div>
             </div>
             <div className="flex items-start gap-3.5">
@@ -108,10 +110,21 @@ export default function AccountInfoSidebar() {
                   Last Login
                 </p>
                 <p className="text-sm font-semibold text-neutral-700 leading-tight">
-                  Jan 15, 2026
+                  {profile?.updatedAt && !isNaN(new Date(profile.updatedAt).getTime())
+                    ? new Date(profile.updatedAt).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                      })
+                    : 'Recently'}
                   <br />
                   <span className="text-[11px] text-slate-400 font-medium tracking-tight">
-                    09:00 AM
+                    {profile?.updatedAt && !isNaN(new Date(profile.updatedAt).getTime())
+                      ? new Date(profile.updatedAt).toLocaleTimeString('en-US', {
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })
+                      : 'Just now'}
                   </span>
                 </p>
               </div>
@@ -187,7 +200,7 @@ export default function AccountInfoSidebar() {
       </Card>
 
       {/* Danger Zone */}
-      <Card className="p-8 border border-red-100 shadow-sm shadow-red-50 bg-red-50/10 rounded-2xl">
+      <Card className="p-8 border border-red-100 shadow-sm shadow-red-50 bg-white rounded-2xl">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center shrink-0">
             <IoTrashOutline className="text-red-600" size={20} />
@@ -200,7 +213,7 @@ export default function AccountInfoSidebar() {
         <Button
           variant="solid"
           colorScheme="danger"
-          className="w-full h-11 rounded-xl font-normal shadow-md shadow-red-200 hover:shadow-red-300 transition-all active:scale-95 bg-red-600 hover:bg-red-700 border-none px-6"
+          className="w-full h-11 rounded-xl font-normal shadow-md shadow-red-200 hover:shadow-red-300 transition-all active:scale-95 bg-red-600 hover:bg-red-700 border-none px-6 cursor-pointer"
         >
           Delete Account
         </Button>

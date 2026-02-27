@@ -1,7 +1,8 @@
-import React from 'react'
 import { IoAddOutline, IoTrashOutline } from 'react-icons/io5'
 import type { ProductCreateFormState } from '../types/product-create.types'
 import { ImageUpload } from './ImageUpload'
+import { DynamicSelectField } from './DynamicSelectField'
+import { useAttributes } from '../../../../features/staff/hooks/useAttributes'
 
 const inputClassName =
   'w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-2xl text-[14px] focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all'
@@ -11,6 +12,13 @@ export function VariantsEditor(props: {
   onChange: (variants: ProductCreateFormState['variants']) => void
 }) {
   const { variants, onChange } = props
+  const { data: attributeList = [] } = useAttributes()
+
+  const attributeOptions = attributeList.map((attr: any) => ({
+    id: attr.id,
+    name: attr.name,
+    showType: attr.showType
+  }))
 
   const addVariant = () => {
     onChange([
@@ -128,18 +136,6 @@ export function VariantsEditor(props: {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input
-                  value={v.sku}
-                  onChange={(e) =>
-                    onChange(
-                      variants.map((vv, i) =>
-                        i === variantIdx ? { ...vv, sku: e.target.value } : vv
-                      )
-                    )
-                  }
-                  placeholder="sku (optional)"
-                  className={inputClassName}
-                />
-                <input
                   value={v.name}
                   onChange={(e) =>
                     onChange(
@@ -149,19 +145,7 @@ export function VariantsEditor(props: {
                     )
                   }
                   placeholder="name (optional)"
-                  className={inputClassName}
-                />
-                <input
-                  value={v.slug}
-                  onChange={(e) =>
-                    onChange(
-                      variants.map((vv, i) =>
-                        i === variantIdx ? { ...vv, slug: e.target.value } : vv
-                      )
-                    )
-                  }
-                  placeholder="slug (optional)"
-                  className={inputClassName}
+                  className={inputClassName + ' md:col-span-2'}
                 />
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:col-span-2">
@@ -245,30 +229,14 @@ export function VariantsEditor(props: {
                   <div className="space-y-3">
                     {v.options.map((o, optionIdx) => (
                       <div key={optionIdx} className="grid grid-cols-1 md:grid-cols-6 gap-3">
-                        <input
-                          value={o.attributeId}
-                          onChange={(e) =>
-                            onChange(
-                              variants.map((vv, i) =>
-                                i !== variantIdx
-                                  ? vv
-                                  : {
-                                      ...vv,
-                                      options: vv.options.map((oo, oi) =>
-                                        oi === optionIdx
-                                          ? { ...oo, attributeId: e.target.value }
-                                          : oo
-                                      )
-                                    }
-                              )
-                            )
-                          }
-                          placeholder="attributeId"
-                          className={inputClassName}
-                        />
-                        <input
+                        <DynamicSelectField
+                          label="Attribute"
                           value={o.attributeName}
-                          onChange={(e) =>
+                          options={attributeOptions}
+                          onChange={(val: string) => {
+                            const selectedAttr = attributeList.find(
+                              (a: any) => a.name === val || a.id === val
+                            )
                             onChange(
                               variants.map((vv, i) =>
                                 i !== variantIdx
@@ -277,15 +245,22 @@ export function VariantsEditor(props: {
                                       ...vv,
                                       options: vv.options.map((oo, oi) =>
                                         oi === optionIdx
-                                          ? { ...oo, attributeName: e.target.value }
+                                          ? {
+                                              ...oo,
+                                              attributeName: selectedAttr ? selectedAttr.name : val,
+                                              attributeId: selectedAttr ? selectedAttr.id : val,
+                                              showType: selectedAttr
+                                                ? selectedAttr.showType
+                                                : oo.showType
+                                            }
                                           : oo
                                       )
                                     }
                               )
                             )
-                          }
-                          placeholder="attributeName"
-                          className={inputClassName}
+                          }}
+                          placeholder="Select attribute..."
+                          className="md:col-span-2"
                         />
                         <input
                           value={o.label}
@@ -306,9 +281,14 @@ export function VariantsEditor(props: {
                           placeholder="label"
                           className={inputClassName}
                         />
-                        <select
+                        <DynamicSelectField
+                          label="Show Type"
                           value={o.showType}
-                          onChange={(e) =>
+                          options={[
+                            { id: 'text', name: 'text' },
+                            { id: 'color', name: 'color' }
+                          ]}
+                          onChange={(val: string) =>
                             onChange(
                               variants.map((vv, i) =>
                                 i !== variantIdx
@@ -317,18 +297,16 @@ export function VariantsEditor(props: {
                                       ...vv,
                                       options: vv.options.map((oo, oi) =>
                                         oi === optionIdx
-                                          ? { ...oo, showType: e.target.value as 'color' | 'text' }
+                                          ? { ...oo, showType: val as 'color' | 'text' }
                                           : oo
                                       )
                                     }
                               )
                             )
                           }
-                          className={inputClassName}
-                        >
-                          <option value="text">text</option>
-                          <option value="color">color</option>
-                        </select>
+                          allowCustom={false}
+                          className="md:col-span-1"
+                        />
                         <input
                           value={o.value}
                           onChange={(e) =>

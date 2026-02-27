@@ -1,72 +1,16 @@
 import { useState, useRef, useEffect } from 'react'
-import { FiSearch, FiMail } from 'react-icons/fi'
+import { FiMail } from 'react-icons/fi'
 import { MdOutlineNotifications } from 'react-icons/md'
 import {
   IoPersonOutline,
   IoSettingsOutline,
   IoLogOutOutline,
-  IoChevronForward
+  IoChevronForward,
+  IoTicketOutline
 } from 'react-icons/io5'
 import { useLocation, Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
-import { HiMenuAlt2 } from 'react-icons/hi'
-import { useLayoutStore } from '@/store/layout.store'
 import { useLogout } from '@/shared/hooks/useLogout'
-import { Button, Input } from '@/shared/components'
-
-export interface NavSearchProps {
-  className?: string
-  inputContainerClassName?: string
-  placeholder?: string
-  styleVariant?: 'default' | 'operation' | 'manager'
-}
-
-export function NavSearch({
-  className,
-  inputContainerClassName,
-  placeholder,
-  styleVariant = 'default'
-}: NavSearchProps) {
-  const { toggleSidebar } = useLayoutStore()
-
-  const inputStyles =
-    styleVariant === 'operation'
-      ? 'bg-mint-200 border-mint-500 rounded-xl'
-      : styleVariant === 'manager'
-        ? 'bg-mint-50 border-mint-200 rounded-xl shadow-sm'
-        : 'bg-neutral-50 border-neutral-100 rounded-xl'
-
-  const iconColor =
-    styleVariant === 'operation'
-      ? 'text-mint-700'
-      : styleVariant === 'manager'
-        ? 'text-mint-600'
-        : 'text-neutral-400'
-
-  return (
-    <div className={cn('flex items-center gap-3 w-full pr-2', className)}>
-      <Button
-        onClick={toggleSidebar}
-        className="lg:hidden p-2 rounded-lg text-neutral-500 hover:bg-neutral-50 transition-colors"
-      >
-        <HiMenuAlt2 className="text-2xl" />
-      </Button>
-
-      <div className={cn('max-w-lg flex-1 lg:pl-6', inputContainerClassName)}>
-        <Input
-          placeholder={placeholder || 'Search orders, customers, or frames...'}
-          size="md"
-          leftElement={
-            <span className="pointer-events-none flex items-center justify-center ml-2">
-              <FiSearch className={cn('text-xl', iconColor)} />
-            </span>
-          }
-          className={cn('w-full', inputStyles)}
-        />
-      </div>
-    </div>
-  )
-}
 
 interface NavActionsProps {
   className?: string
@@ -81,7 +25,7 @@ export function NavActions({
   userName = 'Loading...',
   userRole = 'Loading...',
   userInitials = '...',
-  userEmail = 'loading@example.com'
+  userEmail = ''
 }: NavActionsProps) {
   const [openDropdown, setOpenDropdown] = useState<'notifications' | 'profile' | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -89,7 +33,8 @@ export function NavActions({
 
   // Determine base path for dynamic links
   const isOperation = location.pathname.startsWith('/operationstaff')
-  const basePrefix = isOperation ? '/operationstaff' : '/salestaff'
+  const isManager = location.pathname.startsWith('/manager')
+  const basePrefix = isManager ? '/manager' : isOperation ? '/operationstaff' : '/salestaff'
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -137,7 +82,7 @@ export function NavActions({
   return (
     <div
       ref={containerRef}
-      className={cn('flex justify-end items-center gap-4 relative', className)}
+      className={cn('flex justify-end items-center gap-4 relative w-full', className)}
     >
       <div className="flex items-center gap-4 text-neutral-500">
         <button
@@ -193,7 +138,7 @@ export function NavActions({
               </div>
 
               <div className="px-5 pt-4 mt-2 border-t border-neutral-100">
-                <button className="w-full py-2 text-sm font-semibold text-primary-500 hover:text-primary-600 transition-colors flex items-center justify-center gap-1">
+                <button className="w-full py-2 text-sm font-semibold text-primary-500 hover:text-primary-600 transition-colors flex items-center justify-center gap-1 cursor-pointer">
                   View All Notifications
                 </button>
               </div>
@@ -202,9 +147,9 @@ export function NavActions({
         </div>
       </div>
 
-      <div className="h-8 w-px bg-neutral-100" />
+      <div className="h-8 w-px bg-neutral-100 ml-2" />
 
-      <div className="relative">
+      <div className="relative ml-auto sm:ml-0">
         <button
           onClick={() => setOpenDropdown(openDropdown === 'profile' ? null : 'profile')}
           className="flex items-center gap-3 group transition-opacity hover:opacity-80 cursor-pointer"
@@ -226,13 +171,18 @@ export function NavActions({
                 <p className="text-sm font-medium text-neutral-500 truncate mt-1">{userEmail}</p>
               </div>
               <span className="px-3 py-1 bg-primary-100/50 text-primary-600 text-[11px] font-semibold uppercase tracking-wider rounded-lg border border-primary-200/30">
-                {isOperation ? 'Manager' : 'Staff'}
+                {isManager ? 'Manager' : isOperation ? 'Staff' : 'Staff'}
               </span>
             </div>
 
             <div className="p-3">
               {[
                 { icon: IoPersonOutline, label: 'My Profile', to: `${basePrefix}/profile` },
+                {
+                  icon: IoTicketOutline,
+                  label: 'Report History',
+                  to: `${basePrefix}/support?tab=history`
+                },
                 { icon: IoSettingsOutline, label: 'Settings', to: `${basePrefix}/settings` }
               ].map((item) => (
                 <Link

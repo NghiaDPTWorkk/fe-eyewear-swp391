@@ -1,4 +1,5 @@
 import { useProfile } from '@/features/staff/hooks/useProfile'
+import { getInitials } from '@/shared/utils'
 import { Card, Button, Container } from '@/shared/components'
 import { Link, useNavigate } from 'react-router-dom'
 import { IoChevronForward, IoPencil } from 'react-icons/io5'
@@ -48,19 +49,19 @@ export default function OperationStaffProfilePage() {
 
   return (
     <Container maxWidth="none" className="pt-6 pb-8 px-6 md:px-8">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm mb-6">
-        <Link
-          to="/operationstaff/dashboard"
-          className="text-neutral-500 hover:text-neutral-700 transition-colors font-medium"
-        >
-          Dashboard
-        </Link>
-        <IoChevronForward className="text-neutral-400" />
-        <span className="text-mint-600 font-semibold">My Profile</span>
-      </div>
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-sm mb-6 px-1">
+          <Link
+            to="/operationstaff/dashboard"
+            className="text-neutral-500 hover:text-neutral-700 transition-colors font-medium"
+          >
+            Dashboard
+          </Link>
+          <IoChevronForward className="text-neutral-400" />
+          <span className="text-mint-600 font-semibold">My Profile</span>
+        </div>
 
-      <div className="max-w-4xl mx-auto">
         <Card className="overflow-hidden">
           {/* Header with Avatar & Edit Button */}
           <div className="bg-gradient-to-r from-mint-500 to-mint-600 p-8">
@@ -70,12 +71,7 @@ export default function OperationStaffProfilePage() {
                   {/* Always show fallback initials */}
                   <div className="w-24 h-24 rounded-full border-4 border-white shadow-lg bg-white flex items-center justify-center">
                     <span className="text-3xl font-bold text-mint-600">
-                      {profile.name
-                        .split(' ')
-                        .map((n) => n[0])
-                        .join('')
-                        .toUpperCase()
-                        .slice(0, 2)}
+                      {getInitials(profile.name)}
                     </span>
                   </div>
                 </div>

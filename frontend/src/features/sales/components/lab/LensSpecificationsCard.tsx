@@ -1,14 +1,45 @@
 import React from 'react'
 import { IoCheckmarkCircleOutline } from 'react-icons/io5'
 import { Card } from '@/shared/components/ui-core'
+import { cn } from '@/lib/utils'
 
 interface LensSpecificationsCardProps {
-  selectedOrderId: string
+  selectedOrder: any | null
 }
 
 export const LensSpecificationsCard: React.FC<LensSpecificationsCardProps> = ({
-  selectedOrderId
+  selectedOrder
 }) => {
+  if (!selectedOrder) {
+    return (
+      <Card className="col-span-12 lg:col-span-9 p-6 border border-neutral-100 bg-white shadow-sm rounded-xl flex items-center justify-center text-neutral-400 italic text-sm">
+        Select an order from the table to view specifications
+      </Card>
+    )
+  }
+
+  const formatValue = (val: any) => {
+    if (val === undefined || val === null) return '0.00'
+    const num = parseFloat(val)
+    if (isNaN(num)) return '0.00'
+    const sign = num > 0 ? '+' : ''
+    return `${sign}${num.toFixed(2)}`
+  }
+
+  const orderData = selectedOrder.order
+  const firstProduct = orderData?.products?.[0]
+
+  // Fix: parameters is a sibling of lens, not a property of lens
+  const parameters = firstProduct?.parameters || firstProduct?.lens?.parameters || {}
+
+  const productSku = firstProduct?.product?.sku
+  const lensSku = firstProduct?.lens?.sku
+
+  // Logic to determine if it's a Lens-only product or has both
+  const isLensOrder = productSku?.startsWith('LENS')
+  const displayFrame = isLensOrder ? 'N/A' : productSku || 'N/A'
+  const displayLens = isLensOrder ? productSku : lensSku || 'N/A'
+
   return (
     <Card className="col-span-12 lg:col-span-9 p-6 border border-neutral-100 bg-white shadow-sm rounded-xl">
       <div className="flex justify-between items-start mb-6">
@@ -17,73 +48,83 @@ export const LensSpecificationsCard: React.FC<LensSpecificationsCardProps> = ({
             <IoCheckmarkCircleOutline size={16} />
           </div>
           <h3 className="text-lg font-semibold text-gray-900">
-            Lens Specifications{' '}
+            Order Quick View{' '}
             <span className="ml-2 px-2 py-0.5 bg-neutral-100 text-neutral-500 text-[10px] rounded uppercase tracking-wider">
-              Selected: {selectedOrderId}
+              {selectedOrder.orderCode}
             </span>
           </h3>
         </div>
-        <span className="text-[11px] font-semibold text-neutral-400 tracking-wider italic">
-          Read-Only View
-        </span>
+        <div className="flex items-center gap-2">
+          <span
+            className={cn(
+              'px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider',
+              selectedOrder.stationColor
+            )}
+          >
+            {selectedOrder.station}
+          </span>
+          <span className="text-[11px] font-semibold text-neutral-400 tracking-wider italic">
+            ID: {selectedOrder.fullId.slice(-8)}
+          </span>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         <div className="col-span-1 md:col-span-2 space-y-4">
           <div>
-            <p className="text-[11px] font-semibold text-neutral-400 tracking-wider mb-2">
-              Lens Type
+            <p className="text-[11px] font-medium text-neutral-400 tracking-wider mb-2">
+              Frame SKU
             </p>
-            <div className="px-3 py-2 bg-neutral-50 rounded-lg text-sm font-medium text-neutral-800">
-              Progressive Digital Freeform
+            <div className="px-3 py-2 bg-neutral-50 rounded-lg text-sm font-semibold text-neutral-800 border border-neutral-100/30">
+              {displayFrame}
             </div>
           </div>
           <div>
-            <p className="text-[11px] font-semibold text-neutral-400 tracking-wider mb-2">
-              Material
-            </p>
-            <div className="px-3 py-2 bg-neutral-50 rounded-lg text-sm font-medium text-neutral-800">
-              High Index 1.67
+            <p className="text-[11px] font-medium text-neutral-400 tracking-wider mb-2">Lens SKU</p>
+            <div className="px-3 py-2 bg-neutral-50 rounded-lg text-sm font-semibold text-neutral-800 border border-neutral-100/30">
+              {displayLens}
             </div>
           </div>
         </div>
 
         <div className="col-span-1 border-x border-neutral-100 px-6 space-y-4">
           <div>
-            <p className="text-[11px] font-semibold text-neutral-400 tracking-wider mb-2 text-center">
+            <p className="text-[11px] font-medium text-neutral-400 tracking-wider mb-2 text-center">
               Sphere (SPH)
             </p>
-            <div className="flex gap-2 justify-center">
+            <div className="flex gap-4 justify-center">
               <div className="text-center">
-                <span className="text-[10px] text-neutral-400 font-semibold tracking-wider">
-                  OD
-                </span>
-                <div className="text-sm font-semibold text-neutral-900">-2.50</div>
+                <span className="text-[10px] text-neutral-400 font-medium tracking-wider">OD</span>
+                <div className="text-sm font-semibold text-neutral-900">
+                  {formatValue(parameters.right?.SPH)}
+                </div>
               </div>
               <div className="text-center">
-                <span className="text-[10px] text-neutral-400 font-semibold tracking-wider">
-                  OS
-                </span>
-                <div className="text-sm font-semibold text-neutral-900">-2.75</div>
+                <span className="text-[10px] text-neutral-400 font-medium tracking-wider">OS</span>
+                <div className="text-sm font-semibold text-neutral-900">
+                  {formatValue(parameters.left?.SPH)}
+                </div>
               </div>
             </div>
           </div>
           <div>
-            <p className="text-[11px] font-semibold text-neutral-400 tracking-wider mb-2 text-center">
+            <p className="text-[11px] font-medium text-neutral-400 tracking-wider mb-2 text-center">
               Cylinder (CYL)
             </p>
-            <div className="flex gap-2 justify-center">
+            <div className="flex gap-4 justify-center">
               <div className="text-center">
-                <span className="text-[10px] text-neutral-400 uppercase font-semibold tracking-wider">
+                <span className="text-[10px] text-neutral-400 uppercase font-medium tracking-wider">
                   OD
                 </span>
-                <div className="text-sm font-semibold text-neutral-900">-0.50</div>
+                <div className="text-sm font-semibold text-neutral-900">
+                  {formatValue(parameters.right?.CYL)}
+                </div>
               </div>
               <div className="text-center">
-                <span className="text-[10px] text-neutral-400 font-semibold tracking-wider">
-                  OS
-                </span>
-                <div className="text-sm font-semibold text-neutral-900">-0.75</div>
+                <span className="text-[10px] text-neutral-400 font-medium tracking-wider">OS</span>
+                <div className="text-sm font-semibold text-neutral-900">
+                  {formatValue(parameters.left?.CYL)}
+                </div>
               </div>
             </div>
           </div>
@@ -91,24 +132,30 @@ export const LensSpecificationsCard: React.FC<LensSpecificationsCardProps> = ({
 
         <div className="col-span-1 space-y-4">
           <div>
-            <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider mb-2">
-              Lab Notes
+            <p className="text-[11px] font-medium text-neutral-400 uppercase tracking-wider mb-2">
+              Pupillary Distance
             </p>
-            <div className="p-3 bg-amber-50 rounded-lg text-[11px] font-medium text-amber-800 leading-relaxed border border-amber-100">
-              Customer requested rush delivery if possible. Careful with frame alignment...
+            <div className="p-3 bg-blue-50/50 rounded-lg text-sm font-semibold text-blue-700 text-center border border-blue-100/50">
+              {parameters.PD || '64'}mm
             </div>
           </div>
           <div>
-            <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider mb-2">
-              Coating
+            <p className="text-[11px] font-medium text-neutral-400 uppercase tracking-wider mb-2">
+              Axis
             </p>
-            <div className="flex flex-wrap gap-1.5">
-              <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-semibold rounded tracking-wider">
-                Anti-Reflective
-              </span>
-              <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-semibold rounded tracking-wider">
-                Blue Light Filter
-              </span>
+            <div className="flex justify-between items-center px-3 py-2 bg-neutral-50 rounded-lg">
+              <div className="text-xs font-medium text-neutral-500">
+                OD:{' '}
+                <span className="text-neutral-900 font-semibold">
+                  {parameters.right?.AXIS || '0'}°
+                </span>
+              </div>
+              <div className="text-xs font-medium text-neutral-500">
+                OS:{' '}
+                <span className="text-neutral-900 font-semibold">
+                  {parameters.left?.AXIS || '0'}°
+                </span>
+              </div>
             </div>
           </div>
         </div>

@@ -2,7 +2,7 @@
  * Pagination Component
  * Reusable pagination controls for all SaleStaff table views.
  */
-import { Button } from '@/components'
+import { Button } from '@/shared/components/ui-core'
 import { IoChevronBackOutline, IoChevronForwardOutline } from 'react-icons/io5'
 
 interface PaginationProps {
@@ -24,7 +24,7 @@ export default function Pagination({
   const endItem = Math.min(currentPage * itemsPerPage, totalItems)
 
   return (
-    <div className="p-4 border-t border-gray-100 flex justify-between items-center text-sm text-gray-500">
+    <div className="p-4 border-t border-neutral-50/50 flex justify-between items-center text-sm text-gray-500">
       <span>
         Showing {startItem}-{endItem} of {totalItems} items
       </span>

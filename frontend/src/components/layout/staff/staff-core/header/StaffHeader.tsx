@@ -39,7 +39,7 @@ export function StaffHeader({
             {left && <div className="w-full max-w-xl">{left}</div>}
           </div>
           {center && <div className="flex justify-center flex-none">{center}</div>}
-          <div className="flex items-center gap-4 shrink-0 transition-all">{right}</div>
+          <div className="flex items-center gap-4 flex-1 justify-end transition-all">{right}</div>
         </div>
       </Container>
     </header>

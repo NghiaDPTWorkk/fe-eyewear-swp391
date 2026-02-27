@@ -41,7 +41,10 @@ export const useAuthStore = create<AuthState>()(
       },
       setRole: (role) => set({ role }),
       logout: () => {
-        localStorage.removeItem('auth-storage') // Clear persist storage
+        // Clear ALL known token keys from localStorage to prevent stale tokens
+        localStorage.removeItem('auth-storage')
+        localStorage.removeItem('accessToken')
+        localStorage.removeItem('access_token')
         set({ user: null, accessToken: null, isAuthenticated: false, role: null, error: null })
       },
       setLoading: (loading) => set({ isLoading: loading }),

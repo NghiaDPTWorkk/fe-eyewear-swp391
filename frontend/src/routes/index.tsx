@@ -1,8 +1,10 @@
 /* enable  eslint  */
 import { lazy } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
+import RootErrorPage from '@/pages/RootErrorPage'
 import { LazyPage } from '@/pages/LazyPage'
 import { AuthGuard } from '@/routes/guards'
+import { GoogleCallbackPage } from '@/pages/auth'
 
 const RegisterPage = lazy(() =>
   import('@/pages/auth/customer/RegisterPage').then((m) => ({ default: m.RegisterPage }))
@@ -16,12 +18,6 @@ const CartPage = lazy(() =>
 
 const LoginPage = lazy(() =>
   import('@/pages/auth/customer/CustomerLoginPage').then((m) => ({ default: m.CustomerLoginPage }))
-)
-
-const GoogleCallbackPage = lazy(() =>
-  import('@/pages/auth/customer/GoogleCallbackPage').then((m) => ({
-    default: m.GoogleCallbackPage
-  }))
 )
 
 const LoginStaffPage = lazy(() =>
@@ -125,19 +121,24 @@ const ManagerReportsPage = lazy(() =>
   import('@/pages/manager/ManagerReportsPage').then((m) => ({ default: m.default }))
 )
 
-const ManagerTransactionsPage = lazy(() =>
-  import('@/pages/manager/ManagerTransactionsPage').then((m) => ({ default: m.default }))
+const ManagerProfilePage = lazy(() =>
+  import('@/pages/manager/ManagerProfilePage').then((m) => ({ default: m.default }))
 )
+
 const ManagerProductsPage = lazy(() =>
   import('@/pages/manager/ManagerProductsPage').then((m) => ({ default: m.default }))
+)
+
+const ManagerProductDetailPage = lazy(() =>
+  import('@/pages/manager/ManagerProductDetailPage').then((m) => ({ default: m.default }))
 )
 
 const ManagerAddProductPage = lazy(() =>
   import('@/pages/manager/ManagerAddProductPage').then((m) => ({ default: m.default }))
 )
 
-const ManagerAddAttributePage = lazy(() =>
-  import('@/pages/manager/ManagerAddAttributePage').then((m) => ({ default: m.default }))
+const ManagerEditProductPage = lazy(() =>
+  import('@/pages/manager/ManagerEditProductPage').then((m) => ({ default: m.default }))
 )
 
 // Admin Pages
@@ -214,22 +215,31 @@ const CustomerOrderDetailPage = lazy(() =>
   }))
 )
 
-// Main Layout Wrapper
-const CustomerLayout = lazy(() => import('@/components/layout/customer/CustomerLayout'))
-
 export const router = createBrowserRouter([
   {
-    element: (
-      <LazyPage>
-        <CustomerLayout />
-      </LazyPage>
-    ),
+    errorElement: <RootErrorPage />,
     children: [
       {
         path: '/',
         element: (
           <LazyPage>
             <LandingPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: '/login',
+        element: (
+          <LazyPage>
+            <LoginPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: '/register',
+        element: (
+          <LazyPage>
+            <RegisterPage />
           </LazyPage>
         )
       },
@@ -344,439 +354,435 @@ export const router = createBrowserRouter([
             <CustomerProductPage />
           </LazyPage>
         )
-      }
-    ]
-  },
-  {
-    path: '/login',
-    element: (
-      <LazyPage>
-        <LoginPage />
-      </LazyPage>
-    )
-  },
-  {
-    path: '/register',
-    element: (
-      <LazyPage>
-        <RegisterPage />
-      </LazyPage>
-    )
-  },
-  {
-    path: '/admin/login',
-    element: (
-      <LazyPage>
-        <LoginStaffPage />
-      </LazyPage>
-    )
-  },
-  {
-    path: '/google/oauth/callback',
-    element: (
-      <LazyPage>
-        <GoogleCallbackPage />
-      </LazyPage>
-    )
-  },
-  {
-    path: '/admin',
-    element: (
-      <AuthGuard>
-        <LazyPage>
-          <AdminLayout />
-        </LazyPage>
-      </AuthGuard>
-    ),
-    children: [
-      {
-        index: true,
-        element: <Navigate to="/admin/dashboard" replace />
       },
       {
-        path: 'dashboard',
+        path: '/admin/login',
         element: (
           <LazyPage>
-            <AdminDashboardPage />
+            <LoginStaffPage />
           </LazyPage>
         )
       },
       {
-        path: 'users',
+        path: '/google/oauth/callback',
         element: (
           <LazyPage>
-            <AdminUsersPage />
+            <GoogleCallbackPage />
           </LazyPage>
         )
       },
       {
-        path: 'staff',
+        path: '/admin',
         element: (
-          <LazyPage>
-            <AdminStaffPage />
-          </LazyPage>
-        )
+          <AuthGuard>
+            <LazyPage>
+              <AdminLayout />
+            </LazyPage>
+          </AuthGuard>
+        ),
+        children: [
+          {
+            index: true,
+            element: <Navigate to="/admin/dashboard" replace />
+          },
+          {
+            path: 'dashboard',
+            element: (
+              <LazyPage>
+                <AdminDashboardPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'users',
+            element: (
+              <LazyPage>
+                <AdminUsersPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'staff',
+            element: (
+              <LazyPage>
+                <AdminStaffPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'settings',
+            element: (
+              <LazyPage>
+                <AdminSettingsPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'support',
+            element: (
+              <LazyPage>
+                <AdminSupportPage />
+              </LazyPage>
+            )
+          }
+        ]
       },
       {
-        path: 'settings',
+        path: '/salestaff',
         element: (
-          <LazyPage>
-            <AdminSettingsPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'support',
-        element: (
-          <LazyPage>
-            <AdminSupportPage />
-          </LazyPage>
-        )
-      }
-    ]
-  },
-  {
-    path: '/salestaff',
-    element: (
-      <AuthGuard>
-        <LazyPage>
-          <SaleStaffLayout />
-        </LazyPage>
-      </AuthGuard>
-    ),
-    children: [
-      {
-        path: 'dashboard',
-        element: (
-          <LazyPage>
-            <SaleStaffDashboardPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'orders',
-        element: (
-          <LazyPage>
-            <SaleStaffOrderPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'orders/prescription-orders',
-        element: (
-          <LazyPage>
-            <SaleStaffPrescriptionPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'orders/pre-orders',
-        element: (
-          <LazyPage>
-            <SaleStaffPreOrdersPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'orders/returns',
-        element: (
-          <LazyPage>
-            <SaleStaffReturnsPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'orders/:orderId/verify-rx',
-        element: (
-          <LazyPage>
-            <SaleStaffRxVerificationPage />
-          </LazyPage>
-        )
-      },
+          <AuthGuard>
+            <LazyPage>
+              <SaleStaffLayout />
+            </LazyPage>
+          </AuthGuard>
+        ),
+        children: [
+          {
+            index: true,
+            element: <Navigate to="/salestaff/dashboard" replace />
+          },
+          {
+            path: 'dashboard',
+            element: (
+              <LazyPage>
+                <SaleStaffDashboardPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'orders',
+            element: (
+              <LazyPage>
+                <SaleStaffOrderPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'orders/prescription-orders',
+            element: (
+              <LazyPage>
+                <SaleStaffPrescriptionPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'orders/pre-orders',
+            element: (
+              <LazyPage>
+                <SaleStaffPreOrdersPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'orders/returns',
+            element: (
+              <LazyPage>
+                <SaleStaffReturnsPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'orders/:orderId/verify-rx',
+            element: (
+              <LazyPage>
+                <SaleStaffRxVerificationPage />
+              </LazyPage>
+            )
+          },
 
-      {
-        path: 'orders/:orderId/regular',
-        element: (
-          <LazyPage>
-            <RegularOrderDetailPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'orders/:orderId/pre-order',
-        element: (
-          <LazyPage>
-            <PreOrderDetailPage />
-          </LazyPage>
-        )
-      },
+          {
+            path: 'orders/:orderId/regular',
+            element: (
+              <LazyPage>
+                <RegularOrderDetailPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'orders/:orderId/pre-order',
+            element: (
+              <LazyPage>
+                <PreOrderDetailPage />
+              </LazyPage>
+            )
+          },
 
-      {
-        path: 'customers',
-        element: (
-          <LazyPage>
-            <SaleStaffCustomerPage />
-          </LazyPage>
-        )
+          {
+            path: 'customers',
+            element: (
+              <LazyPage>
+                <SaleStaffCustomerPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'lab-status',
+            element: (
+              <LazyPage>
+                <SaleStaffLabStatusPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'live-map/:trackingId',
+            element: (
+              <LazyPage>
+                <SaleStaffLiveMapPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'profile',
+            element: (
+              <LazyPage>
+                <SaleStaffProfilePage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'settings',
+            element: (
+              <LazyPage>
+                <SaleStaffSettingsPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'support',
+            element: (
+              <LazyPage>
+                <SaleStaffSupportPage />
+              </LazyPage>
+            )
+          }
+        ]
       },
       {
-        path: 'lab-status',
+        path: '/operationstaff',
         element: (
-          <LazyPage>
-            <SaleStaffLabStatusPage />
-          </LazyPage>
-        )
+          <AuthGuard>
+            <LazyPage>
+              <OperationLayout />
+            </LazyPage>
+          </AuthGuard>
+        ),
+        children: [
+          {
+            index: true,
+            element: <Navigate to="/operationstaff/dashboard" replace />
+          },
+          {
+            path: 'dashboard',
+            element: (
+              <LazyPage>
+                <OperationDashboardPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'all',
+            element: (
+              <LazyPage>
+                <OperationAllOrdersPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'prescription-orders',
+            element: (
+              <LazyPage>
+                <OperationPrescriptionPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'pre-orders',
+            element: (
+              <LazyPage>
+                <OperationPreOrdersPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'packing',
+            element: (
+              <LazyPage>
+                <OperationPackingPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'orders/:orderId',
+            element: (
+              <LazyPage>
+                <OrderDetailPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'orders/:orderId/manufacturing',
+            element: (
+              <LazyPage>
+                <OperationManufacturingProcess />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'orders/:orderId/process',
+            element: (
+              <LazyPage>
+                <OperationOrderPackingProcess />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'packed-success',
+            element: (
+              <LazyPage>
+                <OperationCompleteOrdersPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'shipping-handover',
+            element: (
+              <LazyPage>
+                <OperationAllInvoices />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'shipping-handover/:invoiceId',
+            element: (
+              <LazyPage>
+                <OperationShippingHandoverPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'profile',
+            element: (
+              <LazyPage>
+                <OperationProfilePage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'settings',
+            element: (
+              <LazyPage>
+                <OperationSettingPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'support',
+            element: (
+              <LazyPage>
+                <OperationSupportPage />
+              </LazyPage>
+            )
+          }
+        ]
       },
       {
-        path: 'live-map/:trackingId',
+        path: '/manager',
         element: (
           <LazyPage>
-            <SaleStaffLiveMapPage />
+            <ManagerLayout />
           </LazyPage>
-        )
+        ),
+        children: [
+          {
+            index: true,
+            element: <Navigate to="/manager/dashboard" replace />
+          },
+          {
+            path: 'dashboard',
+            element: <ManagerDashboardPage />
+          },
+          {
+            path: 'orders',
+            element: (
+              <LazyPage>
+                <ManagerInvoicesPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'settings',
+            element: (
+              <LazyPage>
+                <ManagerSettingsPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'support',
+            element: (
+              <LazyPage>
+                <ManagerSupportPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'profile',
+            element: (
+              <LazyPage>
+                <ManagerProfilePage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'reports',
+            element: (
+              <LazyPage>
+                <ManagerReportsPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'products',
+            element: (
+              <LazyPage>
+                <ManagerProductsPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'products/add',
+            element: (
+              <LazyPage>
+                <ManagerAddProductPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'products/:id',
+            element: (
+              <LazyPage>
+                <ManagerProductDetailPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'products/:id/edit',
+            element: (
+              <LazyPage>
+                <ManagerEditProductPage />
+              </LazyPage>
+            )
+          }
+        ]
       },
       {
-        path: 'profile',
+        path: '*',
         element: (
           <LazyPage>
-            <SaleStaffProfilePage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'settings',
-        element: (
-          <LazyPage>
-            <SaleStaffSettingsPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'support',
-        element: (
-          <LazyPage>
-            <SaleStaffSupportPage />
+            <NotFoundPage />
           </LazyPage>
         )
       }
     ]
-  },
-  {
-    path: '/operationstaff',
-    element: (
-      <AuthGuard>
-        <LazyPage>
-          <OperationLayout />
-        </LazyPage>
-      </AuthGuard>
-    ),
-    children: [
-      {
-        index: true,
-        element: <Navigate to="/operationstaff/dashboard" replace />
-      },
-      {
-        path: 'dashboard',
-        element: (
-          <LazyPage>
-            <OperationDashboardPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'all',
-        element: (
-          <LazyPage>
-            <OperationAllOrdersPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'prescription-orders',
-        element: (
-          <LazyPage>
-            <OperationPrescriptionPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'pre-orders',
-        element: (
-          <LazyPage>
-            <OperationPreOrdersPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'packing',
-        element: (
-          <LazyPage>
-            <OperationPackingPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'orders/:orderId',
-        element: (
-          <LazyPage>
-            <OrderDetailPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'orders/:orderId/manufacturing',
-        element: (
-          <LazyPage>
-            <OperationManufacturingProcess />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'orders/:orderId/process',
-        element: (
-          <LazyPage>
-            <OperationOrderPackingProcess />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'packed-success',
-        element: (
-          <LazyPage>
-            <OperationCompleteOrdersPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'shipping-handover',
-        element: (
-          <LazyPage>
-            <OperationAllInvoices />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'shipping-handover/:invoiceId',
-        element: (
-          <LazyPage>
-            <OperationShippingHandoverPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'profile',
-        element: (
-          <LazyPage>
-            <OperationProfilePage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'settings',
-        element: (
-          <LazyPage>
-            <OperationSettingPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'support',
-        element: (
-          <LazyPage>
-            <OperationSupportPage />
-          </LazyPage>
-        )
-      }
-    ]
-  },
-  {
-    path: '/manager',
-    element: (
-      <LazyPage>
-        <ManagerLayout />
-      </LazyPage>
-    ),
-    children: [
-      {
-        index: true,
-        element: <Navigate to="/manager/dashboard" replace />
-      },
-      {
-        path: 'dashboard',
-        element: <ManagerDashboardPage />
-      },
-      {
-        path: 'orders',
-        element: (
-          <LazyPage>
-            <ManagerInvoicesPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'settings',
-        element: (
-          <LazyPage>
-            <ManagerSettingsPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'help',
-        element: (
-          <LazyPage>
-            <ManagerSupportPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'reports',
-        element: (
-          <LazyPage>
-            <ManagerReportsPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'transactions',
-        element: (
-          <LazyPage>
-            <ManagerTransactionsPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'products',
-        element: (
-          <LazyPage>
-            <ManagerProductsPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'products/add',
-        element: (
-          <LazyPage>
-            <ManagerAddProductPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'attributes/add',
-        element: (
-          <LazyPage>
-            <ManagerAddAttributePage />
-          </LazyPage>
-        )
-      }
-    ]
-  },
-  {
-    path: '*',
-    element: (
-      <LazyPage>
-        <NotFoundPage />
-      </LazyPage>
-    )
   }
 ])

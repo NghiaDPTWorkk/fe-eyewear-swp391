@@ -17,6 +17,7 @@ interface MenuItemProps {
   onClick?: () => void
   menuOpen?: boolean
   isOpen?: boolean
+  isLoading?: boolean
 }
 
 export function MenuItem({
@@ -48,7 +49,7 @@ export function MenuItem({
   }
 
   const commonClasses = cn(
-    'w-full flex items-center transition-all duration-300 relative group',
+    'w-full flex items-center transition-all duration-300 relative group cursor-pointer',
     sidebarCollapsed ? 'justify-center py-2 px-0' : 'justify-start px-3 py-2.5 rounded-lg gap-3',
     !sidebarCollapsed && active
       ? 'bg-primary-50 text-primary-700'
@@ -64,12 +65,16 @@ export function MenuItem({
       )}
       <span
         className={cn(
-          'text-xl transition-colors relative z-10',
+          'text-xl transition-colors relative z-10 flex items-center justify-center',
           active || (hasDropdown && isOpen) ? 'text-primary-500' : 'text-neutral-400',
           sidebarCollapsed && 'group-hover:text-primary-500'
         )}
       >
-        {icon}
+        {isLoading ? (
+          <div className="w-5 h-5 border-2 border-primary-500/20 border-t-primary-500 rounded-full animate-spin" />
+        ) : (
+          icon
+        )}
       </span>
       {!sidebarCollapsed && (
         <>

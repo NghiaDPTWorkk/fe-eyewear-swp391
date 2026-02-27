@@ -33,7 +33,7 @@ export const OrderTable: React.FC<OrderTableProps> = ({
     <div className="overflow-x-auto">
       <table className="w-full text-left border-collapse min-w-[900px]">
         <thead>
-          <tr className="bg-white border-b border-neutral-100">
+          <tr className="bg-white border-b-[0.5px] border-neutral-50/50">
             <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
               Customer
             </th>
@@ -69,6 +69,7 @@ export const OrderTable: React.FC<OrderTableProps> = ({
               const badge = getStatusBadgeProps(inv)
               const isSelected = selectedInvoiceId === inv.id
               const isReadyToApprove =
+                inv.hasManufacturing &&
                 inv.status === InvoiceStatus.DEPOSITED &&
                 (inv.totalOrdersCount || 0) > 0 &&
                 (inv.approvedOrdersCount || 0) === (inv.totalOrdersCount || 0)
@@ -77,7 +78,7 @@ export const OrderTable: React.FC<OrderTableProps> = ({
                 <tr
                   key={inv.id}
                   className={cn(
-                    'group transition-all duration-200 cursor-pointer border-b border-neutral-50 hover:bg-slate-50/50',
+                    'group transition-all duration-200 cursor-pointer border-b-[0.5px] border-neutral-50 hover:bg-slate-50/50',
                     isSelected && 'bg-mint-50/30'
                   )}
                   onClick={() => setSelectedInvoiceId(inv.id)}
@@ -118,13 +119,7 @@ export const OrderTable: React.FC<OrderTableProps> = ({
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-2 text-[12px] text-slate-500">
                       <IoCalendarOutline className="text-slate-300" size={14} />
-                      <span>
-                        {new Date(inv.createdAt).toLocaleDateString('en-GB', {
-                          day: 'numeric',
-                          month: 'numeric',
-                          year: 'numeric'
-                        })}
-                      </span>
+                      <span>{inv.createdAt ? inv.createdAt.split(' ')[0] : 'N/A'}</span>
                     </div>
                   </td>
 
@@ -132,13 +127,7 @@ export const OrderTable: React.FC<OrderTableProps> = ({
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-2 text-[12px] text-slate-500">
                       <IoTimeOutline className="text-slate-300" size={14} />
-                      <span>
-                        {new Date(inv.createdAt).toLocaleTimeString([], {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                          hour12: true
-                        })}
-                      </span>
+                      <span>{inv.createdAt ? inv.createdAt.split(' ')[1] : 'N/A'}</span>
                     </div>
                   </td>
 

@@ -15,6 +15,13 @@ import { CommunicationHub } from './CommunicationHub'
 import { LabOperationsTimeline } from './LabOperationsTimeline'
 import { RejectionModal } from '../common/RejectionModal'
 
+interface PrescriptionParameters {
+  left: { SPH: number; CYL: number; AXIS: number; ADD: number }
+  right: { SPH: number; CYL: number; AXIS: number; ADD: number }
+  PD: number
+  [key: string]: any
+}
+
 interface PrescriptionVerificationProps {
   orderId: string
   onBack: () => void
@@ -53,7 +60,7 @@ export default function PrescriptionVerification({
   const [zoom, setZoom] = useState(100)
 
   // Prescription Parameters State
-  const [localParameters, setLocalParameters] = useState<Record<string, any> | null>(null)
+  const [localParameters, setLocalParameters] = useState<PrescriptionParameters | null>(null)
 
   // Confirmation Modal State
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
@@ -70,7 +77,14 @@ export default function PrescriptionVerification({
   }
 
   const handleConfirm = async () => {
-    const success = await approveOrder(orderId, { parameters: localParameters })
+    // Priority: 1. Local changes, 2. Existing order data (parameters variable), 3. Default empty params
+    const finalParams = localParameters ||
+      parameters || {
+        left: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
+        right: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
+        PD: 64
+      }
+    const success = await approveOrder(orderId, { parameters: finalParams })
     if (success) {
       toast.success('Prescription approved')
       setIsConfirmOpen(false)

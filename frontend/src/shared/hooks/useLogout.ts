@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/auth.store'
+import { queryClient } from '@/lib/react-query'
 import toast from 'react-hot-toast'
 
 /**
@@ -12,9 +13,12 @@ export const useLogout = () => {
 
   const handleLogout = () => {
     try {
+      // 1. Clear ALL cached query data immediately (sync) to prevent stale profile leaking
+      queryClient.clear()
+      // 2. Clear auth state + all localStorage tokens
       logout()
       toast.success('Logged out successfully')
-      navigate('/admin/login') // Redirect to admin login page
+      navigate('/admin/login')
     } catch (error) {
       console.error('Logout failed:', error)
       toast.error('Logout failed. Please try again.')

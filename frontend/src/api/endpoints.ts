@@ -137,7 +137,24 @@ export const ENDPOINTS = {
     },
     ORDER_APPROVE: (id: string) => `/admin/orders/${id}/status/approve`,
     PROFILE_REQUESTS: '/admin/profile-requests',
-    INVOICE_DETAIL: (id: string) => `/admin/invoices/${id}`
+    PRODUCTS_LIST: (
+      page?: number,
+      limit?: number,
+      type?: string,
+      brand?: string,
+      search?: string
+    ) => {
+      const params = new URLSearchParams()
+      if (page) params.append('page', String(page))
+      if (limit) params.append('limit', String(limit))
+      if (type) params.append('type', type)
+      if (brand) params.append('brand', brand)
+      if (search) params.append('search', search)
+      const qs = params.toString()
+      return qs ? `/admin/products?${qs}` : '/admin/products'
+    },
+    PRODUCT_DETAIL: (id: string) => `/admin/products/${id}`,
+    ATTRIBUTES: '/admin/attributes'
   },
 
   ADMINS: {
@@ -161,6 +178,15 @@ export const ENDPOINTS = {
     GET: '/wishlist',
     ADD: (id: string) => `/wishlist/products/${id}`,
     REMOVE: (id: string) => `/wishlist/products/${id}`
+  },
+  // Categories
+  CATEGORIES: {
+    TREE: '/categories/tree'
+  },
+  // Support
+  SUPPORT: {
+    REPORT_TICKETS: '/admin/report-tickets',
+    MY_HISTORY: '/admin/report-tickets/my-history'
   },
   // AI Chat
   AI_CHAT: {

@@ -6,6 +6,7 @@ import toast from 'react-hot-toast'
 import { useAuthStore } from '@/store/auth.store'
 import { useCartStore } from '@/store/cart.store'
 import { showError, showSuccess } from '@/features/sales/utils/errorHandler'
+import { queryClient } from '@/lib/react-query'
 
 // Helper function to map roles to their corresponding paths
 const getRolePath = (
@@ -46,9 +47,9 @@ export const useLogin = () => {
       console.log('Login Success Response:', response)
 
       // 1. Robust Token Extraction
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       const authData = (response as any).data || response
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       const token = authData.token || authData.accessToken || (response as any).token
 
       if (!token) {
@@ -66,8 +67,9 @@ export const useLogin = () => {
       localStorage.setItem('access_token', token)
       setToken(token)
 
-      // 3. Fetch user profile
+      // 3. Clear stale cache from previous session, then fetch fresh profile
       try {
+        queryClient.clear() // Synchronous clear — removes stale profile from previous user
         await fetchProfile()
       } catch (error) {
         console.error('Failed to fetch profile after login:', error)

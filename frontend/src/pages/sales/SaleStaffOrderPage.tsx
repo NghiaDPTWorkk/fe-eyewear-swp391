@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { IoFlashOutline, IoCubeOutline, IoReceiptOutline, IoRepeatOutline } from 'react-icons/io5'
 import { useSearchParams } from 'react-router-dom'
@@ -39,9 +39,14 @@ export default function SaleStaffOrderPage() {
     setSearchParams(next)
   }
 
+  // Reset page to 1 whenever filters change to avoid "empty page" issues
+  useEffect(() => {
+    setPage(1)
+  }, [statusFilter, orderTypeFilter, searchQuery])
+
   const {
     invoices: invoiceList,
-    pagination: _pagination,
+    pagination,
     loading: isLoading,
     fetchInvoices: refetch
   } = useSalesStaffInvoices(page, limit, statusFilter, searchQuery)
@@ -59,28 +64,10 @@ export default function SaleStaffOrderPage() {
       list = list.filter((inv: Invoice) => inv.orders?.some((o) => o.isPrescription))
     }
 
-    // 2. Approved tab: strictly exclude any pending invoices and filter by relevant statuses
-    if (statusFilter === 'APPROVED_OR_REJECTED') {
-      const activeStatuses = [
-        InvoiceStatus.APPROVED,
-        InvoiceStatus.ONBOARD,
-        InvoiceStatus.READY_TO_SHIP,
-        InvoiceStatus.DELIVERING,
-        InvoiceStatus.DELIVERED,
-        InvoiceStatus.COMPLETED,
-        InvoiceStatus.REJECTED,
-        InvoiceStatus.CANCELED
-      ]
-      list = list.filter(
-        (inv: Invoice) =>
-          inv.status !== InvoiceStatus.DEPOSITED &&
-          activeStatuses.includes(inv.status as InvoiceStatus)
-      )
-    }
-
-    // 3. Refunded tab: only show refunded invoices
-    if (statusFilter === InvoiceStatus.REFUNDED) {
-      list = list.filter((inv: Invoice) => inv.status === InvoiceStatus.REFUNDED)
+    // 3. Approved/Refunded tabs: No client filter needed as server handles it.
+    // We only keep the Pending (DEPOSITED) specific prescription filter if server can't do it.
+    if (statusFilter === InvoiceStatus.DEPOSITED) {
+      list = list.filter((inv: Invoice) => inv.orders?.some((o) => o.isPrescription))
     }
 
     // 4. Search filtering
@@ -104,25 +91,22 @@ export default function SaleStaffOrderPage() {
       )
     }
 
-    // 6. Sort by newest first (most recent at the top)
+    // 6. Sort by newest first
     list = list.sort((a: Invoice, b: Invoice) => {
       const dateA = new Date(a.createdAt).getTime()
       const dateB = new Date(b.createdAt).getTime()
-      return dateB - dateA // Descending order (newest first)
+      return dateB - dateA
     })
 
     return list
   }, [invoiceList, searchQuery, orderTypeFilter, statusFilter])
 
-  // Calculate pagination based on filtered results for accurate page count
-  const totalPages = Math.ceil(filteredInvoices.length / limit) || 1
+  // Total pages sanity check: if list is empty on page 1, force total to 1
+  const serverTotal = pagination?.total || 0
+  const adjustedTotalPages =
+    filteredInvoices.length === 0 && page === 1 ? 1 : pagination?.totalPages || 1
 
-  // Apply client-side pagination to show exactly 'limit' items per page
-  const paginatedInvoices = useMemo(() => {
-    const startIndex = (page - 1) * limit
-    const endIndex = startIndex + limit
-    return filteredInvoices.slice(startIndex, endIndex)
-  }, [filteredInvoices, page, limit])
+  const paginatedInvoices = filteredInvoices
 
   const metrics = useMemo(() => {
     const counts: Record<string, number> = {
@@ -287,7 +271,11 @@ export default function SaleStaffOrderPage() {
     }
 
     if (s === InvoiceStatus.DEPOSITED) {
-      if (invoice.totalOrdersCount && invoice.approvedOrdersCount === invoice.totalOrdersCount) {
+      if (
+        invoice.hasManufacturing &&
+        invoice.totalOrdersCount &&
+        invoice.approvedOrdersCount === invoice.totalOrdersCount
+      ) {
         return {
           label: 'Ready to Approve Final',
           color: 'bg-mint-50 text-mint-600 border-mint-200'
@@ -295,7 +283,7 @@ export default function SaleStaffOrderPage() {
       }
       return hasMfg
         ? { label: 'Wait Verify', color: 'bg-indigo-50 text-indigo-600 border-indigo-100' }
-        : { label: 'Pending', color: 'bg-amber-50 text-amber-600 border-amber-100' }
+        : { label: 'Pending', color: 'bg-slate-50 text-slate-500 border-slate-200' }
     }
 
     if (s === InvoiceStatus.APPROVED || s === 'APPROVED')
@@ -311,11 +299,6 @@ export default function SaleStaffOrderPage() {
   const handleApproveClick = (invoiceId: string) => {
     setInvoiceToProcess(invoiceId)
     setShowConfirmModal(true)
-  }
-
-  const handleRejectClick = (invoiceId: string) => {
-    setInvoiceToProcess(invoiceId)
-    setShowRejectModal(true)
   }
 
   const confirmApproval = async () => {
@@ -366,15 +349,16 @@ export default function SaleStaffOrderPage() {
             setSelectedInvoiceId={setSelectedInvoiceId}
             getStatusBadgeProps={getStatusBadgeProps}
             handleApproveClick={handleApproveClick}
-            handleRejectClick={handleRejectClick}
             processing={processing}
           />
-          <OrderPagination
-            page={page}
-            totalPages={totalPages}
-            isLoading={isLoading}
-            onPageChange={setPage}
-          />
+          {(serverTotal > 0 || filteredInvoices.length > 0) && (
+            <OrderPagination
+              page={page}
+              totalPages={adjustedTotalPages}
+              isLoading={isLoading}
+              onPageChange={setPage}
+            />
+          )}
         </div>
       </div>
 

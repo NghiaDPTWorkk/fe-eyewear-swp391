@@ -94,6 +94,9 @@ export default function ProfileForm() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Anti-autofill dummy fields */}
+        <input type="text" style={{ display: 'none' }} aria-hidden="true" />
+        <input type="email" style={{ display: 'none' }} aria-hidden="true" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">
@@ -107,7 +110,7 @@ export default function ProfileForm() {
               readOnly={!isSaleStaff}
               className={`w-full px-4 py-3 border rounded-xl text-sm font-semibold transition-all focus:outline-none ${
                 isSaleStaff
-                  ? 'bg-white border-slate-200 text-slate-700 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5'
+                  ? 'bg-white border-slate-200 text-slate-700 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5 cursor-pointer'
                   : 'bg-slate-50 border-slate-100 text-slate-400 cursor-not-allowed'
               }`}
             />
@@ -135,7 +138,7 @@ export default function ProfileForm() {
               readOnly={!isSaleStaff}
               className={`w-full px-4 py-3 border rounded-xl text-sm font-semibold transition-all focus:outline-none ${
                 isSaleStaff
-                  ? 'bg-white border-slate-200 text-slate-700 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5'
+                  ? 'bg-white border-slate-200 text-slate-700 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5 cursor-pointer'
                   : 'bg-slate-50 border-slate-100 text-slate-400 cursor-not-allowed'
               }`}
             />
@@ -152,7 +155,7 @@ export default function ProfileForm() {
               readOnly={!isSaleStaff}
               className={`w-full px-4 py-3 border rounded-xl text-sm font-semibold transition-all focus:outline-none ${
                 isSaleStaff
-                  ? 'bg-white border-slate-200 text-slate-700 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5'
+                  ? 'bg-white border-slate-200 text-slate-700 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5 cursor-pointer'
                   : 'bg-slate-50 border-slate-100 text-slate-400 cursor-not-allowed'
               }`}
             />

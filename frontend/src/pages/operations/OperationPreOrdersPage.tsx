@@ -13,7 +13,12 @@ export default function OperationPreOrdersPage() {
   const [currentPage, setCurrentPage] = useState(1)
 
   // Fetch orders với type PRE-ORDER từ API — có phân trang
-  const { data, isLoading, isError } = useOrders(currentPage, PAGE_LIMIT, undefined, OrderType.PRE_ORDER)
+  const { data, isLoading, isError } = useOrders(
+    currentPage,
+    PAGE_LIMIT,
+    undefined,
+    OrderType.PRE_ORDER
+  )
 
   // Pagination meta từ BE
   const paginationMeta = data?.data?.orders
@@ -22,7 +27,11 @@ export default function OperationPreOrdersPage() {
   const orders = useMemo(() => {
     if (!paginationMeta?.data) return []
     return paginationMeta.data
-      .filter((o) => Array.isArray(o.type) ? o.type.includes(OrderType.PRE_ORDER) : o.type === OrderType.PRE_ORDER)
+      .filter((o) =>
+        Array.isArray(o.type)
+          ? o.type.includes(OrderType.PRE_ORDER)
+          : o.type === OrderType.PRE_ORDER
+      )
       .map(transformApiOrderToTableOrder)
   }, [paginationMeta])
 

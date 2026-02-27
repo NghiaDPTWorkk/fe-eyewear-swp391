@@ -2,7 +2,6 @@ import { create } from 'zustand'
 import type { Order } from '@/features/staff/components/OrderTable/OrderTable'
 import { OrderType, OrderStatus } from '@/shared/utils/enums/order.enum'
 
-
 interface OrderCountStore {
   counts: {
     technical: number // Số đơn Manufacturing

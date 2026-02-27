@@ -5,9 +5,9 @@ interface InvoiceTableHeaderProps {
 }
 
 const alignClass: Record<NonNullable<InvoiceTableColumn['align']>, string> = {
-  left:   'text-left',
+  left: 'text-left',
   center: 'text-center',
-  right:  'text-right'
+  right: 'text-right'
 }
 
 export default function InvoiceTableHeader({

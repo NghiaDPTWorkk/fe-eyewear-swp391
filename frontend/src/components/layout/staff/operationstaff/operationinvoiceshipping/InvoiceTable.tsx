@@ -18,12 +18,7 @@ export default function InvoiceTable({ invoices, onView, onNext, columns }: Invo
         <InvoiceTableHeader columns={columns} />
         <tbody className="divide-y divide-gray-200">
           {invoices.map((invoice) => (
-            <InvoiceTableRow
-              key={invoice.id}
-              invoice={invoice}
-              onView={onView}
-              onNext={onNext}
-            />
+            <InvoiceTableRow key={invoice.id} invoice={invoice} onView={onView} onNext={onNext} />
           ))}
         </tbody>
       </table>

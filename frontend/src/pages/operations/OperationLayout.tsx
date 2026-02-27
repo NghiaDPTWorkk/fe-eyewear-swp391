@@ -2,12 +2,7 @@ import { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { STORAGE_KEYS } from '@/shared/constants/storage'
 import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layout/StaffMainLayout'
-import {
-  SidebarStaff,
-  UserWidgetWithLogout,
-  ThemeToggle,
-  NavActions
-} from '@/components/staff'
+import { SidebarStaff, UserWidgetWithLogout, ThemeToggle, NavActions } from '@/components/staff'
 import OperationNavSearch from '@/components/layout/staff/operationstaff/OperationNavSearch'
 import {
   IoGridOutline,

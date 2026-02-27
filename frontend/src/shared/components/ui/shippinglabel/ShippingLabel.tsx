@@ -62,9 +62,7 @@ export default function ShippingLabel({ orderId }: ShippingLabelProps) {
             <div className="text-sm text-gray-600">
               <FormatSecretPhone phone={phone} />
             </div>
-            {fullAddress && (
-              <div className="text-sm text-gray-600 mt-1">{fullAddress}</div>
-            )}
+            {fullAddress && <div className="text-sm text-gray-600 mt-1">{fullAddress}</div>}
           </div>
           {/* Print button */}
           <button className="w-full py-2.5 bg-blue-100 text-blue-700 rounded-lg font-medium hover:bg-blue-200 transition-colors flex items-center justify-center gap-2">

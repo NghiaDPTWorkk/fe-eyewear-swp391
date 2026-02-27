@@ -214,6 +214,20 @@ export default function PrescriptionVerification({
         onConfirm={handleConfirm}
         title="Approve Prescription"
         message="Are you sure you want to approve this prescription? This will move the order to the next stage."
+        details={
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between items-center text-xs">
+              <span className="text-slate-400 font-medium">Order ID</span>
+              <span className="text-slate-900 font-bold uppercase tracking-tight">
+                #{orderId.slice(-8)}
+              </span>
+            </div>
+            <div className="flex justify-between items-center text-xs">
+              <span className="text-slate-400 font-medium">Customer</span>
+              <span className="text-slate-900 font-bold">{order?.customerName}</span>
+            </div>
+          </div>
+        }
         confirmText="Approve"
         type="info"
         isLoading={processing}
@@ -225,6 +239,20 @@ export default function PrescriptionVerification({
         onConfirm={handleConfirmReject}
         title="Reject Prescription"
         message="Are you sure you want to reject this prescription? This will reject the entire invoice."
+        details={
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between items-center text-xs">
+              <span className="text-slate-400 font-medium">Order ID</span>
+              <span className="text-slate-900 font-bold uppercase tracking-tight">
+                #{orderId.slice(-8)}
+              </span>
+            </div>
+            <div className="flex justify-between items-center text-xs">
+              <span className="text-slate-400 font-medium">Customer</span>
+              <span className="text-slate-900 font-bold">{order?.customerName}</span>
+            </div>
+          </div>
+        }
         confirmText="Reject Now"
         isLoading={processing}
       />

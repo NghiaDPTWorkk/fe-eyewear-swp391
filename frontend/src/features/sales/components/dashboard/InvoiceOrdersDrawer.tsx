@@ -255,6 +255,20 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
         onConfirm={confirmApproveOrder}
         title="Approve Order"
         message="Are you sure you want to verify and approve this order? This will move it to the next processing stage."
+        details={
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between items-center text-xs">
+              <span className="text-slate-400 font-medium">Order ID</span>
+              <span className="text-slate-900 font-bold uppercase tracking-tight">
+                #{selectedOrderId?.slice(-8)}
+              </span>
+            </div>
+            <div className="flex justify-between items-center text-xs">
+              <span className="text-slate-400 font-medium">Customer</span>
+              <span className="text-slate-900 font-bold">{invoice.fullName}</span>
+            </div>
+          </div>
+        }
         confirmText="Approve Order"
         cancelText="Cancel"
         isLoading={processing}

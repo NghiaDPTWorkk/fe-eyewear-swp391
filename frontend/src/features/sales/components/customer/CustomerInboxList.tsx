@@ -1,6 +1,7 @@
 import React from 'react'
 import { IoSearchOutline } from 'react-icons/io5'
 import { cn } from '@/lib/utils'
+import { getInitials } from '@/features/sales/utils/nameUtils'
 
 interface Customer {
   id: string
@@ -73,11 +74,17 @@ export const CustomerInboxList: React.FC<CustomerInboxListProps> = ({
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-mint-500" />
             )}
             <div className="relative shrink-0">
-              <img
-                src={customer.avatar}
-                className="w-14 h-14 rounded-2xl object-cover shadow-sm group-hover:scale-105 transition-transform duration-300"
-                alt={customer.name}
-              />
+              {customer.avatar ? (
+                <img
+                  src={customer.avatar}
+                  className="w-14 h-14 rounded-2xl object-cover shadow-sm group-hover:scale-105 transition-transform duration-300"
+                  alt={customer.name}
+                />
+              ) : (
+                <div className="w-14 h-14 rounded-2xl bg-mint-50 flex items-center justify-center text-sm font-bold text-mint-600 border border-mint-100 group-hover:scale-105 transition-transform duration-300 uppercase">
+                  {getInitials(customer.name)}
+                </div>
+              )}
               {customer.status === 'online' && (
                 <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full border-[3px] border-white bg-emerald-500 shadow-sm" />
               )}
@@ -88,7 +95,7 @@ export const CustomerInboxList: React.FC<CustomerInboxListProps> = ({
                   {customer.name}
                 </h3>
                 <span className="text-[11px] font-medium text-neutral-400 whitespace-nowrap ml-2 uppercase tracking-wider">
-                  6:32 PM
+                  {customer.activity}
                 </span>
               </div>
               <p className="text-[13px] text-neutral-500 truncate font-normal leading-snug">

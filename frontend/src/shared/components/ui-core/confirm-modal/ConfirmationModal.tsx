@@ -92,7 +92,7 @@ export default function ConfirmationModal({
               {getIcon()}
             </div>
             <div>
-              <h3 className="text-xl font-bold text-slate-900 leading-tight tracking-tight">
+              <h3 className="text-xl font-semibold text-black leading-tight tracking-tight">
                 {title}
               </h3>
               <div className={`h-1 w-10 ${styles.accent} rounded-full mt-2`}></div>
@@ -108,14 +108,12 @@ export default function ConfirmationModal({
 
         <div className="space-y-6 mb-8">
           <div className="bg-neutral-50 p-6 rounded-[2rem] border border-neutral-100/50">
-            <p className="text-sm font-medium text-slate-600 leading-relaxed italic line-clamp-3">
-              "{message}"
-            </p>
+            <p className="text-sm font-normal text-black leading-relaxed line-clamp-3">{message}</p>
           </div>
 
           {details && (
             <div className="space-y-3">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-4">
+              <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest ml-4">
                 Operation Details
               </label>
               <div className="bg-white border border-slate-100 rounded-[1.5rem] p-5 shadow-sm">
@@ -129,7 +127,7 @@ export default function ConfirmationModal({
           <Button
             onClick={onConfirm}
             disabled={isLoading}
-            className={`${styles.buttonBg} text-white w-full h-14 rounded-2xl font-bold text-sm tracking-wide shadow-xl border-none transition-all active:scale-95 flex items-center justify-center`}
+            className={`${styles.buttonBg} text-white w-full h-14 rounded-2xl font-semibold text-sm tracking-wide shadow-xl border-none transition-all active:scale-95 flex items-center justify-center`}
           >
             {isLoading ? (
               <div className="flex items-center gap-3">
@@ -145,7 +143,7 @@ export default function ConfirmationModal({
             colorScheme="neutral"
             onClick={onClose}
             disabled={isLoading}
-            className="w-full bg-white border-neutral-200 text-slate-500 hover:bg-neutral-50 rounded-2xl h-12 font-semibold text-sm transition-all"
+            className="w-full bg-white border-neutral-200 text-slate-500 hover:bg-neutral-50 rounded-2xl h-12 font-medium text-sm transition-all"
           >
             {cancelText}
           </Button>

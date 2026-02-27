@@ -5,6 +5,7 @@ import RootErrorPage from '@/pages/RootErrorPage'
 import { LazyPage } from '@/pages/LazyPage'
 import { AuthGuard } from '@/routes/guards'
 import { GoogleCallbackPage } from '@/pages/auth'
+import CustomerLayout from '@/components/layout/customer/CustomerLayout'
 
 const RegisterPage = lazy(() =>
   import('@/pages/auth/customer/RegisterPage').then((m) => ({ default: m.RegisterPage }))
@@ -217,6 +218,11 @@ const CustomerOrderDetailPage = lazy(() =>
 
 export const router = createBrowserRouter([
   {
+    element: (
+      <LazyPage>
+        <CustomerLayout />
+      </LazyPage>
+    ),
     errorElement: <RootErrorPage />,
     children: [
       {

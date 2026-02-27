@@ -1,0 +1,43 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: 26266
+          script: |
+            cd ~/fe-eyewear-swp391
+
+            # Pull code mới nhất từ nhánh develop
+            git checkout develop
+            git pull origin develop
+
+            # Vào thư mục frontend để chạy Docker
+            cd frontend
+
+            # Tạo file .env (nếu chưa có)
+            if [ ! -f .env ]; then
+              echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" > .env
+              echo "VITE_APP_NAME=Eyewear Shop" >> .env
+            fi
+
+            # Build lại container và khởi chạy
+            docker compose up -d --build
+
+            # Dọn dẹp image cũ không dùng nữa
+            docker image prune -f

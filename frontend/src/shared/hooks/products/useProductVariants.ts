@@ -1,40 +1,19 @@
 import { useState, useMemo } from 'react'
 import type { Product } from '@/shared/types/product.types'
-
-/**
- * Interface cho variant option từ API
- */
-interface VariantOption {
-  attributeId: string
-  attributeName: string
-  label: string
-  showType: 'text' | 'color' | 'image'
-  value: string
-  colorCode?: string // Optional: for color type
-}
-
-/**
- * Interface cho variant từ API
- */
-interface ProductVariant {
-  sku: string
-  name: string
-  slug: string
-  options: VariantOption[]
-  price: number
-  finalPrice: number
-  stock: number
-  imgs: string[]
-  isDefault: boolean
-}
+import type { Variant } from '@/shared/types/variant.types'
 
 /**
  * Cấu trúc attribute được extract từ variants
  */
-interface AttributeInfo {
+export interface AttributeValue {
+  value: string
+  label: string
+}
+
+export interface AttributeInfo {
   name: string // attributeName
   showType: 'text' | 'color' | 'image'
-  values: string[] // unique values
+  values: AttributeValue[] // unique values with labels
   attributeId: string
 }
 
@@ -46,9 +25,9 @@ type SelectedOptions = Record<string, string> // { attributeName: value }
 /**
  * Return type của hook
  */
-interface UseProductVariantsReturn {
+export interface UseProductVariantsReturn {
   // Current state
-  currentVariant: ProductVariant | null
+  currentVariant: Variant | null
   selectedOptions: SelectedOptions
   attributes: AttributeInfo[]
 
@@ -74,8 +53,7 @@ interface UseProductVariantsReturn {
  * @returns Variant state và helper functions
  */
 export const useProductVariants = (product: Product): UseProductVariantsReturn => {
-  const productAny = product as any
-  const variants: ProductVariant[] = productAny.variants || []
+  const variants: Variant[] = product.variants || []
 
   /**
    * STEP 1: Initialize selected options với default variant
@@ -116,8 +94,11 @@ export const useProductVariants = (product: Product): UseProductVariantsReturn =
         }
 
         const attr = attributesMap.get(option.attributeName)!
-        if (!attr.values.includes(option.value)) {
-          attr.values.push(option.value)
+        if (!attr.values.some((v) => v.value === option.value)) {
+          attr.values.push({
+            value: option.value,
+            label: option.label
+          })
         }
       })
     })
@@ -128,7 +109,7 @@ export const useProductVariants = (product: Product): UseProductVariantsReturn =
   /**
    * STEP 3: Find matching variant based on selected options
    */
-  const currentVariant = useMemo((): ProductVariant | null => {
+  const currentVariant = useMemo((): Variant | null => {
     // Nếu chưa có options nào được chọn, return null
     if (Object.keys(selectedOptions).length === 0) {
       return null

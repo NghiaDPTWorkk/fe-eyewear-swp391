@@ -53,13 +53,27 @@ export function ImportantContacts({ contacts, accentColor = 'mint' }: ImportantC
             </div>
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-sm text-slate-500 group-hover:text-slate-900 transition-colors">
-                <IoMailOutline className="shrink-0 text-slate-400 group-hover:text-primary-500" />
+                <IoMailOutline
+                  className={cn(
+                    'shrink-0 text-slate-400',
+                    accentColor === 'mint'
+                      ? 'group-hover:text-mint-500'
+                      : 'group-hover:text-primary-500'
+                  )}
+                />
                 <span className={cn('font-semibold', contact.isEmergency && 'text-rose-600')}>
                   {contact.email}
                 </span>
               </div>
               <div className="flex items-center gap-3 text-sm text-slate-500 group-hover:text-slate-900 transition-colors">
-                <IoCallOutline className="shrink-0 text-slate-400 group-hover:text-primary-500" />
+                <IoCallOutline
+                  className={cn(
+                    'shrink-0 text-slate-400',
+                    accentColor === 'mint'
+                      ? 'group-hover:text-mint-500'
+                      : 'group-hover:text-primary-500'
+                  )}
+                />
                 <span className="font-semibold">{contact.phone}</span>
               </div>
             </div>

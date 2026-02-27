@@ -163,7 +163,7 @@ export default function SupportContent({
               <input
                 type="text"
                 placeholder="Search reports..."
-                className="w-full pl-11 pr-4 py-2.5 bg-white border border-slate-100 rounded-2xl text-sm focus:outline-none focus:ring-4 focus:ring-primary-500/5 focus:border-primary-500 transition-all placeholder:text-slate-400 font-semibold shadow-sm"
+                className={`w-full pl-11 pr-4 py-2.5 bg-white border border-slate-100 rounded-2xl text-sm focus:outline-none focus:ring-4 transition-all placeholder:text-slate-400 font-semibold shadow-sm ${accentColor === 'mint' ? 'focus:ring-mint-500/5 focus:border-mint-500' : 'focus:ring-primary-500/5 focus:border-primary-500'}`}
               />
             </div>
           </div>
@@ -219,7 +219,9 @@ export default function SupportContent({
                     >
                       <td className="px-8 py-6 max-w-xs md:max-w-md">
                         <div className="flex flex-col gap-1.5">
-                          <h4 className="text-sm font-bold text-slate-800 group-hover:text-primary-600 transition-colors line-clamp-1">
+                          <h4
+                            className={`text-sm font-bold text-slate-800 transition-colors line-clamp-1 ${accentColor === 'mint' ? 'group-hover:text-mint-600' : 'group-hover:text-primary-600'}`}
+                          >
                             {report.title}
                           </h4>
                           <p className="text-xs text-slate-500 line-clamp-2 font-medium leading-relaxed">
@@ -407,10 +409,12 @@ export default function SupportContent({
                     <div
                       key={report.id}
                       onClick={() => setSelectedTicket(report)}
-                      className="flex justify-between items-start p-5 bg-white border border-slate-100 rounded-[1.5rem] shadow-sm transition-all group hover:scale-[1.03] cursor-pointer hover:border-primary-200 hover:shadow-xl hover:shadow-primary-500/5"
+                      className={`flex justify-between items-start p-5 bg-white border border-slate-100 rounded-[1.5rem] shadow-sm transition-all group hover:scale-[1.03] cursor-pointer ${accentColor === 'mint' ? 'hover:border-mint-200 hover:shadow-xl hover:shadow-mint-500/5' : 'hover:border-primary-200 hover:shadow-xl hover:shadow-primary-500/5'}`}
                     >
                       <div className="flex-1 pr-4 min-w-0">
-                        <h4 className="text-sm font-bold text-slate-800 transition-colors truncate group-hover:text-primary-600">
+                        <h4
+                          className={`text-sm font-bold text-slate-800 transition-colors truncate ${accentColor === 'mint' ? 'group-hover:text-mint-600' : 'group-hover:text-primary-600'}`}
+                        >
                           {report.title}
                         </h4>
                         <div className="flex items-center gap-2 mt-1.5">
@@ -439,7 +443,7 @@ export default function SupportContent({
                   searchParams.set('tab', 'history')
                   setSearchParams(searchParams)
                 }}
-                className="w-full py-4 text-xs font-bold text-primary-600 hover:text-primary-700 flex items-center justify-center gap-2 transition-all hover:bg-primary-50 rounded-2xl cursor-pointer active:scale-95"
+                className={`w-full py-4 text-xs font-bold flex items-center justify-center gap-2 transition-all rounded-2xl cursor-pointer active:scale-95 ${accentColor === 'mint' ? 'text-mint-600 hover:text-mint-700 hover:bg-mint-50' : 'text-primary-600 hover:text-primary-700 hover:bg-primary-50'}`}
               >
                 View Full History <IoChevronForwardOutline />
               </button>

@@ -76,7 +76,7 @@ export default function SaleStaffSupportPage() {
         guidelines={guidelines}
         contacts={contacts}
         criticalReminder="Violation of data security policies or financial transaction guidelines may result in immediate suspension and legal action. When in doubt, always escalate to your supervisor."
-        accentColor="primary"
+        accentColor="mint"
       />
     </div>
   )

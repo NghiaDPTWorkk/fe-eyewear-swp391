@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom'
 import {
   IoCloseOutline,
   IoTimeOutline,
@@ -65,7 +66,7 @@ export function TicketDetailsModal({
 
   const status = statusConfig(ticket.status)
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-hidden animate-in fade-in duration-300">
       <div
         onClick={onClose}
@@ -98,7 +99,9 @@ export function TicketDetailsModal({
         <div className="flex-1 overflow-y-auto p-8 pt-6 space-y-8 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
           {/* Title Section */}
           <div className="space-y-2">
-            <span className="text-[10px] font-bold text-primary-500 uppercase tracking-[0.2em] px-1">
+            <span
+              className={`text-[10px] font-bold ${accentColor === 'mint' ? 'text-mint-600' : 'text-primary-500'} uppercase tracking-[0.2em] px-1`}
+            >
               Subject
             </span>
             <h4 className="text-2xl font-bold text-slate-900 leading-tight">{ticket.title}</h4>
@@ -183,6 +186,7 @@ export function TicketDetailsModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

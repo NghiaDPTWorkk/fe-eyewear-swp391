@@ -68,7 +68,9 @@ export default function OperationAllInvoices() {
               </div>
               <div className="text-center">
                 <p className="text-sm font-semibold text-neutral-700">Failed to load invoices</p>
-                <p className="text-xs text-neutral-400 mt-0.5">Check your connection and try refreshing the page.</p>
+                <p className="text-xs text-neutral-400 mt-0.5">
+                  Check your connection and try refreshing the page.
+                </p>
               </div>
             </div>
           ) : invoices.length === 0 ? (
@@ -79,7 +81,9 @@ export default function OperationAllInvoices() {
               </div>
               <div className="text-center">
                 <p className="text-sm font-semibold text-neutral-600">No invoices found</p>
-                <p className="text-xs text-neutral-400 mt-0.5">There are currently no invoices ready for shipping handover.</p>
+                <p className="text-xs text-neutral-400 mt-0.5">
+                  There are currently no invoices ready for shipping handover.
+                </p>
               </div>
             </div>
           ) : (

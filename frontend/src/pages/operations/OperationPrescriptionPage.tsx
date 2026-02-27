@@ -13,7 +13,12 @@ export default function OperationPrescriptionPage() {
   const [currentPage, setCurrentPage] = useState(1)
 
   // Fetch orders với type MANUFACTURING và status MAKING từ API — có phân trang
-  const { data, isLoading, isError } = useOrders(currentPage, PAGE_LIMIT, 'MAKING', OrderType.MANUFACTURING)
+  const { data, isLoading, isError } = useOrders(
+    currentPage,
+    PAGE_LIMIT,
+    'MAKING',
+    OrderType.MANUFACTURING
+  )
 
   // Pagination meta từ BE
   const paginationMeta = data?.data?.orders

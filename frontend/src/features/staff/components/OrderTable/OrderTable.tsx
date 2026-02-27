@@ -115,9 +115,7 @@ export default function OrderTable({
       header: 'ORDER CODE',
       render: (order) => (
         <div className={isSales ? 'flex flex-col items-center' : ''}>
-          <div
-            className={cn('font-bold text-neutral-900', !isSales && 'font-medium')}
-          >
+          <div className={cn('font-bold text-neutral-900', !isSales && 'font-medium')}>
             {order.orderCode || order.id}
           </div>
           <div

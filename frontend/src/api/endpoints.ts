@@ -207,7 +207,6 @@ export const ENDPOINTS = {
       return `/admin/invoices/handle-delivery?${params.toString()}`
     },
     INVOICE_DETAIL: (id: string) => `/admin/invoices/${id}`
-    }
   },
 
   // Admin AI Conversations

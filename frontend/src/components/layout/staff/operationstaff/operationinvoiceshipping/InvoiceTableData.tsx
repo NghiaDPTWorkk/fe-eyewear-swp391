@@ -13,7 +13,7 @@ const getStatusColor = (status: string) => {
       return 'bg-yellow-100 text-yellow-600'
     case 'READY_TO_SHIP':
       return 'bg-mint-100 text-mint-600'
-    case 'SHIPPED':
+    case 'DELIVERED':
       return 'bg-blue-100 text-blue-600'
     default:
       return 'bg-gray-100 text-gray-600'

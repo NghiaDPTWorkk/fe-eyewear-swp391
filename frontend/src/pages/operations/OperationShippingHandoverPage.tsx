@@ -1,50 +1,78 @@
 import { useState } from 'react'
+import { useParams } from 'react-router-dom'
 import { Container } from '@/components'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 import { ProcessTracker } from '@/components/layout/staff/staff-core/processtracker'
-import { IoAirplaneOutline, IoCheckmarkCircle, IoPrintOutline } from 'react-icons/io5'
+import { IoAirplaneOutline } from 'react-icons/io5'
+import ScanInvoiceCode from '@/components/layout/staff/operationstaff/scaninvoicecode/ScanInvoiceCode'
+import {
+  CheckOrderListFromInvoice,
+  OrderCheckItem,
+  ShippingInfoPanel
+} from '@/components/layout/staff/operationstaff/checkorderlistfrominvoice'
+import { useOperationInvoiceDetail } from '@/features/operations/hooks/useOperationInvoiceDetail'
 
 export default function OperationShippingHandoverPage() {
-  // Hardcoded invoice data with multiple orders
-  const invoiceData = {
-    invoiceId: 'INV-2024-001',
-    customer: 'Nguyen Van A',
-    orders: [
-      {
-        id: 'ORD-001',
-        code: '#RX-001',
-        status: 'COMPLETED',
-        item: 'RayBan Aviator + Progressive Lens'
-      },
-      {
-        id: 'ORD-002',
-        code: '#RX-002',
-        status: 'COMPLETED',
-        item: 'Oakley Holbrook + Single Vision'
-      },
-      { id: 'ORD-003', code: '#RX-003', status: 'COMPLETED', item: 'Glasses Case + Cleaning Cloth' }
-    ],
-    shipping: {
-      carrier: 'Viettel Post',
-      address: '123 Nguyen Hue Street, District 1, Ho Chi Minh City, 700000, Vietnam'
-    }
-  }
+  const { invoiceId } = useParams<{ invoiceId: string }>()
+  const { data, isLoading, isError } = useOperationInvoiceDetail(invoiceId ?? '')
+
+  const invoice = data
 
   const [scannedInvoiceId, setScannedInvoiceId] = useState('')
 
-  // Check if all orders are completed
-  const allOrdersCompleted = invoiceData.orders.every((order) => order.status === 'COMPLETED')
-  const isInvoiceConfirmed = scannedInvoiceId === invoiceData.invoiceId
+  // For real API: orders are stored on the invoice, all statuses assumed COMPLETED at handover stage
+  const orders = invoice?.orders ?? []
+  // All orders in handle-delivery invoices are considered completed (ready for shipment)
+  const allOrdersCompleted = orders.length > 0
+  const isInvoiceConfirmed = invoice ? scannedInvoiceId === invoice.invoiceCode : false
   const canShip = isInvoiceConfirmed && allOrdersCompleted
 
   const handleConfirm = () => {
-    if (scannedInvoiceId !== invoiceData.invoiceId) {
+    if (!invoice) return
+    if (scannedInvoiceId !== invoice.invoiceCode) {
       alert('Invoice ID does not match!')
     }
   }
 
   const handlePrintLabel = () => {
-    alert('Printing shipping label for ' + invoiceData.invoiceId)
+    if (!invoice) return
+    alert('Printing shipping label for ' + invoice.invoiceCode)
+  }
+
+  // Build a friendly address string
+  const getAddressString = () => {
+    if (!invoice) return ''
+    return invoice.address ?? ''
+  }
+
+  if (isLoading) {
+    return (
+      <Container className="animate-fade-in-up">
+        <BreadcrumbPath paths={['Dashboard', 'Shipping Handover']} />
+        <div className="flex flex-col items-center justify-center py-40 gap-4">
+          <div className="relative">
+            <div className="w-14 h-14 rounded-full border-4 border-neutral-100" />
+            <div className="absolute inset-0 w-14 h-14 rounded-full border-4 border-t-mint-500 animate-spin" />
+          </div>
+          <p className="text-sm font-semibold text-neutral-700">Loading invoice...</p>
+        </div>
+      </Container>
+    )
+  }
+
+  if (isError || !invoice) {
+    return (
+      <Container className="animate-fade-in-up">
+        <BreadcrumbPath paths={['Dashboard', 'Shipping Handover']} />
+        <div className="flex flex-col items-center justify-center py-40 gap-4">
+          <div className="w-16 h-16 rounded-full bg-red-50 border border-red-100 flex items-center justify-center">
+            <IoAirplaneOutline className="text-red-400" size={32} />
+          </div>
+          <p className="text-sm font-semibold text-neutral-700">Failed to load invoice</p>
+          <p className="text-xs text-neutral-400">Check your connection and try refreshing.</p>
+        </div>
+      </Container>
+    )
   }
 
   return (
@@ -63,7 +91,7 @@ export default function OperationShippingHandoverPage() {
           </p>
         </div>
         <span className="px-6 py-2 bg-blue-100 text-blue-700 border border-blue-200 rounded-full text-xs font-bold uppercase tracking-widest">
-          {allOrdersCompleted ? 'READY TO SHIP' : 'PENDING'}
+          {invoice.status.replace(/_/g, ' ')}
         </span>
       </div>
 
@@ -74,104 +102,35 @@ export default function OperationShippingHandoverPage() {
         {/* Left Column */}
         <div className="col-span-12 lg:col-span-7 space-y-6">
           {/* Scan Invoice ID Section */}
-          <div className="bg-white rounded-lg shadow-sm border border-neutral-100 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-              Scan Invoice ID
-            </h2>
+          <ScanInvoiceCode
+            value={scannedInvoiceId}
+            expectedInvoiceId={invoice.invoiceCode}
+            onChange={setScannedInvoiceId}
+            onConfirm={handleConfirm}
+            isConfirmed={isInvoiceConfirmed}
+          />
 
-            <div className="space-y-3">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Invoice ID</label>
-                <input
-                  type="text"
-                  value={scannedInvoiceId}
-                  onChange={(e) => setScannedInvoiceId(e.target.value)}
-                  placeholder="Scan or enter invoice ID..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-                <p className="text-xs text-gray-500 mt-1">Expected: {invoiceData.invoiceId}</p>
-              </div>
-
-              <button
-                onClick={handleConfirm}
-                disabled={!scannedInvoiceId}
-                className={`w-full px-6 py-3 rounded-lg font-medium transition-all ${
-                  isInvoiceConfirmed
-                    ? 'bg-mint-100 text-mint-700 border-2 border-mint-200 cursor-default'
-                    : scannedInvoiceId
-                      ? 'bg-blue-600 text-white hover:bg-blue-700'
-                      : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                }`}
-              >
-                {isInvoiceConfirmed ? '✓ Invoice Confirmed' : 'Confirm Invoice'}
-              </button>
-            </div>
-          </div>
-
-          {/* Check Order List Section - Always visible */}
+          {/* Check Order List Section */}
           <div className="bg-white rounded-lg shadow-sm border border-neutral-100 p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <span className="w-2 h-2 bg-mint-500 rounded-full"></span>
               Check Order List
             </h2>
 
-            <div className="mb-4 pb-4 border-b border-gray-200">
-              <p className="text-sm text-gray-600">
-                Invoice:{' '}
-                <span className="font-semibold text-gray-900">{invoiceData.invoiceId}</span>
-              </p>
-              <p className="text-sm text-gray-600">
-                Customer:{' '}
-                <span className="font-semibold text-gray-900">{invoiceData.customer}</span>
-              </p>
-              <p className="text-sm text-gray-600 mt-1">
-                Orders:{' '}
-                <span className="font-semibold text-gray-900">{invoiceData.orders.length}</span>
-              </p>
-            </div>
+            <CheckOrderListFromInvoice
+              invoiceCode={invoice.invoiceCode}
+              fullName={invoice.fullName}
+              orderCount={orders.length}
+            />
 
             <div className="space-y-3">
-              {invoiceData.orders.map((order) => (
-                <div
-                  key={order.id}
-                  className={`flex items-center justify-between p-4 rounded-lg border-2 transition-all ${
-                    order.status === 'COMPLETED'
-                      ? 'border-mint-500 bg-mint-50'
-                      : 'border-red-300 bg-red-50'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                        order.status === 'COMPLETED'
-                          ? 'border-mint-500 bg-mint-500'
-                          : 'border-red-400 bg-red-400'
-                      }`}
-                    >
-                      {order.status === 'COMPLETED' ? (
-                        <IoCheckmarkCircle className="text-white" size={20} />
-                      ) : (
-                        <span className="text-white text-xs font-bold">✕</span>
-                      )}
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900">
-                        {order.code} - {order.item}
-                      </p>
-                      <p className="text-xs text-gray-500">Order ID: {order.id}</p>
-                    </div>
-                  </div>
-                  <span
-                    className={`text-xs px-3 py-1 rounded-full font-semibold ${
-                      order.status === 'COMPLETED'
-                        ? 'bg-mint-100 text-mint-700'
-                        : 'bg-red-100 text-red-700'
-                    }`}
-                  >
-                    {order.status}
-                  </span>
-                </div>
+              {orders.map((orderId: string, index: number) => (
+                <OrderCheckItem
+                  key={orderId}
+                  orderCode={`#ORDER-${String(index + 1).padStart(3, '0')}`}
+                  orderId={orderId}
+                  status="COMPLETED"
+                />
               ))}
             </div>
 
@@ -201,76 +160,18 @@ export default function OperationShippingHandoverPage() {
               : 'opacity-30 translate-y-4 pointer-events-none grayscale'
           }`}
         >
-          <div className="bg-white rounded-lg shadow-sm border border-neutral-100 p-6 sticky top-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-              Shipping Information
-            </h2>
-
-            {/* Invoice Info */}
-            <div className="mb-4 pb-4 border-b border-gray-200">
-              <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Invoice ID</p>
-              <p className="text-base font-semibold text-gray-900">{invoiceData.invoiceId}</p>
-              <p className="text-sm text-gray-600 mt-1">Customer: {invoiceData.customer}</p>
-            </div>
-
-            {/* Carrier */}
-            <div className="mb-4">
-              <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Delivery Method</p>
-              <p className="text-base font-semibold text-gray-900">
-                {invoiceData.shipping.carrier}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">Auto-generated</p>
-            </div>
-
-            {/* Shipping Address */}
-            <div className="mb-6">
-              <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Shipping Address</p>
-              <p className="text-sm text-gray-700 leading-relaxed">
-                {invoiceData.shipping.address}
-              </p>
-            </div>
-
-            {/* Print Label Button */}
-            <button
-              onClick={handlePrintLabel}
-              disabled={!canShip}
-              className={`w-full px-6 py-3 rounded-lg font-medium transition-all shadow-lg flex items-center justify-center gap-2 border-2 ${
-                canShip
-                  ? 'bg-mint-900 text-white border-mint-900 hover:bg-mint-700 hover:border-mint-700 transform hover:-translate-y-1 shadow-mint-200'
-                  : 'bg-gray-200 text-gray-400 border-gray-200 cursor-not-allowed'
-              }`}
-            >
-              <IoPrintOutline size={20} />
-              Print Shipping Label
-            </button>
-
-            {/* Order Summary */}
-            <div className="mt-6 pt-6 border-t border-gray-200">
-              <p className="text-xs text-gray-500 uppercase tracking-wide mb-3">Order Summary</p>
-              <div className="space-y-2">
-                {invoiceData.orders.map((order) => (
-                  <div
-                    key={order.id}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                  >
-                    <span className="text-sm font-medium text-gray-900">{order.code}</span>
-                    <span
-                      className={`text-xs px-2 py-1 rounded-full ${
-                        order.status === 'COMPLETED'
-                          ? 'bg-mint-100 text-mint-700'
-                          : 'bg-red-100 text-red-700'
-                      }`}
-                    >
-                      {order.status}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          <ShippingInfoPanel
+            invoiceCode={invoice.invoiceCode}
+            fullName={invoice.fullName}
+            carrier="Viettel Post"
+            address={getAddressString()}
+            canShip={canShip}
+            orders={orders}
+            onPrintLabel={handlePrintLabel}
+          />
         </div>
       </div>
     </Container>
   )
 }
+

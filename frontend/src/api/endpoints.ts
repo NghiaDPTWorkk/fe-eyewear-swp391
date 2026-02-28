@@ -205,6 +205,8 @@ export const ENDPOINTS = {
       })
       if (status) params.append('status', status)
       return `/admin/invoices/handle-delivery?${params.toString()}`
+    },
+    INVOICE_DETAIL: (id: string) => `/admin/invoices/${id}`
     }
   },
 

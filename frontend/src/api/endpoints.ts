@@ -207,5 +207,14 @@ export const ENDPOINTS = {
       return `/admin/invoices/handle-delivery?${params.toString()}`
     },
     INVOICE_DETAIL: (id: string) => `/admin/invoices/${id}`
+    }
+  },
+
+  // Admin AI Conversations
+  ADMIN_AI_CONVERSATIONS: {
+    LIST: (search: string = '', lastItem: string = '') =>
+      `/admin/ai-conversations?search=${encodeURIComponent(search)}&lastItem=${lastItem}`,
+    MESSAGES: (id: string, lastItem: string = '') =>
+      `/admin/ai-conversations/${id}/messages?lastItem=${lastItem}`
   }
 } as const

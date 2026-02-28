@@ -320,27 +320,25 @@ export const CustomerProductPage = () => {
                 <div className="text-center text-gray-eyewear py-10">No products found.</div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {products.map((product, index) => {
-                    // Mock: Add sale to every 3rd product
-                    const hasSale = index % 3 === 0
+                  {products.map((product) => {
+                    const productId = product.id
+                    const originalPrice = product.defaultVariantPrice || 0
+                    const finalPrice = product.defaultVariantFinalPrice || originalPrice
 
-                    // Extract price - handle type safety
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const productAny = product as any
-                    const originalPrice = productAny.defaultVariantPrice || 100
-                    const currentPrice = productAny.defaultVariantFinalPrice || originalPrice
-
-                    // Only set discount if there's actually a sale
-                    const discountPrice = hasSale ? currentPrice : undefined
-                    const salePercent = hasSale ? 20 : undefined
+                    // Determine sale from real data
+                    const hasSale = originalPrice > 0 && finalPrice < originalPrice
+                    const salePercent = hasSale
+                      ? Math.round(((originalPrice - finalPrice) / originalPrice) * 100)
+                      : undefined
+                    const discountPrice = hasSale ? finalPrice : undefined
 
                     return (
                       <ProductCard
-                        key={productAny.id || `product-${index}`}
-                        id={productAny.id || `product-${index}`}
+                        key={productId}
+                        id={productId}
                         name={product.nameBase}
                         brand={product.brand || undefined}
-                        image={productAny.defaultVariantImage || undefined}
+                        image={product.defaultVariantImage || undefined}
                         price={originalPrice}
                         discountPrice={discountPrice}
                         salePercent={salePercent}

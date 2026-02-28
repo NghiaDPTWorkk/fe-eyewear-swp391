@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface ImageGalleryProps {
   images: string[]
@@ -6,6 +6,13 @@ interface ImageGalleryProps {
 
 export const ImageGallery = ({ images }: ImageGalleryProps) => {
   const [activeImage, setActiveImage] = useState(images[0] || '')
+
+  // Update activeImage when images prop changes (e.g. variant switch)
+  useEffect(() => {
+    if (images.length > 0) {
+      setActiveImage(images[0])
+    }
+  }, [images])
 
   if (images.length === 0) {
     return (
@@ -22,30 +29,26 @@ export const ImageGallery = ({ images }: ImageGalleryProps) => {
         <img
           src={activeImage}
           alt="Product view"
-          className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+          className="w-full h-full object-contain transition-transform duration-700 hover:scale-105"
         />
       </div>
 
-      {/* Thumbnails/Additional Images Grid */}
-      <div className="grid grid-cols-2 gap-4">
-        {images.slice(1, images.length).map((img, index) => (
-          <div
-            key={index}
-            className={`aspect-square bg-white rounded-3xl overflow-hidden cursor-pointer border-2 transition-all ${
-              activeImage === img
-                ? 'border-primary-500 shadow-md scale-[0.98]'
-                : 'border-mint-300 hover:border-primary-300'
-            }`}
-            onClick={() => setActiveImage(img)}
-          >
-            <img src={img} alt={`Gallery ${index}`} className="w-full h-full object-cover" />
-          </div>
-        ))}
-      </div>
-
-      {images.length > 3 && (
-        <div className="aspect-[4/2] bg-white rounded-3xl overflow-hidden border border-mint-300">
-          <img src={images[3]} alt="Gallery focus" className="w-full h-full object-cover" />
+      {/* Thumbnails Grid - show all images */}
+      {images.length > 1 && (
+        <div className="grid grid-cols-3 gap-3">
+          {images.map((img, index) => (
+            <div
+              key={index}
+              className={`aspect-square bg-white rounded-2xl overflow-hidden cursor-pointer border-2 transition-all flex items-center justify-center ${
+                activeImage === img
+                  ? 'border-primary-500 shadow-md scale-[0.98]'
+                  : 'border-mint-300 hover:border-primary-300'
+              }`}
+              onClick={() => setActiveImage(img)}
+            >
+              <img src={img} alt={`Gallery ${index + 1}`} className="w-full h-full object-contain" />
+            </div>
+          ))}
         </div>
       )}
     </div>

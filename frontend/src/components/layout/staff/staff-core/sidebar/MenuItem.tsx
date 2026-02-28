@@ -11,7 +11,6 @@ interface MenuItemProps {
   active?: boolean
   badge?: string
   badgeVariant?: 'default' | 'primary' | 'danger'
-  isLoading?: boolean
   hasDropdown?: boolean
   children?: ReactNode
   onClick?: () => void

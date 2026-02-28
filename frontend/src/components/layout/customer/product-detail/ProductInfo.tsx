@@ -18,16 +18,17 @@ import { Button } from '@/shared/components/ui'
 import LensSelectionModal from './lenses/LensSelectionModal'
 import type { LensSelectionState } from './lenses/types'
 import VirtualTryOnModal from './virtual-try-on/VirtualTryOnModal'
-import { useProductVariants } from '@/shared/hooks/products/useProductVariants'
 import { cn } from '@/lib/utils'
+import type { UseProductVariantsReturn, AttributeValue } from '@/shared/hooks/products/useProductVariants'
 
 interface ProductInfoProps {
   product: Product
   productId: string
+  variantState: UseProductVariantsReturn
 }
 
-export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
-  // Use variant selection hook
+export const ProductInfo = ({ product, productId, variantState }: ProductInfoProps) => {
+  // Use shared variant selection state from prop
   const {
     currentVariant,
     selectedOptions,
@@ -40,7 +41,7 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
     isInStock,
     isValidCombination,
     availableOptionsForAttribute
-  } = useProductVariants(product)
+  } = variantState
 
   const addItemAsync = useCartStore((state) => state.addItemAsync)
   const isAddingToCart = useCartStore((state) => state.isAddingToCart)
@@ -64,7 +65,7 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
       return
     }
 
-    const type = (product as any).type || 'frame'
+    const type = product.type || 'frame'
 
     if (type === 'frame') {
       setIsLensModalOpen(true)
@@ -94,14 +95,17 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
       return
     }
 
-    const productAny = product as any
-
-    // Prioritize the MongoDB ID from the product object if available
+    // Prioritize the product ID from the product object if available
     // Otherwise fallback to the ID from the URL prop
-    const finalProductId = productAny._id || productAny.id || productId
+    const finalProductId = product.id || productId
 
     if (!finalProductId) {
       toast.error('Unable to add to cart: Product ID not found')
+      return
+    }
+
+    if (!currentVariant.sku) {
+      toast.error('Unable to add to cart: SKU not found for this variant')
       return
     }
 
@@ -143,10 +147,9 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
     try {
       // Ensure we have all necessary fields for StandardProduct
       const productToSave: StandardProduct = {
-        ...(product as StandardProduct),
-        _id: (product as any)._id || productId,
-        id: (product as any).id || productId,
-        defaultVariantImage: (product as any).defaultVariantImage || images[0],
+        ...product,
+        id: product.id || productId,
+        defaultVariantImage: product.defaultVariantImage || images[1],
         defaultVariantPrice: price,
         defaultVariantFinalPrice: finalPrice
       }
@@ -158,10 +161,9 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
   }
 
   // Get product description
-  const productAny = product as any
   const description =
-    productAny.description ||
-    productAny.shortDescription ||
+    product.description ||
+    product.shortDescription ||
     'A modern interpretation of the classic square silhouette. Crafted from premium Italian acetate with a subtle translucent finish that catches the light from every angle.'
 
   // Calculate discount percentage if applicable
@@ -239,29 +241,33 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
             const availableValues = availableOptionsForAttribute(attribute.name)
             const selectedValue = selectedOptions[attribute.name]
 
-            // Check if this attribute is a color (value starts with # or is a hex color)
-            const isColorAttribute = attribute.values.some(
-              (val) => /^#[0-9A-Fa-f]{6}$/.test(val) || /^#[0-9A-Fa-f]{3}$/.test(val)
-            )
+            const isColorAttribute = attribute.showType === 'color'
+
+            // Find label for the selected value
+            const selectedLabel =
+              currentVariant?.options.find((opt) => opt.attributeName === attribute.name)?.label ||
+              attribute.values.find((v) => v.value === selectedValue)?.label ||
+              selectedValue ||
+              'Select'
 
             return (
               <div key={attribute.name}>
                 <h3 className="text-sm font-bold text-mint-1200 uppercase tracking-wider mb-4">
                   {attribute.name}:{' '}
                   <span className="text-primary-600 font-semibold ml-1">
-                    {selectedValue || 'Select'}
+                    {selectedLabel}
                   </span>
                 </h3>
                 <div className="flex gap-3 flex-wrap">
-                  {attribute.values.map((value) => {
-                    const isAvailable = availableValues.includes(value)
-                    const isSelected = selectedValue === value
+                  {attribute.values.map((option: AttributeValue) => {
+                    const isAvailable = availableValues.includes(option.value)
+                    const isSelected = selectedValue === option.value
 
                     // Render color swatch for color attributes
                     if (isColorAttribute) {
                       return (
                         <button
-                          key={value}
+                          key={option.value}
                           disabled={!isAvailable}
                           className={`relative w-12 h-12 rounded-full transition-all border-4 group ${
                             isSelected
@@ -271,15 +277,15 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
                                 : 'border-gray-200 cursor-not-allowed opacity-40'
                           }`}
                           style={{
-                            backgroundColor: value,
+                            backgroundColor: option.value,
                             boxShadow: isSelected ? '0 4px 12px rgba(0,0,0,0.15)' : undefined
                           }}
-                          onClick={() => isAvailable && selectOption(attribute.name, value)}
-                          title={value}
+                          onClick={() => isAvailable && selectOption(attribute.name, option.value)}
+                          title={option.label}
                         >
                           {/* Tooltip on hover */}
                           <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
-                            {value}
+                            {option.label}
                           </span>
                           {/* Checkmark for selected color */}
                           {isSelected && (
@@ -307,7 +313,7 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
                     // Render regular button for non-color attributes
                     return (
                       <button
-                        key={value}
+                        key={option.value}
                         disabled={!isAvailable}
                         className={`px-6 py-3 rounded-xl font-semibold transition-all border-2 ${
                           isSelected
@@ -316,9 +322,9 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
                               ? 'bg-white text-gray-eyewear border-mint-300 hover:border-primary-400 hover:bg-mint-50'
                               : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
                         }`}
-                        onClick={() => isAvailable && selectOption(attribute.name, value)}
+                        onClick={() => isAvailable && selectOption(attribute.name, option.value)}
                       >
-                        {value}
+                        {option.label}
                         {!isAvailable && <span className="ml-2 text-xs">(Unavailable)</span>}
                       </button>
                     )
@@ -346,7 +352,7 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
               ? 'Select Options'
               : !isInStock
                 ? 'Out of Stock'
-                : (product as any).type === 'frame'
+                : product.type === 'frame'
                   ? 'Select Lenses'
                   : 'Add to Cart'}
         </Button>
@@ -393,8 +399,8 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
         onClose={() => setIsLensModalOpen(false)}
         onConfirm={handleLensConfirm}
         productName={product.nameBase}
-        productImage={currentVariant?.imgs?.[0] || images[0] || ''}
-        productType={(product as any).type || 'frame'}
+        productImage={currentVariant?.imgs?.[1] || images[1] || ''}
+        productType={product.type || 'frame'}
         productId={productId}
         sku={currentVariant?.sku || ''}
       />
@@ -403,7 +409,7 @@ export const ProductInfo = ({ product, productId }: ProductInfoProps) => {
         isOpen={isTryOnOpen}
         onClose={() => setIsTryOnOpen(false)}
         productName={product.nameBase}
-        productImage={currentVariant?.imgs?.[0] || images[0] || ''}
+        productImage={currentVariant?.imgs?.[1] || images[1] || ''}
         productPrice={finalPrice}
       />
     </div>

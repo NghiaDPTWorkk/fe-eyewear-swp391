@@ -119,11 +119,19 @@ export default function OperationOrderPackingProcess() {
 
   const handleBack = () => {
     if (isCompleted) {
-      // Just reuse invalidation logic to be safe if they go to lists
       queryClient.invalidateQueries({ queryKey: ['orders'] })
       queryClient.invalidateQueries({ queryKey: ['order', orderId] })
     }
     navigate(-1)
+  }
+
+  const handleCheckAll = () => {
+    if (isCompleted) return
+    const allCheckedState: Record<string, boolean> = {}
+    checklistItems.forEach((item) => {
+      allCheckedState[item.id] = true
+    })
+    setCheckedState(allCheckedState)
   }
 
   return (
@@ -165,7 +173,7 @@ export default function OperationOrderPackingProcess() {
           <ScanSection orderId={orderId} />
 
           {/* Checklist Section */}
-          <CheckListSection>
+          <CheckListSection onCheckAll={isCompleted ? undefined : handleCheckAll}>
             {checklistItems.map((item) => (
               <CheckItem
                 key={item.id}

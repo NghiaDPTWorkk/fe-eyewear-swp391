@@ -38,7 +38,7 @@ export const orderService = {
    * @param invoiceId - Invoice ID lấy từ order.invoiceId
    */
   getInvoiceById: async (invoiceId: string) => {
-    return httpClient.get<AdminInvoiceDetailResponse>(ENDPOINTS.ADMIN.INVOICE_DETAIL(invoiceId))
+    return httpClient.get<AdminInvoiceDetailResponse>(ENDPOINTS.OPERATION_STAFF.INVOICE_DETAIL(invoiceId))
   },
 
   /**

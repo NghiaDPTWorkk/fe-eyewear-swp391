@@ -48,7 +48,7 @@ export default function ShippingLabel({ orderId }: ShippingLabelProps) {
         <div className="space-y-4">
           {/* Invoice Code */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Method</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Invoice Code of Order</label>
             <div className="p-3 bg-gray-100 rounded-lg font-mono font-medium text-gray-800 tracking-wide text-center border border-gray-200">
               {invoiceCode}
             </div>

@@ -120,6 +120,7 @@ export const ENDPOINTS = {
     INVOICES_DELIVERING: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/delivering`,
     ORDER_DETAIL: (orderId: string) => `/admin/orders/${orderId}`,
     ORDER_ASSIGN: (orderId: string) => `/admin/orders/${orderId}/status/assign`,
+    INVOICES_READY_TO_SHIP: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/ready-to-ship`,
     INVOICES_DEPOSITED: (page: number, limit: number, status?: string) => {
       const params = new URLSearchParams({
         page: String(page),

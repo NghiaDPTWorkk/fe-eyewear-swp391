@@ -6,6 +6,7 @@ interface ShippingInfoPanelProps {
   carrier: string
   address: string
   canShip: boolean
+  shipCode?: string
   orders: string[]
   onPrintLabel: () => void
 }
@@ -16,6 +17,7 @@ export default function ShippingInfoPanel({
   carrier,
   address,
   canShip,
+  shipCode,
   orders,
   onPrintLabel
 }: ShippingInfoPanelProps) {
@@ -37,7 +39,13 @@ export default function ShippingInfoPanel({
       <div className="mb-4">
         <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Delivery Method</p>
         <p className="text-base font-semibold text-gray-900">{carrier}</p>
-        <p className="text-xs text-gray-500 mt-1">Auto-generated</p>
+        {shipCode ? (
+          <p className="text-xs text-mint-600 mt-1 font-medium bg-mint-50 inline-block px-2 py-1 rounded">
+            Ship Code: {shipCode}
+          </p>
+        ) : (
+          <p className="text-xs text-gray-500 mt-1">Auto-generated</p>
+        )}
       </div>
 
       {/* Shipping Address */}

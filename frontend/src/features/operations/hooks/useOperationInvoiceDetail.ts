@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { OperationInvoiceListItem } from '@/shared/types'
 import { operationInvoiceService } from '../services/operationInvoiceService'
 
@@ -15,5 +15,16 @@ export function useOperationInvoiceDetail(invoiceId: string) {
     },
     enabled: Boolean(invoiceId),
     staleTime: 30_000
+  })
+}
+
+export function useUpdateInvoiceReadyToShip() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (invoiceId: string) => operationInvoiceService.updateInvoiceToReadyToShip(invoiceId),
+    onSuccess: (_, invoiceId) => {
+      queryClient.invalidateQueries({ queryKey: ['operation-invoice-detail', invoiceId] })
+      queryClient.invalidateQueries({ queryKey: ['operation-invoices'] })
+    }
   })
 }

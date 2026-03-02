@@ -9,5 +9,8 @@ export const operationInvoiceService = {
   },
   getInvoiceById(id: string) {
     return httpClient.get<AdminInvoiceDetailResponse>(ENDPOINTS.OPERATION_STAFF.INVOICE_DETAIL(id))
+  },
+  updateInvoiceToReadyToShip(id: string) {
+    return httpClient.patch(ENDPOINTS.ADMIN.INVOICES_READY_TO_SHIP(id), {})
   }
 }

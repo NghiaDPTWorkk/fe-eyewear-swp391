@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { Container } from '@/components'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 import { ProcessTracker } from '@/components/layout/staff/staff-core/processtracker'
-import { IoAirplaneOutline, IoPrintOutline } from 'react-icons/io5'
+import { IoAirplaneOutline, IoClose, IoPrintOutline } from 'react-icons/io5'
 import ScanInvoiceCode from '@/components/layout/staff/operationstaff/scaninvoicecode/ScanInvoiceCode'
 import {
   CheckOrderListFromInvoice,
@@ -18,7 +18,6 @@ import {
 import ConfirmationModal from '@/shared/components/ui/ConfirmationModal'
 import ShippingInfoSeal from '@/components/layout/staff/operationstaff/shippinginfoseal/ShippingInfoSeal'
 import { createPortal } from 'react-dom'
-import { IoClose } from 'react-icons/io5'
 import toast from 'react-hot-toast'
 
 export default function OperationShippingHandoverPage() {
@@ -225,7 +224,7 @@ export default function OperationShippingHandoverPage() {
                 <IoClose size={24} />
               </button>
             </div>
-            
+
             {/* The Seal */}
             <div className="bg-white rounded-lg p-2 border border-neutral-200">
                <ShippingInfoSeal

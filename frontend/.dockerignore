@@ -4,8 +4,6 @@ dist
 build
 .git
 .gitignore
-.env
-.env.*
 *.md
 .vscode
 .cursor

@@ -76,18 +76,20 @@ const transformBackendCartToItems = (backendCart: BackendCart): CartItem[] => {
  * @returns Cart items enriched with full product details
  */
 const enrichCartItemsWithProductDetails = async (items: CartItem[]): Promise<CartItem[]> => {
-  // Extract unique product IDs
+  // Extract unique product IDs (both frames and lenses)
   const productIds = [...new Set(items.map((item) => item.product_id).filter(Boolean))]
+  const lensIds = [...new Set(items.map((item) => item.lens?.lensId).filter(Boolean))]
+  const allIds = [...new Set([...productIds, ...lensIds])]
 
-  if (productIds.length === 0) {
+  if (allIds.length === 0) {
     return items
   }
 
   try {
     // Fetch all product details in parallel
-    const productDetailsPromises = productIds.map((id) =>
+    const productDetailsPromises = allIds.map((id) =>
       productService
-        .getProductDetail(id)
+        .getProductDetail(id!)
         .then((response) => ({ id, data: response.data }))
         .catch(() => ({ id, data: null }))
     )
@@ -102,36 +104,32 @@ const enrichCartItemsWithProductDetails = async (items: CartItem[]): Promise<Car
       }
     })
 
-    // Merge product details into cart items
+    // Merge details into cart items
     const enrichedItems = items.map((item) => {
+      let enrichedItem = { ...item }
+
+      // Enrich Frame/Product
       const productDetail = productDetailsMap.get(item.product_id)
-
       if (productDetail) {
-        // Find the specific variant by SKU
         const variant = productDetail.variants?.find((v: any) => v.sku === item.sku)
-
         if (variant) {
-          // Extract color and other attributes from variant options
           const selectedOptions: Record<string, string> = {}
           variant.options?.forEach((option: any) => {
             selectedOptions[option.attributeName] = option.label
           })
-
-          return {
-            ...item,
+          enrichedItem = {
+            ...enrichedItem,
             name: variant.name || productDetail.nameBase || item.name,
             price: variant.finalPrice || variant.price || item.price,
             image: variant.imgs?.[0] || item.image,
             sku: variant.sku || item.sku,
             productType: productDetail.type,
-            selectedOptions // Add variant attributes (color, size, etc.)
+            selectedOptions
           }
         } else {
-          // Fallback to product defaults if variant not found
-          return {
-            ...item,
+          enrichedItem = {
+            ...enrichedItem,
             name: productDetail.nameBase || item.name,
-            // Use default variant if available
             price:
               productDetail.variants?.[0]?.finalPrice ||
               productDetail.variants?.[0]?.price ||
@@ -142,12 +140,27 @@ const enrichCartItemsWithProductDetails = async (items: CartItem[]): Promise<Car
         }
       }
 
-      return item
+      // Enrich Lens
+      if (item.lens?.lensId) {
+        const lensDetail = productDetailsMap.get(item.lens.lensId)
+        if (lensDetail) {
+          const variant = lensDetail.variants?.find((v: any) => v.sku === item.lens?.sku)
+          enrichedItem.lens = {
+            ...item.lens,
+            name: variant?.name || lensDetail.nameBase || 'Lense',
+            price:
+              variant?.finalPrice || variant?.price || lensDetail.defaultVariantFinalPrice || 0,
+            image: variant?.imgs?.[0] || lensDetail.defaultVariantImage || lensDetail.imageUrl,
+            nameVariant: variant?.nameVariant || lensDetail.nameVariant
+          }
+        }
+      }
+
+      return enrichedItem
     })
 
     return enrichedItems
   } catch (error) {
-    // Return original items if enrichment fails
     console.error('Failed to enrich cart items:', error)
     return items
   }

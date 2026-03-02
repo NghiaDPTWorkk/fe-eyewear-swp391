@@ -176,7 +176,7 @@ export default function OperationShippingHandoverPage() {
             address={getAddressString()}
             status={invoice?.status || 'UNKNOWN'}
             isProcessingShipping={updateInvoiceStatus.isPending}
-            shipCode={shipCode || (isReadyToShip ? 'Auto Generated from DB' : undefined)}
+            shipCode={shipCode || (isReadyToShip ? 'Auto Generated' : undefined)}
             orders={orders}
             onPrintLabel={handlePrintLabel}
             onProcessShipping={handleProcessShipping}

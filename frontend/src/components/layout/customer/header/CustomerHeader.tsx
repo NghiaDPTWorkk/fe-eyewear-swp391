@@ -4,7 +4,7 @@ import { Search, ShoppingCart, User, X, Glasses, Heart } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useCartStore, useAuthStore } from '@/store'
-import { STORAGE_KEYS } from '@/shared/constants/storage'
+
 import { ProfileDropdown as ProjectProfileDropdown } from './ProfileDropdown'
 
 export default function CustomerHeader() {
@@ -201,7 +201,7 @@ export default function CustomerHeader() {
                 </span>
               )}
             </button>
-            {isAuthenticated || !!localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN) ? (
+            {isAuthenticated ? (
               <ProjectProfileDropdown />
             ) : (
               <button

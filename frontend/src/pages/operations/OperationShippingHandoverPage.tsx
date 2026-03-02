@@ -3,40 +3,70 @@ import { useParams } from 'react-router-dom'
 import { Container } from '@/components'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 import { ProcessTracker } from '@/components/layout/staff/staff-core/processtracker'
-import { IoAirplaneOutline } from 'react-icons/io5'
+import { IoAirplaneOutline, IoClose, IoPrintOutline } from 'react-icons/io5'
 import ScanInvoiceCode from '@/components/layout/staff/operationstaff/scaninvoicecode/ScanInvoiceCode'
 import {
   CheckOrderListFromInvoice,
   OrderCheckItem,
   ShippingInfoPanel
 } from '@/components/layout/staff/operationstaff/checkorderlistfrominvoice'
-import { useOperationInvoiceDetail } from '@/features/operations/hooks/useOperationInvoiceDetail'
+import {
+  useOperationInvoiceDetail,
+  useUpdateInvoiceReadyToShip,
+  useOperationShipCode
+} from '@/features/operations/hooks/useOperationInvoiceDetail'
+import ConfirmationModal from '@/shared/components/ui/ConfirmationModal'
+import ShippingInfoSeal from '@/components/layout/staff/operationstaff/shippinginfoseal/ShippingInfoSeal'
+import { createPortal } from 'react-dom'
+import toast from 'react-hot-toast'
 
 export default function OperationShippingHandoverPage() {
   const { invoiceId } = useParams<{ invoiceId: string }>()
   const { data, isLoading, isError } = useOperationInvoiceDetail(invoiceId ?? '')
+  const updateInvoiceStatus = useUpdateInvoiceReadyToShip()
+
+  const { data: fetchedShipCode } = useOperationShipCode(invoiceId ?? '')
 
   const invoice = data
 
-  const [scannedInvoiceId, setScannedInvoiceId] = useState('')
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isLabelModalOpen, setIsLabelModalOpen] = useState(false)
+  const [internalShipCode, setInternalShipCode] = useState<string | undefined>(undefined)
 
-  // For real API: orders are stored on the invoice, all statuses assumed COMPLETED at handover stage
+  const activeShipCode = internalShipCode || fetchedShipCode || undefined
+
   const orders = invoice?.orders ?? []
-  // All orders in handle-delivery invoices are considered completed (ready for shipment)
   const allOrdersCompleted = orders.length > 0
-  const isInvoiceConfirmed = invoice ? scannedInvoiceId === invoice.invoiceCode : false
-  const canShip = isInvoiceConfirmed && allOrdersCompleted
 
-  const handleConfirm = () => {
+  const isReadyToShip = invoice?.status === 'READY_TO_SHIP'
+
+
+  const handleProcessShipping = () => {
+    setIsModalOpen(true)
+  }
+
+  const confirmProcessShipping = () => {
     if (!invoice) return
-    if (scannedInvoiceId !== invoice.invoiceCode) {
-      alert('Invoice ID does not match!')
-    }
+    updateInvoiceStatus.mutate(invoice.id, {
+      onSuccess: (data: any) => {
+        setIsModalOpen(false)
+        toast.success('Invoice marked as Ready to Ship!')
+        const newShipCode =
+          data?.data?.data?.shipmentInfo?.shipCode || data?.data?.shipmentInfo?.shipCode
+        if (newShipCode) {
+          setInternalShipCode(newShipCode)
+        }
+      },
+      onError: (error: any) => {
+        setIsModalOpen(false)
+        toast.error(error?.response?.data?.message || 'Failed to update invoice status')
+      }
+    })
   }
 
   const handlePrintLabel = () => {
     if (!invoice) return
-    alert('Printing shipping label for ' + invoice.invoiceCode)
+    setIsLabelModalOpen(true)
   }
 
   // Build a friendly address string
@@ -102,13 +132,7 @@ export default function OperationShippingHandoverPage() {
         {/* Left Column */}
         <div className="col-span-12 lg:col-span-7 space-y-6">
           {/* Scan Invoice ID Section */}
-          <ScanInvoiceCode
-            value={scannedInvoiceId}
-            expectedInvoiceId={invoice.invoiceCode}
-            onChange={setScannedInvoiceId}
-            onConfirm={handleConfirm}
-            isConfirmed={isInvoiceConfirmed}
-          />
+          <ScanInvoiceCode invoiceCode={invoice.invoiceCode} />
 
           {/* Check Order List Section */}
           <div className="bg-white rounded-lg shadow-sm border border-neutral-100 p-6">
@@ -137,15 +161,7 @@ export default function OperationShippingHandoverPage() {
             {!allOrdersCompleted && (
               <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
                 <p className="text-sm text-red-700 font-medium">
-                  ⚠️ Cannot ship: Some orders are not completed yet
-                </p>
-              </div>
-            )}
-
-            {allOrdersCompleted && !isInvoiceConfirmed && (
-              <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                <p className="text-sm text-amber-700 font-medium">
-                  All orders completed. Please scan and confirm invoice ID to proceed.
+                  Cannot ship: Some orders are not completed yet
                 </p>
               </div>
             )}
@@ -155,7 +171,7 @@ export default function OperationShippingHandoverPage() {
         {/* Right Column - Shipping Information */}
         <div
           className={`col-span-12 lg:col-span-5 transition-all duration-500 ease-in-out ${
-            canShip
+            allOrdersCompleted
               ? 'opacity-100 translate-y-0'
               : 'opacity-30 translate-y-4 pointer-events-none grayscale'
           }`}
@@ -163,14 +179,85 @@ export default function OperationShippingHandoverPage() {
           <ShippingInfoPanel
             invoiceCode={invoice.invoiceCode}
             fullName={invoice.fullName}
+            phone={invoice.phone}
             carrier="Viettel Post"
             address={getAddressString()}
-            canShip={canShip}
+            status={invoice?.status || 'UNKNOWN'}
+            isProcessingShipping={updateInvoiceStatus.isPending}
+            shipCode={activeShipCode || (isReadyToShip ? 'Auto Generated' : undefined)}
+            hasShipCode={!!activeShipCode}
             orders={orders}
             onPrintLabel={handlePrintLabel}
+            onProcessShipping={handleProcessShipping}
           />
         </div>
       </div>
+
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={confirmProcessShipping}
+        title="Process Shipping"
+        message="Are you sure you want to mark this invoice to next stage? The shipment code will be generated."
+        confirmText="Confirm Shipping"
+        cancelText="Cancel"
+        isLoading={updateInvoiceStatus.isPending}
+        type="info"
+      />
+
+      {/* Shipping Label Print Modal */}
+      {isLabelModalOpen && invoice && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div
+            className="fixed inset-0 bg-neutral-900/40 backdrop-blur-[2px] transition-opacity duration-300 opacity-100"
+            onClick={() => setIsLabelModalOpen(false)}
+          />
+          <div className="relative w-auto bg-white rounded-xl shadow-2xl p-6 transition-all duration-300 transform scale-100 opacity-100 flex flex-col gap-6">
+            <div className="flex justify-between items-center px-2">
+              <h3 className="text-xl font-bold tracking-tight text-slate-800">
+                Print Shipping Label
+              </h3>
+              <button
+                onClick={() => setIsLabelModalOpen(false)}
+                className="p-2 hover:bg-neutral-100 rounded-full transition-colors text-neutral-400 hover:text-neutral-900"
+              >
+                <IoClose size={24} />
+              </button>
+            </div>
+
+            {/* The Seal */}
+            <div className="bg-white rounded-lg p-2 border border-neutral-200">
+               <ShippingInfoSeal
+                 invoiceCode={invoice.invoiceCode}
+                 fullName={invoice.fullName}
+                 phone={invoice.phone}
+                 address={getAddressString()}
+                 shipCode={activeShipCode}
+               />
+            </div>
+
+            <div className="flex justify-end gap-3 px-2">
+               <button
+                 onClick={() => setIsLabelModalOpen(false)}
+                 className="px-6 py-2.5 rounded-lg border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 transition-colors"
+               >
+                 Cancel
+               </button>
+               <button
+                 onClick={() => {
+                    toast.success('Shipping label sent to printer!')
+                    setIsLabelModalOpen(false)
+                 }}
+                 className="px-8 py-2.5 rounded-lg bg-mint-600 text-white font-bold hover:bg-mint-700 shadow-md shadow-mint-200 transition-transform active:scale-95 flex items-center gap-2"
+               >
+                 <IoPrintOutline size={20} />
+                 Print Now
+               </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </Container>
   )
 }

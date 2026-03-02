@@ -122,6 +122,7 @@ export const ENDPOINTS = {
     INVOICES_DELIVERING: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/delivering`,
     ORDER_DETAIL: (orderId: string) => `/admin/orders/${orderId}`,
     ORDER_ASSIGN: (orderId: string) => `/admin/orders/${orderId}/status/assign`,
+    INVOICES_READY_TO_SHIP: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/ready-to-ship`,
     INVOICES_DEPOSITED: (page: number, limit: number, status?: string) => {
       const params = new URLSearchParams({
         page: String(page),
@@ -138,6 +139,7 @@ export const ENDPOINTS = {
       return `/admin/orders/total?${params.toString()}`
     },
     ORDER_APPROVE: (id: string) => `/admin/orders/${id}/status/approve`,
+    INVOICES_SHIP_CODE: (invoiceId: string) => `/ships/invoice/${invoiceId}/ship-code`,
     PROFILE_REQUESTS: '/admin/profile-requests',
     CUSTOMERS_LIST: (page?: number, limit?: number, search?: string, status?: string) => {
       const params = new URLSearchParams()

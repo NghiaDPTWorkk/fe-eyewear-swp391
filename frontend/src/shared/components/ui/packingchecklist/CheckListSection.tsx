@@ -3,9 +3,10 @@ import React from 'react'
 interface CheckListSectionProps {
   children: React.ReactNode
   onCheckAll?: () => void
+  allChecked?: boolean
 }
 
-export default function CheckListSection({ children, onCheckAll }: CheckListSectionProps) {
+export default function CheckListSection({ children, onCheckAll, allChecked = false }: CheckListSectionProps) {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-neutral-100 p-6">
       <div className="flex items-center justify-between mb-6">
@@ -16,9 +17,13 @@ export default function CheckListSection({ children, onCheckAll }: CheckListSect
         {onCheckAll && (
           <button
             onClick={onCheckAll}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-mint-700 bg-mint-50 border border-mint-200 rounded-lg hover:bg-mint-100 transition-colors"
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors border ${
+              allChecked
+                ? 'text-mint-700 bg-mint-50 border-mint-200 hover:bg-mint-100'
+                : 'text-gray-700 bg-gray-50 border-gray-200 hover:bg-gray-100 '
+            }`}
           >
-            Check All
+            {allChecked ? 'Checked All' : 'Check All'}
           </button>
         )}
       </div>

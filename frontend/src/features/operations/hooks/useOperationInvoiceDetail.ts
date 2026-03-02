@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { OperationInvoiceListItem } from '@/shared/types'
 import { operationInvoiceService } from '../services/operationInvoiceService'
 
@@ -15,5 +15,33 @@ export function useOperationInvoiceDetail(invoiceId: string) {
     },
     enabled: Boolean(invoiceId),
     staleTime: 30_000
+  })
+}
+
+export function useUpdateInvoiceReadyToShip() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (invoiceId: string) => operationInvoiceService.updateInvoiceToReadyToShip(invoiceId),
+    onSuccess: (_, invoiceId) => {
+      queryClient.invalidateQueries({ queryKey: ['operation-invoice-detail', invoiceId] })
+      queryClient.invalidateQueries({ queryKey: ['operation-invoices'] })
+    }
+  })
+}
+
+export function useOperationShipCode(invoiceId: string) {
+  return useQuery({
+    queryKey: ['operation-shipcode', invoiceId],
+    queryFn: async () => {
+      try {
+        const response = await operationInvoiceService.getShipCode(invoiceId)
+        return response.data?.shipCode || null
+      } catch (error) {
+        return null // If API fails (e.g., 404 ship not found), return null
+      }
+    },
+    enabled: Boolean(invoiceId),
+    staleTime: 30_000,
+    retry: false
   })
 }

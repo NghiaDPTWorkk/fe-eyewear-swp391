@@ -1,23 +1,34 @@
+import OrderSummaryOnlyCode from '@/shared/components/ui/ordersummary/OrderSummaryOnlyCode'
 import { IoPrintOutline } from 'react-icons/io5'
 
 interface ShippingInfoPanelProps {
   invoiceCode: string
   fullName: string
+  phone: string
   carrier: string
   address: string
-  canShip: boolean
+  status: string
+  isProcessingShipping: boolean
+  shipCode?: string
+  hasShipCode?: boolean
   orders: string[]
   onPrintLabel: () => void
+  onProcessShipping: () => void
 }
 
 export default function ShippingInfoPanel({
   invoiceCode,
   fullName,
+  phone,
   carrier,
   address,
-  canShip,
+  status,
+  isProcessingShipping,
+  shipCode,
+  hasShipCode,
   orders,
-  onPrintLabel
+  onPrintLabel,
+  onProcessShipping
 }: ShippingInfoPanelProps) {
   return (
     <div className="bg-white rounded-lg shadow-sm border border-neutral-100 p-6 sticky top-6">
@@ -31,13 +42,25 @@ export default function ShippingInfoPanel({
         <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Invoice ID</p>
         <p className="text-base font-semibold text-gray-900">{invoiceCode}</p>
         <p className="text-sm text-gray-600 mt-1">Customer: {fullName}</p>
+        <p className="text-sm text-gray-600 mt-1">Phone number: {phone}</p>
       </div>
 
       {/* Carrier */}
       <div className="mb-4">
         <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Delivery Method</p>
-        <p className="text-base font-semibold text-gray-900">{carrier}</p>
-        <p className="text-xs text-gray-500 mt-1">Auto-generated</p>
+        <p className="w-full px-6 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 border-2 border-solid bg-white text-gray-600 border-gray-200">
+          {carrier}
+        </p>
+        {shipCode ? (
+          <>
+            <p className="text-xs text-gray-500 uppercase tracking-wide mb-1 mt-4">Ship Code</p>
+            <p className="w-full px-6 py-5 rounded-xl font-mono text-lg tracking-wider transition-all flex items-center justify-center gap-2 border-2 border-dashed bg-gray-50 text-gray-800 border-gray-300 hover:bg-mint-50 hover:border-mint-700 cursor-pointer ">
+              {shipCode}
+            </p>
+          </>
+        ) : (
+          <p className="text-xs text-gray-500 mt-1">Auto-generated</p>
+        )}
       </div>
 
       {/* Shipping Address */}
@@ -46,36 +69,46 @@ export default function ShippingInfoPanel({
         <p className="text-sm text-gray-700 leading-relaxed">{address}</p>
       </div>
 
-      {/* Print Label Button */}
-      <button
-        onClick={onPrintLabel}
-        disabled={!canShip}
-        className={`w-full px-6 py-3 rounded-lg font-medium transition-all shadow-lg flex items-center justify-center gap-2 border-2 ${
-          canShip
-            ? 'bg-mint-900 text-white border-mint-900 hover:bg-mint-700 hover:border-mint-700 transform hover:-translate-y-1 shadow-mint-200'
-            : 'bg-gray-200 text-gray-400 border-gray-200 cursor-not-allowed'
-        }`}
-      >
-        <IoPrintOutline size={20} />
-        Print Shipping Label
-      </button>
+      {/* Action Buttons */}
+      <div className="space-y-3 mb-6">
+        <button
+          onClick={onProcessShipping}
+          disabled={status !== 'COMPLETED' || isProcessingShipping || hasShipCode}
+          className={`w-full px-6 py-3 rounded-lg transition-all shadow-sm flex items-center justify-center gap-2 ${
+            status === 'COMPLETED' && !isProcessingShipping && !hasShipCode
+              ? 'bg-mint-600 text-white hover:bg-mint-700 transform hover:-translate-y-1 font-medium'
+              : hasShipCode || status === 'READY_TO_SHIP'
+                ? 'bg-mint-100 text-mint-700 cursor-not-allowed border border-mint-200 font-bold uppercase tracking-wider text-sm'
+                : 'bg-gray-100 text-gray-500 cursor-not-allowed border border-gray-200 font-bold uppercase tracking-wider text-sm'
+          }`}
+        >
+          {isProcessingShipping
+            ? 'Processing...'
+            : (status === 'COMPLETED' && !hasShipCode)
+              ? 'Process Shipping'
+              : status.replace(/_/g, ' ')}
+        </button>
+
+        <button
+          onClick={onPrintLabel}
+          disabled={status !== 'READY_TO_SHIP'}
+          className={`w-full px-6 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 border-2 ${
+            status === 'READY_TO_SHIP'
+              ? 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+              : 'bg-gray-50 text-gray-400 border-transparent cursor-not-allowed'
+          }`}
+        >
+          <IoPrintOutline size={20} />
+          Print Shipping Label
+        </button>
+      </div>
 
       {/* Order Summary */}
       <div className="mt-6 pt-6 border-t border-gray-200">
         <p className="text-xs text-gray-500 uppercase tracking-wide mb-3">Order Summary</p>
         <div className="space-y-2">
           {orders.map((orderId) => (
-            <div
-              key={orderId}
-              className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-            >
-              <span className="text-sm font-medium text-gray-900 font-mono">
-                {orderId.slice(-8).toUpperCase()}
-              </span>
-              <span className="text-xs px-2 py-1 rounded-full bg-mint-100 text-mint-700">
-                COMPLETED
-              </span>
-            </div>
+            <OrderSummaryOnlyCode key={orderId} orderId={orderId} />
           ))}
         </div>
       </div>

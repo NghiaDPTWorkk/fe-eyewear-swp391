@@ -278,14 +278,24 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
       // Đơn mua mỗi tròng á -> hiển thị LensNormalOrder
       renderedLensComponent = (
         <div className="space-y-8">
-          <LensNormalOrder data={mappedOptions} imageSrc={variantImg} quantity={totalQty} />
+          <LensNormalOrder
+            data={mappedOptions}
+            imageSrc={variantImg}
+            quantity={totalQty}
+            sku={orderProductItems[0].product.sku}
+          />
         </div>
       )
     } else {
       // 'frame' | 'sunglass' | other → hiển thị FrameSpecifications
       renderedFrameComponent = (
         <div className="space-y-8">
-          <FrameSpecifications data={mappedOptions} imageSrc={variantImg} quantity={totalQty} />
+          <FrameSpecifications
+            data={mappedOptions}
+            imageSrc={variantImg}
+            quantity={totalQty}
+            sku={orderProductItems[0].product.sku}
+          />
         </div>
       )
     }
@@ -321,9 +331,21 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
     }
 
     renderedLensComponent = <LensSpecifications {...lensComponentProps} />
+  } else if (orderTypeFromApi === 'MANUFACTURING' && orderProductItems[0]?.lens) {
+    // Normal case for lens in MANUFACTURING if already assigned
+    // Actually the logic above handles it via manufacturingOrderLensParams
   }
 
-  // MANUFACTURING Order - Frame (options/ảnh lấy từ variantDetail của API /products/:id/variants/:sku)
+  // Adding the missing SKU for LensNormalOrder if needed in other contexts? 
+  // No, the user specifically asked for LensNormalOrder and FrameSpecifications.
+
+  // Update LensSpecifications to also show SKU if it's there? 
+  // The user only mentioned LensNormalOrder and FrameSpecifications.
+  // Wait, looking at the code, LensSpecifications is used for MANUFACTURING.
+  // The user said: "ở trang @[frontend/src/pages/operations/OperationOrderDetailPage.tsx] component @[frontend/src/components/layout/staff/staff-core/technicaldetail/FrameSpecifications.tsx], và @[frontend/src/components/layout/staff/staff-core/technicaldetail/LensNormalOrder.tsx]"
+  // So I'll stick to those two for now.
+
+  // Update MANUFACTURING Frame component
   if (orderTypeFromApi === 'MANUFACTURING' && manufacturingOrderFrameItem) {
     const frameOptionsFromVariantDetail =
       productVariantApiResponse?.data?.variantDetail?.options || []
@@ -334,7 +356,8 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
           key: attr.attributeName,
           value: attr.label
         })) || [],
-      imageSrc: frameImgFromVariantDetail
+      imageSrc: frameImgFromVariantDetail,
+      sku: manufacturingOrderFrameItem.sku
     }
 
     renderedFrameComponent = <FrameSpecifications {...frameComponentProps} />

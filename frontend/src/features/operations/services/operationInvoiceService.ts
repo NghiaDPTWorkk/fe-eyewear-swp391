@@ -12,5 +12,10 @@ export const operationInvoiceService = {
   },
   updateInvoiceToReadyToShip(id: string) {
     return httpClient.patch(ENDPOINTS.ADMIN.INVOICES_READY_TO_SHIP(id), {})
+  },
+  getShipCode(invoiceId: string) {
+    return httpClient.get<{ data: { shipCode: string } }>(
+      ENDPOINTS.ADMIN.INVOICES_SHIP_CODE(invoiceId)
+    )
   }
 }

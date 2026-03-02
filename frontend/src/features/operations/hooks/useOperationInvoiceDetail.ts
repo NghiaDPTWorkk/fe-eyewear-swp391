@@ -28,3 +28,20 @@ export function useUpdateInvoiceReadyToShip() {
     }
   })
 }
+
+export function useOperationShipCode(invoiceId: string) {
+  return useQuery({
+    queryKey: ['operation-shipcode', invoiceId],
+    queryFn: async () => {
+      try {
+        const response = await operationInvoiceService.getShipCode(invoiceId)
+        return response.data?.shipCode || null
+      } catch (error) {
+        return null // If API fails (e.g., 404 ship not found), return null
+      }
+    },
+    enabled: Boolean(invoiceId),
+    staleTime: 30_000,
+    retry: false
+  })
+}

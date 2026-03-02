@@ -10,6 +10,7 @@ interface ShippingInfoPanelProps {
   status: string
   isProcessingShipping: boolean
   shipCode?: string
+  hasShipCode?: boolean
   orders: string[]
   onPrintLabel: () => void
   onProcessShipping: () => void
@@ -24,6 +25,7 @@ export default function ShippingInfoPanel({
   status,
   isProcessingShipping,
   shipCode,
+  hasShipCode,
   orders,
   onPrintLabel,
   onProcessShipping
@@ -71,18 +73,18 @@ export default function ShippingInfoPanel({
       <div className="space-y-3 mb-6">
         <button
           onClick={onProcessShipping}
-          disabled={status !== 'COMPLETED' || isProcessingShipping}
+          disabled={status !== 'COMPLETED' || isProcessingShipping || hasShipCode}
           className={`w-full px-6 py-3 rounded-lg transition-all shadow-sm flex items-center justify-center gap-2 ${
-            status === 'COMPLETED' && !isProcessingShipping
+            status === 'COMPLETED' && !isProcessingShipping && !hasShipCode
               ? 'bg-mint-600 text-white hover:bg-mint-700 transform hover:-translate-y-1 font-medium'
-              : status === 'READY_TO_SHIP'
+              : hasShipCode || status === 'READY_TO_SHIP'
                 ? 'bg-mint-100 text-mint-700 cursor-not-allowed border border-mint-200 font-bold uppercase tracking-wider text-sm'
                 : 'bg-gray-100 text-gray-500 cursor-not-allowed border border-gray-200 font-bold uppercase tracking-wider text-sm'
           }`}
         >
           {isProcessingShipping
             ? 'Processing...'
-            : status === 'COMPLETED'
+            : (status === 'COMPLETED' && !hasShipCode)
               ? 'Process Shipping'
               : status.replace(/_/g, ' ')}
         </button>

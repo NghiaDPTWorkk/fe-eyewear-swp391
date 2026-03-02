@@ -12,7 +12,8 @@ import {
 } from '@/components/layout/staff/operationstaff/checkorderlistfrominvoice'
 import {
   useOperationInvoiceDetail,
-  useUpdateInvoiceReadyToShip
+  useUpdateInvoiceReadyToShip,
+  useOperationShipCode
 } from '@/features/operations/hooks/useOperationInvoiceDetail'
 import ConfirmationModal from '@/shared/components/ui/ConfirmationModal'
 import toast from 'react-hot-toast'
@@ -22,10 +23,14 @@ export default function OperationShippingHandoverPage() {
   const { data, isLoading, isError } = useOperationInvoiceDetail(invoiceId ?? '')
   const updateInvoiceStatus = useUpdateInvoiceReadyToShip()
 
+  const { data: fetchedShipCode } = useOperationShipCode(invoiceId ?? '')
+
   const invoice = data
 
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [shipCode, setShipCode] = useState<string | undefined>(undefined)
+  const [internalShipCode, setInternalShipCode] = useState<string | undefined>(undefined)
+
+  const activeShipCode = internalShipCode || fetchedShipCode || undefined
 
   const orders = invoice?.orders ?? []
   const allOrdersCompleted = orders.length > 0
@@ -46,7 +51,7 @@ export default function OperationShippingHandoverPage() {
         const newShipCode =
           data?.data?.data?.shipmentInfo?.shipCode || data?.data?.shipmentInfo?.shipCode
         if (newShipCode) {
-          setShipCode(newShipCode)
+          setInternalShipCode(newShipCode)
         }
       },
       onError: (error: any) => {
@@ -176,7 +181,8 @@ export default function OperationShippingHandoverPage() {
             address={getAddressString()}
             status={invoice?.status || 'UNKNOWN'}
             isProcessingShipping={updateInvoiceStatus.isPending}
-            shipCode={shipCode || (isReadyToShip ? 'Auto Generated' : undefined)}
+            shipCode={activeShipCode || (isReadyToShip ? 'Auto Generated' : undefined)}
+            hasShipCode={!!activeShipCode}
             orders={orders}
             onPrintLabel={handlePrintLabel}
             onProcessShipping={handleProcessShipping}

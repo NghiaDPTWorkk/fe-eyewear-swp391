@@ -137,6 +137,7 @@ export const ENDPOINTS = {
       return `/admin/orders/total?${params.toString()}`
     },
     ORDER_APPROVE: (id: string) => `/admin/orders/${id}/status/approve`,
+    INVOICES_SHIP_CODE: (invoiceId: string) => `/ships/invoice/${invoiceId}/ship-code`,
     PROFILE_REQUESTS: '/admin/profile-requests',
     PRODUCTS_LIST: (
       page?: number,

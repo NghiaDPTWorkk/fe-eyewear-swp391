@@ -55,7 +55,7 @@ export function ExpediteRequestModal({ isOpen, onClose, order }: ExpediteRequest
               <IoFlashOutline size={24} />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-slate-900 tracking-tight uppercase leading-none">
+              <h3 className="text-xl font-bold text-slate-900 tracking-tight leading-none">
                 Expedite Progress
               </h3>
               <p className="text-[10px] text-amber-600 font-bold uppercase tracking-[0.2em] mt-2">
@@ -85,7 +85,7 @@ export function ExpediteRequestModal({ isOpen, onClose, order }: ExpediteRequest
                 Current Station
               </p>
               <span
-                className={`px-3 py-1 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white border shadow-sm ${order.stationColor}`}
+                className={`px-3 py-1 rounded-xl text-[10px] font-bold tracking-widest bg-white border shadow-sm ${order.stationColor}`}
               >
                 {order.station}
               </span>
@@ -108,7 +108,7 @@ export function ExpediteRequestModal({ isOpen, onClose, order }: ExpediteRequest
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="Ex: Customer needs for upcoming flight on Monday..."
-                className="w-full min-h-[140px] p-6 bg-neutral-50 border border-neutral-100 rounded-[2rem] text-sm font-semibold text-slate-700 focus:outline-none focus:ring-8 focus:ring-amber-500/10 focus:border-amber-400 transition-all resize-none placeholder:text-slate-300 shadow-inner"
+                className="w-full min-h-[140px] p-6 bg-neutral-50 border border-neutral-100 rounded-[2rem] text-sm font-medium text-slate-700 focus:outline-none focus:ring-8 focus:ring-amber-500/10 focus:border-amber-400 transition-all resize-none placeholder:text-slate-300 shadow-inner"
                 required
               />
             </div>

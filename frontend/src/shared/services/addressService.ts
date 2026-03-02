@@ -28,7 +28,7 @@ export interface Ward {
 
 export const addressService = {
   getProvinces: async (): Promise<Province[]> => {
-    const response = await axios.get(`${API_BASE_URL}/provinces`)
+    const response = await axios.get(`${import.meta.env.VITE_ADDRESS_API_URL}/provinces`)
     return response.data.data.provinceList
   },
 

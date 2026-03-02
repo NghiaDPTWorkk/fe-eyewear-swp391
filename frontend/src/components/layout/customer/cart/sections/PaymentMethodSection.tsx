@@ -28,19 +28,19 @@ export const PaymentMethodSection = ({
           COD
         </button>
         <button
-          onClick={() => onPaymentMethodChange(PaymentMethodType.ZALAPAY)}
+          onClick={() => onPaymentMethodChange(PaymentMethodType.VNPAY)}
           className={`py-3 px-4 rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${
-            paymentMethod === PaymentMethodType.ZALAPAY
-              ? 'border-[#0068FF] bg-[#0068FF]/5 text-[#0068FF]'
+            paymentMethod === PaymentMethodType.VNPAY
+              ? 'border-[#0056A2] bg-[#0056A2]/5 text-[#0056A2]'
               : 'border-mint-200 text-gray-eyewear hover:border-mint-300'
           }`}
         >
           <img
-            src="https://cdn.brandfetch.io/id_T-oXJkN/w/1624/h/1624/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1767789070990"
-            alt="ZaloPay"
+            src="https://vnpay.vn/wp-content/uploads/2020/07/vnpay-logo.png"
+            alt="VNPay"
             className="h-6"
           />
-          <span className="font-bold text-sm">ZaloPay</span>
+          <span className="font-bold text-sm">VNPay</span>
         </button>
       </div>
     </div>

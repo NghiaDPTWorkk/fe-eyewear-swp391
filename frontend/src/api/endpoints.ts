@@ -86,6 +86,8 @@ export const ENDPOINTS = {
   PAYMENT: {
     MOMO: '/payment/momo',
     VNPAY: '/payment/vnpay',
+    VNPAY_URL: (invoiceId: string, paymentId: string) =>
+      `/payments/vnpay/url/${invoiceId}/${paymentId}`,
     STATUS: (transactionId: string) => `/payment/status/${transactionId}`
   },
 

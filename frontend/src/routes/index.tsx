@@ -187,6 +187,11 @@ const CustomerOrderDetailPage = lazy(() =>
     default: m.CustomerOrderDetailPage
   }))
 )
+const PaymentResultPage = lazy(() =>
+  import('@/pages/customer/PaymentResultPage').then((m) => ({
+    default: m.PaymentResultPage
+  }))
+)
 
 // Main Layout Wrapper
 const CustomerLayout = lazy(() => import('@/components/layout/customer/CustomerLayout'))
@@ -220,6 +225,14 @@ export const router = createBrowserRouter([
         element: (
           <LazyPage>
             <ProductDetailPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: '/payment-result',
+        element: (
+          <LazyPage>
+            <PaymentResultPage />
           </LazyPage>
         )
       },

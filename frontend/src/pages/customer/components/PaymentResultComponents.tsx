@@ -172,7 +172,7 @@ export const PaymentResultActions = ({
   onNavigateHome,
   onViewOrder
 }: PaymentResultActionsProps) => (
-  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
+  <div className="grid grid-cols-1 sm:gri`d-cols-3 gap-4 pt-4">
     <Button className="h-14 rounded-2xl bg-success-600 hover:bg-success-700 text-white font-bold text-lg shadow-lg shadow-success-100 flex items-center justify-center gap-2 group">
       <Download className="w-5 h-5 group-hover:-translate-y-1 transition-transform" /> Tải hóa đơn
     </Button>

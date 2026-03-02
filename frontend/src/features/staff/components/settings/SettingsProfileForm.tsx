@@ -42,6 +42,24 @@ export default function ProfileForm() {
     e.preventDefault()
     if (!isSaleStaff) return
 
+    // Validation
+    if (!formData.name.trim()) {
+      toast.error('Name cannot be empty')
+      return
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(formData.email)) {
+      toast.error('Invalid email format')
+      return
+    }
+
+    const phoneRegex = /^(0|84)\d{9,10}$/
+    if (formData.phone && !phoneRegex.test(formData.phone)) {
+      toast.error('Invalid phone number (should be 10-11 digits)')
+      return
+    }
+
     setIsSubmitting(true)
     try {
       const response = await profileService.requestProfileUpdate(formData)

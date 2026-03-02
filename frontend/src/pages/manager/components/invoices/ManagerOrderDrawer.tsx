@@ -12,7 +12,7 @@ interface ManagerOrderDrawerProps {
   isOnboarding: boolean
   onOnboard: (id: string) => Promise<unknown>
   onComplete: (id: string) => Promise<unknown>
-  onDelivering: (id: string) => Promise<unknown>
+  onRefetch?: () => void
 }
 
 export const ManagerOrderDrawer: React.FC<ManagerOrderDrawerProps> = ({
@@ -22,7 +22,7 @@ export const ManagerOrderDrawer: React.FC<ManagerOrderDrawerProps> = ({
   isOnboarding,
   onOnboard,
   onComplete,
-  onDelivering
+  onRefetch
 }) => {
   useEffect(() => {
     if (isOpen) {
@@ -77,12 +77,12 @@ export const ManagerOrderDrawer: React.FC<ManagerOrderDrawerProps> = ({
             onToggleExpanded={() => {}} // No-op since we're always expanded in drawer
             onOnboard={onOnboard}
             onComplete={onComplete}
-            onDelivering={onDelivering}
             showOnboardButton={
               invoice.status === InvoiceStatus.APPROVED ||
               invoice.status === InvoiceStatus.DEPOSITED
             }
             hideActions={false}
+            onRefetch={onRefetch}
           />
         </div>
 

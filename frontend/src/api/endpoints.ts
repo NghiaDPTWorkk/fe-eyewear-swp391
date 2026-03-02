@@ -117,6 +117,8 @@ export const ENDPOINTS = {
     },
     INVOICES_ONBOARD: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/onboard`,
     INVOICES_COMPLETE: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/complete`,
+    INVOICES_READY_TO_SHIP: (invoiceId: string) =>
+      `/admin/invoices/${invoiceId}/assign/handle-delivery`,
     INVOICES_DELIVERING: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/delivering`,
     ORDER_DETAIL: (orderId: string) => `/admin/orders/${orderId}`,
     ORDER_ASSIGN: (orderId: string) => `/admin/orders/${orderId}/status/assign`,
@@ -139,6 +141,15 @@ export const ENDPOINTS = {
     ORDER_APPROVE: (id: string) => `/admin/orders/${id}/status/approve`,
     INVOICES_SHIP_CODE: (invoiceId: string) => `/ships/invoice/${invoiceId}/ship-code`,
     PROFILE_REQUESTS: '/admin/profile-requests',
+    CUSTOMERS_LIST: (page?: number, limit?: number, search?: string, status?: string) => {
+      const params = new URLSearchParams()
+      if (page) params.append('page', String(page))
+      if (limit) params.append('limit', String(limit))
+      if (search) params.append('search', search)
+      if (status && status !== 'All') params.append('status', status)
+      const qs = params.toString()
+      return qs ? `/admin/customers?${qs}` : '/admin/customers'
+    },
     PRODUCTS_LIST: (
       page?: number,
       limit?: number,

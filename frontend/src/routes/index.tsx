@@ -226,9 +226,11 @@ export const router = createBrowserRouter([
       {
         path: '/cart',
         element: (
-          <LazyPage>
-            <CartPage />
-          </LazyPage>
+          <AuthGuard>
+            <LazyPage>
+              <CartPage />
+            </LazyPage>
+          </AuthGuard>
         )
       },
       {

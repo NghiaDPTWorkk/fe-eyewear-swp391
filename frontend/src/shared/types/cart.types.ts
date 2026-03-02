@@ -14,9 +14,19 @@ export interface CartItem {
     sku?: string // Lens SKU for API
     visionNeed: string
     prescription: PrescriptionData | null
+    name?: string
+    price?: number
+    image?: string
+    nameVariant?: string
   }
   selectedOptions?: Record<string, string> // For display purposes
   productType?: string
+  originalPrice?: number
+  discount?: {
+    type: 'percentage' | 'fixed'
+    value: number
+    label?: string
+  }
 }
 
 export interface Cart {

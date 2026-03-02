@@ -1,4 +1,3 @@
-import React from 'react'
 
 interface ShippingInfoSealProps {
   invoiceCode: string
@@ -6,6 +5,7 @@ interface ShippingInfoSealProps {
   phone: string
   address: string
   shipCode?: string
+  totalAmount: number
 }
 
 export default function ShippingInfoSeal({
@@ -13,7 +13,8 @@ export default function ShippingInfoSeal({
   fullName,
   phone,
   address,
-  shipCode
+  shipCode,
+  totalAmount
 }: ShippingInfoSealProps) {
   return (
     <div className="bg-white p-8 font-sans max-w-2xl mx-auto w-[600px] border border-gray-300">
@@ -24,20 +25,26 @@ export default function ShippingInfoSeal({
             <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-xl leading-none">O</span>
             </div>
-            <div className="text-xl font-black tracking-tight text-gray-900 uppercase">OpticView</div>
+            <div className="text-xl font-black tracking-tight text-gray-900 uppercase">
+              OpticView
+            </div>
           </div>
 
           <div className="text-sm text-gray-800 space-y-1.5 leading-relaxed">
-            <p>FB: <strong>OpticView Eyewear</strong></p>
-            <p>Hotline: <strong>0868 56 54 58</strong></p>
-            <p>Address: 01/73/703 Tran Hung Dao St, W. 9,</p>
-            <p>Thu Duc Dist, Ho Chi Minh City</p>
+            <p>
+              FB: <strong>OpticView Eyewear</strong>
+            </p>
+            <p>
+              Hotline: <strong>0868 56 54 58</strong>
+            </p>
+            <p>Address: Lot E2a-7, D1 Street, Saigon Hi-Tech Park,</p>
+            <p>Long Thanh My Ward, Thu Duc City, HCMC</p>
           </div>
 
           <div className="mt-8 pt-6 border-t border-gray-200">
             <p className="text-xs italic text-gray-500 leading-relaxed text-center">
-              Please contact the shop if the first delivery attempt is unsuccessful
-              or when returning. <br />
+              Please contact the shop if the first delivery attempt is unsuccessful or when
+              returning. <br />
               Thank you!
             </p>
           </div>
@@ -47,35 +54,45 @@ export default function ShippingInfoSeal({
         <div className="w-[55%] flex flex-col justify-between pl-2">
           <div className="space-y-4">
             <div className="flex flex-col gap-1">
-              <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Order ID:</span>
+              <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                Order ID:
+              </span>
               <div className="text-lg font-bold text-gray-900 border-b-2 border-dotted border-gray-300 pb-1">
                 {invoiceCode}
               </div>
             </div>
 
             <div className="flex flex-col gap-1">
-              <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Recipient:</span>
+              <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                Recipient:
+              </span>
               <div className="text-base font-bold text-gray-900 border-b-2 border-dotted border-gray-300 pb-1">
                 {fullName}
               </div>
             </div>
 
             <div className="flex flex-col gap-1">
-              <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Phone:</span>
+              <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                Phone:
+              </span>
               <div className="text-base font-bold border-b-2 border-dotted border-gray-300 pb-1">
                 {phone}
               </div>
             </div>
 
             <div className="flex flex-col gap-1">
-              <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Address:</span>
-              <div className="text-sm leading-tight border-b-2 border-dotted border-gray-300 pb-1 min-h-[40px]">
+              <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                Address:
+              </span>
+              <div className="text-sm leading-tight border-b-2 border-dotted border-gray-300 pb-1 min-h-[30px]">
                 {address}
               </div>
             </div>
-            
-             <div className="flex flex-col gap-1">
-              <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Ship Code:</span>
+
+            <div className="flex flex-col gap-1">
+              <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                Ship Code:
+              </span>
               <div className="text-sm font-mono border-b-2 border-dotted border-gray-300 pb-1">
                 {shipCode || 'N/A'}
               </div>
@@ -83,9 +100,11 @@ export default function ShippingInfoSeal({
           </div>
 
           <div className="mt-6 pt-4 border-t-2 border-black">
-            <div className="flex items-end justify-between">
-               <span className="text-sm font-bold uppercase tracking-widest text-gray-700">COD Amount:</span>
-               <span className="text-2xl font-black text-gray-900">0 VND</span>
+            <span className="text-xs font-bold uppercase tracking-widest text-gray-700">
+              Total Amount:
+            </span>
+            <div className="text-xl ps-4 font-black text-gray-900 text-right">
+              {totalAmount.toLocaleString('vi-VN')} VND
             </div>
           </div>
         </div>

@@ -260,6 +260,7 @@ export default function OperationShippingHandoverPage() {
                   phone={invoice.phone}
                   address={getAddressString()}
                   shipCode={activeShipCode}
+                  totalAmount={totalAmount}
                 />
               </div>
 

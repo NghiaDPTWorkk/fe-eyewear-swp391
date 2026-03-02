@@ -43,7 +43,7 @@ export default function OperationShippingHandoverPage() {
 
   // Fetch details for all orders to calculate total amount
   const orderDetailQueries = useOrdersDetails(orders)
-  
+
   const totalAmount = orderDetailQueries.reduce((sum: number, query: any) => {
     const orderData = (query.data as any)?.data?.order
     return sum + (orderData?.price || 0)
@@ -158,14 +158,19 @@ export default function OperationShippingHandoverPage() {
             />
 
             <div className="space-y-3">
-              {orders.map((orderId: string, index: number) => (
-                <OrderCheckItem
-                  key={orderId}
-                  orderCode={`#ORDER-${String(index + 1).padStart(3, '0')}`}
-                  orderId={orderId}
-                  status="COMPLETED"
-                />
-              ))}
+              {orders.map((orderId: string) => {
+                const orderData = (
+                  orderDetailQueries.find((q: any) => q.data?.data?.order?._id === orderId)?.data as any
+                )?.data?.order
+                return (
+                  <OrderCheckItem
+                    key={orderId}
+                    orderCode={orderData?.orderCode || orderId.slice(-8).toUpperCase()}
+                    orderId={orderId}
+                    status={orderData?.status || 'COMPLETED'}
+                  />
+                )
+              })}
             </div>
 
             {!allOrdersCompleted && (
@@ -211,7 +216,13 @@ export default function OperationShippingHandoverPage() {
             isProcessingShipping={updateInvoiceStatus.isPending}
             shipCode={activeShipCode || (isReadyToShip ? 'Auto Generated' : undefined)}
             hasShipCode={!!activeShipCode}
-            orders={orders}
+            orders={orders.map((id) => {
+              const query = orderDetailQueries.find((q: any) => q.data?.data?.order?._id === id)
+              return {
+                id,
+                price: (query?.data as any)?.data?.order?.price
+              }
+            })}
             onPrintLabel={handlePrintLabel}
             onProcessShipping={handleProcessShipping}
           />

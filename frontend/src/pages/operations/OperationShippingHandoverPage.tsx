@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Container } from '@/components'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
+import { useOrdersDetails } from '@/features/staff/hooks/orders/useOrders'
 import { ProcessTracker } from '@/components/layout/staff/staff-core/processtracker'
 import { IoAirplaneOutline, IoClose, IoPrintOutline } from 'react-icons/io5'
 import ScanInvoiceCode from '@/components/layout/staff/operationstaff/scaninvoicecode/ScanInvoiceCode'
@@ -40,6 +41,15 @@ export default function OperationShippingHandoverPage() {
 
   const isReadyToShip = invoice?.status === 'READY_TO_SHIP'
 
+  // Fetch details for all orders to calculate total amount
+  const orderDetailQueries = useOrdersDetails(orders)
+  
+  const totalAmount = orderDetailQueries.reduce((sum: number, query: any) => {
+    const orderData = (query.data as any)?.data?.order
+    return sum + (orderData?.price || 0)
+  }, 0)
+
+  const isDetailsLoading = orderDetailQueries.some((q: any) => q.isLoading)
 
   const handleProcessShipping = () => {
     setIsModalOpen(true)
@@ -165,6 +175,21 @@ export default function OperationShippingHandoverPage() {
                 </p>
               </div>
             )}
+            {/* Total Amount */}
+            <div className="mt-6 pt-6 border-t border-gray-100 flex justify-between items-center">
+              <span className="text-sm font-semibold text-neutral-500 uppercase tracking-wider">
+                Invoice Total Amount
+              </span>
+              <div className="text-right">
+                {isDetailsLoading ? (
+                  <div className="h-6 w-24 bg-neutral-100 animate-pulse rounded" />
+                ) : (
+                  <span className="text-xl font-bold font-mono text-neutral-900 border-b-2 border-mint-500 pb-0.5">
+                    {totalAmount.toLocaleString('vi-VN')} <span className="text-sm font-normal text-neutral-400">₫</span>
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -206,58 +231,61 @@ export default function OperationShippingHandoverPage() {
       />
 
       {/* Shipping Label Print Modal */}
-      {isLabelModalOpen && invoice && createPortal(
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div
-            className="fixed inset-0 bg-neutral-900/40 backdrop-blur-[2px] transition-opacity duration-300 opacity-100"
-            onClick={() => setIsLabelModalOpen(false)}
-          />
-          <div className="relative w-auto bg-white rounded-xl shadow-2xl p-6 transition-all duration-300 transform scale-100 opacity-100 flex flex-col gap-6">
-            <div className="flex justify-between items-center px-2">
-              <h3 className="text-xl font-bold tracking-tight text-slate-800">
-                Print Shipping Label
-              </h3>
-              <button
-                onClick={() => setIsLabelModalOpen(false)}
-                className="p-2 hover:bg-neutral-100 rounded-full transition-colors text-neutral-400 hover:text-neutral-900"
-              >
-                <IoClose size={24} />
-              </button>
-            </div>
+      {isLabelModalOpen &&
+        invoice &&
+        createPortal(
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <div
+              className="fixed inset-0 bg-neutral-900/40 backdrop-blur-[2px] transition-opacity duration-300 opacity-100"
+              onClick={() => setIsLabelModalOpen(false)}
+            />
+            <div className="relative w-auto bg-white rounded-xl shadow-2xl p-6 transition-all duration-300 transform scale-100 opacity-100 flex flex-col gap-6">
+              <div className="flex justify-between items-center px-2">
+                <h3 className="text-xl font-bold tracking-tight text-slate-800">
+                  Print Shipping Label
+                </h3>
+                <button
+                  onClick={() => setIsLabelModalOpen(false)}
+                  className="p-2 hover:bg-neutral-100 rounded-full transition-colors text-neutral-400 hover:text-neutral-900"
+                >
+                  <IoClose size={24} />
+                </button>
+              </div>
 
-            {/* The Seal */}
-            <div className="bg-white rounded-lg p-2 border border-neutral-200">
-               <ShippingInfoSeal
-                 invoiceCode={invoice.invoiceCode}
-                 fullName={invoice.fullName}
-                 phone={invoice.phone}
-                 address={getAddressString()}
-                 shipCode={activeShipCode}
-               />
-            </div>
+              {/* The Seal */}
+              <div className="bg-white rounded-lg p-2 border border-neutral-200">
+                <ShippingInfoSeal
+                  invoiceCode={invoice.invoiceCode}
+                  fullName={invoice.fullName}
+                  phone={invoice.phone}
+                  address={getAddressString()}
+                  shipCode={activeShipCode}
+                  totalAmount={totalAmount}
+                />
+              </div>
 
-            <div className="flex justify-end gap-3 px-2">
-               <button
-                 onClick={() => setIsLabelModalOpen(false)}
-                 className="px-6 py-2.5 rounded-lg border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 transition-colors"
-               >
-                 Cancel
-               </button>
-               <button
-                 onClick={() => {
+              <div className="flex justify-end gap-3 px-2">
+                <button
+                  onClick={() => setIsLabelModalOpen(false)}
+                  className="px-6 py-2.5 rounded-lg border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
                     toast.success('Shipping label sent to printer!')
                     setIsLabelModalOpen(false)
-                 }}
-                 className="px-8 py-2.5 rounded-lg bg-mint-600 text-white font-bold hover:bg-mint-700 shadow-md shadow-mint-200 transition-transform active:scale-95 flex items-center gap-2"
-               >
-                 <IoPrintOutline size={20} />
-                 Print Now
-               </button>
+                  }}
+                  className="px-8 py-2.5 rounded-lg bg-mint-600 text-white font-bold hover:bg-mint-700 shadow-md shadow-mint-200 transition-transform active:scale-95 flex items-center gap-2"
+                >
+                  <IoPrintOutline size={20} />
+                  Print Now
+                </button>
+              </div>
             </div>
-          </div>
-        </div>,
-        document.body
-      )}
+          </div>,
+          document.body
+        )}
     </Container>
   )
 }

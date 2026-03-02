@@ -1,4 +1,5 @@
 import { IoCloseOutline, IoChevronForward } from 'react-icons/io5'
+import { createPortal } from 'react-dom'
 import type { OperationInvoiceListItem } from '@/shared/types'
 
 interface OperationInvoicePopupProps {
@@ -27,7 +28,9 @@ export default function OperationInvoicePopup({
   onClose,
   onNext
 }: OperationInvoicePopupProps) {
-  return (
+  if (!isOpen && !selectedInvoice) return null
+
+  return createPortal(
     <>
       {/* Overlay */}
       <div
@@ -152,17 +155,6 @@ export default function OperationInvoicePopup({
                   ))}
                 </div>
               </div>
-
-              {/* Total Amount */}
-              <div className="pt-6 border-t border-neutral-200 border-dashed">
-                <div className="flex justify-between items-end">
-                  <span className="text-neutral-500 font-medium text-sm mb-1">Total Amount</span>
-                  <span className="text-3xl font-bold text-neutral-900 tracking-tight">
-                    {parseFloat(selectedInvoice.finalPrice ?? '0').toLocaleString('vi-VN')}{' '}
-                    <span className="text-lg text-neutral-400 font-normal">₫</span>
-                  </span>
-                </div>
-              </div>
             </div>
 
             {/* Footer */}
@@ -182,6 +174,7 @@ export default function OperationInvoicePopup({
           </div>
         )}
       </div>
-    </>
+    </>,
+    document.body
   )
 }

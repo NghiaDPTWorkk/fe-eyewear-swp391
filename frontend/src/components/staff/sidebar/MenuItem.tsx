@@ -56,6 +56,7 @@ export interface MenuItemProps {
   active?: boolean
   badge?: string
   badgeVariant?: 'default' | 'primary' | 'danger'
+  isLoading?: boolean // Shows spinner while loading, then number
   hasDropdown?: boolean
   defaultOpen?: boolean
   children?: ReactNode
@@ -69,6 +70,7 @@ export function MenuItem({
   active = false,
   badge,
   badgeVariant = 'default',
+  isLoading = false,
   hasDropdown = false,
   defaultOpen,
   children,
@@ -106,11 +108,18 @@ export function MenuItem({
         {!sidebarCollapsed && (
           <>
             <span className="flex-1 text-left">{label}</span>
-            {badge && (
+            {badge !== undefined && (
               <span
-                className={cn('px-2 py-0.5 text-xs rounded font-medium', badgeStyles[badgeVariant])}
+                className={cn(
+                  'px-2 py-0.5 text-xs rounded-full font-medium min-w-[24px] text-center flex items-center justify-center',
+                  badgeStyles[badgeVariant]
+                )}
               >
-                {badge}
+                {isLoading ? (
+                  <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  badge
+                )}
               </span>
             )}
             {hasDropdown &&

@@ -1,44 +1,65 @@
 import { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { STORAGE_KEYS } from '@/shared/constants/storage'
 import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layout/StaffMainLayout'
-import {
-  SidebarStaff,
-  UserWidgetWithLogout,
-  ThemeToggle,
-  NavActions,
-  NavSearch
-} from '@/components/staff'
+import { SidebarStaff, UserWidgetWithLogout, ThemeToggle, NavActions } from '@/components/staff'
+import OperationNavSearch from '@/components/layout/staff/operationstaff/OperationNavSearch'
 import {
   IoGridOutline,
   IoReceipt,
   IoCarOutline,
   IoSettingsOutline,
   IoHelpCircleOutline,
-  IoBuildOutline
+  IoBuildOutline,
+  IoAirplaneOutline
 } from 'react-icons/io5'
 import { FaBoxesPacking } from 'react-icons/fa6'
 import { useOrderCountStore } from '@/store'
 import { AiOutlineFileDone } from 'react-icons/ai'
-import { useAllOrders } from '@/features/staff/hooks/useOrders'
+import { useAllOrders, useCompletedOrders } from '@/features/staff/hooks/orders/useOrders'
 import { transformApiOrderToTableOrder } from '@/features/staff/components/OrderTable/orderTransformers'
+import { useAuthStore } from '@/store/auth.store'
+import { useProfile } from '@/features/staff/hooks/useProfile'
+import type { AdminAccount } from '@/shared/types'
 
 export default function OperationLayout() {
   const location = useLocation()
   const navigate = useNavigate()
 
-  const { counts, initializeCounts, setOrders, setLoadingState } = useOrderCountStore()
+  const {
+    counts,
+    initializeCounts,
+    setOrders,
+    setLoadingState,
+    setCount,
+    setCompletedLoadingState
+  } = useOrderCountStore()
 
-  // Gọi API để lấy số lượng đơn hàng cho từng trạng thái
-  const { data, isLoading, isError, error } = useAllOrders()
+  // Gọi API để hiển thị avt thông qua Zustand store
+  const { user, setUser } = useAuthStore()
+  const { data: profileData } = useProfile()
+  const profile = user as AdminAccount | null
+
+  useEffect(() => {
+    // Sync data from React Query to Zustand Store
+    if (profileData?.data) {
+      setUser(profileData.data)
+    }
+  }, [profileData, setUser])
+
+  // Gọi API để lấy số lượng đơn hàng để xíu lọc theo từng trạng thái
+  const { data: ordersData, isLoading, isError, error } = useAllOrders()
+
+  // Gọi API riêng để lấy số đơn hàng COMPLETED
+  const { data: completedData, isLoading: isLoadingCompleted } = useCompletedOrders()
 
   useEffect(() => {
     // Set loading và error states vào store
     setLoadingState(isLoading, isError)
 
-    if (data) {
-      console.log('Lấy thông tin từ order thành công:')
+    if (ordersData) {
       // Transform data từ API sang format UI
-      const apiOrders = data?.data?.orders?.data || []
+      const apiOrders = ordersData?.data?.orders?.data || []
 
       // Transform order để nhét vô OrderTable á
       const transformedOrders = apiOrders.map(transformApiOrderToTableOrder)
@@ -50,9 +71,41 @@ export default function OperationLayout() {
       initializeCounts(transformedOrders)
     }
     if (isError) {
-      console.error('Lỗi API:', error)
+      console.error('Error when calling API:', error)
     }
-  }, [data, isLoading, isError, error, initializeCounts, setOrders, setLoadingState])
+  }, [ordersData, isLoading, isError, error, initializeCounts, setOrders, setLoadingState])
+
+  useEffect(() => {
+    // Set loading state cho completed
+    setCompletedLoadingState(isLoadingCompleted)
+
+    if (completedData) {
+      const completedOrders = completedData?.data?.orders?.data || []
+      // Set count cho completed orders
+      setCount('completed', completedOrders.length)
+    }
+  }, [completedData, isLoadingCompleted, setCount, setCompletedLoadingState])
+
+  const handleLogout = () => {
+    navigate('/admin/login')
+    const { logout } = useAuthStore.getState()
+    logout()
+    localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN)
+    localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN)
+    localStorage.removeItem(STORAGE_KEYS.USER_INFO)
+  }
+
+  // Lấy thông tin profile từ store
+  const userInitials = profile?.name
+    ? profile.name
+        .split(' ')
+        .map((word) => word[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2)
+    : 'OP'
+  const userName = profile?.name || 'Loading...'
+  const userRole = profile?.role || 'Staff'
 
   const sidebar = (
     <SidebarStaff
@@ -66,9 +119,10 @@ export default function OperationLayout() {
       }
       userWidget={
         <UserWidgetWithLogout
-          userInitials="SL"
-          userName="Dr. Sarah L."
-          userRole="Head Optometrist"
+          userInitials={userInitials}
+          userName={userName}
+          userRole={userRole}
+          onLogout={handleLogout}
         />
       }
     >
@@ -84,35 +138,46 @@ export default function OperationLayout() {
           label="All Orders"
           active={location.pathname === '/operationstaff/all'}
           onClick={() => navigate('/operationstaff/all')}
-          badge={counts.all > 0 ? counts.all.toString() : undefined}
+          badge={counts.all.toString()}
+          isLoading={isLoading}
         />
         <SidebarStaff.MenuItem
           icon={<IoBuildOutline />}
           label="Technical Stations"
           active={location.pathname === '/operationstaff/prescription-orders'}
           onClick={() => navigate('/operationstaff/prescription-orders')}
-          badge={counts.technical > 0 ? counts.technical.toString() : undefined}
+          badge={counts.technical.toString()}
+          isLoading={isLoading}
         />
         <SidebarStaff.MenuItem
           icon={<IoCarOutline />}
           label="Logistics Waiting Station"
           active={location.pathname === '/operationstaff/pre-orders'}
           onClick={() => navigate('/operationstaff/pre-orders')}
-          badge={counts.logistics > 0 ? counts.logistics.toString() : undefined}
+          badge={counts.logistics.toString()}
+          isLoading={isLoading}
         />
         <SidebarStaff.MenuItem
           icon={<FaBoxesPacking />}
           label="Packing Station"
           active={location.pathname === '/operationstaff/packing'}
           onClick={() => navigate('/operationstaff/packing')}
-          badge={counts.packing > 0 ? counts.packing.toString() : undefined}
+          badge={counts.packing.toString()}
+          isLoading={isLoading}
         />
         <SidebarStaff.MenuItem
           icon={<AiOutlineFileDone />}
           label="Complete Orders"
           active={location.pathname === '/operationstaff/packed-success'}
           onClick={() => navigate('/operationstaff/packed-success')}
-          badge={counts.all > 0 ? counts.all.toString() : undefined}
+          badge={counts.completed.toString()}
+          isLoading={isLoadingCompleted}
+        />
+        <SidebarStaff.MenuItem
+          icon={<IoAirplaneOutline />}
+          label="Shipping Handover"
+          active={location.pathname === '/operationstaff/shipping-handover'}
+          onClick={() => navigate('/operationstaff/shipping-handover')}
         />
       </SidebarStaff.MenuSection>
 
@@ -137,9 +202,16 @@ export default function OperationLayout() {
   return (
     <StaffMainLayout
       sidebar={sidebar}
-      headerLeft={<NavSearch placeholder="Search orders..." styleVariant="operation" />}
-      headerRight={<NavActions />}
-      mainClassName="p-4 md:p-8 bg-mint-200"
+      headerLeft={<OperationNavSearch />}
+      headerRight={
+        <NavActions
+          userName={userName}
+          userRole={userRole}
+          userInitials={userInitials}
+          userEmail={profile?.email || 'loading@example.com'}
+        />
+      }
+      mainClassName="p-4 md:p-8 bg-mint-200 relative overflow-x-hidden"
     />
   )
 }

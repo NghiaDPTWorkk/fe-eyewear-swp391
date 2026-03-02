@@ -5,16 +5,9 @@ import type { ProductType, Gender } from './enums'
  * Product spec types matching backend structure
  */
 export interface FrameSpec {
-  material: string[]
+  material: string
   shape: string
-  style: string | null
   gender: Gender
-  weight: number | null
-  dimensions: {
-    width: number
-    height: number
-    depth: number
-  } | null
 }
 
 export interface LenSpec {
@@ -26,7 +19,7 @@ export interface LenSpec {
  * Standard product interface - used for both list and detail views
  */
 export interface StandardProduct {
-  id?: string
+  id: string
   _id?: string
   nameBase: string
   slugBase: string

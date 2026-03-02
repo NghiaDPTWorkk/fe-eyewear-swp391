@@ -1,5 +1,7 @@
-import { Container } from '@/components'
 import type { ReactNode } from 'react'
+
+import { Container } from '@/shared/components/ui-core'
+import { cn } from '@/lib/utils'
 
 interface StaffHeaderProps {
   containerWidth?: string
@@ -8,6 +10,7 @@ interface StaffHeaderProps {
   center?: ReactNode
   right: ReactNode
   className?: string
+  containerClassName?: string
 }
 
 export function StaffHeader({
@@ -16,17 +19,27 @@ export function StaffHeader({
   left,
   center,
   right,
-  className
+  className,
+  containerClassName
 }: StaffHeaderProps) {
   return (
-    <header className="w-full bg-white border-b border-neutral-200">
-      <Container maxWidth={containerWidth} justify={containerJustify} className={className}>
-        <div className="flex items-center justify-between w-full h-[63.5px] gap-4 mx-auto w-full max-w-[1320px]">
+    <header
+      className={cn(
+        'w-full bg-white border-b border-neutral-200 sticky top-0 z-30 transition-all duration-300 px-3',
+        className
+      )}
+    >
+      <Container
+        maxWidth={containerWidth}
+        justify={containerJustify}
+        className={containerClassName}
+      >
+        <div className="flex items-center justify-between w-full h-[63px] gap-8">
           <div className="flex items-center flex-1 min-w-0">
-            {left && <div className="w-full">{left}</div>}
+            {left && <div className="w-full max-w-xl">{left}</div>}
           </div>
-          {center && <div className="flex justify-center flex-none px-2">{center}</div>}
-          <div className="flex items-center shrink-0">{right}</div>
+          {center && <div className="flex justify-center flex-none">{center}</div>}
+          <div className="flex items-center gap-4 flex-1 justify-end transition-all">{right}</div>
         </div>
       </Container>
     </header>

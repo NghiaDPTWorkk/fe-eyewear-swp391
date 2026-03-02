@@ -32,11 +32,11 @@ export const useGetProductWithType = (
       const apiResponse = await productService.getProductsByType(page, limit, type)
 
       if (apiResponse.success) {
-        const productData = apiResponse.data as any
+        const productData = apiResponse.data
         setProducts(productData.productList || [])
-        setTotal(productData.total || 0)
-        setTotalPages(productData.totalPages || 0)
-        setCurrentPage(productData.page || page)
+        setTotal(productData.pagination?.total || 0)
+        setTotalPages(productData.pagination?.totalPages || 0)
+        setCurrentPage(productData.pagination?.page || page)
       }
     } catch (err) {
       setError(err)

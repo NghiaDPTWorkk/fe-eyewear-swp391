@@ -48,7 +48,7 @@ interface ProductDetail {
 }
 
 interface FrameDataItem {
-  label: string
+  key: string
   value: string
 }
 
@@ -94,10 +94,11 @@ const JobTechnicalDetails = ({ lensData, frameData }: JobTechnicalDetailsProps) 
           <LensSpecifications prescription={lensData.prescription} details={lensData.additional} />
         ) : (
           <LensNormalOrder
-            productDetail={lensData.productDetail}
-            variantDetail={lensData.variantDetail}
-            quantity={lensData.quantity}
-            pricePerUnit={lensData.pricePerUnit}
+            data={lensData.variantDetail.options.map((opt) => ({
+              key: opt.attributeName,
+              value: opt.value
+            }))}
+            imageSrc={lensData.variantDetail.imgs?.[0]}
           />
         )}
       </section>

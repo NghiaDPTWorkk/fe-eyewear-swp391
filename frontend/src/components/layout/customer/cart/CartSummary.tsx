@@ -25,8 +25,8 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
   const { items } = useCartStore()
 
   const [customerInfo, setCustomerInfo] = useState({
-    fullName: user?.fullName || user?.name || '',
-    phone: user?.phone || ''
+    fullName: (user as any)?.fullName || user?.name || '',
+    phone: (user as any)?.phone || ''
   })
 
   const [address, setAddress] = useState({
@@ -51,8 +51,8 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
     if (user) {
       setCustomerInfo((prev) => ({
         ...prev,
-        fullName: prev.fullName || user.fullName || user.name || '',
-        phone: prev.phone || user.phone || ''
+        fullName: prev.fullName || (user as any).fullName || user.name || '',
+        phone: prev.phone || (user as any).phone || ''
       }))
     }
   }, [user])

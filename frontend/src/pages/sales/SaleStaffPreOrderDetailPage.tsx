@@ -1,4 +1,3 @@
-import { Container } from '@/components'
 import OrderDetail from '@/features/staff/components/OrderDetail/OrderDetail'
 import { useNavigate, useParams } from 'react-router-dom'
 import { PageHeader } from '@/features/sales/components/common'
@@ -10,7 +9,7 @@ export default function SaleStaffPreOrderDetailPage() {
   if (!orderId) return null
 
   return (
-    <Container className="pt-2 pb-8 px-2 max-w-none">
+    <div className="space-y-6">
       <PageHeader
         title="Pre-order Details"
         breadcrumbs={[
@@ -20,6 +19,6 @@ export default function SaleStaffPreOrderDetailPage() {
         ]}
       />
       <OrderDetail orderId={orderId} onBack={() => navigate(-1)} isPreOrder={true} />
-    </Container>
+    </div>
   )
 }

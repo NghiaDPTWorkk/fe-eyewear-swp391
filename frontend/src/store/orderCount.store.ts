@@ -1,14 +1,12 @@
 import { create } from 'zustand'
-// ========== START NEW CODE ==========
 import type { Order } from '@/features/staff/components/OrderTable/OrderTable'
 import { OrderType, OrderStatus } from '@/shared/utils/enums/order.enum'
-// ========== END NEW CODE ==========
 
 interface OrderCountStore {
   counts: {
     technical: number // Số đơn Manufacturing
     logistics: number // Số đơn Pre-order
-    packing: number // Số đơn có status packing
+    packing: number // Số đơn đang PACKING
     all: number
     completed: number
   }
@@ -16,7 +14,9 @@ interface OrderCountStore {
   setOrders: (orders: Order[]) => void // Action để set orders
   isLoading: boolean // Trạng thái đang fetch data
   isError: boolean // Trạng thái lỗi khi fetch
+  isLoadingCompleted: boolean // Trạng thái đang fetch completed orders
   setLoadingState: (isLoading: boolean, isError: boolean) => void // Set loading/error states
+  setCompletedLoadingState: (isLoading: boolean) => void // Set loading state cho completed
   setCount: (
     type: 'technical' | 'logistics' | 'packing' | 'all' | 'completed',
     count: number
@@ -34,13 +34,16 @@ export const useOrderCountStore = create<OrderCountStore>((set) => ({
     completed: 0
   },
 
-  orders: [], // Khởi tạo empty array
-  isLoading: false, // Mặc định không loading
-  isError: false, // Mặc định không có lỗi
+  orders: [],
+  isLoading: false,
+  isError: false,
+  isLoadingCompleted: false,
 
   setOrders: (orders) => set({ orders }), // Action để set orders
 
   setLoadingState: (isLoading, isError) => set({ isLoading, isError }),
+
+  setCompletedLoadingState: (isLoading) => set({ isLoadingCompleted: isLoading }),
 
   setCount: (type, count) =>
     set((state) => ({
@@ -50,21 +53,24 @@ export const useOrderCountStore = create<OrderCountStore>((set) => ({
       }
     })),
   initializeCounts: (orders) => {
-    const technical = orders.filter((o) => o.orderType === OrderType.MANUFACTURING).length
+    // Technical Station: chỉ đếm đơn có type = MANUFACTURING VÀ status = MAKING
+    const technical = orders.filter(
+      (o) => o.orderType === OrderType.MANUFACTURING && o.currentStatus === OrderStatus.MAKING
+    ).length
     const logistics = orders.filter((o) => o.orderType === OrderType.PRE_ORDER).length
     // const all = orders.length
     // const completed = orders.filter((o) => o.currentStatus === OrderStatus.COMPLETED).length
     const packing = orders.filter((o) => o.currentStatus === OrderStatus.PACKAGING).length
 
-    set({
+    set((state) => ({
       counts: {
         technical,
         logistics,
         packing,
         all: orders.length,
-        completed: 0
+        completed: state.counts.completed //  Giữ nguyên giá trị completed hiện tại
       }
-    })
+    }))
   },
   resetCounts: () =>
     set({

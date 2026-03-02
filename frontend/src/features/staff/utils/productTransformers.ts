@@ -3,7 +3,7 @@ import type {
   OrderLensData,
   TransformedLensData,
   TransformedFrameData
-} from '@/shared/types/product.types'
+} from '@/shared/types'
 
 /**
  * Chuyển đổi dữ liệu tròng kính (lens)  của đơn hàng

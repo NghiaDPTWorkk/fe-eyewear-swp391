@@ -1,7 +1,9 @@
-import { useState, useCallback } from 'react'
-import { httpClient } from '@/api/apiClients'
-import { toast } from 'react-hot-toast'
+import { useCallback, useState } from 'react'
+
 import { useQueryClient } from '@tanstack/react-query'
+
+import { salesService } from '../services/salesService'
+import { showError, showSuccess } from '../utils/errorHandler'
 
 export const useSalesStaffAction = () => {
   const [processing, setProcessing] = useState(false)
@@ -17,14 +19,13 @@ export const useSalesStaffAction = () => {
       setProcessing(true)
       setError(null)
       try {
-        await httpClient.patch(`/admin/invoices/${id}/status/approve`)
-        toast.success('Invoice approved successfully')
+        await salesService.approveInvoice(id)
+        showSuccess('Invoice approved successfully')
         invalidateSalesData()
         return true
-      } catch (err: any) {
-        const msg = err.response?.data?.message || err.message || 'Approval failed'
-        setError(msg)
-        toast.error(msg)
+      } catch (err: unknown) {
+        setError('Failed to approve invoice')
+        showError(err)
         return false
       } finally {
         setProcessing(false)
@@ -34,18 +35,17 @@ export const useSalesStaffAction = () => {
   )
 
   const rejectInvoice = useCallback(
-    async (id: string) => {
+    async (id: string, note?: string) => {
       setProcessing(true)
       setError(null)
       try {
-        await httpClient.patch(`/admin/invoices/${id}/status/reject`)
-        toast.success('Invoice rejected successfully')
+        await salesService.rejectInvoice(id, note)
+        showSuccess('Invoice rejected successfully')
         invalidateSalesData()
         return true
-      } catch (err: any) {
-        const msg = err.response?.data?.message || err.message || 'Rejection failed'
-        setError(msg)
-        toast.error(msg)
+      } catch (err: unknown) {
+        setError('Failed to reject invoice')
+        showError(err)
         return false
       } finally {
         setProcessing(false)
@@ -55,18 +55,30 @@ export const useSalesStaffAction = () => {
   )
 
   const approveOrder = useCallback(
-    async (id: string) => {
+    async (id: string, data?: { parameters: Record<string, any> }) => {
       setProcessing(true)
       setError(null)
       try {
-        await httpClient.patch(`/admin/orders/${id}/status/approve`)
-        toast.success('Order verified successfully')
+        let finalData = data
+
+        // Use standard default parameters for approval if none provided or parameters is null
+        if (!finalData || !finalData.parameters) {
+          finalData = {
+            parameters: {
+              left: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
+              right: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
+              PD: 64
+            }
+          }
+        }
+
+        await salesService.approveOrder(id, finalData)
+        showSuccess('Order verified successfully')
         invalidateSalesData()
         return true
-      } catch (err: any) {
-        const msg = err.response?.data?.message || err.message || 'Verification failed'
-        setError(msg)
-        toast.error(msg)
+      } catch (err: unknown) {
+        setError('Failed to verify order')
+        showError(err)
         return false
       } finally {
         setProcessing(false)
@@ -76,32 +88,21 @@ export const useSalesStaffAction = () => {
   )
 
   const rejectOrder = useCallback(
-    async (id: string, invoiceId?: string) => {
+    async (_id: string, invoiceId?: string, note?: string) => {
       setProcessing(true)
       setError(null)
       try {
-        // 1. Reject the Order
-        await httpClient.patch(`/admin/orders/${id}/status/reject`)
-
-        // 2. If Invoice ID is present, reject the Invoice as well
-        if (invoiceId) {
-          try {
-            await httpClient.patch(`/admin/invoices/${invoiceId}/status/reject`)
-          } catch (invErr) {
-            console.error('Failed to auto-reject invoice:', invErr)
-            // We don't block the flow if invoice reject fails, but we log it.
-            // Or maybe we should? User said "reject call reject invoice".
-            // Assuming soft dependency effectively.
-          }
+        if (!invoiceId) {
+          throw new Error('Associated invoice ID not found')
         }
 
-        toast.success('Order rejected successfully')
+        await salesService.rejectInvoice(invoiceId, note)
+        showSuccess('Invoice and all associated orders rejected')
         invalidateSalesData()
         return true
-      } catch (err: any) {
-        const msg = err.response?.data?.message || err.message || 'Rejection failed'
-        setError(msg)
-        toast.error(msg)
+      } catch (err: unknown) {
+        setError('Failed to reject order')
+        showError(err)
         return false
       } finally {
         setProcessing(false)

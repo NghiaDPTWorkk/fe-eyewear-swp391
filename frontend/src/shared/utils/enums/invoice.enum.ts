@@ -5,8 +5,10 @@ export enum InvoiceStatus {
   APPROVED = 'APPROVED', // Đã duyệt bởi sale
   ONBOARD = 'ONBOARD', // Manager đang quản lý
   COMPLETED = 'COMPLETED', // Hoàn thành (tất cả orders đã COMPLETE)
+  READY_TO_SHIP = 'READY_TO_SHIP', // Chờ đơn vị vận chuyển tới lấy hàng
   DELIVERING = 'DELIVERING', // Đang giao hàng
   DELIVERED = 'DELIVERED', // Đã giao hàng
+  REFUNDED = 'REFUNDED', // Đã hoàn tiền
   REJECTED = 'REJECTED', // Bị từ chối
   CANCELED = 'CANCELED' // Đã hủy
 }

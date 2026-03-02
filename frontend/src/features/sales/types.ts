@@ -1,45 +1,33 @@
+import type { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
+import type { OrderStatus, OrderType } from '@/shared/utils/enums/order.enum'
+
 export interface Invoice {
   id: string
   invoiceCode: string
   fullName: string
   phone: string
+  email?: string
   finalPrice: string
-  status: 'DEPOSITED' | 'WAITING_ASSIGN' | 'REJECTED' | 'APPROVED'
+  status: InvoiceStatus | string
   address: string
   createdAt: string
   orders: {
     id: string
-    type: ('MANUFACTURING' | 'STANDARD' | 'PRE-ORDER')[]
-    status:
-      | 'PENDING'
-      | 'APPROVED'
-      | 'REJECTED'
-      | 'VERIFIED'
-      | 'UNVERIFIED'
-      | 'WAITING_ASSIGN'
-      | 'PROCESSING'
-      | 'COMPLETED'
-      | 'DEPOSITED'
+    type: OrderType[]
+    status: OrderStatus | string
+    isPrescription?: boolean
   }[]
   approvedOrdersCount?: number
   totalOrdersCount?: number
+  hasManufacturing?: boolean
 }
 
 export interface OrderDetail {
   _id: string
   orderCode: string
   invoiceId: string
-  type: ('MANUFACTURING' | 'STANDARD' | 'PRE-ORDER')[]
-  status:
-    | 'PENDING'
-    | 'APPROVED'
-    | 'REJECTED'
-    | 'VERIFIED'
-    | 'UNVERIFIED'
-    | 'WAITING_ASSIGN'
-    | 'PROCESSING'
-    | 'COMPLETED'
-    | 'DEPOSITED'
+  type: OrderType[]
+  status: OrderStatus | string
   price: number
   products: {
     product: {
@@ -64,12 +52,16 @@ export interface OrderDetail {
   startedAt?: string | null
   completedAt?: string | null
   createdAt?: string
-  // Additional fields for compatibility
   customerName?: string
   customerPhone?: string
   isPrescription?: boolean
   invoice?: Invoice
   assignStaff?: string | null
+  staffName?: string
+  rejectionNote?: string
+  rejectedAt?: string
+  approvedAt?: string
+  updatedAt?: string
 }
 
 export type Order = OrderDetail

@@ -1,20 +1,14 @@
 import { cn } from '@/lib/utils'
+import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 
 export interface PriceTagProps {
   price: number
   discountPrice?: number
-  currency?: string
   size?: 'sm' | 'md' | 'lg'
   className?: string
 }
 
-export function PriceTag({
-  price,
-  discountPrice,
-  currency = '$',
-  size = 'md',
-  className
-}: PriceTagProps) {
+export function PriceTag({ price, discountPrice, size = 'md', className }: PriceTagProps) {
   const hasDiscount = discountPrice !== undefined && discountPrice < price
 
   const sizeClasses = {
@@ -34,18 +28,15 @@ export function PriceTag({
       {hasDiscount ? (
         <>
           <span className={cn('font-bold text-primary-700', sizeClasses[size])}>
-            {currency}
-            {discountPrice.toFixed(2)}
+            <VNDPrice amount={discountPrice} />
           </span>
           <span className={cn('text-neutral-400 line-through', discountSizeClasses[size])}>
-            {currency}
-            {price.toFixed(2)}
+            <VNDPrice amount={price} />
           </span>
         </>
       ) : (
         <span className={cn('font-bold text-mint-1200', sizeClasses[size])}>
-          {currency}
-          {price.toFixed(2)}
+          <VNDPrice amount={price} />
         </span>
       )}
     </div>

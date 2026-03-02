@@ -11,7 +11,7 @@ import CheckListSection from '@/shared/components/ui/packingchecklist/CheckListS
 import CheckItem from '@/shared/components/ui/packingchecklist/CheckItem'
 import ConfirmationModal from '@/shared/components/ui/ConfirmationModal'
 import type { OrderProductItem } from '@/shared/types'
-import { useUpdateStatusToCompleted } from '@/features/staff/hooks/useOrders'
+import { useUpdateStatusToCompleted } from '@/features/staff/hooks/orders/useOrders'
 import toast from 'react-hot-toast'
 import { useQueryClient } from '@tanstack/react-query'
 
@@ -119,11 +119,26 @@ export default function OperationOrderPackingProcess() {
 
   const handleBack = () => {
     if (isCompleted) {
-      // Just reuse invalidation logic to be safe if they go to lists
       queryClient.invalidateQueries({ queryKey: ['orders'] })
       queryClient.invalidateQueries({ queryKey: ['order', orderId] })
     }
     navigate(-1)
+  }
+
+  const handleCheckAll = () => {
+    if (isCompleted) return
+    
+    if (allChecked) {
+      // Clear all
+      setCheckedState({})
+    } else {
+      // Check all
+      const allCheckedState: Record<string, boolean> = {}
+      checklistItems.forEach((item) => {
+        allCheckedState[item.id] = true
+      })
+      setCheckedState(allCheckedState)
+    }
   }
 
   return (
@@ -165,7 +180,10 @@ export default function OperationOrderPackingProcess() {
           <ScanSection orderId={orderId} />
 
           {/* Checklist Section */}
-          <CheckListSection>
+          <CheckListSection
+            onCheckAll={isCompleted ? undefined : handleCheckAll}
+            allChecked={allChecked}
+          >
             {checklistItems.map((item) => (
               <CheckItem
                 key={item.id}
@@ -183,7 +201,7 @@ export default function OperationOrderPackingProcess() {
           className={`col-span-12 lg:col-span-5 space-y-6 transition-all duration-500 ease-in-out ${allChecked || isCompleted ? 'opacity-100 translate-y-0' : 'opacity-30 translate-y-4 pointer-events-none grayscale'}`}
         >
           {/* Shipping Info */}
-          <ShippingLabel />
+          <ShippingLabel orderId={orderId} />
 
           {/* Order Summary */}
           <OrderSumary orderId={orderId} />

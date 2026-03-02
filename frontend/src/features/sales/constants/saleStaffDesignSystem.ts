@@ -106,3 +106,21 @@ export const RX_FILTERS = [
   { label: 'Approved', value: 'approved', count: 18 },
   { label: 'Rejected', value: 'rejected', count: 6 }
 ] as const
+// ─────────────────────────────────────────────────────────────────────────────
+// LAYOUT CONSTANTS
+// ─────────────────────────────────────────────────────────────────────────────
+export const LAYOUT = {
+  // Main container horizontal padding
+  px: 'px-4 md:px-8 lg:px-10',
+  // Page container vertical padding
+  py: 'py-6 md:py-8',
+  // Gap between sections
+  gap: 'gap-6 md:gap-8',
+  // Max width for content
+  maxWidth: 'max-w-[1600px]',
+  // Sidebar widths
+  sidebar: {
+    collapsed: 'w-[80px]',
+    expanded: 'w-[280px]'
+  }
+} as const

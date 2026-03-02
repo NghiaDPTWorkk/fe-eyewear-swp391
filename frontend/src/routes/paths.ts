@@ -34,8 +34,15 @@ export const PATHS = {
     DASHBOARD: '/operationstaff/dashboard',
     PRESCRIPTION_ORDERS: '/operationstaff/prescription-orders',
     ORDER_DETAIL: (orderId: string) => `/operationstaff/orders/${orderId}`,
+    MANUFACTURING_PROCESS: (orderId: string) => `/operationstaff/orders/${orderId}/manufacturing`,
     PACKING_PROCESS: (orderId: string) => `/operationstaff/orders/${orderId}/process`,
     PACKING_SUCCESS: (orderId: string) => `/operationstaff/orders/${orderId}/success`
+  },
+  MANAGER: {
+    DASHBOARD: '/manager/dashboard',
+    PRODUCTS: '/manager/products',
+    ADD_PRODUCT: '/manager/products/add',
+    SUPPORT: '/manager/support'
   },
   NOT_FOUND: '*'
 }

@@ -16,6 +16,7 @@ interface MenuItemProps {
   onClick?: () => void
   menuOpen?: boolean
   isOpen?: boolean
+  isLoading?: boolean
 }
 
 export function MenuItem({
@@ -28,7 +29,8 @@ export function MenuItem({
   hasDropdown,
   children,
   onClick,
-  isOpen: defaultIsOpen = false
+  isOpen: defaultIsOpen = false,
+  isLoading = false
 }: MenuItemProps) {
   const { sidebarCollapsed } = useLayoutStore()
   const hasActiveChild = Children.toArray(children).some(
@@ -46,7 +48,7 @@ export function MenuItem({
   }
 
   const commonClasses = cn(
-    'w-full flex items-center transition-all duration-300 relative group',
+    'w-full flex items-center transition-all duration-300 relative group cursor-pointer',
     sidebarCollapsed ? 'justify-center py-2 px-0' : 'justify-start px-3 py-2.5 rounded-lg gap-3',
     !sidebarCollapsed && active
       ? 'bg-primary-50 text-primary-700'
@@ -62,28 +64,36 @@ export function MenuItem({
       )}
       <span
         className={cn(
-          'text-xl transition-colors relative z-10',
+          'text-xl transition-colors relative z-10 flex items-center justify-center',
           active || (hasDropdown && isOpen) ? 'text-primary-500' : 'text-neutral-400',
           sidebarCollapsed && 'group-hover:text-primary-500'
         )}
       >
-        {icon}
+        {isLoading ? (
+          <div className="w-5 h-5 border-2 border-primary-500/20 border-t-primary-500 rounded-full animate-spin" />
+        ) : (
+          icon
+        )}
       </span>
       {!sidebarCollapsed && (
         <>
           <span className="flex-1 text-left truncate transition-opacity duration-300 font-medium">
             {label}
           </span>
-          {badge && (
+          {badge !== undefined && (
             <span
               className={cn(
-                'px-2 py-0.5 text-xs rounded-full font-semibold shrink-0 min-w-[28px] text-center',
+                'px-2 py-0.5 text-xs rounded-full font-semibold shrink-0 min-w-[28px] text-center flex items-center justify-center',
                 badgeVariant === 'primary' && 'bg-primary-100 text-primary-700',
                 badgeVariant === 'danger' && 'bg-red-100 text-red-700',
                 badgeVariant === 'default' && 'bg-gray-100 text-gray-700'
               )}
             >
-              {badge}
+              {isLoading ? (
+                <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
+              ) : (
+                badge
+              )}
             </span>
           )}
           {hasDropdown && (

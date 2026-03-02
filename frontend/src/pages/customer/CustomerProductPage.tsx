@@ -1,24 +1,20 @@
 import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
-import { useGetProductWithType } from '@/shared/hooks/products/useGetProductWithType'
+import { useFilteredProducts } from '@/shared/hooks/products/useFilteredProducts'
+import { useProductSpecs } from '@/shared/hooks/products/useProductSpecs'
+
 import { ProductFilters } from '@/shared/components/ui/product-filters'
 import { FilterTags, type FilterTag } from '@/shared/components/ui/filter-tags'
 import { ProductCard } from '@/shared/components/ui/product-card'
 
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, X, Loader2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 // Static data for filters
-const categories = [
-  { id: 'men', name: 'Men' },
-  { id: 'women', name: 'Women' },
-  { id: 'unisex', name: 'Unisex' }
-]
-
 const priceRanges = [
-  { id: 'range1', label: '$20.00 - $50.00', min: 20, max: 50 },
-  { id: 'range2', label: '$50.00 - $100.00', min: 50, max: 100 },
-  { id: 'range3', label: '$100.00 - $1200.00', min: 100, max: 1200 }
+  { id: 'range1', label: '200.000đ - 500.000đ', min: 200000, max: 500000 },
+  { id: 'range2', label: '500.000đ - 1.000.000đ', min: 500000, max: 1000000 },
+  { id: 'range3', label: '1.000.000đ - 12.000.000đ', min: 1000000, max: 12000000 }
 ]
 
 const colors = [
@@ -29,11 +25,23 @@ const colors = [
   { id: 'white', name: 'White', hex: '#FFFFFF' }
 ]
 
+// Gender mapping from API codes to labels
+const GENDER_MAP: Record<string, string> = {
+  M: 'Men',
+  F: 'Women',
+  N: 'Non-binary',
+  unisex: 'Unisex'
+}
+
 export const CustomerProductPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [page, setPage] = useState(1)
   const limit = 12
+
+  // Read search query from URL
+  const searchQuery = searchParams.get('search') || ''
 
   const productType = useMemo(() => {
     const path = location.pathname
@@ -49,7 +57,18 @@ export const CustomerProductPage = () => {
     setPage(1)
   }
 
+  // Reset page when search query changes
+  const [prevSearch, setPrevSearch] = useState(searchQuery)
+  if (searchQuery !== prevSearch) {
+    setPrevSearch(searchQuery)
+    setPage(1)
+  }
+
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([])
+  const [selectedMaterials, setSelectedMaterials] = useState<string[]>([])
+  const [selectedShapes, setSelectedShapes] = useState<string[]>([])
+  const [selectedStyles, setSelectedStyles] = useState<string[]>([])
   const [selectedPriceRanges, setSelectedPriceRanges] = useState<string[]>([])
   const [selectedColors, setSelectedColors] = useState<string[]>([])
   const [customPriceRange, setCustomPriceRange] = useState<{
@@ -58,11 +77,41 @@ export const CustomerProductPage = () => {
   }>({ min: null, max: null })
   const [priceResetKey, setPriceResetKey] = useState(0)
 
-  // const allProductsData = useGetProductWithPagination(page, limit)
-  const typedProductsData = useGetProductWithType(page, limit, productType || '')
+  // Fetch product specs for dynamic filters
+  const { specs } = useProductSpecs()
 
-  // Select the appropriate data source
-  const { products, loading, error, totalPages, currentPage } = typedProductsData
+  // Build gender categories from specs
+  const categories = useMemo(() => {
+    if (!specs?.genders) return []
+    return specs.genders.map((g) => ({
+      id: g,
+      name: GENDER_MAP[g] || g
+    }))
+  }, [specs])
+
+  // Reset page when any filter changes
+  const handleFilterChange = <T,>(setter: React.Dispatch<React.SetStateAction<T>>, value: T) => {
+    setter(value)
+    setPage(1)
+  }
+
+  // Single unified hook for fetching products with all filters
+  const { products, loading, error, totalPages, currentPage } = useFilteredProducts({
+    page,
+    limit,
+    type: productType,
+    search: searchQuery || undefined,
+    brand: selectedBrands.length > 0 ? selectedBrands : undefined,
+    material: selectedMaterials.length > 0 ? selectedMaterials : undefined,
+    shape: selectedShapes.length > 0 ? selectedShapes : undefined,
+    style: selectedStyles.length > 0 ? selectedStyles : undefined,
+    gender: selectedCategories.length > 0 ? selectedCategories : undefined
+  })
+
+  const handleClearSearch = () => {
+    setSearchParams({})
+    setPage(1)
+  }
 
   const canPrev = useMemo(() => currentPage > 1, [currentPage])
   const canNext = useMemo(() => currentPage < totalPages, [currentPage, totalPages])
@@ -79,6 +128,26 @@ export const CustomerProductPage = () => {
       }
     })
 
+    // Add brand tags
+    selectedBrands.forEach((brand) => {
+      tags.push({ id: `brand-${brand}`, label: brand, type: 'brand' })
+    })
+
+    // Add material tags
+    selectedMaterials.forEach((material) => {
+      tags.push({ id: `material-${material}`, label: material, type: 'material' })
+    })
+
+    // Add shape tags
+    selectedShapes.forEach((shape) => {
+      tags.push({ id: `shape-${shape}`, label: shape, type: 'shape' })
+    })
+
+    // Add style tags
+    selectedStyles.forEach((style) => {
+      tags.push({ id: `style-${style}`, label: style, type: 'style' })
+    })
+
     // Add color tags
     selectedColors.forEach((colorId) => {
       const color = colors.find((c) => c.id === colorId)
@@ -89,8 +158,14 @@ export const CustomerProductPage = () => {
 
     // Add custom price range tag
     if (customPriceRange.min !== null || customPriceRange.max !== null) {
-      const minLabel = customPriceRange.min !== null ? `$${customPriceRange.min}` : 'Any'
-      const maxLabel = customPriceRange.max !== null ? `$${customPriceRange.max}` : 'Any'
+      const minLabel =
+        customPriceRange.min !== null
+          ? customPriceRange.min.toLocaleString('vi-VN') + 'đ'
+          : 'Bất kỳ'
+      const maxLabel =
+        customPriceRange.max !== null
+          ? customPriceRange.max.toLocaleString('vi-VN') + 'đ'
+          : 'Bất kỳ'
       tags.push({
         id: 'price-custom',
         label: `${minLabel} - ${maxLabel}`,
@@ -99,27 +174,71 @@ export const CustomerProductPage = () => {
     }
 
     return tags
-  }, [selectedCategories, selectedColors, customPriceRange, categories, colors])
+  }, [
+    selectedCategories,
+    selectedBrands,
+    selectedMaterials,
+    selectedShapes,
+    selectedStyles,
+    selectedColors,
+    customPriceRange,
+    categories
+  ])
 
   const handleRemoveTag = (tagId: string) => {
     if (tagId.startsWith('cat-')) {
       const catId = tagId.replace('cat-', '')
-      setSelectedCategories((prev) => prev.filter((id) => id !== catId))
+      handleFilterChange(
+        setSelectedCategories,
+        selectedCategories.filter((id) => id !== catId)
+      )
+    } else if (tagId.startsWith('brand-')) {
+      const brand = tagId.replace('brand-', '')
+      handleFilterChange(
+        setSelectedBrands,
+        selectedBrands.filter((b) => b !== brand)
+      )
+    } else if (tagId.startsWith('material-')) {
+      const material = tagId.replace('material-', '')
+      handleFilterChange(
+        setSelectedMaterials,
+        selectedMaterials.filter((m) => m !== material)
+      )
+    } else if (tagId.startsWith('shape-')) {
+      const shape = tagId.replace('shape-', '')
+      handleFilterChange(
+        setSelectedShapes,
+        selectedShapes.filter((s) => s !== shape)
+      )
+    } else if (tagId.startsWith('style-')) {
+      const style = tagId.replace('style-', '')
+      handleFilterChange(
+        setSelectedStyles,
+        selectedStyles.filter((s) => s !== style)
+      )
     } else if (tagId.startsWith('color-')) {
       const colorId = tagId.replace('color-', '')
-      setSelectedColors((prev) => prev.filter((id) => id !== colorId))
+      handleFilterChange(
+        setSelectedColors,
+        selectedColors.filter((id) => id !== colorId)
+      )
     } else if (tagId === 'price-custom') {
       setCustomPriceRange({ min: null, max: null })
-      setPriceResetKey((prev) => prev + 1) // Trigger component re-mount
+      setPriceResetKey((prev) => prev + 1)
     }
   }
 
   const handleReset = () => {
     setSelectedCategories([])
+    setSelectedBrands([])
+    setSelectedMaterials([])
+    setSelectedShapes([])
+    setSelectedStyles([])
     setSelectedPriceRanges([])
     setSelectedColors([])
     setCustomPriceRange({ min: null, max: null })
-    setPriceResetKey((prev) => prev + 1) // Trigger component re-mount
+    setPriceResetKey((prev) => prev + 1)
+    setPage(1)
   }
 
   const handleCustomPriceApply = (min: number | null, max: number | null) => {
@@ -137,7 +256,19 @@ export const CustomerProductPage = () => {
               <ProductFilters
                 categories={categories}
                 selectedCategories={selectedCategories}
-                onCategoryChange={setSelectedCategories}
+                onCategoryChange={(v) => handleFilterChange(setSelectedCategories, v)}
+                brands={specs?.brands || []}
+                selectedBrands={selectedBrands}
+                onBrandChange={(v) => handleFilterChange(setSelectedBrands, v)}
+                materials={specs?.materials || []}
+                selectedMaterials={selectedMaterials}
+                onMaterialChange={(v) => handleFilterChange(setSelectedMaterials, v)}
+                shapes={specs?.shapes || []}
+                selectedShapes={selectedShapes}
+                onShapeChange={(v) => handleFilterChange(setSelectedShapes, v)}
+                styles={specs?.styles || []}
+                selectedStyles={selectedStyles}
+                onStyleChange={(v) => handleFilterChange(setSelectedStyles, v)}
                 priceRanges={priceRanges}
                 selectedPriceRanges={selectedPriceRanges}
                 onPriceRangeChange={setSelectedPriceRanges}
@@ -151,6 +282,22 @@ export const CustomerProductPage = () => {
 
             {/* Product Grid */}
             <div className="flex-1">
+              {/* Search Results Header */}
+              {searchQuery && (
+                <div className="mb-6 flex items-center gap-3">
+                  <h2 className="text-lg font-semibold text-mint-1200">
+                    Results for &ldquo;{searchQuery}&rdquo;
+                  </h2>
+                  <button
+                    onClick={handleClearSearch}
+                    className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-mint-300 text-sm text-mint-1200 hover:bg-mint-400 transition-colors"
+                  >
+                    <X className="w-3 h-3" />
+                    Clear
+                  </button>
+                </div>
+              )}
+
               {/* Filter Tags */}
               {filterTags.length > 0 && (
                 <div className="mb-6">
@@ -163,34 +310,35 @@ export const CustomerProductPage = () => {
               )}
 
               {loading ? (
-                <div className="text-center text-gray-eyewear py-10">Loading products...</div>
+                <div className="flex flex-col items-center justify-center py-20">
+                  <Loader2 className="w-10 h-10 animate-spin text-primary-500 mb-4" />
+                  <p className="text-gray-eyewear">Loading products...</p>
+                </div>
               ) : error ? (
                 <div className="text-center text-red-600 py-10">Failed to load products.</div>
               ) : products.length === 0 ? (
                 <div className="text-center text-gray-eyewear py-10">No products found.</div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {products.map((product, index) => {
-                    // Mock: Add sale to every 3rd product
-                    const hasSale = index % 3 === 0
+                  {products.map((product) => {
+                    const productId = product.id
+                    const originalPrice = product.defaultVariantPrice || 0
+                    const finalPrice = product.defaultVariantFinalPrice || originalPrice
 
-                    // Extract price - handle type safety
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const productAny = product as any
-                    const originalPrice = productAny.defaultVariantPrice || 100
-                    const currentPrice = productAny.defaultVariantFinalPrice || originalPrice
-
-                    // Only set discount if there's actually a sale
-                    const discountPrice = hasSale ? currentPrice : undefined
-                    const salePercent = hasSale ? 20 : undefined
+                    // Determine sale from real data
+                    const hasSale = originalPrice > 0 && finalPrice < originalPrice
+                    const salePercent = hasSale
+                      ? Math.round(((originalPrice - finalPrice) / originalPrice) * 100)
+                      : undefined
+                    const discountPrice = hasSale ? finalPrice : undefined
 
                     return (
                       <ProductCard
-                        key={productAny.id || `product-${index}`}
-                        id={productAny.id || `product-${index}`}
+                        key={productId}
+                        id={productId}
                         name={product.nameBase}
                         brand={product.brand || undefined}
-                        image={productAny.defaultVariantImage || undefined}
+                        image={product.defaultVariantImage || undefined}
                         price={originalPrice}
                         discountPrice={discountPrice}
                         salePercent={salePercent}

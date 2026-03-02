@@ -1,12 +1,12 @@
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layout/StaffMainLayout'
 import {
-  SidebarStaff,
-  UserWidgetWithLogout,
-  ThemeToggle,
   NavActions,
-  NavSearch
-} from '@/components/staff'
+  NavSearch,
+  SidebarStaff,
+  ThemeToggle,
+  UserWidgetWithLogout
+} from '@/components/layout/staff/staff-core'
 import {
   IoGrid,
   IoCube,
@@ -14,13 +14,21 @@ import {
   IoBarChart,
   IoSettings,
   IoHelpCircle,
-  IoStorefront,
-  IoReader
+  IoStorefront
 } from 'react-icons/io5'
+
+import { getInitials } from '@/shared/utils'
+import { useProfile } from '@/features/staff/hooks/useProfile'
 
 export default function ManagerLayout() {
   const location = useLocation()
-  const navigate = useNavigate()
+  const { data: profileData } = useProfile()
+
+  // Extract profile data
+  const profile = profileData?.data
+  const userName = profile?.name || 'Loading...'
+  const userRole = profile?.role === 'MANAGER' ? 'Manager' : profile?.role || 'Loading...'
+  const userInitials = profile?.name ? getInitials(profile.name) : '...'
 
   const sidebar = (
     <SidebarStaff
@@ -35,12 +43,7 @@ export default function ManagerLayout() {
       storeName="Kanky Store"
       storeIcon={<IoStorefront />}
       userWidget={
-        <UserWidgetWithLogout
-          userInitials="GH"
-          userName="Guy Hawkins"
-          userRole="Admin"
-          onLogout={() => navigate('/login')}
-        />
+        <UserWidgetWithLogout userInitials={userInitials} userName={userName} userRole={userRole} />
       }
     >
       <SidebarStaff.MenuSection label="GENERAL">
@@ -63,12 +66,6 @@ export default function ManagerLayout() {
           active={location.pathname.startsWith('/manager/products')}
         />
         <SidebarStaff.MenuItem
-          icon={<IoReader />}
-          label="Transaction"
-          to="/manager/transactions"
-          active={location.pathname.startsWith('/manager/transactions')}
-        />
-        <SidebarStaff.MenuItem
           icon={<IoBarChart />}
           label="Sales Report"
           to="/manager/reports"
@@ -86,8 +83,8 @@ export default function ManagerLayout() {
         <SidebarStaff.MenuItem
           icon={<IoHelpCircle />}
           label="Support"
-          to="/manager/help"
-          active={location.pathname.startsWith('/manager/help')}
+          to="/manager/support"
+          active={location.pathname.startsWith('/manager/support')}
         />
         <ThemeToggle />
       </SidebarStaff.MenuSection>
@@ -104,9 +101,18 @@ export default function ManagerLayout() {
           inputContainerClassName="lg:pl-0"
         />
       }
-      headerRight={<NavActions />}
-      mainClassName="p-4 md:p-6 bg-neutral-50"
-      headerClassName="px-4 md:px-6"
+      headerRight={
+        <NavActions
+          userName={userName}
+          userRole={userRole}
+          userInitials={userInitials}
+          userEmail={profile?.email || ''}
+        />
+      }
+      mainClassName="px-4 md:px-8 lg:px-10 py-6 md:py-8 bg-white"
+      headerContainerClassName="pl-4 md:pl-8 lg:pl-10 pr-2 md:pr-4"
+      headerContainerWidth="none"
+      contentMaxWidth="max-w-[1600px]"
     />
   )
 }

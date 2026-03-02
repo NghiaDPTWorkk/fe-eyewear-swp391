@@ -1,4 +1,5 @@
 import { Shield } from 'lucide-react'
+import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 import { Button } from '@/shared/components/ui'
 
 interface OrderSummarySectionProps {
@@ -22,12 +23,14 @@ export const OrderSummarySection = ({
         <div className="flex justify-between text-mint-1200">
           <span className="font-medium">Subtotal</span>
           <span className="font-bold">
-            ${subtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+            <VNDPrice amount={subtotal} />
           </span>
         </div>
         <div className="flex justify-between text-mint-1200">
           <span className="font-medium">Shipping</span>
-          <span className="font-bold">{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
+          <span className="font-bold">
+            {shipping === 0 ? 'Miễn phí' : <VNDPrice amount={shipping} />}
+          </span>
         </div>
         <div className="flex justify-between items-baseline pt-4 border-t border-mint-100">
           <span className="text-xl font-bold text-mint-1200 uppercase">
@@ -35,7 +38,7 @@ export const OrderSummarySection = ({
             <span className="text-xs font-medium text-gray-eyewear normal-case">(Excl. Tax)</span>
           </span>
           <span className="text-3xl font-extrabold text-mint-1200">
-            ${total.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+            <VNDPrice amount={total} />
           </span>
         </div>
       </div>

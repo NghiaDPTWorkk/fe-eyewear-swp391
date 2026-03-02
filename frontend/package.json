@@ -30,7 +30,11 @@
     ]
   },
   "dependencies": {
+    "@mediapipe/tasks-vision": "^0.10.32",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.5.0",
     "@tanstack/react-query": "^5.90.16",
+    "@types/three": "^0.182.0",
     "axios": "^1.13.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -41,6 +45,7 @@
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.12.0",
     "tailwind-merge": "^3.4.0",
+    "three": "^0.183.0",
     "zustand": "^5.0.10"
   },
   "devDependencies": {

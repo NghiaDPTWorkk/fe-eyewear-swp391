@@ -86,6 +86,8 @@ export const ENDPOINTS = {
   PAYMENT: {
     MOMO: '/payment/momo',
     VNPAY: '/payment/vnpay',
+    VNPAY_URL: (invoiceId: string, paymentId: string) =>
+      `/payments/vnpay/url/${invoiceId}/${paymentId}`,
     STATUS: (transactionId: string) => `/payment/status/${transactionId}`
   },
 
@@ -122,7 +124,6 @@ export const ENDPOINTS = {
     INVOICES_DELIVERING: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/delivering`,
     ORDER_DETAIL: (orderId: string) => `/admin/orders/${orderId}`,
     ORDER_ASSIGN: (orderId: string) => `/admin/orders/${orderId}/status/assign`,
-    INVOICES_READY_TO_SHIP: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/ready-to-ship`,
     INVOICES_DEPOSITED: (page: number, limit: number, status?: string) => {
       const params = new URLSearchParams({
         page: String(page),

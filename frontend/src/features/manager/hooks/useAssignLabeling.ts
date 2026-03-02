@@ -12,7 +12,7 @@ export function useAssignLabeling() {
 
   const mutation = useMutation({
     mutationFn: ({ invoiceId, assignedStaff }: { invoiceId: string; assignedStaff: string }) =>
-      httpClient.patch<AssignLabelingResponse>(ENDPOINTS.ADMIN.INVOICES_READY_TO_SHIP(invoiceId), {
+      httpClient.patch<AssignLabelingResponse>(ENDPOINTS.ADMIN.INVOICES_HANDLE_DELIVERY(invoiceId), {
         assignedStaff
       }),
     onSuccess: () => {

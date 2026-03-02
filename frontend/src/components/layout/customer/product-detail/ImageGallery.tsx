@@ -5,12 +5,5 @@ interface ImageGalleryProps {
 }
 
 export const ImageGallery = ({ images }: ImageGalleryProps) => {
-  return (
-    <ImageSlider
-      images={images}
-      aspectRatio="aspect-[4/3]"
-      thumbnailSize={72}
-      altPrefix="Product"
-    />
-  )
+  return <ImageSlider images={images} aspectRatio="aspect-[4/3]" altPrefix="Product" />
 }

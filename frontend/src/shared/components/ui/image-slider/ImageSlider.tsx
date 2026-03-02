@@ -3,17 +3,11 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export interface ImageSliderProps {
-  /** Array of image URLs to display */
   images: string[]
-  /** CSS class for the outer wrapper */
   className?: string
-  /** Aspect ratio class for the main image (default: 'aspect-[4/3]') */
   aspectRatio?: string
-  /** Thumbnail size in px (default: 72) */
   thumbnailSize?: number
-  /** Alt text prefix (default: 'Image') */
   altPrefix?: string
-  /** Placeholder when no images */
   emptyPlaceholder?: React.ReactNode
 }
 
@@ -21,7 +15,7 @@ export function ImageSlider({
   images,
   className,
   aspectRatio = 'aspect-[4/3]',
-  thumbnailSize = 72,
+  thumbnailSize = 84,
   altPrefix = 'Image',
   emptyPlaceholder
 }: ImageSliderProps) {
@@ -79,7 +73,13 @@ export function ImageSlider({
 
   if (images.length === 0) {
     return (
-      <div className={cn(aspectRatio, 'bg-white rounded-3xl flex items-center justify-center border-2 border-mint-300', className)}>
+      <div
+        className={cn(
+          aspectRatio,
+          'bg-white rounded-3xl flex items-center justify-center border-2 border-mint-300',
+          className
+        )}
+      >
         {emptyPlaceholder || (
           <span className="text-gray-eyewear font-medium">No images available</span>
         )}
@@ -92,10 +92,12 @@ export function ImageSlider({
   return (
     <div className={cn('space-y-4', className)}>
       {/* Main Image */}
-      <div className={cn(
-        'relative bg-white rounded-3xl overflow-hidden shadow-sm border border-mint-300 group',
-        aspectRatio
-      )}>
+      <div
+        className={cn(
+          'relative bg-white rounded-3xl overflow-hidden shadow-sm border border-mint-300 group',
+          aspectRatio
+        )}
+      >
         <img
           src={activeImage}
           alt={`${altPrefix} ${activeIndex + 1}`}
@@ -147,20 +149,24 @@ export function ImageSlider({
           {/* Thumbnails container */}
           <div
             ref={thumbContainerRef}
-            className="flex gap-2 overflow-x-auto scrollbar-hide px-1 py-1"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            className={cn(
+              'flex gap-3 px-1 py-1 w-full',
+              images.length <= 5 ? 'justify-between' : 'overflow-x-auto scrollbar-hide'
+            )}
+            style={images.length > 5 ? { scrollbarWidth: 'none', msOverflowStyle: 'none' } : {}}
           >
             {images.map((img, index) => (
               <button
                 key={index}
                 onClick={() => setActiveIndex(index)}
                 className={cn(
-                  'flex-shrink-0 rounded-xl overflow-hidden border-2 transition-all duration-200',
+                  'rounded-xl overflow-hidden border-2 transition-all duration-200 aspect-square',
+                  images.length <= 5 ? 'flex-1 h-auto min-w-0' : 'flex-shrink-0',
                   activeIndex === index
                     ? 'border-primary-500 shadow-md ring-2 ring-primary-200'
                     : 'border-mint-300 hover:border-primary-300 opacity-70 hover:opacity-100'
                 )}
-                style={{ width: thumbnailSize, height: thumbnailSize }}
+                style={images.length > 5 ? { width: thumbnailSize, height: thumbnailSize } : {}}
                 aria-label={`View image ${index + 1}`}
               >
                 <img

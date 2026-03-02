@@ -11,7 +11,7 @@ interface ShippingInfoPanelProps {
   isProcessingShipping: boolean
   shipCode?: string
   hasShipCode?: boolean
-  orders: string[]
+  orders: { id: string; price?: number }[]
   onPrintLabel: () => void
   onProcessShipping: () => void
 }
@@ -107,8 +107,8 @@ export default function ShippingInfoPanel({
       <div className="mt-6 pt-6 border-t border-gray-200">
         <p className="text-xs text-gray-500 uppercase tracking-wide mb-3">Order Summary</p>
         <div className="space-y-2">
-          {orders.map((orderId) => (
-            <OrderSummaryOnlyCode key={orderId} orderId={orderId} />
+          {orders.map((order) => (
+            <OrderSummaryOnlyCode key={order.id} orderId={order.id} price={order.price} />
           ))}
         </div>
       </div>

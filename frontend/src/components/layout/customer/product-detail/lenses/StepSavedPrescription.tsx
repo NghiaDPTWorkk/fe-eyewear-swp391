@@ -3,7 +3,7 @@ import type { PrescriptionData } from './types'
 import { useAuthStore } from '@/store'
 import { httpClient } from '@/api/apiClients'
 import { ENDPOINTS } from '@/api/endpoints'
-import { Card } from '@/shared/components/ui'
+import { Card } from '@/shared/components/ui-core'
 import { Calendar, Eye, Trash2, Loader2, FileText } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 

@@ -1,5 +1,6 @@
 import type { OrderType, OrderStatus, AssignmentOrderStatus } from './enums'
 import type { Address } from './address.types'
+import type { LensParameters } from './order-item.types'
 
 import type { Invoice } from './invoice.types'
 
@@ -134,28 +135,34 @@ export interface OrderProductInfo {
   pricePerUnit: number // Required
 }
 
-export interface LensParameters {
-  left: {
-    SPH: number // Sphere
-    CYL: number // Cylinder
-    AXIS: number // Axis
-    ADD?: number // Addition - OPTIONAL
-  }
-  right: {
-    SPH: number
-    CYL: number
-    AXIS: number
-    ADD?: number // OPTIONAL
-  }
-  PD: number // Pupillary Distance
-}
-
 export interface OrderLensDetail {
   lens_id: string // Required
   sku: string // Required
   parameters: LensParameters // Thông số kỹ thuật
   pricePerUnit: number // Required
 }
+
+export type OrderLensData = OrderLensDetail
+
+export interface TransformedLensData {
+  prescription: Array<{
+    eye: string
+    sph: string
+    cyl: string
+    axis: string
+    prism: string
+    add: string
+  }>
+  details: Array<{
+    label: string
+    value: string
+  }>
+}
+
+export type TransformedFrameData = Array<{
+  label: string
+  value: string
+}>
 
 export interface OrderProductItem {
   product: OrderProductInfo // REQUIRED - Frame hoặc Lens

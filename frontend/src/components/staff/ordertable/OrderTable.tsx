@@ -2,8 +2,9 @@ import type { ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components'
 import { IoTimeOutline, IoEyeOutline, IoChevronForward } from 'react-icons/io5'
+import { cn } from '@/lib/utils'
 import { PATHS } from '@/routes/paths'
-import { OrderHeaderTable, OrderList } from '@/features/sales/components/orders'
+import { OrderHeaderTable } from '@/features/sales/components/orders'
 
 export interface Order {
   id: string
@@ -298,7 +299,32 @@ export default function OrderTable({
     <div className="overflow-x-auto bg-white rounded-lg shadow-sm border border-neutral-100">
       <table className="w-full text-left border-collapse">
         <OrderHeaderTable columns={activeColumns} />
-        <OrderList orders={filteredOrders} columns={activeColumns} />
+        <tbody>
+          {filteredOrders.length === 0 ? (
+            <tr>
+              <td
+                colSpan={activeColumns.length}
+                className="py-20 text-center text-gray-400 font-medium"
+              >
+                No records found matching your criteria.
+              </td>
+            </tr>
+          ) : (
+            filteredOrders.map((order) => (
+              <tr
+                key={order.id}
+                className="border-b border-neutral-50 hover:bg-neutral-50/50 transition-colors group cursor-pointer"
+                onClick={() => handleViewOrder(order.id)}
+              >
+                {activeColumns.map((col, idx) => (
+                  <td key={idx} className={cn('px-6 py-5 align-middle', col.className)}>
+                    {col.render(order)}
+                  </td>
+                ))}
+              </tr>
+            ))
+          )}
+        </tbody>
       </table>
     </div>
   )

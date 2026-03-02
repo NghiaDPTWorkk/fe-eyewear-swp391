@@ -2,11 +2,13 @@
  * RxOrderTable Component
  * Table displaying Rx orders pending verification.
  */
-import { Card, Button } from '@/components'
 import { IoGlassesOutline, IoEyeOutline } from 'react-icons/io5'
-import StatusBadge from '../common/CommonStatusBadge'
-import Pagination from '../common/CommonPagination'
+
+import { Card, Button } from '@/components'
+
 import { TYPOGRAPHY } from '../../constants/saleStaffDesignSystem'
+import Pagination from '../common/Pagination'
+import StatusBadge from '../common/StatusBadge'
 
 // Mock data
 const RX_ORDERS = [

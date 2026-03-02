@@ -5,7 +5,11 @@ import { Button, Checkbox, Input, FormField, Divider } from '@/components'
 import { getOrCreateDeviceId } from '@/shared/utils/device.utils'
 import { ENDPOINTS } from '@/api/endpoints'
 
-export const LoginForm = () => {
+interface LoginFormProps {
+  role?: string
+}
+
+export const LoginForm = ({ role: _role }: LoginFormProps) => {
   const { mutate: login, isPending } = useLogin()
 
   const handleGoogleLogin = () => {

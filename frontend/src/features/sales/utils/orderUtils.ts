@@ -1,3 +1,4 @@
+import { OrderType } from '@/shared/utils/enums/order.enum'
 import type { Order } from '../types'
 
 /**
@@ -31,7 +32,7 @@ export const transformOrder = (ord: any, inv?: any): Order => {
       '',
     createdAt: ord.createdAt || inv?.createdAt,
     status: ord.status || 'DEPOSITED',
-    isPrescription: ord.type?.includes('MANUFACTURING') || ord.isPrescription || false,
+    isPrescription: ord.type?.includes(OrderType.MANUFACTURING) || ord.isPrescription || false,
     products: ord.products || ord.orderItems || []
   }
 }
@@ -40,8 +41,8 @@ export const transformOrder = (ord: any, inv?: any): Order => {
  * Determines the order type label for UI display.
  */
 export const getOrderTypeLabel = (order: Order): 'Prescription' | 'Pre-order' | 'Regular' => {
-  if (order.isPrescription || order.type?.includes('MANUFACTURING')) return 'Prescription'
-  if (order.type?.includes('PRE-ORDER')) return 'Pre-order'
+  if (order.isPrescription || order.type?.includes(OrderType.MANUFACTURING)) return 'Prescription'
+  if (order.type?.includes(OrderType.PRE_ORDER)) return 'Pre-order'
   return 'Regular'
 }
 
@@ -51,13 +52,19 @@ export const getOrderTypeLabel = (order: Order): 'Prescription' | 'Pre-order' | 
 export const isOrderVerified = (order: Order): boolean => {
   return [
     'VERIFIED',
+    'APPROVE',
     'APPROVED',
     'WAITING_ASSIGN',
-    'PROCESSING',
+    'ASSIGNED',
+    'MAKING',
+    'PACKAGING',
     'COMPLETED',
+    'ONBOARD',
+    'DELIVERED',
+    'DELIVERING',
     'SHIPPED',
-    'DELIVERED'
-  ].includes(order.status)
+    'PROCESSING'
+  ].includes(order.status.toUpperCase())
 }
 
 /**

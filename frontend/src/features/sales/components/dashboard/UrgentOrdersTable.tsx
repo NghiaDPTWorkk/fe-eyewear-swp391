@@ -2,9 +2,11 @@
  * UrgentOrdersTable Component
  * Displays urgent orders requiring immediate attention
  */
-import { Card } from '@/shared/components/ui/card'
-import { OrderTable } from '../orders'
 import { IoFilter, IoAdd } from 'react-icons/io5'
+
+import { Card } from '@/shared/components/ui-core'
+
+import OrderTable from '@/components/staff/ordertable/OrderTable'
 
 interface UrgentOrdersTableProps {
   onRowClick: (id: string) => void

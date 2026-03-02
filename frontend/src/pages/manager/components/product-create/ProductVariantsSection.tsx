@@ -134,7 +134,7 @@ export function ProductVariantsSection({
                     />
                     {badFinal ? (
                       <p className="text-[11px] font-bold text-red-500 ml-1">
-                        finalPrice must be &le; price
+                        finalPrice must be {'<='} price
                       </p>
                     ) : null}
                   </div>

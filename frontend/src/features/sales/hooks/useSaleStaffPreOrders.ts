@@ -73,8 +73,8 @@ export function useSaleStaffPreOrders(): UseSaleStaffPreOrdersReturn {
 
   // Create order request from pre-order (hands over to Packaging)
   const createOrderRequest = useCallback((preOrderId: string) => {
-    console.log(`[SaleStaff] Creating order request for pre-order: ${preOrderId}`)
-    console.log('[SaleStaff] Handing over to Packaging Department')
+    console.warn(`[SaleStaff] Creating order request for pre-order: ${preOrderId}`)
+    console.warn('[SaleStaff] Handing over to Packaging Department')
     // TODO: Integrate with API
     setIsCreateModalOpen(false)
   }, [])

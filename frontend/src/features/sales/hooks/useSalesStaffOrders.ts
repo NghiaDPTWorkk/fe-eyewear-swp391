@@ -1,159 +1,135 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useCallback } from 'react'
 import { httpClient } from '@/api/apiClients'
-import type { Order, OrderDetail } from '../types'
-import { transformOrder } from '../utils/orderUtils'
-import { useMemo } from 'react'
+import { ENDPOINTS } from '@/api/endpoints'
+import { salesService } from '../services/salesService'
+import type { Order } from '../types'
 
-export const useSalesStaffOrders = () => {
+export function useSalesStaffOrders(page: number = 1, limit: number = 10, status: string = 'All') {
   const queryClient = useQueryClient()
 
-  const ordersQuery = useQuery({
-    queryKey: ['sales', 'orders'],
-    queryFn: async ({ signal }) => {
-      /* eslint-disable @typescript-eslint/no-explicit-any */
-      // 1. Fetch Invoices
-      const response = await httpClient.get<any>('/admin/invoices/deposited', { signal })
-      const invoices = response.data?.data || response.data || []
+  const query = useQuery({
+    queryKey: ['sales', 'orders', { page, limit, status }],
+    queryFn: async () => {
+      const apiStatus = status === 'All' ? undefined : status
+      const response = await httpClient.get<any>(
+        ENDPOINTS.ORDERS.LIST_WITH_PARAMS(page, limit, apiStatus)
+      )
+      const data = response.data
+      const orderList = data?.orderList || []
 
-      const userOrders: any[] = []
+      const enrichedOrders = await Promise.all(
+        orderList.map(async (o: Order) => {
+          const searchParams = new URLSearchParams(window.location.search)
+          const urlInvoiceId = searchParams.get('invoiceId')
+          const invoiceId = o.invoiceId || (o as any).invoice_id || urlInvoiceId
 
-      // 2. Extract basic order info
-      if (Array.isArray(invoices)) {
-        invoices.forEach((inv: any) => {
-          if (Array.isArray(inv.orders)) {
-            inv.orders.forEach((ord: any) => {
-              userOrders.push({
-                ...ord,
-                invoice: inv // Pass parent invoice for context
-              })
-            })
-          }
-        })
-      }
+          if (invoiceId) {
+            try {
+              const invRes = await salesService.getInvoiceById(invoiceId)
+              const idata = invRes.data || (invRes as any)
+              const invoice = idata?.invoice || idata
 
-      // 3. Fetch detailed info for each order in parallel
-      const detailedOrders = await Promise.all(
-        userOrders.map(async (basicOrder) => {
-          try {
-            const detailRes = await httpClient.get<any>(`/admin/orders/${basicOrder.id}`)
-            const detailData =
-              detailRes.data?.data?.order || detailRes.data?.order || detailRes.data?.data
-
-            // Merge detail data with basic info (detail takes precedence)
-            return {
-              ...basicOrder,
-              ...detailData
+              if (invoice) {
+                return {
+                  ...o,
+                  customerName:
+                    o.customerName ||
+                    invoice.fullName ||
+                    invoice.fullNameVn ||
+                    invoice.name ||
+                    invoice.fullname ||
+                    (o as any).fullName,
+                  customerPhone:
+                    o.customerPhone || invoice.phone || invoice.phoneNumber || (o as any).phone,
+                  invoice: invoice
+                }
+              }
+            } catch (err) {
+              console.error('Failed to enrich order in list:', err)
             }
-          } catch (error) {
-            console.error(`Failed to fetch details for order ${basicOrder.id}`, error)
-            return basicOrder // Fallback to basic info
           }
+          return o
         })
       )
 
-      // 4. Transform to application model
-      return detailedOrders.map((ord) => transformOrder(ord, ord.invoice))
-    },
-    staleTime: 30000 // 30 seconds
+      return { ...data, orderList: enrichedOrders }
+    }
   })
 
-  const orders = useMemo(() => ordersQuery.data || [], [ordersQuery.data])
+  const invalidateOrders = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['sales', 'orders'] })
+  }, [queryClient])
 
-  const rxOrders = useMemo(() => orders.filter((o) => o.isPrescription), [orders])
-  const pendingOrders = useMemo(
-    () =>
-      orders.filter(
-        (o) => o.isPrescription && ['WAITING_ASSIGN', 'PENDING', 'DEPOSITED'].includes(o.status)
-      ),
-    [orders]
-  )
-  const processedOrders = useMemo(
-    () =>
-      orders.filter((o) => !o.isPrescription || !['WAITING_ASSIGN', 'PENDING'].includes(o.status)),
-    [orders]
-  )
-
-  const fetchOrders = () => ordersQuery.refetch()
-
-  // Manual fetch function for compatibility with existing components if needed
-  const fetchOrderDetail = async (orderId: string | number) => {
-    try {
-      const response = await httpClient.get<any>(`/admin/orders/${orderId}`)
-      const ord = response.data?.order || response.data?.data?.order || response.data || null
-
-      if (!ord) return null
-
-      return transformOrder(ord, null) as OrderDetail
-    } catch (err) {
-      console.error('Failed to fetch order detail:', err)
-      return null
-    }
-  }
+  const fetchOrders = useCallback(() => {
+    query.refetch()
+  }, [query])
 
   return {
-    orders,
-    rxOrders,
-    pendingOrders,
-    processedOrders,
-    loading: ordersQuery.isLoading,
-    isFetching: ordersQuery.isFetching,
-    error: ordersQuery.error,
-    fetchOrders,
-    fetchOrderDetail,
-    invalidateOrders: () => queryClient.invalidateQueries({ queryKey: ['sales', 'orders'] })
+    orders: (query.data?.orderList || []) as Order[],
+    rxOrders: (query.data?.orderList || []) as Order[],
+    pagination: query.data?.pagination || null,
+    loading: query.isLoading,
+    error: query.error ? (query.error as Error).message : null,
+    invalidateOrders,
+    fetchOrders
   }
 }
 
-export const useSalesStaffOrderDetail = (orderId: string | null | number) => {
-  const queryClient = useQueryClient()
-
+export function useSalesStaffOrderDetail(orderId: string) {
   return useQuery({
     queryKey: ['sales', 'order', orderId],
     queryFn: async () => {
-      if (!orderId) return null
+      if (!orderId) throw new Error('Order ID is required')
+      const response = await salesService.getOrderById(orderId)
+      const order = response.data?.order || (response as any).order
 
-      const cachedOrders = queryClient.getQueryData<Order[]>(['sales', 'orders'])
-      const cachedOrder = cachedOrders?.find((o) => o._id === orderId.toString())
+      if (!order) throw new Error('Order data not found')
 
-      if (cachedOrder && cachedOrder.customerName !== 'Guest') {
-        return cachedOrder
-      }
+      const searchParams = new URLSearchParams(window.location.search)
+      const urlInvoiceId = searchParams.get('invoiceId')
+      const o = order as any
+      const invoiceId =
+        o.invoiceId || o.invoice_id || o.invoice?.id || o.invoice?._id || urlInvoiceId
 
-      try {
-        const response = await httpClient.get<any>(`/admin/orders/${orderId}`)
-        const ord =
-          response.data?.data?.order ||
-          response.data?.order ||
-          response.data?.data ||
-          response.data ||
-          null
+      if (invoiceId) {
+        try {
+          const invRes = await salesService.getInvoiceById(invoiceId)
+          const idata = invRes.data || (invRes as any)
+          const invoice = idata?.invoice || idata
 
-        if (!ord) return null
+          if (invoice) {
+            // Address could be an object { street, ward, district, city }
+            let formattedAddr = invoice.address
+            if (invoice.address && typeof invoice.address === 'object') {
+              const a = invoice.address as any
+              formattedAddr = [a.street, a.ward, a.district, a.city].filter(Boolean).join(', ')
+            }
 
-        let invoiceData = null
-        if (ord.invoiceId) {
-          const cachedInvoices = queryClient.getQueryData<any[]>(['sales', 'invoices'])
-          let invoice = cachedInvoices?.find(
-            (i: any) => i.id === ord.invoiceId || i._id === ord.invoiceId
-          )
-
-          if (!invoice) {
-            const invRes = await httpClient.get<any>('/admin/invoices/deposited')
-            const invoices = invRes.data?.data || invRes.data || []
-            if (Array.isArray(invoices)) {
-              invoice = invoices.find((i: any) => i.id === ord.invoiceId || i._id === ord.invoiceId)
+            return {
+              ...order,
+              customerName:
+                order.customerName ||
+                invoice.fullName ||
+                invoice.fullNameVn ||
+                invoice.name ||
+                invoice.fullname ||
+                (order as any).fullName,
+              customerPhone:
+                order.customerPhone || invoice.phone || invoice.phoneNumber || (order as any).phone,
+              invoice: {
+                ...invoice,
+                address: formattedAddr
+              }
             }
           }
-          invoiceData = invoice
+        } catch (error) {
+          console.error('Failed to fetch invoice for order detail enrichment:', error)
         }
-
-        return transformOrder(ord, invoiceData) as OrderDetail
-      } catch (err) {
-        console.error('Failed to fetch order detail:', err)
-        return null
       }
+
+      return order
     },
-    enabled: !!orderId,
-    staleTime: 60000 // 1 minute
+    enabled: !!orderId
   })
 }

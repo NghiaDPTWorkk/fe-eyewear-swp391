@@ -11,7 +11,7 @@ export default function OrderHeaderTable({ columns, role = 'operation' }: OrderH
 
   return (
     <thead>
-      <tr className="border-b border-neutral-200 bg-neutral-50/50">
+      <tr className="border-b-[0.5px] border-neutral-50 bg-white">
         {columns.map((col, index) => (
           <th
             key={index}

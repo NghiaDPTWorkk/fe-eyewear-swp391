@@ -19,7 +19,10 @@ import LensSelectionModal from './lenses/LensSelectionModal'
 import type { LensSelectionState } from './lenses/types'
 import VirtualTryOnModal from './virtual-try-on/VirtualTryOnModal'
 import { cn } from '@/lib/utils'
-import type { UseProductVariantsReturn, AttributeValue } from '@/shared/hooks/products/useProductVariants'
+import type {
+  UseProductVariantsReturn,
+  AttributeValue
+} from '@/shared/hooks/products/useProductVariants'
 
 interface ProductInfoProps {
   product: Product
@@ -254,9 +257,7 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
               <div key={attribute.name}>
                 <h3 className="text-sm font-bold text-mint-1200 uppercase tracking-wider mb-4">
                   {attribute.name}:{' '}
-                  <span className="text-primary-600 font-semibold ml-1">
-                    {selectedLabel}
-                  </span>
+                  <span className="text-primary-600 font-semibold ml-1">{selectedLabel}</span>
                 </h3>
                 <div className="flex gap-3 flex-wrap">
                   {attribute.values.map((option: AttributeValue) => {

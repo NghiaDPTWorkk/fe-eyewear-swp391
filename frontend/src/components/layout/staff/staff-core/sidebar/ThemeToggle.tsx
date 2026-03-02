@@ -27,7 +27,7 @@ export function ThemeToggle({
     <button
       onClick={handleToggle}
       className={cn(
-        'w-full flex items-center transition-all duration-300 relative group overflow-hidden',
+        'w-full flex items-center transition-all duration-300 relative group overflow-hidden cursor-pointer',
         sidebarCollapsed
           ? 'justify-center py-2 px-0'
           : 'justify-between px-3 py-2.5 rounded-lg text-neutral-500 hover:bg-neutral-50'

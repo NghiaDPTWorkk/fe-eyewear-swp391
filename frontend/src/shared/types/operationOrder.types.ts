@@ -8,11 +8,13 @@ export interface LensParameters {
     SPH: number
     CYL: number
     AXIS: number
+    ADD?: number
   }
   right: {
     SPH: number
     CYL: number
     AXIS: number
+    ADD?: number
   }
   PD: number
 }

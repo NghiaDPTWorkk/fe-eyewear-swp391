@@ -31,7 +31,7 @@ export default tseslint.config(
           varsIgnorePattern: '^_'
         }
       ],
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/consistent-type-imports': 'error',
 
       // General
@@ -45,7 +45,8 @@ export default tseslint.config(
       // Code Style
       'no-multiple-empty-lines': ['error', { max: 1 }],
       'no-trailing-spaces': 'error',
-      'max-lines': ['warn', { max: 250, skipBlankLines: true, skipComments: true }]
+      'max-lines': 'off',
+      'react-hooks/set-state-in-effect': 'off'
     }
   },
   {

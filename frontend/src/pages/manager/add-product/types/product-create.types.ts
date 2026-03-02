@@ -1,4 +1,4 @@
-export type ProductCreateFormType = 'sunglass' | 'lens'
+export type ProductCreateFormType = 'frame' | 'lens'
 
 export interface ProductCreateFormState {
   type: ProductCreateFormType
@@ -41,4 +41,12 @@ export interface ProductCreateFormState {
       value: string
     }>
   }>
+  isPreOrder?: boolean
+  preOrderConfig?: {
+    description: string
+    targetDate: string
+    targetQuantity: string
+    startedDate: string
+    endedDate: string
+  }
 }

@@ -5,6 +5,8 @@ import { authApi } from '../services/auth.api.legacy'
 import toast from 'react-hot-toast'
 import { useAuthStore } from '@/store/auth.store'
 import { useCartStore } from '@/store/cart.store'
+import { showError, showSuccess } from '@/features/sales/utils/errorHandler'
+import { queryClient } from '@/lib/react-query'
 
 // Helper function to map roles to their corresponding paths
 const getRolePath = (
@@ -45,14 +47,18 @@ export const useLogin = () => {
       console.log('Login Success Response:', response)
 
       // 1. Robust Token Extraction
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       const authData = (response as any).data || response
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       const token = authData.token || authData.accessToken || (response as any).token
 
       if (!token) {
         console.error('No token found in response:', response)
-        toast.error('Invalid login response: Token missing')
+        if (isStaffLogin()) {
+          showError('Invalid login response: Token missing')
+        } else {
+          toast.error('Invalid login response: Token missing')
+        }
         return
       }
 
@@ -61,8 +67,9 @@ export const useLogin = () => {
       localStorage.setItem('access_token', token)
       setToken(token)
 
-      // 3. Fetch user profile
+      // 3. Clear stale cache from previous session, then fetch fresh profile
       try {
+        queryClient.clear() // Synchronous clear — removes stale profile from previous user
         await fetchProfile()
       } catch (error) {
         console.error('Failed to fetch profile after login:', error)
@@ -77,7 +84,12 @@ export const useLogin = () => {
         // Continue anyway, cart will be fetched when user visits cart page
       }
 
-      toast.success('Login successful!')
+      // Use appropriate success message based on login type
+      if (isStaffLogin()) {
+        showSuccess('Login successful! Welcome to OpticView Staff Portal')
+      } else {
+        toast.success('Login successful!')
+      }
 
       // Get role from store (it was automatically extracted from JWT by setToken)
       const roleFromToken = useAuthStore.getState().role
@@ -103,7 +115,12 @@ export const useLogin = () => {
       }
     },
     onError: (error: any) => {
-      toast.error(error.message || 'Login failed. Please try again.')
+      // Use Sales Staff error handler for staff login, regular toast for customer login
+      if (isStaffLogin()) {
+        showError(error, 'Login failed. Please check your credentials and try again.')
+      } else {
+        toast.error(error.message || 'Login failed. Please try again.')
+      }
       console.error('Login failed', error)
     }
   })

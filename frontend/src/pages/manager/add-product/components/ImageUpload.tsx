@@ -1,5 +1,6 @@
 import React, { useRef } from 'react'
 import { IoCloudUploadOutline, IoCloseCircle } from 'react-icons/io5'
+import { uploadSingle } from '@/lib/upload'
 
 interface ImageUploadProps {
   images: string[]
@@ -7,16 +8,25 @@ interface ImageUploadProps {
 }
 
 export function ImageUpload({ images, onChange }: ImageUploadProps) {
+  const [isUploading, setIsUploading] = React.useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
-    if (!files) return
+    if (!files || files.length === 0) return
 
-    // In a real app, you would upload to a server here.
-    // For now, we'll create object URLs to simulate the UI.
-    const newImages = Array.from(files).map((file) => URL.createObjectURL(file))
-    onChange([...images, ...newImages])
+    setIsUploading(true)
+    try {
+      const uploadPromises = Array.from(files).map((file) => uploadSingle(file))
+      const uploadedUrls = await Promise.all(uploadPromises)
+      onChange([...images, ...uploadedUrls])
+    } catch (error) {
+      console.error('Upload failed:', error)
+      alert('Failed to upload one or more images. Please contact support if problem persists.')
+    } finally {
+      setIsUploading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
   }
 
   const removeImage = (index: number) => {
@@ -47,10 +57,15 @@ export function ImageUpload({ images, onChange }: ImageUploadProps) {
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="w-24 h-24 flex flex-col items-center justify-center border-2 border-dashed border-neutral-200 rounded-2xl hover:bg-neutral-50 transition-colors"
+          disabled={isUploading}
+          className={`w-24 h-24 flex flex-col items-center justify-center border-2 border-dashed border-neutral-200 rounded-2xl transition-colors ${
+            isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-neutral-50'
+          }`}
         >
           <IoCloudUploadOutline size={24} className="text-neutral-400" />
-          <span className="text-[10px] font-bold text-neutral-400 mt-1">Upload</span>
+          <span className="text-[10px] font-bold text-neutral-400 mt-1">
+            {isUploading ? 'Uploading...' : 'Upload'}
+          </span>
         </button>
       </div>
 

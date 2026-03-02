@@ -1,61 +1,274 @@
 import { useQuery } from '@tanstack/react-query'
-import { httpClient } from '@/api/apiClients'
+import { salesService } from '../services/salesService'
+import { OrderType } from '@/shared/utils/enums/order.enum'
+import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import type { Invoice } from '../types'
 
-export const useSalesStaffInvoices = () => {
-  const {
-    data: invoices = [],
-    isLoading: loading,
-    error,
-    refetch: fetchInvoices
-  } = useQuery({
-    queryKey: ['sales', 'invoices'],
+export function useSalesStaffInvoices(
+  page: number = 1,
+  limit: number = 10,
+  status: string = 'All',
+  search?: string
+) {
+  const query = useQuery({
+    queryKey: ['sales', 'invoices', { page, limit, status, search }],
     queryFn: async () => {
-      const response = await httpClient.get<any>('/admin/invoices/deposited')
-      const rawData = response.data?.data || response.data || []
+      let apiStatus: string | undefined = undefined
+      let apiStatuses: string | undefined = undefined
 
-      // Parallelize checking orders for each invoice
-      const mappedInvoices = await Promise.all(
-        (Array.isArray(rawData) ? rawData : []).map(async (inv: any) => {
-          const total = inv.orders?.length || 0
-          let approved = 0
+      if (status === 'APPROVED_OR_REJECTED') {
+        apiStatuses = [
+          InvoiceStatus.APPROVED,
+          InvoiceStatus.ONBOARD,
+          InvoiceStatus.READY_TO_SHIP,
+          InvoiceStatus.DELIVERING,
+          InvoiceStatus.DELIVERED,
+          InvoiceStatus.COMPLETED,
+          InvoiceStatus.REJECTED,
+          InvoiceStatus.CANCELED
+        ].join(',')
+      } else if (status === 'All') {
+        apiStatus = undefined
+      } else {
+        apiStatus = status
+      }
 
-          if (inv.orders && inv.orders.length > 0) {
-            try {
-              // We need order details to check status
-              // Optimization: Use Promise.all to fetch in parallel
-              const orderPromises = inv.orders.map((o: any) =>
-                httpClient.get(`/admin/orders/${o.id}`).catch(() => null)
+      const response = await salesService.getDepositedInvoices(
+        page,
+        limit,
+        apiStatus,
+        apiStatuses,
+        search
+      )
+
+      const apiData = response?.data
+      const invoiceData = apiData?.invoiceList || []
+      const pagination = apiData?.pagination || { totalPages: 1, total: 0 }
+
+      const enrichedInvoices = await Promise.all(
+        invoiceData.map(async (inv: any) => {
+          try {
+            const orderIds = (inv.orders || []) as (string | { id?: string; _id?: string })[]
+
+            const ordersWithDetails = (
+              await Promise.all(
+                orderIds.map(async (item) => {
+                  const orderId = (typeof item === 'string' ? item : item.id || item._id) as string
+                  if (!orderId) return null
+                  try {
+                    const detailRes = await salesService.getOrderById(orderId)
+                    const o = detailRes.data.order
+
+                    const isMfg = (Array.isArray(o.type) ? o.type : [o.type]).some((t) =>
+                      String(t).includes(OrderType.MANUFACTURING)
+                    )
+
+                    const isVerified = [
+                      'VERIFIED',
+                      'APPROVE',
+                      'APPROVED',
+                      'WAITING_ASSIGN',
+                      'ASSIGNED',
+                      'MAKING',
+                      'PACKAGING',
+                      'COMPLETED',
+                      'ONBOARD',
+                      'DELIVERED',
+                      'DELIVERING',
+                      'SHIPPED',
+                      'PROCESSING'
+                    ].includes(o.status?.toUpperCase())
+
+                    return {
+                      id: o._id,
+                      type: o.type,
+                      status: o.status,
+                      isPrescription: isMfg,
+                      isVerified: isVerified
+                    }
+                  } catch {
+                    return {
+                      id: orderId,
+                      type: [],
+                      status: 'UNKNOWN',
+                      isPrescription: false,
+                      isVerified: false
+                    }
+                  }
+                })
               )
-              const orderResults = await Promise.all(orderPromises)
+            ).filter(Boolean) as any[]
 
-              approved = orderResults.filter((res: any) => {
-                if (!res) return false
-                const order = res.data?.data?.order || res.data?.order || res.data?.data
-                return (
-                  order?.status === 'APPROVED' ||
-                  order?.status === 'COMPLETED' ||
-                  order?.status === 'VERIFIED'
-                )
-              }).length
-            } catch (err) {
-              console.error('Error fetching details for invoice', inv.id, err)
-            }
+            const approvedCount = ordersWithDetails.filter((o) => o && o.isVerified).length
+            const hasManufacturing = ordersWithDetails.some((o) => o.isPrescription)
+
+            return {
+              ...inv,
+              id: inv.id || inv._id,
+              orders: ordersWithDetails,
+              totalOrdersCount: ordersWithDetails.length,
+              approvedOrdersCount: approvedCount,
+              hasManufacturing
+            } as unknown as Invoice
+          } catch {
+            return {
+              ...inv,
+              id: inv.id || inv._id,
+              orders: [],
+              totalOrdersCount: 0,
+              approvedOrdersCount: 0
+            } as unknown as Invoice
           }
-
-          return {
-            ...inv,
-            totalOrdersCount: total,
-            approvedOrdersCount: approved
-          } as Invoice
         })
       )
 
-      return mappedInvoices
+      return {
+        invoices: enrichedInvoices,
+        pagination
+      }
     },
-    staleTime: 1000 * 60 * 1, // Cache for 1 minute
-    refetchOnWindowFocus: true
+    staleTime: 60000
   })
 
-  return { invoices, loading, error: error ? (error as Error).message : null, fetchInvoices }
+  return {
+    invoices: query.data?.invoices || [],
+    pagination: query.data?.pagination || null,
+    loading: query.isLoading,
+    error: query.error ? (query.error as Error).message : null,
+    fetchInvoices: query.refetch
+  }
+}
+
+export function useSalesStaffOrderDetail(orderId: string) {
+  return useQuery({
+    queryKey: ['sales', 'order', orderId],
+    queryFn: async () => {
+      if (!orderId) throw new Error('Order ID is required')
+      const response = await salesService.getOrderById(orderId)
+      const order = response.data?.order || (response as any).order
+
+      if (!order) throw new Error('Order data not found')
+
+      const searchParams = new URLSearchParams(window.location.search)
+      const urlInvoiceId = searchParams.get('invoiceId')
+      const o = order as any
+      const invoiceId =
+        o.invoiceId || o.invoice_id || o.invoice?.id || o.invoice?._id || urlInvoiceId
+
+      if (invoiceId) {
+        try {
+          const invRes = await salesService.getInvoiceById(invoiceId)
+          const idata = invRes.data || (invRes as any)
+          const invoice = idata?.invoice || idata
+
+          if (invoice) {
+            // Address could be an object { street, ward, district, city }
+            let formattedAddr = invoice.address
+            if (invoice.address && typeof invoice.address === 'object') {
+              const a = invoice.address as any
+              formattedAddr = [a.street, a.ward, a.district, a.city].filter(Boolean).join(', ')
+            }
+
+            return {
+              ...order,
+              customerName:
+                order.customerName ||
+                invoice.fullName ||
+                invoice.fullNameVn ||
+                invoice.name ||
+                invoice.fullname ||
+                (order as any).fullName,
+              customerPhone:
+                order.customerPhone || invoice.phone || invoice.phoneNumber || (order as any).phone,
+              invoice: {
+                ...invoice,
+                address: formattedAddr
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Failed to fetch invoice for order enrichment:', error)
+        }
+      }
+
+      return order
+    },
+    enabled: !!orderId
+  })
+}
+
+export function useSalesStaffLabOrders(page: number = 1, limit: number = 10) {
+  return useQuery({
+    queryKey: ['sales', 'lab-orders', { page, limit }],
+    queryFn: async () => {
+      const response = await salesService.getManufacturingOrders(page, limit)
+      const data = response?.data?.orders || { data: [], total: 0 }
+
+      const mappedOrders = (data.data || []).map((o: any) => {
+        const status = o.status?.toUpperCase()
+        let progress = 0
+        let progressColor = 'bg-neutral-200'
+        let station = 'Pending'
+        let stationColor = 'bg-neutral-100 text-neutral-500'
+
+        if (status === 'WAITING_ASSIGN') {
+          progress = 25
+          progressColor = 'bg-amber-400'
+          station = 'Wait Assign'
+          stationColor = 'bg-amber-100 text-amber-600'
+        } else if (status === 'ASSIGNED') {
+          progress = 50
+          progressColor = 'bg-purple-400'
+          station = 'Assigned'
+          stationColor = 'bg-purple-100 text-purple-600'
+        } else if (status === 'MAKING') {
+          progress = 75
+          progressColor = 'bg-blue-400'
+          station = 'Production'
+          stationColor = 'bg-blue-100 text-blue-600'
+        } else if (status === 'PACKAGING' || status === 'COMPLETED') {
+          progress = 100
+          progressColor = 'bg-emerald-400'
+          station = status === 'PACKAGING' ? 'Packaging' : 'Finished'
+          stationColor = 'bg-emerald-100 text-emerald-600'
+        } else if (status === 'APPROVED' || status === 'PENDING') {
+          progress = 10
+          progressColor = 'bg-slate-300'
+          station = 'Verified'
+          stationColor = 'bg-slate-100 text-slate-500'
+        } else if (status === 'CANCELED' || status === 'REJECTED') {
+          progress = 0
+          progressColor = 'bg-rose-400'
+          station = status === 'CANCELED' ? 'Canceled' : 'Rejected'
+          stationColor = 'bg-rose-100 text-rose-600'
+        }
+
+        return {
+          id: `#${o.orderCode?.split('_')[1] || o._id.slice(-4)}`,
+          orderCode: o.orderCode,
+          fullId: o._id,
+          type: o.products?.[0]?.product?.sku || 'Custom Lens',
+          material: o.products?.[0]?.lens?.sku || 'Standard Material',
+          station,
+          stationColor,
+          progress,
+          progressColor,
+          time: o.updatedAt
+            ? new Date(o.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            : 'Active',
+          order: o
+        }
+      })
+
+      return {
+        orders: mappedOrders,
+        pagination: {
+          total: data.total,
+          page: data.page,
+          totalPages: data.totalPages
+        }
+      }
+    },
+    staleTime: 30000
+  })
 }

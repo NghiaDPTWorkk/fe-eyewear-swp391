@@ -1,19 +1,23 @@
 import { useEffect, useState, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
-import {
-  useSalesStaffOrders,
-  useSalesStaffOrderDetail
-} from '@/features/sales/hooks/useSalesStaffOrders'
+
+import { OrderType } from '@/shared/utils/enums/order.enum'
+
 import { useSalesStaffAction } from '@/features/sales/hooks/useSalesStaffAction'
-import { OrderDrawerCustomer } from './drawer/OrderDrawerCustomer'
-import { OrderDrawerItems } from './drawer/OrderDrawerItems'
-import { OrderDrawerTimeline } from './drawer/OrderDrawerTimeline'
+import {
+  useSalesStaffInvoices as useSalesStaffOrders,
+  useSalesStaffOrderDetail
+} from '@/features/sales/hooks/useSalesStaffInvoices'
+import ConfirmationModal from '@/shared/components/ui-core/confirm-modal/ConfirmationModal'
+
 import { OrderDrawerActions } from './drawer/OrderDrawerActions'
-import { OrderDrawerUpdateStatus } from './drawer/OrderDrawerUpdateStatus'
-import { OrderDrawerRxVerify } from './drawer/OrderDrawerRxVerify'
+import { OrderDrawerCustomer } from './drawer/OrderDrawerCustomer'
 import { OrderDrawerHeader } from './drawer/OrderDrawerHeader'
-import ConfirmationModal from '@/shared/components/ui/ConfirmationModal'
+import { OrderDrawerItems } from './drawer/OrderDrawerItems'
+import { OrderDrawerRxVerify } from './drawer/OrderDrawerRxVerify'
+import { OrderDrawerTimeline } from './drawer/OrderDrawerTimeline'
+import { OrderDrawerUpdateStatus } from './drawer/OrderDrawerUpdateStatus'
 
 export const OrderDetailsDrawer: React.FC<{
   isOpen: boolean
@@ -23,8 +27,12 @@ export const OrderDetailsDrawer: React.FC<{
   onViewFullDetails?: () => void
 }> = ({ isOpen, onClose, orderId, onUpdate, onViewFullDetails }) => {
   const navigate = useNavigate()
-  const { invalidateOrders } = useSalesStaffOrders()
-  const { data: order, isLoading, refetch } = useSalesStaffOrderDetail(isOpen ? orderId : null)
+  const { fetchInvoices: invalidateOrders } = useSalesStaffOrders()
+  const {
+    data: order,
+    isLoading,
+    refetch
+  } = useSalesStaffOrderDetail(isOpen && orderId ? orderId : '')
   const { approveInvoice, rejectInvoice, approveOrder, rejectOrder, processing } =
     useSalesStaffAction()
 
@@ -101,7 +109,7 @@ export const OrderDetailsDrawer: React.FC<{
     ]
   }, [order])
 
-  const isPrescription = order?.type?.includes('MANUFACTURING') || false
+  const isPrescription = order?.type?.includes(OrderType.MANUFACTURING) || false
   const isApproved = ['APPROVED', 'VERIFIED', 'COMPLETED'].includes(order?.status || '')
 
   // Confirmation Modal State
@@ -165,7 +173,7 @@ export const OrderDetailsDrawer: React.FC<{
       const isVerified =
         order.status === 'VERIFIED' || order.status === 'APPROVED' || order.status === 'COMPLETED'
       navigate(`/salestaff/orders/${order._id}/verify-rx${isVerified ? '?mode=readonly' : ''}`)
-    } else if (order.type?.includes('PRE-ORDER')) {
+    } else if (order.type?.includes(OrderType.PRE_ORDER)) {
       navigate(`/salestaff/orders/${order._id}/pre-order`)
     } else {
       navigate(`/salestaff/orders/${order._id}/regular`)
@@ -185,7 +193,7 @@ export const OrderDetailsDrawer: React.FC<{
               orderTypeLabel={
                 isPrescription
                   ? 'Prescription'
-                  : order?.type?.includes('PRE-ORDER')
+                  : order?.type?.includes(OrderType.PRE_ORDER)
                     ? 'Pre-order'
                     : 'Regular'
               }
@@ -232,17 +240,51 @@ export const OrderDetailsDrawer: React.FC<{
         onConfirm={executeAction}
         title={
           confirmState.action === 'approve'
-            ? 'Approve Order'
+            ? 'Approve Order Verification'
             : confirmState.action === 'reject'
-              ? 'Reject Order'
+              ? 'Reject Order Verification'
               : 'Confirm Action'
         }
         message={
-          confirmState.action === 'approve'
-            ? 'Are you sure you want to approve this order/invoice? This action cannot be undone.'
-            : 'Are you sure you want to reject this order? This will also reject the associated invoice.'
+          confirmState.action === 'approve' ? (
+            <span className="text-slate-600">
+              You are about to <span className="font-bold text-mint-600">APPROVE</span> this
+              prescription/order. Please ensure all details have been verified for accuracy.
+            </span>
+          ) : (
+            <span className="text-slate-600">
+              You are about to <span className="font-bold text-rose-600">REJECT</span> this order.
+              This action will notify the customer and may require a reason.
+            </span>
+          )
         }
-        confirmText={confirmState.action === 'approve' ? 'Approve' : 'Reject'}
+        details={
+          <div className="space-y-4">
+            <div className="flex justify-between items-center py-2 border-b border-slate-50">
+              <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">
+                Order ID
+              </span>
+              <span className="text-sm font-bold text-slate-900">{order?.orderCode}</span>
+            </div>
+            <div className="flex justify-between items-center py-2 border-b border-slate-50">
+              <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">
+                Customer
+              </span>
+              <span className="text-sm font-bold text-slate-900">
+                {order?.customerName || 'N/A'}
+              </span>
+            </div>
+            <div className="flex justify-between items-center py-2">
+              <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">
+                Category
+              </span>
+              <span className="text-sm font-italic text-slate-600 italic">
+                {isPrescription ? 'Prescription Order' : 'Regular Order'}
+              </span>
+            </div>
+          </div>
+        }
+        confirmText={confirmState.action === 'approve' ? 'Confirm Approval' : 'Proceed Rejection'}
         type={confirmState.action === 'approve' ? 'info' : 'danger'}
         isLoading={processing}
       />

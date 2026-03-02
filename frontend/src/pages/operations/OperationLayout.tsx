@@ -2,13 +2,8 @@ import { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { STORAGE_KEYS } from '@/shared/constants/storage'
 import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layout/StaffMainLayout'
-import {
-  SidebarStaff,
-  UserWidgetWithLogout,
-  ThemeToggle,
-  NavActions,
-  NavSearch
-} from '@/components/staff'
+import { SidebarStaff, UserWidgetWithLogout, ThemeToggle, NavActions } from '@/components/staff'
+import OperationNavSearch from '@/components/layout/staff/operationstaff/OperationNavSearch'
 import {
   IoGridOutline,
   IoReceipt,
@@ -52,7 +47,7 @@ export default function OperationLayout() {
     }
   }, [profileData, setUser])
 
-  // Gọi API để lấy số lượng đơn hàng cho từng trạng thái
+  // Gọi API để lấy số lượng đơn hàng để xíu lọc theo từng trạng thái
   const { data: ordersData, isLoading, isError, error } = useAllOrders()
 
   // Gọi API riêng để lấy số đơn hàng COMPLETED
@@ -63,7 +58,6 @@ export default function OperationLayout() {
     setLoadingState(isLoading, isError)
 
     if (ordersData) {
-      console.log('Lấy thông tin từ order thành công:')
       // Transform data từ API sang format UI
       const apiOrders = ordersData?.data?.orders?.data || []
 
@@ -77,11 +71,10 @@ export default function OperationLayout() {
       initializeCounts(transformedOrders)
     }
     if (isError) {
-      console.error('Lỗi API:', error)
+      console.error('Error when calling API:', error)
     }
   }, [ordersData, isLoading, isError, error, initializeCounts, setOrders, setLoadingState])
 
-  // Effect riêng để xử lý completed orders
   useEffect(() => {
     // Set loading state cho completed
     setCompletedLoadingState(isLoadingCompleted)
@@ -96,7 +89,7 @@ export default function OperationLayout() {
   const handleLogout = () => {
     navigate('/admin/login')
     const { logout } = useAuthStore.getState()
-    logout() // Clear store
+    logout()
     localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN)
     localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN)
     localStorage.removeItem(STORAGE_KEYS.USER_INFO)
@@ -145,7 +138,7 @@ export default function OperationLayout() {
           label="All Orders"
           active={location.pathname === '/operationstaff/all'}
           onClick={() => navigate('/operationstaff/all')}
-          badge={counts.all > 0 ? counts.all.toString() : undefined}
+          badge={counts.all.toString()}
           isLoading={isLoading}
         />
         <SidebarStaff.MenuItem
@@ -161,7 +154,7 @@ export default function OperationLayout() {
           label="Logistics Waiting Station"
           active={location.pathname === '/operationstaff/pre-orders'}
           onClick={() => navigate('/operationstaff/pre-orders')}
-          badge={counts.logistics > 0 ? counts.logistics.toString() : undefined}
+          badge={counts.logistics.toString()}
           isLoading={isLoading}
         />
         <SidebarStaff.MenuItem
@@ -169,7 +162,7 @@ export default function OperationLayout() {
           label="Packing Station"
           active={location.pathname === '/operationstaff/packing'}
           onClick={() => navigate('/operationstaff/packing')}
-          badge={counts.packing > 0 ? counts.packing.toString() : undefined}
+          badge={counts.packing.toString()}
           isLoading={isLoading}
         />
         <SidebarStaff.MenuItem
@@ -209,17 +202,13 @@ export default function OperationLayout() {
   return (
     <StaffMainLayout
       sidebar={sidebar}
-      headerLeft={<NavSearch placeholder="Search orders..." styleVariant="operation" />}
+      headerLeft={<OperationNavSearch />}
       headerRight={
         <NavActions
           userName={userName}
           userRole={userRole}
           userInitials={userInitials}
-          userAvatar={profile?.avatar}
-          userEmail={profile?.email}
-          roleBadge={profile?.role}
-          onLogout={handleLogout}
-          showMessageButton={false}
+          userEmail={profile?.email || 'loading@example.com'}
         />
       }
       mainClassName="p-4 md:p-8 bg-mint-200 relative overflow-x-hidden"

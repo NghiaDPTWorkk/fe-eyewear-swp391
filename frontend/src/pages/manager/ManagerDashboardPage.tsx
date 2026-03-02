@@ -1,4 +1,5 @@
 import { Container } from '@/components'
+import { PageHeader } from '@/features/sales/components/common'
 import { StatCard } from './components/dashboard/StatCard'
 import { SalesTarget } from './components/dashboard/SalesTarget'
 import { DashboardChart } from './components/dashboard/DashboardChart'
@@ -14,15 +15,14 @@ import {
 
 export default function ManagerDashboardPage() {
   return (
-    <Container className="max-w-none px-2 pt-2 pb-8">
-      <div className="mb-6 px-4">
-        <h1 className="text-2xl font-semibold text-gray-900 tracking-tight font-heading">
-          Dashboard
-        </h1>
-        <p className="text-gray-500 text-sm font-normal leading-relaxed">Dashboard Overview</p>
-      </div>
+    <Container className="max-w-none space-y-8">
+      <PageHeader
+        title="Dashboard"
+        subtitle="Review your store's overall performance and key metrics."
+        breadcrumbs={[{ label: 'Dashboard' }]}
+      />
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-10 px-4">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         {/* Row 1: Sales Target + Stats Column */}
         <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-1 gap-6">
           <SalesTarget />
@@ -58,7 +58,7 @@ export default function ManagerDashboardPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-10 px-4">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         {/* Row 2: Charts + Promo */}
         <div className="lg:col-span-3">
           <DashboardChart />
@@ -68,7 +68,7 @@ export default function ManagerDashboardPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 px-4">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         {/* Row 3: Customer Growth + Popular Products */}
         <div className="lg:col-span-2">
           <CustomerGrowth />

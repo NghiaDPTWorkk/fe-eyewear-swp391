@@ -1,6 +1,10 @@
 import { ENDPOINTS, httpClient } from '@/api'
 import type { ApiResponse } from '@/shared/types/response.types'
-import type { AiMessageListData, ChatReplyData, AiConversationData } from '@/shared/types/chat.types'
+import type {
+  AiMessageListData,
+  ChatReplyData,
+  AiConversationData
+} from '@/shared/types/chat.types'
 
 export const chatService = {
   /** Get or create conversation for current user */

@@ -16,7 +16,7 @@ interface MenuItemProps {
   onClick?: () => void
   menuOpen?: boolean
   isOpen?: boolean
-  isLoading?: boolean // Thêm prop để hiển thị loading spinner
+  isLoading?: boolean
 }
 
 export function MenuItem({
@@ -30,7 +30,7 @@ export function MenuItem({
   children,
   onClick,
   isOpen: defaultIsOpen = false,
-  isLoading = false // Mặc định không loading
+  isLoading = false
 }: MenuItemProps) {
   const { sidebarCollapsed } = useLayoutStore()
   const hasActiveChild = Children.toArray(children).some(
@@ -48,7 +48,7 @@ export function MenuItem({
   }
 
   const commonClasses = cn(
-    'w-full flex items-center transition-all duration-300 relative group',
+    'w-full flex items-center transition-all duration-300 relative group cursor-pointer',
     sidebarCollapsed ? 'justify-center py-2 px-0' : 'justify-start px-3 py-2.5 rounded-lg gap-3',
     !sidebarCollapsed && active
       ? 'bg-primary-50 text-primary-700'
@@ -64,19 +64,23 @@ export function MenuItem({
       )}
       <span
         className={cn(
-          'text-xl transition-colors relative z-10',
+          'text-xl transition-colors relative z-10 flex items-center justify-center',
           active || (hasDropdown && isOpen) ? 'text-primary-500' : 'text-neutral-400',
           sidebarCollapsed && 'group-hover:text-primary-500'
         )}
       >
-        {icon}
+        {isLoading ? (
+          <div className="w-5 h-5 border-2 border-primary-500/20 border-t-primary-500 rounded-full animate-spin" />
+        ) : (
+          icon
+        )}
       </span>
       {!sidebarCollapsed && (
         <>
           <span className="flex-1 text-left truncate transition-opacity duration-300 font-medium">
             {label}
           </span>
-          {(badge || isLoading) && (
+          {badge !== undefined && (
             <span
               className={cn(
                 'px-2 py-0.5 text-xs rounded-full font-semibold shrink-0 min-w-[28px] text-center flex items-center justify-center',
@@ -86,26 +90,7 @@ export function MenuItem({
               )}
             >
               {isLoading ? (
-                <svg
-                  className="animate-spin h-3 w-3"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
+                <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
               ) : (
                 badge
               )}

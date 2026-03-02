@@ -1,8 +1,8 @@
-import { useQuery, useMutation } from '@tanstack/react-query'
-import { orderService } from '../../services/orders.service'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { orderService } from '../../services/orderService'
 
 /**
- * Hook để lấy danh sách orders với phân trang và filter
+ * Hook để fetch orders với pagination và filter
  * @param page - Số trang
  * @param limit - Số lượng items mỗi trang
  * @param status - Filter theo status (optional)
@@ -31,63 +31,111 @@ export const useAllOrders = () => {
 }
 
 /**
- * Hook để lấy orders có status COMPLETED
- * Dùng riêng cho sidebar count của Complete Orders
+ * Hook để lấy tất cả orders đã completed
  */
 export const useCompletedOrders = () => {
   return useQuery({
     queryKey: ['orders', 'completed'],
     queryFn: () => orderService.getOrders(1, 1000, 'COMPLETED'),
-    staleTime: 60000, // Cache 1 phút
+    staleTime: 60000,
     refetchOnWindowFocus: true
   })
 }
 
 /**
- * Hook để lấy chi tiết một order theo ID
- * @param orderId - ID của order cần lấy
+ * Hook để lấy chi tiết một order
+ * @param orderId - Order ID
  */
 export const useOrderDetail = (orderId: string) => {
   return useQuery({
     queryKey: ['order', orderId],
     queryFn: () => orderService.getOrderById(orderId),
-    enabled: !!orderId // Chỉ fetch khi có orderId
+    enabled: !!orderId, // Chỉ fetch khi có orderId
+    staleTime: 30000
   })
 }
 
 /**
- * Hook để update order status
- * @returns mutation object
+ * Hook search orders theo orderCode (dùng cho thanh search)
+ * @param orderCode - Mã đơn hàng cần tìm
  */
-export const useUpdateOrder = () => {
-  return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => orderService.updateOrder(id, data)
+export const useSearchOrders = (orderCode: string) => {
+  return useQuery({
+    queryKey: ['orders', 'search', orderCode],
+    queryFn: () => orderService.searchByOrderCode(orderCode),
+    enabled: orderCode.trim().length >= 2, // Chỉ gọi khi nhập >= 2 ký tự
+    staleTime: 10000,
+    refetchOnWindowFocus: false
   })
 }
 
 /**
- * Hook để update order status sang MAKING
+ * Hook lấy chi tiết invoice theo invoiceId
+ * @param invoiceId - Invoice ID (lấy từ order.invoiceId)
+ */
+export const useInvoiceDetail = (invoiceId?: string) => {
+  return useQuery({
+    queryKey: ['invoice', invoiceId],
+    queryFn: () => orderService.getInvoiceById(invoiceId!),
+    enabled: !!invoiceId,
+    staleTime: 60000,
+    refetchOnWindowFocus: false
+  })
+}
+
+/**
+ * Hook cập nhật trạng thái sang MAKING
  */
 export const useUpdateStatusToMaking = () => {
+  const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => orderService.updateStatusToMaking(id)
+    mutationFn: (orderId: string) => orderService.updateStatusToMaking(orderId),
+    onSuccess: (_, orderId) => {
+      queryClient.invalidateQueries({ queryKey: ['orders'] })
+      queryClient.invalidateQueries({ queryKey: ['order', orderId] })
+    }
   })
 }
 
 /**
- * Hook để update order status sang PACKAGING
+ * Hook cập nhật trạng thái sang PACKAGING
  */
 export const useUpdateStatusToPackaging = () => {
+  const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => orderService.updateStatusToPackaging(id)
+    mutationFn: (orderId: string) => orderService.updateStatusToPackaging(orderId),
+    onSuccess: (_, orderId) => {
+      queryClient.invalidateQueries({ queryKey: ['orders'] })
+      queryClient.invalidateQueries({ queryKey: ['order', orderId] })
+    }
   })
 }
 
 /**
- * Hook để update order status sang COMPLETED
+ * Hook cập nhật trạng thái sang COMPLETED
  */
 export const useUpdateStatusToCompleted = () => {
+  const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => orderService.updateStatusToCompleted(id)
+    mutationFn: (orderId: string) => orderService.updateStatusToCompleted(orderId),
+    onSuccess: (_, orderId) => {
+      queryClient.invalidateQueries({ queryKey: ['orders'] })
+      queryClient.invalidateQueries({ queryKey: ['order', orderId] })
+    }
+  })
+}
+
+/**
+ * Hook approve order với prescription parameters
+ */
+export const useApproveOrder = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ orderId, data }: { orderId: string; data: { parameters: any } }) =>
+      orderService.approveOrder(orderId, data),
+    onSuccess: (_, { orderId }) => {
+      queryClient.invalidateQueries({ queryKey: ['orders'] })
+      queryClient.invalidateQueries({ queryKey: ['order', orderId] })
+    }
   })
 }

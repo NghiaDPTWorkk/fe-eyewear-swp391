@@ -301,7 +301,7 @@ export default function ManagerTransactionsPage() {
   const selectedTransaction = mockTransactions.find((t) => t.id === selectedId)
 
   return (
-    <Container className="pt-2 pb-8 px-2 max-w-[1600px] mx-auto">
+    <Container className="max-w-none pt-4 pb-12 px-6 bg-white min-h-[calc(100vh-64px)] rounded-3xl shadow-sm border border-neutral-100">
       <PageHeader
         title="Transactions"
         subtitle="Manage and track all store financial activities."

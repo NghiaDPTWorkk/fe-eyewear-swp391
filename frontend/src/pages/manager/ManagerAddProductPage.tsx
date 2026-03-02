@@ -7,6 +7,7 @@ import { ProductBaseFields } from './add-product/components/ProductBaseFields'
 import { FrameSpecFields } from './add-product/components/FrameSpecFields'
 import { LensSpecFields } from './add-product/components/LensSpecFields'
 import { VariantsEditor } from './add-product/components/VariantsEditor'
+import { VoiceDatePicker } from './add-product/components/VoiceDatePicker'
 import type { ProductCreateFormState } from './add-product/types/product-create.types'
 import { httpClient } from '@/api/apiClients'
 import { toast } from 'react-hot-toast'
@@ -144,10 +145,10 @@ export default function ManagerAddProductPage() {
       }
 
       const endpoint = state.isPreOrder ? '/admin/products/pre-order' : '/admin/products'
-      console.log('Creating product at:', endpoint, 'Payload:', payload)
+      console.warn('Creating product at:', endpoint, 'Payload:', payload)
       const response = (await httpClient.post(endpoint, payload)) as any
-      console.log('Create product response (Object):', response)
-      console.log('Create product response (JSON):', JSON.stringify(response))
+      console.warn('Create product response (Object):', response)
+      console.warn('Create product response (JSON):', JSON.stringify(response))
 
       if (state.isPreOrder && response.success) {
         // Try to find variantSkus in multiple possible locations
@@ -168,10 +169,10 @@ export default function ManagerAddProductPage() {
           }
         }
 
-        console.log('Discovered variant SKUs:', variantSkus)
+        console.warn('Discovered variant SKUs:', variantSkus)
 
         const config = state.preOrderConfig!
-        console.log('Initializing pre-order imports for skus:', variantSkus)
+        console.warn('Initializing pre-order imports for skus:', variantSkus)
 
         const importPromises = variantSkus.map((sku: string) => {
           const toISO = (d: string) => {
@@ -310,50 +311,41 @@ export default function ManagerAddProductPage() {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-gray-700 ml-1">Target Date</label>
-                  <input
-                    type="date"
-                    value={state.preOrderConfig?.targetDate}
-                    onChange={(e) =>
-                      setState((prev) => ({
-                        ...prev,
-                        preOrderConfig: { ...prev.preOrderConfig!, targetDate: e.target.value }
-                      }))
-                    }
-                    className="w-full px-4 py-3 bg-white border border-neutral-100 rounded-2xl text-[14px] focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all"
-                  />
-                </div>
+                <VoiceDatePicker
+                  label="Target Date"
+                  value={state.preOrderConfig?.targetDate || ''}
+                  onChange={(val) =>
+                    setState((prev) => ({
+                      ...prev,
+                      preOrderConfig: { ...prev.preOrderConfig!, targetDate: val }
+                    }))
+                  }
+                  helperText="Speak: 'Ngày 20 tháng 3'"
+                />
 
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-gray-700 ml-1">Start Date</label>
-                  <input
-                    type="date"
-                    value={state.preOrderConfig?.startedDate}
-                    onChange={(e) =>
-                      setState((prev) => ({
-                        ...prev,
-                        preOrderConfig: { ...prev.preOrderConfig!, startedDate: e.target.value }
-                      }))
-                    }
-                    className="w-full px-4 py-3 bg-white border border-neutral-100 rounded-2xl text-[14px] focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all"
-                  />
-                </div>
+                <VoiceDatePicker
+                  label="Start Date"
+                  value={state.preOrderConfig?.startedDate || ''}
+                  onChange={(val) =>
+                    setState((prev) => ({
+                      ...prev,
+                      preOrderConfig: { ...prev.preOrderConfig!, startedDate: val }
+                    }))
+                  }
+                  helperText="Speak: 'Hôm nay'"
+                />
 
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-gray-700 ml-1">End Date</label>
-                  <input
-                    type="date"
-                    value={state.preOrderConfig?.endedDate}
-                    onChange={(e) =>
-                      setState((prev) => ({
-                        ...prev,
-                        preOrderConfig: { ...prev.preOrderConfig!, endedDate: e.target.value }
-                      }))
-                    }
-                    className="w-full px-4 py-3 bg-white border border-neutral-100 rounded-2xl text-[14px] focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all"
-                  />
-                </div>
+                <VoiceDatePicker
+                  label="End Date"
+                  value={state.preOrderConfig?.endedDate || ''}
+                  onChange={(val) =>
+                    setState((prev) => ({
+                      ...prev,
+                      preOrderConfig: { ...prev.preOrderConfig!, endedDate: val }
+                    }))
+                  }
+                  helperText="Speak: 'Ngày mai'"
+                />
               </div>
             )}
           </div>

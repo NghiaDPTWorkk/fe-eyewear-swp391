@@ -1,8 +1,10 @@
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import { Container } from '@/components'
 import { PageHeader } from '@/features/sales/components/common'
-import { UserTable, type UserData } from './components/users/UserTable'
+import { UserTable } from './components/users/UserTable'
 import { UserDetailDrawer } from './components/users/UserDetailDrawer'
+import { useAdminCustomers } from '@/shared/hooks/admin/useAdminCustomers'
+import { useDebounce } from '@/shared/hooks/useDebounce'
 import {
   IoSearchOutline,
   IoRefreshOutline,
@@ -15,72 +17,9 @@ import {
   IoTrendingDownOutline
 } from 'react-icons/io5'
 
-const mockUsers: UserData[] = [
-  {
-    id: '1',
-    name: 'Nguyen Van An',
-    email: 'an.nguyen@gmail.com',
-    phone: '0901234567',
-    status: 'Active',
-    joinDate: 'Jan 15, 2026',
-    totalOrders: 23,
-    totalSpent: 1250
-  },
-  {
-    id: '2',
-    name: 'Tran Thi Bich',
-    email: 'bich.tran@gmail.com',
-    phone: '0912345678',
-    status: 'Active',
-    joinDate: 'Feb 02, 2026',
-    totalOrders: 5,
-    totalSpent: 340
-  },
-  {
-    id: '3',
-    name: 'Le Hoang Nam',
-    email: 'nam.le@gmail.com',
-    phone: '0923456789',
-    status: 'Inactive',
-    joinDate: 'Dec 20, 2025',
-    totalOrders: 12,
-    totalSpent: 890
-  },
-  {
-    id: '4',
-    name: 'Pham Minh Duc',
-    email: 'duc.pham@gmail.com',
-    phone: '0934567890',
-    status: 'Banned',
-    joinDate: 'Nov 10, 2025',
-    totalOrders: 2,
-    totalSpent: 150
-  },
-  {
-    id: '5',
-    name: 'Vo Thi Hanh',
-    email: 'hanh.vo@gmail.com',
-    phone: '0945678901',
-    status: 'Active',
-    joinDate: 'Jan 28, 2026',
-    totalOrders: 8,
-    totalSpent: 620
-  },
-  {
-    id: '6',
-    name: 'Do Quang Huy',
-    email: 'huy.do@gmail.com',
-    phone: '0956789012',
-    status: 'Active',
-    joinDate: 'Feb 10, 2026',
-    totalOrders: 15,
-    totalSpent: 980
-  }
-]
-
 const SummaryCard: React.FC<{
   label: string
-  value: string
+  value: string | number
   percent: string
   isUp: boolean
   icon: React.ReactNode
@@ -115,27 +54,23 @@ const SummaryCard: React.FC<{
 
 export default function AdminUsersPage() {
   const [searchQuery, setSearchQuery] = useState('')
+  const debouncedSearch = useDebounce(searchQuery, 500)
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
   const [statusFilter, setStatusFilter] = useState<'All' | 'Active' | 'Inactive' | 'Banned'>('All')
+  const [page, setPage] = useState(1)
+  const limit = 10
 
-  const filteredUsers = useMemo(() => {
-    let list = mockUsers
-    if (statusFilter !== 'All') {
-      list = list.filter((u) => u.status === statusFilter)
-    }
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase()
-      list = list.filter(
-        (u) =>
-          u.name.toLowerCase().includes(q) ||
-          u.email.toLowerCase().includes(q) ||
-          u.phone.includes(q)
-      )
-    }
-    return list
-  }, [searchQuery, statusFilter])
+  const { data, isLoading, isError, refetch, isFetching } = useAdminCustomers({
+    page,
+    limit,
+    search: debouncedSearch,
+    status: statusFilter
+  })
 
-  const selectedUser = mockUsers.find((u) => u.id === selectedUserId) ?? null
+  const customers = data?.data.customers ?? []
+  const pagination = data?.data.pagination ?? { page: 1, limit: 10, total: 0, totalPages: 1 }
+
+  const selectedUser = customers.find((u) => u._id === selectedUserId) ?? null
 
   const statusTabs = [
     { label: 'All Users', value: 'All' as const },
@@ -143,6 +78,11 @@ export default function AdminUsersPage() {
     { label: 'Inactive', value: 'Inactive' as const },
     { label: 'Banned', value: 'Banned' as const }
   ]
+
+  const handleStatusChange = (status: 'All' | 'Active' | 'Inactive' | 'Banned') => {
+    setStatusFilter(status)
+    setPage(1) // Reset to page 1 on filter change
+  }
 
   return (
     <Container className="pt-2 pb-8 px-2 max-w-none space-y-8">
@@ -158,7 +98,7 @@ export default function AdminUsersPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 px-4">
         <SummaryCard
           label="Total Users"
-          value="8,234"
+          value={pagination.total.toLocaleString()}
           percent="12.5%"
           isUp={true}
           icon={<IoPeopleOutline size={20} />}
@@ -167,7 +107,7 @@ export default function AdminUsersPage() {
         />
         <SummaryCard
           label="Active Users"
-          value="7,102"
+          value="-"
           percent="8.3%"
           isUp={true}
           icon={<IoPersonOutline size={20} />}
@@ -176,7 +116,7 @@ export default function AdminUsersPage() {
         />
         <SummaryCard
           label="Banned"
-          value="45"
+          value="-"
           percent="2.1%"
           isUp={false}
           icon={<IoBanOutline size={20} />}
@@ -191,7 +131,7 @@ export default function AdminUsersPage() {
           {statusTabs.map((tab) => (
             <button
               key={tab.value}
-              onClick={() => setStatusFilter(tab.value)}
+              onClick={() => handleStatusChange(tab.value)}
               className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${
                 statusFilter === tab.value
                   ? 'bg-white text-indigo-600 shadow-sm border border-neutral-100'
@@ -212,9 +152,7 @@ export default function AdminUsersPage() {
               User List
             </p>
             <div className="flex items-baseline gap-3">
-              <h2 className="text-4xl font-bold text-gray-900 font-primary">
-                {filteredUsers.length}
-              </h2>
+              <h2 className="text-4xl font-bold text-gray-900 font-primary">{pagination.total}</h2>
               <span className="text-xs font-bold text-indigo-500">results</span>
             </div>
           </div>
@@ -233,36 +171,88 @@ export default function AdminUsersPage() {
                 className="w-full md:w-64 pl-12 pr-4 py-3 bg-neutral-50/50 border border-neutral-100 rounded-2xl text-[13px] font-medium focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all"
               />
             </div>
-            <button className="w-12 h-12 flex items-center justify-center bg-neutral-50 rounded-2xl text-neutral-400 hover:text-gray-900 transition-all">
+            <button
+              onClick={() => refetch()}
+              className={`w-12 h-12 flex items-center justify-center bg-neutral-50 rounded-2xl text-neutral-400 hover:text-gray-900 transition-all ${isFetching ? 'animate-spin' : ''}`}
+            >
               <IoRefreshOutline size={20} />
             </button>
           </div>
         </div>
 
-        <UserTable
-          users={filteredUsers}
-          selectedUserId={selectedUserId}
-          onSelectUser={(id) => setSelectedUserId(id)}
-        />
+        {isLoading ? (
+          <div className="p-8 text-center text-neutral-500">Loading customers...</div>
+        ) : isError ? (
+          <div className="p-8 text-center text-red-500">Error loading customers</div>
+        ) : customers.length === 0 ? (
+          <div className="p-8 text-center text-neutral-500">No customers found</div>
+        ) : (
+          <UserTable
+            users={customers}
+            selectedUserId={selectedUserId}
+            onSelectUser={(id) => setSelectedUserId(id)}
+          />
+        )}
 
         {/* Pagination */}
         <div className="p-8 border-t border-neutral-50 flex items-center justify-between">
           <p className="text-xs font-semibold text-neutral-400 uppercase tracking-widest">
-            Showing 1-{filteredUsers.length} of {mockUsers.length} Users
+            Showing {(pagination.page - 1) * pagination.limit + 1}-
+            {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}{' '}
+            Users
           </p>
           <div className="flex items-center gap-2">
-            <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-neutral-100 text-neutral-400 hover:text-indigo-600 transition-all">
+            <button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={pagination.page <= 1}
+              className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-neutral-100 text-neutral-400 hover:text-indigo-600 transition-all disabled:opacity-50"
+            >
               <IoChevronBackOutline />
             </button>
             <div className="flex gap-1">
-              <button className="w-10 h-10 rounded-xl bg-indigo-500 text-white text-xs font-bold shadow-lg shadow-indigo-100">
-                1
-              </button>
-              <button className="w-10 h-10 rounded-xl bg-white text-neutral-400 text-xs font-bold hover:bg-neutral-50">
-                2
-              </button>
+              {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
+                .filter((p) => {
+                  // Show current, first, last, and neighbors
+                  return (
+                    p === 1 || p === pagination.totalPages || Math.abs(p - pagination.page) <= 1
+                  )
+                })
+                .reduce((acc, p, i, arr) => {
+                  // Add ellipsis if there's a gap
+                  if (i > 0 && p - arr[i - 1] > 1) {
+                    acc.push(-1) // -1 represents ellipsis
+                  }
+                  acc.push(p)
+                  return acc
+                }, [] as number[])
+                .map((p, i) =>
+                  p === -1 ? (
+                    <span
+                      key={`ellipsis-${i}`}
+                      className="w-10 h-10 flex items-center justify-center text-neutral-400"
+                    >
+                      ...
+                    </span>
+                  ) : (
+                    <button
+                      key={p}
+                      onClick={() => setPage(p)}
+                      className={`w-10 h-10 rounded-xl text-xs font-bold transition-all ${
+                        pagination.page === p
+                          ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-100'
+                          : 'bg-white text-neutral-400 border border-neutral-100 hover:bg-neutral-50'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  )
+                )}
             </div>
-            <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-neutral-100 text-neutral-400 hover:text-indigo-600 transition-all">
+            <button
+              onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
+              disabled={pagination.page >= pagination.totalPages}
+              className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-neutral-100 text-neutral-400 hover:text-indigo-600 transition-all disabled:opacity-50"
+            >
               <IoChevronForwardOutline />
             </button>
           </div>

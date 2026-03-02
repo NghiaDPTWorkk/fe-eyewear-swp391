@@ -45,5 +45,9 @@ export const salesService = {
     return httpClient.get<any>(
       ENDPOINTS.ORDERS.LIST_WITH_PARAMS(page, limit, undefined, 'MANUFACTURING')
     )
+  },
+
+  getInvoiceById: async (id: string) => {
+    return httpClient.get<any>(ENDPOINTS.OPERATION_STAFF.INVOICE_DETAIL(id))
   }
 }

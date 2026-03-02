@@ -308,12 +308,21 @@ export default function InvoiceCard({
                               )}
                             </div>
                           ) : (
-                            <div className="space-y-1">
-                              <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                                Order Status
+                            order.assignedStaff && (
+                              <div className="flex items-center gap-2 bg-neutral-50 px-3 py-2 rounded-xl border border-neutral-100 min-w-[180px]">
+                                <div className="w-8 h-8 rounded-lg bg-white border border-neutral-50 flex items-center justify-center text-neutral-400">
+                                  <IoPersonOutline size={14} />
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-tight">
+                                    Assigned Staff
+                                  </p>
+                                  <p className="text-xs font-bold text-gray-800 truncate">
+                                    {order.assignedStaff}
+                                  </p>
+                                </div>
                               </div>
-                              <div className="text-sm font-bold text-gray-700">{order.status}</div>
-                            </div>
+                            )
                           )}
                         </div>
                       </div>
@@ -333,15 +342,9 @@ export default function InvoiceCard({
                         </div>
                         <div className="text-gray-600">
                           <span className="text-gray-400 font-bold uppercase text-[10px] block mb-0.5">
-                            Worker
-                          </span>{' '}
-                          {order.assignedStaff ?? '-'}
-                        </div>
-                        <div className="text-gray-600">
-                          <span className="text-gray-400 font-bold uppercase text-[10px] block mb-0.5">
                             Assigned Date
                           </span>{' '}
-                          {order.assignedAt ?? '-'}
+                          {order.assignedAt ? new Date(order.assignedAt).toLocaleDateString() : '-'}
                         </div>
                       </div>
 

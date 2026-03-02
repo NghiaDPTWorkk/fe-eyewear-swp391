@@ -13,7 +13,7 @@ interface ConfirmationModalProps {
   onClose: () => void
   onConfirm: () => void
   title: string
-  message: string
+  message: string | React.ReactNode
   confirmText?: string
   cancelText?: string
   isLoading?: boolean
@@ -108,7 +108,7 @@ export default function ConfirmationModal({
 
         <div className="space-y-6 mb-8">
           <div className="bg-neutral-50 p-6 rounded-[2rem] border border-neutral-100/50">
-            <p className="text-sm font-normal text-black leading-relaxed line-clamp-3">{message}</p>
+            <p className="text-sm font-normal text-black leading-relaxed">{message}</p>
           </div>
 
           {details && (

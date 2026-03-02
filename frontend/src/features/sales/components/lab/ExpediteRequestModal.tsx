@@ -55,10 +55,10 @@ export function ExpediteRequestModal({ isOpen, onClose, order }: ExpediteRequest
               <IoFlashOutline size={24} />
             </div>
             <div>
-              <h3 className="text-xl font-black text-slate-900 tracking-tight uppercase leading-none">
+              <h3 className="text-xl font-bold text-slate-900 tracking-tight uppercase leading-none">
                 Expedite Progress
               </h3>
-              <p className="text-[10px] text-amber-600 font-black uppercase tracking-[0.2em] mt-2">
+              <p className="text-[10px] text-amber-600 font-bold uppercase tracking-[0.2em] mt-2">
                 Priority Allocation
               </p>
             </div>
@@ -75,17 +75,17 @@ export function ExpediteRequestModal({ isOpen, onClose, order }: ExpediteRequest
           {/* Order Info Summary */}
           <div className="p-6 bg-slate-50/50 rounded-[2rem] border border-slate-100 flex justify-between items-center">
             <div>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">
+              <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1.5">
                 Target Order
               </p>
-              <p className="text-base font-black text-slate-900">{order.orderCode}</p>
+              <p className="text-base font-bold text-slate-900">{order.orderCode}</p>
             </div>
             <div className="text-right">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">
+              <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1.5">
                 Current Station
               </p>
               <span
-                className={`px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest bg-white border shadow-sm ${order.stationColor}`}
+                className={`px-3 py-1 rounded-xl text-[10px] font-bold uppercase tracking-widest bg-white border shadow-sm ${order.stationColor}`}
               >
                 {order.station}
               </span>
@@ -101,14 +101,14 @@ export function ExpediteRequestModal({ isOpen, onClose, order }: ExpediteRequest
             </div>
 
             <div className="space-y-3">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">
+              <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest ml-2">
                 Reason / Internal Note
               </label>
               <textarea
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="Ex: Customer needs for upcoming flight on Monday..."
-                className="w-full min-h-[140px] p-6 bg-neutral-50 border border-neutral-100 rounded-[2rem] text-sm font-bold text-slate-700 focus:outline-none focus:ring-8 focus:ring-amber-500/10 focus:border-amber-400 transition-all resize-none placeholder:text-slate-300 shadow-inner"
+                className="w-full min-h-[140px] p-6 bg-neutral-50 border border-neutral-100 rounded-[2rem] text-sm font-semibold text-slate-700 focus:outline-none focus:ring-8 focus:ring-amber-500/10 focus:border-amber-400 transition-all resize-none placeholder:text-slate-300 shadow-inner"
                 required
               />
             </div>
@@ -118,7 +118,7 @@ export function ExpediteRequestModal({ isOpen, onClose, order }: ExpediteRequest
             <Button
               type="submit"
               isLoading={isSubmitting}
-              className="w-full h-14 bg-amber-500 hover:bg-amber-600 text-white rounded-[1.25rem] font-black text-xs uppercase tracking-widest shadow-xl shadow-amber-100 transition-all flex items-center justify-center gap-2 border-none active:scale-95"
+              className="w-full h-14 bg-amber-500 hover:bg-amber-600 text-white rounded-[1.25rem] font-bold text-xs uppercase tracking-widest shadow-xl shadow-amber-100 transition-all flex items-center justify-center gap-2 border-none active:scale-95"
             >
               <IoSendOutline className="text-lg" />
               Send Request

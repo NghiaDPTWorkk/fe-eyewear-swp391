@@ -46,7 +46,11 @@ export const ImageGallery = ({ images }: ImageGalleryProps) => {
               }`}
               onClick={() => setActiveImage(img)}
             >
-              <img src={img} alt={`Gallery ${index + 1}`} className="w-full h-full object-contain" />
+              <img
+                src={img}
+                alt={`Gallery ${index + 1}`}
+                className="w-full h-full object-contain"
+              />
             </div>
           ))}
         </div>

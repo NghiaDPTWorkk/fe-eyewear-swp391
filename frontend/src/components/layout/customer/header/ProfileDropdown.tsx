@@ -41,7 +41,7 @@ export function ProfileDropdown() {
       >
         <User className="w-5 h-5 text-gray-eyewear group-hover:text-primary-500 transition-colors" />
         <span className="text-sm font-medium text-gray-eyewear hidden md:block">
-          {user?.name || 'User'}
+          {user?.name || ''}
         </span>
       </button>
 
@@ -50,10 +50,10 @@ export function ProfileDropdown() {
           <div className="p-6 bg-white border-b border-neutral-50 font-sans">
             <div className="mb-3">
               <h3 className="text-xl font-semibold text-neutral-900 leading-tight">
-                {user?.name || 'User'}
+                {user?.name || ''}
               </h3>
               <p className="text-sm font-medium text-neutral-500 truncate mt-1">
-                {user?.email || 'user@example.com'}
+                {user?.email || ''}
               </p>
             </div>
             <span className="px-3 py-1 bg-primary-100 text-primary-600 text-[11px] font-semibold uppercase tracking-wider rounded-lg border border-primary-200/30">

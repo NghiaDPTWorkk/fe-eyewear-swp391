@@ -127,11 +127,18 @@ export default function OperationOrderPackingProcess() {
 
   const handleCheckAll = () => {
     if (isCompleted) return
-    const allCheckedState: Record<string, boolean> = {}
-    checklistItems.forEach((item) => {
-      allCheckedState[item.id] = true
-    })
-    setCheckedState(allCheckedState)
+    
+    if (allChecked) {
+      // Clear all
+      setCheckedState({})
+    } else {
+      // Check all
+      const allCheckedState: Record<string, boolean> = {}
+      checklistItems.forEach((item) => {
+        allCheckedState[item.id] = true
+      })
+      setCheckedState(allCheckedState)
+    }
   }
 
   return (
@@ -173,7 +180,10 @@ export default function OperationOrderPackingProcess() {
           <ScanSection orderId={orderId} />
 
           {/* Checklist Section */}
-          <CheckListSection onCheckAll={isCompleted ? undefined : handleCheckAll}>
+          <CheckListSection
+            onCheckAll={isCompleted ? undefined : handleCheckAll}
+            allChecked={allChecked}
+          >
             {checklistItems.map((item) => (
               <CheckItem
                 key={item.id}

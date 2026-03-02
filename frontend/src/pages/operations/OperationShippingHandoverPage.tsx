@@ -4,7 +4,7 @@ import { Container } from '@/components'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 import { useOrdersDetails } from '@/features/staff/hooks/orders/useOrders'
 import { ProcessTracker } from '@/components/layout/staff/staff-core/processtracker'
-import { IoAirplaneOutline, IoClose, IoPrintOutline } from 'react-icons/io5'
+import { IoCarOutline, IoConstructOutline, IoCubeOutline, IoTimeOutline, IoAirplaneOutline, IoClose, IoPrintOutline } from 'react-icons/io5'
 import ScanInvoiceCode from '@/components/layout/staff/operationstaff/scaninvoicecode/ScanInvoiceCode'
 import {
   CheckOrderListFromInvoice,
@@ -139,7 +139,29 @@ export default function OperationShippingHandoverPage() {
       </div>
 
       {/* Progress Tracker */}
-      <ProcessTracker />
+      {(() => {
+        const invStatus = invoice.status
+        const steps = [
+          { icon: <IoTimeOutline size={24} />, label: 'Pending' },
+          { icon: <IoConstructOutline size={24} />, label: 'Processing' },
+          { icon: <IoCubeOutline size={24} />, label: 'Packaging' },
+          { icon: <IoCubeOutline size={24} />, label: 'Ready for Pickup' },
+          { icon: <IoCarOutline size={24} />, label: 'Shipping' }
+        ]
+
+        let activeStep = 0
+        if (invStatus === 'DELIVERING' || invStatus === 'DELIVERED') {
+          activeStep = 4
+        } else if (invStatus === 'READY_TO_SHIP') {
+          activeStep = 3
+        } else if (invStatus === 'COMPLETED') {
+          activeStep = 2
+        } else if (invStatus) {
+          activeStep = 1
+        }
+
+        return <ProcessTracker title="Invoice Progress" steps={steps} activeStep={activeStep} />
+      })()}
 
       <div className="grid grid-cols-12 gap-6 mt-6">
         {/* Left Column */}

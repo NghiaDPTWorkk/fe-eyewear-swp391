@@ -7,16 +7,31 @@ interface LensProps {
   data: LensItem[]
   imageSrc?: string
   quantity?: number
+  sku?: string
 }
 const LensNormalOrder = ({
   data,
   imageSrc = 'https://via.placeholder.com/400x300?text=Lens',
-  quantity
+  quantity,
+  sku
 }: LensProps) => {
   return (
     <>
-      <div className="text-sm text-mint-800 mb-4 font-semibold ps-2">
-        Quantity: <span className="text-gray-900">{quantity ?? '-'}</span>
+      <div className="flex items-center gap-7 mb-7 ps-2">
+        <div className="flex items-baseline gap-2">
+          <span className="text-[10px] uppercase tracking-[0.1em] font-bold text-neutral-500">Quantity</span>
+          <span className="text-base font-bold text-neutral-800 leading-none">{quantity ?? '-'}</span>
+        </div>
+        
+        {sku && (
+          <>
+            <div className="w-px h-3 bg-neutral-200 self-center"></div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-[10px] uppercase tracking-[0.1em] font-bold text-neutral-500">Lens SKU</span>
+              <span className="text-base font-bold text-neutral-800 leading-none">{sku}</span>
+            </div>
+          </>
+        )}
       </div>
       <div className="flex flex-col md:flex-row gap-6">
         {/* Lens Image */}

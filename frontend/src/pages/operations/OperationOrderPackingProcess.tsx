@@ -1,7 +1,15 @@
 import { useState, useMemo } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Container } from '@/components'
-import { IoArrowBack, IoCarOutline, IoCheckmarkCircle, IoConstructOutline, IoCubeOutline, IoReload, IoTimeOutline } from 'react-icons/io5'
+import {
+  IoArrowBack,
+  IoCarOutline,
+  IoCheckmarkCircle,
+  IoConstructOutline,
+  IoCubeOutline,
+  IoReload,
+  IoTimeOutline
+} from 'react-icons/io5'
 import { ProcessTracker } from '@/components/layout/staff/staff-core/processtracker'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 import { ScanSection } from '@/shared/components/ui/scansection'
@@ -11,15 +19,10 @@ import CheckListSection from '@/shared/components/ui/packingchecklist/CheckListS
 import CheckItem from '@/shared/components/ui/packingchecklist/CheckItem'
 import ConfirmationModal from '@/shared/components/ui/ConfirmationModal'
 import type { OrderProductItem } from '@/shared/types'
-import {
-  useOrderDetail,
-  useUpdateStatusToCompleted
-} from '@/features/staff/hooks/orders/useOrders'
+import { useOrderDetail, useUpdateStatusToCompleted } from '@/features/staff/hooks/orders/useOrders'
 import toast from 'react-hot-toast'
 import { useQueryClient } from '@tanstack/react-query'
-import {
-  useOperationInvoiceDetail,
-} from '@/features/operations/hooks/useOperationInvoiceDetail'
+import { useOperationInvoiceDetail } from '@/features/operations/hooks/useOperationInvoiceDetail'
 
 export default function OperationOrderPackingProcess() {
   const { orderId } = useParams<{ orderId: string }>()
@@ -180,7 +183,6 @@ export default function OperationOrderPackingProcess() {
           {isCompleted ? 'COMPLETED' : status || 'In Progress'}
         </span>
       </div>
-
       {/* Progress Tracker */}
       {(() => {
         const invStatus = invoice?.status
@@ -205,7 +207,7 @@ export default function OperationOrderPackingProcess() {
 
         return <ProcessTracker title="Invoice Progress" steps={steps} activeStep={activeStep} />
       })()}
-
+      {/* : Trạng thái từ API + Loại đơn hàng = Vị trí nút xanh trên thanh. */}
       <div className="grid grid-cols-12 gap-6">
         {/* Left Column */}
         <div className="col-span-12 lg:col-span-7 space-y-6">
@@ -240,7 +242,6 @@ export default function OperationOrderPackingProcess() {
           <OrderSumary orderId={orderId} />
         </div>
       </div>
-
       {/* Footer Actions */}
       <div className="flex justify-end items-center mt-8 pt-4 border-t border-gray-200">
         <button
@@ -269,7 +270,6 @@ export default function OperationOrderPackingProcess() {
           )}
         </button>
       </div>
-
       {/* Confirmation Modal */}
       <ConfirmationModal
         isOpen={isModalOpen}

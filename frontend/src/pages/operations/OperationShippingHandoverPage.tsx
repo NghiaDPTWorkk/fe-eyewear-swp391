@@ -37,12 +37,15 @@ export default function OperationShippingHandoverPage() {
   const activeShipCode = internalShipCode || fetchedShipCode || undefined
 
   const orders = invoice?.orders ?? []
-  const allOrdersCompleted = orders.length > 0
-
-  const isReadyToShip = invoice?.status === 'READY_TO_SHIP'
 
   // Fetch details for all orders to calculate total amount
   const orderDetailQueries = useOrdersDetails(orders)
+
+  const allOrdersCompleted =
+    orders.length > 0 &&
+    orderDetailQueries.every((q: any) => q.isSuccess && q.data?.data?.order?.status === 'COMPLETED')
+
+  const isReadyToShip = invoice?.status === 'READY_TO_SHIP'
 
   const totalAmount = orderDetailQueries.reduce((sum: number, query: any) => {
     const orderData = (query.data as any)?.data?.order
@@ -165,8 +168,8 @@ export default function OperationShippingHandoverPage() {
                 return (
                   <OrderCheckItem
                     key={orderId}
-                    orderCode={orderData?.orderCode || orderId.slice(-8).toUpperCase()}
-                    orderId={orderId}
+                    orderCode={orderData?.orderCode || (orderId ? orderId.slice(-8).toUpperCase() : 'N/A')}
+                    orderId={orderId || ''}
                     status={orderData?.status || 'COMPLETED'}
                   />
                 )

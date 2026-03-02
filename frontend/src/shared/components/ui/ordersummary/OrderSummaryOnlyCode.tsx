@@ -11,6 +11,8 @@ export default function OrderSummaryOnlyCode({
   const { data: orderApiResponse, isLoading } = useOrderDetail(orderId)
   const orderData = (orderApiResponse as OrderResponse)?.data?.order as any
 
+  if (!orderId) return null
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">

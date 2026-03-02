@@ -17,7 +17,7 @@ import LensSpecifications from '@/components/layout/staff/staff-core/technicalde
 import FrameSpecifications from '@/components/layout/staff/staff-core/technicaldetail/FrameSpecifications'
 import { PATHS } from '@/routes/paths'
 import { ProcessTracker } from '@/components/layout/staff/staff-core/processtracker'
-import { IoArrowBack } from 'react-icons/io5'
+import { IoArrowBack, IoCheckmarkCircle, IoConstructOutline, IoCubeOutline, IoTimeOutline } from 'react-icons/io5'
 import type React from 'react'
 
 export default function OperationOrderDetailPage() {
@@ -367,7 +367,31 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
       </div>
 
       {/* Progress Tracker */}
-      <ProcessTracker />
+      {(() => {
+        const orderStatus = orderDetailData.status
+        const orderType = orderDetailData.type?.[0] || orderDetailData.type
+
+        const steps = [
+          { icon: <IoTimeOutline size={24} />, label: 'Pending' },
+          { icon: <IoConstructOutline size={24} />, label: 'Progressing' },
+          { icon: <IoCubeOutline size={24} />, label: 'Packing' },
+          { icon: <IoCheckmarkCircle size={24} />, label: 'Completed' }
+        ]
+
+        let activeStep = 0
+        if (orderStatus === 'COMPLETED') {
+          activeStep = 3
+        } else if (orderStatus === 'PACKING' || orderStatus === 'PACKAGING') {
+          activeStep = 2
+        } else if (orderType === 'MANUFACTURING' && orderStatus === 'MAKING') {
+          activeStep = 1
+        } else if (orderType === 'NORMAL' && (orderStatus === 'MAKING' || orderStatus === 'PACKING' || orderStatus === 'PACKAGING')) {
+           // For Normal, if it somehow gets MAKING, or for packing
+           activeStep = orderStatus === 'MAKING' ? 1 : 2
+        }
+
+        return <ProcessTracker title="Order Progress" steps={steps} activeStep={activeStep} />
+      })()}
 
       {/* Technical Details - Lens Specifications */}
       {renderedLensComponent && (

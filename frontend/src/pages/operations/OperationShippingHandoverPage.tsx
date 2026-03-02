@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { Container } from '@/components'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 import { ProcessTracker } from '@/components/layout/staff/staff-core/processtracker'
-import { IoAirplaneOutline } from 'react-icons/io5'
+import { IoAirplaneOutline, IoPrintOutline } from 'react-icons/io5'
 import ScanInvoiceCode from '@/components/layout/staff/operationstaff/scaninvoicecode/ScanInvoiceCode'
 import {
   CheckOrderListFromInvoice,
@@ -16,6 +16,9 @@ import {
   useOperationShipCode
 } from '@/features/operations/hooks/useOperationInvoiceDetail'
 import ConfirmationModal from '@/shared/components/ui/ConfirmationModal'
+import ShippingInfoSeal from '@/components/layout/staff/operationstaff/shippinginfoseal/ShippingInfoSeal'
+import { createPortal } from 'react-dom'
+import { IoClose } from 'react-icons/io5'
 import toast from 'react-hot-toast'
 
 export default function OperationShippingHandoverPage() {
@@ -28,6 +31,7 @@ export default function OperationShippingHandoverPage() {
   const invoice = data
 
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isLabelModalOpen, setIsLabelModalOpen] = useState(false)
   const [internalShipCode, setInternalShipCode] = useState<string | undefined>(undefined)
 
   const activeShipCode = internalShipCode || fetchedShipCode || undefined
@@ -63,7 +67,7 @@ export default function OperationShippingHandoverPage() {
 
   const handlePrintLabel = () => {
     if (!invoice) return
-    alert('Printing shipping label for ' + invoice.invoiceCode)
+    setIsLabelModalOpen(true)
   }
 
   // Build a friendly address string
@@ -201,6 +205,60 @@ export default function OperationShippingHandoverPage() {
         isLoading={updateInvoiceStatus.isPending}
         type="info"
       />
+
+      {/* Shipping Label Print Modal */}
+      {isLabelModalOpen && invoice && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div
+            className="fixed inset-0 bg-neutral-900/40 backdrop-blur-[2px] transition-opacity duration-300 opacity-100"
+            onClick={() => setIsLabelModalOpen(false)}
+          />
+          <div className="relative w-auto bg-white rounded-xl shadow-2xl p-6 transition-all duration-300 transform scale-100 opacity-100 flex flex-col gap-6">
+            <div className="flex justify-between items-center px-2">
+              <h3 className="text-xl font-bold tracking-tight text-slate-800">
+                Print Shipping Label
+              </h3>
+              <button
+                onClick={() => setIsLabelModalOpen(false)}
+                className="p-2 hover:bg-neutral-100 rounded-full transition-colors text-neutral-400 hover:text-neutral-900"
+              >
+                <IoClose size={24} />
+              </button>
+            </div>
+            
+            {/* The Seal */}
+            <div className="bg-white rounded-lg p-2 border border-neutral-200">
+               <ShippingInfoSeal
+                 invoiceCode={invoice.invoiceCode}
+                 fullName={invoice.fullName}
+                 phone={invoice.phone}
+                 address={getAddressString()}
+                 shipCode={activeShipCode}
+               />
+            </div>
+
+            <div className="flex justify-end gap-3 px-2">
+               <button
+                 onClick={() => setIsLabelModalOpen(false)}
+                 className="px-6 py-2.5 rounded-lg border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 transition-colors"
+               >
+                 Cancel
+               </button>
+               <button
+                 onClick={() => {
+                    toast.success('Shipping label sent to printer!')
+                    setIsLabelModalOpen(false)
+                 }}
+                 className="px-8 py-2.5 rounded-lg bg-mint-600 text-white font-bold hover:bg-mint-700 shadow-md shadow-mint-200 transition-transform active:scale-95 flex items-center gap-2"
+               >
+                 <IoPrintOutline size={20} />
+                 Print Now
+               </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </Container>
   )
 }

@@ -68,13 +68,8 @@ export default function InvoiceTableData({ invoice, onView, onNext }: InvoiceTab
           {/* Next Button */}
           <button
             onClick={() => onNext(invoice.id)}
-            disabled={invoice.status === 'READY_TO_SHIP'}
-            className={`p-2 rounded-lg transition-all border ${
-              invoice.status !== 'READY_TO_SHIP'
-                ? 'bg-mint-50 hover:bg-mint-100 text-mint-600 border-mint-200'
-                : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
-            }`}
-            title="Process Shipping"
+            className="p-2 rounded-lg transition-all border bg-mint-50 hover:bg-mint-100 text-mint-600 border-mint-200"
+            title="Go to Shipping Handover"
           >
             <IoChevronForward size={18} />
           </button>

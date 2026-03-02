@@ -27,13 +27,11 @@ export default function OperationShippingHandoverPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [shipCode, setShipCode] = useState<string | undefined>(undefined)
 
-  // For real API: orders are stored on the invoice, all statuses assumed COMPLETED at handover stage
   const orders = invoice?.orders ?? []
-  // All orders in handle-delivery invoices are considered completed (ready for shipment)
   const allOrdersCompleted = orders.length > 0
 
   const isReadyToShip = invoice?.status === 'READY_TO_SHIP'
-  const canShip = allOrdersCompleted && !isReadyToShip
+
 
   const handleProcessShipping = () => {
     setIsModalOpen(true)
@@ -45,8 +43,6 @@ export default function OperationShippingHandoverPage() {
       onSuccess: (data: any) => {
         setIsModalOpen(false)
         toast.success('Invoice marked as Ready to Ship!')
-        // Assuming the backend response structure matches the user's example
-        // data.data.data.shipmentInfo.shipCode
         const newShipCode =
           data?.data?.data?.shipmentInfo?.shipCode || data?.data?.shipmentInfo?.shipCode
         if (newShipCode) {
@@ -157,7 +153,7 @@ export default function OperationShippingHandoverPage() {
             {!allOrdersCompleted && (
               <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
                 <p className="text-sm text-red-700 font-medium">
-                  ⚠️ Cannot ship: Some orders are not completed yet
+                  Cannot ship: Some orders are not completed yet
                 </p>
               </div>
             )}
@@ -175,12 +171,15 @@ export default function OperationShippingHandoverPage() {
           <ShippingInfoPanel
             invoiceCode={invoice.invoiceCode}
             fullName={invoice.fullName}
+            phone={invoice.phone}
             carrier="Viettel Post"
             address={getAddressString()}
-            canShip={isReadyToShip}
+            status={invoice?.status || 'UNKNOWN'}
+            isProcessingShipping={updateInvoiceStatus.isPending}
             shipCode={shipCode || (isReadyToShip ? 'Auto Generated from DB' : undefined)}
             orders={orders}
             onPrintLabel={handlePrintLabel}
+            onProcessShipping={handleProcessShipping}
           />
         </div>
       </div>
@@ -190,37 +189,12 @@ export default function OperationShippingHandoverPage() {
         onClose={() => setIsModalOpen(false)}
         onConfirm={confirmProcessShipping}
         title="Process Shipping"
-        message="Are you sure you want to mark this invoice as READY_TO_SHIP? The shipment code will be generated."
+        message="Are you sure you want to mark this invoice to next stage? The shipment code will be generated."
         confirmText="Confirm Shipping"
         cancelText="Cancel"
         isLoading={updateInvoiceStatus.isPending}
         type="info"
       />
-      {allOrdersCompleted && (
-        <div className="mt-4 p-4 border-mint-500 bg-mint-50 border rounded-lg flex items-center justify-between">
-          <div>
-            <p className="text-sm text-mint-800 font-medium">Ready for Delivery Handover</p>
-            <p className="text-xs text-mint-600 mt-1">
-              All orders are completed and ready to be shipped.
-            </p>
-          </div>
-          <button
-            onClick={handleProcessShipping}
-            disabled={!canShip || updateInvoiceStatus.isPending}
-            className={`px-5 py-2.5 rounded-lg font-semibold text-sm transition-all shadow-sm ${
-              canShip
-                ? 'bg-mint-600 text-white hover:bg-mint-700'
-                : 'bg-gray-200 text-gray-500 cursor-not-allowed'
-            }`}
-          >
-            {updateInvoiceStatus.isPending
-              ? 'Processing...'
-              : isReadyToShip
-                ? 'Already Processed'
-                : 'Process Shipping'}
-          </button>
-        </div>
-      )}
     </Container>
   )
 }

@@ -61,14 +61,16 @@ export default function ConfirmationModal({
           </div>
 
           <div className="mt-6 flex justify-end gap-3">
-            <Button
-              variant="outline"
-              onClick={onClose}
-              disabled={isLoading}
-              className="bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
-            >
-              {cancelText}
-            </Button>
+            {cancelText && (
+              <Button
+                variant="outline"
+                onClick={onClose}
+                disabled={isLoading}
+                className="bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
+              >
+                {cancelText}
+              </Button>
+            )}
             <Button
               onClick={onConfirm}
               disabled={isLoading}

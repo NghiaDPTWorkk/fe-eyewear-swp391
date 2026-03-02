@@ -15,6 +15,9 @@ export interface AdminInvoiceListItem {
   createdAt: string
   address: string
   orders?: AdminInvoiceListOrderItem[]
+  staffHandleDelivery?: string
+  staffHandleDeliveryName?: string
+  assignStaffHandleDeliveryAt?: string
 }
 
 export interface AdminInvoiceListPagination {

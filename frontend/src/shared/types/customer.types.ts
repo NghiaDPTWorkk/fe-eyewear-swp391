@@ -61,3 +61,23 @@ export interface CustomerListResponse {
     totalPages: number
   }
 }
+
+export interface AdminCustomerParams {
+  page?: number
+  limit?: number
+  search?: string
+  status?: string
+}
+
+export interface AdminCustomerListResponse {
+  message: string
+  data: {
+    customers: Customer[]
+    pagination: {
+      page: number
+      limit: number
+      total: number
+      totalPages: number
+    }
+  }
+}

@@ -7,21 +7,19 @@ import {
   IoCloseOutline
 } from 'react-icons/io5'
 
-interface UserData {
-  id: string
-  name: string
-  email: string
-  phone: string
-  status: 'Active' | 'Inactive' | 'Banned'
-  joinDate: string
-  totalOrders: number
-  totalSpent: number
-}
+import type { Customer } from '@/shared/types/customer.types'
+import { format } from 'date-fns'
 
 interface UserDetailDrawerProps {
   isOpen: boolean
   onClose: () => void
-  user: UserData | null
+  user: Customer | null
+}
+
+const getStatus = (user: Customer): 'Active' | 'Inactive' | 'Banned' => {
+  if (user.deletedAt) return 'Banned'
+  if (!user.isVerified) return 'Inactive'
+  return 'Active'
 }
 
 export const UserDetailDrawer: React.FC<UserDetailDrawerProps> = ({ isOpen, onClose, user }) => {
@@ -56,9 +54,9 @@ export const UserDetailDrawer: React.FC<UserDetailDrawerProps> = ({ isOpen, onCl
             <div>
               <h4 className="text-lg font-bold text-gray-900">{user.name}</h4>
               <span
-                className={`inline-flex items-center px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${statusStyles[user.status]}`}
+                className={`inline-flex items-center px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${statusStyles[getStatus(user)]}`}
               >
-                {user.status}
+                {getStatus(user)}
               </span>
             </div>
           </div>
@@ -75,11 +73,13 @@ export const UserDetailDrawer: React.FC<UserDetailDrawerProps> = ({ isOpen, onCl
               </div>
               <div className="flex items-center gap-3 text-sm text-neutral-600">
                 <IoCallOutline className="text-neutral-400 shrink-0" />
-                <span className="font-medium">{user.phone}</span>
+                <span className="font-medium">{user.phone || 'N/A'}</span>
               </div>
               <div className="flex items-center gap-3 text-sm text-neutral-600">
                 <IoCalendarOutline className="text-neutral-400 shrink-0" />
-                <span className="font-medium">Joined {user.joinDate}</span>
+                <span className="font-medium">
+                  Joined {format(new Date(user.createdAt), 'MMM dd, yyyy')}
+                </span>
               </div>
             </div>
           </div>
@@ -90,15 +90,13 @@ export const UserDetailDrawer: React.FC<UserDetailDrawerProps> = ({ isOpen, onCl
               <p className="text-[10px] font-semibold text-neutral-400 uppercase mb-1">
                 Total Orders
               </p>
-              <p className="text-lg font-bold text-gray-900 font-primary">{user.totalOrders}</p>
+              <p className="text-lg font-bold text-gray-900 font-primary">-</p>
             </div>
             <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-100">
               <p className="text-[10px] font-semibold text-neutral-400 uppercase mb-1">
                 Total Spent
               </p>
-              <p className="text-lg font-bold text-gray-900 font-primary">
-                ${user.totalSpent.toLocaleString()}
-              </p>
+              <p className="text-lg font-bold text-gray-900 font-primary">-</p>
             </div>
           </div>
 
@@ -110,7 +108,7 @@ export const UserDetailDrawer: React.FC<UserDetailDrawerProps> = ({ isOpen, onCl
             <button className="w-full py-3 bg-neutral-50 text-neutral-600 rounded-2xl text-sm font-semibold border border-neutral-100 hover:bg-neutral-100 transition-all">
               Reset Password
             </button>
-            {user.status !== 'Banned' ? (
+            {getStatus(user) !== 'Banned' ? (
               <button className="w-full py-3 bg-red-50 text-red-600 rounded-2xl text-sm font-semibold border border-red-100 hover:bg-red-100 transition-all">
                 Ban User
               </button>

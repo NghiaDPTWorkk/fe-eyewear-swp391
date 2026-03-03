@@ -62,7 +62,7 @@ export default function SaleStaffCustomerPage() {
       }>(ENDPOINTS.ADMIN_AI_CONVERSATIONS.LIST(searchQuery))
 
       if (response.success) {
-        const mappedCustomers: Customer[] = response.data.conversationList.map((conv) => ({
+        const initialCustomers: Customer[] = response.data.conversationList.map((conv) => ({
           id: conv.id,
           name: conv.customerName,
           activity: conv.lastInteractionAt,
@@ -75,7 +75,27 @@ export default function SaleStaffCustomerPage() {
           status: 'online',
           lastMessage: `AI Conversation - ${conv.lastInteractionAt.split(' ')[0]}`
         }))
-        setCustomers(mappedCustomers)
+        setCustomers(initialCustomers)
+
+        // Asynchronously fetch last message for each conversation to populate the preview
+        response.data.conversationList.forEach(async (conv) => {
+          try {
+            const msgResponse = await httpClient.get<{
+              success: boolean
+              data: { messageList: Message[] }
+            }>(ENDPOINTS.ADMIN_AI_CONVERSATIONS.MESSAGES(conv.id))
+
+            if (msgResponse.success && msgResponse.data.messageList.length > 0) {
+              const lastMsgContent =
+                msgResponse.data.messageList[msgResponse.data.messageList.length - 1].content
+              setCustomers((prev) =>
+                prev.map((c) => (c.id === conv.id ? { ...c, lastMessage: lastMsgContent } : c))
+              )
+            }
+          } catch (error) {
+            console.warn(`Failed to fetch last message preview for conversation ${conv.id}:`, error)
+          }
+        })
       }
     } catch (error) {
       console.error('Failed to fetch conversations:', error)

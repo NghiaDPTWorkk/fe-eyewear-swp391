@@ -41,8 +41,8 @@ export interface OrderDetail {
       lens_id: string
       sku: string
       parameters: {
-        left: { SPH: number; CYL: number; AXIS: number }
-        right: { SPH: number; CYL: number; AXIS: number }
+        left: { SPH: number; CYL: number; AXIS: number; ADD?: number }
+        right: { SPH: number; CYL: number; AXIS: number; ADD?: number }
         PD: number
       }
     }

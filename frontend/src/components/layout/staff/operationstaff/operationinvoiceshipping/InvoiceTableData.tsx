@@ -21,7 +21,6 @@ const getStatusColor = (status: string) => {
 }
 
 export default function InvoiceTableData({ invoice, onView, onNext }: InvoiceTableDataProps) {
-  const totalAmount = parseFloat(invoice.finalPrice ?? '0')
 
   return (
     <>
@@ -37,12 +36,7 @@ export default function InvoiceTableData({ invoice, onView, onNext }: InvoiceTab
         </span>
       </td>
 
-      {/* Total amount */}
-      <td className="px-6 py-4 whitespace-nowrap text-right">
-        <span className="text-sm font-semibold text-gray-900">
-          {isNaN(totalAmount) ? invoice.finalPrice : totalAmount.toLocaleString('vi-VN')} ₫
-        </span>
-      </td>
+
 
       {/* Status */}
       <td className="px-6 py-4 whitespace-nowrap text-center">

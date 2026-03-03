@@ -7,14 +7,21 @@ import { defineConfig, loadEnv } from 'vite'
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
 
+  const apiTarget = env.VITE_API_URL || 'https://localhost:5000'
+
   return {
     plugins: [react(), tailwindcss()],
     server: {
+      host: 'localhost',
       port: 3000,
+      https: {},
       proxy: {
         '/api': {
-          target: env.VITE_API_URL || 'http://localhost:5000',
-          changeOrigin: true
+          target: apiTarget,
+          changeOrigin: true,
+          secure: false,
+          cookieDomainRewrite: '',
+          cookiePathRewrite: '/'
         }
       }
     },

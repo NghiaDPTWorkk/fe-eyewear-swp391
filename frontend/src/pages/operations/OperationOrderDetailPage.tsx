@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 import { useParams, useNavigate } from 'react-router-dom'
 import { Container } from '@/components'
 import { Button } from '@/shared/components/ui/button'

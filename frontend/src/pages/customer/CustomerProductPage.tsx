@@ -325,7 +325,7 @@ export const CustomerProductPage = () => {
                     const hasSale = index % 3 === 0
 
                     // Extract price - handle type safety
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                     
                     const productAny = product as any
                     const originalPrice = productAny.defaultVariantPrice || 100
                     const currentPrice = productAny.defaultVariantFinalPrice || originalPrice

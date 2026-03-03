@@ -176,6 +176,23 @@ export const ENDPOINTS = {
     INVOICES_ONBOARD: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/onboard`
   },
 
+  ADMIN_ACCOUNTS: {
+    LIST: (page = 1, limit = 10, role?: string, search?: string) => {
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: String(limit)
+      })
+      if (role) params.append('role', role)
+      if (search) params.append('search', search)
+      return `/admin/admin-accounts?${params.toString()}`
+    },
+    DETAIL: (id: string) => `/admin/admin-accounts/${id}`,
+    CREATE: '/admin/admin-accounts',
+    UPDATE: (id: string) => `/admin/admin-accounts/${id}`,
+    DELETE: (id: string) => `/admin/admin-accounts/${id}`
+  },
+
+
   // Invoices
   INVOICE: {
     CREATE: '/invoices',

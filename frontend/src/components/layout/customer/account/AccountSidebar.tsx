@@ -3,6 +3,7 @@ import { ShoppingBag, MapPin, Clipboard, Heart, LogOut, Settings } from 'lucide-
 import { STORAGE_KEYS } from '@/shared/constants/storage'
 import { useAuthStore, useCartStore } from '@/store'
 import { cn } from '@/lib/utils'
+import { authApi } from '@/features/auth/services/auth.api.legacy'
 
 export function AccountSidebar() {
   const navigate = useNavigate()
@@ -48,7 +49,13 @@ export function AccountSidebar() {
     }
   ]
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await authApi.logout()
+    } catch (e) {
+      // ec ec
+      console.error(e)
+    }
     logout()
     clearCart()
     localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN)

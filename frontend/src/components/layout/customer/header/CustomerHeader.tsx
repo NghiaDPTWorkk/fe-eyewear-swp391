@@ -201,7 +201,10 @@ export default function CustomerHeader() {
                 </span>
               )}
             </button>
-            {isAuthenticated ? (
+            {!_hasHydrated ? (
+              // Placeholder để giữ layout ổn định trong khi chờ hydrate
+              <div className="w-9 h-9" />
+            ) : isAuthenticated ? (
               <ProjectProfileDropdown />
             ) : (
               <button

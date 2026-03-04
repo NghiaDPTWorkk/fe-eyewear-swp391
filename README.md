@@ -1,6 +1,8 @@
-# Eyewear Shop - E-commerce Platform
+# OpticEyewear Shop - E-commerce Platform
+  Live Website: https://eyewear-optic.shop/
+OpticEyewear Shop is a high-performance, full-stack e-commerce platform specifically designed for the eyewear industry. Developed as a core project for the Software Development Project (SWP391) course at FPT University, this application provides a seamless shopping experience for customers while offering robust management tools for staff and operators.
 
-A modern full-stack e-commerce application for eyewear products built with React 19 (frontend) and Spring Boot (backend).
+The project focuses on solving the complexities of eyewear retail, such as managing custom prescriptions, diverse product variations (Eyeglasses, Sunglasses, Lenses), and a multi-role administrative workflow.
 
 ## Tech Stack
 
@@ -78,6 +80,7 @@ npm run dev:skip
 
 | Service     | URL                              |
 | ----------- | -------------------------------- |
+| **Live Demo** | **https://eyewear-optic.shop/** |
 | Frontend    | http://localhost:3000            |
 | Backend API | http://localhost:8080/api/v1     |
 | API Docs    | http://localhost:8080/swagger-ui |
@@ -139,7 +142,7 @@ git commit -m "KAN-456 fix: resolve cart bug"
 
 ## Contributing
 
-1. Create a feature branch (`feat/feature-name`)
+1. Create a feature branch (`feat/KAN-number`)
 2. Make your changes
 3. Run `npm run validate` before committing
 4. Submit a pull request
@@ -157,3 +160,4 @@ This project is developed for educational purposes as part of the SWP391 course 
 **University:** FPT University
 
 Built with React, TypeScript, and Spring Boot
+

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Eye, EyeOff } from 'lucide-react'
 import type { LoginRequest } from '@/shared/types'
 import { useLogin } from '@/features/auth/hooks/useLogin'
 import { Button, Checkbox, Input, FormField, Divider } from '@/components'
@@ -82,45 +83,9 @@ export const LoginForm = ({ role: _role }: LoginFormProps) => {
               className="text-gray-400 hover:text-gray-600 focus:outline-none"
             >
               {showPassword ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-5 h-5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3.98 8.223A11.055 11.055 0 0022.396 7.23m-21.808 1.45a10.717 10.717 0 013.57-6.332m3.18-.5a10.717 10.717 0 0115.658 0M12 18.75a6 6 0 006-6m-15 0a6 6 0 006 6z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15.121 15.121a3 3 0 01-4.242 0M9.879 18.879a1 1 0 011.414 0l4.242-4.242a1 1 0 010-1.414l-4.242-4.242a1 1 0 01-1.414 0l-4.242 4.242a1 1 0 010 1.414l4.242 4.242z"
-                  />
-                </svg>
+                <EyeOff className="h-5 w-5" />
               ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-5 h-5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
+                <Eye className="h-5 w-5" />
               )}
             </button>
           }

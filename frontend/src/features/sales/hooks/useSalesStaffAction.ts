@@ -55,7 +55,7 @@ export const useSalesStaffAction = () => {
   )
 
   const approveOrder = useCallback(
-    async (id: string, data?: { parameters: Record<string, any> }) => {
+    async (id: string, data?: { parameters: Record<string, any>; note?: string }) => {
       setProcessing(true)
       setError(null)
       try {

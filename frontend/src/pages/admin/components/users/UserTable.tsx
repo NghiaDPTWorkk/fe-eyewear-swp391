@@ -21,6 +21,13 @@ const statusStyles: Record<'Active' | 'Inactive' | 'Banned', string> = {
   Banned: 'bg-red-50 text-red-600 border-red-100'
 }
 
+const safeFormatDate = (input?: string | null) => {
+  if (!input) return 'N/A'
+  const date = new Date(input)
+  if (Number.isNaN(date.getTime())) return 'N/A'
+  return format(date, 'MMM dd, yyyy')
+}
+
 export const UserTable: React.FC<UserTableProps> = ({ users, selectedUserId, onSelectUser }) => {
   return (
     <div className="overflow-x-auto">
@@ -57,9 +64,7 @@ export const UserTable: React.FC<UserTableProps> = ({ users, selectedUserId, onS
                   </div>
                 </td>
                 <td className="px-6 py-6 text-sm font-medium text-neutral-600">{user.email}</td>
-                <td className="px-6 py-6 text-sm font-medium text-neutral-600">
-                  {user.phone || 'N/A'}
-                </td>
+                <td className="px-6 py-6 text-sm font-medium text-neutral-600">{user.phone || 'N/A'}</td>
                 <td className="px-6 py-6">
                   <span
                     className={`inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${statusStyles[status]}`}
@@ -68,7 +73,7 @@ export const UserTable: React.FC<UserTableProps> = ({ users, selectedUserId, onS
                   </span>
                 </td>
                 <td className="px-6 py-6 text-sm font-medium text-neutral-600">
-                  {format(new Date(user.createdAt), 'MMM dd, yyyy')}
+                  {safeFormatDate(user.createdAt)}
                 </td>
                 <td className="px-6 py-6 text-center text-sm font-bold text-gray-900">-</td>
               </tr>

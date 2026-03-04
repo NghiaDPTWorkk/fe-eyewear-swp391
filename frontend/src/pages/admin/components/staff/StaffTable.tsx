@@ -5,10 +5,12 @@ export interface StaffData {
   id: string
   name: string
   email: string
-  role: 'Sale Staff' | 'Operation Staff' | 'Manager' | 'Admin'
+  role: string
   status: 'Active' | 'Inactive'
   lastActive: string
   phone: string
+  citizenId?: string
+  avatar?: string | null
 }
 
 interface StaffTableProps {
@@ -18,11 +20,12 @@ interface StaffTableProps {
   onToggleStatus: (id: string) => void
 }
 
-const roleStyles: Record<StaffData['role'], string> = {
-  'Sale Staff': 'bg-blue-50 text-blue-600 border-blue-100',
-  'Operation Staff': 'bg-amber-50 text-amber-600 border-amber-100',
-  Manager: 'bg-purple-50 text-purple-600 border-purple-100',
-  Admin: 'bg-indigo-50 text-indigo-600 border-indigo-100'
+const getRoleStyles = (role: string): string => {
+  const normalized = role.toLowerCase()
+  if (normalized.includes('sale')) return 'bg-blue-50 text-blue-600 border-blue-100'
+  if (normalized.includes('operation')) return 'bg-amber-50 text-amber-600 border-amber-100'
+  if (normalized.includes('manager')) return 'bg-purple-50 text-purple-600 border-purple-100'
+  return 'bg-indigo-50 text-indigo-600 border-indigo-100'
 }
 
 export const StaffTable: React.FC<StaffTableProps> = ({
@@ -54,8 +57,12 @@ export const StaffTable: React.FC<StaffTableProps> = ({
             >
               <td className="px-6 py-6 font-primary">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 border border-indigo-100 shrink-0">
-                    <IoPersonCircleOutline size={24} />
+                  <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 border border-indigo-100 shrink-0 overflow-hidden">
+                    {staff.avatar ? (
+                      <img src={staff.avatar} alt={staff.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <IoPersonCircleOutline size={24} />
+                    )}
                   </div>
                   <span className="text-sm font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">
                     {staff.name}
@@ -65,7 +72,7 @@ export const StaffTable: React.FC<StaffTableProps> = ({
               <td className="px-6 py-6 text-sm font-medium text-neutral-600">{staff.email}</td>
               <td className="px-6 py-6">
                 <span
-                  className={`inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${roleStyles[staff.role]}`}
+                  className={`inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${getRoleStyles(staff.role)}`}
                 >
                   {staff.role}
                 </span>

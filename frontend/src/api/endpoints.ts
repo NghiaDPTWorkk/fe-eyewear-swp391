@@ -79,7 +79,11 @@ export const ENDPOINTS = {
   PRESCRIPTION: {
     VALIDATE: '/prescription/validate',
     CALCULATE: '/prescription/calculate',
-    GET_SAVED: '/prescription/saved'
+    GET_SAVED: '/prescription/saved',
+    LIST: '/customer/profile/prescription',
+    ADD: '/customer/profile/prescription',
+    UPDATE: (id: string) => `/customer/profile/prescription/${id}`,
+    DELETE: (id: string) => `/customer/profile/prescription/${id}`
   },
 
   // Payment

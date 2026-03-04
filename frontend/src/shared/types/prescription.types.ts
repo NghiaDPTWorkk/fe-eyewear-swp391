@@ -1,19 +1,22 @@
-export interface PrescriptionData {
+export interface Prescription {
+  _id?: string
   right: {
-    SPH: string | number
-    CYL: string | number
-    AXIS: string | number
-    ADD?: string | number
+    SPH: number
+    CYL: number
+    AXIS: number
+    ADD: number
   }
   left: {
-    SPH: string | number
-    CYL: string | number
-    AXIS: string | number
-    ADD?: string | number
+    SPH: number
+    CYL: number
+    AXIS: number
+    ADD: number
   }
-  PD: string | number
-  PD2?: string | number // For separate PDs
+  PD: number
+  isDefault?: boolean
 }
+
+export type PrescriptionData = Prescription // Maintain backward compatibility if needed
 
 export interface PrescriptionValidateRequest {
   prescription: PrescriptionData

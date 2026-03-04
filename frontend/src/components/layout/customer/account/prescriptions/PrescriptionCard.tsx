@@ -1,38 +1,60 @@
 import { Card } from '@/shared/components/ui/card'
-import { FileText, Edit2, Trash2, Check } from 'lucide-react'
-import type { PrescriptionData } from '@/shared/types/prescription.types'
+import { FileText, Edit2, Trash2, Check, Star } from 'lucide-react'
+import type { Prescription } from '@/shared/types/prescription.types'
 
 interface PrescriptionCardProps {
-  id: string
-  name: string
-  date: string
-  data: PrescriptionData
-  onEdit?: () => void
-  onDelete?: () => void
+  prescription: Prescription
+  onEdit?: (prescription: Prescription) => void
+  onDelete?: (id: string) => void
 }
 
-export function PrescriptionCard({ name, date, data, onEdit, onDelete }: PrescriptionCardProps) {
+export function PrescriptionCard({ prescription, onEdit, onDelete }: PrescriptionCardProps) {
+  const { _id, left, right, PD, isDefault } = prescription
+
   return (
-    <Card className="p-8 mb-6 border-mint-100/50 hover:border-primary-200 transition-all group overflow-hidden relative">
+    <Card
+      className={`p-8 mb-6 border-2 transition-all group overflow-hidden relative ${
+        isDefault
+          ? 'border-primary-200 bg-primary-50/10 shadow-md shadow-primary-50'
+          : 'border-mint-100/50 hover:border-primary-200'
+      }`}
+    >
+      {isDefault && (
+        <div className="absolute top-0 right-12 bg-primary-500 text-white px-4 py-1.5 rounded-b-2xl flex items-center gap-2 shadow-sm">
+          <Star size={12} fill="white" />
+          <span className="text-[10px] font-bold uppercase tracking-[0.15em]">Primary</span>
+        </div>
+      )}
+
       <div className="flex justify-between items-start mb-8">
         <div className="flex gap-4 items-center">
-          <div className="w-12 h-12 bg-primary-100/50 rounded-2xl flex items-center justify-center text-primary-600 group-hover:bg-primary-500 group-hover:text-white transition-all">
+          <div
+            className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${
+              isDefault
+                ? 'bg-primary-500 text-white'
+                : 'bg-primary-100/50 text-primary-600 group-hover:bg-primary-500 group-hover:text-white'
+            }`}
+          >
             <FileText size={24} />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-mint-1200">{name}</h3>
-            <p className="text-sm font-semibold text-gray-400 italic">Saved on {date}</p>
+            <h3 className="text-xl font-bold text-mint-1200">
+              {isDefault ? 'Primary Vision Correction' : 'Saved Prescription'}
+            </h3>
+            <p className="text-sm font-semibold text-gray-400 italic">
+              ID: {_id?.slice(-8).toUpperCase() || 'NEW'}
+            </p>
           </div>
         </div>
         <div className="flex gap-2">
           <button
-            onClick={onEdit}
+            onClick={() => onEdit?.(prescription)}
             className="p-3 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-xl transition-all"
           >
             <Edit2 size={18} />
           </button>
           <button
-            onClick={onDelete}
+            onClick={() => _id && onDelete?.(_id)}
             className="p-3 text-gray-400 hover:text-danger-500 hover:bg-danger-50 rounded-xl transition-all"
           >
             <Trash2 size={18} />
@@ -54,17 +76,21 @@ export function PrescriptionCard({ name, date, data, onEdit, onDelete }: Prescri
           <tbody className="divide-y divide-mint-50/50">
             <tr>
               <td className="py-6 text-left font-bold text-mint-1200">OD (Right)</td>
-              <td className="py-6 text-sm font-semibold text-mint-900">{data.right.SPH}</td>
-              <td className="py-6 text-sm font-semibold text-mint-900">{data.right.CYL}</td>
-              <td className="py-6 text-sm font-semibold text-mint-900">{data.right.AXIS}</td>
-              <td className="py-6 text-sm font-semibold text-mint-900">{data.right.ADD || '--'}</td>
+              <td className="py-6 text-sm font-bold text-mint-900">
+                {right.SPH > 0 ? `+${right.SPH.toFixed(2)}` : right.SPH.toFixed(2)}
+              </td>
+              <td className="py-6 text-sm font-semibold text-mint-900">{right.CYL.toFixed(2)}</td>
+              <td className="py-6 text-sm font-semibold text-mint-900">{right.AXIS}°</td>
+              <td className="py-6 text-sm font-semibold text-mint-900">+{right.ADD.toFixed(2)}</td>
             </tr>
             <tr>
               <td className="py-6 text-left font-bold text-mint-1200">OS (Left)</td>
-              <td className="py-6 text-sm font-semibold text-mint-900">{data.left.SPH}</td>
-              <td className="py-6 text-sm font-semibold text-mint-900">{data.left.CYL}</td>
-              <td className="py-6 text-sm font-semibold text-mint-900">{data.left.AXIS}</td>
-              <td className="py-6 text-sm font-semibold text-mint-900">{data.left.ADD || '--'}</td>
+              <td className="py-6 text-sm font-bold text-mint-900">
+                {left.SPH > 0 ? `+${left.SPH.toFixed(2)}` : left.SPH.toFixed(2)}
+              </td>
+              <td className="py-6 text-sm font-semibold text-mint-900">{left.CYL.toFixed(2)}</td>
+              <td className="py-6 text-sm font-semibold text-mint-900">{left.AXIS}°</td>
+              <td className="py-6 text-sm font-semibold text-mint-900">+{left.ADD.toFixed(2)}</td>
             </tr>
           </tbody>
         </table>
@@ -74,18 +100,10 @@ export function PrescriptionCard({ name, date, data, onEdit, onDelete }: Prescri
         <div className="flex gap-8">
           <div>
             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1">
-              PD
+              Pupillary Distance (PD)
             </span>
-            <span className="text-sm font-bold text-mint-1200">{data.PD} mm</span>
+            <span className="text-sm font-bold text-mint-1200">{PD} mm</span>
           </div>
-          {data.PD2 && (
-            <div>
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1">
-                PD2
-              </span>
-              <span className="text-sm font-bold text-mint-1200">{data.PD2} mm</span>
-            </div>
-          )}
         </div>
         <div className="flex items-center gap-2 text-primary-600">
           <div className="w-6 h-6 bg-primary-100 rounded-full flex items-center justify-center">

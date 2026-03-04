@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ENDPOINTS, httpClient } from '@/api'
 
 type DeliveringInvoiceResponse = {
@@ -8,9 +8,13 @@ type DeliveringInvoiceResponse = {
 }
 
 export function useDelivering() {
+  const queryClient = useQueryClient()
   const mutation = useMutation({
     mutationFn: (invoiceId: string) =>
-      httpClient.patch<DeliveringInvoiceResponse>(ENDPOINTS.ADMIN.INVOICES_DELIVERING(invoiceId))
+      httpClient.patch<DeliveringInvoiceResponse>(ENDPOINTS.ADMIN.INVOICES_DELIVERING(invoiceId)),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['operation-invoices-handle-delivery'] })
+    }
   })
 
   return {

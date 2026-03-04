@@ -5,6 +5,14 @@ import { useQueryClient } from '@tanstack/react-query'
 import { salesService } from '../services/salesService'
 import { showError, showSuccess } from '../utils/errorHandler'
 
+const DEFAULT_PARAMETERS = {
+  left: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
+  right: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
+  PD: 64
+}
+
+const DEFAULT_APPROVE_NOTE = 'Nhớ làm nhanh dùm khách '
+
 export const useSalesStaffAction = () => {
   const [processing, setProcessing] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -61,18 +69,25 @@ export const useSalesStaffAction = () => {
       try {
         let finalData = data
 
-        // Use standard default parameters for approval if none provided or parameters is null
+        // If caller does not provide parameters (e.g. quick approve button),
+        // fetch current order details and send existing parameters unchanged.
         if (!finalData || !finalData.parameters) {
+          const detailRes = await salesService.getOrderById(id)
+          const order = detailRes?.data?.order
+          const existingParameters = order?.products?.[0]?.lens?.parameters as
+            | (Record<string, any> & { note?: string })
+            | undefined
+
           finalData = {
-            parameters: {
-              left: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
-              right: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
-              PD: 64
-            }
+            parameters: existingParameters || DEFAULT_PARAMETERS,
+            note: DEFAULT_APPROVE_NOTE
           }
         }
 
-        await salesService.approveOrder(id, finalData)
+        await salesService.approveOrder(id, {
+          ...finalData,
+          note: finalData?.note || DEFAULT_APPROVE_NOTE
+        })
         showSuccess('Order verified successfully')
         invalidateSalesData()
         return true

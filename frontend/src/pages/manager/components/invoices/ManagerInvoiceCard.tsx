@@ -89,7 +89,7 @@ function StaffSelect({
       {isOpen && !disabled && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
-          <div className="absolute bottom-full left-0 right-0 mb-1 bg-white border border-neutral-100 rounded-2xl shadow-xl shadow-mint-900/5 z-20 py-2 max-h-60 overflow-y-auto animate-in fade-in slide-in-from-bottom-1 duration-200">
+          <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-neutral-100 rounded-2xl shadow-xl shadow-mint-900/5 z-20 py-2 max-h-60 overflow-y-auto animate-in fade-in slide-in-from-top-1 duration-200">
             <div className="px-4 py-2.5 text-[10px] font-bold text-neutral-400 uppercase tracking-widest border-b border-neutral-50 mb-1">
               Operation Staff List
             </div>
@@ -227,7 +227,7 @@ export default function ManagerInvoiceCard({
   return (
     <div className="flex flex-col gap-6">
       {/* Invoice Main Summary Card */}
-      <div className="rounded-3xl border border-neutral-100 bg-white shadow-sm overflow-hidden p-6">
+      <div className="rounded-3xl border border-neutral-100 bg-white shadow-sm p-6">
         <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-8">
           <div>
             <div className="flex items-center gap-3 mb-2">
@@ -491,9 +491,9 @@ export default function ManagerInvoiceCard({
           return (
             <div
               key={order._id}
-              className="bg-white rounded-3xl border border-neutral-100 overflow-hidden shadow-sm"
+              className="bg-white rounded-3xl border border-neutral-100 shadow-sm"
             >
-              <div className="p-6 border-b border-neutral-50 bg-neutral-50/30">
+              <div className="p-6 border-b border-neutral-50 bg-neutral-50/30 rounded-t-[calc(1.5rem-1px)]">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                   <div className="min-w-0">
                     <h4 className="text-base font-bold text-gray-900 font-heading truncate">

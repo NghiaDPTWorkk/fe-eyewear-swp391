@@ -5,6 +5,7 @@ import { authService } from '@/features/auth/services/auth.service'
 import { getRoleFromToken, isTokenExpired } from '@/shared/utils'
 import { STORAGE_KEYS } from '@/shared/constants/storage'
 import { apiClient } from '@/lib/axios'
+import { useCartStore } from './cart.store'
 
 const ADMIN_ROLES = ['SYSTEM_ADMIN', 'SALE_STAFF', 'MANAGER', 'OPERATION_STAFF']
 
@@ -55,6 +56,8 @@ export const useAuthStore = create<AuthState>()(
         localStorage.removeItem('accessToken')
         localStorage.removeItem('access_token')
         set({ user: null, accessToken: null, isAuthenticated: false, role: null, error: null })
+        // Reset cart immediately so the header count clears without a page reload
+        useCartStore.setState({ items: [], isInitialized: false })
       },
       setLoading: (loading) => set({ isLoading: loading }),
       fetchProfile: async () => {

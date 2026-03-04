@@ -1,5 +1,6 @@
 # OpticEyewear Shop - E-commerce Platform
   Live Website: https://eyewear-optic.shop/
+  
 OpticEyewear Shop is a high-performance, full-stack e-commerce platform specifically designed for the eyewear industry. Developed as a core project for the Software Development Project (SWP391) course at FPT University, this application provides a seamless shopping experience for customers while offering robust management tools for staff and operators.
 
 The project focuses on solving the complexities of eyewear retail, such as managing custom prescriptions, diverse product variations (Eyeglasses, Sunglasses, Lenses), and a multi-role administrative workflow.
@@ -160,4 +161,5 @@ This project is developed for educational purposes as part of the SWP391 course 
 **University:** FPT University
 
 Built with React, TypeScript, and Spring Boot
+
 

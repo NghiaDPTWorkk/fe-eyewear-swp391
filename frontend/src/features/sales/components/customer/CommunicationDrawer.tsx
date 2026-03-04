@@ -2,6 +2,7 @@ import { IoClose, IoSend, IoCheckmarkDoneOutline, IoWarningOutline } from 'react
 import { Card, Button } from '@/components'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
+import { getInitials } from '@/features/sales/utils/nameUtils'
 
 interface Customer {
   name: string
@@ -10,12 +11,22 @@ interface Customer {
   phone: string
 }
 
+interface Message {
+  id: string
+  role: 'CUSTOMER' | 'AI' | 'STAFF'
+  conversationId: string
+  content: string
+  createdAt: string
+}
+
 interface CommunicationDrawerProps {
   isOpen: boolean
   onClose: () => void
   customer: Customer | null
   variant?: 'overlay' | 'inline'
   hideHeader?: boolean
+  messages?: Message[]
+  isLoadingMessages?: boolean
 }
 
 const ORDER_HISTORY = [
@@ -50,7 +61,9 @@ export default function CommunicationDrawer({
   onClose,
   customer,
   variant = 'overlay',
-  hideHeader = false
+  hideHeader = false,
+  messages = [],
+  isLoadingMessages = false
 }: CommunicationDrawerProps) {
   const [activeTab, setActiveTab] = useState<'chat' | 'orders'>('chat')
 
@@ -69,11 +82,19 @@ export default function CommunicationDrawer({
         <>
           <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-white shrink-0 z-10">
             <div className="flex items-center gap-3">
-              <img
-                src={customer.avatar}
-                alt={customer.name}
-                className="w-10 h-10 rounded-full object-cover border border-gray-200"
-              />
+              <div className="shrink-0">
+                {customer.avatar ? (
+                  <img
+                    src={customer.avatar}
+                    alt={customer.name}
+                    className="w-10 h-10 rounded-full object-cover border border-gray-200"
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-mint-50 flex items-center justify-center text-xs font-bold text-mint-600 border border-mint-200 uppercase">
+                    {getInitials(customer.name)}
+                  </div>
+                )}
+              </div>
               <div>
                 <h3 className="font-semibold text-gray-900">{customer.name}</h3>
                 <p className="text-xs text-mint-500 font-medium flex items-center gap-1">
@@ -110,31 +131,63 @@ export default function CommunicationDrawer({
         {activeTab === 'chat' && (
           <div className="h-full flex flex-col">
             <div className="flex-1 overflow-y-auto no-scrollbar p-4 space-y-4">
-              <div className="text-center text-xs text-gray-400 my-4">Today, Oct 27</div>
-
-              <div className="flex gap-3 max-w-[85%]">
-                <img src={customer.avatar} className="w-8 h-8 rounded-full self-end mb-1" />
-                <div>
-                  <div className="bg-white p-3 rounded-2xl rounded-bl-none shadow-sm border border-gray-100 text-sm text-gray-700">
-                    Hi, I was wondering if my order #ORD-7782 is ready for pickup?
+              {isLoadingMessages ? (
+                <div className="flex items-center justify-center h-full">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-mint-500" />
+                </div>
+              ) : messages.length > 0 ? (
+                messages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={cn(
+                      'flex gap-3 max-w-[85%]',
+                      msg.role !== 'CUSTOMER' ? 'ml-auto flex-row-reverse' : ''
+                    )}
+                  >
+                    {msg.role === 'CUSTOMER' ? (
+                      customer.avatar ? (
+                        <img
+                          src={customer.avatar}
+                          className="w-8 h-8 rounded-full self-end mb-1 shrink-0 object-cover"
+                          alt=""
+                        />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-mint-50 flex items-center justify-center text-[10px] font-bold text-mint-600 self-end mb-1 shrink-0 border border-mint-100 uppercase">
+                          {getInitials(customer.name)}
+                        </div>
+                      )
+                    ) : (
+                      <div className="w-8 h-8 bg-mint-50 rounded-full flex items-center justify-center text-[10px] font-bold text-mint-600 self-end mb-1 shrink-0 border border-mint-100 shadow-sm">
+                        {msg.role === 'AI' ? 'AI' : 'ME'}
+                      </div>
+                    )}
+                    <div className={msg.role !== 'CUSTOMER' ? 'flex flex-col items-end' : ''}>
+                      <div
+                        className={cn(
+                          'p-3 rounded-2xl shadow-sm text-sm border',
+                          msg.role === 'CUSTOMER'
+                            ? 'bg-white rounded-bl-none border-gray-100 text-gray-700'
+                            : 'bg-mint-700 rounded-br-none border-transparent text-white'
+                        )}
+                      >
+                        {msg.content.split('\n').map((line, i) => (
+                          <p key={i}>{line}</p>
+                        ))}
+                      </div>
+                      <span className="text-[10px] text-gray-400 mt-1 block px-1">
+                        {msg.createdAt.split(' ')[0]}
+                        {msg.role !== 'CUSTOMER' && (
+                          <IoCheckmarkDoneOutline className="inline ml-1 text-mint-500" />
+                        )}
+                      </span>
+                    </div>
                   </div>
-                  <span className="text-[10px] text-gray-400 ml-1 mt-1 block">10:42 AM</span>
+                ))
+              ) : (
+                <div className="flex flex-col items-center justify-center h-full text-neutral-400">
+                  <p className="text-sm">No messages yet</p>
                 </div>
-              </div>
-
-              <div className="flex gap-3 max-w-[85%] ml-auto flex-row-reverse">
-                <div className="w-8 h-8 bg-mint-100 rounded-full flex items-center justify-center text-[10px] font-semibold text-mint-600 self-end mb-1">
-                  Me
-                </div>
-                <div>
-                  <div className="bg-mint-700 p-3 rounded-2xl rounded-br-none shadow-sm text-sm text-white">
-                    Hello {customer.name.split(' ')[0]}! Let me check that for you right away.
-                  </div>
-                  <span className="text-[10px] text-gray-400 mr-1 mt-1 block text-right flex justify-end gap-1 items-center">
-                    10:44 AM <IoCheckmarkDoneOutline className="text-mint-500" />
-                  </span>
-                </div>
-              </div>
+              )}
             </div>
 
             <div className="p-3 bg-white border-t border-gray-100 shrink-0">

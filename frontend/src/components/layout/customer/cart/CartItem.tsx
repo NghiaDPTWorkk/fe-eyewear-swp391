@@ -13,17 +13,28 @@ export const CartItem = ({ item }: CartItemProps) => {
   const { updateQuantity, removeItem, toggleSelection } = useCartStore()
   const [isLensesOpen, setIsLensesOpen] = useState(false)
 
-  // Mock data to match design
-  const hasPromo = true
-  const promoDiscount = '30% off frame'
-  const originalPrice = item.price / 0.7 // Mocking an original price
+  // Dynamic data from item
+  // Calculate totals
+  const frameUnitPrice = item.price
+  const lensUnitPrice = item.lens?.price || 0
+  const itemTotalUnitPrice = frameUnitPrice + lensUnitPrice
+  const itemTotalSubtotal = itemTotalUnitPrice * item.quantity
+
+  // Calculate discount percentage
+  const displayDiscount = item.discount
+    ? item.discount.type === 'percentage'
+      ? `-${item.discount.value}%`
+      : `-${item.discount.value} VND`
+    : item.originalPrice && item.originalPrice > item.price
+      ? `-${Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100)}%`
+      : null
 
   return (
     <Card className="p-8 border-mint-300/50 relative group bg-white hover:shadow-md transition-shadow">
       <div className="flex flex-col md:flex-row gap-8">
         {/* Selection Checkbox and Image Container */}
-        <div className="flex items-start gap-6">
-          <div className="pt-16">
+        <div className="flex items-center gap-6">
+          <div className="flex-shrink-0">
             <Checkbox
               isChecked={item.selected ?? true}
               onCheckedChange={() => toggleSelection(item.product_id)}
@@ -31,16 +42,21 @@ export const CartItem = ({ item }: CartItemProps) => {
             />
           </div>
           <div className="flex flex-col items-center gap-4">
-            <div className="w-48 h-48 bg-[#F8F9FA] rounded-lg overflow-hidden flex items-center justify-center border border-gray-100 p-4">
+            <div className="w-48 h-48 bg-mint-50/30 rounded-2xl overflow-hidden flex items-center justify-center border border-mint-100/50 p-4 relative group/img">
               <img
                 src={item.image}
                 alt={item.name}
-                className="w-full h-full object-contain mix-blend-multiply"
+                className="w-full h-full object-contain mix-blend-multiply transition-transform duration-500 group-hover/img:scale-105"
               />
+              {displayDiscount && (
+                <div className="absolute top-0 left-0 bg-primary-500 text-white text-[10px] font-black px-2 py-1 rounded-br-xl shadow-sm">
+                  {displayDiscount}
+                </div>
+              )}
             </div>
             <button
               onClick={() => removeItem(item)}
-              className="text-xs font-medium text-gray-400 hover:text-red-500 transition-colors underline"
+              className="text-xs font-bold text-gray-400 hover:text-red-500 transition-colors uppercase tracking-widest hover:underline"
             >
               Remove
             </button>
@@ -50,162 +66,217 @@ export const CartItem = ({ item }: CartItemProps) => {
         {/* Product Details */}
         <div className="flex-grow pt-2">
           <div className="flex justify-between items-start mb-6">
-            <div>
-              <div className="flex items-center gap-3 mb-1">
-                <h3 className="text-2xl font-bold text-[#000000] tracking-tight">{item.name}</h3>
-                {hasPromo && (
-                  <span className="px-2 py-1 bg-[#FEE2E2] text-[#EF4444] rounded text-[10px] font-bold uppercase tracking-wider">
-                    30% OFF
-                  </span>
-                )}
+            <div className="flex-grow">
+              {/* Product (Frame) Row */}
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="text-xl font-bold text-mint-1200 tracking-tight leading-tight">
+                    {item.name}
+                  </h3>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    <span className="text-[10px] font-bold text-gray-400 tracking-widest uppercase">
+                      {(item.sku || item.product_id || 'N/A').toString().toUpperCase()}
+                    </span>
+                    {item.selectedOptions &&
+                      Object.entries(item.selectedOptions).map(([key, value]) => (
+                        <span
+                          key={key}
+                          className="text-[10px] font-bold text-primary-600 bg-primary-50 px-1.5 py-0.5 rounded uppercase"
+                        >
+                          {key}: {value}
+                        </span>
+                      ))}
+                  </div>
+                </div>
+                <div className="text-right">
+                  {item.originalPrice && item.originalPrice > item.price && (
+                    <p className="text-xs text-gray-300 line-through font-medium">
+                      <VNDPrice amount={item.originalPrice} />
+                    </p>
+                  )}
+                  <p className="text-base font-bold text-mint-1200">
+                    <VNDPrice amount={frameUnitPrice} />
+                  </p>
+                </div>
               </div>
-              <p className="text-sm text-gray-400 tracking-widest uppercase mb-4">
-                {(item.product_id || 'N/A').toString().toUpperCase()}
-              </p>
-            </div>
 
-            <div className="text-right">
-              <p className="text-sm text-gray-300 line-through mb-1">
-                <VNDPrice amount={originalPrice} />
-              </p>
-              <p className="text-xl font-bold text-[#000000]">
-                <VNDPrice amount={item.price} />
-              </p>
+              {/* Lens Row */}
+              {item.lens && (
+                <div className="flex gap-4 pl-6 py-3 border-l-2 border-mint-100 mb-6 bg-mint-50/20 rounded-r-xl">
+                  <div className="w-12 h-12 bg-white rounded-lg border border-mint-100 flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
+                    {item.lens.image ? (
+                      <img
+                        src={item.lens.image}
+                        alt={item.lens.name}
+                        className="w-full h-full object-contain"
+                      />
+                    ) : (
+                      <div className="bg-mint-100 w-full h-full flex items-center justify-center">
+                        <span className="text-[8px] font-bold text-mint-500">LENS</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-grow flex justify-between items-start">
+                    <div>
+                      <h4 className="text-sm font-bold text-primary-700 leading-tight">
+                        Standard Lenses: {item.lens.name || 'Custom Lenses'}
+                      </h4>
+                      <p className="text-[10px] font-bold text-primary-400 uppercase tracking-wider mt-0.5">
+                        {item.lens.visionNeed === 'prescription' ? 'Prescription' : 'Standard'}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-l font-bold text-primary-600">
+                        {lensUnitPrice === 0 ? 'FREE' : <VNDPrice amount={lensUnitPrice} />}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
           {/* Collapsible Lenses Section */}
-          {item.productType !== 'lens' && (
-            <div className="mb-8">
+          {item.lens && (
+            <div className="mb-6">
               <button
                 onClick={() => setIsLensesOpen(!isLensesOpen)}
-                className="flex items-center gap-2 text-base font-bold text-[#4F8B8B] hover:text-[#3D6E6E] transition-colors mb-4"
+                className="flex items-center gap-2 text-xs font-bold text-primary-500 hover:text-primary-600 transition-colors uppercase tracking-widest"
               >
-                {item.lens ? 'Your lenses' : 'Standard lenses'}
+                {isLensesOpen ? 'Hide Prescription Detail' : 'Show Prescription Detail'}
                 {isLensesOpen ? (
-                  <ChevronUp className="w-4 h-4" />
+                  <ChevronUp className="w-3.5 h-3.5" />
                 ) : (
-                  <ChevronDown className="w-4 h-4" />
+                  <ChevronDown className="w-3.5 h-3.5" />
                 )}
               </button>
 
-              {isLensesOpen && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-3 mb-6 animate-in fade-in slide-in-from-top-2 duration-300">
-                  {item.lens ? (
-                    <>
-                      <div className="flex justify-between gap-4 py-0.5">
-                        <span className="text-sm text-gray-400 whitespace-nowrap">Vision Need</span>
-                        <span className="text-sm text-[#000000] font-bold text-right uppercase">
-                          {item.lens.visionNeed.replace('-', ' ')}
-                        </span>
+              {isLensesOpen && item.lens.prescription && (
+                <div className="mt-4 p-4 bg-white border border-mint-100 rounded-2xl animate-in fade-in slide-in-from-top-2 duration-300 shadow-sm">
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 border-b border-mint-50 pb-2">
+                    Prescription Details
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <p className="text-[10px] font-bold text-primary-500 uppercase">Right (OD)</p>
+                      <div className="grid grid-cols-4 gap-2 text-center bg-mint-50/50 p-2 rounded-lg">
+                        <div className="flex flex-col">
+                          <span className="text-[8px] font-black text-gray-400 uppercase">SPH</span>
+                          <span className="text-xs font-bold text-mint-1200">
+                            {item.lens.prescription.right.SPH}
+                          </span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-[8px] font-black text-gray-400 uppercase">CYL</span>
+                          <span className="text-xs font-bold text-mint-1200">
+                            {item.lens.prescription.right.CYL}
+                          </span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-[8px] font-black text-gray-400 uppercase">
+                            AXIS
+                          </span>
+                          <span className="text-xs font-bold text-mint-1200">
+                            {item.lens.prescription.right.AXIS}
+                          </span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-[8px] font-black text-gray-400 uppercase">ADD</span>
+                          <span className="text-xs font-bold text-mint-1200">
+                            {item.lens.prescription.right.ADD || '--'}
+                          </span>
+                        </div>
                       </div>
-                      {item.lens.prescription && (
-                        <>
-                          <div className="md:col-span-2 border-t border-mint-50 mt-2 pt-2">
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
-                              Prescription Details
-                            </p>
-                            <div className="grid grid-cols-2 gap-8 bg-mint-50/30 p-3 rounded-lg">
-                              <div>
-                                <p className="text-[10px] font-bold text-mint-700 uppercase mb-1">
-                                  Right (OD)
-                                </p>
-                                <p className="text-xs font-bold text-mint-1200">
-                                  SPH: {item.lens.prescription.right.SPH} | CYL:{' '}
-                                  {item.lens.prescription.right.CYL} | AXIS:{' '}
-                                  {item.lens.prescription.right.AXIS}
-                                  {item.lens.prescription.right.ADD &&
-                                    ` | ADD: ${item.lens.prescription.right.ADD}`}
-                                </p>
-                              </div>
-                              <div>
-                                <p className="text-[10px] font-bold text-mint-700 uppercase mb-1">
-                                  Left (OS)
-                                </p>
-                                <p className="text-xs font-bold text-mint-1200">
-                                  SPH: {item.lens.prescription.left.SPH} | CYL:{' '}
-                                  {item.lens.prescription.left.CYL} | AXIS:{' '}
-                                  {item.lens.prescription.left.AXIS}
-                                  {item.lens.prescription.left.ADD &&
-                                    ` | ADD: ${item.lens.prescription.left.ADD}`}
-                                </p>
-                              </div>
-                              <div className="col-span-2 mt-1">
-                                <p className="text-[10px] font-bold text-mint-700 uppercase mb-1">
-                                  PD
-                                </p>
-                                <p className="text-xs font-bold text-mint-1200">
-                                  {item.lens.prescription.PD}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        </>
-                      )}
-                    </>
-                  ) : (
-                    <div className="flex justify-between gap-4 py-0.5">
-                      <span className="text-sm text-gray-400 whitespace-nowrap">Type</span>
-                      <span className="text-sm text-[#000000] font-bold text-right">
-                        Standard Sunglass Lenses
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-[10px] font-bold text-primary-500 uppercase">Left (OS)</p>
+                      <div className="grid grid-cols-4 gap-2 text-center bg-mint-50/50 p-2 rounded-lg">
+                        <div className="flex flex-col">
+                          <span className="text-[8px] font-black text-gray-400 uppercase">SPH</span>
+                          <span className="text-xs font-bold text-mint-1200">
+                            {item.lens.prescription.left.SPH}
+                          </span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-[8px] font-black text-gray-400 uppercase">CYL</span>
+                          <span className="text-xs font-bold text-mint-1200">
+                            {item.lens.prescription.left.CYL}
+                          </span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-[8px] font-black text-gray-400 uppercase">
+                            AXIS
+                          </span>
+                          <span className="text-xs font-bold text-mint-1200">
+                            {item.lens.prescription.left.AXIS}
+                          </span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-[8px] font-black text-gray-400 uppercase">ADD</span>
+                          <span className="text-xs font-bold text-mint-1200">
+                            {item.lens.prescription.left.ADD || '--'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="md:col-span-2 flex items-center justify-between pt-2 border-t border-mint-50">
+                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                        Pupillary Distance (PD)
+                      </span>
+                      <span className="text-sm font-black text-mint-1200 bg-mint-100 px-3 py-1 rounded-full">
+                        {item.lens.prescription.PD} mm
                       </span>
                     </div>
-                  )}
-                  <div className="md:col-span-2 flex justify-end mt-4">
-                    <button className="text-xs font-bold text-[#4F8B8B] hover:underline uppercase tracking-widest">
-                      Edit
-                    </button>
                   </div>
                 </div>
               )}
             </div>
           )}
 
-          {/* Promo Section */}
-          <div className="space-y-2 py-6 border-t border-gray-100">
-            <div className="flex justify-between items-center">
-              <span className="text-base font-bold text-[#20B2AA]">Promo applied:</span>
-              <span className="text-base font-bold text-[#20B2AA]">{promoDiscount}</span>
-            </div>
-            {isLensesOpen && (
-              <div className="flex justify-end">
-                <span className="text-base font-bold text-[#20B2AA]">Lens Discount</span>
+          {/* Promo Info */}
+          {displayDiscount && (
+            <div className="py-3 border-t border-mint-50 flex items-center gap-2">
+              <div className="px-2 py-0.5 bg-primary-50 text-primary-600 text-[10px] font-bold rounded uppercase tracking-wider border border-primary-100">
+                Discount Applied: {displayDiscount}
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Item Subtotal Area */}
-          <div className="flex justify-between items-center pt-8 border-t border-gray-200">
-            <span className="text-base font-bold text-gray-500 uppercase tracking-widest">
-              SUBTOTAL
-            </span>
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-300 line-through">
-                <VNDPrice amount={originalPrice * item.quantity} />
+          <div className="flex justify-between items-center pt-6 border-t border-gray-100 mt-auto">
+            <div className="flex items-center gap-3 bg-mint-50/50 p-1 rounded-xl border border-mint-100/50">
+              <button
+                onClick={() => updateQuantity(item, Math.max(1, item.quantity - 1))}
+                className="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm hover:text-primary-500 transition-colors disabled:opacity-50"
+                disabled={item.quantity <= 1}
+              >
+                <Minus className="w-3.5 h-3.5" />
+              </button>
+              <span className="text-sm font-bold text-mint-1200 min-w-[30px] text-center">
+                {item.quantity}
               </span>
-              <span className="text-xl font-bold text-[#000000]">
-                <VNDPrice amount={item.price * item.quantity} />
-              </span>
+              <button
+                onClick={() => updateQuantity(item, item.quantity + 1)}
+                className="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm hover:text-primary-500 transition-colors"
+                disabled={item.quantity >= 99}
+              >
+                <Plus className="w-3.5 h-3.5" />
+              </button>
             </div>
-          </div>
 
-          {/* Quantity Selector (Invisible but functional) */}
-          <div className="absolute top-8 right-8 flex items-center gap-3 bg-gray-50 rounded-lg p-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button
-              onClick={() => updateQuantity(item, Math.max(1, item.quantity - 1))}
-              className="p-1 hover:bg-white rounded transition-colors text-gray-600"
-            >
-              <Minus className="w-3 h-3" />
-            </button>
-            <span className="text-xs font-bold text-gray-800 min-w-[20px] text-center">
-              {item.quantity}
-            </span>
-            <button
-              onClick={() => updateQuantity(item, item.quantity + 1)}
-              className="p-1 hover:bg-white rounded transition-colors text-gray-600"
-            >
-              <Plus className="w-3 h-3" />
-            </button>
+            <div className="text-right">
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">
+                Subtotal
+              </p>
+              <div className="text-2xl font-black text-mint-1200 leading-none">
+                <VNDPrice amount={itemTotalSubtotal} />
+              </div>
+              {item.originalPrice && item.originalPrice > item.price && (
+                <p className="text-[10px] text-primary-600 font-bold mt-1">
+                  Saved <VNDPrice amount={(item.originalPrice - item.price) * item.quantity} />
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { useGetProductDetail } from '@/shared/hooks/products/useGetProductDetail
 import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
 import { ImageGallery, ProductInfo } from '@/components/layout/customer/product-detail'
 import { Newsletter, Footer } from '@/components/layout/customer/homepage/components'
+import { useProductVariants } from '@/shared/hooks/products/useProductVariants'
 
 export const ProductDetailPage = () => {
   const { id } = useParams<{ id: string }>()
@@ -33,25 +34,19 @@ export const ProductDetailPage = () => {
     )
   }
 
-  const productAny = product as any
+  return <ProductDetailContent product={product} productId={product.id || id || ''} />
+}
 
-  // Extract and deduplicate images from variants and other fields
-  const defaultVariant =
-    productAny.variants?.find((v: any) => v.isDefault) || productAny.variants?.[0]
-  const imageSet = new Set<string>()
+// Separate component so useProductVariants hook can be called after product is loaded
+import type { Product } from '@/shared/types/product.types'
 
-  if (productAny.defaultVariantImage) imageSet.add(productAny.defaultVariantImage)
-  if (productAny.imageUrl) imageSet.add(productAny.imageUrl)
+interface ProductDetailContentProps {
+  product: Product
+  productId: string
+}
 
-  if (defaultVariant?.imgs) {
-    defaultVariant.imgs.forEach((img: string) => imageSet.add(img))
-  }
-
-  if (productAny.images) {
-    productAny.images.forEach((img: string) => imageSet.add(img))
-  }
-
-  const images = Array.from(imageSet).filter(Boolean)
+const ProductDetailContent = ({ product, productId }: ProductDetailContentProps) => {
+  const variantState = useProductVariants(product)
 
   return (
     <div className="min-h-screen bg-mint-200">
@@ -68,17 +63,15 @@ export const ProductDetailPage = () => {
             Products
           </a>
           <span>/</span>
-          <span className="text-mint-1200 font-semibold">
-            {productAny.nameBase || productAny.name}
-          </span>
+          <span className="text-mint-1200 font-semibold">{product.nameBase}</span>
         </nav>
 
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
-          {/* Left Column: Image Gallery - use key to force reset state on product change */}
-          <ImageGallery key={productAny._id || productAny.id || id} images={images as string[]} />
+          {/* Left Column: Image Gallery - images from current variant */}
+          <ImageGallery images={variantState.images} />
 
-          {/* Right Column: Product Info */}
-          <ProductInfo product={product} productId={id || ''} />
+          {/* Right Column: Product Info - pass shared variant state */}
+          <ProductInfo product={product} productId={productId} variantState={variantState} />
         </div>
       </main>
 

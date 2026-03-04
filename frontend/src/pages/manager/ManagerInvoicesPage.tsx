@@ -7,7 +7,6 @@ import { PageHeader } from '@/features/sales/components/common'
 
 import { useAdminInvoices } from '@/features/manager/hooks/useAdminInvoices'
 import { useComplete } from '@/features/manager/hooks/useComplete'
-import { useDelivering } from '@/features/manager/hooks/useDelivering'
 import { useOnboard } from '@/features/manager/hooks/useOnboard'
 
 import ManagerOrderDrawer from './components/invoices/ManagerOrderDrawer'
@@ -35,7 +34,6 @@ export default function ManagerInvoicesPage() {
 
   const { onboard, isLoading: isOnboarding } = useOnboard()
   const { complete, isLoading: isCompleting } = useComplete()
-  const { delivering, isLoading: isDelivering } = useDelivering()
 
   const apiStatus = statusFilter === 'All' ? undefined : statusFilter
   const { data, isLoading, isError, error, refetch } = useAdminInvoices(page, limit, apiStatus)
@@ -226,7 +224,7 @@ export default function ManagerInvoicesPage() {
         isOpen={!!selectedInvoiceId}
         onClose={() => setSelectedInvoiceId(null)}
         invoice={selectedInvoice}
-        isOnboarding={isOnboarding || isCompleting || isDelivering}
+        isOnboarding={isOnboarding || isCompleting}
         onOnboard={async (id) => {
           await onboard(id)
           refetch()
@@ -235,10 +233,7 @@ export default function ManagerInvoicesPage() {
           await complete(id)
           refetch()
         }}
-        onDelivering={async (id) => {
-          await delivering(id)
-          refetch()
-        }}
+        onRefetch={refetch}
       />
     </Container>
   )

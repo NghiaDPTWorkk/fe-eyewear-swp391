@@ -1,4 +1,4 @@
-import type { Address, PaymentMethodType } from '.'
+import type { Address, PaymentMethodType, Payment } from '.'
 import type { OrderProduct } from './order-item.types'
 import type { InvoiceStatus } from './enums'
 
@@ -177,5 +177,8 @@ export interface InvoiceDetailApiResponse {
 export interface CreateInvoiceApiResponse {
   success: boolean
   message: string
-  data: InvoiceResponse
+  data: {
+    invoice: Invoice
+    payment: Payment
+  }
 }

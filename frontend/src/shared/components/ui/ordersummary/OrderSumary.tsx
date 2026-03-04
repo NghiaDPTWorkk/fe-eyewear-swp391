@@ -23,7 +23,9 @@ export default function OrderSumary({ orderId }: { orderId?: string }) {
       <div className="space-y-3 text-sm">
         <div className="flex justify-between py-1 border-b border-gray-50">
           <span className="text-gray-500">Order ID:</span>
-          <span className="font-medium text-gray-900 truncate max-w-[200px]">{orderId || '—'}</span>
+          <span className="font-medium text-gray-900 truncate max-w-[200px]">
+            {orderData?.orderCode || orderId || '—'}
+          </span>
         </div>
         <div className="flex justify-between py-1 border-b border-gray-50">
           <span className="text-gray-500">Customer:</span>

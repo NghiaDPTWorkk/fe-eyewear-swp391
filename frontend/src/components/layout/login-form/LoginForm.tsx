@@ -104,9 +104,6 @@ export const LoginForm = ({ role: _role }: LoginFormProps) => {
       </Button>
 
       <div className="relative my-8">
-        <div className="absolute inset-0 flex items-center">
-          <Divider />
-        </div>
         <div className="relative flex justify-center text-sm">
           <span className="bg-white px-4 text-gray-400">Or continue with</span>
         </div>

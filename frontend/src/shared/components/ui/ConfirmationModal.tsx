@@ -1,5 +1,7 @@
 import { IoAlertCircle, IoClose } from 'react-icons/io5'
 import { Button } from '@/shared/components/ui/button'
+import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 
 interface ConfirmationModalProps {
   isOpen: boolean
@@ -24,65 +26,94 @@ export default function ConfirmationModal({
   isLoading = false,
   type = 'info'
 }: ConfirmationModalProps) {
-  if (!isOpen) return null
+  const [shouldRender, setShouldRender] = useState(isOpen)
 
-  return (
-    <div className="fixed inset-0 z-[100] overflow-y-auto">
-      <div className="flex min-h-screen items-center justify-center p-4 text-center">
-        {/* Backdrop */}
-        <div
-          className="fixed inset-0 bg-black/25 backdrop-blur-sm transition-opacity"
-          onClick={onClose}
-        />
+  useEffect(() => {
+    if (isOpen) setShouldRender(true)
+    else {
+      const timer = setTimeout(() => setShouldRender(false), 300)
+      return () => clearTimeout(timer)
+    }
+  }, [isOpen])
 
-        {/* Modal Panel */}
-        <div className="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all border border-neutral-100 scale-100 opacity-100">
-          <div className="flex justify-between items-start mb-4">
+  if (!shouldRender) return null
+
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div
+        className={`fixed inset-0 bg-neutral-900/40 backdrop-blur-[2px] transition-opacity duration-300 ${
+          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={onClose}
+      />
+
+      {/* Centered Modal Card */}
+      <div
+        className={`relative w-full max-w-[500px] bg-white rounded-[24px] shadow-2xl p-6 transition-all duration-300 transform ${
+          isOpen ? 'scale-100 opacity-100 translate-y-0' : 'scale-95 opacity-0 translate-y-4 pointer-events-none'
+        }`}
+      >
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center gap-3">
+            <div className={`p-2 rounded-full border ${
+              type === 'danger' ? 'bg-red-50 text-red-600 border-red-100' : 'bg-mint-50 text-mint-600 border-mint-100'
+            }`}>
+              {type === 'danger' ? <IoAlertCircle size={24} /> : <IoAlertCircle size={24} />}
+            </div>
             <h3
-              className={`text-lg font-bold leading-6 ${
-                type === 'danger' ? 'text-red-600' : 'text-gray-900'
-              } flex items-center gap-2`}
+              className={`text-xl font-bold tracking-tight ${
+                type === 'danger' ? 'text-red-600' : 'text-slate-800'
+              }`}
             >
-              {type === 'danger' && <IoAlertCircle size={24} />}
               {title}
             </h3>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-500 transition-colors"
-            >
-              <IoClose size={20} />
-            </button>
           </div>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-neutral-100 rounded-full transition-colors text-neutral-400 hover:text-neutral-900"
+          >
+            <IoClose size={20} />
+          </button>
+        </div>
 
-          <div className="mt-2">
-            <p className="text-sm text-gray-500 bg-neutral-50 p-3 rounded-lg border border-neutral-100">
+        {/* Content */}
+        <div className="mb-8">
+          <div className="bg-slate-50 rounded-xl p-5 border border-slate-100">
+            <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 pl-1">
+              MESSAGE
+            </h4>
+            <p className="text-[15px] text-slate-700 leading-relaxed font-medium">
               {message}
             </p>
           </div>
+        </div>
 
-          <div className="mt-6 flex justify-end gap-3">
-            <Button
-              variant="outline"
-              onClick={onClose}
-              disabled={isLoading}
-              className="bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
-            >
-              {cancelText}
-            </Button>
-            <Button
-              onClick={onConfirm}
-              disabled={isLoading}
-              className={`${
-                type === 'danger'
-                  ? 'bg-red-600 hover:bg-red-700 text-white'
-                  : 'bg-mint-900 hover:bg-mint-700 text-white'
-              } px-6`}
-            >
-              {isLoading ? 'Processing...' : confirmText}
-            </Button>
-          </div>
+        {/* Footer */}
+        <div className="flex flex-col gap-3">
+          <Button
+            onClick={onConfirm}
+            disabled={isLoading}
+            className={`w-full py-4 rounded-xl font-bold text-white shadow-md transition-transform active:scale-[0.98] ${
+              type === 'danger'
+                ? 'bg-red-600 hover:bg-red-700 shadow-red-200'
+                : 'bg-mint-900 hover:bg-mint-700 shadow-mint-200'
+            }`}
+          >
+            {isLoading ? 'Processing...' : confirmText}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={onClose}
+            disabled={isLoading}
+            className="w-full py-4 bg-white border border-slate-200 text-slate-600 hover:bg-gray-200 hover:text-slate-900 rounded-xl font-bold transition-colors"
+          >
+            {cancelText}
+          </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

@@ -5,6 +5,7 @@ import { Card } from '@/shared/components/ui'
 import { addressService, type Province, type Ward } from '@/shared/services/addressService'
 import { customerAddressService } from '@/features/customer/services/customerAddress.service'
 import { invoiceService } from '@/features/customer/invoice/services/invoice.service'
+import { paymentService } from '@/features/customer/services/payment.service'
 import { useCartStore } from '@/store'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { PaymentMethodType, type Address } from '@/shared/types'
@@ -225,6 +226,23 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
         } else {
           await removeItems(selectedItemsCopy)
         }
+
+        if (paymentMethod === PaymentMethodType.VNPAY) {
+          try {
+            const { invoice, payment } = response.data
+            const urlResponse = await paymentService.getVNPayUrl(invoice._id, payment._id)
+            if (urlResponse.success && urlResponse.data.url) {
+              window.location.href = urlResponse.data.url
+              return // Stop further execution
+            }
+          } catch (error) {
+            console.error('Failed to get VNPay URL:', error)
+            toast.error(
+              'Không thể tạo liên kết thanh toán VNPay. Vui lòng thử lại trong Lịch sử đơn hàng.'
+            )
+          }
+        }
+
         navigate('/account/orders')
       } else {
         toast.error(response.message || 'Tạo đơn hàng thất bại')

@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueries, useMutation, useQueryClient } from '@tanstack/react-query'
 import { orderService } from '../../services/orderService'
 
 /**
@@ -137,5 +137,19 @@ export const useApproveOrder = () => {
       queryClient.invalidateQueries({ queryKey: ['orders'] })
       queryClient.invalidateQueries({ queryKey: ['order', orderId] })
     }
+  })
+}
+
+/**
+ * Hook to fetch multiple order details by IDs
+ * @param orderIds - Array of order IDs
+ */
+export const useOrdersDetails = (orderIds: string[]) => {
+  return useQueries({
+    queries: (orderIds ?? []).map((id) => ({
+      queryKey: ['order', id],
+      queryFn: () => orderService.getOrderById(id),
+      staleTime: 30000
+    }))
   })
 }

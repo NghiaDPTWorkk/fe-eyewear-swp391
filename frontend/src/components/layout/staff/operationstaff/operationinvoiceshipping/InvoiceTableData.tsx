@@ -13,7 +13,7 @@ const getStatusColor = (status: string) => {
       return 'bg-yellow-100 text-yellow-600'
     case 'READY_TO_SHIP':
       return 'bg-mint-100 text-mint-600'
-    case 'SHIPPED':
+    case 'DELIVERED':
       return 'bg-blue-100 text-blue-600'
     default:
       return 'bg-gray-100 text-gray-600'
@@ -21,7 +21,6 @@ const getStatusColor = (status: string) => {
 }
 
 export default function InvoiceTableData({ invoice, onView, onNext }: InvoiceTableDataProps) {
-  const totalAmount = parseFloat(invoice.finalPrice ?? '0')
 
   return (
     <>
@@ -37,12 +36,7 @@ export default function InvoiceTableData({ invoice, onView, onNext }: InvoiceTab
         </span>
       </td>
 
-      {/* Total amount */}
-      <td className="px-6 py-4 whitespace-nowrap text-right">
-        <span className="text-sm font-semibold text-gray-900">
-          {isNaN(totalAmount) ? invoice.finalPrice : totalAmount.toLocaleString('vi-VN')} ₫
-        </span>
-      </td>
+
 
       {/* Status */}
       <td className="px-6 py-4 whitespace-nowrap text-center">
@@ -68,13 +62,8 @@ export default function InvoiceTableData({ invoice, onView, onNext }: InvoiceTab
           {/* Next Button */}
           <button
             onClick={() => onNext(invoice.id)}
-            disabled={invoice.status === 'READY_TO_SHIP'}
-            className={`p-2 rounded-lg transition-all border ${
-              invoice.status !== 'READY_TO_SHIP'
-                ? 'bg-mint-50 hover:bg-mint-100 text-mint-600 border-mint-200'
-                : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
-            }`}
-            title="Process Shipping"
+            className="p-2 rounded-lg transition-all border bg-mint-50 hover:bg-mint-100 text-mint-600 border-mint-200"
+            title="Go to Shipping Handover"
           >
             <IoChevronForward size={18} />
           </button>

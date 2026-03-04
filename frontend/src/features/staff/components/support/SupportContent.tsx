@@ -153,7 +153,7 @@ export default function SupportContent({
               searchParams.delete('tab')
               setSearchParams(searchParams)
             }}
-            className="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-bold transition-all"
+            className="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-medium transition-all"
           >
             <IoChevronBackOutline /> Back to Reporting
           </Button>
@@ -163,7 +163,7 @@ export default function SupportContent({
               <input
                 type="text"
                 placeholder="Search reports..."
-                className={`w-full pl-11 pr-4 py-2.5 bg-white border border-slate-100 rounded-2xl text-sm focus:outline-none focus:ring-4 transition-all placeholder:text-slate-400 font-semibold shadow-sm ${accentColor === 'mint' ? 'focus:ring-mint-500/5 focus:border-mint-500' : 'focus:ring-primary-500/5 focus:border-primary-500'}`}
+                className={`w-full pl-11 pr-4 py-2.5 bg-white border border-slate-100 rounded-2xl text-sm focus:outline-none focus:ring-4 transition-all placeholder:text-slate-400 font-medium shadow-sm ${accentColor === 'mint' ? 'focus:ring-mint-500/5 focus:border-mint-500' : 'focus:ring-primary-500/5 focus:border-primary-500'}`}
               />
             </div>
           </div>
@@ -177,7 +177,7 @@ export default function SupportContent({
                 Manage and track your submitted tickets
               </p>
             </div>
-            <span className="px-4 py-1.5 bg-white border border-slate-100 rounded-xl text-[10px] font-bold text-slate-500 uppercase tracking-widest shadow-sm">
+            <span className="px-4 py-1.5 bg-white border border-slate-100 rounded-xl text-[10px] font-semibold text-slate-500 uppercase tracking-widest shadow-sm">
               {sortedHistory.length} Total
             </span>
           </div>
@@ -186,16 +186,16 @@ export default function SupportContent({
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-slate-50/50">
-                  <th className="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">
+                  <th className="px-8 py-5 text-[10px] font-semibold text-slate-400 uppercase tracking-[0.2em]">
                     Ticket Information
                   </th>
-                  <th className="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] text-center">
+                  <th className="px-8 py-5 text-[10px] font-semibold text-slate-400 uppercase tracking-[0.2em] text-center">
                     Priority
                   </th>
-                  <th className="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] text-center">
+                  <th className="px-8 py-5 text-[10px] font-semibold text-slate-400 uppercase tracking-[0.2em] text-center">
                     Current Status
                   </th>
-                  <th className="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] text-right">
+                  <th className="px-8 py-5 text-[10px] font-semibold text-slate-400 uppercase tracking-[0.2em] text-right">
                     Date Submitted
                   </th>
                 </tr>
@@ -220,7 +220,7 @@ export default function SupportContent({
                       <td className="px-8 py-6 max-w-xs md:max-w-md">
                         <div className="flex flex-col gap-1.5">
                           <h4
-                            className={`text-sm font-bold text-slate-800 transition-colors line-clamp-1 ${accentColor === 'mint' ? 'group-hover:text-mint-600' : 'group-hover:text-primary-600'}`}
+                            className={`text-sm font-semibold text-slate-800 transition-colors line-clamp-1 ${accentColor === 'mint' ? 'group-hover:text-mint-600' : 'group-hover:text-primary-600'}`}
                           >
                             {report.title}
                           </h4>
@@ -231,7 +231,7 @@ export default function SupportContent({
                       </td>
                       <td className="px-8 py-6 text-center">
                         <span
-                          className={`px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider border inline-block ${
+                          className={`px-3 py-1.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider border inline-block ${
                             report.priorityLevel === 'HIGH'
                               ? 'bg-rose-50 text-rose-600 border-rose-100 shadow-sm shadow-rose-100/50'
                               : report.priorityLevel === 'MEDIUM'
@@ -244,13 +244,13 @@ export default function SupportContent({
                       </td>
                       <td className="px-8 py-6 text-center">
                         <span
-                          className={`px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider border inline-block ${statusClass(report.status)} shadow-sm`}
+                          className={`px-3 py-1.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider border inline-block ${statusClass(report.status)} shadow-sm`}
                         >
                           {report.status}
                         </span>
                       </td>
                       <td className="px-8 py-6 text-right">
-                        <p className="text-xs text-slate-400 font-bold">{report.createdAt}</p>
+                        <p className="text-xs text-slate-400 font-medium">{report.createdAt}</p>
                       </td>
                     </tr>
                   ))
@@ -413,19 +413,19 @@ export default function SupportContent({
                     >
                       <div className="flex-1 pr-4 min-w-0">
                         <h4
-                          className={`text-sm font-bold text-slate-800 transition-colors truncate ${accentColor === 'mint' ? 'group-hover:text-mint-600' : 'group-hover:text-primary-600'}`}
+                          className={`text-sm font-semibold text-slate-800 transition-colors truncate ${accentColor === 'mint' ? 'group-hover:text-mint-600' : 'group-hover:text-primary-600'}`}
                         >
                           {report.title}
                         </h4>
                         <div className="flex items-center gap-2 mt-1.5">
                           <IoTimeOutline size={12} className="text-slate-400" />
-                          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                          <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
                             {report.createdAt.split(' ').pop()}
                           </p>
                         </div>
                       </div>
                       <span
-                        className={`px-3 py-1 rounded-xl text-[9px] font-bold uppercase tracking-widest border shrink-0 ${statusClass(report.status)}`}
+                        className={`px-3 py-1 rounded-xl text-[9px] font-semibold uppercase tracking-widest border shrink-0 ${statusClass(report.status)}`}
                       >
                         {report.status}
                       </span>
@@ -443,7 +443,7 @@ export default function SupportContent({
                   searchParams.set('tab', 'history')
                   setSearchParams(searchParams)
                 }}
-                className={`w-full py-4 text-xs font-bold flex items-center justify-center gap-2 transition-all rounded-2xl cursor-pointer active:scale-95 ${accentColor === 'mint' ? 'text-mint-600 hover:text-mint-700 hover:bg-mint-50' : 'text-primary-600 hover:text-primary-700 hover:bg-primary-50'}`}
+                className={`w-full py-4 text-xs font-semibold flex items-center justify-center gap-2 transition-all rounded-2xl cursor-pointer active:scale-95 ${accentColor === 'mint' ? 'text-mint-600 hover:text-mint-700 hover:bg-mint-50' : 'text-primary-600 hover:text-primary-700 hover:bg-primary-50'}`}
               >
                 View Full History <IoChevronForwardOutline />
               </button>

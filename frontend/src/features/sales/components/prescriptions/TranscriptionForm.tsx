@@ -11,6 +11,8 @@ import { Button, Card, Input } from '@/shared/components/ui-core'
 interface TranscriptionFormProps {
   parameters: any
   onParametersChange?: (params: any) => void
+  note?: string
+  onNoteChange?: (note: string) => void
   isReadOnly: boolean
   isApproved: boolean
   isRejected: boolean
@@ -26,6 +28,8 @@ interface TranscriptionFormProps {
 export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
   parameters,
   onParametersChange,
+  note,
+  onNoteChange,
   isReadOnly,
   isApproved,
   isRejected,
@@ -220,6 +224,8 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
             </label>
             <textarea
               readOnly={isReadOnly}
+              value={note ?? ''}
+              onChange={(e) => onNoteChange?.(e.target.value)}
               className="w-full h-12 p-3.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-mint-500/10 focus:border-mint-500 text-sm font-medium text-slate-700 resize-none bg-white transition-all placeholder:font-normal placeholder:text-slate-300 shadow-none overflow-hidden [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
               placeholder="Lab instructions..."
             ></textarea>

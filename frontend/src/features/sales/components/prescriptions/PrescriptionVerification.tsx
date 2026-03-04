@@ -61,6 +61,7 @@ export default function PrescriptionVerification({
 
   // Prescription Parameters State
   const [localParameters, setLocalParameters] = useState<PrescriptionParameters | null>(null)
+  const [localNote, setLocalNote] = useState('')
 
   // Confirmation Modal State
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
@@ -78,13 +79,17 @@ export default function PrescriptionVerification({
 
   const handleConfirm = async () => {
     // Priority: 1. Local changes, 2. Existing order data (parameters variable), 3. Default empty params
-    const finalParams = localParameters ||
+    const finalParams =
+      localParameters ||
       parameters || {
         left: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
         right: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
         PD: 64
       }
-    const success = await approveOrder(orderId, { parameters: finalParams })
+
+    const finalNote = localNote.trim() || parameters?.note || ''
+
+    const success = await approveOrder(orderId, { parameters: finalParams, note: finalNote })
     if (success) {
       toast.success('Prescription approved')
       setIsConfirmOpen(false)
@@ -183,6 +188,8 @@ export default function PrescriptionVerification({
           <TranscriptionForm
             parameters={localParameters || parameters}
             onParametersChange={setLocalParameters}
+            note={localNote || parameters?.note || ''}
+            onNoteChange={setLocalNote}
             isReadOnly={isReadOnly}
             isApproved={isApproved}
             isRejected={isRejected}

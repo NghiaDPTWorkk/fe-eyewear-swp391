@@ -9,3 +9,11 @@ export function useOperationInvoices(page: number, limit: number, status?: strin
     staleTime: 30_000
   })
 }
+
+export function useAllOperationInvoices() {
+  return useQuery<OperationInvoiceListApiResponse>({
+    queryKey: ['operation-invoices-handle-delivery', 'all'],
+    queryFn: () => operationInvoiceService.getHandleDeliveryInvoices(1, 1000), // Lấy tối đa 1000 đơn để đếm
+    staleTime: 60_000
+  })
+}

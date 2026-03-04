@@ -6,6 +6,7 @@ import { ENDPOINTS } from '@/api/endpoints'
 
 import { salesService } from '../services/salesService'
 import type { Order } from '../types'
+import { transformOrder } from '../utils/orderUtils'
 
 export function useSalesStaffOrders(page: number = 1, limit: number = 10, status: string = 'All') {
   const queryClient = useQueryClient()
@@ -17,7 +18,14 @@ export function useSalesStaffOrders(page: number = 1, limit: number = 10, status
       const response = await httpClient.get<any>(
         ENDPOINTS.ORDERS.LIST_WITH_PARAMS(page, limit, apiStatus)
       )
-      return response.data
+
+      const raw = response.data
+      const orderList = (raw?.orderList || []).map((ord: any) => transformOrder(ord))
+
+      return {
+        ...raw,
+        orderList
+      }
     }
   })
 

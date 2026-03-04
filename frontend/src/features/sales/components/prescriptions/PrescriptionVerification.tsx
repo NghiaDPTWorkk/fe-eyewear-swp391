@@ -79,8 +79,7 @@ export default function PrescriptionVerification({
 
   const handleConfirm = async () => {
     // Priority: 1. Local changes, 2. Existing order data (parameters variable), 3. Default empty params
-    const finalParams =
-      localParameters ||
+    const finalParams = localParameters ||
       parameters || {
         left: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
         right: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },

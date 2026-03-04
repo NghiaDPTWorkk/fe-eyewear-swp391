@@ -3,6 +3,7 @@ import { salesService } from '../services/salesService'
 import { OrderType } from '@/shared/utils/enums/order.enum'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import type { Invoice } from '../types'
+import { transformOrder } from '../utils/orderUtils'
 
 export function useSalesStaffInvoices(
   page: number = 1,
@@ -155,7 +156,7 @@ export function useSalesStaffOrderDetail(orderId: string) {
     queryKey: ['sales', 'order', orderId],
     queryFn: async () => {
       const response = await salesService.getOrderById(orderId)
-      return response.data.order
+      return transformOrder(response.data.order)
     },
     enabled: !!orderId
   })

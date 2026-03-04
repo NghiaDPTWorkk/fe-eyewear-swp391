@@ -19,7 +19,7 @@ export const renderOrderCode = (order: Order, onClick?: (id: string) => void) =>
       }
     }}
   >
-    {order.orderCode}
+    {order.orderCode || (order._id ? `ORD-${order._id.slice(-6).toUpperCase()}` : 'N/A')}
   </div>
 )
 

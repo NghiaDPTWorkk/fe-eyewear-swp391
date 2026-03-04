@@ -5,7 +5,7 @@ import { OrderTable } from '@/components/staff'
 import { OrderStatus } from '@/shared/utils/enums/order.enum'
 import { useOrders } from '@/features/staff/hooks/orders/useOrders'
 import { transformApiOrderToTableOrder } from '@/features/staff/components/OrderTable/orderTransformers'
-import OperationPagination from '@/pages/operations/OperationPagination'
+import { OperationPagination } from '@/shared/components/ui/pagination'
 
 const PAGE_LIMIT = 10
 

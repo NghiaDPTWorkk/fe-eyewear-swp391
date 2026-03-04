@@ -23,7 +23,8 @@ export default function OperationPagination({
   const inputRef = useRef<HTMLInputElement>(null)
 
   // Ẩn nếu không có data, chỉ 1 trang, hoặc trang hiện tại không có items
-  if (total === 0 || totalPages <= 1 || itemsOnPage === 0) return null
+  if (total === 0 || totalPages <= 1 || (itemsOnPage !== undefined && itemsOnPage === 0))
+    return null
 
   const handlePageClick = () => {
     setInputValue(String(page))

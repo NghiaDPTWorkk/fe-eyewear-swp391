@@ -31,8 +31,13 @@ export const authService = {
     return response
   },
 
-  getProfile: async () => {
-    const response = await authApi.getProfile()
+  getProfile: async (role?: string | null) => {
+    const isStaff =
+      role && ['SYSTEM_ADMIN', 'SALE_STAFF', 'MANAGER', 'OPERATION_STAFF'].includes(role)
+
+    // Gọi đúng API tùy theo role
+    const response = isStaff ? await authApi.getAdminProfile() : await authApi.getProfile()
+
     return response.data
   }
 }

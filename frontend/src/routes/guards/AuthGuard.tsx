@@ -7,10 +7,11 @@ interface AuthGuardProps {
 }
 
 export function AuthGuard({ children }: AuthGuardProps) {
-  const { isAuthenticated, isLoading } = useAuthStore()
+  const { isAuthenticated, isLoading, _hasHydrated } = useAuthStore()
   const location = useLocation()
 
-  if (isLoading) {
+  // Wait for zustand to finish hydrating (and token refresh if needed)
+  if (!_hasHydrated || isLoading) {
     return <LazyPage children={<div></div>}></LazyPage>
   }
 

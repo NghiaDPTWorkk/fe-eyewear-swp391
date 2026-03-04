@@ -15,7 +15,7 @@ export default function CustomerHeader() {
   const location = useLocation()
   const items = useCartStore((state) => state.items)
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
-  const { isAuthenticated } = useAuthStore()
+  const { isAuthenticated, _hasHydrated: hasHydrated } = useAuthStore()
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -201,7 +201,10 @@ export default function CustomerHeader() {
                 </span>
               )}
             </button>
-            {isAuthenticated ? (
+            {!hasHydrated ? (
+              // Placeholder để giữ layout ổn định trong khi chờ hydrate
+              <div className="w-9 h-9" />
+            ) : isAuthenticated ? (
               <ProjectProfileDropdown />
             ) : (
               <button

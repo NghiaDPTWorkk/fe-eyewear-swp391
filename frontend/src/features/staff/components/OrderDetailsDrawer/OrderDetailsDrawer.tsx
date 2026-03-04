@@ -71,7 +71,6 @@ export default function OrderDetailsDrawer({
 
       setLoading(true)
       try {
-        /* eslint-disable @typescript-eslint/no-explicit-any */
         // Fetch order data
         const orderResponse = await httpClient.get<any>(`/admin/orders/${orderId}`)
         const ord =

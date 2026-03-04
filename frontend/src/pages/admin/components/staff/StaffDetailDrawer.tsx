@@ -14,11 +14,12 @@ interface StaffDetailDrawerProps {
   staff: StaffData | null
 }
 
-const roleStyles: Record<StaffData['role'], string> = {
-  'Sale Staff': 'bg-blue-50 text-blue-600 border-blue-100',
-  'Operation Staff': 'bg-amber-50 text-amber-600 border-amber-100',
-  Manager: 'bg-purple-50 text-purple-600 border-purple-100',
-  Admin: 'bg-indigo-50 text-indigo-600 border-indigo-100'
+const getRoleStyles = (role: string): string => {
+  const normalized = role.toLowerCase()
+  if (normalized.includes('sale')) return 'bg-blue-50 text-blue-600 border-blue-100'
+  if (normalized.includes('operation')) return 'bg-amber-50 text-amber-600 border-amber-100'
+  if (normalized.includes('manager')) return 'bg-purple-50 text-purple-600 border-purple-100'
+  return 'bg-indigo-50 text-indigo-600 border-indigo-100'
 }
 
 export const StaffDetailDrawer: React.FC<StaffDetailDrawerProps> = ({ isOpen, onClose, staff }) => {
@@ -47,7 +48,7 @@ export const StaffDetailDrawer: React.FC<StaffDetailDrawerProps> = ({ isOpen, on
             <div>
               <h4 className="text-lg font-bold text-gray-900">{staff.name}</h4>
               <span
-                className={`inline-flex items-center px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${roleStyles[staff.role]}`}
+                className={`inline-flex items-center px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${getRoleStyles(staff.role)}`}
               >
                 {staff.role}
               </span>

@@ -3,6 +3,7 @@ import { User, LogOut, ChevronRight, ShoppingBag, MapPin, Clipboard, Heart } fro
 import { Link, useNavigate } from 'react-router-dom'
 import { STORAGE_KEYS } from '@/shared/constants/storage'
 import { useAuthStore, useCartStore } from '@/store'
+import { authApi } from '@/features/auth/services/auth.api.legacy'
 
 export function ProfileDropdown() {
   const [isOpen, setIsOpen] = useState(false)
@@ -19,7 +20,13 @@ export function ProfileDropdown() {
     { icon: Heart, label: 'My favorites', to: '/account/favorites' }
   ]
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await authApi.logout()
+    } catch (e) {
+      console.error(e)
+    }
+
     logout()
     clearCart()
     localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN)

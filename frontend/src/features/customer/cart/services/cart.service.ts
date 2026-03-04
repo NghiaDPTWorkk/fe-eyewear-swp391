@@ -35,6 +35,7 @@ const transformPrescriptionToParameters = (prescription: PrescriptionData): Lens
  */
 const transformBackendCartToItems = (backendCart: BackendCart): CartItem[] => {
   return backendCart.products.map((item) => ({
+    _id: item._id,
     product_id: item.product?.product_id || '',
     sku: item.product?.sku || '',
     name: item.product?.name || 'Unknown Product',

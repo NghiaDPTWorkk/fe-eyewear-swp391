@@ -4,7 +4,7 @@ import type { Order } from '../types'
 /**
  * Transforms raw API order/invoice data into a standardized Order object.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 export const transformOrder = (ord: any, inv?: any): Order => {
   const orderId = ord.id || ord._id
   const invoiceId = inv?.id || inv?._id || ord.invoiceId || ord.invoice?._id

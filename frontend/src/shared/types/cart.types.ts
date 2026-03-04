@@ -1,6 +1,7 @@
 import type { PrescriptionData } from './prescription.types'
 
 export interface CartItem {
+  _id?: string // Backend cart-line unique ID (used as React key)
   product_id: string // SKU
   quantity: number
   name: string

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import type { LoginRequest } from '@/shared/types'
 import { useLogin } from '@/features/auth/hooks/useLogin'
 import { Button, Checkbox, Input, FormField, Divider } from '@/components'
@@ -46,8 +47,6 @@ export const LoginForm = ({ role: _role }: LoginFormProps) => {
 
   return (
     <form onSubmit={handleSubmit} className="w-full">
-      <Divider className="mb-4" />
-
       <FormField label="Email" className="mb-4">
         <Input
           type="email"
@@ -103,14 +102,7 @@ export const LoginForm = ({ role: _role }: LoginFormProps) => {
         Log In
       </Button>
 
-      <div className="relative my-8">
-        <div className="absolute inset-0 flex items-center">
-          <Divider />
-        </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="bg-white px-4 text-gray-400">Or continue with</span>
-        </div>
-      </div>
+      <Divider className="mb-4" />
 
       <button
         type="button"
@@ -140,10 +132,21 @@ export const LoginForm = ({ role: _role }: LoginFormProps) => {
 
       <p className="text-center text-sm text-gray-500">
         Don't have an account?{' '}
-        <a href="/register" className="font-medium text-primary-600 hover:text-primary-700">
+        <Link to="/register" className="font-medium text-primary-600 hover:text-primary-700">
           Sign Up
-        </a>
+        </Link>
       </p>
+      {_role !== 'staff' && (
+        <div className="mt-6 pt-2 border-t border-gray-100 text-center">
+          <span className="text-xs text-gray-400">Are you a staff member? </span>
+          <Link
+            to="/admin/login"
+            className="text-xs font-semibold text-gray-500 hover:text-primary-600 transition-colors"
+          >
+            Staff Portal
+          </Link>
+        </div>
+      )}
     </form>
   )
 }

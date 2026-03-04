@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { STORAGE_KEYS } from '@/shared/constants/storage'
 import { useAuthStore } from '@/store/auth.store'
 import { toast } from 'react-hot-toast'
 
@@ -14,9 +15,9 @@ export const GoogleCallbackPage = () => {
     if (accessToken) {
       const handleLoginSuccess = async () => {
         try {
-          // 1. Set token in store and localStorage
+          // 1. Set token in store and localStorage (setToken now handles localStorage too)
           setToken(accessToken)
-          localStorage.setItem('access_token', accessToken)
+          localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken)
           localStorage.setItem('accessToken', accessToken)
 
           // 2. Fetch user profile

@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 import { ExpediteRequestModal } from '../lab/ExpediteRequestModal'
 
 interface LabOperationsTimelineProps {
-  order: any
+  order?: any
 }
 
 export const LabOperationsTimeline: React.FC<LabOperationsTimelineProps> = ({ order }) => {
@@ -66,8 +66,8 @@ export const LabOperationsTimeline: React.FC<LabOperationsTimelineProps> = ({ or
 
   // Mapping order to the simplified station object expected by ExpediteRequestModal
   const mappedOrder = {
-    ...order,
-    orderCode: order.orderCode || `#${order._id?.slice(-6)}`,
+    ...(order || {}),
+    orderCode: order?.orderCode || `#${order?._id?.slice(-6) || 'N/A'}`,
     station: stages.find((s) => s.isActive)?.label || 'Completed',
     stationColor:
       stages.find((s) => s.isActive)?.color.replace('bg-', 'text-') || 'text-emerald-600'

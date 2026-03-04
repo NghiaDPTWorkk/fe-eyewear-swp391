@@ -133,7 +133,13 @@ apiClient.interceptors.request.use(
       localStorage.getItem('accessToken') ??
       localStorage.getItem('token')
 
-    const publicRoutes = ['/auth/login', '/admin/auth/login', '/products', '/auth/refresh-token']
+    const publicRoutes = [
+      '/auth/login',
+      '/admin/auth/login',
+      '/products',
+      '/auth/refresh-token',
+      '/admin/auth/refresh-token'
+    ]
     const isPublicRoute = publicRoutes.some((route) => url.startsWith(route))
 
     if (config.skipAuth || isPublicRoute) {

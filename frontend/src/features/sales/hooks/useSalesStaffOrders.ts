@@ -4,6 +4,7 @@ import { httpClient } from '@/api/apiClients'
 import { ENDPOINTS } from '@/api/endpoints'
 import { salesService } from '../services/salesService'
 import type { Order } from '../types'
+import { transformOrder } from '../utils/orderUtils'
 
 export function useSalesStaffOrders(page: number = 1, limit: number = 10, status: string = 'All') {
   const queryClient = useQueryClient()
@@ -15,45 +16,7 @@ export function useSalesStaffOrders(page: number = 1, limit: number = 10, status
       const response = await httpClient.get<any>(
         ENDPOINTS.ORDERS.LIST_WITH_PARAMS(page, limit, apiStatus)
       )
-      const data = response.data
-      const orderList = data?.orderList || []
-
-      const enrichedOrders = await Promise.all(
-        orderList.map(async (o: Order) => {
-          const searchParams = new URLSearchParams(window.location.search)
-          const urlInvoiceId = searchParams.get('invoiceId')
-          const invoiceId = o.invoiceId || (o as any).invoice_id || urlInvoiceId
-
-          if (invoiceId) {
-            try {
-              const invRes = await salesService.getInvoiceById(invoiceId)
-              const idata = invRes.data || (invRes as any)
-              const invoice = idata?.invoice || idata
-
-              if (invoice) {
-                return {
-                  ...o,
-                  customerName:
-                    o.customerName ||
-                    invoice.fullName ||
-                    invoice.fullNameVn ||
-                    invoice.name ||
-                    invoice.fullname ||
-                    (o as any).fullName,
-                  customerPhone:
-                    o.customerPhone || invoice.phone || invoice.phoneNumber || (o as any).phone,
-                  invoice: invoice
-                }
-              }
-            } catch (err) {
-              console.error('Failed to enrich order in list:', err)
-            }
-          }
-          return o
-        })
-      )
-
-      return { ...data, orderList: enrichedOrders }
+      return response.data
     }
   })
 

@@ -46,6 +46,12 @@ export const useLogin = () => {
     onSuccess: async (response: LoginResponse) => {
       console.log('Login Success Response:', response)
 
+      // DEBUG
+      console.group('[LOGIN] Login successful')
+      console.info('document.cookie:', document.cookie || '(empty - cookie may be HttpOnly)')
+      console.info('deviceId used:', localStorage.getItem('x_device_id'))
+      console.groupEnd()
+
       // 1. Robust Token Extraction
 
       const authData = (response as any).data || response
@@ -63,25 +69,24 @@ export const useLogin = () => {
       }
 
       // 2. Store token (this will automatically extract and set role from JWT)
-      localStorage.setItem('accessToken', token)
       localStorage.setItem('access_token', token)
       setToken(token)
 
-      // 3. Clear stale cache from previous session, then fetch fresh profile
+      // 3. Clear stale cache and fetch fresh profile (automatically handles Admin vs Customer profile)
       try {
-        queryClient.clear() // Synchronous clear — removes stale profile from previous user
+        queryClient.clear()
         await fetchProfile()
       } catch (error) {
         console.error('Failed to fetch profile after login:', error)
-        // Continue anyway, profile will be fetched on next page load
       }
 
-      // 4. Fetch cart from backend
-      try {
-        await fetchCart()
-      } catch (error) {
-        console.error('Failed to fetch cart after login:', error)
-        // Continue anyway, cart will be fetched when user visits cart page
+      // 4. Fetch cart ONLY for customers
+      if (!isStaffLogin()) {
+        try {
+          await fetchCart()
+        } catch (error) {
+          console.error('Failed to fetch cart after login:', error)
+        }
       }
 
       // Use appropriate success message based on login type

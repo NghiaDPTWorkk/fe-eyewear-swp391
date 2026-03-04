@@ -69,7 +69,13 @@ export const CartPage = () => {
 
                   <div className="space-y-6">
                     {items.map((item) => (
-                      <CartItem key={item.product_id} item={item} />
+                      <CartItem
+                        key={
+                          item._id ??
+                          `${item.product_id}-${item.sku ?? ''}-${item.lens?.lensId ?? ''}`
+                        }
+                        item={item}
+                      />
                     ))}
                   </div>
 

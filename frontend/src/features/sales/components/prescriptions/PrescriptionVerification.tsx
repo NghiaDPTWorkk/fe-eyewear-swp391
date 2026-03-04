@@ -16,9 +16,9 @@ import { LabOperationsTimeline } from './LabOperationsTimeline'
 import { RejectionModal } from '../common/RejectionModal'
 
 interface PrescriptionParameters {
-  left: { SPH: string | number; CYL: string | number; AXIS: string | number; ADD: string | number }
-  right: { SPH: string | number; CYL: string | number; AXIS: string | number; ADD: string | number }
-  PD: string | number
+  left: { SPH: number; CYL: number; AXIS: number; ADD: number }
+  right: { SPH: number; CYL: number; AXIS: number; ADD: number }
+  PD: number
   [key: string]: any
 }
 
@@ -61,39 +61,13 @@ export default function PrescriptionVerification({
 
   // Prescription Parameters State
   const [localParameters, setLocalParameters] = useState<PrescriptionParameters | null>(null)
+  const [localNote, setLocalNote] = useState('')
 
   // Confirmation Modal State
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const [confirmAction, setConfirmAction] = useState<'approve' | 'reject' | null>(null)
 
   const handleApprove = () => {
-    // Basic validation before opening modal
-    const params = localParameters || parameters
-    if (params) {
-      if (
-        (params.right?.SPH === '' || params.right?.SPH === undefined) &&
-        (params.left?.SPH === '' || params.left?.SPH === undefined)
-      ) {
-        toast.error('SPH values cannot be empty')
-        return
-      }
-
-      // Check PD
-      const pdVal = parseFloat(String(params.PD))
-      if (isNaN(pdVal) || pdVal < 40 || pdVal > 90) {
-        toast.error('PD must be between 40 and 90')
-        return
-      }
-
-      // Check AXIS
-      const rightAxis = parseFloat(String(params.right?.AXIS))
-      const leftAxis = parseFloat(String(params.left?.AXIS))
-      if (rightAxis < 0 || rightAxis > 180 || leftAxis < 0 || leftAxis > 180) {
-        toast.error('AXIS must be between 0 and 180')
-        return
-      }
-    }
-
     setConfirmAction('approve')
     setIsConfirmOpen(true)
   }
@@ -105,32 +79,16 @@ export default function PrescriptionVerification({
 
   const handleConfirm = async () => {
     // Priority: 1. Local changes, 2. Existing order data (parameters variable), 3. Default empty params
-    const rawParams = (localParameters ||
+    const finalParams = localParameters ||
       parameters || {
         left: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
         right: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
         PD: 64
-      }) as any
+      }
 
-    // Ensure they are numbers before sending to API
-    const finalParams = {
-      ...rawParams,
-      left: {
-        SPH: parseFloat(String(rawParams.left?.SPH || 0)),
-        CYL: parseFloat(String(rawParams.left?.CYL || 0)),
-        AXIS: parseFloat(String(rawParams.left?.AXIS || 0)),
-        ADD: parseFloat(String(rawParams.left?.ADD || 0))
-      },
-      right: {
-        SPH: parseFloat(String(rawParams.right?.SPH || 0)),
-        CYL: parseFloat(String(rawParams.right?.CYL || 0)),
-        AXIS: parseFloat(String(rawParams.right?.AXIS || 0)),
-        ADD: parseFloat(String(rawParams.right?.ADD || 0))
-      },
-      PD: parseFloat(String(rawParams.PD || 64))
-    }
+    const finalNote = localNote.trim() || (parameters as any)?.note || ''
 
-    const success = await approveOrder(orderId, { parameters: finalParams })
+    const success = await approveOrder(orderId, { parameters: finalParams, note: finalNote })
     if (success) {
       toast.success('Prescription approved')
       setIsConfirmOpen(false)
@@ -193,19 +151,19 @@ export default function PrescriptionVerification({
         <div className="flex items-center gap-2 text-sm text-slate-500">
           <span className="font-normal">Order Status:</span>
           {isApproved ? (
-            <span className="px-3 py-1 bg-mint-50 text-mint-600 font-semibold rounded-full text-[10px] border border-mint-200 tracking-widest flex items-center gap-1.5 shadow-sm">
-              <IoCheckmark size={14} className="text-mint-600" /> Verified
+            <span className="px-3 py-1 bg-mint-50 text-mint-600 font-semibold rounded-full text-[10px] border border-mint-200 uppercase tracking-widest flex items-center gap-1.5 shadow-sm">
+              <IoCheckmark size={14} className="text-mint-600" /> VERIFIED
             </span>
           ) : isRejected ? (
-            <span className="px-3 py-1 bg-rose-50 text-rose-600 font-semibold rounded-full text-[10px] border border-rose-200 tracking-widest shadow-sm">
-              <IoClose size={14} className="text-rose-600 inline mr-1" /> Rejected
+            <span className="px-3 py-1 bg-rose-50 text-rose-600 font-semibold rounded-full text-[10px] border border-rose-200 uppercase tracking-widest shadow-sm">
+              <IoClose size={14} className="text-rose-600 inline mr-1" /> REJECTED
             </span>
           ) : isPending ? (
-            <span className="px-3 py-1 bg-amber-50 text-amber-600 font-semibold rounded-full text-[10px] border border-amber-200 tracking-widest shadow-sm uppercase">
-              Pending
+            <span className="px-3 py-1 bg-amber-50 text-amber-600 font-semibold rounded-full text-[10px] border border-amber-200 uppercase tracking-widest shadow-sm">
+              PENDING
             </span>
           ) : (
-            <span className="px-3 py-1 bg-white text-slate-400 font-semibold rounded-full text-[10px] border border-neutral-100 tracking-widest">
+            <span className="px-3 py-1 bg-white text-slate-400 font-semibold rounded-full text-[10px] border border-neutral-100 uppercase tracking-widest">
               {order.status}
             </span>
           )}
@@ -229,6 +187,8 @@ export default function PrescriptionVerification({
           <TranscriptionForm
             parameters={localParameters || parameters}
             onParametersChange={setLocalParameters}
+            note={localNote || (parameters as any)?.note || ''}
+            onNoteChange={setLocalNote}
             isReadOnly={isReadOnly}
             isApproved={isApproved}
             isRejected={isRejected}

@@ -2,19 +2,56 @@ import { useState } from 'react'
 import { Container } from '@/components'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 import { IoAirplaneOutline } from 'react-icons/io5'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import OperationInvoicePopup from './OperationInvoicePopup'
 import InvoiceTable from '@/components/layout/staff/operationstaff/operationinvoiceshipping/InvoiceTable'
-import { useOperationInvoices } from '@/features/operations/hooks/useOperationInvoices'
+import { useOperationInvoices, useAllOperationInvoices } from '@/features/operations/hooks/useOperationInvoices'
 import type { OperationInvoiceListItem } from '@/shared/types'
+import { FilterButtonList } from '@/components/staff'
+import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
+import OperationPagination from '@/pages/operations/OperationPagination'
+
+const PAGE_LIMIT = 10
 
 export default function OperationAllInvoices() {
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const statusFilter = searchParams.get('status') ?? 'all'
+  const [currentPage, setCurrentPage] = useState(1)
+
   const [selectedInvoice, setSelectedInvoice] = useState<OperationInvoiceListItem | null>(null)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
-  const { data, isLoading, isError } = useOperationInvoices(1, 20)
+  const { data, isLoading, isError } = useOperationInvoices(
+    currentPage,
+    PAGE_LIMIT,
+    statusFilter === 'all' ? undefined : statusFilter
+  )
+
+  // Lấy toàn bộ invoices để tính count cho badges
+  const { data: allData } = useAllOperationInvoices()
+  const allInvoicesRaw = allData?.data?.invoiceList ?? []
+
   const invoices = data?.data?.invoiceList ?? []
+  const pagination = data?.data?.pagination
+
+  // Tính toán số lượng cho từng status
+  const counts = {
+    all: allData?.data?.pagination?.total ?? 0,
+    readyToShip: allInvoicesRaw.filter((inv) => inv.status === InvoiceStatus.READY_TO_SHIP).length,
+    delivering: allInvoicesRaw.filter((inv) => inv.status === InvoiceStatus.DELIVERING).length,
+    delivered: allInvoicesRaw.filter((inv) => inv.status === InvoiceStatus.DELIVERED).length,
+    completed: allInvoicesRaw.filter((inv) => inv.status === InvoiceStatus.COMPLETED).length
+  }
+
+  const setStatusFilter = (value: string) => {
+    setCurrentPage(1)
+    if (value === 'all') {
+      setSearchParams({})
+    } else {
+      setSearchParams({ status: value })
+    }
+  }
 
   const handleViewInvoice = (invoice: OperationInvoiceListItem) => {
     setSelectedInvoice(invoice)
@@ -30,21 +67,32 @@ export default function OperationAllInvoices() {
     navigate(`/operationstaff/shipping-handover/${invoiceId}`)
   }
 
+  const filterButtons = [
+    { label: 'All', count: counts.all, value: 'all' },
+    { label: 'Ready to Ship', count: counts.readyToShip, value: InvoiceStatus.READY_TO_SHIP },
+    { label: 'Delivering', count: counts.delivering, value: InvoiceStatus.DELIVERING },
+    { label: 'Delivered', count: counts.delivered, value: InvoiceStatus.DELIVERED },
+    { label: 'Completed', count: counts.completed, value: InvoiceStatus.COMPLETED }
+  ]
+
   return (
     <>
       <Container>
-        {/* Breadcrumb */}
-        <BreadcrumbPath paths={['Dashboard', 'Shipping Handover']} />
-
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
-              <IoAirplaneOutline className="text-mint-600" /> Shipping Handover
-            </h1>
-            <p className="text-gray-500 mt-1">Manage invoices ready for shipping and delivery.</p>
-          </div>
+        <div className="mb-8">
+          <BreadcrumbPath paths={['Dashboard', 'Shipping Handover']} />
+          <h1 className="text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
+            <IoAirplaneOutline className="text-mint-600" /> Shipping Handover
+          </h1>
+          <p className="text-gray-500 mt-1">Manage invoices ready for shipping and delivery.</p>
         </div>
+
+        <FilterButtonList
+          buttons={filterButtons}
+          selectedValue={statusFilter}
+          onChange={setStatusFilter}
+          className="mb-6"
+        />
 
         {/* Invoice Table */}
         <div className="bg-white rounded-lg shadow-sm border border-neutral-100 overflow-hidden">
@@ -94,6 +142,17 @@ export default function OperationAllInvoices() {
             />
           )}
         </div>
+
+        {pagination && pagination.totalPages > 1 && (
+          <OperationPagination
+            page={currentPage}
+            totalPages={pagination.totalPages}
+            total={pagination.total}
+            limit={PAGE_LIMIT}
+            itemsOnPage={invoices.length}
+            onPageChange={setCurrentPage}
+          />
+        )}
       </Container>
 
       {/* Invoice Detail Sidebar (Popup) */}

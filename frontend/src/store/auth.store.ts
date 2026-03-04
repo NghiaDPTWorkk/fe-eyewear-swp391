@@ -39,13 +39,17 @@ export const useAuthStore = create<AuthState>()(
       setUser: (user) => set({ user }),
       setToken: (token) => {
         if (token) {
-          // Extract role from JWT token, fallback to existing role if not present in new token
-          // (e.g. some backends don't encode role in refresh-token response)
+          // Standardize token storage in BOTH localStorage and store
+          localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, token)
+          localStorage.setItem('accessToken', token) // Compatibility
+          
           const roleFromJwt = getRoleFromToken(token)
           const existingRole = useAuthStore.getState().role
           const role = roleFromJwt || existingRole
           set({ accessToken: token, isAuthenticated: true, role })
         } else {
+          localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN)
+          localStorage.removeItem('accessToken')
           set({ accessToken: null, isAuthenticated: false, role: null })
         }
       },
@@ -83,7 +87,10 @@ export const useAuthStore = create<AuthState>()(
           return
         }
 
-        const accessToken = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN)
+        const accessToken =
+          state.accessToken ||
+          localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN) ||
+          localStorage.getItem('accessToken')
 
         if (!accessToken) {
           useAuthStore.setState({
@@ -94,6 +101,11 @@ export const useAuthStore = create<AuthState>()(
             _hasHydrated: true
           })
           return
+        }
+
+        // If token exists but user doesn't, try to fetch profile
+        if (!state.user && accessToken) {
+          useAuthStore.getState().fetchProfile()
         }
 
         if (isTokenExpired(accessToken)) {

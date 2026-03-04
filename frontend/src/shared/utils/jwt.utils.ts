@@ -77,7 +77,7 @@ export const getUserIdFromToken = (token: string): string | null => {
  */
 export const isTokenExpired = (token: string): boolean => {
   const payload = decodeJWT(token)
-  if (!payload?.exp) return true
+  if (!payload || typeof payload.exp !== 'number') return false
 
   // exp is in seconds, Date.now() is in milliseconds
   return payload.exp * 1000 < Date.now()

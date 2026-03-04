@@ -199,7 +199,6 @@ export const ENDPOINTS = {
     DELETE: (id: string) => `/admin/admin-accounts/${id}`
   },
 
-
   // Invoices
   INVOICE: {
     CREATE: '/invoices',

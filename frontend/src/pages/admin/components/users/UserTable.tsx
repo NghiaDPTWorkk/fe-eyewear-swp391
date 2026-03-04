@@ -64,7 +64,9 @@ export const UserTable: React.FC<UserTableProps> = ({ users, selectedUserId, onS
                   </div>
                 </td>
                 <td className="px-6 py-6 text-sm font-medium text-neutral-600">{user.email}</td>
-                <td className="px-6 py-6 text-sm font-medium text-neutral-600">{user.phone || 'N/A'}</td>
+                <td className="px-6 py-6 text-sm font-medium text-neutral-600">
+                  {user.phone || 'N/A'}
+                </td>
                 <td className="px-6 py-6">
                   <span
                     className={`inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${statusStyles[status]}`}

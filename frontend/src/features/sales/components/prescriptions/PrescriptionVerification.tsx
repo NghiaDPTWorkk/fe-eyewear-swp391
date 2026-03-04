@@ -79,15 +79,14 @@ export default function PrescriptionVerification({
 
   const handleConfirm = async () => {
     // Priority: 1. Local changes, 2. Existing order data (parameters variable), 3. Default empty params
-    const finalParams =
-      localParameters ||
+    const finalParams = localParameters ||
       parameters || {
         left: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
         right: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
         PD: 64
       }
 
-    const finalNote = localNote.trim() || parameters?.note || ''
+    const finalNote = localNote.trim() || (parameters as any)?.note || ''
 
     const success = await approveOrder(orderId, { parameters: finalParams, note: finalNote })
     if (success) {
@@ -188,7 +187,7 @@ export default function PrescriptionVerification({
           <TranscriptionForm
             parameters={localParameters || parameters}
             onParametersChange={setLocalParameters}
-            note={localNote || parameters?.note || ''}
+            note={localNote || (parameters as any)?.note || ''}
             onNoteChange={setLocalNote}
             isReadOnly={isReadOnly}
             isApproved={isApproved}
@@ -211,7 +210,7 @@ export default function PrescriptionVerification({
         <div className="space-y-5">
           <OrderDetailsSidebar order={order} />
           <CommunicationHub customerName={order.customerName || undefined} />
-          <LabOperationsTimeline />
+          <LabOperationsTimeline order={order} />
         </div>
       </div>
 

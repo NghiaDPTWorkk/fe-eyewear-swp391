@@ -31,7 +31,10 @@ export const adminAccountService = {
   },
 
   updateAdminAccount(id: string, payload: UpdateAdminAccountRequest) {
-    return httpClient.patch<AdminAccountDetailResponse>(ENDPOINTS.ADMIN_ACCOUNTS.UPDATE(id), payload)
+    return httpClient.patch<AdminAccountDetailResponse>(
+      ENDPOINTS.ADMIN_ACCOUNTS.UPDATE(id),
+      payload
+    )
   },
 
   deleteAdminAccount(id: string) {

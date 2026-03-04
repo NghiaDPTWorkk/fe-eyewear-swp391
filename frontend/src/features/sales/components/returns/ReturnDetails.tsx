@@ -1,4 +1,3 @@
- 
 import {
   IoPersonOutline,
   IoLocationOutline,

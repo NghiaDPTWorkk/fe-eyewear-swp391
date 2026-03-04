@@ -59,7 +59,11 @@ export const StaffTable: React.FC<StaffTableProps> = ({
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 border border-indigo-100 shrink-0 overflow-hidden">
                     {staff.avatar ? (
-                      <img src={staff.avatar} alt={staff.name} className="w-full h-full object-cover" />
+                      <img
+                        src={staff.avatar}
+                        alt={staff.name}
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
                       <IoPersonCircleOutline size={24} />
                     )}

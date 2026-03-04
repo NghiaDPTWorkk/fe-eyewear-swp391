@@ -2,6 +2,7 @@ import type { User, AdminAccount } from '@/shared/types'
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { authService } from '@/features/auth/services/auth.service'
+import { authApi } from '@/features/auth/services/auth.api.legacy'
 import { getRoleFromToken, isTokenExpired } from '@/shared/utils'
 import { STORAGE_KEYS } from '@/shared/constants/storage'
 
@@ -12,6 +13,7 @@ export interface AuthState {
   isLoading: boolean
   error: any | null
   role: string | null
+  _hasHydrated: boolean
   setUser: (user: User | AdminAccount | null) => void
   setToken: (token: string | null) => void
   setRole: (role: string | null) => void
@@ -29,6 +31,7 @@ export const useAuthStore = create<AuthState>()(
       isLoading: false,
       error: null,
       role: null,
+      _hasHydrated: false,
 
       setUser: (user) => set({ user }),
       setToken: (token) => {
@@ -52,7 +55,8 @@ export const useAuthStore = create<AuthState>()(
       fetchProfile: async () => {
         set({ isLoading: true, error: null })
         try {
-          const profile = await authService.getProfile()
+          const role = useAuthStore.getState().role
+          const profile = await authService.getProfile(role)
           set({ user: profile, isAuthenticated: true })
         } catch (error) {
           console.error('Failed to fetch profile:', error)
@@ -66,15 +70,47 @@ export const useAuthStore = create<AuthState>()(
       name: 'auth-storage',
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
-        if (!state) return
-        // Validate token on app startup - if no valid token exists, reset auth state
-        const accessToken = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN)
-        if (!accessToken || isTokenExpired(accessToken)) {
-          state.user = null
-          state.accessToken = null
-          state.isAuthenticated = false
-          state.role = null
+        if (!state) {
+          useAuthStore.setState({ _hasHydrated: true })
+          return
         }
+
+        const accessToken = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN)
+
+        if (!accessToken) {
+          useAuthStore.setState({
+            user: null,
+            accessToken: null,
+            isAuthenticated: false,
+            role: null,
+            _hasHydrated: true
+          })
+          return
+        }
+
+        if (isTokenExpired(accessToken)) {
+          authApi
+            .refreshToken()
+            .then((res: any) => {
+              const newToken = res?.accessToken || res?.data?.accessToken
+              if (newToken) {
+                localStorage.setItem('access_token', newToken)
+                useAuthStore.getState().setToken(newToken)
+                console.info('[AUTH] Token refreshed on startup')
+              } else {
+                useAuthStore.getState().logout()
+              }
+            })
+            .catch(() => {
+              useAuthStore.getState().logout()
+            })
+            .finally(() => {
+              useAuthStore.setState({ _hasHydrated: true })
+            })
+          return
+        }
+
+        useAuthStore.setState({ _hasHydrated: true })
       }
     }
   )

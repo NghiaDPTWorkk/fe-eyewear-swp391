@@ -43,6 +43,14 @@ export const authApi = {
     return httpClient.get<ApiResponse<User>>(ENDPOINTS.AUTH.PROFILE)
   },
 
+  /**
+   * Lấy thông tin cá nhân của admin/staff
+   * @returns Thông tin chi tiết admin/staff
+   */
+  getAdminProfile: () => {
+    return httpClient.get<ApiResponse<any>>(ENDPOINTS.AUTH.GET_PROFILE)
+  },
+
   refreshToken() {
     return httpClient.post<{ accessToken: string }>(ENDPOINTS.AUTH.REFRESH_TOKEN, undefined, {
       withCredentials: true

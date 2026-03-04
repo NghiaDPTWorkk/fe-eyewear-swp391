@@ -2,9 +2,11 @@ import type { User, AdminAccount } from '@/shared/types'
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { authService } from '@/features/auth/services/auth.service'
-import { authApi } from '@/features/auth/services/auth.api.legacy'
 import { getRoleFromToken, isTokenExpired } from '@/shared/utils'
 import { STORAGE_KEYS } from '@/shared/constants/storage'
+import { apiClient } from '@/lib/axios'
+
+const ADMIN_ROLES = ['SYSTEM_ADMIN', 'SALE_STAFF', 'MANAGER', 'OPERATION_STAFF']
 
 export interface AuthState {
   user: User | AdminAccount | null
@@ -36,8 +38,11 @@ export const useAuthStore = create<AuthState>()(
       setUser: (user) => set({ user }),
       setToken: (token) => {
         if (token) {
-          // Extract role from JWT token
-          const role = getRoleFromToken(token)
+          // Extract role from JWT token, fallback to existing role if not present in new token
+          // (e.g. some backends don't encode role in refresh-token response)
+          const roleFromJwt = getRoleFromToken(token)
+          const existingRole = useAuthStore.getState().role
+          const role = roleFromJwt || existingRole
           set({ accessToken: token, isAuthenticated: true, role })
         } else {
           set({ accessToken: null, isAuthenticated: false, role: null })
@@ -89,14 +94,24 @@ export const useAuthStore = create<AuthState>()(
         }
 
         if (isTokenExpired(accessToken)) {
-          authApi
-            .refreshToken()
+          // Lấy role đã persist để chọn đúng endpoint
+          const persistedRole = state?.role
+          const refreshEndpoint =
+            persistedRole && ADMIN_ROLES.includes(persistedRole.toUpperCase())
+              ? '/admin/auth/refresh-token'
+              : '/auth/refresh-token'
+
+          apiClient
+            .post<{ data?: { accessToken: string }; accessToken?: string }>(
+              refreshEndpoint,
+              undefined,
+              { skipAuth: true, _retry: true, withCredentials: true }
+            )
             .then((res: any) => {
-              const newToken = res?.accessToken || res?.data?.accessToken
+              const newToken = res?.data?.data?.accessToken || res?.data?.accessToken
               if (newToken) {
                 localStorage.setItem('access_token', newToken)
                 useAuthStore.getState().setToken(newToken)
-                console.info('[AUTH] Token refreshed on startup')
               } else {
                 useAuthStore.getState().logout()
               }

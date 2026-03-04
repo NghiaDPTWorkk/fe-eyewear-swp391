@@ -73,16 +73,6 @@ async function refreshAccessToken(): Promise<string> {
     const deviceId = getOrCreateDeviceId()
     const refreshEndpoint = getRefreshEndpoint()
 
-    // DEBUG
-    console.group('[REFRESH TOKEN] Start refresh')
-    console.info('deviceId:', deviceId)
-    console.info('endpoint:', refreshEndpoint)
-    console.info('document.cookie:', document.cookie || '(empty - no cookie visible to JS)')
-    console.info('localStorage x_device_id:', localStorage.getItem('x_device_id'))
-    console.info('baseURL:', apiClient.defaults.baseURL)
-    console.info('withCredentials (global):', apiClient.defaults.withCredentials)
-    console.groupEnd()
-
     // NOTE: Refresh token endpoint PHẢI có withCredentials: true để gửi refreshToken cookie
     const res = await apiClient.post<RefreshTokenResponse>(refreshEndpoint, undefined, {
       headers: {
@@ -94,7 +84,6 @@ async function refreshAccessToken(): Promise<string> {
     } as AxiosRequestConfig)
 
     const newToken = res.data?.data?.accessToken
-    console.info('[REFRESH TOKEN] Success!', res.data)
     if (!newToken) {
       throw new Error('Refresh token response missing accessToken')
     }
@@ -144,7 +133,13 @@ apiClient.interceptors.request.use(
       localStorage.getItem('accessToken') ??
       localStorage.getItem('token')
 
-    const publicRoutes = ['/auth/login', '/admin/auth/login', '/products', '/auth/refresh-token']
+    const publicRoutes = [
+      '/auth/login',
+      '/admin/auth/login',
+      '/products',
+      '/auth/refresh-token',
+      '/admin/auth/refresh-token'
+    ]
     const isPublicRoute = publicRoutes.some((route) => url.startsWith(route))
 
     if (config.skipAuth || isPublicRoute) {

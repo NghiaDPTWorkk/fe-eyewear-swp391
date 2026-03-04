@@ -119,12 +119,12 @@ apiClient.interceptors.request.use(
     const url = config.url || ''
 
     // Security check: if logging in, clear all old auth data first
-    // fix tam thoi nha <3
-    if (url.toLowerCase().includes('login')) {
+    // chỉ clear khi thực sự gọi API login chính thức
+    const isLoginEndpoint = url.endsWith('/auth/login') || url.endsWith('/admin/auth/login')
+    if (isLoginEndpoint) {
       localStorage.removeItem('access_token')
       localStorage.removeItem('accessToken')
       localStorage.removeItem('auth-storage')
-      // Reset the zustand store state
       useAuthStore.getState().logout()
     }
 

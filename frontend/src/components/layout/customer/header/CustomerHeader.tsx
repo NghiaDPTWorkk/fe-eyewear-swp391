@@ -15,7 +15,15 @@ export default function CustomerHeader() {
   const location = useLocation()
   const items = useCartStore((state) => state.items)
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
-  const { isAuthenticated, _hasHydrated: hasHydrated } = useAuthStore()
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+
+  // đợi Component mount xong
+  const [hasHydrated, setHasHydrated] = useState(false)
+
+  useEffect(() => {
+    // đã mount, chúng ta coi như đã nạp xong (vì localStorage là đồng bộ)
+    setHasHydrated(true)
+  }, [])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

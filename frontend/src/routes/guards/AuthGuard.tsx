@@ -1,17 +1,24 @@
 import { LazyPage } from '@/pages/LazyPage'
 import { useAuthStore } from '@/store'
 import { Navigate, useLocation } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 
 interface AuthGuardProps {
   children: React.ReactNode
 }
 
 export function AuthGuard({ children }: AuthGuardProps) {
-  const { isAuthenticated, isLoading, _hasHydrated } = useAuthStore()
+  const { isAuthenticated, isLoading } = useAuthStore()
   const location = useLocation()
 
-  // Wait for zustand to finish hydrating (and token refresh if needed)
-  if (!_hasHydrated || isLoading) {
+  const [hasHydrated, setHasHydrated] = useState(false)
+
+  useEffect(() => {
+    setHasHydrated(true)
+  }, [])
+
+  // wait for zustand to finish hydrating
+  if (!hasHydrated || isLoading) {
     return <LazyPage children={<div></div>}></LazyPage>
   }
 

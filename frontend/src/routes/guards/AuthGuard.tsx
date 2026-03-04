@@ -17,6 +17,16 @@ export function AuthGuard({ children, allowedRoles, requireAuth = true }: AuthGu
 
   useEffect(() => {
     setHasHydrated(true)
+
+    // Sync auth state across tabs
+    const syncAuth = (event: StorageEvent) => {
+      if (event.key === 'auth-storage') {
+        useAuthStore.persist.rehydrate()
+      }
+    }
+
+    window.addEventListener('storage', syncAuth)
+    return () => window.removeEventListener('storage', syncAuth)
   }, [])
 
   // wait for zustand to finish hydrating

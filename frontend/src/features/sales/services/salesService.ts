@@ -37,7 +37,7 @@ export const salesService = {
     )
   },
 
-  approveOrder: async (id: string, data?: { parameters: any }) => {
+  approveOrder: async (id: string, data?: { parameters: any; note?: string }) => {
     return httpClient.patch(ENDPOINTS.ADMIN.ORDER_APPROVE(id), data || {})
   },
 

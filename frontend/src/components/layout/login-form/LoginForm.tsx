@@ -136,7 +136,7 @@ export const LoginForm = ({ role: _role }: LoginFormProps) => {
         </a>
       </p>
       {_role !== 'staff' && (
-        <div className="mt-8 pt-4 border-t border-gray-100 text-center">
+        <div className="mt-6 pt-2 border-t border-gray-100 text-center">
           <span className="text-xs text-gray-400">Are you a staff member? </span>
           <a
             href="/admin/login"

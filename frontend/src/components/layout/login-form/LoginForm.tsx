@@ -46,8 +46,6 @@ export const LoginForm = ({ role: _role }: LoginFormProps) => {
 
   return (
     <form onSubmit={handleSubmit} className="w-full">
-      <Divider className="mb-4" />
-
       <FormField label="Email" className="mb-4">
         <Input
           type="email"
@@ -103,11 +101,7 @@ export const LoginForm = ({ role: _role }: LoginFormProps) => {
         Log In
       </Button>
 
-      <div className="relative my-8">
-        <div className="relative flex justify-center text-sm">
-          <span className="bg-white px-4 text-gray-400">Or continue with</span>
-        </div>
-      </div>
+      <Divider className="mb-4" />
 
       <button
         type="button"

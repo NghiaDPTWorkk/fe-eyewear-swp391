@@ -38,10 +38,10 @@ export default function OperationAllInvoices() {
   // Tính toán số lượng cho từng status
   const counts = {
     all: allData?.data?.pagination?.total ?? 0,
+    completed: allInvoicesRaw.filter((inv) => inv.status === InvoiceStatus.COMPLETED).length,
     readyToShip: allInvoicesRaw.filter((inv) => inv.status === InvoiceStatus.READY_TO_SHIP).length,
     delivering: allInvoicesRaw.filter((inv) => inv.status === InvoiceStatus.DELIVERING).length,
-    delivered: allInvoicesRaw.filter((inv) => inv.status === InvoiceStatus.DELIVERED).length,
-    completed: allInvoicesRaw.filter((inv) => inv.status === InvoiceStatus.COMPLETED).length
+    delivered: allInvoicesRaw.filter((inv) => inv.status === InvoiceStatus.DELIVERED).length
   }
 
   const setStatusFilter = (value: string) => {
@@ -69,10 +69,10 @@ export default function OperationAllInvoices() {
 
   const filterButtons = [
     { label: 'All', count: counts.all, value: 'all' },
+    { label: 'Completed', count: counts.completed, value: InvoiceStatus.COMPLETED },
     { label: 'Ready to Ship', count: counts.readyToShip, value: InvoiceStatus.READY_TO_SHIP },
     { label: 'Delivering', count: counts.delivering, value: InvoiceStatus.DELIVERING },
-    { label: 'Delivered', count: counts.delivered, value: InvoiceStatus.DELIVERED },
-    { label: 'Completed', count: counts.completed, value: InvoiceStatus.COMPLETED }
+    { label: 'Delivered', count: counts.delivered, value: InvoiceStatus.DELIVERED }
   ]
 
   return (

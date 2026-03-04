@@ -1,5 +1,6 @@
 import { lazy } from 'react'
 import { LazyPage } from '@/pages/LazyPage'
+import { GuestGuard } from '../guards/GuestGuard'
 
 const LoginPage = lazy(() =>
   import('@/pages/auth/customer/CustomerLoginPage').then((m) => ({ default: m.CustomerLoginPage }))
@@ -20,25 +21,31 @@ export const authRoutes = [
   {
     path: '/login',
     element: (
-      <LazyPage>
-        <LoginPage />
-      </LazyPage>
+      <GuestGuard>
+        <LazyPage>
+          <LoginPage />
+        </LazyPage>
+      </GuestGuard>
     )
   },
   {
     path: '/register',
     element: (
-      <LazyPage>
-        <RegisterPage />
-      </LazyPage>
+      <GuestGuard>
+        <LazyPage>
+          <RegisterPage />
+        </LazyPage>
+      </GuestGuard>
     )
   },
   {
     path: '/admin/login',
     element: (
-      <LazyPage>
-        <LoginStaffPage />
-      </LazyPage>
+      <GuestGuard>
+        <LazyPage>
+          <LoginStaffPage />
+        </LazyPage>
+      </GuestGuard>
     )
   },
   {

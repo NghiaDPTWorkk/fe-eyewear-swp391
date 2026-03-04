@@ -86,6 +86,8 @@ export const ENDPOINTS = {
   PAYMENT: {
     MOMO: '/payment/momo',
     VNPAY: '/payment/vnpay',
+    VNPAY_URL: (invoiceId: string, paymentId: string) =>
+      `/payments/vnpay/url/${invoiceId}/${paymentId}`,
     STATUS: (transactionId: string) => `/payment/status/${transactionId}`
   },
 
@@ -117,9 +119,13 @@ export const ENDPOINTS = {
     },
     INVOICES_ONBOARD: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/onboard`,
     INVOICES_COMPLETE: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/complete`,
+    INVOICES_HANDLE_DELIVERY: (invoiceId: string) =>
+      `/admin/invoices/${invoiceId}/assign/handle-delivery`,
     INVOICES_DELIVERING: (invoiceId: string) => `/admin/invoices/${invoiceId}/status/delivering`,
     ORDER_DETAIL: (orderId: string) => `/admin/orders/${orderId}`,
     ORDER_ASSIGN: (orderId: string) => `/admin/orders/${orderId}/status/assign`,
+    INVOICES_READY_TO_SHIP: (invoiceId: string) =>
+      `/admin/invoices/${invoiceId}/status/ready-to-ship`,
     INVOICES_DEPOSITED: (page: number, limit: number, status?: string) => {
       const params = new URLSearchParams({
         page: String(page),
@@ -136,6 +142,7 @@ export const ENDPOINTS = {
       return `/admin/orders/total?${params.toString()}`
     },
     ORDER_APPROVE: (id: string) => `/admin/orders/${id}/status/approve`,
+    INVOICES_SHIP_CODE: (invoiceId: string) => `/ships/invoice/${invoiceId}/ship-code`,
     PROFILE_REQUESTS: '/admin/profile-requests',
     CUSTOMERS_LIST: (page?: number, limit?: number, search?: string, status?: string) => {
       const params = new URLSearchParams()
@@ -230,6 +237,15 @@ export const ENDPOINTS = {
       })
       if (status) params.append('status', status)
       return `/admin/invoices/handle-delivery?${params.toString()}`
-    }
+    },
+    INVOICE_DETAIL: (id: string) => `/admin/invoices/${id}`
+  },
+
+  // Admin AI Conversations
+  ADMIN_AI_CONVERSATIONS: {
+    LIST: (search: string = '', lastItem: string = '') =>
+      `/admin/ai-conversations?search=${encodeURIComponent(search)}&lastItem=${lastItem}`,
+    MESSAGES: (id: string, lastItem: string = '') =>
+      `/admin/ai-conversations/${id}/messages?lastItem=${lastItem}`
   }
 } as const

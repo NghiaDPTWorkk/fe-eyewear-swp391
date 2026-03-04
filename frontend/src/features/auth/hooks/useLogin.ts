@@ -46,6 +46,12 @@ export const useLogin = () => {
     onSuccess: async (response: LoginResponse) => {
       console.log('Login Success Response:', response)
 
+      // DEBUG
+      console.group('[LOGIN] Login successful')
+      console.info('document.cookie:', document.cookie || '(empty - cookie may be HttpOnly)')
+      console.info('deviceId used:', localStorage.getItem('x_device_id'))
+      console.groupEnd()
+
       // 1. Robust Token Extraction
 
       const authData = (response as any).data || response

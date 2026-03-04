@@ -41,7 +41,14 @@ export const OrderDetailsSidebar: React.FC<OrderDetailsSidebarProps> = ({ order 
           <div>
             <p className="text-xs text-gray-500">Product</p>
             <p className="text-sm font-medium text-gray-900">
-              {order.products?.[0]?.product?.product_name || 'N/A'}
+              {order.products?.[0]?.product?.product_name ||
+                order.products?.[0]?.product?.productName ||
+                order.products?.[0]?.product?.name ||
+                order.products?.[0]?.product_name ||
+                order.products?.[0]?.productName ||
+                order.products?.[0]?.name ||
+                order.products?.[0]?.product?.sku ||
+                'Eyewear Product'}
             </p>
             <p className="text-[10px] text-gray-400">
               SKU: {order.products?.[0]?.product?.sku || 'N/A'}

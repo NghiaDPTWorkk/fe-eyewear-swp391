@@ -240,17 +240,51 @@ export const OrderDetailsDrawer: React.FC<{
         onConfirm={executeAction}
         title={
           confirmState.action === 'approve'
-            ? 'Approve Order'
+            ? 'Approve Order Verification'
             : confirmState.action === 'reject'
-              ? 'Reject Order'
+              ? 'Reject Order Verification'
               : 'Confirm Action'
         }
         message={
-          confirmState.action === 'approve'
-            ? 'Are you sure you want to approve this order/invoice? This action cannot be undone.'
-            : 'Are you sure you want to reject this order? This will also reject the associated invoice.'
+          confirmState.action === 'approve' ? (
+            <span className="text-slate-600">
+              You are about to <span className="font-bold text-mint-600">APPROVE</span> this
+              prescription/order. Please ensure all details have been verified for accuracy.
+            </span>
+          ) : (
+            <span className="text-slate-600">
+              You are about to <span className="font-bold text-rose-600">REJECT</span> this order.
+              This action will notify the customer and may require a reason.
+            </span>
+          )
         }
-        confirmText={confirmState.action === 'approve' ? 'Approve' : 'Reject'}
+        details={
+          <div className="space-y-4">
+            <div className="flex justify-between items-center py-2 border-b border-slate-50">
+              <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">
+                Order ID
+              </span>
+              <span className="text-sm font-bold text-slate-900">{order?.orderCode}</span>
+            </div>
+            <div className="flex justify-between items-center py-2 border-b border-slate-50">
+              <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">
+                Customer
+              </span>
+              <span className="text-sm font-bold text-slate-900">
+                {order?.customerName || 'N/A'}
+              </span>
+            </div>
+            <div className="flex justify-between items-center py-2">
+              <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">
+                Category
+              </span>
+              <span className="text-sm font-italic text-slate-600 italic">
+                {isPrescription ? 'Prescription Order' : 'Regular Order'}
+              </span>
+            </div>
+          </div>
+        }
+        confirmText={confirmState.action === 'approve' ? 'Confirm Approval' : 'Proceed Rejection'}
         type={confirmState.action === 'approve' ? 'info' : 'danger'}
         isLoading={processing}
       />

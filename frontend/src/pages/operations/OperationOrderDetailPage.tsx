@@ -16,7 +16,7 @@ import LensSpecifications from '@/components/layout/staff/staff-core/technicalde
 import FrameSpecifications from '@/components/layout/staff/staff-core/technicaldetail/FrameSpecifications'
 import { PATHS } from '@/routes/paths'
 import { ProcessTracker } from '@/components/layout/staff/staff-core/processtracker'
-import { IoArrowBack } from 'react-icons/io5'
+import { IoArrowBack, IoCheckmarkCircle, IoConstructOutline, IoCubeOutline, IoTimeOutline } from 'react-icons/io5'
 import type React from 'react'
 
 export default function OperationOrderDetailPage() {
@@ -277,14 +277,24 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
       // Đơn mua mỗi tròng á -> hiển thị LensNormalOrder
       renderedLensComponent = (
         <div className="space-y-8">
-          <LensNormalOrder data={mappedOptions} imageSrc={variantImg} quantity={totalQty} />
+          <LensNormalOrder
+            data={mappedOptions}
+            imageSrc={variantImg}
+            quantity={totalQty}
+            sku={orderProductItems[0].product.sku}
+          />
         </div>
       )
     } else {
       // 'frame' | 'sunglass' | other → hiển thị FrameSpecifications
       renderedFrameComponent = (
         <div className="space-y-8">
-          <FrameSpecifications data={mappedOptions} imageSrc={variantImg} quantity={totalQty} />
+          <FrameSpecifications
+            data={mappedOptions}
+            imageSrc={variantImg}
+            quantity={totalQty}
+            sku={orderProductItems[0].product.sku}
+          />
         </div>
       )
     }
@@ -320,9 +330,21 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
     }
 
     renderedLensComponent = <LensSpecifications {...lensComponentProps} />
+  } else if (orderTypeFromApi === 'MANUFACTURING' && orderProductItems[0]?.lens) {
+    // Normal case for lens in MANUFACTURING if already assigned
+    // Actually the logic above handles it via manufacturingOrderLensParams
   }
 
-  // MANUFACTURING Order - Frame (options/ảnh lấy từ variantDetail của API /products/:id/variants/:sku)
+  // Adding the missing SKU for LensNormalOrder if needed in other contexts? 
+  // No, the user specifically asked for LensNormalOrder and FrameSpecifications.
+
+  // Update LensSpecifications to also show SKU if it's there? 
+  // The user only mentioned LensNormalOrder and FrameSpecifications.
+  // Wait, looking at the code, LensSpecifications is used for MANUFACTURING.
+  // The user said: "ở trang @[frontend/src/pages/operations/OperationOrderDetailPage.tsx] component @[frontend/src/components/layout/staff/staff-core/technicaldetail/FrameSpecifications.tsx], và @[frontend/src/components/layout/staff/staff-core/technicaldetail/LensNormalOrder.tsx]"
+  // So I'll stick to those two for now.
+
+  // Update MANUFACTURING Frame component
   if (orderTypeFromApi === 'MANUFACTURING' && manufacturingOrderFrameItem) {
     const frameOptionsFromVariantDetail =
       productVariantApiResponse?.data?.variantDetail?.options || []
@@ -333,7 +355,8 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
           key: attr.attributeName,
           value: attr.label
         })) || [],
-      imageSrc: frameImgFromVariantDetail
+      imageSrc: frameImgFromVariantDetail,
+      sku: manufacturingOrderFrameItem.sku
     }
 
     renderedFrameComponent = <FrameSpecifications {...frameComponentProps} />
@@ -366,7 +389,31 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
       </div>
 
       {/* Progress Tracker */}
-      <ProcessTracker />
+      {(() => {
+        const orderStatus = orderDetailData.status
+        const orderType = orderDetailData.type?.[0] || orderDetailData.type
+
+        const steps = [
+          { icon: <IoTimeOutline size={24} />, label: 'Pending' },
+          { icon: <IoConstructOutline size={24} />, label: 'Progressing' },
+          { icon: <IoCubeOutline size={24} />, label: 'Packing' },
+          { icon: <IoCheckmarkCircle size={24} />, label: 'Completed' }
+        ]
+
+        let activeStep = 0
+        if (orderStatus === 'COMPLETED') {
+          activeStep = 3
+        } else if (orderStatus === 'PACKING' || orderStatus === 'PACKAGING') {
+          activeStep = 2
+        } else if (orderType === 'MANUFACTURING' && orderStatus === 'MAKING') {
+          activeStep = 1
+        } else if (orderType === 'NORMAL' && (orderStatus === 'MAKING' || orderStatus === 'PACKING' || orderStatus === 'PACKAGING')) {
+           // For Normal, if it somehow gets MAKING, or for packing
+           activeStep = orderStatus === 'MAKING' ? 1 : 2
+        }
+
+        return <ProcessTracker title="Order Progress" steps={steps} activeStep={activeStep} />
+      })()}
 
       {/* Technical Details - Lens Specifications */}
       {renderedLensComponent && (

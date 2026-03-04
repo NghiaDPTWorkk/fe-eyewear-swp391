@@ -21,7 +21,7 @@ export const StaffLoginPage = () => {
           <div>
             <h1 className="mb-2 text-3xl font-bold text-primary-950">Sign In</h1>
             <p className="mb-6 text-sm text-gray-eyewear">
-              Lorem ipsum dolor sit amet consectetur. Leo eget mauris dui in posuere nulla
+              See the world through your own lens. Sign in to start your style journey with OpticView Eyewear.
             </p>
 
             <LoginForm role="staff" />

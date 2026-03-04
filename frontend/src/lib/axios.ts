@@ -11,10 +11,12 @@ import axios, {
 declare module 'axios' {
   export interface AxiosRequestConfig {
     skipAuth?: boolean
+    _retry?: boolean
   }
 
   export interface InternalAxiosRequestConfig {
     skipAuth?: boolean
+    _retry?: boolean
   }
 }
 
@@ -53,29 +55,54 @@ function isTokenExpiredOrNearExpiry(token: string, skewSeconds = 30): boolean {
 
 let refreshPromise: Promise<string> | null = null
 
+function getRefreshEndpoint(): string {
+  const role = useAuthStore.getState().role
+  if (
+    role &&
+    ['SYSTEM_ADMIN', 'SALE_STAFF', 'MANAGER', 'OPERATION_STAFF'].includes(role.toUpperCase())
+  ) {
+    return '/admin/auth/refresh-token'
+  }
+  return '/auth/refresh-token'
+}
+
 async function refreshAccessToken(): Promise<string> {
   if (refreshPromise) return refreshPromise
 
   refreshPromise = (async () => {
     const deviceId = getOrCreateDeviceId()
+    const refreshEndpoint = getRefreshEndpoint()
+
+    // DEBUG
+    console.group('[REFRESH TOKEN] Start refresh')
+    console.info('deviceId:', deviceId)
+    console.info('endpoint:', refreshEndpoint)
+    console.info('document.cookie:', document.cookie || '(empty - no cookie visible to JS)')
+    console.info('localStorage x_device_id:', localStorage.getItem('x_device_id'))
+    console.info('baseURL:', apiClient.defaults.baseURL)
+    console.info('withCredentials (global):', apiClient.defaults.withCredentials)
+    console.groupEnd()
 
     // NOTE: Refresh token endpoint PHẢI có withCredentials: true để gửi refreshToken cookie
-    // Ngay cả trong development, endpoint này cần cookies
-    const res = await apiClient.post<RefreshTokenResponse>('/admin/auth/refresh-token', undefined, {
+    const res = await apiClient.post<RefreshTokenResponse>(refreshEndpoint, undefined, {
       headers: {
         'x-device-id': deviceId
       },
       skipAuth: true,
-      withCredentials: true // ← Force enable cho refresh endpoint
+      _retry: true,
+      withCredentials: true
     } as AxiosRequestConfig)
 
     const newToken = res.data?.data?.accessToken
+    console.info('[REFRESH TOKEN] Success!', res.data)
     if (!newToken) {
       throw new Error('Refresh token response missing accessToken')
     }
 
+    // Update both localStorage and zustand store
     localStorage.setItem('access_token', newToken)
     localStorage.setItem('accessToken', newToken)
+    useAuthStore.getState().setToken(newToken)
     return newToken
   })()
 
@@ -145,12 +172,31 @@ apiClient.interceptors.request.use(
 )
 
 apiClient.interceptors.response.use(
-  (response) => {
-    return response
-  },
+  (response) => response,
   async (error: AxiosError) => {
-    if (error.response?.status === 401) {
-      authEventEmitter.emit('UNAUTHORIZED')
+    const originalRequest = error.config
+
+    // If 401 and we haven't retried yet, attempt to refresh the token
+    if (
+      error.response?.status === 401 &&
+      originalRequest &&
+      !originalRequest._retry &&
+      !originalRequest.skipAuth
+    ) {
+      originalRequest._retry = true
+
+      try {
+        const newToken = await refreshAccessToken()
+        originalRequest.headers.Authorization = `Bearer ${newToken}`
+        return apiClient(originalRequest) // Retry the original request
+      } catch {
+        // Refresh also failed → session truly expired, force logout
+        localStorage.removeItem('access_token')
+        localStorage.removeItem('accessToken')
+        useAuthStore.getState().logout()
+        authEventEmitter.emit('UNAUTHORIZED')
+        return Promise.reject(error)
+      }
     }
 
     return Promise.reject(error)

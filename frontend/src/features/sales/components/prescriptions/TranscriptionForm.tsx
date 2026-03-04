@@ -44,15 +44,28 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
   const handleChange = (eye: 'left' | 'right' | 'common', field: string, value: string) => {
     if (!onParametersChange) return
 
-    const numValue = parseFloat(value) || 0
+    // Allow comma as decimal separator internally
+    const normalizedValue = value.replace(',', '.')
+
+    // Allow typing numbers, one decimal point, and a leading minus sign
+    if (
+      normalizedValue !== '' &&
+      normalizedValue !== '-' &&
+      normalizedValue !== '.' &&
+      normalizedValue !== '-.' &&
+      !/^-?\d*\.?\d*$/.test(normalizedValue)
+    ) {
+      return
+    }
+
     const newParams = { ...parameters }
 
     if (eye === 'common') {
-      newParams[field] = numValue
+      newParams[field] = normalizedValue
     } else {
       newParams[eye] = {
         ...newParams[eye],
-        [field]: numValue
+        [field]: normalizedValue
       }
     }
 

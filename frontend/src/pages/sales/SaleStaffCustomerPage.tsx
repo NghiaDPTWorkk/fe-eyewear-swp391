@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { IoInformationCircleOutline } from 'react-icons/io5'
 import { useSearchParams } from 'react-router-dom'
+import { httpClient } from '@/api'
+import { ENDPOINTS } from '@/api/endpoints'
 
 import CommunicationDrawer from '@/features/sales/components/customer/CommunicationDrawer'
 import { CustomerInboxList } from '@/features/sales/components/customer/CustomerInboxList'
@@ -8,6 +10,7 @@ import { CustomerProfileInsights } from '@/features/sales/components/customer/Cu
 import { PageHeader } from '@/features/staff'
 import { cn } from '@/lib/utils'
 import { Button, Card } from '@/shared/components/ui-core'
+import { getInitials } from '@/features/sales/utils/nameUtils'
 
 interface Customer {
   id: string
@@ -23,47 +26,20 @@ interface Customer {
   lastMessage?: string
 }
 
-const customers: Customer[] = [
-  {
-    id: 'c1',
-    name: 'Esther Howard',
-    activity: 'Today, 6:38 PM',
-    badge: 'Going Cold',
-    badgeColor: 'text-neutral-500 bg-neutral-100',
-    phone: '(252) 555-0126',
-    email: 'tim.jennings@example.com',
-    website: 'eyewear.com',
-    avatar: 'https://i.pravatar.cc/150?u=esther',
-    status: 'online',
-    lastMessage: 'Hi, I was wondering if my order #ORD-7782 is ready?'
-  },
-  {
-    id: 'c2',
-    name: 'Jacob Jones',
-    activity: 'Today, 4:38 PM',
-    badge: 'Need Follow Up',
-    badgeColor: 'text-primary-600 bg-primary-100/50',
-    phone: '(808) 555-0111',
-    email: 'tim.jennings@example.com',
-    website: 'eyewear.com',
-    avatar: 'https://i.pravatar.cc/150?u=jacob',
-    status: 'online',
-    lastMessage: 'When can I expect the new frame collection?'
-  },
-  {
-    id: 'c3',
-    name: 'Albert Flores',
-    activity: 'Today, 2:38 PM',
-    badge: 'Fast Response',
-    badgeColor: 'text-emerald-600 bg-emerald-100/50',
-    phone: '(308) 555-0121',
-    email: 'tim.jennings@example.com',
-    website: 'eyewear.com',
-    avatar: 'https://i.pravatar.cc/150?u=albert',
-    status: 'offline',
-    lastMessage: 'Thank you for the prescription update.'
-  }
-]
+interface Conversation {
+  id: string
+  customerId: string
+  customerName: string
+  lastInteractionAt: string
+}
+
+interface Message {
+  id: string
+  role: 'CUSTOMER' | 'AI' | 'STAFF'
+  conversationId: string
+  content: string
+  createdAt: string
+}
 
 export default function SaleStaffCustomerPage() {
   const [searchParams] = useSearchParams()
@@ -72,6 +48,98 @@ export default function SaleStaffCustomerPage() {
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(customerIdParam)
   const [showProfile, setShowProfile] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [customers, setCustomers] = useState<Customer[]>([])
+  const [messages, setMessages] = useState<Message[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingMessages, setIsLoadingMessages] = useState(false)
+
+  const fetchConversations = useCallback(async () => {
+    setIsLoading(true)
+    try {
+      const response = await httpClient.get<{
+        success: boolean
+        data: { conversationList: Conversation[] }
+      }>(ENDPOINTS.ADMIN_AI_CONVERSATIONS.LIST(searchQuery))
+
+      if (response.success) {
+        const initialCustomers: Customer[] = response.data.conversationList.map((conv) => ({
+          id: conv.id,
+          name: conv.customerName,
+          activity: conv.lastInteractionAt,
+          badge: 'AI Chat',
+          badgeColor: 'text-primary-600 bg-primary-100/50',
+          phone: '',
+          email: '',
+          website: '',
+          avatar: '', // No hardcoded link
+          status: 'online',
+          lastMessage: `AI Conversation - ${conv.lastInteractionAt.split(' ')[0]}`
+        }))
+        setCustomers(initialCustomers)
+
+        // Asynchronously fetch last message for each conversation to populate the preview
+        response.data.conversationList.forEach(async (conv) => {
+          try {
+            const msgResponse = await httpClient.get<{
+              success: boolean
+              data: { messageList: Message[] }
+            }>(ENDPOINTS.ADMIN_AI_CONVERSATIONS.MESSAGES(conv.id))
+
+            if (msgResponse.success && msgResponse.data.messageList.length > 0) {
+              const lastMsgContent =
+                msgResponse.data.messageList[msgResponse.data.messageList.length - 1].content
+              setCustomers((prev) =>
+                prev.map((c) => (c.id === conv.id ? { ...c, lastMessage: lastMsgContent } : c))
+              )
+            }
+          } catch (error) {
+            console.warn(`Failed to fetch last message preview for conversation ${conv.id}:`, error)
+          }
+        })
+      }
+    } catch (error) {
+      console.error('Failed to fetch conversations:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [searchQuery])
+
+  const fetchMessages = useCallback(async (conversationId: string) => {
+    setIsLoadingMessages(true)
+    try {
+      const response = await httpClient.get<{
+        success: boolean
+        data: { messageList: Message[] }
+      }>(ENDPOINTS.ADMIN_AI_CONVERSATIONS.MESSAGES(conversationId))
+
+      if (response.success) {
+        setMessages(response.data.messageList)
+        // Update the last message preview in the sidebar list
+        if (response.data.messageList.length > 0) {
+          const lastMsg = response.data.messageList[response.data.messageList.length - 1].content
+          setCustomers((prev) =>
+            prev.map((c) => (c.id === conversationId ? { ...c, lastMessage: lastMsg } : c))
+          )
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch messages:', error)
+    } finally {
+      setIsLoadingMessages(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchConversations()
+  }, [fetchConversations])
+
+  useEffect(() => {
+    if (selectedCustomerId) {
+      fetchMessages(selectedCustomerId)
+    } else {
+      setMessages([])
+    }
+  }, [selectedCustomerId, fetchMessages])
 
   const selectedCustomer = customers.find((c) => c.id === selectedCustomerId) || null
 
@@ -84,13 +152,20 @@ export default function SaleStaffCustomerPage() {
       />
 
       <Card className="flex-1 flex overflow-hidden border border-neutral-200 p-0 rounded-[32px] bg-white shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50">
-        <CustomerInboxList
-          customers={customers}
-          selectedCustomerId={selectedCustomerId}
-          setSelectedCustomerId={setSelectedCustomerId}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-        />
+        <div className="relative border-r border-neutral-50 flex flex-col shrink-0">
+          <CustomerInboxList
+            customers={customers}
+            selectedCustomerId={selectedCustomerId}
+            setSelectedCustomerId={setSelectedCustomerId}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+          />
+          {isLoading && (
+            <div className="absolute inset-0 bg-white/50 flex items-center justify-center backdrop-blur-[1px]">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-mint-500" />
+            </div>
+          )}
+        </div>
 
         <main className="flex-1 flex overflow-hidden bg-white">
           {selectedCustomer ? (
@@ -98,10 +173,17 @@ export default function SaleStaffCustomerPage() {
               <div className="flex-1 flex flex-col overflow-hidden min-w-0">
                 <header className="px-6 py-4 border-b border-neutral-50 flex items-center justify-between shrink-0">
                   <div className="flex items-center gap-3">
-                    <img
-                      src={selectedCustomer.avatar}
-                      className="w-9 h-9 rounded-xl object-cover"
-                    />
+                    {selectedCustomer.avatar ? (
+                      <img
+                        src={selectedCustomer.avatar}
+                        className="w-9 h-9 rounded-xl object-cover shrink-0"
+                        alt=""
+                      />
+                    ) : (
+                      <div className="w-9 h-9 rounded-xl bg-mint-50 flex items-center justify-center text-[10px] font-bold text-mint-600 shrink-0 border border-mint-100 uppercase">
+                        {getInitials(selectedCustomer.name)}
+                      </div>
+                    )}
                     <div>
                       <h2 className="text-sm font-medium text-neutral-900 leading-none mb-1">
                         {selectedCustomer.name}
@@ -136,6 +218,8 @@ export default function SaleStaffCustomerPage() {
                     customer={selectedCustomer}
                     variant="inline"
                     hideHeader={true}
+                    messages={messages}
+                    isLoadingMessages={isLoadingMessages}
                   />
                 </div>
               </div>

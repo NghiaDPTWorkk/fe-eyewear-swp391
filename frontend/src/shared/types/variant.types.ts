@@ -11,6 +11,7 @@ export interface VariantOption {
 }
 
 export interface Variant {
+  mode?: 'AVAILABLE' | 'PRE_ORDER'
   sku?: string
   name?: string
   slug?: string

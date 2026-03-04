@@ -86,7 +86,7 @@ export default function PrescriptionVerification({
         PD: 64
       }
 
-    const finalNote = localNote.trim() || parameters?.note || ''
+    const finalNote = localNote.trim() || (parameters as any)?.note || ''
 
     const success = await approveOrder(orderId, { parameters: finalParams, note: finalNote })
     if (success) {
@@ -187,7 +187,7 @@ export default function PrescriptionVerification({
           <TranscriptionForm
             parameters={localParameters || parameters}
             onParametersChange={setLocalParameters}
-            note={localNote || parameters?.note || ''}
+            note={localNote || (parameters as any)?.note || ''}
             onNoteChange={setLocalNote}
             isReadOnly={isReadOnly}
             isApproved={isApproved}
@@ -210,7 +210,7 @@ export default function PrescriptionVerification({
         <div className="space-y-5">
           <OrderDetailsSidebar order={order} />
           <CommunicationHub customerName={order.customerName || undefined} />
-          <LabOperationsTimeline />
+          <LabOperationsTimeline order={order} />
         </div>
       </div>
 

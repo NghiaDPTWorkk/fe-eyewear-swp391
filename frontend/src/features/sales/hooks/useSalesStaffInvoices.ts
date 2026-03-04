@@ -18,7 +18,6 @@ export function useSalesStaffInvoices(
       let apiStatuses: string | undefined = undefined
 
       if (status === 'APPROVED_OR_REJECTED') {
-        // Fetch all finalized/active statuses for the Approved tab
         apiStatuses = [
           InvoiceStatus.APPROVED,
           InvoiceStatus.ONBOARD,
@@ -43,14 +42,12 @@ export function useSalesStaffInvoices(
         search
       )
 
-      // Extract data safely
       const apiData = response?.data
       const invoiceData = apiData?.invoiceList || []
       const pagination = apiData?.pagination || { totalPages: 1, total: 0 }
 
-      // ENRICHMENT OPTIMIZATION:
       const enrichedInvoices = await Promise.all(
-        invoiceData.map(async (inv: { id?: string; _id?: string; orders?: unknown[] }) => {
+        invoiceData.map(async (inv: any) => {
           try {
             const orderIds = (inv.orders || []) as (string | { id?: string; _id?: string })[]
 
@@ -101,16 +98,8 @@ export function useSalesStaffInvoices(
                   }
                 })
               )
-            ).filter(Boolean) as {
-              id: string
-              type: unknown
-              status: string
-              isPrescription: boolean
-              isVerified: boolean
-            }[]
+            ).filter(Boolean) as any[]
 
-            // All orders must be explicitly verified or in a processing/completed state
-            // Normal orders are NOT considered approved by default if the backend rejects them.
             const approvedCount = ordersWithDetails.filter((o) => o && o.isVerified).length
             const hasManufacturing = ordersWithDetails.some((o) => o.isPrescription)
 
@@ -139,7 +128,7 @@ export function useSalesStaffInvoices(
         pagination
       }
     },
-    staleTime: 60000 // Cache for 1 minute
+    staleTime: 60000
   })
 
   return {
@@ -155,8 +144,9 @@ export function useSalesStaffOrderDetail(orderId: string) {
   return useQuery({
     queryKey: ['sales', 'order', orderId],
     queryFn: async () => {
+      if (!orderId) throw new Error('Order ID is required')
       const response = await salesService.getOrderById(orderId)
-      return transformOrder(response.data.order)
+      return response.data.order
     },
     enabled: !!orderId
   })
@@ -176,7 +166,6 @@ export function useSalesStaffLabOrders(page: number = 1, limit: number = 10) {
         let station = 'Pending'
         let stationColor = 'bg-neutral-100 text-neutral-500'
 
-        // Mapping logic based on user's 25/50/75/100 request
         if (status === 'WAITING_ASSIGN') {
           progress = 25
           progressColor = 'bg-amber-400'

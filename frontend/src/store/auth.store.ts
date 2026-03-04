@@ -2,7 +2,8 @@ import type { User, AdminAccount } from '@/shared/types'
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { authService } from '@/features/auth/services/auth.service'
-import { getRoleFromToken } from '@/shared/utils'
+import { getRoleFromToken, isTokenExpired } from '@/shared/utils'
+import { STORAGE_KEYS } from '@/shared/constants/storage'
 
 export interface AuthState {
   user: User | AdminAccount | null
@@ -63,7 +64,18 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
-      storage: createJSONStorage(() => localStorage)
+      storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        if (!state) return
+        // Validate token on app startup - if no valid token exists, reset auth state
+        const accessToken = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN)
+        if (!accessToken || isTokenExpired(accessToken)) {
+          state.user = null
+          state.accessToken = null
+          state.isAuthenticated = false
+          state.role = null
+        }
+      }
     }
   )
 )

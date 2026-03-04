@@ -1,50 +1,121 @@
 import { useState } from 'react'
+import { useParams } from 'react-router-dom'
 import { Container } from '@/components'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
+import { useOrdersDetails } from '@/features/staff/hooks/orders/useOrders'
 import { ProcessTracker } from '@/components/layout/staff/staff-core/processtracker'
-import { IoAirplaneOutline, IoCheckmarkCircle, IoPrintOutline } from 'react-icons/io5'
+import { IoCarOutline, IoConstructOutline, IoCubeOutline, IoTimeOutline, IoAirplaneOutline, IoClose, IoPrintOutline } from 'react-icons/io5'
+import ScanInvoiceCode from '@/components/layout/staff/operationstaff/scaninvoicecode/ScanInvoiceCode'
+import {
+  CheckOrderListFromInvoice,
+  OrderCheckItem,
+  ShippingInfoPanel
+} from '@/components/layout/staff/operationstaff/checkorderlistfrominvoice'
+import {
+  useOperationInvoiceDetail,
+  useUpdateInvoiceReadyToShip,
+  useOperationShipCode
+} from '@/features/operations/hooks/useOperationInvoiceDetail'
+import ConfirmationModal from '@/shared/components/ui/ConfirmationModal'
+import ShippingInfoSeal from '@/components/layout/staff/operationstaff/shippinginfoseal/ShippingInfoSeal'
+import { createPortal } from 'react-dom'
+import toast from 'react-hot-toast'
 
 export default function OperationShippingHandoverPage() {
-  // Hardcoded invoice data with multiple orders
-  const invoiceData = {
-    invoiceId: 'INV-2024-001',
-    customer: 'Nguyen Van A',
-    orders: [
-      {
-        id: 'ORD-001',
-        code: '#RX-001',
-        status: 'COMPLETED',
-        item: 'RayBan Aviator + Progressive Lens'
-      },
-      {
-        id: 'ORD-002',
-        code: '#RX-002',
-        status: 'COMPLETED',
-        item: 'Oakley Holbrook + Single Vision'
-      },
-      { id: 'ORD-003', code: '#RX-003', status: 'COMPLETED', item: 'Glasses Case + Cleaning Cloth' }
-    ],
-    shipping: {
-      carrier: 'Viettel Post',
-      address: '123 Nguyen Hue Street, District 1, Ho Chi Minh City, 700000, Vietnam'
-    }
+  const { invoiceId } = useParams<{ invoiceId: string }>()
+  const { data, isLoading, isError } = useOperationInvoiceDetail(invoiceId ?? '')
+  const updateInvoiceStatus = useUpdateInvoiceReadyToShip()
+
+  const { data: fetchedShipCode } = useOperationShipCode(invoiceId ?? '')
+
+  const invoice = data
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isLabelModalOpen, setIsLabelModalOpen] = useState(false)
+  const [internalShipCode, setInternalShipCode] = useState<string | undefined>(undefined)
+
+  const activeShipCode = internalShipCode || fetchedShipCode || undefined
+
+  const orders = invoice?.orders ?? []
+
+  // Fetch details for all orders to calculate total amount
+  const orderDetailQueries = useOrdersDetails(orders)
+
+  const allOrdersCompleted =
+    orders.length > 0 &&
+    orderDetailQueries.every((q: any) => q.isSuccess && q.data?.data?.order?.status === 'COMPLETED')
+
+  const isReadyToShip = invoice?.status === 'READY_TO_SHIP'
+
+  const totalAmount = orderDetailQueries.reduce((sum: number, query: any) => {
+    const orderData = (query.data as any)?.data?.order
+    return sum + (orderData?.price || 0)
+  }, 0)
+
+  const isDetailsLoading = orderDetailQueries.some((q: any) => q.isLoading)
+
+  const handleProcessShipping = () => {
+    setIsModalOpen(true)
   }
 
-  const [scannedInvoiceId, setScannedInvoiceId] = useState('')
-
-  // Check if all orders are completed
-  const allOrdersCompleted = invoiceData.orders.every((order) => order.status === 'COMPLETED')
-  const isInvoiceConfirmed = scannedInvoiceId === invoiceData.invoiceId
-  const canShip = isInvoiceConfirmed && allOrdersCompleted
-
-  const handleConfirm = () => {
-    if (scannedInvoiceId !== invoiceData.invoiceId) {
-      alert('Invoice ID does not match!')
-    }
+  const confirmProcessShipping = () => {
+    if (!invoice) return
+    updateInvoiceStatus.mutate(invoice.id, {
+      onSuccess: (data: any) => {
+        setIsModalOpen(false)
+        toast.success('Invoice marked as Ready to Ship!')
+        const newShipCode =
+          data?.data?.data?.shipmentInfo?.shipCode || data?.data?.shipmentInfo?.shipCode
+        if (newShipCode) {
+          setInternalShipCode(newShipCode)
+        }
+      },
+      onError: (error: any) => {
+        setIsModalOpen(false)
+        toast.error(error?.response?.data?.message || 'Failed to update invoice status')
+      }
+    })
   }
 
   const handlePrintLabel = () => {
-    alert('Printing shipping label for ' + invoiceData.invoiceId)
+    if (!invoice) return
+    setIsLabelModalOpen(true)
+  }
+
+  // Build a friendly address string
+  const getAddressString = () => {
+    if (!invoice) return ''
+    return invoice.address ?? ''
+  }
+
+  if (isLoading) {
+    return (
+      <Container className="animate-fade-in-up">
+        <BreadcrumbPath paths={['Dashboard', 'Shipping Handover']} />
+        <div className="flex flex-col items-center justify-center py-40 gap-4">
+          <div className="relative">
+            <div className="w-14 h-14 rounded-full border-4 border-neutral-100" />
+            <div className="absolute inset-0 w-14 h-14 rounded-full border-4 border-t-mint-500 animate-spin" />
+          </div>
+          <p className="text-sm font-semibold text-neutral-700">Loading invoice...</p>
+        </div>
+      </Container>
+    )
+  }
+
+  if (isError || !invoice) {
+    return (
+      <Container className="animate-fade-in-up">
+        <BreadcrumbPath paths={['Dashboard', 'Shipping Handover']} />
+        <div className="flex flex-col items-center justify-center py-40 gap-4">
+          <div className="w-16 h-16 rounded-full bg-red-50 border border-red-100 flex items-center justify-center">
+            <IoAirplaneOutline className="text-red-400" size={32} />
+          </div>
+          <p className="text-sm font-semibold text-neutral-700">Failed to load invoice</p>
+          <p className="text-xs text-neutral-400">Check your connection and try refreshing.</p>
+        </div>
+      </Container>
+    )
   }
 
   return (
@@ -63,214 +134,194 @@ export default function OperationShippingHandoverPage() {
           </p>
         </div>
         <span className="px-6 py-2 bg-blue-100 text-blue-700 border border-blue-200 rounded-full text-xs font-bold uppercase tracking-widest">
-          {allOrdersCompleted ? 'READY TO SHIP' : 'PENDING'}
+          {invoice.status.replace(/_/g, ' ')}
         </span>
       </div>
 
       {/* Progress Tracker */}
-      <ProcessTracker />
+      {(() => {
+        const invStatus = invoice.status
+        const steps = [
+          { icon: <IoTimeOutline size={24} />, label: 'Pending' },
+          { icon: <IoConstructOutline size={24} />, label: 'Processing' },
+          { icon: <IoCubeOutline size={24} />, label: 'Packaging' },
+          { icon: <IoCubeOutline size={24} />, label: 'Ready for Pickup' },
+          { icon: <IoCarOutline size={24} />, label: 'Shipping' }
+        ]
+
+        let activeStep = 0
+        if (invStatus === 'DELIVERING' || invStatus === 'DELIVERED') {
+          activeStep = 4
+        } else if (invStatus === 'READY_TO_SHIP') {
+          activeStep = 3
+        } else if (invStatus === 'COMPLETED') {
+          activeStep = 2
+        } else if (invStatus) {
+          activeStep = 1
+        }
+
+        return <ProcessTracker title="Invoice Progress" steps={steps} activeStep={activeStep} />
+      })()}
 
       <div className="grid grid-cols-12 gap-6 mt-6">
         {/* Left Column */}
         <div className="col-span-12 lg:col-span-7 space-y-6">
           {/* Scan Invoice ID Section */}
-          <div className="bg-white rounded-lg shadow-sm border border-neutral-100 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-              Scan Invoice ID
-            </h2>
+          <ScanInvoiceCode invoiceCode={invoice.invoiceCode} />
 
-            <div className="space-y-3">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Invoice ID</label>
-                <input
-                  type="text"
-                  value={scannedInvoiceId}
-                  onChange={(e) => setScannedInvoiceId(e.target.value)}
-                  placeholder="Scan or enter invoice ID..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-                <p className="text-xs text-gray-500 mt-1">Expected: {invoiceData.invoiceId}</p>
-              </div>
-
-              <button
-                onClick={handleConfirm}
-                disabled={!scannedInvoiceId}
-                className={`w-full px-6 py-3 rounded-lg font-medium transition-all ${
-                  isInvoiceConfirmed
-                    ? 'bg-mint-100 text-mint-700 border-2 border-mint-200 cursor-default'
-                    : scannedInvoiceId
-                      ? 'bg-blue-600 text-white hover:bg-blue-700'
-                      : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                }`}
-              >
-                {isInvoiceConfirmed ? '✓ Invoice Confirmed' : 'Confirm Invoice'}
-              </button>
-            </div>
-          </div>
-
-          {/* Check Order List Section - Always visible */}
+          {/* Check Order List Section */}
           <div className="bg-white rounded-lg shadow-sm border border-neutral-100 p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <span className="w-2 h-2 bg-mint-500 rounded-full"></span>
               Check Order List
             </h2>
 
-            <div className="mb-4 pb-4 border-b border-gray-200">
-              <p className="text-sm text-gray-600">
-                Invoice:{' '}
-                <span className="font-semibold text-gray-900">{invoiceData.invoiceId}</span>
-              </p>
-              <p className="text-sm text-gray-600">
-                Customer:{' '}
-                <span className="font-semibold text-gray-900">{invoiceData.customer}</span>
-              </p>
-              <p className="text-sm text-gray-600 mt-1">
-                Orders:{' '}
-                <span className="font-semibold text-gray-900">{invoiceData.orders.length}</span>
-              </p>
-            </div>
+            <CheckOrderListFromInvoice
+              invoiceCode={invoice.invoiceCode}
+              fullName={invoice.fullName}
+              orderCount={orders.length}
+            />
 
             <div className="space-y-3">
-              {invoiceData.orders.map((order) => (
-                <div
-                  key={order.id}
-                  className={`flex items-center justify-between p-4 rounded-lg border-2 transition-all ${
-                    order.status === 'COMPLETED'
-                      ? 'border-mint-500 bg-mint-50'
-                      : 'border-red-300 bg-red-50'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                        order.status === 'COMPLETED'
-                          ? 'border-mint-500 bg-mint-500'
-                          : 'border-red-400 bg-red-400'
-                      }`}
-                    >
-                      {order.status === 'COMPLETED' ? (
-                        <IoCheckmarkCircle className="text-white" size={20} />
-                      ) : (
-                        <span className="text-white text-xs font-bold">✕</span>
-                      )}
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900">
-                        {order.code} - {order.item}
-                      </p>
-                      <p className="text-xs text-gray-500">Order ID: {order.id}</p>
-                    </div>
-                  </div>
-                  <span
-                    className={`text-xs px-3 py-1 rounded-full font-semibold ${
-                      order.status === 'COMPLETED'
-                        ? 'bg-mint-100 text-mint-700'
-                        : 'bg-red-100 text-red-700'
-                    }`}
-                  >
-                    {order.status}
-                  </span>
-                </div>
-              ))}
+              {orders.map((orderId: string) => {
+                const orderData = (
+                  orderDetailQueries.find((q: any) => q.data?.data?.order?._id === orderId)?.data as any
+                )?.data?.order
+                return (
+                  <OrderCheckItem
+                    key={orderId}
+                    orderCode={orderData?.orderCode || (orderId ? orderId.slice(-8).toUpperCase() : 'N/A')}
+                    orderId={orderId || ''}
+                    status={orderData?.status || 'COMPLETED'}
+                  />
+                )
+              })}
             </div>
 
             {!allOrdersCompleted && (
               <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
                 <p className="text-sm text-red-700 font-medium">
-                  ⚠️ Cannot ship: Some orders are not completed yet
+                  Cannot ship: Some orders are not completed yet
                 </p>
               </div>
             )}
-
-            {allOrdersCompleted && !isInvoiceConfirmed && (
-              <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                <p className="text-sm text-amber-700 font-medium">
-                  All orders completed. Please scan and confirm invoice ID to proceed.
-                </p>
+            {/* Total Amount */}
+            <div className="mt-6 pt-6 border-t border-gray-100 flex justify-between items-center">
+              <span className="text-sm font-semibold text-neutral-500 uppercase tracking-wider">
+                Invoice Total Amount
+              </span>
+              <div className="text-right">
+                {isDetailsLoading ? (
+                  <div className="h-6 w-24 bg-neutral-100 animate-pulse rounded" />
+                ) : (
+                  <span className="text-xl font-bold font-mono text-neutral-900 border-b-2 border-mint-500 pb-0.5">
+                    {totalAmount.toLocaleString('vi-VN')} <span className="text-sm font-normal text-neutral-400">₫</span>
+                  </span>
+                )}
               </div>
-            )}
+            </div>
           </div>
         </div>
 
         {/* Right Column - Shipping Information */}
         <div
           className={`col-span-12 lg:col-span-5 transition-all duration-500 ease-in-out ${
-            canShip
+            allOrdersCompleted
               ? 'opacity-100 translate-y-0'
               : 'opacity-30 translate-y-4 pointer-events-none grayscale'
           }`}
         >
-          <div className="bg-white rounded-lg shadow-sm border border-neutral-100 p-6 sticky top-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-              Shipping Information
-            </h2>
-
-            {/* Invoice Info */}
-            <div className="mb-4 pb-4 border-b border-gray-200">
-              <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Invoice ID</p>
-              <p className="text-base font-semibold text-gray-900">{invoiceData.invoiceId}</p>
-              <p className="text-sm text-gray-600 mt-1">Customer: {invoiceData.customer}</p>
-            </div>
-
-            {/* Carrier */}
-            <div className="mb-4">
-              <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Delivery Method</p>
-              <p className="text-base font-semibold text-gray-900">
-                {invoiceData.shipping.carrier}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">Auto-generated</p>
-            </div>
-
-            {/* Shipping Address */}
-            <div className="mb-6">
-              <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Shipping Address</p>
-              <p className="text-sm text-gray-700 leading-relaxed">
-                {invoiceData.shipping.address}
-              </p>
-            </div>
-
-            {/* Print Label Button */}
-            <button
-              onClick={handlePrintLabel}
-              disabled={!canShip}
-              className={`w-full px-6 py-3 rounded-lg font-medium transition-all shadow-lg flex items-center justify-center gap-2 border-2 ${
-                canShip
-                  ? 'bg-mint-900 text-white border-mint-900 hover:bg-mint-700 hover:border-mint-700 transform hover:-translate-y-1 shadow-mint-200'
-                  : 'bg-gray-200 text-gray-400 border-gray-200 cursor-not-allowed'
-              }`}
-            >
-              <IoPrintOutline size={20} />
-              Print Shipping Label
-            </button>
-
-            {/* Order Summary */}
-            <div className="mt-6 pt-6 border-t border-gray-200">
-              <p className="text-xs text-gray-500 uppercase tracking-wide mb-3">Order Summary</p>
-              <div className="space-y-2">
-                {invoiceData.orders.map((order) => (
-                  <div
-                    key={order.id}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                  >
-                    <span className="text-sm font-medium text-gray-900">{order.code}</span>
-                    <span
-                      className={`text-xs px-2 py-1 rounded-full ${
-                        order.status === 'COMPLETED'
-                          ? 'bg-mint-100 text-mint-700'
-                          : 'bg-red-100 text-red-700'
-                      }`}
-                    >
-                      {order.status}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          <ShippingInfoPanel
+            invoiceCode={invoice.invoiceCode}
+            fullName={invoice.fullName}
+            phone={invoice.phone}
+            carrier="Viettel Post"
+            address={getAddressString()}
+            status={invoice?.status || 'UNKNOWN'}
+            isProcessingShipping={updateInvoiceStatus.isPending}
+            shipCode={activeShipCode || (isReadyToShip ? 'Auto Generated' : undefined)}
+            hasShipCode={!!activeShipCode}
+            orders={orders.map((id) => {
+              const query = orderDetailQueries.find((q: any) => q.data?.data?.order?._id === id)
+              return {
+                id,
+                price: (query?.data as any)?.data?.order?.price
+              }
+            })}
+            onPrintLabel={handlePrintLabel}
+            onProcessShipping={handleProcessShipping}
+          />
         </div>
       </div>
+
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={confirmProcessShipping}
+        title="Process Shipping"
+        message="Are you sure you want to mark this invoice to next stage? The shipment code will be generated."
+        confirmText="Confirm Shipping"
+        cancelText="Cancel"
+        isLoading={updateInvoiceStatus.isPending}
+        type="info"
+      />
+
+      {/* Shipping Label Print Modal */}
+      {isLabelModalOpen &&
+        invoice &&
+        createPortal(
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <div
+              className="fixed inset-0 bg-neutral-900/40 backdrop-blur-[2px] transition-opacity duration-300 opacity-100"
+              onClick={() => setIsLabelModalOpen(false)}
+            />
+            <div className="relative w-auto bg-white rounded-xl shadow-2xl p-6 transition-all duration-300 transform scale-100 opacity-100 flex flex-col gap-6">
+              <div className="flex justify-between items-center px-2">
+                <h3 className="text-xl font-bold tracking-tight text-slate-800">
+                  Print Shipping Label
+                </h3>
+                <button
+                  onClick={() => setIsLabelModalOpen(false)}
+                  className="p-2 hover:bg-neutral-100 rounded-full transition-colors text-neutral-400 hover:text-neutral-900"
+                >
+                  <IoClose size={24} />
+                </button>
+              </div>
+
+              {/* The Seal */}
+              <div className="bg-white rounded-lg p-2 border border-neutral-200">
+                <ShippingInfoSeal
+                  invoiceCode={invoice.invoiceCode}
+                  fullName={invoice.fullName}
+                  phone={invoice.phone}
+                  address={getAddressString()}
+                  shipCode={activeShipCode}
+                  totalAmount={totalAmount}
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 px-2">
+                <button
+                  onClick={() => setIsLabelModalOpen(false)}
+                  className="px-6 py-2.5 rounded-lg border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    toast.success('Shipping label sent to printer!')
+                    setIsLabelModalOpen(false)
+                  }}
+                  className="px-8 py-2.5 rounded-lg bg-mint-600 text-white font-bold hover:bg-mint-700 shadow-md shadow-mint-200 transition-transform active:scale-95 flex items-center gap-2"
+                >
+                  <IoPrintOutline size={20} />
+                  Print Now
+                </button>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
     </Container>
   )
 }

@@ -14,14 +14,14 @@ export default function SanSection({ orderId }: { orderId?: string }) {
             </div>
             <input
               type="text"
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-mint-500 focus:border-mint-500 bg-gray-50"
+              className="block w-120 md:w-80 lg:w-96 pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-mint-500 focus:border-mint-500 bg-gray-50"
               placeholder="Scan barcode..."
               defaultValue={orderId}
             />
           </div>
-          <button className="px-4 py-2 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-colors">
-            Confirm
-          </button>
+          {/* <button className="px-4 py-2 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-colors">
+            Auto generated
+          </button> */}
         </div>
         <div className="mt-2 text-xs text-gray-500">OrderID: {'ex: REG-001'}</div>
       </div>

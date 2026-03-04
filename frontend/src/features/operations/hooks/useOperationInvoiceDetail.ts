@@ -24,7 +24,7 @@ export function useUpdateInvoiceReadyToShip() {
     mutationFn: (invoiceId: string) => operationInvoiceService.updateInvoiceToReadyToShip(invoiceId),
     onSuccess: (_, invoiceId) => {
       queryClient.invalidateQueries({ queryKey: ['operation-invoice-detail', invoiceId] })
-      queryClient.invalidateQueries({ queryKey: ['operation-invoices'] })
+      queryClient.invalidateQueries({ queryKey: ['operation-invoices-handle-delivery'] })
     }
   })
 }

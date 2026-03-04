@@ -6,7 +6,6 @@ import { router } from './routes'
 import { Toaster } from 'react-hot-toast'
 
 function App() {
-  let count = 0
   return (
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />

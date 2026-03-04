@@ -9,6 +9,7 @@ import { PATHS } from '@/routes/paths'
 import { useUpdateStatusToPackaging } from '@/features/staff/hooks/orders/useOrders'
 import toast from 'react-hot-toast'
 import { useQueryClient } from '@tanstack/react-query'
+import { getOrderProgressStep } from '@/shared/utils/order-status.utils'
 
 export default function OperationManufacturingProcess() {
   const { orderId } = useParams<{ orderId: string }>()
@@ -99,7 +100,7 @@ export default function OperationManufacturingProcess() {
       </div>
 
       {/* Progress Tracker */}
-      <ProcessTracker />
+      <ProcessTracker activeStep={getOrderProgressStep(isCompleted ? 'PACKAGING' : 'MAKING')} />
 
       <div className="grid grid-cols-12 gap-6 mt-6">
         {/* Left Column - Lens Prescription */}

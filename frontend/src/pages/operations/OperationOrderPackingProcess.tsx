@@ -3,12 +3,9 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Container } from '@/components'
 import {
   IoArrowBack,
-  IoCarOutline,
   IoCheckmarkCircle,
-  IoConstructOutline,
   IoCubeOutline,
-  IoReload,
-  IoTimeOutline
+  IoReload
 } from 'react-icons/io5'
 import { ProcessTracker } from '@/components/layout/staff/staff-core/processtracker'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
@@ -23,6 +20,7 @@ import { useOrderDetail, useUpdateStatusToCompleted } from '@/features/staff/hoo
 import toast from 'react-hot-toast'
 import { useQueryClient } from '@tanstack/react-query'
 import { useOperationInvoiceDetail } from '@/features/operations/hooks/useOperationInvoiceDetail'
+import { getOrderProgressStep } from '@/shared/utils/order-status.utils'
 
 export default function OperationOrderPackingProcess() {
   const { orderId } = useParams<{ orderId: string }>()
@@ -186,26 +184,13 @@ export default function OperationOrderPackingProcess() {
       {/* Progress Tracker */}
       {(() => {
         const invStatus = invoice?.status
-        const steps = [
-          { icon: <IoTimeOutline size={24} />, label: 'Pending' },
-          { icon: <IoConstructOutline size={24} />, label: 'Processing' },
-          { icon: <IoCubeOutline size={24} />, label: 'Packaging' },
-          { icon: <IoCubeOutline size={24} />, label: 'Ready for Pickup' },
-          { icon: <IoCarOutline size={24} />, label: 'Shipping' }
-        ]
+        const activeStep = getOrderProgressStep(
+          isCompleted ? 'PACKAGING' : status,
+          undefined,
+          invStatus
+        )
 
-        let activeStep = 0
-        if (invStatus === 'DELIVERING' || invStatus === 'DELIVERED') {
-          activeStep = 4
-        } else if (invStatus === 'READY_TO_SHIP') {
-          activeStep = 3
-        } else if (invStatus === 'COMPLETED') {
-          activeStep = 2
-        } else if (invStatus) {
-          activeStep = 1
-        }
-
-        return <ProcessTracker title="Invoice Progress" steps={steps} activeStep={activeStep} />
+        return <ProcessTracker title="Invoice Progress" activeStep={activeStep} />
       })()}
       {/* : Trạng thái từ API + Loại đơn hàng = Vị trí nút xanh trên thanh. */}
       <div className="grid grid-cols-12 gap-6">

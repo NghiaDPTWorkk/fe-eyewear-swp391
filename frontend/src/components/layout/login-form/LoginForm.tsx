@@ -135,6 +135,17 @@ export const LoginForm = ({ role: _role }: LoginFormProps) => {
           Sign Up
         </a>
       </p>
+      {_role !== 'staff' && (
+        <div className="mt-8 pt-4 border-t border-gray-100 text-center">
+          <span className="text-xs text-gray-400">Are you a staff member? </span>
+          <a
+            href="/admin/login"
+            className="text-xs font-semibold text-gray-500 hover:text-primary-600 transition-colors"
+          >
+            Staff Portal
+          </a>
+        </div>
+      )}
     </form>
   )
 }

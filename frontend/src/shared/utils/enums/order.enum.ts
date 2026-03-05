@@ -22,3 +22,12 @@ export enum OrderStatus {
   WAITING_REFUND = 'WAITING_REFUND', // Chờ hoàn tiền
   REFUNDED = 'REFUNDED' // Đã hoàn tiền
 }
+
+export const AssignmentOrderStatus = {
+  PENDING: 'PENDING',
+  ASSIGNED: 'ASSIGNED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED'
+} as const
+export type AssignmentOrderStatus =
+  (typeof AssignmentOrderStatus)[keyof typeof AssignmentOrderStatus]

@@ -127,7 +127,8 @@ const enrichCartItemsWithProductDetails = async (items: CartItem[]): Promise<Car
             image: variant.imgs?.[0] || item.image,
             sku: variant.sku || item.sku,
             productType: productDetail.type,
-            selectedOptions
+            selectedOptions,
+            mode: variant.mode
           }
         } else {
           enrichedItem = {

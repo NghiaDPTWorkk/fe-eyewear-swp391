@@ -42,6 +42,7 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
     stock,
     images,
     isInStock,
+    isPreOrder,
     isValidCombination,
     availableOptionsForAttribute
   } = variantState
@@ -117,10 +118,11 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
       await addItemAsync(finalProductId, currentVariant.sku, 1, lensSelection)
 
       // Show success message
+      const actionLabel = isPreOrder ? 'Pre-ordered' : 'added to cart'
       if (lensSelection) {
-        toast.success(`${product.nameBase} with ${lensSelection.visionNeed} lenses added to cart!`)
+        toast.success(`${product.nameBase} with ${lensSelection.visionNeed} lenses ${actionLabel}!`)
       } else {
-        toast.success(`${currentVariant.name} added to cart!`)
+        toast.success(`${currentVariant.name} ${actionLabel}!`)
       }
 
       // Close lens modal if open
@@ -221,7 +223,17 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
       {/* Stock Status */}
       {currentVariant && (
         <div className="mb-6">
-          {isInStock ? (
+          {isPreOrder ? (
+            <div className="flex flex-col gap-1">
+              <p className="text-sm text-blue-600 font-semibold flex items-center gap-2">
+                <span className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></span>
+                Pre-order Item
+              </p>
+              <p className="text-xs text-gray-500 italic">
+                This item is available for pre-order and will be shipped when in stock.
+              </p>
+            </div>
+          ) : isInStock ? (
             <p className="text-sm text-green-600 font-semibold flex items-center gap-2">
               <span className="w-2 h-2 bg-green-600 rounded-full"></span>
               In Stock ({stock} available)
@@ -355,7 +367,9 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
                 ? 'Out of Stock'
                 : product.type === 'frame'
                   ? 'Select Lenses'
-                  : 'Add to Cart'}
+                  : isPreOrder
+                    ? 'Pre-order Now'
+                    : 'Add to Cart'}
         </Button>
         <Button
           variant="outline"

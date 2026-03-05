@@ -24,7 +24,7 @@ interface CartState {
   updateQuantity: (item: CartItem, quantity: number) => Promise<void>
   removeItem: (item: CartItem) => Promise<void>
   removeItems: (items: CartItem[]) => Promise<void>
-  toggleSelection: (productId: string) => void
+  toggleSelection: (item: CartItem) => void
   toggleAllSelection: () => void
   clearCart: () => Promise<void>
   setLoading: (loading: boolean) => void
@@ -174,11 +174,18 @@ export const useCartStore = create<CartState>((set, get) => ({
     }
   },
 
-  toggleSelection: (productId) =>
+  toggleSelection: (targetItem) =>
     set((state) => ({
-      items: state.items.map((item) =>
-        item.product_id === productId ? { ...item, selected: !item.selected } : item
-      )
+      items: state.items.map((i) => {
+        const isSameProduct = i.product_id === targetItem.product_id
+        const isSameSku = (i.sku || '') === (targetItem.sku || '')
+        const isSameLens = JSON.stringify(i.lens) === JSON.stringify(targetItem.lens)
+        const isSameId = i._id && targetItem._id ? i._id === targetItem._id : true
+
+        return isSameProduct && isSameSku && isSameLens && isSameId
+          ? { ...i, selected: !i.selected }
+          : i
+      })
     })),
 
   toggleAllSelection: () =>

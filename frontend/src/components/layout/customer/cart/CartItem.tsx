@@ -37,8 +37,8 @@ export const CartItem = ({ item }: CartItemProps) => {
           <div className="flex-shrink-0">
             <Checkbox
               isChecked={item.selected ?? true}
-              onCheckedChange={() => toggleSelection(item.product_id)}
-              id={`select-${item.product_id}`}
+              onCheckedChange={() => toggleSelection(item)}
+              id={`select-${item._id || item.product_id}`}
             />
           </div>
           <div className="flex flex-col items-center gap-4">

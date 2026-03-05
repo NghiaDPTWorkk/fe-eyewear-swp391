@@ -55,6 +55,10 @@ export const authApi = {
     return httpClient.patch<ApiResponse<User>>(ENDPOINTS.AUTH.UPDATE_PROFILE, payload)
   },
 
+  changePasswordCustomer: (payload: { oldPassword: string; newPassword: string }) => {
+    return httpClient.patch<ApiResponse<any>>(ENDPOINTS.AUTH.CHANGE_PASSWORD_CUSTOMER, payload)
+  },
+
   refreshToken() {
     return httpClient.post<{ accessToken: string }>(ENDPOINTS.AUTH.REFRESH_TOKEN, undefined, {
       withCredentials: true

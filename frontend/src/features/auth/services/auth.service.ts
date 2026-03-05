@@ -43,5 +43,10 @@ export const authService = {
   updateProfile: async (payload: { name: string; phone: string; gender: string }) => {
     const response = await authApi.updateProfile(payload)
     return response.data
+  },
+
+  changePasswordCustomer: async (payload: { oldPassword: string; newPassword: string }) => {
+    const response = await authApi.changePasswordCustomer(payload)
+    return response
   }
 }

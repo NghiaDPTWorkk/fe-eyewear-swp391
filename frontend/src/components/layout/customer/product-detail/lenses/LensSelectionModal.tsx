@@ -7,6 +7,7 @@ import StepManualPrescription from './StepManualPrescription'
 import StepSavedPrescription from './StepSavedPrescription'
 import ModalSidebar from './ModalSidebar'
 import ModalHeader from './ModalHeader'
+import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 
 interface LensSelectionModalProps {
   isOpen: boolean
@@ -15,6 +16,7 @@ interface LensSelectionModalProps {
   productName: string
   productImage: string
   productType: string
+  productPrice: number
   productId?: string
   sku?: string
 }
@@ -30,6 +32,7 @@ export default function LensSelectionModal({
   productName,
   productImage,
   productType,
+  productPrice,
   productId,
   sku
 }: LensSelectionModalProps) {
@@ -40,6 +43,7 @@ export default function LensSelectionModal({
     visionNeed: productType === 'lens' ? 'prescription' : null,
     lensId: productType === 'lens' ? productId || null : null,
     sku: productType === 'lens' ? sku || null : null,
+    lensPrice: null,
     prescription: null,
     useSavedPrescription: false
   })
@@ -56,8 +60,8 @@ export default function LensSelectionModal({
     }
   }
 
-  const handleLensSelect = (lensId: string, lensSku: string) => {
-    setState((prev) => ({ ...prev, lensId, sku: lensSku }))
+  const handleLensSelect = (lensId: string, lensSku: string, price: number) => {
+    setState((prev) => ({ ...prev, lensId, sku: lensSku, lensPrice: price }))
     setStep('PRESCRIPTION_OPTION')
   }
 
@@ -118,16 +122,19 @@ export default function LensSelectionModal({
             )}
           </div>
 
-          <div className="p-8 border-t border-mint-100 bg-[#F8F9FA]/50 flex justify-between items-center">
-            <button className="text-sm font-bold text-primary-500 hover:underline uppercase tracking-wider transition-all">
+          <div className="p-6 lg:p-8 border-t border-mint-100 bg-[#F8F9FA]/50 flex justify-between items-center group/footer">
+            <button className="text-[10px] lg:text-xs font-bold text-primary-500 hover:text-primary-600 underline decoration-primary-200 underline-offset-4 uppercase tracking-widest transition-all">
               Add insurance benefits
             </button>
+
             <div className="text-right">
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">
-                Frame Price
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+                Total Price
               </p>
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-bold text-mint-1200 tracking-tight">117.500đ</span>
+              <div className="flex items-baseline justify-end gap-1">
+                <span className="text-2xl lg:text-3xl font-black text-mint-1200 tracking-tighter">
+                  <VNDPrice amount={productPrice + (state.lensPrice || 0)} />
+                </span>
               </div>
             </div>
           </div>

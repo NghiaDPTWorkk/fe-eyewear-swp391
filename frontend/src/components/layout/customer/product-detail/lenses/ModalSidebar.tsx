@@ -15,7 +15,9 @@ export default function ModalSidebar({ productName, productImage, visionNeed }: 
   return (
     <div className="hidden lg:flex w-1/2 bg-[#F8F9FA] items-center justify-center p-12 relative border-r border-mint-100">
       <div className="absolute top-8 left-8">
-        <h2 className="text-xl font-bold text-mint-1200 tracking-tight uppercase">GLASSES.COM</h2>
+        <h2 className="text-xl font-bold text-mint-1200 tracking-tight uppercase">
+          eyewear-optic.shop
+        </h2>
       </div>
 
       <div className="flex flex-col items-center">

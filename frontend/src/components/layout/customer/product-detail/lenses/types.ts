@@ -7,6 +7,7 @@ export interface LensSelectionState {
   visionNeed: VisionNeed | null
   lensId: string | null
   sku: string | null
+  lensPrice: number | null
   prescription: PrescriptionData | null
   useSavedPrescription: boolean
 }

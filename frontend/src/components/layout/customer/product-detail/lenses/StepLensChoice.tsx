@@ -7,7 +7,7 @@ import { productService } from '@/shared/services/products/productService'
 import type { Product } from '@/shared/types/product.types'
 
 interface StepLensChoiceProps {
-  onSelect: (lensId: string, lensSku: string) => void
+  onSelect: (lensId: string, lensSku: string, price: number) => void
 }
 
 export default function StepLensChoice({ onSelect }: StepLensChoiceProps) {
@@ -57,14 +57,16 @@ export default function StepLensChoice({ onSelect }: StepLensChoiceProps) {
         // If only one variant, auto select
         const variant = fullProduct.variants?.[0]
         const finalSku = variant?.sku || fullProduct.sku || fullProduct.skuBase
-        onSelect(id, finalSku)
+        const finalPrice = variant?.finalPrice || fullProduct.defaultVariantFinalPrice || 0
+        onSelect(id, finalSku, finalPrice)
       }
     } catch (err) {
       console.error('Error fetching product variants:', err)
       // ec ec auto-select with whatever SKU we have if detail fetch fails
       const defaultVariant = lens.variants?.find((v: any) => v.isDefault) || lens.variants?.[0]
       const fallbackSku = defaultVariant?.sku || lens.sku || lens.skuBase || ''
-      onSelect(id, fallbackSku)
+      const fallbackPrice = lens.defaultVariantFinalPrice || defaultVariant?.finalPrice || 0
+      onSelect(id, fallbackSku, fallbackPrice)
     } finally {
       setSelectingId(null)
     }
@@ -106,7 +108,7 @@ export default function StepLensChoice({ onSelect }: StepLensChoiceProps) {
             return (
               <Card
                 key={variantSku || index}
-                onClick={() => onSelect(variantId, variantSku)}
+                onClick={() => onSelect(variantId, variantSku, price)}
                 className="group p-6 border-2 border-mint-100 rounded-2xl hover:border-primary-500 hover:bg-primary-50 transition-all text-left flex items-center justify-between cursor-pointer"
               >
                 <div className="flex items-center gap-6">

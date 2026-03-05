@@ -402,6 +402,7 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
         productName={product.nameBase}
         productImage={currentVariant?.imgs?.[1] || images[1] || ''}
         productType={product.type || 'frame'}
+        productPrice={finalPrice}
         productId={productId}
         sku={currentVariant?.sku || ''}
       />

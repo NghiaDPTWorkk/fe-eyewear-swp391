@@ -129,8 +129,14 @@ export default function StepLensChoice({ onSelect }: StepLensChoiceProps) {
                         variant.options?.map((opt: any) => opt.label).join(' - ') ||
                         `Option ${index + 1}`}
                     </h4>
-                    <p className="text-sm text-gray-eyewear mt-1">
-                      {variant.stock > 0 ? 'In stock' : 'Out of stock'}
+                    <p className="text-sm mt-1">
+                      {variant.mode === 'PRE_ORDER' ? (
+                        <span className="text-blue-600 font-semibold animate-pulse">Pre-order</span>
+                      ) : variant.stock > 0 ? (
+                        <span className="text-green-600 font-semibold">In stock</span>
+                      ) : (
+                        <span className="text-red-600 font-semibold">Out of stock</span>
+                      )}
                     </p>
                   </div>
                 </div>

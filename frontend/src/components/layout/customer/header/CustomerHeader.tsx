@@ -16,6 +16,7 @@ export default function CustomerHeader() {
   const items = useCartStore((state) => state.items)
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+  const fetchCart = useCartStore((state) => state.fetchCart)
   const [isBagAnimating, setIsBagAnimating] = useState(false)
 
   // đợi Component mount xong
@@ -24,7 +25,12 @@ export default function CustomerHeader() {
   useEffect(() => {
     // đã mount, chúng ta coi như đã nạp xong (vì localStorage là đồng bộ)
     setHasHydrated(true)
-  }, [])
+
+    // Fetch cart on mount if authenticated to persist badge across pages
+    if (isAuthenticated) {
+      fetchCart()
+    }
+  }, [isAuthenticated, fetchCart])
 
   // Animation effect for cart badge
   useEffect(() => {

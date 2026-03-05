@@ -167,6 +167,8 @@ export function OrderCard({
                 <span className="text-[10px] font-medium text-gray-300">Placed</span>
                 <span className="text-gray-500">{date}</span>
               </div>
+            </div>
+            <div className="flex flex-wrap items-center mt-4 gap-x-4 gap-y-2 text-xs font-semibold text-gray-400">
               <div className="w-1 h-1 bg-gray-200 rounded-full hidden sm:block" />
               <span className="uppercase tracking-wide">
                 {itemCount} {itemCount > 1 ? 'Items' : 'Item'}
@@ -185,17 +187,6 @@ export function OrderCard({
                   <span className="text-primary-600">Transit</span>
                   <span>Arrival</span>
                 </div>
-              </div>
-            )}
-            {(status === InvoiceStatus.ONBOARD ||
-              status === InvoiceStatus.APPROVED ||
-              status === InvoiceStatus.DEPOSITED) && (
-              <div className="flex items-center gap-2.5 text-primary-600 bg-primary-50/20 py-1.5 px-3 rounded-lg border border-primary-100/20 inline-flex">
-                <span className="text-[10px] font-bold uppercase tracking-wider">
-                  {status === InvoiceStatus.ONBOARD
-                    ? '✨ Expert Verification'
-                    : '📦 Preparing for Ship'}
-                </span>
               </div>
             )}
           </div>

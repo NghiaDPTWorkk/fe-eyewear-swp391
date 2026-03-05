@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Container } from '@/components'
+import { Container, OperationPagination } from '@/components'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 import { IoAirplaneOutline } from 'react-icons/io5'
 import { useNavigate, useSearchParams } from 'react-router-dom'
@@ -9,7 +9,7 @@ import { useOperationInvoices, useAllOperationInvoices } from '@/features/operat
 import type { OperationInvoiceListItem } from '@/shared/types'
 import { FilterButtonList } from '@/components/staff'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
-import OperationPagination from '@/pages/operations/OperationPagination'
+// import OperationPagination from '@/pages/operations/OperationPagination'
 
 const PAGE_LIMIT = 10
 

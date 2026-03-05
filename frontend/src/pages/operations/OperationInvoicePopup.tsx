@@ -163,7 +163,9 @@ export default function OperationInvoicePopup({
                 onClick={() => onNext(selectedInvoice.id)}
                 className="w-full py-4 bg-mint-600 hover:bg-mint-700 text-white rounded-xl font-bold text-base transition-all shadow-lg shadow-mint-200 hover:shadow-mint-300 flex items-center justify-center gap-3 active:scale-[0.98]"
               >
-                {selectedInvoice.status === 'COMPLETED' ? 'Proceed to Handover' : 'View Invoice Detail'}
+                {selectedInvoice.status === 'COMPLETED'
+                  ? 'Proceed to Handover'
+                  : 'View Invoice Detail'}
                 <IoChevronForward size={20} />
               </button>
             </div>

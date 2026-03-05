@@ -16,7 +16,7 @@ export const getOrderProgressStep = (
   if (invoiceStatus === 'DELIVERED') {
     return 5 // All steps completed
   }
-  
+
   if (invoiceStatus === 'DELIVERING') {
     return 4 // In Shipping stage
   }

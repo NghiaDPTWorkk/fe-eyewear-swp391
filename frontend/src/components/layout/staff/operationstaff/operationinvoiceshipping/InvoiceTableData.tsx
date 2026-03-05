@@ -21,7 +21,6 @@ const getStatusColor = (status: string) => {
 }
 
 export default function InvoiceTableData({ invoice, onView, onNext }: InvoiceTableDataProps) {
-
   return (
     <>
       {/* Invoice ID */}
@@ -35,8 +34,6 @@ export default function InvoiceTableData({ invoice, onView, onNext }: InvoiceTab
           {invoice.orders?.length ?? 0} orders
         </span>
       </td>
-
-
 
       {/* Status */}
       <td className="px-6 py-4 whitespace-nowrap text-center">

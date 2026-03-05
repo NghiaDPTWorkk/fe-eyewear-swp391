@@ -82,11 +82,7 @@ export const LoginForm = ({ role: _role }: LoginFormProps) => {
               onClick={() => setShowPassword(!showPassword)}
               className="text-gray-400 hover:text-gray-600 focus:outline-none"
             >
-              {showPassword ? (
-                <EyeOff className="h-5 w-5" />
-              ) : (
-                <Eye className="h-5 w-5" />
-              )}
+              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
             </button>
           }
         />

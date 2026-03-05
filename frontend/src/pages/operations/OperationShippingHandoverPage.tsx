@@ -4,7 +4,15 @@ import { Container } from '@/components'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 import { useOrdersDetails } from '@/features/staff/hooks/orders/useOrders'
 import { ProcessTracker } from '@/components/layout/staff/staff-core/processtracker'
-import { IoCarOutline, IoConstructOutline, IoCubeOutline, IoTimeOutline, IoAirplaneOutline, IoClose, IoPrintOutline } from 'react-icons/io5'
+import {
+  IoCarOutline,
+  IoConstructOutline,
+  IoCubeOutline,
+  IoTimeOutline,
+  IoAirplaneOutline,
+  IoClose,
+  IoPrintOutline
+} from 'react-icons/io5'
 import ScanInvoiceCode from '@/components/layout/staff/operationstaff/scaninvoicecode/ScanInvoiceCode'
 import {
   CheckOrderListFromInvoice,
@@ -185,12 +193,15 @@ export default function OperationShippingHandoverPage() {
             <div className="space-y-3">
               {orders.map((orderId: string) => {
                 const orderData = (
-                  orderDetailQueries.find((q: any) => q.data?.data?.order?._id === orderId)?.data as any
+                  orderDetailQueries.find((q: any) => q.data?.data?.order?._id === orderId)
+                    ?.data as any
                 )?.data?.order
                 return (
                   <OrderCheckItem
                     key={orderId}
-                    orderCode={orderData?.orderCode || (orderId ? orderId.slice(-8).toUpperCase() : 'N/A')}
+                    orderCode={
+                      orderData?.orderCode || (orderId ? orderId.slice(-8).toUpperCase() : 'N/A')
+                    }
                     orderId={orderId || ''}
                     status={orderData?.status || 'COMPLETED'}
                   />
@@ -215,7 +226,8 @@ export default function OperationShippingHandoverPage() {
                   <div className="h-6 w-24 bg-neutral-100 animate-pulse rounded" />
                 ) : (
                   <span className="text-xl font-bold font-mono text-neutral-900 border-b-2 border-mint-500 pb-0.5">
-                    {totalAmount.toLocaleString('vi-VN')} <span className="text-sm font-normal text-neutral-400">₫</span>
+                    {totalAmount.toLocaleString('vi-VN')}{' '}
+                    <span className="text-sm font-normal text-neutral-400">₫</span>
                   </span>
                 )}
               </div>

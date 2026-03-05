@@ -4,28 +4,28 @@ const products = [
   {
     id: '021231',
     name: 'Kanky Kitadakate (Green)',
-    price: '$20.00',
+    price: '20.00',
     sales: 3000,
     status: 'Success'
   },
   {
     id: '021231',
     name: 'Kanky Kitadakate (Green)',
-    price: '$20.00',
+    price: '20.00',
     sales: 2311,
     status: 'Success'
   },
   {
     id: '021231',
     name: 'Kanky Kitadakate (Green)',
-    price: '$20.00',
+    price: '20.00',
     sales: 2111,
     status: 'Success'
   },
   {
     id: '021231',
     name: 'Kanky Kitadakate (Green)',
-    price: '$20.00',
+    price: '20.00',
     sales: 1661,
     status: 'Success'
   }

@@ -1,5 +1,7 @@
 import type { Variant } from './variant.types'
-import type { ProductType, Gender } from './enums'
+import type { ProductType } from '@/shared/utils/enums/product.enum'
+import type { Gender } from '@/shared/utils/enums/gender.enum'
+export type { ProductType, Gender }
 
 /**
  * Product spec types matching backend structure
@@ -35,6 +37,7 @@ export interface StandardProduct {
   createdAt?: string
   updatedAt?: Date
   deletedAt?: Date | null
+  isDefault?: boolean
   // Optional fields for detail views
   variants?: Variant[]
   spec?: FrameSpec | LenSpec | null

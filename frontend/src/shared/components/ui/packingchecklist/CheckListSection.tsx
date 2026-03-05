@@ -6,7 +6,11 @@ interface CheckListSectionProps {
   allChecked?: boolean
 }
 
-export default function CheckListSection({ children, onCheckAll, allChecked = false }: CheckListSectionProps) {
+export default function CheckListSection({
+  children,
+  onCheckAll,
+  allChecked = false
+}: CheckListSectionProps) {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-neutral-100 p-6">
       <div className="flex items-center justify-between mb-6">

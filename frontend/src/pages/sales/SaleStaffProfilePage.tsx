@@ -1,164 +1,187 @@
 import { useProfile } from '@/features/staff/hooks/useProfile'
-import { getInitials } from '@/shared/utils'
-import { Card, Button } from '@/shared/components'
-import { Link, useNavigate } from 'react-router-dom'
-import { IoChevronForward, IoPencil } from 'react-icons/io5'
+import { PageHeader } from '@/features/staff/components/common'
+import { Card, Button, Container } from '@/shared/components/ui-core'
+import { useNavigate } from 'react-router-dom'
+import {
+  IoMailOutline,
+  IoCallOutline,
+  IoIdCardOutline,
+  IoTimeOutline,
+  IoCalendarOutline,
+  IoCameraOutline,
+  IoShieldCheckmarkOutline
+} from 'react-icons/io5'
 
 export default function SaleStaffProfilePage() {
-  const { data: profileData, isLoading, isError } = useProfile()
   const navigate = useNavigate()
+  const { data: profileData, isLoading } = useProfile()
+  const profile = profileData?.data
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-mint-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-neutral-500 font-medium">Loading profile...</p>
-        </div>
+      <div className="flex h-96 items-center justify-center">
+        <div className="w-12 h-12 border-4 border-mint-500/20 border-t-mint-500 rounded-full animate-spin" />
       </div>
     )
   }
-
-  if (isError || !profileData?.data) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg
-              className="w-8 h-8 text-red-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-          </div>
-          <p className="text-red-600 font-semibold mb-2">Failed to load profile</p>
-          <p className="text-neutral-500 text-sm">Please try again later</p>
-        </div>
-      </div>
-    )
-  }
-
-  const profile = profileData.data
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm mb-6 px-1">
-        <Link
-          to="/salestaff/dashboard"
-          className="text-neutral-500 hover:text-neutral-700 transition-colors font-medium"
-        >
-          Dashboard
-        </Link>
-        <IoChevronForward className="text-neutral-400" />
-        <span className="text-mint-600 font-semibold">My Profile</span>
-      </div>
+    <Container maxWidth="1400px" className="space-y-8 animate-in fade-in duration-500">
+      <PageHeader
+        title="My Profile"
+        subtitle="View and manage your personal professional information"
+        breadcrumbs={[{ label: 'Dashboard', path: '/salestaff/dashboard' }, { label: 'Profile' }]}
+      />
 
-      <Card className="overflow-hidden">
-        {/* Header with Avatar & Edit Button */}
-        <div className="bg-gradient-to-r from-mint-500 to-mint-600 p-8">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div className="flex items-center gap-6">
-              <div className="relative">
-                {/* Always show fallback initials */}
-                <div className="w-24 h-24 rounded-full border-4 border-white shadow-lg bg-white flex items-center justify-center">
-                  <span className="text-3xl font-bold text-mint-600">
-                    {getInitials(profile.name)}
-                  </span>
-                </div>
-              </div>
-              <div className="flex-1">
-                <h2 className="text-2xl font-bold text-white mb-1">{profile.name}</h2>
-                <p className="text-mint-100 text-sm font-medium">{profile.email}</p>
-                <div className="mt-3">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white/20 text-white backdrop-blur-sm">
-                    {profile.role.replace('_', ' ')}
-                  </span>
-                </div>
-              </div>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-12 items-stretch">
+        {/* Profile Card */}
+        <Card className="lg:col-span-4 p-8 border-none shadow-xl shadow-slate-200/40 bg-white rounded-[32px] flex flex-col items-center relative overflow-hidden group h-full">
+          <div className="absolute top-0 left-0 w-full h-32 bg-mint-50/50 -z-0" />
+
+          <div className="relative mt-8 mb-6">
+            <div className="w-32 h-32 rounded-[40px] border-4 border-white shadow-2xl overflow-hidden bg-mint-100 flex items-center justify-center text-4xl font-semibold text-mint-600 relative z-10 transition-transform duration-500 group-hover:scale-105">
+              {profile?.avatar ? (
+                <img
+                  src={profile.avatar}
+                  alt={profile.name}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement
+                    target.style.display = 'none'
+                  }}
+                />
+              ) : null}
+              <span className="absolute inset-0 flex items-center justify-center opacity-80 tracking-tighter -z-10">
+                {profile?.name
+                  ?.split(' ')
+                  .filter(Boolean)
+                  .map((n) => n[0])
+                  .join('')
+                  .toUpperCase()
+                  .slice(0, 2)}
+              </span>
             </div>
-
-            <Button
-              onClick={() => navigate('/salestaff/settings')}
-              className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white border border-white/20 px-5 py-2.5 rounded-xl font-medium transition-all backdrop-blur-sm"
-            >
-              <IoPencil className="text-lg" />
-              Edit Profile
-            </Button>
+            <button className="absolute bottom-0 right-0 w-10 h-10 bg-white rounded-2xl shadow-lg border border-slate-100 flex items-center justify-center text-slate-500 hover:text-mint-600 transition-all z-20 hover:scale-110 active:scale-90">
+              <IoCameraOutline size={20} />
+            </button>
           </div>
-        </div>
 
-        {/* Profile Details */}
-        <div className="p-8">
-          <h3 className="text-lg font-semibold text-neutral-900 mb-6 select-none">
-            Account Information
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-neutral-500 mb-2 select-none">
-                Full Name
-              </label>
-              <div className="px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 cursor-default">
-                <p className="text-neutral-900 font-medium select-none">{profile.name}</p>
+          <div className="text-center relative z-10 space-y-2">
+            <h2 className="text-2xl font-semibold text-slate-900 tracking-tight">
+              {profile?.name}
+            </h2>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-mint-50 text-mint-600 rounded-full text-[10px] font-semibold uppercase tracking-widest border border-mint-100 shadow-sm">
+              <IoShieldCheckmarkOutline size={14} />
+              {profile?.role?.replace('_', ' ')}
+            </div>
+          </div>
+
+          <div className="w-full mt-10 pt-10 border-t border-slate-50 space-y-6">
+            <div className="flex items-center gap-4 group/item">
+              <div className="w-10 h-10 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover/item:bg-mint-50 group-hover/item:text-mint-600 transition-all border border-slate-50">
+                <IoMailOutline size={20} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-0.5">
+                  Email Address
+                </p>
+                <p className="text-sm font-semibold text-slate-700 truncate">{profile?.email}</p>
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-neutral-500 mb-2 select-none">
-                Email Address
-              </label>
-              <div className="px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 cursor-default">
-                <p className="text-neutral-900 font-medium select-none">{profile.email}</p>
+            <div className="flex items-center gap-4 group/item">
+              <div className="w-10 h-10 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover/item:bg-mint-50 group-hover/item:text-mint-600 transition-all border border-slate-50">
+                <IoCallOutline size={20} />
+              </div>
+              <div>
+                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-0.5">
+                  Phone Number
+                </p>
+                <p className="text-sm font-semibold text-slate-700">{profile?.phone}</p>
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-neutral-500 mb-2 select-none">
-                Phone Number
-              </label>
-              <div className="px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 cursor-default">
-                <p className="text-neutral-900 font-medium select-none">{profile.phone}</p>
+            <div className="flex items-center gap-4 group/item">
+              <div className="w-10 h-10 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover/item:bg-mint-50 group-hover/item:text-mint-600 transition-all border border-slate-50">
+                <IoIdCardOutline size={20} />
               </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-neutral-500 mb-2 select-none">
-                Citizen ID
-              </label>
-              <div className="px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 cursor-default">
-                <p className="text-neutral-900 font-medium select-none">{profile.citizenId}</p>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-neutral-500 mb-2 select-none">
-                Role
-              </label>
-              <div className="px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 cursor-default">
-                <p className="text-neutral-900 font-medium select-none">
-                  {profile.role.replace('_', ' ')}
+              <div>
+                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-0.5">
+                  Citizen ID
+                </p>
+                <p className="text-sm font-semibold text-slate-700 font-mono tracking-tighter">
+                  {profile?.citizenId}
                 </p>
               </div>
             </div>
+          </div>
+        </Card>
 
-            <div>
-              <label className="block text-sm font-medium text-neutral-500 mb-2 select-none">
-                Account Created
-              </label>
-              <div className="px-4 py-3 bg-neutral-50 rounded-lg border border-neutral-200 cursor-default">
-                <p className="text-neutral-900 font-medium select-none">{profile.createdAt}</p>
+        {/* Detailed Info */}
+        <div className="lg:col-span-8 flex flex-col gap-8">
+          <Card className="p-10 border-none shadow-xl shadow-slate-200/40 bg-white rounded-[32px] flex-1">
+            <h3 className="text-lg font-semibold text-slate-900 tracking-tight mb-8">
+              System Activity
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 px-2 py-4">
+              <div className="flex items-start gap-5">
+                <div className="w-14 h-14 rounded-[20px] bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 shadow-sm">
+                  <IoCalendarOutline size={28} />
+                </div>
+                <div>
+                  <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.15em] mb-1.5">
+                    Account Created
+                  </p>
+                  <p className="text-lg font-semibold text-slate-800">{profile?.createdAt}</p>
+                  <p className="text-xs text-slate-400 font-medium mt-1">
+                    First registered in system
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-5">
+                <div className="w-14 h-14 rounded-[20px] bg-mint-50/50 flex items-center justify-center text-mint-600 border border-mint-100 shadow-sm">
+                  <IoTimeOutline size={28} />
+                </div>
+                <div>
+                  <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.15em] mb-1.5">
+                    Last System Access
+                  </p>
+                  <p className="text-lg font-semibold text-slate-800">{profile?.lastLogin}</p>
+                  <p className="text-xs text-mint-600 font-medium mt-1">Verified secure session</p>
+                </div>
               </div>
             </div>
-          </div>
+          </Card>
+
+          <Card className="p-10 border-none shadow-xl shadow-slate-200/40 bg-white rounded-[32px] overflow-hidden relative flex-1 flex flex-col">
+            <div className="absolute right-0 top-0 w-64 h-64 bg-slate-50 -mr-32 -mt-32 rounded-full opacity-50" />
+            <h3 className="text-lg font-semibold text-slate-900 tracking-tight mb-4 relative z-10">
+              Professional Summary
+            </h3>
+            <p className="text-slate-500 leading-relaxed max-w-2xl relative z-10 font-normal flex-1">
+              Internal staff profile for the Eyewear Management System. This information is used for
+              internal tracking, task assignment, and system auditing purposes. Some fields can only
+              be modified by the System Administrator or Branch Manager.
+            </p>
+            <div className="mt-8 flex gap-4 relative z-10">
+              <Button
+                variant="outline"
+                className="px-8 h-12 rounded-2xl text-xs font-semibold uppercase tracking-widest border-slate-200 text-slate-500 hover:bg-slate-50"
+              >
+                Download Resume
+              </Button>
+              <Button
+                onClick={() => navigate('/salestaff/settings')}
+                className="px-8 h-12 rounded-2xl text-xs font-semibold uppercase tracking-widest bg-mint-600 hover:bg-mint-700 text-white shadow-lg shadow-mint-100 active:scale-95 transition-all"
+              >
+                Edit Professional Info
+              </Button>
+            </div>
+          </Card>
         </div>
-      </Card>
-    </div>
+      </div>
+    </Container>
   )
 }

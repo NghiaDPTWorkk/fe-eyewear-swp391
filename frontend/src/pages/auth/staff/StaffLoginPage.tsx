@@ -1,4 +1,4 @@
-import { LoginForm } from '@/components/layout/login-form/LoginForm'
+import { LoginForm } from '@/components/layout/login-form'
 
 export const StaffLoginPage = () => {
   return (

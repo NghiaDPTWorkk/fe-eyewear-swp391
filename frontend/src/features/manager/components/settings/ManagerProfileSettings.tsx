@@ -330,6 +330,7 @@ export default function ManagerProfileSettings() {
                     <CheckCircle2
                       size={20}
                       className="group-hover:rotate-12 transition-transform"
+                      stroke="#1a6d53"
                     />
                   )}
                   Save Profile Changes

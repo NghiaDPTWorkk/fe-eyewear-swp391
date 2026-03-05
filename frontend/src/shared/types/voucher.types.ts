@@ -1,8 +1,9 @@
-import type { VoucherStatus, VoucherDiscountType, VoucherApplyScope } from './enums'
-
-/**
- * Voucher types matching backend structure
- */
+import type {
+  VoucherStatus,
+  VoucherDiscountType,
+  VoucherApplyScope
+} from '@/shared/utils/enums/voucher.enum'
+export type { VoucherStatus, VoucherDiscountType, VoucherApplyScope }
 
 export interface Voucher {
   _id: string
@@ -13,56 +14,22 @@ export interface Voucher {
   value: number
   usageLimit: number
   usageCount: number
-  startedDate: Date
-  endedDate: Date
+  startedDate: string
+  endedDate: string
   minOrderValue: number
   maxDiscountValue: number
   applyScope: VoucherApplyScope
   status: VoucherStatus
-  createdAt: Date
-  updatedAt: Date
-  deletedAt?: Date | null
+  deletedAt: string | null
+  createdAt: string
+  updatedAt: string
+  __v: number
 }
 
-export interface CreateVoucherRequest {
-  name: string
-  description: string
-  code: string
-  typeDiscount: VoucherDiscountType
-  value: number
-  usageLimit: number
-  startedDate: Date
-  endedDate: Date
-  minOrderValue?: number
-  maxDiscountValue: number
-  applyScope: VoucherApplyScope
-  status?: VoucherStatus
-}
-
-export interface UpdateVoucherRequest {
-  name?: string
-  description?: string
-  typeDiscount?: VoucherDiscountType
-  value?: number
-  usageLimit?: number
-  startedDate?: Date
-  endedDate?: Date
-  minOrderValue?: number
-  maxDiscountValue?: number
-  applyScope?: VoucherApplyScope
-  status?: VoucherStatus
-}
-
-export interface VoucherResponse {
-  voucher: Voucher
-}
-
-export interface VoucherListResponse {
-  items: Voucher[]
-  pagination: {
-    page: number
-    limit: number
-    total: number
-    totalPages: number
+export interface GetMyVouchersResponse {
+  success: boolean
+  message: string
+  data: {
+    vouchers: Voucher[]
   }
 }

@@ -7,7 +7,7 @@ import { IoLocation } from 'react-icons/io5'
 export default function LiveMapMapBackground() {
   return (
     <div className="absolute inset-0 z-0">
-      <div className="w-full h-full bg-[#cad2d3] relative opacity-60">
+      <div className="w-full h-full bg-[#eef5f6] relative opacity-60">
         {/* Mock Map Texture/Grid */}
         <div
           className="absolute inset-0"
@@ -22,14 +22,13 @@ export default function LiveMapMapBackground() {
           <path
             d="M 200,500 Q 400,300 800,200 T 1200,300"
             fill="none"
-            stroke="#10b981"
             strokeWidth="4"
             strokeDasharray="10,5"
-            className="drop-shadow-lg"
+            className="drop-shadow-lg stroke-mint-500"
           />
           <g style={{ transform: 'translate(750px, 210px)' }}>
-            <circle r="12" fill="#10b981" className="animate-ping opacity-75" />
-            <circle r="6" fill="white" stroke="#10b981" strokeWidth="2" />
+            <circle r="12" className="animate-ping opacity-75 fill-mint-500" />
+            <circle r="6" fill="white" strokeWidth="2" className="stroke-mint-500" />
           </g>
         </svg>
 
@@ -42,10 +41,10 @@ export default function LiveMapMapBackground() {
         </div>
 
         <div className="absolute left-[1200px] top-[300px] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
-          <div className="w-8 h-8 rounded-full bg-emerald-600 border-4 border-white shadow-xl flex items-center justify-center text-white">
+          <div className="w-8 h-8 rounded-full bg-mint-600 border-4 border-white shadow-xl flex items-center justify-center text-white">
             <IoLocation />
           </div>
-          <span className="mt-2 text-xs font-bold text-emerald-800 bg-white/90 px-3 py-1 rounded-full shadow-md">
+          <span className="mt-2 text-xs font-bold text-mint-800 bg-white/90 px-3 py-1 rounded-full shadow-md">
             Ho Chi Minh City
           </span>
         </div>

@@ -6,7 +6,7 @@ import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcr
 import { useOrderCountStore } from '@/store'
 import type { Order } from '@/features/staff/components/OrderTable/OrderTable'
 import { OrderType } from '@/shared/utils/enums/order.enum'
-import OperationPagination from '@/pages/operations/OperationPagination'
+import { OperationPagination } from '@/shared/components/ui/pagination'
 
 const PAGE_LIMIT = 10
 

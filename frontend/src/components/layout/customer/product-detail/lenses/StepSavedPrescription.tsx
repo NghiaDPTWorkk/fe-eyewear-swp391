@@ -1,68 +1,33 @@
 import { useState, useEffect } from 'react'
-import type { PrescriptionData } from './types'
-import { useAuthStore } from '@/store'
-import { httpClient } from '@/api/apiClients'
-import { ENDPOINTS } from '@/api/endpoints'
-import { Card } from '@/shared/components/ui-core'
-import { Calendar, Eye, Trash2, Loader2, FileText } from 'lucide-react'
+import type { Prescription } from '@/shared/types/prescription.types'
+import { prescriptionService } from '@/features/customer/services/prescription.service'
+import { Card } from '@/shared/components/ui/card'
+import { Calendar, Eye, Loader2, FileText } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 
 interface StepSavedPrescriptionProps {
-  onSelect: (rx: PrescriptionData) => void
-}
-
-interface SavedPrescription {
-  id: string
-  name: string
-  date: string
-  prescription: PrescriptionData
+  onSelect: (rx: Prescription) => void
 }
 
 export default function StepSavedPrescription({ onSelect }: StepSavedPrescriptionProps) {
-  const [prescriptions, setPrescriptions] = useState<SavedPrescription[]>([])
+  const [prescriptions, setPrescriptions] = useState<Prescription[]>([])
   const [loading, setLoading] = useState(true)
-  const { isAuthenticated } = useAuthStore()
 
   useEffect(() => {
     const fetchPrescriptions = async () => {
       try {
-        // For now, use mock data if API fails or for demonstration
-        const mockData = [
-          {
-            id: 'rx-1',
-            name: 'My Daily Rx',
-            date: '2024-01-15',
-            prescription: {
-              right: { SPH: '-2.50', CYL: '-0.75', AXIS: '180' },
-              left: { SPH: '-2.25', CYL: '-0.50', AXIS: '175' },
-              PD: '64'
-            }
-          }
-        ]
-
-        try {
-          if (isAuthenticated) {
-            const response = (await httpClient.get(ENDPOINTS.PRESCRIPTION.GET_SAVED)) as {
-              data: SavedPrescription[]
-            }
-            if (response.data && response.data.length > 0) {
-              setPrescriptions(response.data)
-            } else {
-              setPrescriptions(mockData)
-            }
-          } else {
-            setPrescriptions(mockData)
-          }
-        } catch {
-          setPrescriptions(mockData)
-        }
+        const data = await prescriptionService.getPrescriptions()
+        setPrescriptions(data)
+      } catch (error) {
+        console.error('Failed to fetch prescriptions:', error)
+        toast.error('Failed to load saved prescriptions')
       } finally {
         setLoading(false)
       }
     }
 
     fetchPrescriptions()
-  }, [isAuthenticated])
+  }, [])
 
   if (loading) {
     return (
@@ -90,8 +55,8 @@ export default function StepSavedPrescription({ onSelect }: StepSavedPrescriptio
         <div className="space-y-4">
           {prescriptions.map((rx) => (
             <Card
-              key={rx.id}
-              onClick={() => onSelect(rx.prescription)}
+              key={rx._id}
+              onClick={() => onSelect(rx)}
               className="p-6 border-2 border-mint-100 hover:border-primary-500 hover:bg-primary-50 transition-all cursor-pointer group rounded-2xl"
             >
               <div className="flex justify-between items-start">
@@ -101,27 +66,22 @@ export default function StepSavedPrescription({ onSelect }: StepSavedPrescriptio
                   </div>
                   <div>
                     <h4 className="font-bold text-mint-1200 text-lg uppercase tracking-tight">
-                      {rx.name}
+                      {rx.isDefault ? 'Primary Prescription' : 'Saved Prescription'}
                     </h4>
                     <div className="flex items-center gap-2 text-gray-400 mt-1">
                       <Calendar className="w-3.5 h-3.5" />
-                      <span className="text-xs font-medium">Added on {rx.date}</span>
+                      <span className="text-xs font-medium">
+                        ID: {rx._id?.slice(-8).toUpperCase()}
+                      </span>
                     </div>
                   </div>
                 </div>
                 <div className="flex flex-col items-end gap-3">
-                  <span className="px-2 py-1 bg-mint-100 text-mint-700 rounded text-[10px] font-bold uppercase tracking-wider">
-                    Active
-                  </span>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      toast.success('Feature coming soon!')
-                    }}
-                    className="text-gray-400 hover:text-red-500 transition-colors"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  {rx.isDefault && (
+                    <span className="px-2 py-1 bg-primary-100 text-primary-700 rounded text-[10px] font-bold uppercase tracking-wider">
+                      Primary
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -131,7 +91,7 @@ export default function StepSavedPrescription({ onSelect }: StepSavedPrescriptio
                     Right (OD)
                   </p>
                   <p className="text-xs font-bold text-mint-1200">
-                    SPH: {rx.prescription.right.SPH} | CYL: {rx.prescription.right.CYL}
+                    SPH: {rx.right.SPH} | CYL: {rx.right.CYL} | AXIS: {rx.right.AXIS}
                   </p>
                 </div>
                 <div>
@@ -139,18 +99,21 @@ export default function StepSavedPrescription({ onSelect }: StepSavedPrescriptio
                     Left (OS)
                   </p>
                   <p className="text-xs font-bold text-mint-1200">
-                    SPH: {rx.prescription.left.SPH} | CYL: {rx.prescription.left.CYL}
+                    SPH: {rx.left.SPH} | CYL: {rx.left.CYL} | AXIS: {rx.left.AXIS}
                   </p>
                 </div>
               </div>
             </Card>
           ))}
 
-          <button className="w-full py-6 border-2 border-dashed border-mint-200 rounded-2xl text-gray-400 font-bold hover:border-primary-300 hover:text-primary-500 transition-all flex items-center justify-center gap-2 group">
+          <button
+            onClick={() => toast('Please go to Account Settings to manage prescriptions')}
+            className="w-full py-6 border-2 border-dashed border-mint-200 rounded-2xl text-gray-400 font-bold hover:border-primary-300 hover:text-primary-500 transition-all flex items-center justify-center gap-2 group"
+          >
             <div className="w-8 h-8 rounded-full border-2 border-current flex items-center justify-center group-hover:scale-110 transition-transform">
               +
             </div>
-            ADD NEW PRESCRIPTION
+            MANAGE PRESCRIPTIONS
           </button>
         </div>
       )}

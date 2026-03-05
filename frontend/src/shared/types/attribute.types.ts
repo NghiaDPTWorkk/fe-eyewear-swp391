@@ -1,4 +1,4 @@
-import type { AttributeShowType } from './enums'
+import type { AttributeShowType } from '@/shared/utils/enums/attribute.enum'
 
 /**
  * Attribute types matching backend structure

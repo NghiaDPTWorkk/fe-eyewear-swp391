@@ -6,7 +6,7 @@ import { Container, Checkbox } from '@/shared/components/ui'
 import { EmptyCart, CartItem, CartSummary, PromoSection } from '@/components/layout/customer/cart'
 
 export const CartPage = () => {
-  const { items, isLoading, fetchError, toggleAllSelection } = useCart()
+  const { items, isLoading, fetchError, toggleAllSelection, isUpdating } = useCart()
 
   const selectedItems = items.filter((item) => item.selected)
   const allSelected = items.length > 0 && items.every((item) => item.selected)
@@ -39,7 +39,7 @@ export const CartPage = () => {
                 </button>
               </div>
             </div>
-          ) : items.length === 0 ? (
+          ) : items.length === 0 && !isUpdating ? (
             <EmptyCart />
           ) : (
             <>

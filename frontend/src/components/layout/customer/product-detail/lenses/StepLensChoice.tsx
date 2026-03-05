@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Glasses, Loader2, AlertCircle } from 'lucide-react'
+import { Glasses, Loader2, AlertCircle, ArrowLeft, Check } from 'lucide-react'
 import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 import { Card, Button } from '@/shared/components/ui-core'
 import { useGetProductWithType } from '@/shared/hooks/products/useGetProductWithType'
@@ -7,12 +7,14 @@ import { productService } from '@/shared/services/products/productService'
 import type { Product } from '@/shared/types/product.types'
 
 interface StepLensChoiceProps {
-  onSelect: (lensId: string, lensSku: string) => void
+  onSelect: (lensId: string, lensSku: string, price: number) => void
 }
 
 export default function StepLensChoice({ onSelect }: StepLensChoiceProps) {
   const { products, loading, error } = useGetProductWithType(1, 10, 'lens')
   const [selectingId, setSelectingId] = useState<string | null>(null)
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+  const [activeLensId, setActiveLensId] = useState<string | null>(null)
 
   if (loading) {
     return (
@@ -42,6 +44,120 @@ export default function StepLensChoice({ onSelect }: StepLensChoiceProps) {
     )
   }
 
+  const handleProductSelect = async (lens: Product) => {
+    const id = lens._id || lens.id || lens.skuBase
+    if (!id || selectingId) return
+
+    setSelectingId(id)
+    setActiveLensId(id)
+    try {
+      const response = await productService.getProductDetail(id)
+      const fullProduct = response.data.product
+      if (fullProduct.variants && fullProduct.variants.length > 1) {
+        setSelectedProduct(fullProduct)
+      } else {
+        const variant = fullProduct.variants?.[0]
+        const finalSku = variant?.sku || fullProduct.sku || fullProduct.skuBase || ''
+        const finalPrice = variant?.finalPrice || fullProduct.defaultVariantFinalPrice || 0
+        onSelect(id, finalSku, finalPrice)
+      }
+    } catch (err) {
+      console.error('Error fetching product variants:', err)
+      const defaultVariant = lens.variants?.find((v: any) => v.isDefault) || lens.variants?.[0]
+      const fallbackSku = defaultVariant?.sku || lens.sku || lens.skuBase || ''
+      const fallbackPrice = lens.defaultVariantFinalPrice || defaultVariant?.finalPrice || 0
+      onSelect(id, fallbackSku, fallbackPrice)
+    } finally {
+      setSelectingId(null)
+    }
+  }
+
+  if (selectedProduct) {
+    return (
+      <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+        <button
+          onClick={() => setSelectedProduct(null)}
+          className="flex items-center gap-2 text-primary-500 font-bold mb-6 hover:text-primary-600 transition-colors group"
+        >
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+          Back to lenses
+        </button>
+
+        <div className="mb-8">
+          <h2 className="text-3xl font-heading font-bold text-mint-1200 mb-2">
+            Select your {selectedProduct.nameBase}
+          </h2>
+          <p className="text-gray-eyewear"> Choose the specific options that fit your needs.</p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4">
+          {selectedProduct.variants?.map((variant: any, index: number) => {
+            const variantId = selectedProduct._id || selectedProduct.id
+            const variantSku = variant.sku
+            const price = variant.finalPrice
+            const originalPrice = variant.price
+
+            // Pick image: 2nd image if exists, otherwise 1st, otherwise null
+            const variantImage =
+              variant.imgs?.length >= 2
+                ? variant.imgs[1]
+                : variant.imgs?.length === 1
+                  ? variant.imgs[0]
+                  : null
+
+            return (
+              <Card
+                key={variantSku || index}
+                onClick={() => onSelect(activeLensId || variantId, variantSku, price)}
+                className="group p-6 border-2 border-mint-100 rounded-2xl hover:border-primary-500 hover:bg-primary-50 transition-all text-left flex items-center justify-between cursor-pointer"
+              >
+                <div className="flex items-center gap-6">
+                  <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center shrink-0 overflow-hidden">
+                    {variantImage ? (
+                      <img
+                        src={variantImage}
+                        alt={variant.name}
+                        className="w-full h-full object-cover mix-blend-multiply"
+                      />
+                    ) : (
+                      <Check className="w-6 h-6 text-primary-500" />
+                    )}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-mint-1200 text-lg uppercase tracking-tight">
+                      {variant.name ||
+                        variant.options?.map((opt: any) => opt.label).join(' - ') ||
+                        `Option ${index + 1}`}
+                    </h4>
+                    <p className="text-sm mt-1">
+                      {variant.mode === 'PRE_ORDER' ? (
+                        <span className="text-blue-600 font-semibold animate-pulse">Pre-order</span>
+                      ) : variant.stock > 0 ? (
+                        <span className="text-green-600 font-semibold">In stock</span>
+                      ) : (
+                        <span className="text-red-600 font-semibold">Out of stock</span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="font-bold text-primary-600 block text-lg">
+                    {price === 0 ? 'MIỄN PHÍ' : <VNDPrice amount={price} />}
+                  </span>
+                  {price < originalPrice && (
+                    <span className="text-xs text-gray-400 line-through">
+                      <VNDPrice amount={originalPrice} />
+                    </span>
+                  )}
+                </div>
+              </Card>
+            )
+          })}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="animate-in fade-in slide-in-from-right-4 duration-500">
       <h2 className="text-3xl font-heading font-bold text-mint-1200 mb-2">Choose your lenses</h2>
@@ -56,37 +172,16 @@ export default function StepLensChoice({ onSelect }: StepLensChoiceProps) {
           </div>
         ) : (
           products.map((lens: Product) => {
-            const productAny = lens as any
+            const id = lens._id || lens.id || lens.skuBase
             const defaultVariant =
               lens.variants?.find((v: any) => v.isDefault) || lens.variants?.[0]
-
-            const id = lens._id || lens.id || lens.skuBase
-
-            const lensSku = defaultVariant?.sku || productAny.sku || lens.skuBase || ''
             const price = lens.defaultVariantFinalPrice || defaultVariant?.finalPrice || 0
             const originalPrice = lens.defaultVariantPrice || defaultVariant?.price || 0
 
             return (
               <Card
                 key={id}
-                onClick={async () => {
-                  if (selectingId) return
-                  setSelectingId(id)
-                  try {
-                    // Always fetch detail to ensure we have the correct variant SKU
-                    const response = await productService.getProductDetail(id)
-                    const fullLens = response.data.product
-                    const variant =
-                      fullLens.variants?.find((v: any) => v.isDefault) || fullLens.variants?.[0]
-                    const finalSku = variant?.sku || fullLens.sku || fullLens.skuBase
-                    onSelect(id, finalSku)
-                  } catch (err) {
-                    console.error('error neeee: ', err)
-                    onSelect(id, lensSku) // Fallback to current best guess
-                  } finally {
-                    setSelectingId(null)
-                  }
-                }}
+                onClick={() => handleProductSelect(lens)}
                 className={`group p-6 border-2 rounded-2xl transition-all text-left flex items-center gap-6 cursor-pointer ${
                   selectingId === id
                     ? 'border-primary-500 bg-primary-50 animate-pulse'

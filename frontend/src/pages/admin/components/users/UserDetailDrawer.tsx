@@ -22,9 +22,9 @@ const getStatus = (user: Customer): 'Active' | 'Inactive' | 'Banned' => {
   return 'Active'
 }
 
-const safeFormatDate = (input?: string | null) => {
+const safeFormatDate = (input?: Date | string | null) => {
   if (!input) return 'N/A'
-  const date = new Date(input)
+  const date = input instanceof Date ? input : new Date(input)
   if (Number.isNaN(date.getTime())) return 'N/A'
   return format(date, 'MMM dd, yyyy')
 }
@@ -84,12 +84,7 @@ export const UserDetailDrawer: React.FC<UserDetailDrawerProps> = ({ isOpen, onCl
               </div>
               <div className="flex items-center gap-3 text-sm text-neutral-600">
                 <IoCalendarOutline className="text-neutral-400 shrink-0" />
-                <span className="font-medium">
-                  Joined{' '}
-                  {user.createdAt && !Number.isNaN(new Date(user.createdAt).getTime())
-                    ? format(new Date(user.createdAt), 'MMM dd, yyyy')
-                    : 'N/A'}
-                </span>
+                <span className="font-medium">Joined {safeFormatDate(user.createdAt)}</span>
               </div>
             </div>
           </div>

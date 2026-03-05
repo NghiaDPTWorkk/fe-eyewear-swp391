@@ -10,9 +10,11 @@ const inputClassName =
 
 export function VariantsEditor(props: {
   variants: ProductCreateFormState['variants']
+  optionsConfig: ProductCreateFormState['optionsConfig']
+  nameBase: string
   onChange: (variants: ProductCreateFormState['variants']) => void
 }) {
-  const { variants, onChange } = props
+  const { variants, optionsConfig, nameBase, onChange } = props
   const { data: attributeList = [] } = useAttributes()
 
   const attributeOptions = attributeList.map((attr: any) => ({
@@ -36,6 +38,68 @@ export function VariantsEditor(props: {
         options: []
       }
     ])
+  }
+
+  const generateVariants = () => {
+    if (!optionsConfig.length) return
+
+    // Recursive function to get cartesian product
+    const getCombinations = (configs: ProductCreateFormState['optionsConfig']) => {
+      const results: any[][] = [[]]
+      for (const config of configs) {
+        const nextResults: any[][] = []
+        for (const res of results) {
+          for (const value of config.values) {
+            nextResults.push([
+              ...res,
+              {
+                ...value,
+                attributeId: config.attributeId,
+                attributeName: config.attributeName,
+                showType: config.showType
+              }
+            ])
+          }
+        }
+        results.length = 0
+        results.push(...nextResults)
+      }
+      return results
+    }
+
+    const combinations = getCombinations(optionsConfig)
+
+    const newVariants = combinations.map((combo) => {
+      const variantName = nameBase
+        ? `${nameBase} - ${combo.map((c) => c.label).join(' - ')}`
+        : combo.map((c) => c.label).join(' - ')
+
+      return {
+        sku: '',
+        name: variantName,
+        slug: '',
+        priceText: '',
+        finalPriceText: '',
+        stockText: '',
+        imgs: [],
+        isDefault: false,
+        options: combo.map((c) => ({
+          attributeId: c.attributeId,
+          attributeName: c.attributeName,
+          label: c.label,
+          showType: c.showType,
+          value: c.value
+        }))
+      }
+    })
+
+    if (variants.length > 0 && variants[0].options.length === 0 && !variants[0].name) {
+      // If we only have the initial empty variant, replace it
+      onChange(newVariants.map((v, i) => (i === 0 ? { ...v, isDefault: true } : v)))
+    } else {
+      // Append new variants
+      onChange([...variants, ...newVariants])
+    }
   }
 
   const removeVariant = (idx: number) => {
@@ -91,14 +155,25 @@ export function VariantsEditor(props: {
             Product Variants
           </h3>
         </div>
-        <button
-          type="button"
-          onClick={addVariant}
-          className="flex items-center gap-2 text-xs font-bold text-white bg-mint-600 hover:bg-mint-700 px-4 py-2.5 rounded-2xl transition-all active:scale-95 shadow-lg shadow-mint-100/50"
-        >
-          <IoAddOutline size={20} />
-          Add New Variant
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={generateVariants}
+            disabled={!optionsConfig.length || optionsConfig.every((c) => !c.values.length)}
+            className="flex items-center gap-2 text-xs font-bold text-mint-600 bg-white hover:bg-mint-50 px-4 py-2.5 rounded-2xl border border-mint-200 transition-all active:scale-95 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <div className="w-2 h-2 bg-mint-500 rounded-full animate-pulse" />
+            Auto-Generate Variants
+          </button>
+          <button
+            type="button"
+            onClick={addVariant}
+            className="flex items-center gap-2 text-xs font-bold text-white bg-mint-600 hover:bg-mint-700 px-4 py-2.5 rounded-2xl transition-all active:scale-95 shadow-lg shadow-mint-100/50"
+          >
+            <IoAddOutline size={20} />
+            Add New Variant
+          </button>
+        </div>
       </div>
 
       <div className="space-y-6">

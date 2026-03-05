@@ -46,9 +46,7 @@ export default function ProgressTracker({
               />
               {index < steps.length - 1 && (
                 <div
-                  className={`flex-1 h-0.5 -mx-2 ${
-                    isCompleted ? 'bg-mint-500' : 'bg-gray-200'
-                  }`}
+                  className={`flex-1 h-0.5 -mx-2 ${isCompleted ? 'bg-mint-500' : 'bg-gray-200'}`}
                 ></div>
               )}
             </React.Fragment>
@@ -58,3 +56,9 @@ export default function ProgressTracker({
     </div>
   )
 }
+// Pending	-> PENDING, VERIFIED, APPROVED, ASSIGNED
+// Processing ->	MAKING (Order)
+// Packaging -> 	PACKAGING, PACKAGED, PACKING (Order)
+// Ready for Pickup	-> READY_TO_SHIP, COMPLETED (Invoice)
+// Shipping ->	DELIVERING (Invoice)
+// Completed	DELIVERED (Invoice) or COMPLETED (Order)

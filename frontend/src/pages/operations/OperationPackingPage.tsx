@@ -4,7 +4,7 @@ import { OrderTable } from '@/components/staff'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 import { useOrders } from '@/features/staff/hooks/orders/useOrders'
 import { transformApiOrderToTableOrder } from '@/features/staff/components/OrderTable/orderTransformers'
-import OperationPagination from '@/pages/operations/OperationPagination'
+import { OperationPagination } from '@/shared/components/ui/pagination'
 
 const PAGE_LIMIT = 10
 

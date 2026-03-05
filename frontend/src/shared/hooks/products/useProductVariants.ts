@@ -40,6 +40,7 @@ export interface UseProductVariantsReturn {
   stock: number
   images: string[]
   isInStock: boolean
+  isPreOrder: boolean
 
   // Validation
   isValidCombination: boolean
@@ -173,7 +174,8 @@ export const useProductVariants = (product: Product): UseProductVariantsReturn =
   const finalPrice = activeVariant?.finalPrice || price
   const stock = activeVariant?.stock || 0
   const images = activeVariant?.imgs || []
-  const isInStock = stock > 0
+  const isPreOrder = activeVariant?.mode === 'PRE_ORDER'
+  const isInStock = isPreOrder || stock > 0
 
   /**
    * STEP 7: Validation - Check if current combination is valid
@@ -190,6 +192,7 @@ export const useProductVariants = (product: Product): UseProductVariantsReturn =
     stock,
     images,
     isInStock,
+    isPreOrder,
     isValidCombination,
     availableOptionsForAttribute
   }

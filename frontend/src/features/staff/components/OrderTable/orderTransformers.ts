@@ -82,6 +82,7 @@ export const transformApiOrderToTableOrder = (apiOrder: OperationOrder): Order =
     currentStatus: apiOrder.status,
     timeElapsed: calculateTimeElapsed(apiOrder.createdAt),
     statusColor: getStatusColor(apiOrder.status),
+    createdAt: apiOrder.createdAt,
     // ========== START NEW CODE ==========
     isNextActive:
       apiOrder.status !== OrderStatus.COMPLETED && apiOrder.status !== OrderStatus.PACKAGING,

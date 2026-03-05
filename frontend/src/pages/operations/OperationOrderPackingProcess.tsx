@@ -1,12 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Container } from '@/components'
-import {
-  IoArrowBack,
-  IoCheckmarkCircle,
-  IoCubeOutline,
-  IoReload
-} from 'react-icons/io5'
+import { IoArrowBack, IoCheckmarkCircle, IoCubeOutline, IoReload } from 'react-icons/io5'
 import { ProcessTracker } from '@/components/layout/staff/staff-core/processtracker'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 import { ScanSection } from '@/shared/components/ui/scansection'

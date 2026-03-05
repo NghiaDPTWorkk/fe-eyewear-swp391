@@ -1,4 +1,5 @@
-import type { OrderType, OrderStatus, AssignmentOrderStatus } from './enums'
+import type { OrderType, OrderStatus, AssignmentOrderStatus } from '@/shared/utils/enums/order.enum'
+export type { OrderType, OrderStatus, AssignmentOrderStatus }
 import type { Address } from './address.types'
 import type { LensParameters } from './order-item.types'
 

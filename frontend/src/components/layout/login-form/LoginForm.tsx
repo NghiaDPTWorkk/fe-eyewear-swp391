@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Eye, EyeOff } from 'lucide-react'
 import type { LoginRequest } from '@/shared/types'
 import { useLogin } from '@/features/auth/hooks/useLogin'
 import { Button, Checkbox, Input, FormField, Divider } from '@/components'
@@ -26,7 +27,7 @@ export const LoginForm = ({ role: _role }: LoginFormProps) => {
   })
 
   const [rememberMe, setRememberMe] = useState(false)
-  const showPassword = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   const isValidEmail = formData.email.includes('@') && formData.email.includes('.')
 
@@ -75,6 +76,15 @@ export const LoginForm = ({ role: _role }: LoginFormProps) => {
           value={formData.password}
           onChange={(e) => handleChange('password', e.target.value)}
           size="lg"
+          rightElement={
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="text-gray-400 hover:text-gray-600 focus:outline-none"
+            >
+              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+            </button>
+          }
         />
       </FormField>
 

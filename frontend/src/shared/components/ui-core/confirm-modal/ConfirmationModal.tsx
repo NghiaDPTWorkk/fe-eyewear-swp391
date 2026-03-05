@@ -50,24 +50,27 @@ export default function ConfirmationModal({
     switch (type) {
       case 'danger':
         return {
-          bg: 'bg-rose-50',
-          border: 'border-rose-100',
-          buttonBg: 'bg-rose-500 hover:bg-rose-600 shadow-rose-100',
-          accent: 'bg-rose-500'
+          bg: 'bg-rose-50/50',
+          border: 'border-rose-100/50',
+          buttonBg:
+            'bg-gradient-to-br from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 shadow-rose-200/50',
+          accent: 'bg-rose-500 shadow-[0_0_12px_rgba(244,63,94,0.4)]'
         }
       case 'warning':
         return {
-          bg: 'bg-amber-50',
-          border: 'border-amber-100',
-          buttonBg: 'bg-amber-500 hover:bg-amber-600 shadow-amber-100',
-          accent: 'bg-amber-500'
+          bg: 'bg-amber-50/50',
+          border: 'border-amber-100/50',
+          buttonBg:
+            'bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 shadow-amber-200/50',
+          accent: 'bg-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.4)]'
         }
       default:
         return {
-          bg: 'bg-mint-50',
-          border: 'border-mint-100',
-          buttonBg: 'bg-mint-600 hover:bg-mint-700 shadow-mint-100',
-          accent: 'bg-mint-500'
+          bg: 'bg-mint-50/50',
+          border: 'border-mint-100/50',
+          buttonBg:
+            'bg-gradient-to-br from-mint-500 to-mint-600 hover:from-mint-600 hover:to-mint-700 shadow-mint-200/50',
+          accent: 'bg-mint-500 shadow-[0_0_12px_rgba(16,185,129,0.4)]'
         }
     }
   }
@@ -78,45 +81,48 @@ export default function ConfirmationModal({
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-slate-900/60 backdrop-blur-md transition-all duration-300 animate-in fade-in"
+        className="fixed inset-0 bg-slate-900/40 backdrop-blur-xl transition-all duration-500 animate-in fade-in"
         onClick={onClose}
       />
 
       {/* Modal Panel */}
-      <div className="relative w-full max-w-md transform overflow-hidden rounded-[2.5rem] bg-white p-8 text-left align-middle shadow-[0_32px_128px_-16px_rgba(0,0,0,0.3)] transition-all border border-neutral-100/50 animate-in zoom-in-95 duration-300">
+      <div className="relative w-full max-w-md transform overflow-hidden rounded-[2.5rem] bg-white p-8 text-left align-middle shadow-[0_40px_130px_-20px_rgba(0,0,0,0.25)] transition-all border border-white/20 animate-in zoom-in-95 fade-in duration-500 ease-out">
         <div className="flex justify-between items-start mb-6">
           <div className="flex items-center gap-4">
             <div
-              className={`w-14 h-14 rounded-2xl ${styles.bg} flex items-center justify-center border ${styles.border} shadow-sm`}
+              className={`w-14 h-14 rounded-2xl ${styles.bg} flex items-center justify-center border ${styles.border} shadow-inner transition-transform hover:scale-105 duration-300`}
             >
               {getIcon()}
             </div>
             <div>
-              <h3 className="text-xl font-semibold text-black leading-tight tracking-tight">
+              <h3 className="text-xl font-bold text-slate-900 tracking-tight leading-none mb-2">
                 {title}
               </h3>
-              <div className={`h-1 w-10 ${styles.accent} rounded-full mt-2`}></div>
+              <div className={`h-1 w-10 ${styles.accent} rounded-full`}></div>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-10 h-10 rounded-2xl bg-neutral-50 flex items-center justify-center text-slate-400 hover:bg-neutral-100 transition-all border border-neutral-100 active:scale-90"
+            className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-all active:scale-90 border border-slate-100"
           >
-            <IoClose size={24} />
+            <IoClose size={22} />
           </button>
         </div>
 
         <div className="space-y-6 mb-8">
-          <div className="bg-neutral-50 p-6 rounded-[2rem] border border-neutral-100/50">
-            <p className="text-sm font-normal text-black leading-relaxed">{message}</p>
+          <div className="bg-slate-50/50 p-6 rounded-3xl border border-slate-100/50 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-white/40 blur-3xl rounded-full -mr-12 -mt-12 group-hover:bg-white/60 transition-colors" />
+            <div className="text-[14.5px] font-medium text-slate-600 leading-relaxed relative z-10">
+              {message}
+            </div>
           </div>
 
           {details && (
             <div className="space-y-3">
-              <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest ml-4">
-                Operation Details
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] ml-4">
+                Details
               </label>
-              <div className="bg-white border border-slate-100 rounded-[1.5rem] p-5 shadow-sm">
+              <div className="bg-white border border-slate-100 rounded-3xl p-5 shadow-sm shadow-slate-100/50">
                 {details}
               </div>
             </div>
@@ -127,23 +133,22 @@ export default function ConfirmationModal({
           <Button
             onClick={onConfirm}
             disabled={isLoading}
-            className={`${styles.buttonBg} text-white w-full h-14 rounded-2xl font-semibold text-sm tracking-wide shadow-xl border-none transition-all active:scale-95 flex items-center justify-center`}
+            className={`w-full h-14 rounded-2xl font-bold text-base tracking-wide shadow-xl transition-all active:scale-[0.98] flex items-center justify-center border-none text-white ${styles.buttonBg}`}
           >
             {isLoading ? (
               <div className="flex items-center gap-3">
                 <div className="w-5 h-5 border-[3px] border-white/30 border-t-white rounded-full animate-spin" />
-                Processing...
+                <span>Processing...</span>
               </div>
             ) : (
               confirmText
             )}
           </Button>
           <Button
-            variant="outline"
-            colorScheme="neutral"
+            variant="ghost"
             onClick={onClose}
             disabled={isLoading}
-            className="w-full bg-white border-neutral-200 text-slate-500 hover:bg-neutral-50 rounded-2xl h-12 font-medium text-sm transition-all"
+            className="w-full bg-transparent border-none text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-2xl h-12 font-semibold text-sm transition-all"
           >
             {cancelText}
           </Button>

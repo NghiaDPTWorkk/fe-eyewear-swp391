@@ -6,9 +6,10 @@ import { ProductFilters } from '@/shared/components/ui/product-filters'
 import { FilterTags, type FilterTag } from '@/shared/components/ui/filter-tags'
 import { ProductCard } from '@/shared/components/ui/product-card'
 
-import { ArrowRight, X, Loader2 } from 'lucide-react'
+import { X, Loader2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { OperationPagination } from '@/shared/components/ui/pagination'
 
 // Static data for filters
 const priceRanges = [
@@ -112,9 +113,6 @@ export const CustomerProductPage = () => {
     setSearchParams({})
     setPage(1)
   }
-
-  const canPrev = useMemo(() => currentPage > 1, [currentPage])
-  const canNext = useMemo(() => currentPage < totalPages, [currentPage, totalPages])
 
   // Generate filter tags
   const filterTags = useMemo<FilterTag[]>(() => {
@@ -352,28 +350,15 @@ export const CustomerProductPage = () => {
               )}
 
               {/* Pagination */}
-              <div className="flex items-center justify-center gap-4 mt-10">
-                <button
-                  className="px-4 py-2 rounded-xl border-2 border-mint-300 bg-white text-mint-1200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-mint-200 transition-all"
-                  disabled={!canPrev || loading}
-                  onClick={() => setPage((prev) => Math.max(1, prev - 1))}
-                >
-                  Prev
-                </button>
-
-                <div className="text-sm text-gray-eyewear">
-                  Page <span className="font-semibold text-mint-1200">{currentPage}</span> /{' '}
-                  <span className="font-semibold text-mint-1200">{totalPages || 1}</span>
-                </div>
-
-                <button
-                  className="px-4 py-2 rounded-xl border-2 border-mint-300 bg-white text-mint-1200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-mint-200 transition-all inline-flex items-center gap-2"
-                  disabled={!canNext || loading}
-                  onClick={() => setPage((prev) => prev + 1)}
-                >
-                  Next
-                  <ArrowRight className="w-4 h-4" />
-                </button>
+              <div className="mt-10">
+                <OperationPagination
+                  page={currentPage}
+                  totalPages={totalPages}
+                  total={products.length > 0 ? totalPages * limit : 0} // Approximate total or use actual total if available
+                  limit={limit}
+                  onPageChange={setPage}
+                  itemsOnPage={products.length}
+                />
               </div>
             </div>
           </div>

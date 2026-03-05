@@ -146,7 +146,51 @@ export function useSalesStaffOrderDetail(orderId: string) {
     queryFn: async () => {
       if (!orderId) throw new Error('Order ID is required')
       const response = await salesService.getOrderById(orderId)
-      return response.data.order
+      const rawOrder = response.data.order
+
+      // Fetch invoice detail to get full customer info if invoiceId exists
+      const rawOrderData = rawOrder as any
+      const invoiceId =
+        rawOrderData.invoiceId ||
+        rawOrderData.invoice?.id ||
+        rawOrderData.invoice?._id ||
+        (typeof rawOrderData.invoice === 'string' ? rawOrderData.invoice : undefined)
+      let fullInvoice = rawOrderData.invoice
+
+      // Fetch if we have an ID AND (we don't have an invoice object OR the object is missing basic info)
+      const needsFetch =
+        !!invoiceId && (!fullInvoice || typeof fullInvoice === 'string' || !fullInvoice.fullName)
+
+      if (needsFetch && typeof invoiceId === 'string') {
+        try {
+          const invRes = await salesService.getInvoiceById(invoiceId)
+          // Handle case where API response structure is { success: true, data: { invoice: ... } }
+          // or just the data directly
+          fullInvoice = invRes.data?.invoice || invRes.data || invRes || rawOrderData.invoice
+        } catch (err) {
+          console.error('Failed to fetch invoice details for order:', err)
+        }
+      }
+
+      // If email is still missing, try to fetch customer profile via owner ID
+      const hasEmail =
+        fullInvoice?.email || fullInvoice?.customer?.email || fullInvoice?.owner?.email
+      const ownerId =
+        fullInvoice?.owner && typeof fullInvoice.owner === 'string' ? fullInvoice.owner : undefined
+
+      if (!hasEmail && ownerId) {
+        try {
+          const customerRes = await salesService.getCustomerById(ownerId)
+          const customerData = customerRes?.data?.customer || customerRes?.data
+          if (customerData?.email) {
+            fullInvoice = { ...fullInvoice, email: customerData.email }
+          }
+        } catch {
+          // Silently fail — email is optional
+        }
+      }
+
+      return transformOrder(rawOrderData, fullInvoice)
     },
     enabled: !!orderId
   })

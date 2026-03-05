@@ -8,6 +8,7 @@ import { ProductBaseFields } from './add-product/components/ProductBaseFields'
 import { FrameSpecFields } from './add-product/components/FrameSpecFields'
 import { LensSpecFields } from './add-product/components/LensSpecFields'
 import { VariantsEditor } from './add-product/components/VariantsEditor'
+import { OptionsConfigEditor } from './add-product/components/OptionsConfigEditor'
 import type { ProductCreateFormState } from './add-product/types/product-create.types'
 
 import type { ProductEditFormState } from './edit-product/types/product-edit.types'
@@ -57,7 +58,8 @@ export default function ManagerEditProductPage() {
         mode: 'AVAILABLE',
         options: []
       }
-    ]
+    ],
+    optionsConfig: []
   })
 
   // Pre-fill form when product data arrives
@@ -200,8 +202,19 @@ export default function ManagerEditProductPage() {
             <LensSpecFields specLens={state.specLens} onChange={handleSpecLensChange} />
           )}
 
-          {/* 3. Variants Editor (reuse existing component) */}
-          <VariantsEditor variants={state.variants} onChange={handleVariantsChange} />
+          {/* 3. Options Configuration */}
+          <OptionsConfigEditor
+            optionsConfig={state.optionsConfig}
+            onChange={(optionsConfig) => setState((prev) => ({ ...prev, optionsConfig }))}
+          />
+
+          {/* 4. Variants Editor (reuse existing component) */}
+          <VariantsEditor
+            variants={state.variants}
+            optionsConfig={state.optionsConfig}
+            nameBase={state.nameBase}
+            onChange={handleVariantsChange}
+          />
 
           {/* 4. Variant Mode Selector (additional UI for edit page) */}
           <div className="space-y-4 pt-4 border-t border-neutral-100">

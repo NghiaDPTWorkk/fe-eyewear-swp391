@@ -10,6 +10,7 @@ export interface CartItem {
   addAt: Date
   selected?: boolean
   sku?: string
+  mode?: 'AVAILABLE' | 'PRE_ORDER'
   lens?: {
     lensId?: string // Backend lens_id for API
     sku?: string // Lens SKU for API

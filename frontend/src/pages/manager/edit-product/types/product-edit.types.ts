@@ -42,4 +42,13 @@ export interface ProductEditFormState {
     origin: string
   }
   variants: ProductEditVariant[]
+  optionsConfig: Array<{
+    attributeId: string
+    attributeName: string
+    showType: 'color' | 'text'
+    values: Array<{
+      label: string
+      value: string
+    }>
+  }>
 }

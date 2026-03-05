@@ -1,8 +1,6 @@
 import { useSalesStaffOrderDetail } from '@/features/sales/hooks/useSalesStaffInvoices'
 
 import {
-  IoPrintOutline,
-  IoPencilOutline,
   IoMailOutline,
   IoCallOutline,
   IoLocationOutline,
@@ -14,20 +12,20 @@ import {
   IoWalletOutline,
   IoArrowBackOutline,
   IoGlassesOutline,
-  IoListOutline,
   IoTimeOutline,
   IoInformationCircleOutline
 } from 'react-icons/io5'
-import { Card, Button } from '@/shared/components/ui-core'
+import { Card } from '@/shared/components/ui-core'
 import { cn } from '@/lib/utils'
 
 interface OrderDetailProps {
   orderId: string
   onBack: () => void
   isPreOrder?: boolean
+  children?: React.ReactNode
 }
 
-export default function OrderDetail({ orderId, onBack }: OrderDetailProps) {
+export default function OrderDetail({ orderId, onBack, isPreOrder, children }: OrderDetailProps) {
   const { data: realOrder, isLoading, error } = useSalesStaffOrderDetail(orderId)
 
   if (isLoading) {
@@ -48,9 +46,12 @@ export default function OrderDetail({ orderId, onBack }: OrderDetailProps) {
           <IoInformationCircleOutline size={32} />
         </div>
         <p className="text-slate-600 font-semibold">Failed to load order details</p>
-        <Button onClick={onBack} variant="outline" colorScheme="neutral">
+        <button
+          onClick={onBack}
+          className="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 font-semibold text-sm hover:bg-slate-50 transition-colors"
+        >
           Go Back
-        </Button>
+        </button>
       </div>
     )
   }
@@ -73,49 +74,84 @@ export default function OrderDetail({ orderId, onBack }: OrderDetailProps) {
     total: `${(realOrder.price || 0).toLocaleString()} ₫`,
     customer: {
       name: realOrder.customerName || realOrder.invoice?.fullName || 'Guest Customer',
-      email: realOrder.invoice?.email || 'No email provided',
+      email: realOrder.customerEmail || realOrder.invoice?.email || 'No email provided',
       phone: realOrder.customerPhone || realOrder.invoice?.phone || 'No phone provided',
       avatar: (realOrder.customerName || realOrder.invoice?.fullName || 'G')
         .charAt(0)
         .toUpperCase(),
       since: 'Member'
     },
-    shippingAddress: realOrder.invoice?.address || 'Store Pickup',
+    note: realOrder.note || '',
+    shippingAddress: (() => {
+      const addr = realOrder.invoice?.address as any
+      if (!addr) return 'Store Pickup'
+      if (typeof addr === 'string') return addr
+      return (
+        [addr.street, addr.ward, addr.city, addr.country].filter(Boolean).join(', ') ||
+        'Store Pickup'
+      )
+    })(),
     items: (realOrder.products || []).map((p: any, idx: number) => ({
       id: idx,
       name: p.product?.product_name || p.product?.sku || 'Eyewear Product',
       sku: p.product?.sku || 'N/A',
-      brand: 'Premium collection',
+      brand: 'PREMIUM COLLECTION',
       price: `${(p.product?.pricePerUnit || 0).toLocaleString()} ₫`,
       quantity: p.quantity,
       lens: p.lens
     })),
-    timeline: [
-      {
-        title: 'Order Created',
-        time: realOrder.createdAt
-          ? new Date(realOrder.createdAt).toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit'
-            })
-          : '',
-        desc: 'New order registered in system',
-        icon: IoDocumentTextOutline
-      },
-      {
-        title: 'Current Stage',
-        time: 'Active',
-        desc: `Order is currently in ${realOrder.status} stage`,
-        icon: IoTimeOutline
-      }
-    ],
+    timeline: isPreOrder
+      ? [
+          {
+            title: 'Pre-order Placed',
+            time: realOrder.createdAt
+              ? new Date(realOrder.createdAt).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })
+              : '',
+            desc: 'Deposit confirmed and order reserved',
+            icon: IoWalletOutline
+          },
+          {
+            title: 'Supplier Notification',
+            time: 'COMPLETED',
+            desc: 'Order sent to logistics partner',
+            icon: IoCubeOutline
+          },
+          {
+            title: 'Estimated Arrival',
+            time: '14-21 DAYS',
+            desc: 'Item is expected to arrive at our local warehouse',
+            icon: IoTimeOutline
+          }
+        ]
+      : [
+          {
+            title: 'Order Created',
+            time: realOrder.createdAt
+              ? new Date(realOrder.createdAt).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })
+              : '',
+            desc: 'New order registered in system',
+            icon: IoDocumentTextOutline
+          },
+          {
+            title: 'Current Stage',
+            time: 'ACTIVE',
+            desc: `Order is currently in ${realOrder.status?.toLowerCase().replace(/_/g, ' ') || 'pending'} stage`,
+            icon: IoTimeOutline
+          }
+        ],
     transactions: [
       {
         id: `TRX-${(realOrder.orderCode || '').slice(-6)}`,
         date: realOrder.createdAt ? new Date(realOrder.createdAt).toLocaleDateString() : 'N/A',
-        method: 'Bank Transfer',
+        method: isPreOrder ? 'DEPOSIT PAYMENT' : 'BANK TRANSFER',
         amount: `${(realOrder.price || 0).toLocaleString()} ₫`,
-        status: 'Success'
+        status: 'SUCCESS'
       }
     ]
   }
@@ -132,13 +168,12 @@ export default function OrderDetail({ orderId, onBack }: OrderDetailProps) {
       case 'PROCESSING':
         return 'bg-indigo-50 text-indigo-600 border-indigo-100'
       default:
-        return 'bg-amber-50 text-amber-600 border-amber-100'
+        return 'bg-mint-100/50 text-mint-700 border-mint-200'
     }
   }
 
   return (
-    <div className="space-y-8 pb-24 animate-in fade-in slide-in-from-right-4 duration-500 font-sans bg-transparent">
-      {/* Header Profile Section */}
+    <div className="space-y-12 pb-24 font-sans relative">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div className="flex items-center gap-5">
           <button
@@ -150,16 +185,23 @@ export default function OrderDetail({ orderId, onBack }: OrderDetailProps) {
           <div className="space-y-1">
             <div className="flex flex-wrap items-center gap-3">
               <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
-                Order #{order.id}
+                {isPreOrder ? 'PRE-ORDER' : 'ORDER'} #{order.id}
               </h1>
               <span
                 className={cn(
                   'px-3 py-1 text-[10px] font-semibold uppercase tracking-widest rounded-lg border',
-                  getStatusColor(order.status)
+                  isPreOrder
+                    ? 'bg-mint-50 text-mint-600 border-mint-100'
+                    : getStatusColor(order.status)
                 )}
               >
-                {order.status}
+                {isPreOrder ? 'PRE-ORDER' : order.status}
               </span>
+              {isPreOrder && (
+                <span className="px-3 py-1 bg-rose-50 text-rose-600 border border-rose-100 text-[10px] font-bold uppercase tracking-widest rounded-lg">
+                  DEPOSIT PAID
+                </span>
+              )}
             </div>
             <div className="flex items-center gap-4 text-xs font-medium text-slate-400 uppercase tracking-widest">
               <span className="flex items-center gap-1.5">
@@ -169,63 +211,46 @@ export default function OrderDetail({ orderId, onBack }: OrderDetailProps) {
               <span className="flex items-center gap-1.5">
                 <IoCubeOutline size={14} /> {order.items.length} Items
               </span>
+              {isPreOrder && (
+                <>
+                  <span className="w-1 h-1 bg-slate-300 rounded-full" />
+                  <span className="flex items-center gap-1.5 text-emerald-500 font-bold">
+                    <IoTimeOutline size={14} /> ETA: 2-3 WEEKS
+                  </span>
+                </>
+              )}
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            colorScheme="neutral"
-            className="bg-white border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-semibold rounded-2xl px-6 h-12 transition-all border shadow-sm"
-            leftIcon={<IoPrintOutline size={20} />}
-          >
-            Print Invoice
-          </Button>
-          <Button
-            className="bg-mint-600 hover:bg-mint-700 text-white font-semibold rounded-2xl px-6 h-12 transition-all shadow-lg shadow-mint-100 active:scale-[0.98] border-none"
-            leftIcon={<IoPencilOutline size={20} />}
-          >
-            Update Status
-          </Button>
-        </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
-        {/* Main Information */}
-        <div className="xl:col-span-8 space-y-8">
-          {/* Order Items Table-style Card */}
-          <Card className="p-0 overflow-hidden border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 bg-white rounded-[32px]">
-            <div className="px-8 py-6 border-b border-slate-50 bg-slate-50/20 flex justify-between items-center">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-white rounded-xl shadow-sm text-mint-600 border border-slate-100">
-                  <IoListOutline size={20} />
-                </div>
-                <h2 className="text-lg font-semibold text-slate-800 tracking-tight">
-                  Order Summary
-                </h2>
-              </div>
-              <button className="text-xs font-semibold text-mint-600 uppercase tracking-widest hover:text-mint-700 transition-colors">
-                Export Details
-              </button>
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-stretch">
+        <div className="contents">
+          {/* Main Card */}
+          <Card className="xl:col-span-8 order-1 h-full flex flex-col p-0 overflow-hidden border border-slate-100/50 shadow-xl shadow-slate-200/40 bg-white rounded-[32px]">
+            <div className="px-8 py-6 border-b border-slate-50 bg-slate-50/20">
+              <h2 className="text-lg font-semibold text-slate-800 tracking-tight">
+                {isPreOrder ? 'Pre-order Summary' : 'Order Summary'}
+              </h2>
             </div>
 
-            <div className="p-2">
+            <div>
               {order.items.map((item, i) => (
                 <div
                   key={i}
                   className="p-6 rounded-[24px] hover:bg-slate-50/40 transition-all duration-300 group"
                 >
                   <div className="flex items-start gap-6">
-                    <div className="w-28 h-28 bg-white border border-slate-100 rounded-2xl flex items-center justify-center text-slate-200 shadow-sm">
+                    <div className="w-28 h-28 bg-white border border-slate-100 rounded-2xl flex items-center justify-center text-slate-200 shadow-sm transition-all group-hover:shadow-md group-hover:scale-[1.02]">
                       <IoGlassesOutline size={48} />
                     </div>
                     <div className="flex-1 space-y-3">
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="text-[10px] font-semibold text-mint-500 uppercase tracking-[0.2em] mb-1">
+                          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] mb-1 text-mint-600">
                             {item.brand}
                           </p>
-                          <h3 className="text-base font-semibold text-slate-800 tracking-tight group-hover:text-mint-600 transition-colors">
+                          <h3 className="text-base font-semibold text-slate-800 tracking-tight transition-colors group-hover:text-mint-600">
                             {item.name}
                           </h3>
                         </div>
@@ -250,10 +275,9 @@ export default function OrderDetail({ orderId, onBack }: OrderDetailProps) {
                         </div>
                       </div>
 
-                      {/* Lens configuration */}
                       {item.lens && (
-                        <div className="mt-4 p-4 bg-emerald-50/30 rounded-2xl border border-emerald-100/40 space-y-3">
-                          <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest flex items-center gap-2">
+                        <div className="mt-4 p-4 rounded-2xl border bg-mint-50/30 border-mint-100/40 space-y-3">
+                          <p className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 text-mint-600">
                             <IoEyeOutline size={14} /> Prescription details included
                           </p>
                           <div className="grid grid-cols-2 gap-4">
@@ -282,41 +306,60 @@ export default function OrderDetail({ orderId, onBack }: OrderDetailProps) {
               ))}
             </div>
 
-            {/* Price Footer */}
-            <div className="px-8 py-8 bg-slate-50/30 border-t border-slate-50">
-              <div className="max-w-xs ml-auto space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
-                    Subtotal
-                  </span>
-                  <span className="text-sm font-bold text-slate-700">{order.subtotal}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
-                    Shipping
-                  </span>
-                  <span className="text-sm font-bold text-slate-700">{order.shipping}</span>
-                </div>
-                <div className="flex justify-between items-center pb-2">
-                  <span className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
-                    Tax
-                  </span>
-                  <span className="text-sm font-bold text-slate-700">{order.tax}</span>
-                </div>
-                <div className="pt-5 border-t border-slate-200/60 flex justify-between items-center">
-                  <span className="text-sm font-semibold text-slate-900 uppercase tracking-widest">
-                    Total Amount
-                  </span>
-                  <span className="text-2xl font-bold text-mint-600 tracking-tight">
-                    {order.total}
-                  </span>
+            <div className="flex flex-col md:flex-row bg-slate-50/10 mt-auto">
+              <div className="flex-1 p-6 relative">
+                {order.note ? (
+                  <div className="p-6 rounded-[24px] border relative overflow-hidden h-full flex flex-col justify-center bg-mint-50/60 border-mint-100/60">
+                    <div className="absolute top-0 right-0 p-4 opacity-5">
+                      <IoDocumentTextOutline size={80} />
+                    </div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] flex items-center gap-2 mb-3 text-mint-600">
+                      <span className="w-2 h-2 rounded-full bg-mint-400" />
+                      Order Note
+                    </p>
+                    <p className="text-sm font-medium text-slate-700 italic leading-relaxed relative z-10 line-clamp-3">
+                      &ldquo;{order.note}&rdquo;
+                    </p>
+                  </div>
+                ) : (
+                  <div className="h-full rounded-[24px] border border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400 gap-2 min-h-[140px]">
+                    <IoDocumentTextOutline size={24} className="opacity-20" />
+                    <span className="text-xs uppercase tracking-widest font-semibold opacity-50">
+                      No attached note
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <div className="w-full md:w-[380px] shrink-0 p-6 bg-slate-50/40">
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center text-sm font-semibold text-slate-400 uppercase tracking-wider">
+                    <span>Subtotal</span>
+                    <span className="text-slate-700">{order.subtotal}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm font-semibold text-slate-400 uppercase tracking-wider">
+                    <span>Shipping</span>
+                    <span className="text-slate-700">{order.shipping}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm font-semibold text-slate-400 uppercase tracking-wider pb-3">
+                    <span>Tax</span>
+                    <span className="text-slate-700">{order.tax}</span>
+                  </div>
+                  <div className="pt-2 flex justify-between items-center">
+                    <span className="text-sm font-bold text-slate-900 uppercase tracking-widest">
+                      {isPreOrder ? 'Deposit Amount' : 'Total Amount'}
+                    </span>
+                    <span className="text-2xl font-bold tracking-tight text-mint-600">
+                      {order.total}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
           </Card>
 
           {/* Activity Timeline */}
-          <Card className="p-8 border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 bg-white rounded-[32px]">
+          <Card className="xl:col-span-8 order-3 h-full flex flex-col p-6 border border-slate-100/50 shadow-xl shadow-slate-200/40 bg-white rounded-[32px]">
             <h2 className="text-lg font-semibold text-slate-800 tracking-tight mb-8">
               Activity Flow
             </h2>
@@ -327,7 +370,7 @@ export default function OrderDetail({ orderId, onBack }: OrderDetailProps) {
                   <div className="relative z-10 w-5 h-5 rounded-full bg-white border-4 border-mint-500 shadow-sm" />
                   <div className="flex-1 -mt-1">
                     <div className="flex justify-between items-center mb-1">
-                      <h4 className="text-sm font-semibold text-slate-800">{item.title}</h4>
+                      <h4 className="text-sm font-bold text-slate-800">{item.title}</h4>
                       <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest bg-slate-50 px-2 py-1 rounded-md">
                         {item.time}
                       </span>
@@ -340,29 +383,67 @@ export default function OrderDetail({ orderId, onBack }: OrderDetailProps) {
               ))}
             </div>
           </Card>
+
+          {/* Transactions */}
+          <Card className="xl:col-span-8 order-6 h-full flex flex-col p-0 overflow-hidden border border-slate-100/50 shadow-xl shadow-slate-200/40 bg-white rounded-[32px]">
+            <div className="px-8 py-6 border-b border-slate-50 flex items-center gap-3">
+              <div className="p-2 bg-slate-50 rounded-xl text-slate-500">
+                <IoWalletOutline size={20} />
+              </div>
+              <h2 className="text-lg font-semibold text-slate-800 tracking-tight">
+                Transaction History
+              </h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead className="bg-slate-50/50 text-[10px] uppercase font-semibold text-slate-400 tracking-[0.15em]">
+                  <tr>
+                    <th className="px-8 py-5">TXN ID</th>
+                    <th className="px-8 py-5 text-right">AMOUNT</th>
+                    <th className="px-8 py-5 text-center">STATUS</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50">
+                  {order.transactions.map((trx, j) => (
+                    <tr key={j} className="hover:bg-slate-50/30 transition-colors">
+                      <td className="px-8 py-6 font-mono text-xs font-semibold text-slate-900 uppercase">
+                        {trx.id}
+                      </td>
+                      <td className="px-8 py-6 text-right font-semibold text-slate-900">
+                        {trx.amount}
+                      </td>
+                      <td className="px-8 py-6 text-center">
+                        <span className="px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-semibold uppercase tracking-widest rounded-lg border border-emerald-100">
+                          {trx.status.toUpperCase()}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
         </div>
 
         {/* Sidebar */}
-        <div className="xl:col-span-4 space-y-8">
-          {/* Customer Card */}
-          <Card className="p-8 border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 bg-white rounded-[32px] overflow-hidden relative group">
-            <div className="absolute -right-4 -top-4 w-32 h-32 bg-mint-50 rounded-full opacity-50 group-hover:scale-110 transition-transform duration-500" />
-            <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-[0.2em] mb-6 relative">
+        <div className="contents">
+          {/* Customer Profile */}
+          <Card className="xl:col-span-4 order-2 h-full flex flex-col p-6 border border-slate-100/50 shadow-xl shadow-slate-200/40 bg-white rounded-[32px] overflow-hidden relative group">
+            <div className="absolute -right-4 -top-4 w-32 h-32 rounded-full opacity-50 bg-mint-50 group-hover:scale-110 transition-transform duration-500" />
+            <h2 className="text-lg font-semibold text-slate-800 tracking-tight mb-6 relative z-10">
               Customer Profile
             </h2>
-
             <div className="relative flex flex-col items-center text-center pb-8 border-b border-slate-100">
-              <div className="w-20 h-20 bg-mint-100 text-mint-600 rounded-[28px] flex items-center justify-center font-semibold text-2xl border-4 border-white shadow-xl mb-4 transition-all">
+              <div className="w-20 h-20 rounded-[28px] flex items-center justify-center font-semibold text-2xl border-4 border-white shadow-xl mb-4 transition-all bg-mint-100 text-mint-600">
                 {order.customer.avatar}
               </div>
               <h3 className="text-lg font-semibold text-slate-900 tracking-tight">
                 {order.customer.name}
               </h3>
-              <p className="px-3 py-1 bg-mint-50 text-mint-600 text-[10px] font-semibold uppercase tracking-widest rounded-full mt-2">
+              <p className="px-3 py-1 text-[10px] font-semibold uppercase tracking-widest rounded-full mt-2 bg-mint-50 text-mint-600">
                 {order.customer.since}
               </p>
             </div>
-
             <div className="space-y-5 pt-8">
               <div className="flex flex-col gap-1.5">
                 <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
@@ -378,20 +459,20 @@ export default function OrderDetail({ orderId, onBack }: OrderDetailProps) {
                 </p>
                 <p className="text-sm font-semibold text-slate-700">{order.customer.phone}</p>
               </div>
-              <button className="w-full mt-4 py-3 text-xs font-semibold text-mint-600 bg-mint-50/50 hover:bg-mint-50 border border-mint-100/50 rounded-xl transition-all uppercase tracking-widest active:scale-95">
+              <button className="w-full mt-4 py-3 text-xs font-semibold border rounded-xl transition-all uppercase tracking-widest active:scale-95 text-mint-600 bg-mint-50/50 hover:bg-mint-50 border-mint-100/50">
                 View History
               </button>
             </div>
           </Card>
 
-          {/* Delivery & Address */}
-          <Card className="p-8 border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 bg-white rounded-[32px]">
-            <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-[0.2em] mb-6">
-              Fulfillment Details
+          {/* Delivery Section */}
+          <Card className="xl:col-span-4 order-4 h-full flex flex-col p-6 border border-slate-100/50 shadow-xl shadow-slate-200/40 bg-white rounded-[32px]">
+            <h2 className="text-lg font-semibold text-slate-800 tracking-tight mb-6">
+              Order Detail
             </h2>
             <div className="space-y-6">
               <div className="flex gap-4">
-                <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-mint-500 shrink-0 shadow-sm border border-slate-100">
+                <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center shrink-0 shadow-sm border border-slate-100 text-mint-500">
                   <IoLocationOutline size={20} />
                 </div>
                 <div className="space-y-1">
@@ -404,7 +485,7 @@ export default function OrderDetail({ orderId, onBack }: OrderDetailProps) {
                 </div>
               </div>
               <div className="flex gap-4 pt-6 border-t border-slate-50">
-                <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-mint-500 shrink-0 shadow-sm border border-slate-100">
+                <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center shrink-0 shadow-sm border border-slate-100 text-mint-500">
                   <IoWalletOutline size={20} />
                 </div>
                 <div className="space-y-1">
@@ -421,72 +502,30 @@ export default function OrderDetail({ orderId, onBack }: OrderDetailProps) {
               </div>
             </div>
           </Card>
-        </div>
-      </div>
 
-      {/* Transactions & Memo Row */}
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
-        {/* Transactions Section - Now at bottom left */}
-        <div className="xl:col-span-8">
-          <Card className="p-0 overflow-hidden border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 bg-white rounded-[32px]">
-            <div className="px-8 py-6 border-b border-slate-50 flex items-center gap-3">
-              <div className="p-2 bg-slate-50 rounded-xl text-slate-500">
-                <IoWalletOutline size={20} />
-              </div>
-              <h2 className="text-lg font-semibold text-slate-800 tracking-tight">
-                Transaction History
-              </h2>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead className="bg-slate-50/50 text-[10px] uppercase font-semibold text-slate-400 tracking-[0.15em]">
-                  <tr>
-                    <th className="px-8 py-5">TXN ID</th>
-                    <th className="px-8 py-5">DATE</th>
-                    <th className="px-8 py-5 text-right">AMOUNT</th>
-                    <th className="px-8 py-5 text-center">STATUS</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-50">
-                  {order.transactions.map((trx, j) => (
-                    <tr key={j} className="hover:bg-slate-50/30 transition-colors">
-                      <td className="px-8 py-6 font-mono text-xs font-semibold text-slate-900 uppercase">
-                        {trx.id}
-                      </td>
-                      <td className="px-8 py-6 text-xs font-medium text-slate-500">{trx.date}</td>
-                      <td className="px-8 py-6 text-right font-semibold text-slate-900">
-                        {trx.amount}
-                      </td>
-                      <td className="px-8 py-6 text-center">
-                        <span className="px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-semibold uppercase tracking-widest rounded-lg border border-emerald-100">
-                          {trx.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Card>
-        </div>
+          {children && <div className="xl:col-span-12 order-5 w-full">{children}</div>}
 
-        {/* Internal Memo - Now at bottom right */}
-        <div className="xl:col-span-4 h-full">
-          <Card className="h-full p-8 border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 bg-amber-50/40 rounded-[32px] border border-amber-50 relative overflow-hidden flex flex-col">
+          {/* Staff Memo */}
+          <Card
+            className={cn(
+              'xl:col-span-4 order-7 h-full flex flex-col p-6 border border-slate-100/50 shadow-xl shadow-slate-200/40 rounded-[32px] relative overflow-hidden',
+              'bg-amber-50/40'
+            )}
+          >
             <div className="absolute top-0 right-0 p-4 opacity-5">
               <IoDocumentTextOutline size={120} />
             </div>
-            <h2 className="text-[10px] font-semibold text-amber-600/70 uppercase tracking-[0.2em] mb-4 flex items-center gap-2 relative">
-              <div className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
+            <h2 className="text-base font-semibold tracking-tight mb-4 flex items-center gap-2 relative text-amber-600">
+              <div className="w-2 h-2 rounded-full animate-ping bg-amber-400" />
               Staff Memo
             </h2>
             <textarea
-              className="w-full flex-1 min-h-[150px] p-4 rounded-3xl border border-amber-100 bg-white/60 focus:outline-none focus:ring-4 focus:ring-amber-200/20 text-sm font-semibold text-slate-700 resize-none shadow-inner"
+              className="w-full flex-1 min-h-[100px] p-4 rounded-3xl border border-amber-100 bg-white/60 focus:outline-none focus:ring-4 focus:ring-amber-200/20 text-xs font-medium text-slate-700 resize-none shadow-inner"
               placeholder="Add private staff instructions..."
               style={{ scrollbarWidth: 'none' }}
             />
             <div className="flex justify-end mt-4">
-              <button className="text-[10px] font-semibold text-amber-700 uppercase tracking-[0.2em] hover:text-amber-900 transition-colors">
+              <button className="text-[10px] font-semibold uppercase tracking-[0.2em] transition-colors text-amber-700 hover:text-amber-900">
                 Save Changes
               </button>
             </div>

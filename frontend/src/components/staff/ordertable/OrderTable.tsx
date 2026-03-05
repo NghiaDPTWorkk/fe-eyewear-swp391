@@ -28,6 +28,9 @@ export interface Column<T> {
 }
 
 interface OrderTableProps {
+  orders?: Order[]
+  isLoading?: boolean
+  isError?: boolean
   columns?: Column<Order>[]
   hiddenColumns?: string[]
   filterType?: string
@@ -300,7 +303,28 @@ export default function OrderTable({
       <table className="w-full text-left border-collapse">
         <OrderHeaderTable columns={activeColumns} />
         <tbody>
-          {filteredOrders.length === 0 ? (
+          {isLoading ? (
+            <tr>
+              <td
+                colSpan={activeColumns.length}
+                className="py-20 text-center text-gray-400 font-medium"
+              >
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-8 h-8 border-4 border-mint-500 border-t-transparent rounded-full animate-spin" />
+                  <span>Loading orders...</span>
+                </div>
+              </td>
+            </tr>
+          ) : isError ? (
+            <tr>
+              <td
+                colSpan={activeColumns.length}
+                className="py-20 text-center text-red-500 font-medium"
+              >
+                Internal error occurred while fetching orders.
+              </td>
+            </tr>
+          ) : filteredOrders.length === 0 ? (
             <tr>
               <td
                 colSpan={activeColumns.length}

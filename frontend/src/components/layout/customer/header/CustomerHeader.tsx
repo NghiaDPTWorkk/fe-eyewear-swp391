@@ -15,7 +15,31 @@ export default function CustomerHeader() {
   const location = useLocation()
   const items = useCartStore((state) => state.items)
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
-  const { isAuthenticated, _hasHydrated: hasHydrated } = useAuthStore()
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+  const fetchCart = useCartStore((state) => state.fetchCart)
+  const [isBagAnimating, setIsBagAnimating] = useState(false)
+
+  // đợi Component mount xong
+  const [hasHydrated, setHasHydrated] = useState(false)
+
+  useEffect(() => {
+    // đã mount, chúng ta coi như đã nạp xong (vì localStorage là đồng bộ)
+    setHasHydrated(true)
+
+    // Fetch cart on mount if authenticated to persist badge across pages
+    if (isAuthenticated) {
+      fetchCart()
+    }
+  }, [isAuthenticated, fetchCart])
+
+  // Animation effect for cart badge
+  useEffect(() => {
+    if (totalItems === 0) return
+
+    setIsBagAnimating(true)
+    const timer = setTimeout(() => setIsBagAnimating(false), 400)
+    return () => clearTimeout(timer)
+  }, [totalItems])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -196,7 +220,11 @@ export default function CustomerHeader() {
             >
               <ShoppingCart className="w-5 h-5 text-gray-eyewear group-hover:text-primary-500 transition-colors" />
               {totalItems > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary-500 text-white text-xs rounded-full flex items-center justify-center font-semibold shadow-md">
+                <span
+                  className={`absolute -top-1 -right-1 w-5 h-5 bg-primary-500 text-white text-xs rounded-full flex items-center justify-center font-semibold shadow-md ${
+                    isBagAnimating ? 'animate-bump' : ''
+                  }`}
+                >
                   {totalItems}
                 </span>
               )}

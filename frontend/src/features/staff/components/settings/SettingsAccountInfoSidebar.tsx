@@ -1,5 +1,8 @@
+import { useState } from 'react'
 import { useProfile } from '@/features/staff/hooks/useProfile'
 import { Card, Button } from '@/shared/components/ui-core'
+import ConfirmationModal from '@/shared/components/ui-core/confirm-modal/ConfirmationModal'
+import { toast } from 'react-hot-toast'
 import {
   IoStorefrontOutline,
   IoCalendarOutline,
@@ -7,10 +10,43 @@ import {
   IoGlobeOutline,
   IoTrashOutline
 } from 'react-icons/io5'
+import { CustomSelect } from '@/shared/components/ui-core/select/CustomSelect'
 
 export default function AccountInfoSidebar() {
   const { data: profileData, isLoading } = useProfile()
   const profile = profileData?.data
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+
+  const handleDeleteAccount = () => {
+    setIsDeleteModalOpen(false)
+    toast.success(
+      () => (
+        <div className="flex flex-col gap-1">
+          <p className="font-bold text-slate-900">Request Submitted</p>
+          <p className="text-xs text-slate-500 font-medium">
+            Your account deletion is waiting for Admin approval.
+          </p>
+        </div>
+      ),
+      {
+        duration: 6000,
+        icon: (
+          <div className="w-10 h-10 rounded-full bg-mint-50 flex items-center justify-center text-mint-600 shadow-sm border border-mint-100 flex-shrink-0 animate-bounce">
+            <IoTimeOutline size={20} />
+          </div>
+        ),
+        style: {
+          borderRadius: '24px',
+          background: 'rgba(255, 255, 255, 0.9)',
+          backdropFilter: 'blur(12px)',
+          border: '1px solid rgba(226, 232, 240, 0.8)',
+          boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+          padding: '16px 20px',
+          maxWidth: '400px'
+        }
+      }
+    )
+  }
 
   const getInitials = (name: string): string => {
     if (!name) return '??'
@@ -91,13 +127,7 @@ export default function AccountInfoSidebar() {
                   Member Since
                 </p>
                 <p className="text-sm font-semibold text-neutral-700">
-                  {profile?.createdAt && !isNaN(new Date(profile.createdAt).getTime())
-                    ? new Date(profile.createdAt).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric'
-                      })
-                    : 'Jan 10, 2024'}
+                  {profile?.createdAt || 'N/A'}
                 </p>
               </div>
             </div>
@@ -110,22 +140,7 @@ export default function AccountInfoSidebar() {
                   Last Login
                 </p>
                 <p className="text-sm font-semibold text-neutral-700 leading-tight">
-                  {profile?.updatedAt && !isNaN(new Date(profile.updatedAt).getTime())
-                    ? new Date(profile.updatedAt).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric'
-                      })
-                    : 'Recently'}
-                  <br />
-                  <span className="text-[11px] text-slate-400 font-medium tracking-tight">
-                    {profile?.updatedAt && !isNaN(new Date(profile.updatedAt).getTime())
-                      ? new Date(profile.updatedAt).toLocaleTimeString('en-US', {
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })
-                      : 'Just now'}
-                  </span>
+                  {profile?.lastLogin || 'Recently'}
                 </p>
               </div>
             </div>
@@ -151,51 +166,44 @@ export default function AccountInfoSidebar() {
           System
         </h3>
         <div className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-[11px] font-medium text-neutral-500 uppercase tracking-widest pl-1">
-              Language
-            </label>
-            <div className="relative">
-              <select className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium text-neutral-700 appearance-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all cursor-pointer">
-                <option>English</option>
-                <option>Vietnamese</option>
-              </select>
-              <IoGlobeOutline
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500"
-                size={18}
-              />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <label className="text-[11px] font-medium text-neutral-500 uppercase tracking-widest pl-1">
-              Timezone
-            </label>
-            <div className="relative">
-              <select className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium text-neutral-700 appearance-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all cursor-pointer">
-                <option>UTC-5 (EST)</option>
-                <option>UTC+7 (ICT)</option>
-              </select>
-              <IoTimeOutline
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500"
-                size={18}
-              />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <label className="text-[11px] font-medium text-neutral-500 uppercase tracking-widest pl-1">
-              Date Format
-            </label>
-            <div className="relative">
-              <select className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium text-neutral-700 appearance-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all cursor-pointer">
-                <option>MM/DD/YYYY</option>
-                <option>DD/MM/YYYY</option>
-              </select>
-              <IoCalendarOutline
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500"
-                size={18}
-              />
-            </div>
-          </div>
+          <CustomSelect
+            label="Language"
+            icon={<IoGlobeOutline size={18} />}
+            value="English"
+            options={[
+              { value: 'English', label: 'English', icon: <span className="text-[10px]">EN</span> },
+              {
+                value: 'Vietnamese',
+                label: 'Vietnamese (Tiếng Việt)',
+                icon: <span className="text-[10px]">VN</span>
+              }
+            ]}
+            onChange={() => {}}
+          />
+
+          <CustomSelect
+            label="Timezone"
+            icon={<IoTimeOutline size={18} />}
+            value="UTC-5"
+            options={[
+              { value: 'UTC-5', label: 'UTC-5 (EST)' },
+              { value: 'UTC+7', label: 'UTC+7 (ICT) - Saigon' },
+              { value: 'UTC+0', label: 'UTC+0 (GMT)' }
+            ]}
+            onChange={() => {}}
+          />
+
+          <CustomSelect
+            label="Date Format"
+            icon={<IoCalendarOutline size={18} />}
+            value="MM/DD/YYYY"
+            options={[
+              { value: 'MM/DD/YYYY', label: 'MM/DD/YYYY' },
+              { value: 'DD/MM/YYYY', label: 'DD/MM/YYYY' },
+              { value: 'YYYY-MM-DD', label: 'YYYY-MM-DD' }
+            ]}
+            onChange={() => {}}
+          />
         </div>
       </Card>
 
@@ -213,11 +221,23 @@ export default function AccountInfoSidebar() {
         <Button
           variant="solid"
           colorScheme="danger"
-          className="w-full h-11 rounded-xl font-normal shadow-md shadow-red-200 hover:shadow-red-300 transition-all active:scale-95 bg-red-600 hover:bg-red-700 border-none px-6 cursor-pointer"
+          onClick={() => setIsDeleteModalOpen(true)}
+          className="w-full h-11 rounded-xl font-semibold shadow-md shadow-rose-100 hover:shadow-rose-200 transition-all active:scale-95 bg-rose-600 hover:bg-rose-700 border-none px-6 cursor-pointer"
         >
           Delete Account
         </Button>
       </Card>
+
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDeleteAccount}
+        title="Delete Your Account?"
+        message="Are you absolutely sure? This will submit a permanent deletion request for your staff account. This action is IRREVERSIBLE and requires Admin/Manager approval before final execution."
+        confirmText="Request Deletion"
+        cancelText="Keep Account"
+        type="danger"
+      />
     </div>
   )
 }

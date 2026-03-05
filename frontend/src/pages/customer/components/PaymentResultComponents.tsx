@@ -27,7 +27,7 @@ export const PaymentStatusHeader = ({ status, error }: PaymentStatusHeaderProps)
         <div className="relative inline-block">
           <div className="absolute inset-0 bg-success-200/30 blur-3xl rounded-full scale-150 animate-pulse" />
           <div className="bg-success-500 text-white p-4 rounded-full shadow-lg shadow-success-200 relative">
-            <CheckCircle2 className="w-16 h-16" />
+            <CheckCircle2 className="w-16 h-16" stroke="#1a6d53" />
           </div>
         </div>
         <div className="space-y-2">
@@ -116,7 +116,7 @@ interface OrderInvoiceDetailsProps {
 }
 
 export const OrderInvoiceDetails = ({ invoiceData }: OrderInvoiceDetailsProps) => (
-  <Card className="p-8 border-none shadow-xl rounded-3xl bg-white space-y-6">
+  <Card className="p-8 border-none shadow-xl rounded-3xl bg-white space-y-8">
     <div className="flex items-center gap-3 pb-4 border-b border-mint-50">
       <div className="bg-mint-100 p-2 rounded-xl text-mint-700">
         <ShoppingBag className="w-6 h-6" />
@@ -126,33 +126,78 @@ export const OrderInvoiceDetails = ({ invoiceData }: OrderInvoiceDetailsProps) =
 
     <div className="space-y-6">
       {invoiceData?.productList.map((item, idx) => {
-        const product = item.product || item.lens
-        if (!product) return null
+        const product = item.product
+        const lens = item.lens
+        const quantity = item.quantity || 1
+        const mainItem = product || lens
+
+        if (!mainItem) return null
+
+        const itemTotal = ((product?.pricePerUnit || 0) + (lens?.pricePerUnit || 0)) * quantity
+
         return (
-          <div key={idx} className="flex justify-between items-start group">
-            <div className="space-y-1">
-              <p className="font-bold text-mint-1100 group-hover:text-primary-600 transition-colors">
-                {product.detail.name}
-              </p>
+          <div key={idx} className="flex gap-4 group">
+            <div className="w-16 h-16 rounded-xl bg-mint-50 p-2 flex-shrink-0 border border-mint-100/50">
+              <img
+                src={mainItem.detail.imgs[0]}
+                alt={mainItem.detail.name}
+                className="w-full h-full object-contain mix-blend-multiply"
+              />
             </div>
-            <div className="font-bold text-mint-1100">
-              <VNDPrice amount={product.pricePerUnit} />
+            <div className="flex-1 min-w-0">
+              <div className="flex justify-between items-start">
+                <div className="space-y-1">
+                  <p className="font-bold text-mint-1100 leading-tight group-hover:text-primary-600 transition-colors line-clamp-2">
+                    {mainItem.detail.name}
+                  </p>
+                  {product && lens && (
+                    <p className="text-[10px] text-primary-500 font-bold uppercase tracking-wider">
+                      + Kèm tròng kính
+                    </p>
+                  )}
+                  <p className="text-xs text-mint-800/60 font-medium">
+                    Số lượng: <span className="text-mint-1000 font-bold">x{quantity}</span>
+                  </p>
+                </div>
+                <div className="text-right">
+                  <div className="font-bold text-mint-1100">
+                    <VNDPrice amount={itemTotal} />
+                  </div>
+                  {quantity > 1 && (
+                    <p className="text-[10px] text-mint-800/40 font-medium">
+                      <VNDPrice amount={itemTotal / quantity} /> / sp
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         )
       })}
     </div>
 
-    <div className="pt-6 border-t border-dashed border-mint-200 space-y-4">
+    <div className="pt-8 border-t border-dashed border-mint-200 space-y-4">
       <div className="flex justify-between text-mint-800/70 font-medium">
         <span>Tạm tính</span>
-        <VNDPrice amount={invoiceData?.invoice.totalPrice || 0} />
+        <VNDPrice
+          amount={
+            (invoiceData?.invoice.totalPrice || 0) + (invoiceData?.invoice.totalDiscount || 0)
+          }
+        />
       </div>
+      {invoiceData?.invoice.totalDiscount && invoiceData.invoice.totalDiscount > 0 ? (
+        <div className="flex justify-between text-mint-800/70 font-medium">
+          <span>Giảm giá</span>
+          <span className="text-danger-500 font-bold">
+            -<VNDPrice amount={invoiceData.invoice.totalDiscount} />
+          </span>
+        </div>
+      ) : null}
       <div className="flex justify-between text-mint-800/70 font-medium">
         <span>Phí vận chuyển</span>
-        <span className="text-success-600">Miễn phí</span>
+        <span className="text-success-600 font-bold">Miễn phí</span>
       </div>
-      <div className="flex justify-between text-2xl font-black text-mint-1200 pt-2">
+      <div className="flex justify-between text-2xl font-black text-mint-1200 pt-4">
         <span>Tổng cộng</span>
         <div className="text-primary-600 tracking-tight">
           <VNDPrice amount={invoiceData?.invoice.totalPrice || 0} />

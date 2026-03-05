@@ -21,10 +21,11 @@ export function useOperationInvoiceDetail(invoiceId: string) {
 export function useUpdateInvoiceReadyToShip() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (invoiceId: string) => operationInvoiceService.updateInvoiceToReadyToShip(invoiceId),
+    mutationFn: (invoiceId: string) =>
+      operationInvoiceService.updateInvoiceToReadyToShip(invoiceId),
     onSuccess: (_, invoiceId) => {
       queryClient.invalidateQueries({ queryKey: ['operation-invoice-detail', invoiceId] })
-      queryClient.invalidateQueries({ queryKey: ['operation-invoices'] })
+      queryClient.invalidateQueries({ queryKey: ['operation-invoices-handle-delivery'] })
     }
   })
 }
@@ -36,7 +37,7 @@ export function useOperationShipCode(invoiceId: string) {
       try {
         const response = await operationInvoiceService.getShipCode(invoiceId)
         return response.data?.shipCode || null
-      } catch (error) {
+      } catch {
         return null // If API fails (e.g., 404 ship not found), return null
       }
     },

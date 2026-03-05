@@ -49,8 +49,21 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
         set({ items: items.filter((item) => (item._id || item.id) !== productId) })
         await wishlistService.removeFromWishlist(productId)
       } else {
-        // Optimistic update
-        set({ items: [...items, product] })
+        // Optimistic update - Default first, then new item
+        const defaultIndex = items.findIndex((item) => item.isDefault)
+        let newItems: StandardProduct[]
+
+        if (defaultIndex !== -1) {
+          newItems = [
+            ...items.slice(0, defaultIndex + 1),
+            product,
+            ...items.slice(defaultIndex + 1)
+          ]
+        } else {
+          newItems = [product, ...items]
+        }
+
+        set({ items: newItems })
         await wishlistService.addToWishlist(productId)
       }
     } catch (error) {

@@ -34,7 +34,7 @@ const transformPrescriptionToParameters = (prescription: PrescriptionData): Lens
  * Transform backend cart to frontend cart items
  */
 const transformBackendCartToItems = (backendCart: BackendCart): CartItem[] => {
-  return backendCart.products.map((item) => ({
+  const items = backendCart.products.map((item) => ({
     _id: item._id,
     product_id: item.product?.product_id || '',
     sku: item.product?.sku || '',
@@ -69,6 +69,8 @@ const transformBackendCartToItems = (backendCart: BackendCart): CartItem[] => {
         }
       : undefined
   }))
+
+  return items.reverse()
 }
 
 /**
@@ -125,7 +127,8 @@ const enrichCartItemsWithProductDetails = async (items: CartItem[]): Promise<Car
             image: variant.imgs?.[0] || item.image,
             sku: variant.sku || item.sku,
             productType: productDetail.type,
-            selectedOptions
+            selectedOptions,
+            mode: variant.mode
           }
         } else {
           enrichedItem = {

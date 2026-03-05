@@ -35,12 +35,25 @@ export const wishlistService = {
           return {
             ...p,
             id: p._id || p.id,
+            isDefault: item.isDefault || false,
+            addedAt: item.createdAt || item.addedAt || p.createdAt,
             defaultVariantImage: p.defaultVariantImage || defaultVariant?.imgs?.[0] || '',
             defaultVariantPrice: p.defaultVariantPrice || defaultVariant?.price || 0,
             defaultVariantFinalPrice: p.defaultVariantFinalPrice || defaultVariant?.finalPrice || 0
           }
         })
-        return mappedItems
+
+        // Sort: Default first, then newest added first
+        return mappedItems.sort((a, b) => {
+          // Default priority
+          if (a.isDefault && !b.isDefault) return -1
+          if (!a.isDefault && b.isDefault) return 1
+
+          // Newest next
+          const dateA = a.addedAt ? new Date(a.addedAt).getTime() : 0
+          const dateB = b.addedAt ? new Date(b.addedAt).getTime() : 0
+          return dateB - dateA
+        })
       }
       return []
     } catch (error) {

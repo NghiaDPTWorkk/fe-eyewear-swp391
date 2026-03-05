@@ -8,13 +8,16 @@ import { invoiceService } from '@/features/customer/invoice/services/invoice.ser
 import { paymentService } from '@/features/customer/services/payment.service'
 import { useCartStore } from '@/store'
 import { useAuth } from '@/features/auth/hooks/useAuth'
-import { PaymentMethodType, type Address } from '@/shared/types'
+import { PaymentMethodType } from '@/shared/utils/enums/payment.enum'
+import type { Address } from '@/shared/types/address.types'
 import type { CreateInvoiceRequest } from '@/shared/types/invoice.types'
+import type { Voucher } from '@/shared/types/voucher.types'
 
 import { CustomerInfoSection } from './sections/CustomerInfoSection'
 import { ShippingAddressSection } from './sections/ShippingAddressSection'
 import { PaymentMethodSection } from './sections/PaymentMethodSection'
 import { OrderSummarySection } from './sections/OrderSummarySection'
+import { VoucherSection } from './sections/VoucherSection'
 
 interface CartSummaryProps {
   subtotal: number
@@ -37,6 +40,7 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
   })
   const [note, setNote] = useState('')
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>(PaymentMethodType.COD)
+  const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
 
   const [provinces, setProvinces] = useState<Province[]>([])
@@ -62,33 +66,27 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
   useEffect(() => {
     const initData = async () => {
       try {
-        const provinceData = await addressService.getProvinces()
-        const provincesArray = Array.isArray(provinceData) ? provinceData : []
-        setProvinces(provincesArray)
-
+        let addresses: Address[] = []
         if (user) {
-          const addresses = await customerAddressService.getAddresses()
+          addresses = await customerAddressService.getAddresses()
           setSavedAddresses(addresses)
+        }
 
-          if (addresses.length > 0) {
-            const defaultAddr = addresses.find((a) => a.isDefault) || addresses[0]
-            setAddressMode('list')
-            setSelectedAddressId(defaultAddr._id || '')
-            setAddress({
-              street: defaultAddr.street,
-              ward: defaultAddr.ward,
-              city: defaultAddr.city
-            })
-
-            const province = provincesArray.find(
-              (p) => p.name.toLowerCase() === defaultAddr.city.toLowerCase()
-            )
-            if (province) {
-              setSelectedProvinceCode(province.code)
-              const wardData = await addressService.getWards(province.code)
-              setWards(Array.isArray(wardData) ? wardData : [])
-            }
-          }
+        if (addresses.length > 0) {
+          const defaultAddr = addresses.find((a) => a.isDefault) || addresses[0]
+          setAddressMode('list')
+          setSelectedAddressId(defaultAddr._id || '')
+          setAddress({
+            street: defaultAddr.street,
+            ward: defaultAddr.ward,
+            city: defaultAddr.city
+          })
+          // Provinces will be fetched on-demand if user switches to manual mode
+        } else {
+          // No saved addresses or not logged in, fetch provinces for manual entry
+          const provinceData = await addressService.getProvinces()
+          setProvinces(Array.isArray(provinceData) ? provinceData : [])
+          setAddressMode('manual')
         }
       } catch (error) {
         console.error('Failed to initialize cart summary data:', error)
@@ -104,6 +102,16 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
       setAddress({ street: '', ward: '', city: '' })
       setSelectedProvinceCode(null)
       setWards([])
+
+      // Fetch provinces on demand if not already loaded
+      if (provinces.length === 0) {
+        try {
+          const provinceData = await addressService.getProvinces()
+          setProvinces(Array.isArray(provinceData) ? provinceData : [])
+        } catch (error) {
+          console.error('Failed to fetch provinces on-demand:', error)
+        }
+      }
       return
     }
 
@@ -116,14 +124,17 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
         city: addr.city
       })
 
-      const province = provinces.find((p) => p.name.toLowerCase() === addr.city.toLowerCase())
-      if (province) {
-        setSelectedProvinceCode(province.code)
-        try {
-          const data = await addressService.getWards(province.code)
-          setWards(Array.isArray(data) ? data : [])
-        } catch (error) {
-          console.error('Failed to fetch wards:', error)
+      // If we need to sync manual fields (like ward/province dropdowns) when selecting a saved address
+      if (provinces.length > 0) {
+        const province = provinces.find((p) => p.name.toLowerCase() === addr.city.toLowerCase())
+        if (province) {
+          setSelectedProvinceCode(province.code)
+          try {
+            const data = await addressService.getWards(province.code)
+            setWards(Array.isArray(data) ? data : [])
+          } catch (error) {
+            console.error('Failed to fetch wards:', error)
+          }
         }
       }
     }
@@ -210,7 +221,7 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
         },
         fullName: customerInfo.fullName,
         phone: customerInfo.phone,
-        voucher: [],
+        voucher: selectedVoucher ? [selectedVoucher.code] : [],
         paymentMethod,
         note
       }
@@ -243,6 +254,22 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
           }
         }
 
+        if (paymentMethod === PaymentMethodType.PAYOS) {
+          try {
+            const { invoice, payment } = response.data
+            const urlResponse = await paymentService.getPayOSUrl(invoice._id, payment._id)
+            if (urlResponse.success && urlResponse.data.url) {
+              window.location.href = urlResponse.data.url
+              return // Stop further execution
+            }
+          } catch (error) {
+            console.error('Failed to get PayOS URL:', error)
+            toast.error(
+              'Không thể tạo liên kết thanh toán PayOS. Vui lòng thử lại trong Lịch sử đơn hàng.'
+            )
+          }
+        }
+
         navigate('/account/orders')
       } else {
         toast.error(response.message || 'Tạo đơn hàng thất bại')
@@ -256,7 +283,20 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
   }
 
   const shipping: number = 0
-  const total = subtotal + shipping
+
+  let discountAmount = 0
+  if (selectedVoucher) {
+    if (selectedVoucher.typeDiscount === 'PERCENTAGE') {
+      discountAmount = (subtotal * selectedVoucher.value) / 100
+      if (selectedVoucher.maxDiscountValue > 0) {
+        discountAmount = Math.min(discountAmount, selectedVoucher.maxDiscountValue)
+      }
+    } else {
+      discountAmount = selectedVoucher.value
+    }
+  }
+
+  const total = Math.max(0, subtotal - discountAmount + shipping)
 
   return (
     <Card className="p-8 border-mint-300/50 sticky top-8 rounded-3xl">
@@ -294,8 +334,15 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
         onPaymentMethodChange={setPaymentMethod}
       />
 
+      <VoucherSection
+        selectedVoucherId={selectedVoucher?._id || null}
+        onVoucherSelect={setSelectedVoucher}
+        subtotal={subtotal}
+      />
+
       <OrderSummarySection
         subtotal={subtotal}
+        discount={discountAmount}
         shipping={shipping}
         total={total}
         isProcessing={isProcessing}

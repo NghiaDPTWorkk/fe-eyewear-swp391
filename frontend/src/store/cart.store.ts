@@ -20,11 +20,11 @@ interface CartState {
     quantity: number,
     lensSelection?: LensSelectionState
   ) => Promise<void>
-  fetchCart: (force?: boolean) => Promise<void>
+  fetchCart: (force?: boolean, quiet?: boolean) => Promise<void>
   updateQuantity: (item: CartItem, quantity: number) => Promise<void>
   removeItem: (item: CartItem) => Promise<void>
   removeItems: (items: CartItem[]) => Promise<void>
-  toggleSelection: (productId: string) => void
+  toggleSelection: (item: CartItem) => void
   toggleAllSelection: () => void
   clearCart: () => Promise<void>
   setLoading: (loading: boolean) => void
@@ -62,7 +62,7 @@ export const useCartStore = create<CartState>((set, get) => ({
           })
         }
       }
-      return { items: [...state.items, { ...item, selected: item.selected ?? true }] }
+      return { items: [{ ...item, selected: item.selected ?? true }, ...state.items] }
     }),
 
   /**
@@ -94,14 +94,15 @@ export const useCartStore = create<CartState>((set, get) => ({
   /**
    * Fetch cart from backend
    */
-  fetchCart: async (force = false) => {
+  fetchCart: async (force = false, quiet = false) => {
     // Optimization: Skip if already initialized and not a forced refresh
     // But ONLY if we actually have items. If items is empty, we likely need to fetch.
     if (get().isInitialized && !force && get().items.length > 0) {
       return
     }
 
-    set({ isLoading: true, fetchError: null })
+    if (!quiet) set({ isLoading: true, fetchError: null })
+    else set({ fetchError: null })
 
     try {
       const items = await cartService.getCart()
@@ -118,18 +119,31 @@ export const useCartStore = create<CartState>((set, get) => ({
   },
 
   updateQuantity: async (item, quantity) => {
-    set({ isUpdating: true })
+    const previousItems = get().items
+    set({
+      isUpdating: true,
+      items: previousItems.map((i) => {
+        const isSameProduct = i.product_id === item.product_id
+        const isSameSku = (i.sku || '') === (item.sku || '')
+        const isSameLens = JSON.stringify(i.lens) === JSON.stringify(item.lens)
+        return isSameProduct && isSameSku && isSameLens ? { ...i, quantity } : i
+      })
+    })
+
     try {
       const updatedItems = await cartService.updateQuantity(item, quantity)
-      set({ items: updatedItems, isUpdating: false })
 
-      // Safety fix: If updatedItems is empty, it might be due to API response shape
-      // Fetch specifically to ensure we have the truth
-      if (updatedItems.length === 0) {
-        await get().fetchCart(true)
+      // Only update items if we got a valid non-empty list
+      // Otherwise keep current items and do a quiet refresh
+      if (updatedItems && updatedItems.length > 0) {
+        set({ items: updatedItems, isUpdating: false })
+      } else {
+        await get().fetchCart(true, true)
+        set({ isUpdating: false })
       }
     } catch (error: any) {
-      set({ isUpdating: false })
+      // Rollback on error
+      set({ items: previousItems, isUpdating: false })
       throw error
     }
   },
@@ -160,11 +174,18 @@ export const useCartStore = create<CartState>((set, get) => ({
     }
   },
 
-  toggleSelection: (productId) =>
+  toggleSelection: (targetItem) =>
     set((state) => ({
-      items: state.items.map((item) =>
-        item.product_id === productId ? { ...item, selected: !item.selected } : item
-      )
+      items: state.items.map((i) => {
+        const isSameProduct = i.product_id === targetItem.product_id
+        const isSameSku = (i.sku || '') === (targetItem.sku || '')
+        const isSameLens = JSON.stringify(i.lens) === JSON.stringify(targetItem.lens)
+        const isSameId = i._id && targetItem._id ? i._id === targetItem._id : true
+
+        return isSameProduct && isSameSku && isSameLens && isSameId
+          ? { ...i, selected: !i.selected }
+          : i
+      })
     })),
 
   toggleAllSelection: () =>

@@ -1,6 +1,6 @@
 import { Minus, Plus, ChevronDown, ChevronUp } from 'lucide-react'
 import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { CartItem as CartItemType } from '@/shared/types'
 import { useCartStore } from '@/store/cart.store'
 import { Checkbox, Card } from '@/shared/components/ui'
@@ -12,6 +12,40 @@ interface CartItemProps {
 export const CartItem = ({ item }: CartItemProps) => {
   const { updateQuantity, removeItem, toggleSelection } = useCartStore()
   const [isLensesOpen, setIsLensesOpen] = useState(false)
+
+  // Local state for quantity input to allow typing
+  const [localQty, setLocalQty] = useState(item.quantity.toString())
+
+  useEffect(() => {
+    setLocalQty(item.quantity.toString())
+  }, [item.quantity])
+
+  const handleQtyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Only allow digits
+    const val = e.target.value.replace(/\D/g, '')
+    setLocalQty(val)
+  }
+
+  const handleQtyBlur = () => {
+    let newQty = parseInt(localQty)
+    if (isNaN(newQty) || newQty < 1) {
+      newQty = 1
+    } else if (newQty > 99) {
+      newQty = 99
+    }
+
+    if (newQty !== item.quantity) {
+      updateQuantity(item, newQty)
+    } else {
+      setLocalQty(item.quantity.toString())
+    }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      ;(e.target as HTMLInputElement).blur()
+    }
+  }
 
   // Dynamic data from item
   // Calculate totals
@@ -37,8 +71,8 @@ export const CartItem = ({ item }: CartItemProps) => {
           <div className="flex-shrink-0">
             <Checkbox
               isChecked={item.selected ?? true}
-              onCheckedChange={() => toggleSelection(item.product_id)}
-              id={`select-${item.product_id}`}
+              onCheckedChange={() => toggleSelection(item)}
+              id={`select-${item._id || item.product_id}`}
             />
           </div>
           <div className="flex flex-col items-center gap-4">
@@ -252,9 +286,14 @@ export const CartItem = ({ item }: CartItemProps) => {
               >
                 <Minus className="w-3.5 h-3.5" />
               </button>
-              <span className="text-sm font-bold text-mint-1200 min-w-[30px] text-center">
-                {item.quantity}
-              </span>
+              <input
+                type="text"
+                value={localQty}
+                onChange={handleQtyChange}
+                onBlur={handleQtyBlur}
+                onKeyDown={handleKeyDown}
+                className="text-sm font-bold text-mint-1200 w-10 text-center bg-transparent border-none focus:outline-none focus:ring-1 focus:ring-primary-400/30 rounded-md transition-all appearance-none"
+              />
               <button
                 onClick={() => updateQuantity(item, item.quantity + 1)}
                 className="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm hover:text-primary-500 transition-colors"

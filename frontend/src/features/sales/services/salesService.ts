@@ -37,7 +37,7 @@ export const salesService = {
     )
   },
 
-  approveOrder: async (id: string, data?: { parameters: any }) => {
+  approveOrder: async (id: string, data?: { parameters: any; note?: string }) => {
     return httpClient.patch(ENDPOINTS.ADMIN.ORDER_APPROVE(id), data || {})
   },
 
@@ -49,5 +49,9 @@ export const salesService = {
 
   getInvoiceById: async (id: string) => {
     return httpClient.get<any>(ENDPOINTS.OPERATION_STAFF.INVOICE_DETAIL(id))
+  },
+
+  getCustomerById: async (id: string) => {
+    return httpClient.get<any>(`/admin/customers/${id}`)
   }
 }

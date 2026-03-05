@@ -16,7 +16,7 @@ import LensSpecifications from '@/components/layout/staff/staff-core/technicalde
 import FrameSpecifications from '@/components/layout/staff/staff-core/technicaldetail/FrameSpecifications'
 import { PATHS } from '@/routes/paths'
 import { ProcessTracker } from '@/components/layout/staff/staff-core/processtracker'
-import { IoArrowBack, IoCheckmarkCircle } from 'react-icons/io5'
+import { IoArrowBack } from 'react-icons/io5'
 import { getOrderProgressStep } from '@/shared/utils/order-status.utils'
 import type React from 'react'
 
@@ -336,10 +336,10 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
     // Actually the logic above handles it via manufacturingOrderLensParams
   }
 
-  // Adding the missing SKU for LensNormalOrder if needed in other contexts? 
+  // Adding the missing SKU for LensNormalOrder if needed in other contexts?
   // No, the user specifically asked for LensNormalOrder and FrameSpecifications.
 
-  // Update LensSpecifications to also show SKU if it's there? 
+  // Update LensSpecifications to also show SKU if it's there?
   // The user only mentioned LensNormalOrder and FrameSpecifications.
   // Wait, looking at the code, LensSpecifications is used for MANUFACTURING.
   // The user said: "ở trang @[frontend/src/pages/operations/OperationOrderDetailPage.tsx] component @[frontend/src/components/layout/staff/staff-core/technicaldetail/FrameSpecifications.tsx], và @[frontend/src/components/layout/staff/staff-core/technicaldetail/LensNormalOrder.tsx]"

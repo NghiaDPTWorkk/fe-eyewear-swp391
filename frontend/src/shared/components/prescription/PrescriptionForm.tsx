@@ -236,6 +236,8 @@ export function PrescriptionForm({
               <span className="w-2 h-2 bg-primary-500 rounded-full shrink-0"></span>
               Left Eye (OS)
             </h4>
+            {/* Empty spacer to align with the 'Same for both eyes' button in the right eye column */}
+            <div className="h-8 hidden md:block" aria-hidden="true" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">

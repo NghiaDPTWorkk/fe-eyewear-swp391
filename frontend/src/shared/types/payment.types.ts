@@ -1,4 +1,5 @@
-import type { PaymentMethodType, PaymentStatus } from './enums'
+import type { PaymentMethodType, PaymentStatus } from '@/shared/utils/enums/payment.enum'
+export type { PaymentMethodType, PaymentStatus }
 
 export interface Payment {
   _id: string

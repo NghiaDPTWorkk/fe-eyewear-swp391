@@ -1,4 +1,16 @@
-import { format, addDays } from 'date-fns'
+// Helpers replacing date-fns (not installed)
+function formatDate(date: Date): string {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
+
+function addDays(date: Date, days: number): Date {
+  const result = new Date(date)
+  result.setDate(result.getDate() + days)
+  return result
+}
 
 /**
  * Parses a Vietnamese date string into YYYY-MM-DD.
@@ -22,8 +34,8 @@ export function parseVietnameseDate(input: string): string | null {
   const currentYear = today.getFullYear()
 
   // 2. Shortcuts
-  if (text.includes('hôm nay')) return format(today, 'yyyy-MM-dd')
-  if (text.includes('ngày mai')) return format(addDays(today, 1), 'yyyy-MM-dd')
+  if (text.includes('hôm nay')) return formatDate(today)
+  if (text.includes('ngày mai')) return formatDate(addDays(today, 1))
 
   // 3. Extract numbers
   const numbers = text.match(/\d+/g)
@@ -77,7 +89,7 @@ export function parseVietnameseDate(input: string): string | null {
     try {
       const date = new Date(year, month - 1, day)
       if (!isNaN(date.getTime())) {
-        const result = format(date, 'yyyy-MM-dd')
+        const result = formatDate(date)
         console.warn('[DateParser] Success:', result)
         return result
       }

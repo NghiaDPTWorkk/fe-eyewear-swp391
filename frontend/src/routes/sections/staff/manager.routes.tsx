@@ -2,6 +2,7 @@ import { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
 import { LazyPage } from '@/pages/LazyPage'
 import { AuthGuard } from '@/routes/guards'
+import { ManagerVouchersPage } from '@/pages/manager'
 
 const ManagerLayout = lazy(() =>
   import('@/pages/manager/ManagerLayout').then((m) => ({ default: m.default }))
@@ -114,6 +115,14 @@ export const managerRoutes = [
         element: (
           <LazyPage>
             <ManagerAddAttributePage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'vouchers',
+        element: (
+          <LazyPage>
+            <ManagerVouchersPage />
           </LazyPage>
         )
       }

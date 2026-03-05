@@ -53,7 +53,7 @@ export function CustomerOrderDetailPage() {
       <div className="p-10 text-center">
         <p className="text-danger-500 font-bold mb-6">{error || 'Order not found'}</p>
         <Button
-          onClick={() => navigate('/account/orders')}
+          onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/account/orders'))}
           variant="outline"
           className="rounded-xl"
         >
@@ -70,7 +70,7 @@ export function CustomerOrderDetailPage() {
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">
         <button
-          onClick={() => navigate('/account/orders')}
+          onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/account/orders'))}
           className="p-3 hover:bg-mint-50 rounded-2xl text-mint-1200 transition-colors"
         >
           <ArrowLeft size={24} />

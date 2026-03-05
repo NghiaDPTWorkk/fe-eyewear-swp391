@@ -8,13 +8,16 @@ import { invoiceService } from '@/features/customer/invoice/services/invoice.ser
 import { paymentService } from '@/features/customer/services/payment.service'
 import { useCartStore } from '@/store'
 import { useAuth } from '@/features/auth/hooks/useAuth'
-import { PaymentMethodType, type Address } from '@/shared/types'
+import { PaymentMethodType } from '@/shared/utils/enums/payment.enum'
+import type { Address } from '@/shared/types/address.types'
 import type { CreateInvoiceRequest } from '@/shared/types/invoice.types'
+import type { Voucher } from '@/shared/types/voucher.types'
 
 import { CustomerInfoSection } from './sections/CustomerInfoSection'
 import { ShippingAddressSection } from './sections/ShippingAddressSection'
 import { PaymentMethodSection } from './sections/PaymentMethodSection'
 import { OrderSummarySection } from './sections/OrderSummarySection'
+import { VoucherSection } from './sections/VoucherSection'
 
 interface CartSummaryProps {
   subtotal: number
@@ -37,6 +40,7 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
   })
   const [note, setNote] = useState('')
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>(PaymentMethodType.COD)
+  const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
 
   const [provinces, setProvinces] = useState<Province[]>([])
@@ -217,7 +221,7 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
         },
         fullName: customerInfo.fullName,
         phone: customerInfo.phone,
-        voucher: [],
+        voucher: selectedVoucher ? [selectedVoucher.code] : [],
         paymentMethod,
         note
       }
@@ -279,7 +283,20 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
   }
 
   const shipping: number = 0
-  const total = subtotal + shipping
+
+  let discountAmount = 0
+  if (selectedVoucher) {
+    if (selectedVoucher.typeDiscount === 'PERCENTAGE') {
+      discountAmount = (subtotal * selectedVoucher.value) / 100
+      if (selectedVoucher.maxDiscountValue > 0) {
+        discountAmount = Math.min(discountAmount, selectedVoucher.maxDiscountValue)
+      }
+    } else {
+      discountAmount = selectedVoucher.value
+    }
+  }
+
+  const total = Math.max(0, subtotal - discountAmount + shipping)
 
   return (
     <Card className="p-8 border-mint-300/50 sticky top-8 rounded-3xl">
@@ -317,8 +334,15 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
         onPaymentMethodChange={setPaymentMethod}
       />
 
+      <VoucherSection
+        selectedVoucherId={selectedVoucher?._id || null}
+        onVoucherSelect={setSelectedVoucher}
+        subtotal={subtotal}
+      />
+
       <OrderSummarySection
         subtotal={subtotal}
+        discount={discountAmount}
         shipping={shipping}
         total={total}
         isProcessing={isProcessing}

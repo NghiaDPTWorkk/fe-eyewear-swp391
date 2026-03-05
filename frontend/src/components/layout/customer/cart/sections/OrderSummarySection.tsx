@@ -4,6 +4,7 @@ import { Button } from '@/shared/components/ui'
 
 interface OrderSummarySectionProps {
   subtotal: number
+  discount: number
   shipping: number
   total: number
   isProcessing: boolean
@@ -12,6 +13,7 @@ interface OrderSummarySectionProps {
 
 export const OrderSummarySection = ({
   subtotal,
+  discount,
   shipping,
   total,
   isProcessing,
@@ -26,6 +28,14 @@ export const OrderSummarySection = ({
             <VNDPrice amount={subtotal} />
           </span>
         </div>
+        {discount > 0 && (
+          <div className="flex justify-between text-primary-600">
+            <span className="font-medium">Discount</span>
+            <span className="font-bold">
+              -<VNDPrice amount={discount} />
+            </span>
+          </div>
+        )}
         <div className="flex justify-between text-mint-1200">
           <span className="font-medium">Shipping</span>
           <span className="font-bold">

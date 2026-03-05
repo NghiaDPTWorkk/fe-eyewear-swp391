@@ -9,6 +9,8 @@ export const ENDPOINTS = {
     LOGOUT: '/auth/logout',
     REFRESH_TOKEN: '/auth/refresh-token',
     PROFILE: '/customer',
+    UPDATE_PROFILE: '/customer/profile',
+    CHANGE_PASSWORD_CUSTOMER: '/customer/profile/password',
     GET_PROFILE: '/admin/auth/profile', // Get admin/staff profile - Keep from target
     CHANGE_PASSWORD: '/admin/auth/profile/change-password',
     ADDRESS_LIST: '/customer/profile/address',
@@ -253,5 +255,9 @@ export const ENDPOINTS = {
       `/admin/ai-conversations?search=${encodeURIComponent(search)}&lastItem=${lastItem}`,
     MESSAGES: (id: string, lastItem: string = '') =>
       `/admin/ai-conversations/${id}/messages?lastItem=${lastItem}`
+  },
+  // Vouchers
+  VOUCHERS: {
+    MY_VOUCHERS: '/vouchers/my-vouchers'
   }
 } as const

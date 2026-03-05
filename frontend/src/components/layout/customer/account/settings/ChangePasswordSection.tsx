@@ -1,11 +1,63 @@
-import { Card, Input, Button } from '@/components'
+import { Card, Input, Button } from '@/shared/components/ui'
 import { Lock, Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
+import { authService } from '@/features/auth/services/auth.service'
+import { toast } from 'react-hot-toast'
 
 export const ChangePasswordSection = () => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+
+  const [isLoading, setIsLoading] = useState(false)
+  const [formData, setFormData] = useState({
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  })
+
+  const handleUpdatePassword = async () => {
+    const { oldPassword, newPassword, confirmPassword } = formData
+
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      toast.error('Vui lòng nhập đầy đủ thông tin mật khẩu')
+      return
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast.error('Mật khẩu mới và xác nhận mật khẩu không khớp')
+      return
+    }
+
+    if (newPassword.length < 8) {
+      toast.error('Mật khẩu mới phải có ít nhất 8 ký tự')
+      return
+    }
+
+    setIsLoading(true)
+    try {
+      const response = await authService.changePasswordCustomer({
+        oldPassword,
+        newPassword
+      })
+
+      if (response.success) {
+        toast.success(response.message || 'Cập nhật mật khẩu thành công!')
+        setFormData({
+          oldPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        })
+      } else {
+        toast.error(response.message || 'Cập nhật mật khẩu thất bại')
+      }
+    } catch (error: any) {
+      const errorMsg = error.response?.data?.message || 'Có lỗi xảy ra khi cập nhật mật khẩu'
+      toast.error(errorMsg)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <Card className="p-10 !rounded-[24px]">
@@ -22,6 +74,8 @@ export const ChangePasswordSection = () => {
           <Input
             type={showCurrentPassword ? 'text' : 'password'}
             placeholder="••••••••"
+            value={formData.oldPassword}
+            onChange={(e) => setFormData({ ...formData, oldPassword: e.target.value })}
             className="bg-white border-primary-500 rounded-xl h-14"
             rightElement={
               <button
@@ -42,6 +96,8 @@ export const ChangePasswordSection = () => {
           <Input
             type={showNewPassword ? 'text' : 'password'}
             placeholder="••••••••"
+            value={formData.newPassword}
+            onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
             className="bg-white border-primary-500 rounded-xl h-14"
             rightElement={
               <button
@@ -62,6 +118,8 @@ export const ChangePasswordSection = () => {
           <Input
             type={showConfirmPassword ? 'text' : 'password'}
             placeholder="••••••••"
+            value={formData.confirmPassword}
+            onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
             className="bg-white border-primary-500 rounded-xl h-14"
             rightElement={
               <button
@@ -77,7 +135,11 @@ export const ChangePasswordSection = () => {
       </div>
 
       <div className="mt-10">
-        <Button className="bg-primary-500 hover:bg-primary-600 text-white px-8 h-12 rounded-lg font-bold uppercase tracking-wider text-sm shadow-md shadow-primary-100">
+        <Button
+          onClick={handleUpdatePassword}
+          isLoading={isLoading}
+          className="bg-primary-500 hover:bg-primary-600 text-white px-8 h-12 rounded-lg font-bold uppercase tracking-wider text-sm shadow-md shadow-primary-100"
+        >
           Update Password
         </Button>
       </div>

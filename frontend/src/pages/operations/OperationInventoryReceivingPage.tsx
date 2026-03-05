@@ -255,12 +255,11 @@ export default function OperationInventoryReceivingPage() {
       <div className="bg-white rounded-xl shadow-sm border border-neutral-100 overflow-hidden">
         {/* Table header */}
         <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-neutral-50 border-b border-neutral-100 text-[11px] font-bold text-neutral-500 uppercase tracking-widest">
-          <div className="col-span-2 flex items-center gap-1.5">
+          <div className="col-span-3 flex items-center gap-1.5">
             <IoLayersOutline size={13} /> SKU
           </div>
-          <div className="col-span-3">Description</div>
-          <div className="col-span-1 text-center">Pre-Ordered Qty</div>
-          <div className="col-span-2 flex items-center gap-1.5">
+          <div className="col-span-2 text-center">Pre-Ordered Qty</div>
+          <div className="col-span-3 flex items-center gap-1.5">
             <IoPersonOutline size={13} /> Manager
           </div>
           <div className="col-span-2 flex items-center gap-1.5">
@@ -290,21 +289,14 @@ export default function OperationInventoryReceivingPage() {
                 }`}
               >
                 {/* SKU */}
-                <div className="col-span-2">
+                <div className="col-span-3">
                   <span className="font-mono text-sm font-bold text-neutral-800 bg-neutral-100 px-2 py-0.5 rounded">
                     {batch.sku}
                   </span>
                 </div>
 
-                {/* Description */}
-                <div className="col-span-3">
-                  <p className="text-sm text-neutral-700 truncate" title={batch.description}>
-                    {batch.description}
-                  </p>
-                </div>
-
                 {/* Pre-Ordered Qty + mini progress */}
-                <div className="col-span-1 flex flex-col items-center gap-1">
+                <div className="col-span-2 flex flex-col items-center gap-1">
                   <span className="text-sm font-bold text-neutral-800">
                     {batch.preOrderedQuantity}
                     <span className="text-xs text-neutral-400 font-normal">
@@ -326,7 +318,7 @@ export default function OperationInventoryReceivingPage() {
                 </div>
 
                 {/* Manager */}
-                <div className="col-span-2">
+                <div className="col-span-3">
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-full bg-mint-100 flex items-center justify-center flex-shrink-0">
                       <span className="text-[10px] font-bold text-mint-700 uppercase">

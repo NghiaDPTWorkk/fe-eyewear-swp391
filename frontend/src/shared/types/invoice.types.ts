@@ -148,6 +148,7 @@ export interface InvoiceProductDetail {
 
 export interface InvoiceItem {
   type: string[]
+  quantity: number
   lens?: {
     product_id: string
     sku: string

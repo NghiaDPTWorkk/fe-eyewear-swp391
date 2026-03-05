@@ -9,42 +9,64 @@ import type { InvoiceDetailData } from '@/shared/types/invoice.types'
 import {
   PaymentStatusHeader,
   PaymentAmountCard,
-  TransactionDetails,
-  OrderInvoiceDetails,
   PaymentResultActions,
   PaymentFailureReasons,
   PaymentFooter
 } from './components/PaymentResultComponents'
+import { OrderItemList } from '@/components/layout/customer/account/orders/detail/OrderItemList'
+import { OrderSummary } from '@/components/layout/customer/account/orders/detail/OrderSummary'
+import { OrderCustomerDetails } from '@/components/layout/customer/account/orders/detail/OrderCustomerDetails'
 
 export const PaymentResultPage = () => {
-  const [searchParams] = useSearchParams()
+  useSearchParams()
   const navigate = useNavigate()
+
+  const fullUrl = window.location.href
+  const queryPart = fullUrl.includes('?') ? fullUrl.split('?').slice(1).join('&') : ''
+  const normalizedSearch = queryPart.replace(/%3F/gi, '&').replace(/\?/g, '&')
+  const params = new URLSearchParams(normalizedSearch)
+
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
   const [invoiceData, setInvoiceData] = useState<InvoiceDetailData | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchResult = async () => {
-      const responseCode = searchParams.get('vnp_ResponseCode')
-      const txnRef = searchParams.get('vnp_TxnRef') // Format: invoiceId-timestamp
+      const responseCode = params.get('vnp_ResponseCode')
+      const txnRef = params.get('vnp_TxnRef')
+      const isSuccess = params.get('isSuccess')
+      const invoiceIdParam = params.get('invoiceId')
 
-      if (!txnRef) {
+      let invoiceId = ''
+      let isActuallySuccess = false
+
+      if (txnRef) {
+        invoiceId = txnRef.split('-')[0]
+        isActuallySuccess = responseCode === '00'
+      } else if (invoiceIdParam) {
+        invoiceId = invoiceIdParam
+        const isSuccessStr = isSuccess?.toLowerCase() || ''
+        isActuallySuccess = isSuccessStr.startsWith('true') || isSuccessStr === '1'
+      }
+
+      if (!invoiceId) {
         setStatus('error')
         setError('Không tìm thấy thông tin giao dịch.')
         return
       }
 
-      const invoiceId = txnRef.split('-')[0]
-
       try {
         const response = await invoiceService.getInvoiceDetail(invoiceId)
         if (response.success) {
           setInvoiceData(response.data)
-          if (responseCode === '00') {
+          if (isActuallySuccess) {
             setStatus('success')
           } else {
             setStatus('error')
-            setError('Giao dịch không thành công hoặc đã bị hủy (Mã lỗi: ' + responseCode + ')')
+            const errorMsg = responseCode
+              ? `Giao dịch không thành công hoặc đã bị hủy (Mã lỗi: ${responseCode})`
+              : 'Thanh toán không thành công.'
+            setError(errorMsg)
           }
         } else {
           setStatus('error')
@@ -58,14 +80,12 @@ export const PaymentResultPage = () => {
     }
 
     fetchResult()
-  }, [searchParams])
+    // params is derived from window.location.href which changes when navigation happens
+  }, [window.location.href])
 
-  const paymentDate = searchParams.get('vnp_PayDate')
-  const formattedDate = paymentDate
-    ? `${paymentDate.slice(6, 8)}/${paymentDate.slice(4, 6)}/${paymentDate.slice(0, 4)}, ${paymentDate.slice(8, 10)}:${paymentDate.slice(10, 12)}`
-    : new Date().toLocaleDateString('vi-VN')
-
-  const amount = searchParams.get('vnp_Amount') ? Number(searchParams.get('vnp_Amount')) / 100 : 0
+  const amount = params.get('vnp_Amount')
+    ? Number(params.get('vnp_Amount')) / 100
+    : invoiceData?.invoice.totalPrice || 0
 
   return (
     <div className="min-h-screen bg-mint-50 flex flex-col font-sans text-mint-1200">
@@ -93,12 +113,23 @@ export const PaymentResultPage = () => {
 
               <PaymentAmountCard amount={amount} />
 
-              <TransactionDetails
-                transactionNo={searchParams.get('vnp_TransactionNo')}
-                formattedDate={formattedDate}
+              <OrderCustomerDetails
+                fullName={invoiceData?.invoice.fullName || ''}
+                phone={invoiceData?.invoice.phone || ''}
+                address={invoiceData?.invoice.address || { street: '', ward: '', city: '' }}
               />
 
-              <OrderInvoiceDetails invoiceData={invoiceData} />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="md:col-span-2">
+                  <OrderItemList items={invoiceData?.productList || []} />
+                </div>
+                <div>
+                  <OrderSummary
+                    totalPrice={invoiceData?.invoice.totalPrice || 0}
+                    totalDiscount={invoiceData?.invoice.totalDiscount || 0}
+                  />
+                </div>
+              </div>
 
               <PaymentResultActions
                 invoiceId={invoiceData?.invoice._id}

@@ -62,33 +62,27 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
   useEffect(() => {
     const initData = async () => {
       try {
-        const provinceData = await addressService.getProvinces()
-        const provincesArray = Array.isArray(provinceData) ? provinceData : []
-        setProvinces(provincesArray)
-
+        let addresses: Address[] = []
         if (user) {
-          const addresses = await customerAddressService.getAddresses()
+          addresses = await customerAddressService.getAddresses()
           setSavedAddresses(addresses)
+        }
 
-          if (addresses.length > 0) {
-            const defaultAddr = addresses.find((a) => a.isDefault) || addresses[0]
-            setAddressMode('list')
-            setSelectedAddressId(defaultAddr._id || '')
-            setAddress({
-              street: defaultAddr.street,
-              ward: defaultAddr.ward,
-              city: defaultAddr.city
-            })
-
-            const province = provincesArray.find(
-              (p) => p.name.toLowerCase() === defaultAddr.city.toLowerCase()
-            )
-            if (province) {
-              setSelectedProvinceCode(province.code)
-              const wardData = await addressService.getWards(province.code)
-              setWards(Array.isArray(wardData) ? wardData : [])
-            }
-          }
+        if (addresses.length > 0) {
+          const defaultAddr = addresses.find((a) => a.isDefault) || addresses[0]
+          setAddressMode('list')
+          setSelectedAddressId(defaultAddr._id || '')
+          setAddress({
+            street: defaultAddr.street,
+            ward: defaultAddr.ward,
+            city: defaultAddr.city
+          })
+          // Provinces will be fetched on-demand if user switches to manual mode
+        } else {
+          // No saved addresses or not logged in, fetch provinces for manual entry
+          const provinceData = await addressService.getProvinces()
+          setProvinces(Array.isArray(provinceData) ? provinceData : [])
+          setAddressMode('manual')
         }
       } catch (error) {
         console.error('Failed to initialize cart summary data:', error)
@@ -104,6 +98,16 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
       setAddress({ street: '', ward: '', city: '' })
       setSelectedProvinceCode(null)
       setWards([])
+
+      // Fetch provinces on demand if not already loaded
+      if (provinces.length === 0) {
+        try {
+          const provinceData = await addressService.getProvinces()
+          setProvinces(Array.isArray(provinceData) ? provinceData : [])
+        } catch (error) {
+          console.error('Failed to fetch provinces on-demand:', error)
+        }
+      }
       return
     }
 
@@ -116,14 +120,17 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
         city: addr.city
       })
 
-      const province = provinces.find((p) => p.name.toLowerCase() === addr.city.toLowerCase())
-      if (province) {
-        setSelectedProvinceCode(province.code)
-        try {
-          const data = await addressService.getWards(province.code)
-          setWards(Array.isArray(data) ? data : [])
-        } catch (error) {
-          console.error('Failed to fetch wards:', error)
+      // If we need to sync manual fields (like ward/province dropdowns) when selecting a saved address
+      if (provinces.length > 0) {
+        const province = provinces.find((p) => p.name.toLowerCase() === addr.city.toLowerCase())
+        if (province) {
+          setSelectedProvinceCode(province.code)
+          try {
+            const data = await addressService.getWards(province.code)
+            setWards(Array.isArray(data) ? data : [])
+          } catch (error) {
+            console.error('Failed to fetch wards:', error)
+          }
         }
       }
     }

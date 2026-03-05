@@ -7,46 +7,50 @@ import {
   IoTicketOutline,
   IoWalletOutline
 } from 'react-icons/io5'
-const METRICS = [
-  {
-    title: 'Pending Orders',
-    value: '24',
-    icon: <IoClipboardOutline className="text-2xl" />,
-    trend: { label: 'from yesterday', value: 12, isPositive: true },
-    progress: { value: 45, colorClass: 'bg-orange-500' },
-    colorScheme: 'warning' as const
-  },
-  {
-    title: 'Daily Revenue',
-    value: '$4,250.00',
-    icon: <IoWalletOutline className="text-2xl" />,
-    trend: { label: 'vs last week', value: 8.2, isPositive: true },
-    progress: { value: 70, colorClass: 'bg-emerald-500' },
-    colorScheme: 'success' as const
-  },
-  {
-    title: 'Open Tickets',
-    value: '5',
-    icon: <IoTicketOutline className="text-2xl" />,
-    trend: { label: 'new today', value: -2, isPositive: false },
-    progress: { value: 25, colorClass: 'bg-red-500' },
-    colorScheme: 'danger' as const
-  },
-  {
-    title: 'Monthly Target',
-    value: '85%',
-    subValue: '$102k achieved',
-    icon: <IoFlagOutline className="text-2xl" />,
-    trend: null,
-    progress: { value: 85, colorClass: 'bg-blue-600' },
-    colorScheme: 'primary' as const
-  }
-]
+import { useOrderCountStore } from '@/store'
 
 function DashboardMetrics() {
+  const { counts } = useOrderCountStore()
+
+  const metrics = [
+    {
+      title: 'Pending Orders',
+      value: counts.assigned.toString(),
+      icon: <IoClipboardOutline className="text-2xl" />,
+      trend: { label: 'from yesterday', value: 12, isPositive: true },
+      progress: { value: 45, colorClass: 'bg-orange-500' },
+      colorScheme: 'warning' as const
+    },
+    {
+      title: 'Daily Revenue',
+      value: '$4,250.00',
+      icon: <IoWalletOutline className="text-2xl" />,
+      trend: { label: 'vs last week', value: 8.2, isPositive: true },
+      progress: { value: 70, colorClass: 'bg-emerald-500' },
+      colorScheme: 'success' as const
+    },
+    {
+      title: 'Open Tickets',
+      value: '5',
+      icon: <IoTicketOutline className="text-2xl" />,
+      trend: { label: 'new today', value: -2, isPositive: false },
+      progress: { value: 25, colorClass: 'bg-red-500' },
+      colorScheme: 'danger' as const
+    },
+    {
+      title: 'Monthly Target',
+      value: '85%',
+      subValue: '$102k achieved',
+      icon: <IoFlagOutline className="text-2xl" />,
+      trend: null,
+      progress: { value: 85, colorClass: 'bg-blue-600' },
+      colorScheme: 'primary' as const
+    }
+  ]
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      {METRICS.map((metric, index) => (
+      {metrics.map((metric, index) => (
         <MetricCard
           key={index}
           label={metric.title}

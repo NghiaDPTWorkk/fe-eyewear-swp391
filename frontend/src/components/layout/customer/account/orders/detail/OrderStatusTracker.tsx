@@ -29,6 +29,12 @@ export function OrderStatusTracker({ status }: OrderStatusTrackerProps) {
           step: 2,
           description: 'Order confirmed by our team'
         }
+      case InvoiceStatus.WAITING_ASSIGN:
+        return {
+          label: DETAILED_ORDER_STATUS.WAITING_ASSIGN,
+          step: 3,
+          description: 'Order management assignment'
+        }
       case InvoiceStatus.ONBOARD:
         return {
           label: DETAILED_ORDER_STATUS.ONBOARD,
@@ -81,6 +87,7 @@ export function OrderStatusTracker({ status }: OrderStatusTrackerProps) {
   if (
     status === InvoiceStatus.REJECTED ||
     status === InvoiceStatus.CANCELED ||
+    status === InvoiceStatus.CANCEL ||
     status === InvoiceStatus.REFUNDED
   ) {
     const isRefunded = status === InvoiceStatus.REFUNDED

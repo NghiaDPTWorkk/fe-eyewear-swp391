@@ -33,12 +33,14 @@ function getInvoiceStatusBadgeClass(status: string) {
     case InvoiceStatus.READY_TO_SHIP:
       return 'bg-blue-50 text-blue-600 border-blue-100'
     case InvoiceStatus.APPROVED:
+    case InvoiceStatus.WAITING_ASSIGN:
     case InvoiceStatus.ONBOARD:
     case InvoiceStatus.DELIVERED:
     case InvoiceStatus.COMPLETED:
       return 'bg-mint-50 text-mint-700 border-mint-100'
     case InvoiceStatus.REJECTED:
     case InvoiceStatus.CANCELED:
+    case InvoiceStatus.CANCEL:
       return 'bg-red-50 text-red-600 border-red-100'
     default:
       return 'bg-neutral-50 text-neutral-600 border-neutral-200'

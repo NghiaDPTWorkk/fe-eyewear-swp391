@@ -100,6 +100,18 @@ export function OrderCard({
       bgColor: 'bg-[#F5F5F5]',
       textColor: 'text-[#616161]',
       description: 'Order voided'
+    },
+    [InvoiceStatus.WAITING_ASSIGN]: {
+      label: CUSTOMER_STATUS.WAITING_ASSIGN,
+      bgColor: 'bg-[#FFF0E5]',
+      textColor: 'text-[#E65100]',
+      description: 'Assigning expert'
+    },
+    [InvoiceStatus.CANCEL]: {
+      label: CUSTOMER_STATUS.CANCEL,
+      bgColor: 'bg-[#F5F5F5]',
+      textColor: 'text-[#616161]',
+      description: 'Order voided'
     }
   }
 

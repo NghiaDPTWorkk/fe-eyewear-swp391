@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { Container, MetricCard } from '@/components'
 import { OrderTable } from '@/components/staff'
@@ -8,6 +9,7 @@ import {
   IoWalletOutline
 } from 'react-icons/io5'
 import { useOrderCountStore } from '@/store'
+import { OrderType, OrderStatus } from '@/shared/utils/enums/order.enum'
 
 function DashboardMetrics() {
   const { counts } = useOrderCountStore()
@@ -67,6 +69,47 @@ function DashboardMetrics() {
 }
 
 export default function OperationDashboardPage() {
+  const { orders, isLoading, isError } = useOrderCountStore()
+
+  const prioritizedOrders = useMemo(() => {
+    if (!orders) return []
+
+    return [...orders].sort((a, b) => {
+      // 1. Primary Sort: Status (ASSIGNED > MAKING > PACKAGING > COMPLETED)
+      const statusPriority: Record<string, number> = {
+        [OrderStatus.ASSIGNED]: 1,
+        [OrderStatus.MAKING]: 2,
+        [OrderStatus.PACKAGING]: 3,
+        [OrderStatus.COMPLETED]: 4
+      }
+
+      const sA = statusPriority[a.currentStatus] || 99
+      const sB = statusPriority[b.currentStatus] || 99
+
+      if (sA !== sB) {
+        return sA - sB
+      }
+
+      // 2. Secondary Sort: Time (Oldest First)
+      const timeDiff = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      if (timeDiff !== 0) {
+        return timeDiff
+      }
+
+      // 3. Tertiary Sort: Type (MANUFACTURING > NORMAL > PRE-ORDER)
+      const typePriority: Record<string, number> = {
+        [OrderType.MANUFACTURING]: 1,
+        [OrderType.NORMAL]: 2,
+        [OrderType.PRE_ORDER]: 3
+      }
+
+      const priorityA = typePriority[a.orderType] || 99
+      const priorityB = typePriority[b.orderType] || 99
+
+      return priorityA - priorityB
+    })
+  }, [orders])
+
   return (
     <Container>
       <div className="mb-8">
@@ -88,7 +131,13 @@ export default function OperationDashboardPage() {
         </div>
       </div>
       <h4 className="text-primary-600 font-bold text-xl mb-4">Priority Orders</h4>
-      <OrderTable hiddenColumns={['WAITING FOR', 'CUSTOMER']} role="operation" />
+      <OrderTable 
+        orders={prioritizedOrders}
+        isLoading={isLoading}
+        isError={isError}
+        hiddenColumns={['WAITING FOR', 'CUSTOMER']} 
+        role="operation" 
+      />
     </Container>
   )
 }

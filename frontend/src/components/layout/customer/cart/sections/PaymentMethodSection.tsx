@@ -1,5 +1,5 @@
+import { PaymentMethodType } from '@/shared/utils/enums/payment.enum'
 import { CreditCard } from 'lucide-react'
-import { PaymentMethodType } from '@/shared/types'
 
 interface PaymentMethodSectionProps {
   paymentMethod: PaymentMethodType

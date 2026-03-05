@@ -3,6 +3,7 @@ import { Card } from '@/shared/components/ui/card'
 import { PriceTag } from '@/shared/components/ui/price-tag'
 import { Button } from '@/shared/components/ui/button'
 import { cn } from '@/lib/utils'
+import { CUSTOMER_STATUS, InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 
 interface OrderCardProps {
   id: string
@@ -11,14 +12,7 @@ interface OrderCardProps {
   date: string
   itemCount: number
   price: number
-  status:
-    | 'PENDING'
-    | 'APPROVE'
-    | 'PROCESSING'
-    | 'DELIVERING'
-    | 'DELIVERED'
-    | 'REJECTED'
-    | 'CANCELED'
+  status: InvoiceStatus
   image: string
   expDate?: string
   receivedDate?: string
@@ -37,45 +31,72 @@ export function OrderCard({
   receivedDate
 }: OrderCardProps) {
   const navigate = useNavigate()
-  const statusConfig = {
-    PENDING: {
-      label: 'Pending',
+  const statusConfig: Record<
+    InvoiceStatus,
+    { label: string; bgColor: string; textColor: string; description: string }
+  > = {
+    [InvoiceStatus.PENDING]: {
+      label: CUSTOMER_STATUS.PENDING,
       bgColor: 'bg-[#FFF9E5]',
       textColor: 'text-[#B78103]',
       description: 'Verifying details'
     },
-    APPROVE: {
-      label: 'Confirmed',
+    [InvoiceStatus.DEPOSITED]: {
+      label: CUSTOMER_STATUS.DEPOSITED,
+      bgColor: 'bg-[#E5F6FF]',
+      textColor: 'text-[#0077B6]',
+      description: 'Order confirmed'
+    },
+    [InvoiceStatus.APPROVED]: {
+      label: CUSTOMER_STATUS.APPROVED,
       bgColor: 'bg-[#E5F6FF]',
       textColor: 'text-[#0077B6]',
       description: 'Ready for crafting'
     },
-    PROCESSING: {
-      label: 'Crafting',
+    [InvoiceStatus.ONBOARD]: {
+      label: CUSTOMER_STATUS.ONBOARD,
       bgColor: 'bg-[#FFF0E5]',
       textColor: 'text-[#E65100]',
       description: 'Precision processing'
     },
-    DELIVERING: {
-      label: 'Shipping',
+    [InvoiceStatus.COMPLETED]: {
+      label: CUSTOMER_STATUS.COMPLETED,
+      bgColor: 'bg-[#EDF7ED]',
+      textColor: 'text-[#1E4620]',
+      description: 'Ready to ship'
+    },
+    [InvoiceStatus.READY_TO_SHIP]: {
+      label: CUSTOMER_STATUS.READY_TO_SHIP,
+      bgColor: 'bg-[#EDF7ED]',
+      textColor: 'text-[#1E4620]',
+      description: 'Waiting for pickup'
+    },
+    [InvoiceStatus.DELIVERING]: {
+      label: CUSTOMER_STATUS.DELIVERING,
       bgColor: 'bg-[#E5FFF7]',
       textColor: 'text-[#008955]',
       description: 'On the move'
     },
-    DELIVERED: {
-      label: 'Delivered',
+    [InvoiceStatus.DELIVERED]: {
+      label: CUSTOMER_STATUS.DELIVERED,
       bgColor: 'bg-[#EDF7ED]',
       textColor: 'text-[#1E4620]',
       description: 'Arrival complete'
     },
-    REJECTED: {
-      label: 'Rejected',
+    [InvoiceStatus.REFUNDED]: {
+      label: CUSTOMER_STATUS.REFUNDED,
+      bgColor: 'bg-[#F5F5F5]',
+      textColor: 'text-[#616161]',
+      description: 'Order refunded'
+    },
+    [InvoiceStatus.REJECTED]: {
+      label: CUSTOMER_STATUS.REJECTED,
       bgColor: 'bg-[#FFF0F0]',
       textColor: 'text-[#C62828]',
       description: 'Action required'
     },
-    CANCELED: {
-      label: 'Cancelled',
+    [InvoiceStatus.CANCELED]: {
+      label: CUSTOMER_STATUS.CANCELED,
       bgColor: 'bg-[#F5F5F5]',
       textColor: 'text-[#616161]',
       description: 'Order voided'
@@ -154,10 +175,14 @@ export function OrderCard({
                 </div>
               </div>
             )}
-            {(status === 'PROCESSING' || status === 'APPROVE') && (
+            {(status === InvoiceStatus.ONBOARD ||
+              status === InvoiceStatus.APPROVED ||
+              status === InvoiceStatus.DEPOSITED) && (
               <div className="flex items-center gap-2.5 text-primary-600 bg-primary-50/20 py-1.5 px-3 rounded-lg border border-primary-100/20 inline-flex">
                 <span className="text-[10px] font-bold uppercase tracking-wider">
-                  {status === 'PROCESSING' ? '✨ Expert Verification' : '📦 Preparing for Ship'}
+                  {status === InvoiceStatus.ONBOARD
+                    ? '✨ Expert Verification'
+                    : '📦 Preparing for Ship'}
                 </span>
               </div>
             )}
@@ -182,16 +207,18 @@ export function OrderCard({
               Details
             </Button>
 
-            {(status === 'DELIVERING' || status === 'DELIVERED') && (
+            {(status === InvoiceStatus.DELIVERING ||
+              status === InvoiceStatus.DELIVERED ||
+              status === InvoiceStatus.COMPLETED) && (
               <Button
                 className={cn(
                   'flex-1 lg:flex-none h-10 rounded-xl px-6 font-bold text-[10px] uppercase tracking-[0.15em] transition-all shadow-sm flex items-center justify-center gap-2',
-                  status === 'DELIVERING'
+                  status === InvoiceStatus.DELIVERING
                     ? 'bg-primary-500 text-white hover:bg-primary-600'
                     : 'bg-white border-mint-100 text-mint-1200 hover:bg-danger-50 hover:text-danger-600 hover:border-danger-100 shadow-sm'
                 )}
               >
-                {status === 'DELIVERING' ? 'Track 🚚' : 'Return'}
+                {status === InvoiceStatus.DELIVERING ? 'Track 🚚' : 'Return'}
               </Button>
             )}
           </div>

@@ -8,7 +8,8 @@ import { invoiceService } from '@/features/customer/invoice/services/invoice.ser
 import { paymentService } from '@/features/customer/services/payment.service'
 import { useCartStore } from '@/store'
 import { useAuth } from '@/features/auth/hooks/useAuth'
-import { PaymentMethodType, type Address } from '@/shared/types'
+import { PaymentMethodType } from '@/shared/utils/enums/payment.enum'
+import type { Address } from '@/shared/types/address.types'
 import type { CreateInvoiceRequest } from '@/shared/types/invoice.types'
 import type { Voucher } from '@/shared/types/voucher.types'
 

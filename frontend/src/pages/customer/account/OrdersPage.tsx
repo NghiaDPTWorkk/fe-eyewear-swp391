@@ -5,14 +5,17 @@ import { cn } from '@/lib/utils'
 import { invoiceService } from '@/features/customer/invoice/services/invoice.service'
 import type { Invoice } from '@/shared/types/invoice.types'
 import { Loader2 } from 'lucide-react'
-import { Pagination } from '@/shared/components/ui/pagination'
+import OperationPagination from '@/shared/components/ui/pagination/OperationPagination'
+import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 
 const TABS = [
   { id: 'all', label: 'All Orders' },
   { id: 'pending', label: 'Pending' },
+  { id: 'confirmed', label: 'Confirmed' },
   { id: 'processing', label: 'Processing' },
   { id: 'delivering', label: 'Delivering' },
-  { id: 'history', label: 'History' }
+  { id: 'delivered', label: 'Delivered' },
+  { id: 'cancelled', label: 'Cancelled' }
 ]
 
 export function OrdersPage() {
@@ -21,7 +24,6 @@ export function OrdersPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
 
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId)
@@ -33,8 +35,8 @@ export function OrdersPage() {
       try {
         setIsLoading(true)
         const response = await invoiceService.getInvoices({
-          page: currentPage,
-          limit: 3
+          page: 1, // Luôn fetch trang 1 nhưng lấy nhiều hơn
+          limit: 100 // Lấy tối đa 100 đơn gần nhất để filter ở client
         })
         if (response.success) {
           // Fetch full details for each invoice to get product list
@@ -51,7 +53,6 @@ export function OrdersPage() {
           })
 
           setInvoices(mergedInvoices)
-          setTotalPages(response.data.totalPages)
         } else {
           setError(response.message)
         }
@@ -64,42 +65,42 @@ export function OrdersPage() {
     }
 
     fetchInvoices()
-  }, [currentPage])
-
-  const mapBackendStatus = (status: string): any => {
-    switch (status) {
-      case 'PENDING':
-        return 'PENDING'
-      case 'APPROVED':
-      case 'DEPOSITED':
-        return 'APPROVE'
-      case 'WAITING_ASSIGN':
-      case 'ONBOARD':
-        return 'PROCESSING'
-      case 'DELIVERING':
-        return 'DELIVERING'
-      case 'DELIVERED':
-      case 'COMPLETED':
-        return 'DELIVERED'
-      case 'REJECTED':
-        return 'REJECTED'
-      case 'CANCEL':
-        return 'CANCELED'
-      default:
-        return 'PENDING'
-    }
-  }
+  }, []) // Chỉ fetch một lần duy nhất
 
   const filteredInvoices = invoices.filter((inv) => {
-    const uiStatus = mapBackendStatus(inv.status)
+    const status = inv.status as InvoiceStatus
     if (activeTab === 'all') return true
-    if (activeTab === 'pending') return uiStatus === 'PENDING' || uiStatus === 'APPROVE'
-    if (activeTab === 'processing') return uiStatus === 'PROCESSING'
-    if (activeTab === 'delivering') return uiStatus === 'DELIVERING'
-    if (activeTab === 'history')
-      return uiStatus === 'DELIVERED' || uiStatus === 'REJECTED' || uiStatus === 'CANCELED'
+    if (activeTab === 'pending')
+      return status === InvoiceStatus.PENDING || status === InvoiceStatus.DEPOSITED
+    if (activeTab === 'confirmed') return status === InvoiceStatus.APPROVED
+    if (activeTab === 'processing') {
+      return [
+        InvoiceStatus.WAITING_ASSIGN,
+        InvoiceStatus.ONBOARD,
+        InvoiceStatus.COMPLETED,
+        InvoiceStatus.READY_TO_SHIP
+      ].includes(status)
+    }
+    if (activeTab === 'delivering') return status === InvoiceStatus.DELIVERING
+    if (activeTab === 'delivered') return status === InvoiceStatus.DELIVERED
+    if (activeTab === 'cancelled') {
+      return [
+        InvoiceStatus.CANCELED,
+        InvoiceStatus.CANCEL,
+        InvoiceStatus.REJECTED,
+        InvoiceStatus.REFUNDED
+      ].includes(status)
+    }
     return true
   })
+
+  // Pagination logic ở client
+  const ITEMS_PER_PAGE = 3
+  const totalPagesLocal = Math.ceil(filteredInvoices.length / ITEMS_PER_PAGE)
+  const paginatedInvoices = filteredInvoices.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  )
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-5xl mx-auto">
@@ -163,10 +164,10 @@ export function OrdersPage() {
               Try Again
             </button>
           </div>
-        ) : filteredInvoices.length > 0 ? (
+        ) : paginatedInvoices.length > 0 ? (
           <>
             <div className="flex flex-col gap-2">
-              {filteredInvoices.map((inv) => {
+              {paginatedInvoices.map((inv) => {
                 const firstItem = inv.productList?.[0]
                 const firstProduct = firstItem?.product?.detail || firstItem?.lens?.detail
                 const itemCount = inv.productList?.length || (inv as any).orders?.length || 1
@@ -180,7 +181,7 @@ export function OrdersPage() {
                     date={new Date(inv.createdAt).toLocaleDateString()}
                     itemCount={itemCount}
                     price={inv.totalPrice}
-                    status={mapBackendStatus(inv.status)}
+                    status={inv.status as InvoiceStatus}
                     image={
                       firstProduct?.imgs?.[0] ||
                       'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&q=80&w=200'
@@ -190,21 +191,22 @@ export function OrdersPage() {
               })}
             </div>
 
-            {totalPages > 1 && (
+            {totalPagesLocal > 1 && (
               <div className="mt-8">
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
+                <OperationPagination
+                  page={currentPage}
+                  totalPages={totalPagesLocal}
+                  total={filteredInvoices.length}
+                  limit={ITEMS_PER_PAGE}
                   onPageChange={setCurrentPage}
+                  itemsOnPage={paginatedInvoices.length}
                 />
               </div>
             )}
           </>
         ) : (
           <Card className="p-20 flex flex-col items-center justify-center border-dashed border-2 border-mint-100 bg-mint-50/20 rounded-[32px]">
-            <div className="w-16 h-16 bg-mint-100 rounded-full flex items-center justify-center mb-4 text-mint-400">
-              📦
-            </div>
+            <div className="w-16 h-16 bg-mint-100 rounded-full flex items-center justify-center mb-4 text-mint-400"></div>
             <p className="text-gray-500 font-bold">No orders found in this category.</p>
           </Card>
         )}

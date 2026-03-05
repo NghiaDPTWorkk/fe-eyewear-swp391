@@ -70,8 +70,7 @@ const transformBackendCartToItems = (backendCart: BackendCart): CartItem[] => {
       : undefined
   }))
 
-  // Sort by addedAt descending (newest first)
-  return items.sort((a, b) => b.addAt.getTime() - a.addAt.getTime())
+  return items.reverse()
 }
 
 /**

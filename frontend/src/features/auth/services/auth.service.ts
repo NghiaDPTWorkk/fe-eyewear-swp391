@@ -37,7 +37,11 @@ export const authService = {
 
     // Gọi đúng API tùy theo role
     const response = isStaff ? await authApi.getAdminProfile() : await authApi.getProfile()
+    return response.data
+  },
 
+  updateProfile: async (payload: { name: string; phone: string; gender: string }) => {
+    const response = await authApi.updateProfile(payload)
     return response.data
   }
 }

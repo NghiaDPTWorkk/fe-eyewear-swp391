@@ -9,6 +9,7 @@ export const ENDPOINTS = {
     LOGOUT: '/auth/logout',
     REFRESH_TOKEN: '/auth/refresh-token',
     PROFILE: '/customer',
+    UPDATE_PROFILE: '/customer/profile',
     GET_PROFILE: '/admin/auth/profile', // Get admin/staff profile - Keep from target
     CHANGE_PASSWORD: '/admin/auth/profile/change-password',
     ADDRESS_LIST: '/customer/profile/address',

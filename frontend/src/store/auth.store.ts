@@ -19,6 +19,7 @@ export interface AuthState {
   logout: () => void
   setLoading: (loading: boolean) => void
   fetchProfile: () => Promise<void>
+  updateProfile: (payload: { name: string; phone: string; gender: string }) => Promise<void>
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -64,6 +65,19 @@ export const useAuthStore = create<AuthState>()(
         } catch (error) {
           console.error('Failed to fetch profile:', error)
           set({ error: error as any })
+        } finally {
+          set({ isLoading: false })
+        }
+      },
+      updateProfile: async (payload) => {
+        set({ isLoading: true, error: null })
+        try {
+          const updatedUser = await authService.updateProfile(payload)
+          set({ user: updatedUser })
+        } catch (error) {
+          console.error('Failed to update profile:', error)
+          set({ error: error as any })
+          throw error
         } finally {
           set({ isLoading: false })
         }

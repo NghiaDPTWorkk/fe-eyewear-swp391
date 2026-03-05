@@ -21,7 +21,13 @@ export const useAddressStore = create<AddressState>((set) => ({
     set({ isLoading: true, error: null })
     try {
       const addresses = await customerAddressService.getAddresses()
-      set({ addresses, isLoading: false })
+      // Sort: Default first, then newest first
+      const defaultAddr = addresses.find((a) => a.isDefault)
+      const others = addresses.filter((a) => !a.isDefault).reverse()
+      set({
+        addresses: defaultAddr ? [defaultAddr, ...others] : others,
+        isLoading: false
+      })
     } catch (error: any) {
       set({
         error: error.response?.data?.message || 'Failed to fetch addresses',
@@ -36,7 +42,12 @@ export const useAddressStore = create<AddressState>((set) => ({
       await customerAddressService.addAddress(addressData)
       // Re-fetch all addresses to ensure state is in sync with backend (handles isDefault logic)
       const addresses = await customerAddressService.getAddresses()
-      set({ addresses, isLoading: false })
+      const defaultAddr = addresses.find((a) => a.isDefault)
+      const others = addresses.filter((a) => !a.isDefault).reverse()
+      set({
+        addresses: defaultAddr ? [defaultAddr, ...others] : others,
+        isLoading: false
+      })
     } catch (error: any) {
       set({
         error: error.response?.data?.message || 'Failed to add address',
@@ -52,7 +63,12 @@ export const useAddressStore = create<AddressState>((set) => ({
       await customerAddressService.setDefaultAddress(id, { ...address, isDefault: true })
       // Re-fetch to sync
       const addresses = await customerAddressService.getAddresses()
-      set({ addresses, isLoading: false })
+      const defaultAddr = addresses.find((a) => a.isDefault)
+      const others = addresses.filter((a) => !a.isDefault).reverse()
+      set({
+        addresses: defaultAddr ? [defaultAddr, ...others] : others,
+        isLoading: false
+      })
     } catch (error: any) {
       set({
         error: error.response?.data?.message || 'Failed to set default address',

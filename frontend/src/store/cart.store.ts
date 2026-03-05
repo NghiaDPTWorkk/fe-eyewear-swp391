@@ -62,7 +62,7 @@ export const useCartStore = create<CartState>((set, get) => ({
           })
         }
       }
-      return { items: [...state.items, { ...item, selected: item.selected ?? true }] }
+      return { items: [{ ...item, selected: item.selected ?? true }, ...state.items] }
     }),
 
   /**

@@ -19,7 +19,9 @@ export function PrescriptionsPage() {
     setIsLoading(true)
     try {
       const data = await prescriptionService.getPrescriptions()
-      setPrescriptions(data)
+      const defaultPx = data.find((p) => p.isDefault)
+      const others = data.filter((p) => !p.isDefault).reverse()
+      setPrescriptions(defaultPx ? [defaultPx, ...others] : others)
     } catch (error) {
       console.error('Failed to fetch prescriptions:', error)
       toast.error('Failed to load prescriptions')

@@ -250,6 +250,22 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
           }
         }
 
+        if (paymentMethod === PaymentMethodType.PAYOS) {
+          try {
+            const { invoice, payment } = response.data
+            const urlResponse = await paymentService.getPayOSUrl(invoice._id, payment._id)
+            if (urlResponse.success && urlResponse.data.url) {
+              window.location.href = urlResponse.data.url
+              return // Stop further execution
+            }
+          } catch (error) {
+            console.error('Failed to get PayOS URL:', error)
+            toast.error(
+              'Không thể tạo liên kết thanh toán PayOS. Vui lòng thử lại trong Lịch sử đơn hàng.'
+            )
+          }
+        }
+
         navigate('/account/orders')
       } else {
         toast.error(response.message || 'Tạo đơn hàng thất bại')

@@ -36,13 +36,19 @@ export const PaymentResultPage = () => {
       const txnRef = params.get('vnp_TxnRef')
       const isSuccess = params.get('isSuccess')
       const invoiceIdParam = params.get('invoiceId')
+      const payosStatus = params.get('status')
+      const payosOrderCode = params.get('orderCode')
 
       let invoiceId = ''
       let isActuallySuccess = false
 
       if (txnRef) {
-        invoiceId = txnRef.split('-')[0]
+        invoiceId = txnRef.split('-')[1] || txnRef.split('-')[0]
         isActuallySuccess = responseCode === '00'
+      } else if (payosStatus) {
+        // Ưu tiên invoiceId (MongoID) để fetch detail, nếu không có mới dùng orderCode
+        invoiceId = invoiceIdParam || payosOrderCode || ''
+        isActuallySuccess = payosStatus === 'PAID'
       } else if (invoiceIdParam) {
         invoiceId = invoiceIdParam
         const isSuccessStr = isSuccess?.toLowerCase() || ''

@@ -47,7 +47,8 @@ export type InvoiceStatus = (typeof InvoiceStatus)[keyof typeof InvoiceStatus]
 // Payment Enums
 export const PaymentMethodType = {
   COD: 'COD',
-  VNPAY: 'VNPAY'
+  VNPAY: 'VNPAY',
+  PAYOS: 'PAYOS'
 } as const
 export type PaymentMethodType = (typeof PaymentMethodType)[keyof typeof PaymentMethodType]
 

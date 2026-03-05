@@ -253,5 +253,9 @@ export const ENDPOINTS = {
       `/admin/ai-conversations?search=${encodeURIComponent(search)}&lastItem=${lastItem}`,
     MESSAGES: (id: string, lastItem: string = '') =>
       `/admin/ai-conversations/${id}/messages?lastItem=${lastItem}`
+  },
+  // Vouchers
+  VOUCHERS: {
+    MY_VOUCHERS: '/vouchers/my-vouchers'
   }
 } as const

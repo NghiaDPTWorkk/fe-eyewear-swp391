@@ -7,6 +7,7 @@ import { ProductBaseFields } from './add-product/components/ProductBaseFields'
 import { FrameSpecFields } from './add-product/components/FrameSpecFields'
 import { LensSpecFields } from './add-product/components/LensSpecFields'
 import { VariantsEditor } from './add-product/components/VariantsEditor'
+import { OptionsConfigEditor } from './add-product/components/OptionsConfigEditor'
 import { VoiceDatePicker } from './add-product/components/VoiceDatePicker'
 import type { ProductCreateFormState } from './add-product/types/product-create.types'
 import { httpClient } from '@/api/apiClients'
@@ -53,6 +54,7 @@ export default function ManagerAddProductPage() {
         options: []
       }
     ],
+    optionsConfig: [],
     isPreOrder: false,
     preOrderConfig: {
       description: '',
@@ -175,17 +177,23 @@ export default function ManagerAddProductPage() {
         console.warn('Initializing pre-order imports for skus:', variantSkus)
 
         const importPromises = variantSkus.map((sku: string) => {
-          const toISO = (d: string) => {
+          const formatDate = (d: string) => {
+            if (!d) return ''
             const date = new Date(d)
-            return d && !isNaN(date.getTime()) ? date.toISOString() : new Date().toISOString()
+            if (isNaN(date.getTime())) return d // Return as is if already formatted or invalid
+            const day = String(date.getDate()).padStart(2, '0')
+            const month = String(date.getMonth() + 1).padStart(2, '0')
+            const year = date.getFullYear()
+            return `${day}-${month}-${year}`
           }
+
           return httpClient.post('/admin/pre-order-imports', {
             sku,
-            description: config.description || 'Pre-order import',
-            targetDate: toISO(config.targetDate),
+            description: config.description || `Import product ${sku}`,
+            targetDate: formatDate(config.targetDate),
             targetQuantity: Number(config.targetQuantity) || 1,
-            startedDate: toISO(config.startedDate),
-            endedDate: toISO(config.endedDate)
+            startedDate: formatDate(config.startedDate),
+            endedDate: formatDate(config.endedDate)
           })
         })
 
@@ -251,8 +259,19 @@ export default function ManagerAddProductPage() {
             <LensSpecFields specLens={state.specLens} onChange={handleSpecLensChange} />
           )}
 
-          {/* 3. Variants Editor */}
-          <VariantsEditor variants={state.variants} onChange={handleVariantsChange} />
+          {/* 3. Options Configuration */}
+          <OptionsConfigEditor
+            optionsConfig={state.optionsConfig}
+            onChange={(optionsConfig) => setState((prev) => ({ ...prev, optionsConfig }))}
+          />
+
+          {/* 4. Variants Editor */}
+          <VariantsEditor
+            variants={state.variants}
+            optionsConfig={state.optionsConfig}
+            nameBase={state.nameBase}
+            onChange={handleVariantsChange}
+          />
 
           {/* 4. Pre-order Configuration */}
           <div className="border-t border-neutral-100 pt-10 space-y-6">

@@ -41,6 +41,15 @@ export interface ProductCreateFormState {
       value: string
     }>
   }>
+  optionsConfig: Array<{
+    attributeId: string
+    attributeName: string
+    showType: 'color' | 'text'
+    values: Array<{
+      label: string
+      value: string
+    }>
+  }>
   isPreOrder?: boolean
   preOrderConfig?: {
     description: string

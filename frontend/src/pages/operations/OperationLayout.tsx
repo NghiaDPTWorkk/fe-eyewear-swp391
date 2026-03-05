@@ -11,7 +11,8 @@ import {
   IoSettingsOutline,
   IoHelpCircleOutline,
   IoBuildOutline,
-  IoAirplaneOutline
+  IoAirplaneOutline,
+  IoArchiveOutline
 } from 'react-icons/io5'
 import { FaBoxesPacking } from 'react-icons/fa6'
 import { useOrderCountStore } from '@/store'
@@ -178,6 +179,12 @@ export default function OperationLayout() {
           label="Shipping Handover"
           active={location.pathname === '/operationstaff/shipping-handover'}
           onClick={() => navigate('/operationstaff/shipping-handover')}
+        />
+        <SidebarStaff.MenuItem
+          icon={<IoArchiveOutline />}
+          label="Inventory Receiving"
+          active={location.pathname.startsWith('/operationstaff/inventory-receiving')}
+          onClick={() => navigate('/operationstaff/inventory-receiving')}
         />
       </SidebarStaff.MenuSection>
 

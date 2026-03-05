@@ -42,6 +42,10 @@ const OperationPersonalProfile = lazy(() =>
   import('@/pages/operations/OperationPersonalProfile').then((m) => ({ default: m.default }))
 )
 
+const OperationInventoryReceivingPage = lazy(() =>
+  import('@/pages/operations/OperationInventoryReceivingPage').then((m) => ({ default: m.default }))
+)
+
 export const operationRoutes = [
   {
     path: '/operationstaff',
@@ -166,6 +170,14 @@ export const operationRoutes = [
         element: (
           <LazyPage>
             <OperationPersonalProfile />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'inventory-receiving',
+        element: (
+          <LazyPage>
+            <OperationInventoryReceivingPage />
           </LazyPage>
         )
       }

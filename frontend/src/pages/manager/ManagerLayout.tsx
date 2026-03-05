@@ -66,6 +66,12 @@ export default function ManagerLayout() {
           active={location.pathname.startsWith('/manager/products')}
         />
         <SidebarStaff.MenuItem
+          icon={<IoGrid />}
+          label="Vouchers"
+          to="/manager/vouchers"
+          active={location.pathname === '/manager/vouchers'}
+        />
+        <SidebarStaff.MenuItem
           icon={<IoBarChart />}
           label="Sales Report"
           to="/manager/reports"

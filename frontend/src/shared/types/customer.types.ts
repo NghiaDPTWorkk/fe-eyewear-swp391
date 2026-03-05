@@ -1,5 +1,5 @@
 import type { Address } from './address.types'
-import type { Gender } from './enums'
+import type { Gender } from '@/shared/utils/enums/gender.enum'
 
 /**
  * Customer types matching backend structure

@@ -242,16 +242,14 @@ export default function OperationShippingHandoverPage() {
                 Shipping Label
               </h2>
 
-              <div className='mt-10 mb-10'>
-                <ShippingInfoSeal
-                  invoiceCode={invoice.invoiceCode}
-                  fullName={invoice.fullName}
-                  phone={invoice.phone}
-                  address={getAddressString()}
-                  shipCode={activeShipCode}
-                  totalAmount={totalAmount}
-                />
-              </div>
+              <ShippingInfoSeal
+                invoiceCode={invoice.invoiceCode}
+                fullName={invoice.fullName}
+                phone={invoice.phone}
+                address={getAddressString()}
+                shipCode={activeShipCode}
+                totalAmount={totalAmount}
+              />
             </div>
           )}
         </div>

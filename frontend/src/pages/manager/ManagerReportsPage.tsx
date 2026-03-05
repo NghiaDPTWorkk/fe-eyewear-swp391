@@ -55,10 +55,10 @@ export default function ManagerReportsPage() {
 
   // Mock products
   const products = [
-    { name: 'Rompi Berkancing', price: '$119.99', stock: 25, sold: 320, active: true },
-    { name: 'Casual Blazer', price: '$89.50', stock: 12, sold: 150, active: true },
-    { name: 'Silk Scarf', price: '$45.00', stock: 48, sold: 89, active: false },
-    { name: 'Leather Boots', price: '$199.00', stock: 8, sold: 210, active: true }
+    { name: 'Rompi Berkancing', price: '119.99 ₫', stock: 25, sold: 320, active: true },
+    { name: 'Casual Blazer', price: '89.50 ₫', stock: 12, sold: 150, active: true },
+    { name: 'Silk Scarf', price: '45.00 ₫', stock: 48, sold: 89, active: false },
+    { name: 'Leather Boots', price: '199.00 ₫', stock: 8, sold: 210, active: true }
   ]
 
   return (

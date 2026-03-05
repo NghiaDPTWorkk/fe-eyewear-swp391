@@ -41,6 +41,7 @@ export const PATHS = {
   MANAGER: {
     DASHBOARD: '/manager/dashboard',
     PRODUCTS: '/manager/products',
+    VOUCHERS: '/manager/vouchers',
     ADD_PRODUCT: '/manager/products/add',
     SUPPORT: '/manager/support'
   },

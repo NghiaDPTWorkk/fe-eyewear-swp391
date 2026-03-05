@@ -233,6 +233,27 @@ export default function OperationShippingHandoverPage() {
               </div>
             </div>
           </div>
+
+          {/* Shipping Info Seal - shown when DELIVERED */}
+          {['DELIVERED', 'DELIVERING'].includes(invoice.status) && (
+            <div className="bg-white rounded-lg shadow-sm border border-neutral-100 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <span className="w-2 h-2 bg-mint-500 rounded-full"></span>
+                Shipping Label
+              </h2>
+
+              <div className='mt-10 mb-10'>
+                <ShippingInfoSeal
+                  invoiceCode={invoice.invoiceCode}
+                  fullName={invoice.fullName}
+                  phone={invoice.phone}
+                  address={getAddressString()}
+                  shipCode={activeShipCode}
+                  totalAmount={totalAmount}
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Right Column - Shipping Information */}
@@ -247,7 +268,7 @@ export default function OperationShippingHandoverPage() {
             invoiceCode={invoice.invoiceCode}
             fullName={invoice.fullName}
             phone={invoice.phone}
-            carrier="Viettel Post"
+            carrier="OpticView Post"
             address={getAddressString()}
             status={invoice?.status || 'UNKNOWN'}
             isProcessingShipping={updateInvoiceStatus.isPending}

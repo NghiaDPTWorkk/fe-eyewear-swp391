@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  IoStatsChartOutline, 
+import {
+  IoStatsChartOutline,
   IoFileTrayFullOutline,
   IoTimeOutline,
   IoCheckmarkCircleOutline,
@@ -17,12 +17,12 @@ export default function OperationPersonalProfile() {
   const { data: profileData, isLoading: isProfileLoading } = useProfile()
   const { counts } = useOrderCountStore()
   const navigate = useNavigate()
-  
+
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
 
   const profile = profileData?.data
-  
+
   const userInitials = profile?.name
     ? profile.name
         .split(' ')
@@ -96,7 +96,7 @@ export default function OperationPersonalProfile() {
   return (
     <Container className="py-8 space-y-8">
       {/* Header Section */}
-      <ProfileDetailCard 
+      <ProfileDetailCard
         profile={profile}
         userInitials={userInitials}
         onEditProfile={() => navigate('/operationstaff/settings')}
@@ -106,14 +106,12 @@ export default function OperationPersonalProfile() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         {stats.map((stat, idx) => (
-          <div 
-            key={idx} 
+          <div
+            key={idx}
             className="group bg-white p-6 rounded-[24px] border border-neutral-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
           >
             <div className="flex items-center justify-between mb-4">
-              <div className={cn("p-4 rounded-2xl", stat.bgColor, stat.color)}>
-                {stat.icon}
-              </div>
+              <div className={cn('p-4 rounded-2xl', stat.bgColor, stat.color)}>{stat.icon}</div>
               <span className="text-xs font-bold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-lg">
                 +12% vs last month
               </span>
@@ -137,8 +135,10 @@ export default function OperationPersonalProfile() {
           {/* Date Filters */}
           <div className="flex items-center gap-3 bg-white p-2 border border-neutral-200 rounded-2xl shadow-sm">
             <div className="flex items-center gap-2 px-3">
-              <span className="text-xs font-bold text-neutral-400 uppercase tracking-tight">From</span>
-              <input 
+              <span className="text-xs font-bold text-neutral-400 uppercase tracking-tight">
+                From
+              </span>
+              <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
@@ -147,8 +147,10 @@ export default function OperationPersonalProfile() {
             </div>
             <div className="w-px h-6 bg-neutral-200" />
             <div className="flex items-center gap-2 px-3">
-              <span className="text-xs font-bold text-neutral-400 uppercase tracking-tight">To</span>
-              <input 
+              <span className="text-xs font-bold text-neutral-400 uppercase tracking-tight">
+                To
+              </span>
+              <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
@@ -165,11 +167,19 @@ export default function OperationPersonalProfile() {
           <div className="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:ml-[2.25rem] md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-neutral-100 before:to-transparent">
             {activityHistory.map((activity) => (
               <div key={activity.id} className="relative flex items-center gap-6 group">
-                <div className={cn(
-                  "flex items-center justify-center w-11 h-11 rounded-full border-4 border-white shadow-md z-10 shrink-0",
-                  activity.status === 'success' ? 'bg-emerald-500 text-white' : 'bg-amber-500 text-white'
-                )}>
-                  {activity.status === 'success' ? <IoCheckmarkCircleOutline className="w-6 h-6" /> : <IoAlertCircleOutline className="w-6 h-6" />}
+                <div
+                  className={cn(
+                    'flex items-center justify-center w-11 h-11 rounded-full border-4 border-white shadow-md z-10 shrink-0',
+                    activity.status === 'success'
+                      ? 'bg-emerald-500 text-white'
+                      : 'bg-amber-500 text-white'
+                  )}
+                >
+                  {activity.status === 'success' ? (
+                    <IoCheckmarkCircleOutline className="w-6 h-6" />
+                  ) : (
+                    <IoAlertCircleOutline className="w-6 h-6" />
+                  )}
                 </div>
                 <div className="flex-1 bg-neutral-50 group-hover:bg-white rounded-[24px] p-5 border border-transparent group-hover:border-neutral-100 group-hover:shadow-lg group-hover:shadow-neutral-100/50 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>

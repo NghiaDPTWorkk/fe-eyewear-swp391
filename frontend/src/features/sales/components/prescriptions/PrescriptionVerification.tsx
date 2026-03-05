@@ -11,7 +11,6 @@ import { Button, ConfirmationModal } from '@/shared/components/ui-core'
 import { ImageViewer } from './ImageViewer'
 import { TranscriptionForm } from './TranscriptionForm'
 import { OrderDetailsSidebar } from './OrderDetailsSidebar'
-import { CommunicationHub } from './CommunicationHub'
 import { LabOperationsTimeline } from './LabOperationsTimeline'
 import { RejectionModal } from '../common/RejectionModal'
 
@@ -231,7 +230,6 @@ export default function PrescriptionVerification({
         {/* Right Column: Information & Operations (Sidebar) */}
         <div className="space-y-5">
           <OrderDetailsSidebar order={order} />
-          <CommunicationHub customerName={order.customerName || undefined} />
           <LabOperationsTimeline order={order} />
         </div>
       </div>

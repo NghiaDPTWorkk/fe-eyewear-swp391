@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { IoFlashOutline, IoCubeOutline, IoReceiptOutline, IoRepeatOutline } from 'react-icons/io5'
 import { useSearchParams } from 'react-router-dom'
@@ -372,7 +372,106 @@ export default function SaleStaffOrderPage() {
         onClose={() => setShowConfirmModal(false)}
         onConfirm={confirmApproval}
         title="Approve Invoice"
-        message="Are you sure you want to approve this invoice? All orders within this invoice will be marked as verified and proceed to the next stage."
+        message={
+          <div className="space-y-2">
+            <p className="text-slate-600">Are you sure you want to approve this invoice?</p>
+            <p className="text-slate-500 text-sm">
+              All orders within this invoice will be marked as{' '}
+              <span className="text-mint-600 font-semibold uppercase">verified</span> and proceed to
+              the next stage.
+            </p>
+          </div>
+        }
+        details={
+          invoiceToProcess && (
+            <div className="space-y-4 pt-2">
+              <div className="flex justify-between items-center pb-2 border-b border-slate-100">
+                <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
+                  Items to Approve
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-mint-500 animate-pulse" />
+                  <span className="text-[11px] font-bold text-mint-600 uppercase">
+                    {invoiceList.find((inv) => inv.id === invoiceToProcess)?.orders?.length || 0}{' '}
+                    Total
+                  </span>
+                </div>
+              </div>
+
+              <div className="max-h-[240px] overflow-y-auto pr-1 space-y-3 custom-scrollbar">
+                {invoiceList
+                  .find((inv) => inv.id === invoiceToProcess)
+                  ?.orders?.map((order, i) => (
+                    <div
+                      key={order.id || i}
+                      className="group flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100 hover:border-mint-200 hover:shadow-md hover:shadow-mint-50/50 transition-all duration-300"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-mint-50 group-hover:text-mint-600 transition-colors">
+                          <IoReceiptOutline size={20} />
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-semibold text-slate-700 font-mono tracking-tight leading-none group-hover:text-mint-600 transition-colors">
+                              #{order.orderCode || order.id?.slice(-8)}
+                            </span>
+                            {order.isPrescription && (
+                              <span className="px-2 py-0.5 bg-rose-50 text-rose-500 rounded-md text-[8px] font-bold uppercase tracking-tight border border-rose-100/50">
+                                RX
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex flex-wrap gap-1.5">
+                            {(Array.isArray(order.type)
+                              ? order.type
+                              : [order.type || 'REGULAR']
+                            ).map((t, idx) => (
+                              <span
+                                key={idx}
+                                className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-[9px] font-medium uppercase tracking-wide border border-slate-200/50"
+                              >
+                                {String(t).replace(/_/g, ' ')}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center">
+                        <span
+                          className={`px-3 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider border shadow-sm transition-all ${
+                            [
+                              'VERIFIED',
+                              'APPROVE',
+                              'APPROVED',
+                              'WAITING_ASSIGN',
+                              'ASSIGNED',
+                              'MAKING',
+                              'PACKAGING',
+                              'COMPLETED',
+                              'ONBOARD'
+                            ].includes(String(order.status).toUpperCase())
+                              ? 'bg-emerald-50 text-emerald-600 border-emerald-100 shadow-emerald-50'
+                              : 'bg-amber-50 text-amber-600 border-amber-100 shadow-amber-50'
+                          }`}
+                        >
+                          {String(order.status).replace(/_/g, ' ')}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+
+              <div className="p-3 bg-mint-50/40 rounded-2xl border border-mint-100/40">
+                <p className="text-[11px] font-medium text-mint-700 leading-relaxed text-center">
+                  Once approved, all listed items will be marked as{' '}
+                  <span className="font-bold text-mint-900">VERIFIED</span> and shifted to the{' '}
+                  <span className="font-bold text-mint-900">PACKAGING</span> stage.
+                </p>
+              </div>
+            </div>
+          )
+        }
         confirmText="Approve Invoice"
         type="info"
         isLoading={processing}

@@ -26,10 +26,12 @@ export default function SaleStaffDashboardPage() {
   // Track if we've already handled the URL invoiceId
   useEffect(() => {
     const invoiceId = searchParams.get('invoiceId')
-    if (invoiceId && !isDrawerOpen && invoices.length > 0) {
+    // Only open if we have an invoiceId in URL AND the drawer is not already open
+    // AND we're not currently tracking this ID (to prevent double-opening/lag)
+    if (invoiceId && !isDrawerOpen && invoices.length > 0 && selectedOrderId !== invoiceId) {
       openDrawer(invoiceId)
     }
-  }, [searchParams, invoices, isDrawerOpen, openDrawer])
+  }, [searchParams, invoices, isDrawerOpen, openDrawer, selectedOrderId])
 
   const handleCloseDrawer = () => {
     closeDrawer()

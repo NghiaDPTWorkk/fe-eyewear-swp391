@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { IoCloseOutline, IoFlashOutline, IoSendOutline } from 'react-icons/io5'
 import { Button } from '@/shared/components/ui-core'
 import { toast } from 'react-hot-toast'
+import { cn } from '@/lib/utils'
 
 interface ExpediteRequestModalProps {
   isOpen: boolean
@@ -29,7 +30,7 @@ export function ExpediteRequestModal({ isOpen, onClose, order }: ExpediteRequest
         background: '#10b981',
         color: '#fff',
         fontSize: '14px',
-        fontWeight: '600'
+        fontWeight: '500'
       }
     })
 
@@ -51,14 +52,14 @@ export function ExpediteRequestModal({ isOpen, onClose, order }: ExpediteRequest
         {/* Header */}
         <div className="flex items-center justify-between p-8 border-b border-neutral-50 bg-neutral-50/50">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center shadow-sm border border-amber-100/50">
+            <div className="w-12 h-12 bg-mint-50 text-mint-600 rounded-2xl flex items-center justify-center shadow-sm border border-mint-100/50">
               <IoFlashOutline size={24} />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-slate-900 tracking-tight leading-none">
+              <h3 className="text-xl font-semibold text-slate-900 tracking-tight leading-none">
                 Expedite Progress
               </h3>
-              <p className="text-[10px] text-amber-600 font-bold uppercase tracking-[0.2em] mt-2">
+              <p className="text-[10px] text-mint-600 font-semibold uppercase tracking-[0.2em] mt-2">
                 Priority Allocation
               </p>
             </div>
@@ -73,28 +74,53 @@ export function ExpediteRequestModal({ isOpen, onClose, order }: ExpediteRequest
 
         <form onSubmit={handleSubmit} className="p-8 space-y-6">
           {/* Order Info Summary */}
-          <div className="p-6 bg-slate-50/50 rounded-[2rem] border border-slate-100 flex justify-between items-center">
-            <div>
-              <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1.5">
-                Target Order
-              </p>
-              <p className="text-base font-bold text-slate-900">{order.orderCode}</p>
+          <div className="p-6 bg-slate-50/50 rounded-[2rem] border border-slate-100 space-y-4">
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1">
+                  Target Order
+                </p>
+                <p className="text-base font-bold text-slate-900">{order.orderCode}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1">
+                  Current Station
+                </p>
+                <span
+                  className={cn(
+                    'px-3 py-1 rounded-xl text-[10px] font-semibold tracking-widest bg-white border shadow-sm',
+                    order.stationColor
+                      ? order.stationColor.replace('amber', 'mint').replace('yellow', 'mint')
+                      : 'border-mint-200 text-mint-600'
+                  )}
+                >
+                  {order.station}
+                </span>
+              </div>
             </div>
-            <div className="text-right">
-              <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1.5">
-                Current Station
-              </p>
-              <span
-                className={`px-3 py-1 rounded-xl text-[10px] font-bold tracking-widest bg-white border shadow-sm ${order.stationColor}`}
-              >
-                {order.station}
-              </span>
+
+            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100/50">
+              <div>
+                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1">
+                  Lens Details
+                </p>
+                <p className="text-xs font-bold text-slate-700">{order.type}</p>
+                <p className="text-[10px] text-slate-400 font-medium">{order.material}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1">
+                  Time in Station
+                </p>
+                <p className="text-xs font-bold text-mint-600 font-mono tracking-tight underline underline-offset-4 decoration-mint-200">
+                  {order.time}
+                </p>
+              </div>
             </div>
           </div>
 
           <div className="space-y-4">
-            <div className="p-5 bg-amber-50/30 rounded-2xl border border-amber-100/30">
-              <p className="text-xs font-bold text-amber-800 leading-relaxed italic">
+            <div className="p-5 bg-mint-50/30 rounded-2xl border border-mint-100/30">
+              <p className="text-xs font-medium text-mint-800 leading-relaxed italic">
                 Notice: Submitting this request will flag this order for immediate prioritization in
                 the lab queue.
               </p>
@@ -108,7 +134,7 @@ export function ExpediteRequestModal({ isOpen, onClose, order }: ExpediteRequest
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="Ex: Customer needs for upcoming flight on Monday..."
-                className="w-full min-h-[140px] p-6 bg-neutral-50 border border-neutral-100 rounded-[2rem] text-sm font-medium text-slate-700 focus:outline-none focus:ring-8 focus:ring-amber-500/10 focus:border-amber-400 transition-all resize-none placeholder:text-slate-300 shadow-inner"
+                className="w-full min-h-[140px] p-6 bg-neutral-50 border border-neutral-100 rounded-[2rem] text-sm font-medium text-slate-700 focus:outline-none focus:ring-8 focus:ring-mint-500/10 focus:border-mint-400 transition-all resize-none placeholder:text-slate-300 shadow-inner"
                 required
               />
             </div>
@@ -118,7 +144,7 @@ export function ExpediteRequestModal({ isOpen, onClose, order }: ExpediteRequest
             <Button
               type="submit"
               isLoading={isSubmitting}
-              className="w-full h-14 bg-amber-500 hover:bg-amber-600 text-white rounded-[1.25rem] font-bold text-xs uppercase tracking-widest shadow-xl shadow-amber-100 transition-all flex items-center justify-center gap-2 border-none active:scale-95"
+              className="w-full h-14 bg-mint-500 hover:bg-mint-600 text-white rounded-[1.25rem] font-semibold text-xs uppercase tracking-widest shadow-xl shadow-mint-100 transition-all flex items-center justify-center gap-2 border-none active:scale-95"
             >
               <IoSendOutline className="text-lg" />
               Send Request
@@ -127,7 +153,7 @@ export function ExpediteRequestModal({ isOpen, onClose, order }: ExpediteRequest
               type="button"
               variant="outline"
               onClick={onClose}
-              className="w-full h-12 bg-white border-neutral-200 text-slate-500 hover:bg-neutral-50 rounded-[1.25rem] font-bold text-xs uppercase tracking-widest transition-all"
+              className="w-full h-12 bg-white border-neutral-200 text-slate-500 hover:bg-neutral-50 rounded-[1.25rem] font-semibold text-xs uppercase tracking-widest transition-all"
             >
               Dismiss
             </Button>

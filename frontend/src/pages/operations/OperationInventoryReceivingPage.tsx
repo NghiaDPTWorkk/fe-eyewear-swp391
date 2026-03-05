@@ -122,16 +122,34 @@ const MOCK_BATCHES: PreOrderImportBatch[] = [
 ]
 
 // ─── Status config ────────────────────────────────────────────────
-const STATUS_CONFIG: Record<PreOrderImportStatus, { label: string; color: string; bg: string; icon: JSX.Element }> = {
-  PENDING:   { label: 'Pending',   color: 'text-amber-700',   bg: 'bg-amber-50 border-amber-200',   icon: <IoTimeOutline size={13} /> },
-  DONE:      { label: 'Done',      color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200', icon: <IoCheckmarkCircleOutline size={13} /> },
-  CANCELLED: { label: 'Cancelled', color: 'text-red-700',     bg: 'bg-red-50 border-red-200',       icon: <IoCloseCircleOutline size={13} /> }
+const STATUS_CONFIG: Record<
+  PreOrderImportStatus,
+  { label: string; color: string; bg: string; icon: JSX.Element }
+> = {
+  PENDING: {
+    label: 'Pending',
+    color: 'text-amber-700',
+    bg: 'bg-amber-50 border-amber-200',
+    icon: <IoTimeOutline size={13} />
+  },
+  DONE: {
+    label: 'Done',
+    color: 'text-emerald-700',
+    bg: 'bg-emerald-50 border-emerald-200',
+    icon: <IoCheckmarkCircleOutline size={13} />
+  },
+  CANCELLED: {
+    label: 'Cancelled',
+    color: 'text-red-700',
+    bg: 'bg-red-50 border-red-200',
+    icon: <IoCloseCircleOutline size={13} />
+  }
 }
 
 const STATUS_FILTERS = [
-  { label: 'All',       value: 'all' },
-  { label: 'Pending',   value: 'PENDING' },
-  { label: 'Done',      value: 'DONE' },
+  { label: 'All', value: 'all' },
+  { label: 'Pending', value: 'PENDING' },
+  { label: 'Done', value: 'DONE' },
   { label: 'Cancelled', value: 'CANCELLED' }
 ]
 
@@ -163,8 +181,8 @@ export default function OperationInventoryReceivingPage() {
 
   const counts = {
     all: MOCK_BATCHES.length,
-    PENDING:   MOCK_BATCHES.filter((b) => b.status === 'PENDING').length,
-    DONE:      MOCK_BATCHES.filter((b) => b.status === 'DONE').length,
+    PENDING: MOCK_BATCHES.filter((b) => b.status === 'PENDING').length,
+    DONE: MOCK_BATCHES.filter((b) => b.status === 'DONE').length,
     CANCELLED: MOCK_BATCHES.filter((b) => b.status === 'CANCELLED').length
   }
 
@@ -192,7 +210,10 @@ export default function OperationInventoryReceivingPage() {
       <div className="flex flex-wrap items-center gap-3 mb-6">
         {/* Search */}
         <div className="relative flex-1 min-w-[220px] max-w-sm">
-          <IoSearchOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={18} />
+          <IoSearchOutline
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
+            size={18}
+          />
           <input
             type="text"
             placeholder="Search SKU, manager or description..."
@@ -219,7 +240,9 @@ export default function OperationInventoryReceivingPage() {
                 }`}
               >
                 {f.label}
-                <span className={`ml-1.5 px-1.5 py-0.5 rounded-full text-[10px] font-bold ${active ? 'bg-white/25 text-white' : 'bg-neutral-100 text-neutral-500'}`}>
+                <span
+                  className={`ml-1.5 px-1.5 py-0.5 rounded-full text-[10px] font-bold ${active ? 'bg-white/25 text-white' : 'bg-neutral-100 text-neutral-500'}`}
+                >
                   {cnt}
                 </span>
               </button>
@@ -230,7 +253,6 @@ export default function OperationInventoryReceivingPage() {
 
       {/* ── Table ── */}
       <div className="bg-white rounded-xl shadow-sm border border-neutral-100 overflow-hidden">
-
         {/* Table header */}
         <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-neutral-50 border-b border-neutral-100 text-[11px] font-bold text-neutral-500 uppercase tracking-widest">
           <div className="col-span-2 flex items-center gap-1.5">
@@ -258,7 +280,8 @@ export default function OperationInventoryReceivingPage() {
         ) : (
           filtered.map((batch, idx) => {
             const st = STATUS_CONFIG[batch.status]
-            const fillPct = batch.targetQuantity > 0 ? (batch.preOrderedQuantity / batch.targetQuantity) * 100 : 0
+            const fillPct =
+              batch.targetQuantity > 0 ? (batch.preOrderedQuantity / batch.targetQuantity) * 100 : 0
             return (
               <div
                 key={batch._id}
@@ -284,13 +307,18 @@ export default function OperationInventoryReceivingPage() {
                 <div className="col-span-1 flex flex-col items-center gap-1">
                   <span className="text-sm font-bold text-neutral-800">
                     {batch.preOrderedQuantity}
-                    <span className="text-xs text-neutral-400 font-normal">/{batch.targetQuantity}</span>
+                    <span className="text-xs text-neutral-400 font-normal">
+                      /{batch.targetQuantity}
+                    </span>
                   </span>
                   <div className="w-full h-1.5 bg-neutral-100 rounded-full overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all ${
-                        batch.status === 'CANCELLED' ? 'bg-red-300' :
-                        fillPct >= 100 ? 'bg-emerald-400' : 'bg-mint-400'
+                        batch.status === 'CANCELLED'
+                          ? 'bg-red-300'
+                          : fillPct >= 100
+                            ? 'bg-emerald-400'
+                            : 'bg-mint-400'
                       }`}
                       style={{ width: `${Math.min(fillPct, 100)}%` }}
                     />
@@ -302,10 +330,17 @@ export default function OperationInventoryReceivingPage() {
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-full bg-mint-100 flex items-center justify-center flex-shrink-0">
                       <span className="text-[10px] font-bold text-mint-700 uppercase">
-                        {batch.managerResponsibility.split(' ').map(w => w[0]).join('').slice(0, 2)}
+                        {batch.managerResponsibility
+                          .split(' ')
+                          .map((w) => w[0])
+                          .join('')
+                          .slice(0, 2)}
                       </span>
                     </div>
-                    <span className="text-sm text-neutral-700 truncate" title={batch.managerResponsibility}>
+                    <span
+                      className="text-sm text-neutral-700 truncate"
+                      title={batch.managerResponsibility}
+                    >
                       {batch.managerResponsibility}
                     </span>
                   </div>
@@ -314,14 +349,14 @@ export default function OperationInventoryReceivingPage() {
                 {/* Started Date */}
                 <div className="col-span-2">
                   <p className="text-sm text-neutral-600">{formatDate(batch.startedDate)}</p>
-                  <p className="text-xs text-neutral-400 mt-0.5">
-                    → {formatDate(batch.endedDate)}
-                  </p>
+                  <p className="text-xs text-neutral-400 mt-0.5">→ {formatDate(batch.endedDate)}</p>
                 </div>
 
                 {/* Status badge */}
                 <div className="col-span-1 flex justify-center">
-                  <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border ${st.bg} ${st.color}`}>
+                  <span
+                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border ${st.bg} ${st.color}`}
+                  >
                     {st.icon}
                     {st.label}
                   </span>

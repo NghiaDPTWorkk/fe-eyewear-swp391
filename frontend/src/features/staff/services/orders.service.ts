@@ -30,7 +30,7 @@ export const orderService = {
    * @param data - Dữ liệu cần update
    */
   updateOrder: async (id: string, data: any) => {
-    return httpClient.put(ENDPOINTS.ORDERS.UPDATE(id), data)a
+    return httpClient.put(ENDPOINTS.ORDERS.UPDATE(id), data)
   },
 
   /**

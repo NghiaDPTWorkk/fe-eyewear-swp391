@@ -3,7 +3,7 @@
  * Displays courier information and contact options
  */
 import { Card, Button } from '@/components'
-import { IoCall, IoChatbubble, IoInformationCircle } from 'react-icons/io5'
+import { IoCall, IoChatbubble, IoInformationCircle, IoAirplaneOutline } from 'react-icons/io5'
 
 export default function LiveMapCourierInfoCard() {
   return (
@@ -13,17 +13,13 @@ export default function LiveMapCourierInfoCard() {
           Courier Information
         </h3>
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-14 h-14 rounded-full bg-yellow-400 overflow-hidden border-2 border-white shadow-md">
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/DHL_Logo.svg/1200px-DHL_Logo.svg.png"
-              alt="DHL"
-              className="w-full h-full object-contain bg-white p-1"
-            />
+          <div className="w-14 h-14 rounded-full bg-mint-100 flex items-center justify-center overflow-hidden border-2 border-white shadow-md text-mint-500">
+            <IoAirplaneOutline size={28} />
           </div>
           <div>
-            <h4 className="text-lg font-bold text-gray-900">DHL Express</h4>
-            <div className="flex gap-1 text-xs text-yellow-600 font-bold bg-yellow-50 px-2 py-0.5 rounded-full w-fit">
-              <IoInformationCircle size={14} /> Global Priority
+            <h4 className="text-lg font-bold text-gray-900">OpticView Global</h4>
+            <div className="flex gap-1 text-xs text-mint-600 font-bold bg-mint-50 px-2 py-0.5 rounded-full w-fit">
+              <IoInformationCircle size={14} /> Priority Line
             </div>
           </div>
         </div>
@@ -45,10 +41,10 @@ export default function LiveMapCourierInfoCard() {
       </div>
 
       <div className="mt-6 flex gap-3">
-        <Button variant="outline" className="flex-1 border-gray-200 hover:bg-gray-50">
+        <Button variant="outline" className="flex-1 border-mint-200 text-mint-600 hover:bg-mint-50">
           <IoChatbubble className="mr-2" /> Message
         </Button>
-        <Button className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white">
+        <Button className="flex-1 bg-mint-500 hover:bg-mint-600 text-white border-0">
           <IoCall className="mr-2" /> Call
         </Button>
       </div>

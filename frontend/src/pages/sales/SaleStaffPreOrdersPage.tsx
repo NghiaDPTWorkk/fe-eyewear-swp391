@@ -99,7 +99,12 @@ export default function SaleStaffPreOrdersPage() {
   }
 
   const handleVerify = (order: Order) => {
-    navigate(`/salestaff/orders/${order._id}/verify-rx`)
+    const isManufacturing = order.type?.includes(OrderType.MANUFACTURING)
+    if (isManufacturing) {
+      navigate(`/salestaff/orders/${order._id}/verify-rx`)
+    } else {
+      navigate(`/salestaff/orders/${order._id}/pre-order`)
+    }
   }
 
   const handleChat = (order: Order) => {

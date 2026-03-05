@@ -191,7 +191,7 @@ export const OrderDetailsDrawer: React.FC<{
               orderCode={order?.orderCode}
               status={order?.status}
               orderTypeLabel={
-                isPrescription
+                order?.type?.includes(OrderType.MANUFACTURING)
                   ? 'Prescription'
                   : order?.type?.includes(OrderType.PRE_ORDER)
                     ? 'Pre-order'

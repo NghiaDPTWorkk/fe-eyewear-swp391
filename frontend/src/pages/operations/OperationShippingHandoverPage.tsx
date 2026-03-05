@@ -242,7 +242,7 @@ export default function OperationShippingHandoverPage() {
                 Shipping Label
               </h2>
 
-              <div className='mt-10 mb-10'>
+              <div className="mt-10 mb-10">
                 <ShippingInfoSeal
                   invoiceCode={invoice.invoiceCode}
                   fullName={invoice.fullName}

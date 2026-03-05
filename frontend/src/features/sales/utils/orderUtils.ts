@@ -42,7 +42,20 @@ export const transformOrder = (ord: any, inv?: any): Order => {
     createdAt: ord.createdAt || inv?.createdAt,
     status: ord.status || 'DEPOSITED',
     isPrescription: ord.type?.includes(OrderType.MANUFACTURING) || ord.isPrescription || false,
-    products: ord.products || ord.orderItems || []
+    products: ord.products || ord.orderItems || [],
+    invoice: inv || ord.invoice,
+    // Note: lấy từ order trước, fallback sang invoice note
+    note: ord.note || ord.orderNote || inv?.note || inv?.orderNote || ord.invoice?.note || '',
+    // Email: thử nhiều paths khác nhau trong response của backend
+    customerEmail:
+      ord.customerEmail ||
+      inv?.email ||
+      inv?.customer?.email ||
+      inv?.customerEmail ||
+      inv?.owner?.email ||
+      ord.invoice?.email ||
+      ord.invoice?.customer?.email ||
+      ''
   }
 }
 

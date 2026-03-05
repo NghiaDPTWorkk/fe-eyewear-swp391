@@ -305,7 +305,10 @@ export default function OrderTable({
         <tbody>
           {isLoading ? (
             <tr>
-              <td colSpan={activeColumns.length} className="py-20 text-center text-gray-400 font-medium">
+              <td
+                colSpan={activeColumns.length}
+                className="py-20 text-center text-gray-400 font-medium"
+              >
                 <div className="flex flex-col items-center gap-3">
                   <div className="w-8 h-8 border-4 border-mint-500 border-t-transparent rounded-full animate-spin" />
                   <span>Loading orders...</span>
@@ -314,7 +317,10 @@ export default function OrderTable({
             </tr>
           ) : isError ? (
             <tr>
-              <td colSpan={activeColumns.length} className="py-20 text-center text-red-500 font-medium">
+              <td
+                colSpan={activeColumns.length}
+                className="py-20 text-center text-red-500 font-medium"
+              >
                 Internal error occurred while fetching orders.
               </td>
             </tr>

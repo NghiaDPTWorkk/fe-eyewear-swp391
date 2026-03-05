@@ -49,5 +49,9 @@ export const salesService = {
 
   getInvoiceById: async (id: string) => {
     return httpClient.get<any>(ENDPOINTS.OPERATION_STAFF.INVOICE_DETAIL(id))
+  },
+
+  getCustomerById: async (id: string) => {
+    return httpClient.get<any>(`/admin/customers/${id}`)
   }
 }

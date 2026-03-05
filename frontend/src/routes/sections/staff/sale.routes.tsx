@@ -16,6 +16,7 @@ const SaleStaffSupportPage = lazy(() => import('@/pages/sales/SaleStaffSupportPa
 const SaleStaffRxVerificationPage = lazy(() => import('@/pages/sales/SaleStaffRxVerificationPage'))
 const RegularOrderDetailPage = lazy(() => import('@/pages/sales/SaleStaffRegularOrderDetailPage'))
 const PreOrderDetailPage = lazy(() => import('@/pages/sales/SaleStaffPreOrderDetailPage'))
+const SaleStaffProfilePage = lazy(() => import('@/pages/sales/SaleStaffProfilePage'))
 
 export const saleRoutes = [
   {
@@ -129,6 +130,14 @@ export const saleRoutes = [
         element: (
           <LazyPage>
             <SaleStaffSupportPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'profile',
+        element: (
+          <LazyPage>
+            <SaleStaffProfilePage />
           </LazyPage>
         )
       }

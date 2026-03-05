@@ -35,6 +35,7 @@ export interface StandardProduct {
   createdAt?: string
   updatedAt?: Date
   deletedAt?: Date | null
+  isDefault?: boolean
   // Optional fields for detail views
   variants?: Variant[]
   spec?: FrameSpec | LenSpec | null

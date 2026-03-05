@@ -27,7 +27,7 @@ export const PaymentStatusHeader = ({ status, error }: PaymentStatusHeaderProps)
         <div className="relative inline-block">
           <div className="absolute inset-0 bg-success-200/30 blur-3xl rounded-full scale-150 animate-pulse" />
           <div className="bg-success-500 text-white p-4 rounded-full shadow-lg shadow-success-200 relative">
-            <CheckCircle2 className="w-16 h-16" />
+            <CheckCircle2 className="w-16 h-16" stroke="#1a6d53" />
           </div>
         </div>
         <div className="space-y-2">

@@ -184,7 +184,7 @@ export function PrescriptionForm({
                 step="0.01"
                 value={formData.right.SPH}
                 onChange={(e) => handleEyeChange('right', 'SPH', e.target.value)}
-                className="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors"
+                className="w-full bg-white border border-gray-100 rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center"
                 placeholder="0"
               />
             </div>
@@ -197,7 +197,7 @@ export function PrescriptionForm({
                 step="0.01"
                 value={formData.right.CYL}
                 onChange={(e) => handleEyeChange('right', 'CYL', e.target.value)}
-                className="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors"
+                className="w-full bg-white border border-gray-100 rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center"
                 placeholder="0"
               />
             </div>
@@ -209,7 +209,7 @@ export function PrescriptionForm({
                 type="number"
                 value={formData.right.AXIS}
                 onChange={(e) => handleEyeChange('right', 'AXIS', e.target.value)}
-                className="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors"
+                className="w-full bg-white border border-gray-100 rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center"
                 placeholder="0"
               />
             </div>
@@ -222,7 +222,7 @@ export function PrescriptionForm({
                 step="0.01"
                 value={formData.right.ADD}
                 onChange={(e) => handleEyeChange('right', 'ADD', e.target.value)}
-                className="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors"
+                className="w-full bg-white border border-gray-100 rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center"
                 placeholder="0"
               />
             </div>
@@ -247,7 +247,7 @@ export function PrescriptionForm({
                 step="0.01"
                 value={formData.left.SPH}
                 onChange={(e) => handleEyeChange('left', 'SPH', e.target.value)}
-                className="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors"
+                className="w-full bg-white border border-gray-100 rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center"
                 placeholder="0"
               />
             </div>
@@ -260,7 +260,7 @@ export function PrescriptionForm({
                 step="0.01"
                 value={formData.left.CYL}
                 onChange={(e) => handleEyeChange('left', 'CYL', e.target.value)}
-                className="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors"
+                className="w-full bg-white border border-gray-100 rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center"
                 placeholder="0"
               />
             </div>
@@ -272,7 +272,7 @@ export function PrescriptionForm({
                 type="number"
                 value={formData.left.AXIS}
                 onChange={(e) => handleEyeChange('left', 'AXIS', e.target.value)}
-                className="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors"
+                className="w-full bg-white border border-gray-100 rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center"
                 placeholder="0"
               />
             </div>
@@ -285,7 +285,7 @@ export function PrescriptionForm({
                 step="0.01"
                 value={formData.left.ADD}
                 onChange={(e) => handleEyeChange('left', 'ADD', e.target.value)}
-                className="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors"
+                className="w-full bg-white border border-gray-100 rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center"
                 placeholder="0"
               />
             </div>
@@ -302,7 +302,7 @@ export function PrescriptionForm({
             type="number"
             value={formData.PD}
             onChange={(e) => handlePDChange(e.target.value)}
-            className="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors"
+            className="w-full bg-white border border-gray-100 rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center"
             placeholder="0 (e.g. 63)"
           />
         </div>

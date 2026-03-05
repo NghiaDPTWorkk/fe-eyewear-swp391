@@ -1,7 +1,16 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import type { Prescription } from '@/shared/types/prescription.types'
 import { Button } from '@/shared/components/ui/button'
-import { Check, Copy } from 'lucide-react'
+import { Check, Copy, AlertCircle, Info } from 'lucide-react'
+import { toast } from 'react-hot-toast'
+
+const VALIDATION_RULES = {
+  SPH: { min: -20.0, max: 20.0, step: 0.25 },
+  CYL: { min: -6.0, max: 0.0, step: 0.25 },
+  AXIS: { min: 1, max: 180, step: 1 },
+  ADD: { min: 0.75, max: 3.5, step: 0.25 },
+  PD: { min: 35, max: 65, step: 0.5 }
+}
 
 interface PrescriptionFormState {
   left: { SPH: string; CYL: string; AXIS: string; ADD: string }
@@ -38,18 +47,18 @@ export function PrescriptionForm({
     if (initialData) {
       return {
         left: {
-          SPH: initialData.left.SPH.toString(),
-          CYL: initialData.left.CYL.toString(),
-          AXIS: initialData.left.AXIS.toString(),
-          ADD: initialData.left.ADD.toString()
+          SPH: initialData.left.SPH?.toString() || '',
+          CYL: initialData.left.CYL?.toString() || '',
+          AXIS: initialData.left.AXIS?.toString() || '',
+          ADD: initialData.left.ADD?.toString() || ''
         },
         right: {
-          SPH: initialData.right.SPH.toString(),
-          CYL: initialData.right.CYL.toString(),
-          AXIS: initialData.right.AXIS.toString(),
-          ADD: initialData.right.ADD.toString()
+          SPH: initialData.right.SPH?.toString() || '',
+          CYL: initialData.right.CYL?.toString() || '',
+          AXIS: initialData.right.AXIS?.toString() || '',
+          ADD: initialData.right.ADD?.toString() || ''
         },
-        PD: initialData.PD.toString(),
+        PD: initialData.PD?.toString() || '',
         isDefault: initialData.isDefault || false
       }
     }
@@ -61,20 +70,112 @@ export function PrescriptionForm({
     }
   })
   const [isConfirmed, setIsConfirmed] = useState(!showConfirmCheckbox)
+  const [pdConfirmed, setPdConfirmed] = useState(false)
+
+  const validationResults = useMemo(() => {
+    const warnings: string[] = []
+    const errors: Record<string, string> = {}
+
+    const checkRange = (
+      val: string,
+      rule: { min: number; max: number; step: number },
+      fieldName: string
+    ) => {
+      if (!val) return
+      const num = parseFloat(val)
+      if (num < rule.min || num > rule.max) {
+        errors[fieldName] = `Giá trị phải trong khoảng ${rule.min} và ${rule.max}`
+      } else if (Math.abs((num * 100) % (rule.step * 100)) > 0.01) {
+        // Using 100 to avoid floating point issues
+        warnings.push(`${fieldName} thường là bội số của ${rule.step}`)
+      }
+    }
+
+    // Individual field checks
+    ;(['left', 'right'] as const).forEach((eye) => {
+      const eyeLabel = eye === 'left' ? 'Mắt trái' : 'Mắt phải'
+      checkRange(formData[eye].SPH, VALIDATION_RULES.SPH, `${eyeLabel} SPH`)
+      checkRange(formData[eye].CYL, VALIDATION_RULES.CYL, `${eyeLabel} CYL`)
+      checkRange(formData[eye].AXIS, VALIDATION_RULES.AXIS, `${eyeLabel} AXIS`)
+      checkRange(formData[eye].ADD, VALIDATION_RULES.ADD, `${eyeLabel} ADD`)
+
+      // Step 3: CYL & AXIS dependency
+      const cyl = parseFloat(formData[eye].CYL)
+      if (cyl !== 0 && !formData[eye].AXIS) {
+        errors[`${eye}.AXIS`] = 'Bắt buộc nhập AXIS khi có độ loạn (CYL)'
+      }
+
+      // Step 5: CYL Sign
+      if (cyl > 0) {
+        warnings.push(
+          `Phát hiện độ loạn dấu cộng (+) ở ${eyeLabel}. Thông thường độ loạn được quy đổi về dấu trừ (-).`
+        )
+      }
+
+      // Step 6: High Index Warning
+      const sph = Math.abs(parseFloat(formData[eye].SPH))
+      const absCyl = Math.abs(cyl)
+      if (sph > 10 || absCyl > 4) {
+        warnings.push(
+          `Độ khúc xạ của ${eyeLabel} rất cao. Để đảm bảo thị lực tốt nhất, vui lòng liên hệ kỹ thuật viên để được tư vấn loại tròng kính chiết suất đặc biệt (1.74 hoặc tròng đặt riêng).`
+        )
+      }
+    })
+
+    // PD Validation
+    if (formData.PD) {
+      const pd = parseFloat(formData.PD)
+      if (pd < VALIDATION_RULES.PD.min || pd > VALIDATION_RULES.PD.max) {
+        errors.PD = `PD phải nằm trong khoảng ${VALIDATION_RULES.PD.min} - ${VALIDATION_RULES.PD.max}`
+      }
+    }
+
+    // Step 4: ADD Equality
+    const addLeft = formData.left.ADD
+    const addRight = formData.right.ADD
+    if (addLeft && addRight && addLeft !== addRight) {
+      warnings.push(
+        'Thông thường độ ADD ở hai mắt sẽ giống nhau, bạn vui lòng kiểm tra lại đơn thuốc.'
+      )
+    }
+
+    // Step 7: SPH and ADD Logic
+    const sphRight = parseFloat(formData.right.SPH)
+    const addRightNum = parseFloat(formData.right.ADD)
+    if (sphRight > 5 && addRightNum === 0) {
+      warnings.push(
+        'Độ viễn thị nặng nhưng ADD = 0 có thể do nhầm lẫn dòng trên đơn thuốc. Vui lòng kiểm tra lại.'
+      )
+    }
+
+    return { errors, warnings }
+  }, [formData])
 
   const isFormValid = () => {
-    const fields = [
-      formData.right.SPH,
-      formData.right.CYL,
-      formData.right.AXIS,
-      formData.right.ADD,
-      formData.left.SPH,
-      formData.left.CYL,
-      formData.left.AXIS,
-      formData.left.ADD,
-      formData.PD
+    // SPH and PD are always required
+    const mandatoryFields = [
+      { name: 'right.SPH', value: formData.right.SPH },
+      { name: 'left.SPH', value: formData.left.SPH },
+      { name: 'PD', value: formData.PD }
     ]
-    return fields.every((field) => field !== '' && field !== null && field !== undefined)
+
+    const allMandatoryFilled = mandatoryFields.every((f) => f.value !== '')
+
+    // AXIS is required ONLY if CYL is entered and is not 0
+    const rightCylNum = parseFloat(formData.right.CYL) || 0
+    const leftCylNum = parseFloat(formData.left.CYL) || 0
+
+    const rightAxisRequired = rightCylNum !== 0
+    const leftAxisRequired = leftCylNum !== 0
+
+    const rightAxisOk = rightAxisRequired ? formData.right.AXIS !== '' : true
+    const leftAxisOk = leftAxisRequired ? formData.left.AXIS !== '' : true
+
+    const hasErrors = Object.keys(validationResults.errors).length > 0
+    const pdNum = parseFloat(formData.PD)
+    const pdRequirementMet = (pdNum >= 50 && pdNum <= 65) || (pdNum >= 35 && pdConfirmed)
+
+    return allMandatoryFilled && rightAxisOk && leftAxisOk && !hasErrors && pdRequirementMet
   }
 
   const handleCopyRightToLeft = () => {
@@ -129,21 +230,27 @@ export function PrescriptionForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (showConfirmCheckbox && !isConfirmed) return
-    if (!isFormValid()) return
+    if (!isFormValid()) {
+      toast.error('Please fix validation errors before submitting.')
+      return
+    }
 
     // Convert string values to numbers before submitting, default to 0 if empty
+    const rightCyl = parseFloat(formData.right.CYL) || 0
+    const leftCyl = parseFloat(formData.left.CYL) || 0
+
     const submissionData: Prescription = {
       ...formData,
       right: {
         SPH: parseFloat(formData.right.SPH) || 0,
-        CYL: parseFloat(formData.right.CYL) || 0,
-        AXIS: parseFloat(formData.right.AXIS) || 0,
+        CYL: rightCyl,
+        AXIS: rightCyl === 0 ? 0 : parseFloat(formData.right.AXIS) || 0,
         ADD: parseFloat(formData.right.ADD) || 0
       },
       left: {
         SPH: parseFloat(formData.left.SPH) || 0,
-        CYL: parseFloat(formData.left.CYL) || 0,
-        AXIS: parseFloat(formData.left.AXIS) || 0,
+        CYL: leftCyl,
+        AXIS: leftCyl === 0 ? 0 : parseFloat(formData.left.AXIS) || 0,
         ADD: parseFloat(formData.left.ADD) || 0
       },
       PD: parseFloat(formData.PD) || 0
@@ -162,17 +269,6 @@ export function PrescriptionForm({
               <span className="w-2 h-2 bg-primary-500 rounded-full shrink-0"></span>
               Right Eye (OD)
             </h4>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={handleCopyRightToLeft}
-              className="h-8 px-2 text-[10px] font-bold uppercase tracking-tight text-primary-600 hover:text-primary-700 hover:bg-primary-100/50 gap-1.5 rounded-lg"
-              title="Copy Right Eye to Left Eye"
-            >
-              <Copy className="w-3 h-3 shrink-0" />
-              Same for both eyes
-            </Button>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
@@ -181,12 +277,17 @@ export function PrescriptionForm({
               </label>
               <input
                 type="number"
-                step="0.01"
+                step="0.25"
                 value={formData.right.SPH}
                 onChange={(e) => handleEyeChange('right', 'SPH', e.target.value)}
-                className="w-full bg-white border border-gray-100 rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center"
+                className={`w-full bg-white border ${validationResults.errors['right.SPH'] ? 'border-red-500' : 'border-gray-100'} rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center`}
                 placeholder="0"
               />
+              {validationResults.errors['right.SPH'] && (
+                <p className="text-[10px] text-red-500 font-medium">
+                  {validationResults.errors['right.SPH']}
+                </p>
+              )}
             </div>
             <div className="space-y-1.5">
               <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">
@@ -194,12 +295,17 @@ export function PrescriptionForm({
               </label>
               <input
                 type="number"
-                step="0.01"
+                step="0.25"
                 value={formData.right.CYL}
                 onChange={(e) => handleEyeChange('right', 'CYL', e.target.value)}
-                className="w-full bg-white border border-gray-100 rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center"
+                className={`w-full bg-white border ${validationResults.errors['right.CYL'] ? 'border-red-500' : 'border-gray-100'} rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center`}
                 placeholder="0"
               />
+              {validationResults.errors['right.CYL'] && (
+                <p className="text-[10px] text-red-500 font-medium">
+                  {validationResults.errors['right.CYL']}
+                </p>
+              )}
             </div>
             <div className="space-y-1.5">
               <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">
@@ -207,11 +313,18 @@ export function PrescriptionForm({
               </label>
               <input
                 type="number"
+                step="1"
                 value={formData.right.AXIS}
                 onChange={(e) => handleEyeChange('right', 'AXIS', e.target.value)}
-                className="w-full bg-white border border-gray-100 rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center"
-                placeholder="0"
+                className={`w-full bg-white border ${validationResults.errors['right.AXIS'] ? 'border-red-500' : 'border-gray-100'} rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center`}
+                placeholder={parseFloat(formData.right.CYL) === 0 ? '—' : '0'}
+                disabled={parseFloat(formData.right.CYL) === 0}
               />
+              {validationResults.errors['right.AXIS'] && (
+                <p className="text-[10px] text-red-500 font-medium">
+                  {validationResults.errors['right.AXIS']}
+                </p>
+              )}
             </div>
             <div className="space-y-1.5">
               <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">
@@ -219,14 +332,30 @@ export function PrescriptionForm({
               </label>
               <input
                 type="number"
-                step="0.01"
+                step="0.25"
                 value={formData.right.ADD}
                 onChange={(e) => handleEyeChange('right', 'ADD', e.target.value)}
-                className="w-full bg-white border border-gray-100 rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center"
+                className={`w-full bg-white border ${validationResults.errors['right.ADD'] ? 'border-red-500' : 'border-gray-100'} rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center`}
                 placeholder="0"
               />
+              {validationResults.errors['right.ADD'] && (
+                <p className="text-[10px] text-red-500 font-medium">
+                  {validationResults.errors['right.ADD']}
+                </p>
+              )}
             </div>
           </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={handleCopyRightToLeft}
+            className="h-8 px-2 text-[10px] font-bold uppercase tracking-tight text-primary-600 hover:text-primary-700 hover:bg-primary-100/50 gap-1.5 rounded-lg"
+            title="Copy Right Eye to Left Eye"
+          >
+            <Copy className="w-3 h-3 shrink-0" />
+            Same for both eyes
+          </Button>
         </div>
 
         {/* Left Eye */}
@@ -246,12 +375,17 @@ export function PrescriptionForm({
               </label>
               <input
                 type="number"
-                step="0.01"
+                step="0.25"
                 value={formData.left.SPH}
                 onChange={(e) => handleEyeChange('left', 'SPH', e.target.value)}
-                className="w-full bg-white border border-gray-100 rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center"
+                className={`w-full bg-white border ${validationResults.errors['left.SPH'] ? 'border-red-500' : 'border-gray-100'} rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center`}
                 placeholder="0"
               />
+              {validationResults.errors['left.SPH'] && (
+                <p className="text-[10px] text-red-500 font-medium">
+                  {validationResults.errors['left.SPH']}
+                </p>
+              )}
             </div>
             <div className="space-y-1.5">
               <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">
@@ -259,12 +393,17 @@ export function PrescriptionForm({
               </label>
               <input
                 type="number"
-                step="0.01"
+                step="0.25"
                 value={formData.left.CYL}
                 onChange={(e) => handleEyeChange('left', 'CYL', e.target.value)}
-                className="w-full bg-white border border-gray-100 rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center"
+                className={`w-full bg-white border ${validationResults.errors['left.CYL'] ? 'border-red-500' : 'border-gray-100'} rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center`}
                 placeholder="0"
               />
+              {validationResults.errors['left.CYL'] && (
+                <p className="text-[10px] text-red-500 font-medium">
+                  {validationResults.errors['left.CYL']}
+                </p>
+              )}
             </div>
             <div className="space-y-1.5">
               <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">
@@ -272,11 +411,18 @@ export function PrescriptionForm({
               </label>
               <input
                 type="number"
+                step="1"
                 value={formData.left.AXIS}
                 onChange={(e) => handleEyeChange('left', 'AXIS', e.target.value)}
-                className="w-full bg-white border border-gray-100 rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center"
-                placeholder="0"
+                className={`w-full bg-white border ${validationResults.errors['left.AXIS'] ? 'border-red-500' : 'border-gray-100'} rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center`}
+                placeholder={parseFloat(formData.left.CYL) === 0 ? '—' : '0'}
+                disabled={parseFloat(formData.left.CYL) === 0}
               />
+              {validationResults.errors['left.AXIS'] && (
+                <p className="text-[10px] text-red-500 font-medium">
+                  {validationResults.errors['left.AXIS']}
+                </p>
+              )}
             </div>
             <div className="space-y-1.5">
               <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">
@@ -284,12 +430,17 @@ export function PrescriptionForm({
               </label>
               <input
                 type="number"
-                step="0.01"
+                step="0.25"
                 value={formData.left.ADD}
                 onChange={(e) => handleEyeChange('left', 'ADD', e.target.value)}
-                className="w-full bg-white border border-gray-100 rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center"
+                className={`w-full bg-white border ${validationResults.errors['left.ADD'] ? 'border-red-500' : 'border-gray-100'} rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center`}
                 placeholder="0"
               />
+              {validationResults.errors['left.ADD'] && (
+                <p className="text-[10px] text-red-500 font-medium">
+                  {validationResults.errors['left.ADD']}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -302,28 +453,68 @@ export function PrescriptionForm({
           </label>
           <input
             type="number"
+            step="0.5"
             value={formData.PD}
             onChange={(e) => handlePDChange(e.target.value)}
-            className="w-full bg-white border border-gray-100 rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center"
+            className={`w-full bg-white border ${validationResults.errors.PD ? 'border-red-500' : 'border-gray-100'} rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center`}
             placeholder="0 (e.g. 63)"
           />
+          {validationResults.errors.PD && (
+            <p className="text-[10px] text-red-500 font-medium">{validationResults.errors.PD}</p>
+          )}
+          {parseFloat(formData.PD) > 0 && parseFloat(formData.PD) < 50 && (
+            <div className="flex items-center gap-2 mt-2 p-2 bg-yellow-50 rounded-lg border border-yellow-100">
+              <Info className="w-3 h-3 text-yellow-600 shrink-0" />
+              <div className="flex flex-col">
+                <p className="text-[10px] text-yellow-700 font-medium">
+                  Số đo này dành cho trẻ em hay người lớn?
+                </p>
+                <div className="flex gap-2 mt-1">
+                  <button
+                    type="button"
+                    onClick={() => setPdConfirmed(true)}
+                    className={`text-[9px] px-2 py-0.5 rounded ${pdConfirmed ? 'bg-yellow-200 text-yellow-800' : 'bg-white text-yellow-600 hover:bg-yellow-100'}`}
+                  >
+                    Xác nhận chính xác
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-
-        {showDefaultCheckbox && (
-          <div className="flex items-center gap-3 py-3">
-            <input
-              type="checkbox"
-              id="isDefault"
-              checked={formData.isDefault}
-              onChange={(e) => setFormData((prev) => ({ ...prev, isDefault: e.target.checked }))}
-              className="w-5 h-5 rounded-lg border-gray-200 text-primary-500 focus:ring-primary-500"
-            />
-            <label htmlFor="isDefault" className="text-sm font-bold text-mint-1200 cursor-pointer">
-              Set as default prescription
-            </label>
-          </div>
-        )}
       </div>
+
+      {validationResults.warnings.length > 0 && (
+        <div className="space-y-2 p-4 bg-orange-50 rounded-2xl border border-orange-100">
+          <div className="flex items-center gap-2 text-orange-700 mb-1">
+            <AlertCircle className="w-4 h-4" />
+            <span className="text-xs font-bold uppercase tracking-wider">Cảnh báo kiểm tra</span>
+          </div>
+          <ul className="space-y-1">
+            {validationResults.warnings.map((warning, index) => (
+              <li key={index} className="text-xs text-orange-600 flex items-start gap-2">
+                <span className="mt-1 w-1 h-1 bg-orange-400 rounded-full shrink-0"></span>
+                {warning}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {showDefaultCheckbox && (
+        <div className="flex items-center gap-3 py-3">
+          <input
+            type="checkbox"
+            id="isDefault"
+            checked={formData.isDefault}
+            onChange={(e) => setFormData((prev) => ({ ...prev, isDefault: e.target.checked }))}
+            className="w-5 h-5 rounded-lg border-gray-200 text-primary-500 focus:ring-primary-500"
+          />
+          <label htmlFor="isDefault" className="text-sm font-bold text-mint-1200 cursor-pointer">
+            Set as default prescription
+          </label>
+        </div>
+      )}
 
       {showConfirmCheckbox && (
         <label className="flex items-start cursor-pointer mt-4">

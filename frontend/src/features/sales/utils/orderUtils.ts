@@ -20,16 +20,25 @@ export const transformOrder = (ord: any, inv?: any): Order => {
       ord.customerName ||
       inv?.fullName ||
       inv?.customer?.fullName ||
+      inv?.customer?.name ||
+      inv?.name ||
       ord.invoice?.fullName ||
       ord.invoice?.customer?.fullName ||
+      ord.invoice?.customer?.name ||
+      ord.invoice?.name ||
       'Guest',
     customerPhone:
       ord.customerPhone ||
       inv?.phone ||
+      inv?.phoneNumber ||
       inv?.customer?.phone ||
+      inv?.customer?.phoneNumber ||
       ord.invoice?.phone ||
+      ord.invoice?.phoneNumber ||
       ord.invoice?.customer?.phone ||
+      ord.invoice?.customer?.phoneNumber ||
       '',
+
     createdAt: ord.createdAt || inv?.createdAt,
     status: ord.status || 'DEPOSITED',
     isPrescription: ord.type?.includes(OrderType.MANUFACTURING) || ord.isPrescription || false,

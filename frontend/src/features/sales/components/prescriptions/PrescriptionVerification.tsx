@@ -79,12 +79,34 @@ export default function PrescriptionVerification({
 
   const handleConfirm = async () => {
     // Priority: 1. Local changes, 2. Existing order data (parameters variable), 3. Default empty params
-    const finalParams = localParameters ||
+    const rawParams = localParameters ||
       parameters || {
         left: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
         right: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
         PD: 64
       }
+
+    // Ensure all numeric fields are actual numbers (not strings)
+    const finalParams = {
+      ...rawParams,
+      left: rawParams.left
+        ? {
+            SPH: Number(rawParams.left.SPH) || 0,
+            CYL: Number(rawParams.left.CYL) || 0,
+            AXIS: Number(rawParams.left.AXIS) || 0,
+            ADD: Number(rawParams.left.ADD) || 0
+          }
+        : { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
+      right: rawParams.right
+        ? {
+            SPH: Number(rawParams.right.SPH) || 0,
+            CYL: Number(rawParams.right.CYL) || 0,
+            AXIS: Number(rawParams.right.AXIS) || 0,
+            ADD: Number(rawParams.right.ADD) || 0
+          }
+        : { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
+      PD: Number(rawParams.PD) || 64
+    }
 
     const finalNote = localNote.trim() || (parameters as any)?.note || ''
 

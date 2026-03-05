@@ -22,6 +22,7 @@ export interface Order {
   isNextActive: boolean
   price?: number // Giá đơn hàng
   assignedStaff?: string // Staff được assign
+  createdAt: string // For sorting
 }
 
 // Định nghĩa cấu trúc 1 cột

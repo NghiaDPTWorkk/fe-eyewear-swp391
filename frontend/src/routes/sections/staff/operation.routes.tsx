@@ -38,6 +38,10 @@ const OperationAllInvoices = lazy(() =>
   }))
 )
 
+const OperationPersonalProfile = lazy(() =>
+  import('@/pages/operations/OperationPersonalProfile').then((m) => ({ default: m.default }))
+)
+
 export const operationRoutes = [
   {
     path: '/operationstaff',
@@ -154,6 +158,14 @@ export const operationRoutes = [
         element: (
           <LazyPage>
             <OperationSupportPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'profile',
+        element: (
+          <LazyPage>
+            <OperationPersonalProfile />
           </LazyPage>
         )
       }

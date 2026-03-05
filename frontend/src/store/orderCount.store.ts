@@ -9,6 +9,7 @@ interface OrderCountStore {
     packing: number // Số đơn đang PACKING
     all: number
     completed: number
+    assigned: number // Số đơn có status ASSIGNED
   }
   orders: Order[] // Lưu toàn bộ orders từ API
   setOrders: (orders: Order[]) => void // Action để set orders
@@ -18,7 +19,7 @@ interface OrderCountStore {
   setLoadingState: (isLoading: boolean, isError: boolean) => void // Set loading/error states
   setCompletedLoadingState: (isLoading: boolean) => void // Set loading state cho completed
   setCount: (
-    type: 'technical' | 'logistics' | 'packing' | 'all' | 'completed',
+    type: 'technical' | 'logistics' | 'packing' | 'all' | 'completed' | 'assigned',
     count: number
   ) => void
   initializeCounts: (orders: { orderType: string; currentStatus: string }[]) => void
@@ -31,7 +32,8 @@ export const useOrderCountStore = create<OrderCountStore>((set) => ({
     logistics: 0,
     packing: 0,
     all: 0,
-    completed: 0
+    completed: 0,
+    assigned: 0
   },
 
   orders: [],
@@ -61,6 +63,7 @@ export const useOrderCountStore = create<OrderCountStore>((set) => ({
     // const all = orders.length
     // const completed = orders.filter((o) => o.currentStatus === OrderStatus.COMPLETED).length
     const packing = orders.filter((o) => o.currentStatus === OrderStatus.PACKAGING).length
+    const assigned = orders.filter((o) => o.currentStatus === OrderStatus.ASSIGNED).length
 
     set((state) => ({
       counts: {
@@ -68,7 +71,8 @@ export const useOrderCountStore = create<OrderCountStore>((set) => ({
         logistics,
         packing,
         all: orders.length,
-        completed: state.counts.completed //  Giữ nguyên giá trị completed hiện tại
+        completed: state.counts.completed, //  Giữ nguyên giá trị completed hiện tại
+        assigned
       }
     }))
   },
@@ -79,7 +83,8 @@ export const useOrderCountStore = create<OrderCountStore>((set) => ({
         logistics: 0,
         packing: 0,
         all: 0,
-        completed: 0
+        completed: 0,
+        assigned: 0
       }
     })
 }))

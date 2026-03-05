@@ -46,9 +46,7 @@ export default function ProgressTracker({
               />
               {index < steps.length - 1 && (
                 <div
-                  className={`flex-1 h-0.5 -mx-2 ${
-                    isCompleted ? 'bg-mint-500' : 'bg-gray-200'
-                  }`}
+                  className={`flex-1 h-0.5 -mx-2 ${isCompleted ? 'bg-mint-500' : 'bg-gray-200'}`}
                 ></div>
               )}
             </React.Fragment>

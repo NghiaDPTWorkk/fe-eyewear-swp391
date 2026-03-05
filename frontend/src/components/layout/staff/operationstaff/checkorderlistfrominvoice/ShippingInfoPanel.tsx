@@ -84,7 +84,7 @@ export default function ShippingInfoPanel({
         >
           {isProcessingShipping
             ? 'Processing...'
-            : (status === 'COMPLETED' && !hasShipCode)
+            : status === 'COMPLETED' && !hasShipCode
               ? 'Process Shipping'
               : status.replace(/_/g, ' ')}
         </button>

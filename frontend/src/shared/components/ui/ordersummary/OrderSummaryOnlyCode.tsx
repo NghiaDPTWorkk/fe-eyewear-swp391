@@ -33,14 +33,12 @@ export default function OrderSummaryOnlyCode({
         {orderData?.orderCode || orderId.slice(-8).toUpperCase()}
       </span>
       <div className="flex items-center gap-3">
-        {(price || orderData?.price) && (
+        {(price ?? orderData?.price) !== undefined && (
           <span className="text-sm font-semibold text-neutral-600">
-            {(price || orderData?.price).toLocaleString('vi-VN')} ₫
+            {(price ?? orderData?.price)?.toLocaleString('vi-VN')} ₫
           </span>
         )}
-        <span className="text-xs px-2 py-1 rounded-full bg-mint-100 text-mint-700">
-          COMPLETED
-        </span>
+        <span className="text-xs px-2 py-1 rounded-full bg-mint-100 text-mint-700">COMPLETED</span>
       </div>
     </div>
   )

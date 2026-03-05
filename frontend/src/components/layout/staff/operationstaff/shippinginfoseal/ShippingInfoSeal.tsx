@@ -1,4 +1,3 @@
-
 interface ShippingInfoSealProps {
   invoiceCode: string
   fullName: string

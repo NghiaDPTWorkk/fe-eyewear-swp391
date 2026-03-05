@@ -12,9 +12,12 @@ export function useAssignLabeling() {
 
   const mutation = useMutation({
     mutationFn: ({ invoiceId, assignedStaff }: { invoiceId: string; assignedStaff: string }) =>
-      httpClient.patch<AssignLabelingResponse>(ENDPOINTS.ADMIN.INVOICES_HANDLE_DELIVERY(invoiceId), {
-        assignedStaff
-      }),
+      httpClient.patch<AssignLabelingResponse>(
+        ENDPOINTS.ADMIN.INVOICES_HANDLE_DELIVERY(invoiceId),
+        {
+          assignedStaff
+        }
+      ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-invoices'] })
     }

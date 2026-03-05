@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Card } from '@/shared/components/ui/card'
 import { OrderCard } from '@/components/layout/customer/account/orders/OrderCard'
 import { cn } from '@/lib/utils'
@@ -19,15 +20,20 @@ const TABS = [
 ]
 
 export function OrdersPage() {
-  const [activeTab, setActiveTab] = useState('all')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const activeTab = searchParams.get('tab') || 'all'
+  const currentPage = parseInt(searchParams.get('page') || '1')
+
   const [invoices, setInvoices] = useState<Invoice[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [currentPage, setCurrentPage] = useState(1)
 
   const handleTabChange = (tabId: string) => {
-    setActiveTab(tabId)
-    setCurrentPage(1)
+    setSearchParams({ tab: tabId, page: '1' }, { replace: true })
+  }
+
+  const handlePageChange = (page: number) => {
+    setSearchParams({ tab: activeTab, page: page.toString() }, { replace: true })
   }
 
   useEffect(() => {
@@ -198,7 +204,7 @@ export function OrdersPage() {
                   totalPages={totalPagesLocal}
                   total={filteredInvoices.length}
                   limit={ITEMS_PER_PAGE}
-                  onPageChange={setCurrentPage}
+                  onPageChange={handlePageChange}
                   itemsOnPage={paginatedInvoices.length}
                 />
               </div>

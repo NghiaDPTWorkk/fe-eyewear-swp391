@@ -220,7 +220,7 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
         },
         fullName: customerInfo.fullName,
         phone: customerInfo.phone,
-        voucher: selectedVoucher ? [selectedVoucher._id] : [],
+        voucher: selectedVoucher ? [selectedVoucher.code] : [],
         paymentMethod,
         note
       }

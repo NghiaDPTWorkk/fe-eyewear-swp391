@@ -94,12 +94,14 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
   const queryClient = useQueryClient()
 
   const handleStartProcessing = () => {
-    // orderTypeFromApi: lấy type của đơn hàng ('NORMAL' | 'MANUFACTURING'...)
-    // BE có thể trả về type là mảng ['MANUFACTURING'] hoặc chuỗi 'MANUFACTURING'
-    const orderTypeFromApi = orderDetailData?.type?.[0] || orderDetailData?.type
+    // BE có thể trả về type là mảng ['PRE-ORDER', 'MANUFACTURING'] hoặc chuỗi 'MANUFACTURING'
+    const orderTypes = Array.isArray(orderDetailData?.type)
+      ? (orderDetailData.type as string[])
+      : [orderDetailData?.type as string]
+
+    const isManufacturingStyle = orderTypes.includes('MANUFACTURING')
 
     // Bước 1: Nếu đơn đang PACKAGING → navigate thẳng vào trang packing, KHÔNG gọi API
-    // (đơn đã được chuyển sang PACKAGING trước đó rồi, chỉ cần vào xem tiếp)
     if (orderDetailData.status === 'PACKAGING') {
       navigate(PATHS.OPERATIONSTAFF.PACKING_PROCESS(orderDetailData._id), {
         state: {
@@ -111,7 +113,6 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
     }
 
     // Bước 2: Nếu đơn đang MAKING → navigate thẳng vào trang manufacturing, KHÔNG gọi API
-    // Lý do: gọi API updateMaking khi status đã là MAKING sẽ bị lỗi 400/409 từ BE
     if (orderDetailData.status === 'MAKING') {
       navigate(PATHS.OPERATIONSTAFF.MANUFACTURING_PROCESS(orderDetailData._id), {
         state: {
@@ -123,9 +124,9 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
       return
     }
 
-    //  Đơn MANUFACTURING status ASSIGNED
+    // Đơn MANUFACTURING style (bao gồm PRE-ORDER + MANUFACTURING) status ASSIGNED
     // gọi API PATCH /status/making để đổi sang MAKING, sau đó navigate
-    if (orderTypeFromApi === 'MANUFACTURING') {
+    if (isManufacturingStyle) {
       updateMaking.mutate(orderDetailData._id, {
         onSuccess: () => {
           toast.success('Order status updated to MAKING')
@@ -147,7 +148,7 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
       return
     }
 
-    //  NORMAL order (hoặc các loại còn lại)
+    // NORMAL style (bao gồm PRE-ORDER + NORMAL hoặc NORMAL)
     // → gọi API PATCH /status/packaging để đổi sang PACKAGING, sau đó navigate vào packing
     updatePackaging.mutate(orderDetailData._id, {
       onSuccess: () => {
@@ -170,10 +171,15 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
 
   // List sản phẩm lấy từ orderDetailData (từ API GET /orders/:id)
   const orderProductItems: OrderProductItem[] = orderDetailData?.products || []
-  const orderTypeFromApi = orderDetailData?.type?.[0] || orderDetailData?.type
+  const orderTypes = Array.isArray(orderDetailData?.type)
+    ? (orderDetailData.type as string[])
+    : [orderDetailData?.type as string]
 
-  // ── Xử lý MANUFACTURING order ──────────────────────────────────
-  // Khai báo 2 biến để lưu data frame & lens params của đơn MANUFACTURING.
+  // Xác định style của đơn hàng để hiển thị UI
+  const isManufacturingStyle = orderTypes.includes('MANUFACTURING')
+  const isNormalStyle = !isManufacturingStyle
+
+  // ── Xử lý MANUFACTURING style (bao gồm PRE-ORDER + MANUFACTURING) ────────────────
   let manufacturingOrderFrameItem: {
     product_id: string
     sku: string
@@ -183,55 +189,49 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
   let manufacturingOrderLensParams: {
     lens_id: string
     sku: string
-    parameters: LensParameters // Thông số kính: SPH, CYL, AXIS, ADD, PD
+    parameters: LensParameters
     pricePerUnit: number
   } | null = null
 
-  if (orderTypeFromApi === 'MANUFACTURING') {
-    // MANUFACTURING order luôn có đúng 1 sản phẩm trong products[]
-    const manufacturingFirstProduct = orderProductItems[0]
-    if (manufacturingFirstProduct) {
+  if (isManufacturingStyle) {
+    const mainProduct = orderProductItems[0]
+    if (mainProduct) {
       manufacturingOrderFrameItem = {
-        product_id: manufacturingFirstProduct.product.product_id,
-        sku: manufacturingFirstProduct.product.sku,
-        pricePerUnit: manufacturingFirstProduct.product.pricePerUnit,
-        quantity: manufacturingFirstProduct.quantity
+        product_id: mainProduct.product.product_id,
+        sku: mainProduct.product.sku,
+        pricePerUnit: mainProduct.product.pricePerUnit,
+        quantity: mainProduct.quantity
       }
 
-      // lens là optional (có thể chưa có nếu chưa được assign thông số)
-      if (manufacturingFirstProduct.lens) {
+      if (mainProduct.lens) {
         manufacturingOrderLensParams = {
-          lens_id: manufacturingFirstProduct.lens.lens_id,
-          sku: manufacturingFirstProduct.lens.sku,
-          parameters: manufacturingFirstProduct.lens.parameters,
-          pricePerUnit: manufacturingFirstProduct.lens.pricePerUnit
+          lens_id: mainProduct.lens.lens_id,
+          sku: mainProduct.lens.sku,
+          parameters: mainProduct.lens.parameters,
+          pricePerUnit: mainProduct.lens.pricePerUnit
         }
       }
     }
   }
 
-  // ──  Chọn item để gọi variant API ────────────────────────────────
-  // Variant API: GET /products/:product_id/variants/:sku
-  //Trả về productDetail (có .type: 'frame'|'sunglass'|'lens') + variantDetail (options, imgs)
-  //
-  // NORMAL:        dùng products[0] — loại sản phẩm sẽ xác định qua productDetail.type
-  // MANUFACTURING: dùng products[0] — luôn là frame
+  // Chọn item để gọi API variant (ưu tiên frame/sản phẩm chính)
   let variantApiProductId: string | undefined
   let variantApiProductSku: string | undefined
 
-  if (orderTypeFromApi === 'NORMAL' && orderProductItems[0]) {
+  if (isNormalStyle && orderProductItems[0]) {
     variantApiProductId = orderProductItems[0].product.product_id
     variantApiProductSku = orderProductItems[0].product.sku
-  } else if (orderTypeFromApi === 'MANUFACTURING' && manufacturingOrderFrameItem) {
+  } else if (isManufacturingStyle && manufacturingOrderFrameItem) {
     variantApiProductId = manufacturingOrderFrameItem.product_id
     variantApiProductSku = manufacturingOrderFrameItem.sku
   }
 
+
   // Gọi API: GET /products/:id/variants/:sku
-  // Toàn bộ data hiển thị frame/lens đều lấy từ response.data.variantDetail
   const { data: productVariantApiResponse, isLoading: isProductVariantApiLoading } = useQuery({
     queryKey: ['productVariant', variantApiProductId, variantApiProductSku],
-    queryFn: () => productsService.getProductVariant(variantApiProductId!, variantApiProductSku!),
+    queryFn: () =>
+      productsService.getProductVariant(variantApiProductId!, encodeURIComponent(variantApiProductSku!)),
     enabled: !!variantApiProductId && !!variantApiProductSku
   })
 
@@ -246,122 +246,98 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
     )
   }
 
-  // Lấy type từ productDetail để quyết định render component ────
-  //   'frame'     render FrameSpecifications
-  //   'sunglass'  render FrameSpecifications (cùng UI với frame)
-  //   'lens'      render LensNormalOrder
+  // Lấy data từ response
   const productType = (productVariantApiResponse as any)?.data?.productDetail?.type as
     | 'frame'
     | 'sunglass'
     | 'lens'
     | undefined
-
-  // options & ảnh từ variantDetail để truyền vào component hiển thị
   const variantOptions = (productVariantApiResponse as any)?.data?.variantDetail?.options || []
   const variantImg = (productVariantApiResponse as any)?.data?.variantDetail?.imgs?.[0]
 
-  // Khai báo trước null, sẽ được gán bên dưới theo từng loại đơn
   let renderedLensComponent: React.ReactNode = null
   let renderedFrameComponent: React.ReactNode = null
 
-  if (orderTypeFromApi === 'NORMAL' && orderProductItems[0]) {
-    // Cộng tổng quantity của tất cả items trong order
+  // UI cho NORMAL style (hoặc PRE-ORDER không lens)
+  if (isNormalStyle && orderProductItems[0]) {
     const totalQty = orderProductItems.reduce((sum, item) => sum + (item.quantity || 1), 0)
-
-    // Map options về dạng { key: attributeName, value: label } cho component hiển thị
     const mappedOptions = variantOptions.map((attr: any) => ({
       key: attr.attributeName,
       value: attr.label
     }))
 
     if (productType === 'lens') {
-      // Đơn mua mỗi tròng á -> hiển thị LensNormalOrder
       renderedLensComponent = (
-        <div className="space-y-8">
-          <LensNormalOrder
-            data={mappedOptions}
-            imageSrc={variantImg}
-            quantity={totalQty}
-            sku={orderProductItems[0].product.sku}
-          />
-        </div>
+        <LensNormalOrder
+          data={mappedOptions}
+          imageSrc={variantImg}
+          quantity={totalQty}
+          sku={orderProductItems[0].product.sku}
+        />
       )
     } else {
-      // 'frame' | 'sunglass' | other → hiển thị FrameSpecifications
       renderedFrameComponent = (
-        <div className="space-y-8">
-          <FrameSpecifications
-            data={mappedOptions}
-            imageSrc={variantImg}
-            quantity={totalQty}
-            sku={orderProductItems[0].product.sku}
-          />
-        </div>
+        <FrameSpecifications
+          data={mappedOptions}
+          imageSrc={variantImg}
+          quantity={totalQty}
+          sku={orderProductItems[0].product.sku}
+        />
       )
     }
   }
 
-  // MANUFACTURING Order - Lens (thông số kính cận từ order.products[0].lens)
-  if (orderTypeFromApi === 'MANUFACTURING' && manufacturingOrderLensParams) {
-    const { parameters } = manufacturingOrderLensParams
-    const lensComponentProps = {
-      prescription: [
-        {
-          eye: 'Right Eye (OD)',
-          sph: parameters.right.SPH.toString(),
-          cyl: parameters.right.CYL.toString(),
-          axis: `${parameters.right.AXIS}°`,
-          prism: '-',
-          add: parameters.right.ADD?.toString() || '-'
-        },
-        {
-          eye: 'Left Eye (OS)',
-          sph: parameters.left.SPH.toString(),
-          cyl: parameters.left.CYL.toString(),
-          axis: `${parameters.left.AXIS}°`,
-          prism: '-',
-          add: parameters.left.ADD?.toString() || '-'
-        }
-      ],
-      details: [
-        { label: 'PD (Pupillary Distance)', value: `${parameters.PD} mm` },
-        { label: 'Lens SKU', value: manufacturingOrderLensParams.sku },
-        { label: 'Price Per Unit', value: `${manufacturingOrderLensParams.pricePerUnit}` }
-      ]
+  // UI cho MANUFACTURING style (hoặc PRE-ORDER có lens)
+  if (isManufacturingStyle) {
+    // 1. Render Lens Specifications (nếu có thông số)
+    if (manufacturingOrderLensParams) {
+      const { parameters } = manufacturingOrderLensParams
+      const lensComponentProps = {
+        prescription: [
+          {
+            eye: 'Right Eye (OD)',
+            sph: parameters.right.SPH.toString(),
+            cyl: parameters.right.CYL.toString(),
+            axis: `${parameters.right.AXIS}°`,
+            prism: '-',
+            add: parameters.right.ADD?.toString() || '-'
+          },
+          {
+            eye: 'Left Eye (OS)',
+            sph: parameters.left.SPH.toString(),
+            cyl: parameters.left.CYL.toString(),
+            axis: `${parameters.left.AXIS}°`,
+            prism: '-',
+            add: parameters.left.ADD?.toString() || '-'
+          }
+        ],
+        details: [
+          { label: 'PD (Pupillary Distance)', value: `${parameters.PD} mm` },
+          { label: 'Lens SKU', value: manufacturingOrderLensParams.sku },
+          { label: 'Price Per Unit', value: `${manufacturingOrderLensParams.pricePerUnit}` }
+        ]
+      }
+      renderedLensComponent = <LensSpecifications {...lensComponentProps} />
     }
 
-    renderedLensComponent = <LensSpecifications {...lensComponentProps} />
-  } else if (orderTypeFromApi === 'MANUFACTURING' && orderProductItems[0]?.lens) {
-    // Normal case for lens in MANUFACTURING if already assigned
-    // Actually the logic above handles it via manufacturingOrderLensParams
-  }
-
-  // Adding the missing SKU for LensNormalOrder if needed in other contexts?
-  // No, the user specifically asked for LensNormalOrder and FrameSpecifications.
-
-  // Update LensSpecifications to also show SKU if it's there?
-  // The user only mentioned LensNormalOrder and FrameSpecifications.
-  // Wait, looking at the code, LensSpecifications is used for MANUFACTURING.
-  // The user said: "ở trang @[frontend/src/pages/operations/OperationOrderDetailPage.tsx] component @[frontend/src/components/layout/staff/staff-core/technicaldetail/FrameSpecifications.tsx], và @[frontend/src/components/layout/staff/staff-core/technicaldetail/LensNormalOrder.tsx]"
-  // So I'll stick to those two for now.
-
-  // Update MANUFACTURING Frame component
-  if (orderTypeFromApi === 'MANUFACTURING' && manufacturingOrderFrameItem) {
-    const frameOptionsFromVariantDetail =
-      productVariantApiResponse?.data?.variantDetail?.options || []
-    const frameImgFromVariantDetail = productVariantApiResponse?.data?.variantDetail?.imgs?.[0]
-    const frameComponentProps = {
-      data:
-        frameOptionsFromVariantDetail?.map((attr: any) => ({
-          key: attr.attributeName,
-          value: attr.label
-        })) || [],
-      imageSrc: frameImgFromVariantDetail,
-      sku: manufacturingOrderFrameItem.sku
+    // 2. Render Frame Specifications
+    if (manufacturingOrderFrameItem) {
+      const frameOptions = productVariantApiResponse?.data?.variantDetail?.options || []
+      const frameImg = productVariantApiResponse?.data?.variantDetail?.imgs?.[0]
+      renderedFrameComponent = (
+        <FrameSpecifications
+          data={frameOptions.map((attr: any) => ({
+            key: attr.attributeName,
+            value: attr.label
+          }))}
+          imageSrc={frameImg}
+          sku={manufacturingOrderFrameItem.sku}
+          quantity={manufacturingOrderFrameItem.quantity}
+        />
+      )
     }
-
-    renderedFrameComponent = <FrameSpecifications {...frameComponentProps} />
   }
+
 
   return (
     <Container className="animate-fade-in-up">
@@ -427,11 +403,18 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
           </Button>
         ) : (
           <Button
-            className="px-6 py-3 bg-mint-900 hover:bg-mint-700 text-white rounded-lg font-medium transition-colors shadow-sm"
+            className="px-6 py-3 bg-mint-900 hover:bg-mint-700 text-white rounded-lg font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleStartProcessing}
-            disabled={updatePackaging.isPending}
+            disabled={
+              updatePackaging.isPending || 
+              orderDetailData.status === 'WAITING_STOCK'
+            }
           >
-            {updatePackaging.isPending ? 'Processing...' : 'Start Processing'}
+            {updatePackaging.isPending 
+              ? 'Processing...' 
+              : orderDetailData.status === 'WAITING_STOCK' 
+                ? 'Waiting for Stock'
+                : 'Start Processing'}
           </Button>
         )}
       </div>

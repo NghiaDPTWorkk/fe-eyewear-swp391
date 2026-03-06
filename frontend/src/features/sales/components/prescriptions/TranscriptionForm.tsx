@@ -305,6 +305,20 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
                     </p>
                   </div>
                 </div>
+
+                {note && (
+                  <div className="bg-white/90 border border-mint-100/60 rounded-2xl p-5 max-w-xl shadow-sm animate-in fade-in slide-in-from-top-2 duration-500">
+                    <p className="text-[10px] text-mint-600 font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-mint-500" />
+                      LAB INSTRUCTIONS
+                    </p>
+                    <div className="relative pl-4 border-l-2 border-mint-200">
+                      <p className="text-sm text-slate-700 leading-relaxed font-semibold italic">
+                        "{note}"
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

@@ -1,5 +1,4 @@
 import React from 'react'
-import { IoFilter, IoRefresh } from 'react-icons/io5'
 
 import { LabStatusMetrics } from '@/features/sales/components/lab/LabStatusMetrics'
 import { LensSpecificationsCard } from '@/features/sales/components/lab/LensSpecificationsCard'
@@ -11,7 +10,7 @@ import { ExpediteRequestModal } from '@/features/sales/components/lab/ExpediteRe
 
 export default function SaleStaffLabStatusPage() {
   const [page, setPage] = React.useState(1)
-  const { data, isLoading, refetch } = useSalesStaffLabOrders(page, 5)
+  const { data, isLoading } = useSalesStaffLabOrders(page, 5)
   const [selectedOrder, setSelectedOrder] = React.useState<any>(null)
   const [isExpediteModalOpen, setIsExpediteModalOpen] = React.useState(false)
   const [orderToExpedite, setOrderToExpedite] = React.useState<any>(null)
@@ -54,29 +53,6 @@ export default function SaleStaffLabStatusPage() {
           ]}
           noMargin={true}
         />
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex gap-2 bg-white/60 backdrop-blur-md p-1.5 rounded-2xl border border-white shadow-sm ring-1 ring-slate-100/50">
-            <button className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-slate-600 hover:bg-white hover:text-mint-600 hover:shadow-sm rounded-xl transition-all active:scale-95 group">
-              <IoFilter className="text-slate-400 group-hover:text-mint-500" />
-              All Urgencies
-            </button>
-            <div className="w-px h-6 bg-slate-100 my-auto"></div>
-            <button className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-slate-600 hover:bg-white hover:text-blue-600 hover:shadow-sm rounded-xl transition-all active:scale-95 group">
-              <IoFilter className="text-slate-400 group-hover:text-blue-500" />
-              All Stations
-            </button>
-          </div>
-          <button
-            onClick={() => refetch()}
-            className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-mint-500 to-emerald-600 text-white rounded-2xl text-sm font-bold hover:shadow-lg hover:shadow-mint-200/50 transition-all active:scale-95 group shadow-md"
-          >
-            <IoRefresh
-              className="group-hover:rotate-180 transition-transform duration-700"
-              size={18}
-            />
-            Refresh Data
-          </button>
-        </div>
       </div>
 
       <div className="grid grid-cols-12 gap-6">

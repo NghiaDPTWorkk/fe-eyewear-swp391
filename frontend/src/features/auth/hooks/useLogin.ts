@@ -112,7 +112,7 @@ export const useLogin = () => {
         const rolePath = getRolePath(
           roleFromToken as 'SALE_STAFF' | 'SYSTEM_ADMIN' | 'MANAGER' | 'OPERATION_STAFF'
         )
-        navigate(`/${rolePath}`)
+        navigate(`/${rolePath}/dashboard`)
       } else {
         // Fallback: if something went wrong, go to home
         console.error('Unexpected state: roleFromToken and isStaffLogin mismatch')

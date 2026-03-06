@@ -19,10 +19,10 @@ export const profileService = {
 
   /**
    * Thay đổi mật khẩu của admin/staff đang đăng nhập
-   * Endpoint: POST /admin/auth/profile/change-password
+   * Endpoint: PATCH /admin/auth/profile/change-password
    */
   changePassword: async (data: ChangePasswordRequest) => {
-    return httpClient.post<GenericApiResponse>(ENDPOINTS.AUTH.CHANGE_PASSWORD, data)
+    return httpClient.patch<GenericApiResponse>(ENDPOINTS.AUTH.CHANGE_PASSWORD, data)
   },
 
   /**

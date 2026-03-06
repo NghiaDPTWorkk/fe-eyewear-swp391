@@ -4,7 +4,6 @@ import type { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import type { PaymentMethodType } from '../utils/enums/payment.enum'
 import type { Payment } from './payment.types'
 
-
 export interface CreateInvoiceRequest {
   products: OrderProduct[]
   address: Address
@@ -36,7 +35,6 @@ export interface Invoice {
   __v?: number
   productList?: InvoiceItem[]
 }
-
 
 export interface InvoiceResponse {
   invoice: Invoice

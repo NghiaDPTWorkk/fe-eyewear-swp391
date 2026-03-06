@@ -13,6 +13,7 @@ export interface Invoice {
   createdAt: string
   orders: {
     id: string
+    orderCode?: string
     type: OrderType[]
     status: OrderStatus | string
     isPrescription?: boolean
@@ -62,6 +63,8 @@ export interface OrderDetail {
   rejectedAt?: string
   approvedAt?: string
   updatedAt?: string
+  note?: string
+  customerEmail?: string
 }
 
 export type Order = OrderDetail

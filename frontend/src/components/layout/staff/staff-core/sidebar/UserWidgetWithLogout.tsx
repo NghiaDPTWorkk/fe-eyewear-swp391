@@ -1,4 +1,5 @@
 import { IoLogOut } from 'react-icons/io5'
+import { Link, useLocation } from 'react-router-dom'
 import { useLayoutStore } from '@/store/layout.store'
 import { useLogout } from '@/shared/hooks/useLogout'
 import { cn } from '@/lib/utils'
@@ -18,6 +19,15 @@ export function UserWidgetWithLogout({
 }: UserWidgetWithLogoutProps) {
   const { sidebarCollapsed } = useLayoutStore()
   const { handleLogout } = useLogout()
+  const location = useLocation()
+
+  const isOperation = location.pathname.startsWith('/operationstaff')
+  const isManager = location.pathname.startsWith('/manager')
+  const profilePath = isManager
+    ? '/manager/profile'
+    : isOperation
+      ? '/operationstaff/profile'
+      : '/salestaff/profile'
 
   const logoutAction = onLogout || handleLogout
 
@@ -29,15 +39,21 @@ export function UserWidgetWithLogout({
           sidebarCollapsed ? 'justify-center' : 'gap-3 mb-3'
         )}
       >
-        <div className="w-10 h-10 bg-mint-500 rounded-full flex items-center justify-center shrink-0 shadow-sm shadow-mint-100">
+        <Link
+          to={profilePath}
+          className="w-10 h-10 bg-mint-500 rounded-full flex items-center justify-center shrink-0 shadow-sm shadow-mint-100 hover:scale-105 transition-transform cursor-pointer"
+        >
           <span className="text-sm font-bold text-white uppercase">{userInitials}</span>
-        </div>
+        </Link>
         {!sidebarCollapsed && (
           <>
-            <div className="flex-1 min-w-0">
+            <Link
+              to={profilePath}
+              className="flex-1 min-w-0 hover:opacity-75 transition-opacity cursor-pointer"
+            >
               <div className="text-sm font-semibold text-gray-900 truncate">{userName}</div>
               <div className="text-xs text-gray-500 truncate">{userRole}</div>
-            </div>
+            </Link>
             <button
               onClick={logoutAction}
               className="p-2 hover:bg-red-50 rounded-lg transition-colors text-red-500 cursor-pointer"

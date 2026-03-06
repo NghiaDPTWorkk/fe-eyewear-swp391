@@ -1,9 +1,4 @@
-import { 
-  IoPersonOutline, 
-  IoMailOutline, 
-  IoCallOutline, 
-  IoCalendarOutline 
-} from 'react-icons/io5'
+import { IoPersonOutline, IoMailOutline, IoCallOutline, IoCalendarOutline } from 'react-icons/io5'
 import type { AdminAccount } from '@/shared/types'
 
 interface ProfileDetailCardProps {
@@ -13,11 +8,11 @@ interface ProfileDetailCardProps {
   onChangePassword: () => void
 }
 
-export default function ProfileDetailCard({ 
-  profile, 
-  userInitials, 
-  onEditProfile, 
-  onChangePassword 
+export default function ProfileDetailCard({
+  profile,
+  userInitials,
+  onEditProfile,
+  onChangePassword
 }: ProfileDetailCardProps) {
   return (
     <div className="relative overflow-hidden bg-white border border-neutral-100 rounded-[32px] shadow-sm p-8 md:p-10">

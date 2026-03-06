@@ -148,6 +148,12 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
 
                   const isApprovable = displayStatus.label === 'NEED VERIFY'
 
+                  const displayType = (() => {
+                    if (hasManufacturing || order.isPrescription) return 'PRESCRIPTION'
+                    if (hasPreOrder) return 'PRE-ORDER'
+                    return (orderTypes.join(' & ') || 'REGULAR').toUpperCase()
+                  })()
+
                   return (
                     <div
                       key={order.id}
@@ -172,7 +178,7 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
                             </span>
                           </div>
                           <span className="text-base font-medium text-slate-900 group-hover:text-primary-700 transition-colors font-heading tracking-tight">
-                            {orderTypes.join(' & ')}
+                            {displayType}
                           </span>
                         </div>
                         <div className="flex flex-col items-end gap-2 text-right">
@@ -217,13 +223,15 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
               </h4>
               <div className="space-y-4">
                 <div className="flex justify-between items-center text-sm">
-                  <span className="text-slate-500 font-normal">Final Price</span>
+                  <span className="text-slate-500 font-normal uppercase tracking-wider text-[10px]">
+                    Final Price
+                  </span>
                   <span className="font-semibold text-primary-700 text-lg font-heading">
                     {invoice.finalPrice}
                   </span>
                 </div>
                 <div className="flex justify-between gap-6 text-sm">
-                  <span className="text-slate-500 font-normal whitespace-nowrap">
+                  <span className="text-slate-500 font-normal whitespace-nowrap uppercase tracking-wider text-[10px]">
                     Shipping Address
                   </span>
                   <span className="text-slate-700 font-medium text-right leading-relaxed">

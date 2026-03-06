@@ -172,6 +172,24 @@ export function useSalesStaffOrderDetail(orderId: string) {
         }
       }
 
+      // If email is still missing, try to fetch customer profile via owner ID
+      const hasEmail =
+        fullInvoice?.email || fullInvoice?.customer?.email || fullInvoice?.owner?.email
+      const ownerId =
+        fullInvoice?.owner && typeof fullInvoice.owner === 'string' ? fullInvoice.owner : undefined
+
+      if (!hasEmail && ownerId) {
+        try {
+          const customerRes = await salesService.getCustomerById(ownerId)
+          const customerData = customerRes?.data?.customer || customerRes?.data
+          if (customerData?.email) {
+            fullInvoice = { ...fullInvoice, email: customerData.email }
+          }
+        } catch {
+          // Silently fail — email is optional
+        }
+      }
+
       return transformOrder(rawOrderData, fullInvoice)
     },
     enabled: !!orderId

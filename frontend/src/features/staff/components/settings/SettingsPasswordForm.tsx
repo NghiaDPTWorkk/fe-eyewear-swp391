@@ -111,7 +111,7 @@ export default function PasswordForm() {
           onClick={handleSubmit}
           isLoading={loading}
           leftIcon={<IoShieldCheckmarkOutline size={18} />}
-          className="h-11 rounded-xl font-semibold px-6 bg-primary-500 hover:bg-primary-600 shadow-md shadow-primary-100 transition-all active:scale-95 border-none"
+          className="h-11 rounded-xl font-semibold px-6 bg-mint-500 hover:bg-mint-600 shadow-md shadow-mint-100 transition-all active:scale-95 border-none"
         >
           Update Password
         </Button>

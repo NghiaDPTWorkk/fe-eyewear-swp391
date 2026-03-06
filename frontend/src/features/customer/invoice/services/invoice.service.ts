@@ -14,10 +14,7 @@ export const invoiceService = {
    * Lấy danh sách hóa đơn của người dùng
    * @param params - Tham số phân trang (page, limit)
    */
-  getInvoices: async (params?: {
-    page?: number
-    limit?: number
-  }): Promise<GetInvoicesApiResponse> => {
+  getInvoices: async (params?: Record<string, any>): Promise<GetInvoicesApiResponse> => {
     try {
       const response = await httpClient.get<GetInvoicesApiResponse>(ENDPOINTS.INVOICE.LIST, {
         params

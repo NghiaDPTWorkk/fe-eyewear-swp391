@@ -1,4 +1,8 @@
-import type { VoucherStatus, VoucherDiscountType, VoucherApplyScope } from '@/shared/utils/enums/voucher.enum'
+import type {
+  VoucherStatus,
+  VoucherDiscountType,
+  VoucherApplyScope
+} from '@/shared/utils/enums/voucher.enum'
 export type { VoucherStatus, VoucherDiscountType, VoucherApplyScope }
 
 export interface Voucher {

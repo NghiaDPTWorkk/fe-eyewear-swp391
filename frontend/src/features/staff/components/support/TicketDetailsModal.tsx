@@ -104,7 +104,9 @@ export function TicketDetailsModal({
             >
               Subject
             </span>
-            <h4 className="text-2xl font-semibold text-slate-900 leading-tight">{ticket.title}</h4>
+            <h4 className="text-2xl font-semibold text-slate-900 leading-tight break-words">
+              {ticket.title}
+            </h4>
           </div>
 
           {/* Stats Grid */}
@@ -148,7 +150,7 @@ export function TicketDetailsModal({
               </span>
               <div className="h-px flex-1 bg-slate-100" />
             </div>
-            <div className="p-6 bg-white border border-slate-200 rounded-3xl shadow-sm leading-relaxed text-slate-700 text-sm whitespace-pre-wrap">
+            <div className="p-6 bg-white border border-slate-200 rounded-3xl shadow-sm leading-relaxed text-slate-700 text-sm whitespace-pre-wrap break-words">
               {ticket.description}
             </div>
           </div>

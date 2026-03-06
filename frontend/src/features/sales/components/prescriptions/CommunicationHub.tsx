@@ -1,13 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import {
-  IoChatbubblesOutline,
-  IoEllipsisHorizontal,
-  IoSend,
-  IoCallOutline,
-  IoVideocamOutline,
-  IoCheckmarkDoneOutline
-} from 'react-icons/io5'
-import { Button, Card } from '@/shared/components/ui-core'
+import { IoChatbubblesOutline, IoCheckmarkDoneOutline } from 'react-icons/io5'
+import { Card } from '@/shared/components/ui-core'
 import { httpClient } from '@/api/apiClients'
 import { ENDPOINTS } from '@/api/endpoints'
 import { cn } from '@/lib/utils'
@@ -39,7 +32,6 @@ export const CommunicationHub: React.FC<CommunicationHubProps> = ({ customerName
         }>(ENDPOINTS.ADMIN_AI_CONVERSATIONS.LIST(customerName))
 
         if (response.success && response.data.conversationList.length > 0) {
-          // Find closest match or first one
           const conv = response.data.conversationList[0]
 
           const msgResponse = await httpClient.get<{
@@ -63,40 +55,24 @@ export const CommunicationHub: React.FC<CommunicationHubProps> = ({ customerName
 
   return (
     <Card className="p-0 border border-gray-200 shadow-sm overflow-hidden bg-white rounded-xl">
-      <div className="p-4 bg-white border-b border-gray-100 flex justify-between items-center">
+      {/* Header */}
+      <div className="p-4 bg-white border-b border-gray-100 flex items-center">
         <h3 className="font-semibold text-slate-800 text-sm flex items-center gap-2">
           <IoChatbubblesOutline className="text-slate-400" /> Communication
         </h3>
-        <div className="flex gap-1">
-          <Button
-            variant="ghost"
-            colorScheme="neutral"
-            className="p-1.5 rounded-lg hover:bg-slate-50 text-slate-400 hover:text-slate-600 transition-colors"
-          >
-            <IoEllipsisHorizontal />
-          </Button>
-        </div>
       </div>
 
-      {/* Tabs */}
+      {/* Tab bar — view only, Chat tab always active */}
       <div className="flex border-b border-neutral-100">
-        <Button className="flex-1 py-3 text-[10px] font-medium uppercase tracking-widest text-mint-600 border-b-2 border-mint-500 bg-white rounded-none border-t-0 border-x-0">
+        <button className="flex-1 py-3 text-[10px] font-medium uppercase tracking-widest text-mint-600 border-b-2 border-mint-500 bg-white">
           Chat ({messages.length})
-        </Button>
-        <Button
-          variant="ghost"
-          colorScheme="neutral"
-          className="flex-1 py-3 text-[10px] font-medium uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors bg-white hover:bg-slate-50 rounded-none border-none"
-        >
+        </button>
+        <button className="flex-1 py-3 text-[10px] font-medium uppercase tracking-widest text-slate-400 bg-white hover:bg-slate-50">
           Call
-        </Button>
-        <Button
-          variant="ghost"
-          colorScheme="neutral"
-          className="flex-1 py-3 text-[10px] font-medium uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors bg-white hover:bg-slate-50 rounded-none border-none"
-        >
+        </button>
+        <button className="flex-1 py-3 text-[10px] font-medium uppercase tracking-widest text-slate-400 bg-white hover:bg-slate-50">
           History
-        </Button>
+        </button>
       </div>
 
       {/* Chat View */}
@@ -151,54 +127,17 @@ export const CommunicationHub: React.FC<CommunicationHubProps> = ({ customerName
                 <IoChatbubblesOutline className="text-slate-300" size={24} />
               </div>
               <p className="text-[11px] font-medium text-slate-400 leading-relaxed px-6">
-                No conversation records found with this customer. Start a new chat to assist them.
+                No conversation records found with this customer.
               </p>
             </div>
           )}
         </div>
 
-        {/* Input Area */}
-        <div className="p-3 border-t border-slate-100 bg-white">
-          <div className="flex gap-2">
-            <div className="flex-1 relative">
-              <input
-                type="text"
-                placeholder="Type a message..."
-                className="w-full pl-4 pr-3 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-mint-300 focus:ring-4 focus:ring-mint-500/5 transition-all bg-slate-50/50"
-              />
-            </div>
-            <Button
-              variant="solid"
-              className="p-2.5 bg-mint-600 text-white rounded-xl hover:bg-mint-700 shadow-md shadow-mint-100 transition-all active:scale-95 border-none h-[38px] w-[38px]"
-            >
-              <IoSend size={14} className="text-white" />
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      <div className="p-3 bg-white border-t border-slate-100 flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-mint-500 animate-pulse"></div>
-          <span className="text-xs font-medium text-slate-400">Customer Online</span>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="ghost"
-            colorScheme="neutral"
-            className="p-1.5 rounded-full bg-white border border-slate-100 text-slate-400 hover:text-mint-600 hover:border-mint-200 shadow-sm transition-all"
-            title="Voice Call"
-          >
-            <IoCallOutline />
-          </Button>
-          <Button
-            variant="ghost"
-            colorScheme="neutral"
-            className="p-1.5 rounded-full bg-white border border-slate-100 text-slate-400 hover:text-mint-600 hover:border-mint-200 shadow-sm transition-all"
-            title="Video Call"
-          >
-            <IoVideocamOutline />
-          </Button>
+        {/* View-only notice */}
+        <div className="p-3 bg-slate-50 border-t border-slate-100 flex items-center justify-center shrink-0">
+          <span className="text-[11px] font-medium text-slate-400 italic">
+            👁 View-only — conversation history with this customer
+          </span>
         </div>
       </div>
     </Card>

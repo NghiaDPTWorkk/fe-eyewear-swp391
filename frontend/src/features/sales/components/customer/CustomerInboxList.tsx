@@ -33,7 +33,7 @@ export const CustomerInboxList: React.FC<CustomerInboxListProps> = ({
   setSearchQuery
 }) => {
   return (
-    <aside className="w-[300px] lg:w-[380px] border-r border-neutral-50 bg-white flex flex-col shrink-0">
+    <aside className="w-[300px] lg:w-[380px] border-r border-neutral-50 bg-white flex flex-col shrink-0 h-full">
       <div className="p-6 space-y-6 text-sm font-medium">
         <div className="relative">
           <IoSearchOutline
@@ -58,7 +58,7 @@ export const CustomerInboxList: React.FC<CustomerInboxListProps> = ({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto no-scrollbar pb-6">
+      <div className="flex-1 overflow-y-auto pb-6 scrollbar-thin scrollbar-thumb-mint-200 scrollbar-track-transparent">
         {customers.map((customer) => (
           <div
             key={customer.id}

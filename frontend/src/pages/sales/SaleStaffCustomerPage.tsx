@@ -152,7 +152,7 @@ export default function SaleStaffCustomerPage() {
       />
 
       <Card className="flex-1 flex overflow-hidden border border-neutral-200 p-0 rounded-[32px] bg-white shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50">
-        <div className="relative border-r border-neutral-50 flex flex-col shrink-0">
+        <div className="relative flex flex-col h-full shrink-0">
           <CustomerInboxList
             customers={customers}
             selectedCustomerId={selectedCustomerId}
@@ -161,8 +161,8 @@ export default function SaleStaffCustomerPage() {
             setSearchQuery={setSearchQuery}
           />
           {isLoading && (
-            <div className="absolute inset-0 bg-white/50 flex items-center justify-center backdrop-blur-[1px]">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-mint-500" />
+            <div className="absolute inset-0 bg-white/60 flex items-center justify-center backdrop-blur-[2px] z-10 transition-all duration-300">
+              <div className="animate-spin rounded-full h-8 w-8 border-4 border-mint-500/20 border-t-mint-500" />
             </div>
           )}
         </div>
@@ -220,6 +220,7 @@ export default function SaleStaffCustomerPage() {
                     hideHeader={true}
                     messages={messages}
                     isLoadingMessages={isLoadingMessages}
+                    readOnly={true}
                   />
                 </div>
               </div>

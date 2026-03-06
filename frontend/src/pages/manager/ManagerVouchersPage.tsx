@@ -61,22 +61,26 @@ import {
 
 
 const STATUS_CFG: Record<VoucherStatus, { label: string; color: string; bg: string }> = {
-  ACTIVE:   { label: 'Active',   color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200' },
-  INACTIVE: { label: 'Inactive', color: 'text-neutral-600', bg: 'bg-neutral-100 border-neutral-200' },
-  EXPIRED:  { label: 'Expired',  color: 'text-red-700',     bg: 'bg-red-50 border-red-200' },
+  ACTIVE: { label: 'Active', color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200' },
+  INACTIVE: {
+    label: 'Inactive',
+    color: 'text-neutral-600',
+    bg: 'bg-neutral-100 border-neutral-200'
+  },
+  EXPIRED: { label: 'Expired', color: 'text-red-700', bg: 'bg-red-50 border-red-200' }
 }
 
 // ─── Component ────────────────────────────────────────────────────
 export default function ManagerVouchersPage() {
   const [vouchers, setVouchers] = useState<Voucher[]>(INITIAL_VOUCHERS)
-  const [search, setSearch]     = useState('')
+  const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
 
   const [showForm, setShowForm]   = useState(false)
   const [editingVoucher, setEditingVoucher] = useState<Voucher | null>(null)
   const [deleteId, setDeleteId]   = useState<string | null>(null)
   const [assignVoucher, setAssignVoucher] = useState<Voucher | null>(null)
-  const [assignSearch, setAssignSearch]   = useState('')
+  const [assignSearch, setAssignSearch] = useState('')
 
   // ── Derived ──────────────────────────────────────────────────────
   const filtered = vouchers.filter((v) => {
@@ -88,9 +92,9 @@ export default function ManagerVouchersPage() {
 
   const counts = {
     all: vouchers.length,
-    ACTIVE:   vouchers.filter((v) => v.status === 'ACTIVE').length,
+    ACTIVE: vouchers.filter((v) => v.status === 'ACTIVE').length,
     INACTIVE: vouchers.filter((v) => v.status === 'INACTIVE').length,
-    EXPIRED:  vouchers.filter((v) => v.status === 'EXPIRED').length,
+    EXPIRED: vouchers.filter((v) => v.status === 'EXPIRED').length
   }
 
   // Handlers ────────────────────────────────────────────────────
@@ -142,12 +146,20 @@ export default function ManagerVouchersPage() {
     setAssignVoucher((prev) => {
       if (!prev) return null
       const already = prev.assignedTo.includes(customerId)
-      return { ...prev, assignedTo: already ? prev.assignedTo.filter((id) => id !== customerId) : [...prev.assignedTo, customerId] }
+      return {
+        ...prev,
+        assignedTo: already
+          ? prev.assignedTo.filter((id) => id !== customerId)
+          : [...prev.assignedTo, customerId]
+      }
     })
   }
 
-  const filteredAssignCustomers = MOCK_CUSTOMERS.filter((c) =>
-    !assignSearch || c.name.toLowerCase().includes(assignSearch.toLowerCase()) || c.email.includes(assignSearch)
+  const filteredAssignCustomers = MOCK_CUSTOMERS.filter(
+    (c) =>
+      !assignSearch ||
+      c.name.toLowerCase().includes(assignSearch.toLowerCase()) ||
+      c.email.includes(assignSearch)
   )
 
   // Format helpers
@@ -166,10 +178,14 @@ export default function ManagerVouchersPage() {
             <IoTicketOutline className="text-mint-500" size={28} />
             Vouchers
           </h1>
-          <p className="text-sm text-neutral-500 mt-1">Manage discount vouchers and assign them to customers.</p>
+          <p className="text-sm text-neutral-500 mt-1">
+            Manage discount vouchers and assign them to customers.
+          </p>
         </div>
-        <button onClick={openCreate}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-mint-500 text-white text-sm font-bold hover:bg-mint-600 transition shadow-sm shadow-mint-200">
+        <button
+          onClick={openCreate}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-mint-500 text-white text-sm font-bold hover:bg-mint-600 transition shadow-sm shadow-mint-200"
+        >
           <IoAddOutline size={18} /> Add Voucher
         </button>
       </div>
@@ -177,13 +193,35 @@ export default function ManagerVouchersPage() {
       {/* Stats */}
       <div className="grid grid-cols-4 gap-4 mb-6">
         {[
-          { label: 'Total',    value: counts.all,      color: 'text-neutral-800', bg: 'bg-neutral-50 border-neutral-100' },
-          { label: 'Active',   value: counts.ACTIVE,   color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-100' },
-          { label: 'Inactive', value: counts.INACTIVE, color: 'text-neutral-500', bg: 'bg-neutral-50 border-neutral-100' },
-          { label: 'Expired',  value: counts.EXPIRED,  color: 'text-red-600',     bg: 'bg-red-50 border-red-100' },
+          {
+            label: 'Total',
+            value: counts.all,
+            color: 'text-neutral-800',
+            bg: 'bg-neutral-50 border-neutral-100'
+          },
+          {
+            label: 'Active',
+            value: counts.ACTIVE,
+            color: 'text-emerald-700',
+            bg: 'bg-emerald-50 border-emerald-100'
+          },
+          {
+            label: 'Inactive',
+            value: counts.INACTIVE,
+            color: 'text-neutral-500',
+            bg: 'bg-neutral-50 border-neutral-100'
+          },
+          {
+            label: 'Expired',
+            value: counts.EXPIRED,
+            color: 'text-red-600',
+            bg: 'bg-red-50 border-red-100'
+          }
         ].map((s) => (
           <div key={s.label} className={`rounded-xl border p-4 ${s.bg}`}>
-            <p className="text-xs font-bold text-neutral-400 uppercase tracking-widest">{s.label}</p>
+            <p className="text-xs font-bold text-neutral-400 uppercase tracking-widest">
+              {s.label}
+            </p>
             <p className={`text-3xl font-black mt-1 ${s.color}`}>{s.value}</p>
           </div>
         ))}
@@ -192,9 +230,17 @@ export default function ManagerVouchersPage() {
       {/* Filter */}
       <div className="flex flex-wrap items-center gap-3 mb-5">
         <div className="relative flex-1 min-w-[220px] max-w-sm">
-          <IoSearchOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={17} />
-          <input type="text" placeholder="Search code or description..." value={search} onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-neutral-200 bg-white text-sm text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-mint-300/50 focus:border-mint-400 transition" />
+          <IoSearchOutline
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
+            size={17}
+          />
+          <input
+            type="text"
+            placeholder="Search code or description..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-neutral-200 bg-white text-sm text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-mint-300/50 focus:border-mint-400 transition"
+          />
         </div>
         <div className="flex items-center gap-2">
           <IoFilterOutline className="text-neutral-400" size={15} />
@@ -202,10 +248,17 @@ export default function ManagerVouchersPage() {
             const cnt = s === 'all' ? counts.all : counts[s]
             const active = statusFilter === s
             return (
-              <button key={s} onClick={() => setStatusFilter(s)}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${active ? 'bg-mint-500 border-mint-500 text-white' : 'bg-white border-neutral-200 text-neutral-600 hover:border-mint-300 hover:text-mint-600'}`}>
+              <button
+                key={s}
+                onClick={() => setStatusFilter(s)}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${active ? 'bg-mint-500 border-mint-500 text-white' : 'bg-white border-neutral-200 text-neutral-600 hover:border-mint-300 hover:text-mint-600'}`}
+              >
                 {s === 'all' ? 'All' : s.charAt(0) + s.slice(1).toLowerCase()}
-                <span className={`ml-1.5 px-1.5 py-0.5 rounded-full text-[10px] font-bold ${active ? 'bg-white/25 text-white' : 'bg-neutral-100 text-neutral-500'}`}>{cnt}</span>
+                <span
+                  className={`ml-1.5 px-1.5 py-0.5 rounded-full text-[10px] font-bold ${active ? 'bg-white/25 text-white' : 'bg-neutral-100 text-neutral-500'}`}
+                >
+                  {cnt}
+                </span>
               </button>
             )
           })}
@@ -267,14 +320,24 @@ export default function ManagerVouchersPage() {
                 </div>
                 {/* Assigned */}
                 <div className="col-span-1 flex justify-center pt-0.5">
-                  <button onClick={() => { setAssignVoucher(v); setAssignSearch('') }}
-                    className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-neutral-100 text-xs font-bold text-neutral-600 hover:bg-mint-100 hover:text-mint-700 transition">
-                    <IoPersonAddOutline size={11} />{v.assignedTo.length}
+                  <button
+                    onClick={() => {
+                      setAssignVoucher(v)
+                      setAssignSearch('')
+                    }}
+                    className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-neutral-100 text-xs font-bold text-neutral-600 hover:bg-mint-100 hover:text-mint-700 transition"
+                  >
+                    <IoPersonAddOutline size={11} />
+                    {v.assignedTo.length}
                   </button>
                 </div>
                 {/* Status */}
                 <div className="col-span-1 flex justify-center pt-0.5">
-                  <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold border ${st.bg} ${st.color}`}>{st.label}</span>
+                  <span
+                    className={`px-2.5 py-1 rounded-full text-[11px] font-bold border ${st.bg} ${st.color}`}
+                  >
+                    {st.label}
+                  </span>
                 </div>
                 {/* Actions */}
                 <div className="col-span-1 flex justify-center gap-1 pt-0.5">
@@ -306,8 +369,18 @@ export default function ManagerVouchersPage() {
             <h2 className="text-base font-bold text-neutral-900 mb-1">Delete Voucher?</h2>
             <p className="text-sm text-neutral-500 mb-6">This action cannot be undone.</p>
             <div className="flex gap-3 justify-center">
-              <button onClick={() => setDeleteId(null)} className="px-5 py-2 rounded-lg border border-neutral-200 text-neutral-600 text-sm font-semibold hover:bg-neutral-50 transition">Cancel</button>
-              <button onClick={handleDelete} className="px-6 py-2 rounded-lg bg-red-500 text-white text-sm font-bold hover:bg-red-600 transition">Delete</button>
+              <button
+                onClick={() => setDeleteId(null)}
+                className="px-5 py-2 rounded-lg border border-neutral-200 text-neutral-600 text-sm font-semibold hover:bg-neutral-50 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-6 py-2 rounded-lg bg-red-500 text-white text-sm font-bold hover:bg-red-600 transition"
+              >
+                Delete
+              </button>
             </div>
           </div>
         </ModalOverlay>
@@ -322,27 +395,48 @@ export default function ManagerVouchersPage() {
                 <h2 className="text-base font-bold text-neutral-900">Assign Voucher</h2>
                 <p className="text-xs text-neutral-400 mt-0.5 font-mono">{assignVoucher.code}</p>
               </div>
-              <button onClick={() => setAssignVoucher(null)} className="p-2 rounded-full hover:bg-neutral-100 text-neutral-400 hover:text-neutral-700 transition"><IoCloseOutline size={20} /></button>
+              <button
+                onClick={() => setAssignVoucher(null)}
+                className="p-2 rounded-full hover:bg-neutral-100 text-neutral-400 hover:text-neutral-700 transition"
+              >
+                <IoCloseOutline size={20} />
+              </button>
             </div>
             <div className="relative mb-4">
-              <IoSearchOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={16} />
-              <input value={assignSearch} onChange={(e) => setAssignSearch(e.target.value)}
-                placeholder="Search customer..." className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-mint-300/50 focus:border-mint-400 transition" />
+              <IoSearchOutline
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
+                size={16}
+              />
+              <input
+                value={assignSearch}
+                onChange={(e) => setAssignSearch(e.target.value)}
+                placeholder="Search customer..."
+                className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-mint-300/50 focus:border-mint-400 transition"
+              />
             </div>
             <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
               {filteredAssignCustomers.map((c) => {
                 const assigned = assignVoucher.assignedTo.includes(c.id)
                 return (
-                  <div key={c.id} onClick={() => toggleAssign(c.id)}
-                    className={`flex items-center justify-between px-4 py-3 rounded-xl border transition cursor-pointer ${assigned ? 'bg-mint-50 border-mint-200' : 'bg-white border-neutral-100 hover:bg-neutral-50'}`}>
+                  <div
+                    key={c.id}
+                    onClick={() => toggleAssign(c.id)}
+                    className={`flex items-center justify-between px-4 py-3 rounded-xl border transition cursor-pointer ${assigned ? 'bg-mint-50 border-mint-200' : 'bg-white border-neutral-100 hover:bg-neutral-50'}`}
+                  >
                     <div className="flex items-center gap-3">
-                      <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold ${assigned ? 'bg-mint-500 text-white' : 'bg-neutral-100 text-neutral-600'}`}>{c.avatarInitials}</div>
+                      <div
+                        className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold ${assigned ? 'bg-mint-500 text-white' : 'bg-neutral-100 text-neutral-600'}`}
+                      >
+                        {c.avatarInitials}
+                      </div>
                       <div>
                         <p className="text-sm font-semibold text-neutral-800">{c.name}</p>
                         <p className="text-xs text-neutral-400">{c.email}</p>
                       </div>
                     </div>
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition ${assigned ? 'bg-mint-500 border-mint-500' : 'border-neutral-300'}`}>
+                    <div
+                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition ${assigned ? 'bg-mint-500 border-mint-500' : 'border-neutral-300'}`}
+                    >
                       {assigned && <IoCheckmarkOutline size={12} className="text-white" />}
                     </div>
                   </div>
@@ -350,8 +444,15 @@ export default function ManagerVouchersPage() {
               })}
             </div>
             <div className="mt-4 pt-4 border-t border-neutral-100 flex justify-between items-center">
-              <p className="text-xs text-neutral-500">{assignVoucher.assignedTo.length} customer(s) assigned</p>
-              <button onClick={() => setAssignVoucher(null)} className="px-5 py-2 rounded-lg bg-mint-500 text-white text-sm font-bold hover:bg-mint-600 transition">Done</button>
+              <p className="text-xs text-neutral-500">
+                {assignVoucher.assignedTo.length} customer(s) assigned
+              </p>
+              <button
+                onClick={() => setAssignVoucher(null)}
+                className="px-5 py-2 rounded-lg bg-mint-500 text-white text-sm font-bold hover:bg-mint-600 transition"
+              >
+                Done
+              </button>
             </div>
           </div>
         </ModalOverlay>

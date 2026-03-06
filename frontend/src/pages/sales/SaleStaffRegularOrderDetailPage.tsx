@@ -1,6 +1,5 @@
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom'
 
-import { PageHeader } from '@/features/sales/components/common'
 import { useSalesStaffOrderDetail } from '@/features/sales/hooks'
 import OrderDetail from '@/features/staff/components/OrderDetail/OrderDetail'
 
@@ -28,15 +27,27 @@ export default function SaleStaffRegularOrderDetailPage() {
   if (!orderId) return null
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Order Details"
-        breadcrumbs={[
-          { label: 'Dashboard', path: '/salestaff/dashboard' },
-          { label: 'Orders', path: '/salestaff/orders' },
-          { label: 'Order Details' }
-        ]}
-      />
+    <div className="space-y-12 pb-12">
+      {/* Breadcrumb */}
+      <nav className="flex items-center gap-1 text-sm font-medium mb-6 ml-1">
+        <Link
+          to="/salestaff/dashboard"
+          className="text-neutral-400 hover:text-neutral-600 transition-colors font-normal"
+        >
+          Dashboard
+        </Link>
+        <span className="text-neutral-300 mx-1">/</span>
+        <Link
+          to="/salestaff/orders"
+          className="text-neutral-400 hover:text-neutral-600 transition-colors font-normal"
+        >
+          Orders
+        </Link>
+        <span className="text-neutral-300 mx-1">/</span>
+        <span className="text-mint-500 font-semibold tracking-wider">Order Details</span>
+      </nav>
+
+      {/* Main content */}
       <OrderDetail orderId={orderId} onBack={handleBack} />
     </div>
   )

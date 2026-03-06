@@ -99,13 +99,15 @@ export default function ProfileForm() {
     <Card className="p-8 border-none shadow-sm shadow-neutral-200/50 bg-white">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h3 className="text-xl font-bold text-slate-800 tracking-tight">Profile Information</h3>
+          <h3 className="text-xl font-semibold text-slate-800 tracking-tight">
+            Profile Information
+          </h3>
           <p className="text-xs text-slate-400 font-medium mt-1 uppercase tracking-widest">
             {isSaleStaff ? 'Request changes to your profile' : 'View your profile details'}
           </p>
         </div>
         {isSaleStaff && (
-          <div className="flex items-center gap-2 text-[10px] font-bold text-primary-600 bg-primary-50 px-3 py-1.5 rounded-full border border-primary-100 uppercase tracking-widest">
+          <div className="flex items-center gap-2 text-[10px] font-semibold text-mint-600 bg-mint-50 px-3 py-1.5 rounded-full border border-mint-100 uppercase tracking-widest">
             <IoInformationCircleOutline size={14} /> Approval Required
           </div>
         )}
@@ -117,7 +119,7 @@ export default function ProfileForm() {
         <input type="email" style={{ display: 'none' }} aria-hidden="true" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">
+            <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest pl-1">
               Full Name
             </label>
             <input
@@ -128,13 +130,13 @@ export default function ProfileForm() {
               readOnly={!isSaleStaff}
               className={`w-full px-4 py-3 border rounded-xl text-sm font-semibold transition-all focus:outline-none ${
                 isSaleStaff
-                  ? 'bg-white border-slate-200 text-slate-700 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5 cursor-pointer'
+                  ? 'bg-white border-slate-200 text-slate-700 focus:border-mint-500 focus:ring-4 focus:ring-mint-500/5 cursor-pointer'
                   : 'bg-slate-50 border-slate-100 text-slate-400 cursor-not-allowed'
               }`}
             />
           </div>
           <div className="space-y-2">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">
+            <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest pl-1">
               Role
             </label>
             <input
@@ -145,7 +147,7 @@ export default function ProfileForm() {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">
+            <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest pl-1">
               Email
             </label>
             <input
@@ -162,7 +164,7 @@ export default function ProfileForm() {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1">
+            <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest pl-1">
               Phone
             </label>
             <input
@@ -185,7 +187,7 @@ export default function ProfileForm() {
             <Button
               type="submit"
               isLoading={isSubmitting}
-              className="h-11 rounded-xl font-semibold px-6 bg-primary-500 hover:bg-primary-600 shadow-md shadow-primary-100 transition-all active:scale-95 border-none"
+              className="h-11 rounded-xl font-semibold px-6 bg-mint-500 hover:bg-mint-600 shadow-md shadow-mint-100 transition-all active:scale-95 border-none"
               leftIcon={<IoShieldCheckmarkOutline size={18} />}
             >
               Submit Update Request

@@ -59,10 +59,10 @@ export function SalesMetricCard({
     >
       <div className="flex justify-between items-start">
         <div>
-          <p className="text-[12px] font-bold text-slate-400 tracking-wider whitespace-nowrap uppercase">
+          <p className="text-[12px] font-semibold text-slate-400 tracking-wider whitespace-nowrap uppercase">
             {label}
           </p>
-          <h3 className="text-2xl font-bold mt-1.5 text-slate-900 font-heading tracking-tight">
+          <h3 className="text-2xl font-semibold mt-1.5 text-slate-900 font-heading tracking-tight">
             {value}
           </h3>
         </div>
@@ -83,7 +83,7 @@ export function SalesMetricCard({
           {trend && (
             <span
               className={cn(
-                'font-bold flex items-center',
+                'font-semibold flex items-center',
                 trend.isPositive ? 'text-emerald-600' : 'text-red-600'
               )}
             >

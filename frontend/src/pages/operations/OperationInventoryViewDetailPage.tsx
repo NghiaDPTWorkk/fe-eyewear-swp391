@@ -105,10 +105,28 @@ const MOCK_BATCHES_MAP: Record<string, PreOrderImportBatch> = {
 }
 
 // ─── Status config ────────────────────────────────────────────────
-const STATUS_CONFIG: Record<PreOrderImportStatus, { label: string; color: string; bg: string; icon: React.ReactNode }> = {
-  PENDING:   { label: 'Pending',   color: 'text-amber-700',   bg: 'bg-amber-50 border-amber-200',    icon: <IoTimeOutline size={16} /> },
-  DONE:      { label: 'Done',      color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200', icon: <IoCheckmarkCircleOutline size={16} /> },
-  CANCELLED: { label: 'Cancelled', color: 'text-red-700',     bg: 'bg-red-50 border-red-200',        icon: <IoCloseCircleOutline size={16} /> }
+const STATUS_CONFIG: Record<
+  PreOrderImportStatus,
+  { label: string; color: string; bg: string; icon: React.ReactNode }
+> = {
+  PENDING: {
+    label: 'Pending',
+    color: 'text-amber-700',
+    bg: 'bg-amber-50 border-amber-200',
+    icon: <IoTimeOutline size={16} />
+  },
+  DONE: {
+    label: 'Done',
+    color: 'text-emerald-700',
+    bg: 'bg-emerald-50 border-emerald-200',
+    icon: <IoCheckmarkCircleOutline size={16} />
+  },
+  CANCELLED: {
+    label: 'Cancelled',
+    color: 'text-red-700',
+    bg: 'bg-red-50 border-red-200',
+    icon: <IoCloseCircleOutline size={16} />
+  }
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────
@@ -158,9 +176,10 @@ export default function OperationInventoryViewDetailPage() {
   }
 
   const st = STATUS_CONFIG[batch.status]
-  const fillPct = batch.targetQuantity > 0
-    ? Math.min((batch.preOrderedQuantity / batch.targetQuantity) * 100, 100)
-    : 0
+  const fillPct =
+    batch.targetQuantity > 0
+      ? Math.min((batch.preOrderedQuantity / batch.targetQuantity) * 100, 100)
+      : 0
 
   const initials = batch.managerResponsibility
     .split(' ')
@@ -191,7 +210,9 @@ export default function OperationInventoryViewDetailPage() {
           </div>
         </div>
 
-        <span className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold border ${st.bg} ${st.color}`}>
+        <span
+          className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold border ${st.bg} ${st.color}`}
+        >
           {st.icon}
           {st.label}
         </span>
@@ -200,7 +221,6 @@ export default function OperationInventoryViewDetailPage() {
       <div className="grid grid-cols-12 gap-6">
         {/* ── Left column ── */}
         <div className="col-span-12 lg:col-span-7 space-y-5">
-
           {/* Progress card */}
           <div className="bg-white rounded-xl shadow-sm border border-neutral-100 p-6">
             <div className="flex items-center gap-2 mb-5 pb-4 border-b border-neutral-100">
@@ -211,16 +231,24 @@ export default function OperationInventoryViewDetailPage() {
             {/* Big numbers */}
             <div className="grid grid-cols-3 gap-4 mb-6">
               <div className="text-center p-4 bg-neutral-50 rounded-lg border border-neutral-100">
-                <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">Pre-Ordered</p>
+                <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">
+                  Pre-Ordered
+                </p>
                 <p className="text-3xl font-black text-mint-600">{batch.preOrderedQuantity}</p>
               </div>
               <div className="text-center p-4 bg-neutral-50 rounded-lg border border-neutral-100">
-                <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">Target</p>
+                <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">
+                  Target
+                </p>
                 <p className="text-3xl font-black text-neutral-800">{batch.targetQuantity}</p>
               </div>
               <div className="text-center p-4 bg-neutral-50 rounded-lg border border-neutral-100">
-                <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">Fill Rate</p>
-                <p className={`text-3xl font-black ${fillPct >= 100 ? 'text-emerald-600' : fillPct > 0 ? 'text-amber-600' : 'text-neutral-400'}`}>
+                <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">
+                  Fill Rate
+                </p>
+                <p
+                  className={`text-3xl font-black ${fillPct >= 100 ? 'text-emerald-600' : fillPct > 0 ? 'text-amber-600' : 'text-neutral-400'}`}
+                >
                   {Math.round(fillPct)}%
                 </p>
               </div>
@@ -235,9 +263,11 @@ export default function OperationInventoryViewDetailPage() {
               <div className="w-full h-4 bg-neutral-100 rounded-full overflow-hidden">
                 <div
                   className={`h-full rounded-full transition-all duration-700 ${
-                    batch.status === 'CANCELLED' ? 'bg-red-400' :
-                    fillPct >= 100 ? 'bg-emerald-400' :
-                    'bg-gradient-to-r from-mint-400 to-mint-600'
+                    batch.status === 'CANCELLED'
+                      ? 'bg-red-400'
+                      : fillPct >= 100
+                        ? 'bg-emerald-400'
+                        : 'bg-gradient-to-r from-mint-400 to-mint-600'
                   }`}
                   style={{ width: `${fillPct}%` }}
                 />
@@ -272,7 +302,13 @@ export default function OperationInventoryViewDetailPage() {
 
               {/* End */}
               <TimelineItem
-                dotColor={batch.status === 'CANCELLED' ? 'bg-red-400' : batch.status === 'DONE' ? 'bg-emerald-400' : 'bg-neutral-300'}
+                dotColor={
+                  batch.status === 'CANCELLED'
+                    ? 'bg-red-400'
+                    : batch.status === 'DONE'
+                      ? 'bg-emerald-400'
+                      : 'bg-neutral-300'
+                }
                 label="Deadline"
                 date={formatDate(batch.endedDate)}
                 isLast
@@ -283,7 +319,6 @@ export default function OperationInventoryViewDetailPage() {
 
         {/* ── Right column ── */}
         <div className="col-span-12 lg:col-span-5 space-y-5">
-
           {/* Batch info */}
           <div className="bg-white rounded-xl shadow-sm border border-neutral-100 p-5 space-y-4">
             <div className="flex items-center gap-2 pb-3 border-b border-neutral-100">
@@ -309,7 +344,9 @@ export default function OperationInventoryViewDetailPage() {
                 <span className="text-base font-black text-mint-700">{initials}</span>
               </div>
               <div>
-                <p className="text-sm font-semibold text-neutral-800">{batch.managerResponsibility}</p>
+                <p className="text-sm font-semibold text-neutral-800">
+                  {batch.managerResponsibility}
+                </p>
                 <p className="text-xs text-neutral-400 mt-0.5">Responsible Manager</p>
               </div>
             </div>
@@ -341,7 +378,9 @@ function InfoRow({ label, value, mono = false }: { label: string; value: string;
   return (
     <div className="flex justify-between items-start gap-3">
       <span className="text-xs text-neutral-500 flex-shrink-0">{label}</span>
-      <span className={`text-sm font-semibold text-neutral-800 text-right break-all ${mono ? 'font-mono' : ''}`}>
+      <span
+        className={`text-sm font-semibold text-neutral-800 text-right break-all ${mono ? 'font-mono' : ''}`}
+      >
         {value}
       </span>
     </div>
@@ -361,7 +400,9 @@ function TimelineItem({
 }) {
   return (
     <div className={`relative flex items-start gap-4 ${isLast ? '' : 'mb-6'}`}>
-      <div className={`absolute -left-4 top-1 w-3 h-3 rounded-full border-2 border-white ${dotColor} shadow-sm`} />
+      <div
+        className={`absolute -left-4 top-1 w-3 h-3 rounded-full border-2 border-white ${dotColor} shadow-sm`}
+      />
       <div>
         <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest">{label}</p>
         <p className="text-sm font-semibold text-neutral-800 mt-0.5">{date}</p>

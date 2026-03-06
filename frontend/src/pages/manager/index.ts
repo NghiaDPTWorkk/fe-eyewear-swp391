@@ -6,4 +6,3 @@ export { default as ManagerEditProductPage } from './ManagerEditProductPage'
 export { default as ManagerAddAttributePage } from './ManagerAddAttributePage'
 export { default as ManagerInvoiceCard } from './components/invoices/ManagerInvoiceCard'
 export { default as ManagerVouchersPage } from './ManagerVouchersPage'
-

@@ -47,7 +47,9 @@ const OperationInventoryReceivingPage = lazy(() =>
 )
 
 const OperationInventoryViewDetailPage = lazy(() =>
-  import('@/pages/operations/OperationInventoryViewDetailPage').then((m) => ({ default: m.default }))
+  import('@/pages/operations/OperationInventoryViewDetailPage').then((m) => ({
+    default: m.default
+  }))
 )
 
 export const operationRoutes = [

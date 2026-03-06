@@ -60,6 +60,7 @@ export interface OrderDetail {
   assignStaff?: string | null
   staffName?: string
   rejectionNote?: string
+  rejectedNote?: string
   rejectedAt?: string
   approvedAt?: string
   updatedAt?: string

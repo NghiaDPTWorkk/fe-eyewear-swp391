@@ -15,13 +15,13 @@ export const SalesTarget: React.FC = () => {
             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-[0.15em]">
               In Progress
             </p>
-            <p className="text-2xl font-semibold text-gray-900 font-heading">$231,032,444</p>
+            <p className="text-2xl font-semibold text-gray-900 font-heading">231,032,444</p>
           </div>
           <div className="text-right space-y-2">
             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-[0.15em] text-right">
               Sales Target
             </p>
-            <p className="text-2xl font-semibold text-gray-900 font-heading">$500,000,000</p>
+            <p className="text-2xl font-semibold text-gray-900 font-heading">500,000,000</p>
           </div>
         </div>
 

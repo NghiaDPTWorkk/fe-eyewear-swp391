@@ -212,7 +212,11 @@ export default function PrescriptionVerification({
           <TranscriptionForm
             parameters={localParameters || parameters}
             onParametersChange={setLocalParameters}
-            note={localNote || (parameters as any)?.note || ''}
+            note={
+              isApproved
+                ? order.staffNote || (parameters as any)?.note || ''
+                : localNote || (parameters as any)?.note || ''
+            }
             onNoteChange={setLocalNote}
             isReadOnly={isReadOnly}
             isApproved={isApproved}
@@ -227,7 +231,9 @@ export default function PrescriptionVerification({
                 ? order.approvedAt || order.completedAt || order.updatedAt
                 : order.rejectedAt || order.updatedAt
             )}
-            rejectionNote={order.rejectionNote || (order.invoice as any)?.note}
+            rejectionNote={
+              isRejected ? order.invoice?.rejectedNote || order.rejectedNote || '' : ''
+            }
           />
         </div>
 

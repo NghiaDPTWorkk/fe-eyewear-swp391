@@ -14,7 +14,8 @@ import {
   IoBarChart,
   IoSettings,
   IoHelpCircle,
-  IoStorefront
+  IoStorefront,
+  IoArrowDown
 } from 'react-icons/io5'
 
 import { getInitials } from '@/shared/utils'
@@ -64,6 +65,12 @@ export default function ManagerLayout() {
           label="Product"
           to="/manager/products"
           active={location.pathname.startsWith('/manager/products')}
+        />
+        <SidebarStaff.MenuItem
+          icon={<IoArrowDown />}
+          label="Imports"
+          to="/manager/imports"
+          active={location.pathname === '/manager/imports'}
         />
         <SidebarStaff.MenuItem
           icon={<IoGrid />}

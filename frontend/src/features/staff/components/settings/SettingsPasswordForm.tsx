@@ -4,12 +4,14 @@ import toast from 'react-hot-toast'
 
 import { profileService } from '@/features/staff/services/profile.service'
 import { Card, Button } from '@/shared/components'
+import { useLogout } from '@/shared/hooks/useLogout'
 
 /**
  * PasswordForm Component
  * Security settings for password update
  */
 export default function PasswordForm() {
+  const { handleLogout } = useLogout()
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
     currentPassword: '',
@@ -37,17 +39,20 @@ export default function PasswordForm() {
     setLoading(true)
     try {
       const response = await profileService.changePassword({
-        oldPassword: formData.currentPassword,
+        currentPassword: formData.currentPassword,
         newPassword: formData.newPassword
       })
 
       if (response.success) {
-        toast.success(response.message || 'Password updated successfully')
+        toast.success(response.message || 'Password updated successfully. Logging out...')
         setFormData({
           currentPassword: '',
           newPassword: '',
           confirmPassword: ''
         })
+        setTimeout(() => {
+          handleLogout()
+        }, 1500)
       } else {
         toast.error(response.message || 'Failed to update password')
       }

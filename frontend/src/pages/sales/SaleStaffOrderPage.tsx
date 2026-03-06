@@ -9,19 +9,36 @@ import { OrderMetrics } from '@/features/sales/components/orders/OrderMetrics'
 import { OrderPagination } from '@/features/sales/components/orders/OrderPagination'
 import { OrderTable } from '@/features/sales/components/orders/OrderTable'
 import { StatusFilterBar } from '@/features/sales/components/orders/StatusFilterBar'
+import { RealtimeStatusBar } from '@/features/sales/components/orders/RealtimeStatusBar'
+import { LockBlockedModal } from '@/features/sales/components/orders/InvoiceLockBadge'
 import { PageHeader, RejectionModal } from '@/features/sales/components/common'
 import { useSalesStaffAction } from '@/features/sales/hooks/useSalesStaffAction'
 import { useSalesStaffInvoices } from '@/features/sales/hooks/useSalesStaffInvoices'
+import { useInvoiceLock } from '@/features/sales/hooks/useInvoiceLock'
+import { useSalesStaffRealtime } from '@/features/sales/hooks/useSalesStaffRealtime'
 import { type Invoice } from '@/features/sales/types'
 import { ConfirmationModal } from '@/shared/components/ui-core'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import { OrderType } from '@/shared/utils/enums/order.enum'
+import { useAuthStore } from '@/store/auth.store'
 
 export default function SaleStaffOrderPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const statusFilter = searchParams.get('status') ?? 'All'
   const orderTypeFilter = searchParams.get('orderType') ?? 'All'
   const searchQuery = searchParams.get('search') ?? ''
+
+  // ── Auth: lấy staffId để truyền vào lock ────────────────────────────────
+  const currentUser = useAuthStore((s) => s.user)
+  const staffId = (currentUser as any)?._id || (currentUser as any)?.id || undefined
+
+  // ── Invoice locking ──────────────────────────────────────────────────────
+  const { acquireLock, releaseLock, isLockedByOther, lockedCount } = useInvoiceLock(staffId)
+  const [showLockBlockedModal, setShowLockBlockedModal] = useState(false)
+  const [lockedInvoiceId, setLockedInvoiceId] = useState<string | null>(null)
+
+  // ── Real-time polling ────────────────────────────────────────────────────
+  const { isRefreshing, refresh, getLastUpdatedLabel } = useSalesStaffRealtime()
 
   const { approveInvoice, rejectInvoice, processing } = useSalesStaffAction()
   const [page, setPage] = useState(1)
@@ -297,6 +314,17 @@ export default function SaleStaffOrderPage() {
   }
 
   const handleApproveClick = (invoiceId: string) => {
+    if (isLockedByOther(invoiceId)) {
+      setLockedInvoiceId(invoiceId)
+      setShowLockBlockedModal(true)
+      return
+    }
+    const locked = acquireLock(invoiceId)
+    if (!locked) {
+      setLockedInvoiceId(invoiceId)
+      setShowLockBlockedModal(true)
+      return
+    }
     setInvoiceToProcess(invoiceId)
     setShowConfirmModal(true)
   }
@@ -304,6 +332,7 @@ export default function SaleStaffOrderPage() {
   const confirmApproval = async () => {
     if (invoiceToProcess) {
       await approveInvoice(invoiceToProcess)
+      releaseLock(invoiceToProcess)
       refetch()
       setShowConfirmModal(false)
       setInvoiceToProcess(null)
@@ -313,6 +342,7 @@ export default function SaleStaffOrderPage() {
   const confirmRejection = async (note: string) => {
     if (invoiceToProcess) {
       await rejectInvoice(invoiceToProcess, note)
+      releaseLock(invoiceToProcess)
       refetch()
       setShowRejectModal(false)
       setInvoiceToProcess(null)
@@ -321,11 +351,20 @@ export default function SaleStaffOrderPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Order Management"
-        breadcrumbs={[{ label: 'Dashboard', path: '/salestaff/dashboard' }, { label: 'Orders' }]}
-        subtitle="Consolidated view of all sales orders, pre-orders, and returns."
-      />
+      <div className="flex items-start justify-between gap-4">
+        <PageHeader
+          title="Order Management"
+          breadcrumbs={[{ label: 'Dashboard', path: '/salestaff/dashboard' }, { label: 'Orders' }]}
+          subtitle="Consolidated view of all sales orders, pre-orders, and returns."
+        />
+        <RealtimeStatusBar
+          isRefreshing={isRefreshing}
+          lastUpdatedLabel={getLastUpdatedLabel()}
+          lockedCount={lockedCount}
+          onRefresh={refresh}
+          className="shrink-0 mt-1"
+        />
+      </div>
       <div className="space-y-6">
         <OrderMetrics
           metrics={metrics}
@@ -342,7 +381,7 @@ export default function SaleStaffOrderPage() {
           onReset={handleResetFilters}
           orderTypeFilter={orderTypeFilter}
         />
-        <div className="bg-white border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 rounded-[32px] overflow-hidden">
+        <div className="bg-white border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 rounded-3xl overflow-hidden">
           <OrderTable
             invoices={paginatedInvoices}
             selectedInvoiceId={selectedInvoiceId}
@@ -350,6 +389,7 @@ export default function SaleStaffOrderPage() {
             getStatusBadgeProps={getStatusBadgeProps}
             handleApproveClick={handleApproveClick}
             processing={processing}
+            isLockedByOther={isLockedByOther}
           />
           {(serverTotal > 0 || filteredInvoices.length > 0) && (
             <OrderPagination
@@ -369,7 +409,12 @@ export default function SaleStaffOrderPage() {
       />
       <ConfirmationModal
         isOpen={showConfirmModal}
-        onClose={() => setShowConfirmModal(false)}
+        onClose={() => {
+          // Release lock khi user hủy thao tác approve
+          if (invoiceToProcess) releaseLock(invoiceToProcess)
+          setShowConfirmModal(false)
+          setInvoiceToProcess(null)
+        }}
         onConfirm={confirmApproval}
         title="Approve Invoice"
         message={
@@ -478,9 +523,24 @@ export default function SaleStaffOrderPage() {
       />
       <RejectionModal
         isOpen={showRejectModal}
-        onClose={() => setShowRejectModal(false)}
+        onClose={() => {
+          // Release lock khi close rejection modal mà không confirm
+          if (invoiceToProcess) releaseLock(invoiceToProcess)
+          setShowRejectModal(false)
+          setInvoiceToProcess(null)
+        }}
         onConfirm={confirmRejection}
         isLoading={processing}
+      />
+
+      {/* Lock blocked notification - hiện khi user cố xử lý invoice đang bị lock */}
+      <LockBlockedModal
+        isOpen={showLockBlockedModal}
+        invoiceId={lockedInvoiceId}
+        onClose={() => {
+          setShowLockBlockedModal(false)
+          setLockedInvoiceId(null)
+        }}
       />
     </div>
   )

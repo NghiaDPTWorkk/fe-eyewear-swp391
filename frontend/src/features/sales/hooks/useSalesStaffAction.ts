@@ -86,7 +86,7 @@ export const useSalesStaffAction = () => {
 
         await salesService.approveOrder(id, {
           ...finalData,
-          note: finalData?.note || DEFAULT_APPROVE_NOTE
+          note: finalData?.note !== undefined ? finalData.note : DEFAULT_APPROVE_NOTE
         })
         showSuccess('Order verified successfully')
         invalidateSalesData()

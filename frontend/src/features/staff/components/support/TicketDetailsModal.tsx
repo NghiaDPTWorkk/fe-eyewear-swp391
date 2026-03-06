@@ -164,13 +164,13 @@ export function TicketDetailsModal({
                 </span>
                 <div className="h-px flex-1 bg-slate-100" />
               </div>
-              <div className="rounded-[2rem] overflow-hidden border border-slate-200 shadow-md group relative bg-neutral-900">
+              <div className="rounded-[2rem] overflow-hidden border border-slate-100 shadow-sm group relative bg-slate-50">
                 <img
                   src={ticket.imageUrl}
                   alt="Bug attachment"
                   className="w-full h-auto object-contain max-h-[500px] transition-transform duration-500 group-hover:scale-[1.02]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
+                <div className="absolute inset-0 bg-gradient-to-t from-mint-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
                   <p className="text-white text-xs font-medium">Visual Evidence Attachment</p>
                 </div>
               </div>
@@ -179,10 +179,14 @@ export function TicketDetailsModal({
         </div>
 
         {/* Footer */}
-        <div className="p-6 px-8 border-t border-slate-100 bg-slate-50/30 flex justify-end">
+        <div className="p-6 px-8 border-t border-slate-100 bg-mint-50/30 flex justify-end">
           <button
             onClick={onClose}
-            className="px-6 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-bold shadow-lg shadow-slate-900/20 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+            style={{
+              background: 'linear-gradient(135deg, #4ade80 0%, #2dd4bf 100%)',
+              boxShadow: '0 4px 20px -4px rgba(34, 197, 94, 0.4)'
+            }}
+            className="px-8 py-3 text-white rounded-2xl text-[13px] font-bold uppercase tracking-widest transition-all hover:scale-[1.02] hover:opacity-90 active:scale-95 cursor-pointer border-none"
           >
             Close View
           </button>

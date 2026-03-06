@@ -1,4 +1,3 @@
-import React from 'react'
 import { IoBarcodeOutline } from 'react-icons/io5'
 
 export default function SanSection({ orderId }: { orderId?: string }) {

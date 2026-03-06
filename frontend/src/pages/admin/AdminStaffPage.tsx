@@ -165,7 +165,7 @@ function CreateStaffModal({ open, onClose, onSubmit, isSubmitting }: CreateStaff
             </button>
           </div>
 
-          <Formik
+          <Formik<CreateAdminAccountFormValues>
             initialValues={initialValues}
             validationSchema={createAdminAccountValidationSchema}
             onSubmit={onSubmit}

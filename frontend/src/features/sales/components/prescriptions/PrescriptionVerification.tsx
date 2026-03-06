@@ -52,7 +52,8 @@ export default function PrescriptionVerification({
   const { data: profileData } = useProfile()
   const [searchParams] = useSearchParams()
   const mode = searchParams.get('mode')
-  const isReadOnly = mode === 'readonly'
+  // We will compute isReadOnly dynamically after getting order status
+  const isReadOnlyParams = mode === 'readonly'
 
   const { data: order, isLoading: loading, refetch } = useSalesStaffOrderDetail(orderId)
   const [rotation, setRotation] = useState(0)
@@ -107,7 +108,8 @@ export default function PrescriptionVerification({
       PD: Number(rawParams.PD) || 64
     }
 
-    const finalNote = localNote.trim() || (parameters as any)?.note || ''
+    // Always use what the user typed; fallback to existing note only if the user hasn't typed anything
+    const finalNote = localNote !== '' ? localNote : ((parameters as any)?.note ?? '')
 
     const success = await approveOrder(orderId, { parameters: finalParams, note: finalNote })
     if (success) {
@@ -165,6 +167,8 @@ export default function PrescriptionVerification({
   const lens = order.products?.[0]?.lens
   const parameters = lens?.parameters
 
+  const isReadOnly = isReadOnlyParams || isApproved || isRejected
+
   return (
     <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
       {/* Status Badge */}
@@ -208,7 +212,11 @@ export default function PrescriptionVerification({
           <TranscriptionForm
             parameters={localParameters || parameters}
             onParametersChange={setLocalParameters}
-            note={localNote || (parameters as any)?.note || ''}
+            note={
+              isApproved
+                ? order.staffNote || (parameters as any)?.note || ''
+                : localNote || (parameters as any)?.note || ''
+            }
             onNoteChange={setLocalNote}
             isReadOnly={isReadOnly}
             isApproved={isApproved}

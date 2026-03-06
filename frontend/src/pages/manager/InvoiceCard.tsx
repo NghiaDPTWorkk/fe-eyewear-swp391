@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { IoPersonOutline } from 'react-icons/io5'
 
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import { OrderStatus } from '@/shared/utils/enums/order.enum'

@@ -15,7 +15,7 @@ export default function SaleStaffPreOrderDetailPage() {
   const { data: order } = useSalesStaffOrderDetail(orderId as string)
 
   // Tracking progress state
-  const [progress, setProgress] = useState(65)
+  const [progress, setProgress] = useState(62)
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -59,7 +59,7 @@ export default function SaleStaffPreOrderDetailPage() {
           Orders
         </Link>
         <span className="text-neutral-300 mx-1">/</span>
-        <span className="text-mint-500 font-semibold tracking-wider">Pre-order Details</span>
+        <span className="text-mint-700 font-bold tracking-tight">Pre-order Details</span>
       </nav>
 
       {/* Main content - Order details */}

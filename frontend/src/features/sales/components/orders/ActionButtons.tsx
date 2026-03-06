@@ -12,8 +12,10 @@ interface ActionButtonsProps {
   onViewDetail: () => void
 }
 
+import { OrderType } from '@/shared/utils/enums/order.enum'
+
 export const ActionButtons: React.FC<ActionButtonsProps> = ({ order, onVerify, onViewDetail }) => {
-  const isMfg = order.type?.includes('MANUFACTURING') || order.isPrescription
+  const isMfg = order.type?.includes(OrderType.MANUFACTURING) || order.isPrescription
   const canVerify = isMfg && order.status !== 'VERIFIED' && order.status !== 'APPROVED'
 
   return (

@@ -1,4 +1,3 @@
-import React from 'react'
 import { Container } from '@/components'
 import { PageHeader } from '@/features/sales/components/common'
 import { IoChevronBackOutline, IoSaveOutline, IoAddOutline, IoTrashOutline } from 'react-icons/io5'

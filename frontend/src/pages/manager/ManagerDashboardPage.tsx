@@ -32,7 +32,7 @@ export default function ManagerDashboardPage() {
         <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
           <StatCard
             label="Total Revenue"
-            value="$81,000"
+            value="81,000"
             variant="mint"
             trend={{ value: '10.8%', isPositive: true }}
             icon={<IoTrendingUpOutline />}

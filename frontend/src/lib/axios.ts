@@ -104,7 +104,7 @@ async function refreshAccessToken(): Promise<string> {
 
 export const apiClient: AxiosInstance = axios.create({
   baseURL: import.meta.env.DEV ? '/api/v1' : `${import.meta.env.VITE_API_URL}/api/v1`,
-  timeout: 30000,
+  timeout: 60000,
   headers: {
     'Content-Type': 'application/json'
   },

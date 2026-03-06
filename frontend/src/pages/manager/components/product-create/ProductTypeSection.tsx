@@ -1,4 +1,3 @@
-import React from 'react'
 import type { ProductCreateFormType } from '@/shared/types/product-create.types'
 import { PRODUCT_CREATE_INPUT_CLASSNAME } from '@/shared/utils/product-create.utils'
 

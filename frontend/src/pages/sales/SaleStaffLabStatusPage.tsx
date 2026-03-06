@@ -39,8 +39,12 @@ export default function SaleStaffLabStatusPage() {
   }
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
+    <div className="space-y-8 relative">
+      {/* Decorative Background Glows */}
+      <div className="absolute -top-24 -right-24 w-96 h-96 bg-mint-400/10 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/2 -left-24 w-72 h-72 bg-blue-400/10 blur-[100px] rounded-full pointer-events-none" />
+
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
         <PageHeader
           title="Lab Status Tracking"
           subtitle="Monitor production stages, urgent requests, and lens specifications."
@@ -50,24 +54,27 @@ export default function SaleStaffLabStatusPage() {
           ]}
           noMargin={true}
         />
-        <div className="flex gap-4">
-          <div className="flex gap-2 bg-white p-1.5 rounded-2xl border border-neutral-100 shadow-sm shadow-neutral-100/50">
-            <button className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-neutral-600 hover:bg-neutral-50 rounded-xl transition-all">
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex gap-2 bg-white/60 backdrop-blur-md p-1.5 rounded-2xl border border-white shadow-sm ring-1 ring-slate-100/50">
+            <button className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-slate-600 hover:bg-white hover:text-mint-600 hover:shadow-sm rounded-xl transition-all active:scale-95 group">
+              <IoFilter className="text-slate-400 group-hover:text-mint-500" />
               All Urgencies
-              <IoFilter className="text-neutral-400" />
             </button>
-            <div className="w-px h-6 bg-neutral-100 my-auto"></div>
-            <button className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-neutral-600 hover:bg-neutral-50 rounded-xl transition-all">
+            <div className="w-px h-6 bg-slate-100 my-auto"></div>
+            <button className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-slate-600 hover:bg-white hover:text-blue-600 hover:shadow-sm rounded-xl transition-all active:scale-95 group">
+              <IoFilter className="text-slate-400 group-hover:text-blue-500" />
               All Stations
-              <IoFilter className="text-neutral-400" />
             </button>
           </div>
           <button
             onClick={() => refetch()}
-            className="flex items-center gap-2 px-6 py-2.5 bg-mint-600 text-white rounded-2xl text-sm font-semibold hover:bg-mint-700 hover:shadow-lg hover:shadow-mint-100 transition-all active:scale-95 group"
+            className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-mint-500 to-emerald-600 text-white rounded-2xl text-sm font-bold hover:shadow-lg hover:shadow-mint-200/50 transition-all active:scale-95 group shadow-md"
           >
-            <IoRefresh className="group-hover:rotate-180 transition-transform duration-500" />
-            Refresh
+            <IoRefresh
+              className="group-hover:rotate-180 transition-transform duration-700"
+              size={18}
+            />
+            Refresh Data
           </button>
         </div>
       </div>

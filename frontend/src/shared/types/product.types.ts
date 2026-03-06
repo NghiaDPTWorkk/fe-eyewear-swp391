@@ -7,9 +7,12 @@ export type { ProductType, Gender }
  * Product spec types matching backend structure
  */
 export interface FrameSpec {
-  material: string
+  material: string[]
   shape: string
   gender: Gender
+  style?: string | null
+  weight?: number | null
+  dimensions?: { width: number; height: number; depth: number } | null
 }
 
 export interface LenSpec {

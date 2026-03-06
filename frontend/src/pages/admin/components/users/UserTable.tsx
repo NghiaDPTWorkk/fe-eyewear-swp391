@@ -21,9 +21,9 @@ const statusStyles: Record<'Active' | 'Inactive' | 'Banned', string> = {
   Banned: 'bg-red-50 text-red-600 border-red-100'
 }
 
-const safeFormatDate = (input?: string | null) => {
+const safeFormatDate = (input?: Date | string | null) => {
   if (!input) return 'N/A'
-  const date = new Date(input)
+  const date = input instanceof Date ? input : new Date(input)
   if (Number.isNaN(date.getTime())) return 'N/A'
   return format(date, 'MMM dd, yyyy')
 }

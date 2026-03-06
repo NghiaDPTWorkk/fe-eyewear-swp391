@@ -331,7 +331,7 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
                 )}
               </div>
 
-              <div className="w-full md:w-[380px] shrink-0 p-6 bg-slate-50/40">
+              <div className="w-full md:w-[380px] shrink-0 p-6 bg-slate-50/40 rounded-3xl">
                 <div className="space-y-4">
                   <div className="flex justify-between items-center text-sm font-semibold text-slate-400 uppercase tracking-wider">
                     <span>Subtotal</span>

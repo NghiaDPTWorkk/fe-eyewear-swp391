@@ -144,7 +144,7 @@ export default function SaleStaffDashboardPage() {
       <div className="space-y-8">
         <Charts />
 
-        <Card className="p-8 border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 bg-white rounded-[32px]">
+        <Card className="p-8 border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 bg-white rounded-3xl">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8">
             <div className="space-y-1">
               <h3 className="text-xl font-medium text-gray-900 font-heading">

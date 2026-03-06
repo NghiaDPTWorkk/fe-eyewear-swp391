@@ -120,6 +120,8 @@ export default function OrderTable({
   hiddenColumns = [],
   filterType,
   role = 'operations',
+  isLoading,
+  isError,
   onConfirmPrescription,
   onRowClick
 }: OrderTableProps) {

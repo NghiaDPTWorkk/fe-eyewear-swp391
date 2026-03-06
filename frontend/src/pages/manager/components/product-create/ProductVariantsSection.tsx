@@ -1,4 +1,3 @@
-import React from 'react'
 import { IoAddOutline, IoTrashOutline } from 'react-icons/io5'
 import {
   PRODUCT_CREATE_INPUT_CLASSNAME,

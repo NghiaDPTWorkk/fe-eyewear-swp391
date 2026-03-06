@@ -64,7 +64,7 @@ export const TYPOGRAPHY = {
 export const STYLES = {
   // Breadcrumb
   breadcrumbLink: 'text-neutral-400 hover:text-neutral-600 transition-colors font-normal',
-  breadcrumbActive: 'text-mint-600 font-medium',
+  breadcrumbActive: 'text-mint-700 font-bold tracking-tight',
   breadcrumbSeparator: 'text-neutral-300 mx-1',
   // Cards
   card: 'p-5 border border-neutral-200 shadow-sm rounded-xl',
@@ -117,7 +117,7 @@ export const LAYOUT = {
   // Gap between sections
   gap: 'gap-6 md:gap-8',
   // Max width for content
-  maxWidth: 'max-w-[1600px]',
+  maxWidth: 'max-w-[1440px]',
   // Sidebar widths
   sidebar: {
     collapsed: 'w-[80px]',

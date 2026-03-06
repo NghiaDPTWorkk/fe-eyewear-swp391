@@ -1,4 +1,3 @@
-import React from 'react'
 import { IoCopyOutline } from 'react-icons/io5'
 
 export function ProductJsonPreview({

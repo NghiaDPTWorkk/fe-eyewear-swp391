@@ -1,4 +1,3 @@
-import React from 'react'
 import { IoCarOutline, IoPrintOutline } from 'react-icons/io5'
 
 export default function ShippingLabel() {

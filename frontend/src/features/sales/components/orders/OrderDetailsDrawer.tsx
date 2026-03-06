@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
+import { IoEyeOutline, IoBodyOutline } from 'react-icons/io5'
 
 import { OrderType } from '@/shared/utils/enums/order.enum'
 
@@ -260,28 +261,122 @@ export const OrderDetailsDrawer: React.FC<{
         }
         details={
           <div className="space-y-4">
-            <div className="flex justify-between items-center py-2 border-b border-slate-50">
-              <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">
-                Order ID
-              </span>
-              <span className="text-sm font-bold text-slate-900">{order?.orderCode}</span>
+            {/* Order Basic Info */}
+            <div className="bg-slate-50/60 rounded-2xl p-4 border border-slate-100 space-y-3">
+              <div className="flex justify-between items-center text-[11px] font-bold uppercase tracking-wider pb-2 border-b border-slate-100">
+                <span className="text-slate-400">Order Information</span>
+                <span className="text-mint-600 font-mono">
+                  #{order?.orderCode || order?._id?.slice(-8)}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-0.5">
+                  <p className="text-[10px] text-slate-400 uppercase tracking-widest">Customer</p>
+                  <p className="text-xs font-bold text-slate-900">{order?.customerName || 'N/A'}</p>
+                </div>
+                <div className="space-y-0.5 text-right">
+                  <p className="text-[10px] text-slate-400 uppercase tracking-widest">Phone</p>
+                  <p className="text-xs font-bold text-slate-900">{order?.customerPhone || '—'}</p>
+                </div>
+                <div className="space-y-0.5 col-span-2">
+                  <p className="text-[10px] text-slate-400 uppercase tracking-widest">Category</p>
+                  <p className="text-xs font-semibold text-slate-700 italic">
+                    {isPrescription ? '🔬 Prescription (Manufacturing) Order' : '📦 Regular Order'}
+                  </p>
+                </div>
+              </div>
             </div>
-            <div className="flex justify-between items-center py-2 border-b border-slate-50">
-              <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">
-                Customer
-              </span>
-              <span className="text-sm font-bold text-slate-900">
-                {order?.customerName || 'N/A'}
-              </span>
-            </div>
-            <div className="flex justify-between items-center py-2">
-              <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">
-                Category
-              </span>
-              <span className="text-sm font-italic text-slate-600 italic">
-                {isPrescription ? 'Prescription Order' : 'Regular Order'}
-              </span>
-            </div>
+
+            {/* Prescription Parameters */}
+            {isPrescription && order?.products?.[0]?.lens?.parameters ? (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 px-1">
+                  <div className="w-6 h-6 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-500 border border-indigo-100">
+                    <IoEyeOutline size={14} />
+                  </div>
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                    Prescription Parameters (RX)
+                  </span>
+                </div>
+                <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
+                  <table className="w-full text-[11px] border-collapse">
+                    <thead>
+                      <tr className="bg-slate-50 border-b border-slate-100 text-slate-400">
+                        <th className="py-2.5 px-3 text-left font-bold w-12">EYE</th>
+                        <th className="py-2.5 px-2 font-bold text-center">SPH</th>
+                        <th className="py-2.5 px-2 font-bold text-center">CYL</th>
+                        <th className="py-2.5 px-2 font-bold text-center">AXIS</th>
+                        <th className="py-2.5 px-2 font-bold text-center">ADD</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-50">
+                      {(['right', 'left'] as const).map((side) => {
+                        const params = order.products[0].lens?.parameters[side]
+                        const label = side === 'right' ? 'OD' : 'OS'
+                        const colorClass =
+                          side === 'right'
+                            ? 'text-indigo-600 bg-indigo-50/30'
+                            : 'text-emerald-600 bg-emerald-50/30'
+                        const accentClass =
+                          side === 'right' ? 'text-indigo-500' : 'text-emerald-500'
+                        const fmt = (v?: number) =>
+                          v !== undefined ? (v > 0 ? '+' : '') + v.toFixed(2) : '0.00'
+                        return (
+                          <tr key={side}>
+                            <td className={`py-3 px-3 font-bold ${colorClass}`}>{label}</td>
+                            <td className="py-3 px-2 text-center font-semibold text-slate-700">
+                              {fmt(params?.SPH)}
+                            </td>
+                            <td className="py-3 px-2 text-center font-semibold text-slate-700">
+                              {fmt(params?.CYL)}
+                            </td>
+                            <td className={`py-3 px-2 text-center font-semibold ${accentClass}`}>
+                              {params?.AXIS || 0}°
+                            </td>
+                            <td className="py-3 px-2 text-center font-semibold text-slate-500">
+                              {fmt(params?.ADD)}
+                            </td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                  {/* PD Row */}
+                  <div className="bg-blue-50/50 p-3 flex justify-between items-center border-t border-blue-100/50">
+                    <div className="flex items-center gap-2">
+                      <div className="w-5 h-5 rounded-md bg-blue-100 flex items-center justify-center text-blue-600">
+                        <IoBodyOutline size={12} />
+                      </div>
+                      <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">
+                        Pupillary Distance (PD)
+                      </span>
+                    </div>
+                    <span className="text-sm font-bold text-blue-700">
+                      {order.products[0].lens.parameters.PD || 64}mm
+                    </span>
+                  </div>
+                </div>
+
+                {/* Prescription image if available */}
+                {order.products[0].prescriptionImageUrl && (
+                  <div className="rounded-2xl overflow-hidden border border-indigo-100 bg-indigo-50/30">
+                    <p className="text-[9px] font-bold text-indigo-500 uppercase tracking-widest px-3 pt-2 pb-1">
+                      Prescription Image
+                    </p>
+                    <img
+                      src={order.products[0].prescriptionImageUrl}
+                      alt="Prescription"
+                      className="w-full max-h-40 object-contain"
+                    />
+                  </div>
+                )}
+              </div>
+            ) : isPrescription ? (
+              /* Prescription order but parameters not loaded yet */
+              <div className="py-5 text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
+                No prescription parameters on record
+              </div>
+            ) : null}
           </div>
         }
         confirmText={confirmState.action === 'approve' ? 'Confirm Approval' : 'Proceed Rejection'}

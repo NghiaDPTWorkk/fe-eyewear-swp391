@@ -1,49 +1,135 @@
 import { VoucherAddition } from '@/components/layout/staff/managerstaff/voucheraddition'
-import type { Voucher, Customer, VoucherStatus } from '../../components/layout/staff/managerstaff/voucheraddition/VoucherAddition'
+import type {
+  Voucher,
+  Customer,
+  VoucherStatus
+} from '../../components/layout/staff/managerstaff/voucheraddition/VoucherAddition'
 
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 
 // ─── Mock data ───────────────────────────────────────────────────
 const MOCK_CUSTOMERS: Customer[] = [
-  { id: 'cus-001', name: 'Nguyễn Thị Lan',  email: 'lan.nguyen@email.com',  avatarInitials: 'NL', totalSpending: 12500000, orderCount: 8 },
-  { id: 'cus-002', name: 'Trần Văn Hùng',   email: 'hung.tran@email.com',   avatarInitials: 'TH', totalSpending: 2400000,  orderCount: 2 },
-  { id: 'cus-003', name: 'Lê Minh Phúc',    email: 'phuc.le@email.com',     avatarInitials: 'LP', totalSpending: 850000,   orderCount: 1 },
-  { id: 'cus-004', name: 'Phạm Thu Hương',  email: 'huong.pham@email.com',  avatarInitials: 'PH', totalSpending: 15700000, orderCount: 12 },
-  { id: 'cus-005', name: 'Võ Thị Kim Chi',  email: 'chi.vo@email.com',      avatarInitials: 'VC', totalSpending: 4200000,  orderCount: 4 },
-  { id: 'cus-006', name: 'Đặng Quốc Tuấn', email: 'tuan.dang@email.com',   avatarInitials: 'DT', totalSpending: 9800000,  orderCount: 6 },
+  {
+    id: 'cus-001',
+    name: 'Nguyễn Thị Lan',
+    email: 'lan.nguyen@email.com',
+    avatarInitials: 'NL',
+    totalSpending: 12500000,
+    orderCount: 8
+  },
+  {
+    id: 'cus-002',
+    name: 'Trần Văn Hùng',
+    email: 'hung.tran@email.com',
+    avatarInitials: 'TH',
+    totalSpending: 2400000,
+    orderCount: 2
+  },
+  {
+    id: 'cus-003',
+    name: 'Lê Minh Phúc',
+    email: 'phuc.le@email.com',
+    avatarInitials: 'LP',
+    totalSpending: 850000,
+    orderCount: 1
+  },
+  {
+    id: 'cus-004',
+    name: 'Phạm Thu Hương',
+    email: 'huong.pham@email.com',
+    avatarInitials: 'PH',
+    totalSpending: 15700000,
+    orderCount: 12
+  },
+  {
+    id: 'cus-005',
+    name: 'Võ Thị Kim Chi',
+    email: 'chi.vo@email.com',
+    avatarInitials: 'VC',
+    totalSpending: 4200000,
+    orderCount: 4
+  },
+  {
+    id: 'cus-006',
+    name: 'Đặng Quốc Tuấn',
+    email: 'tuan.dang@email.com',
+    avatarInitials: 'DT',
+    totalSpending: 9800000,
+    orderCount: 6
+  }
 ]
-
 
 const INITIAL_VOUCHERS: Voucher[] = [
   {
-    _id: 'v-001', name: 'Chương trình Hè 2026', code: 'SUMMER25', description: 'Summer sale campaign',
-    typeDiscount: 'PERCENTAGE', value: 10, applyScope: 'ALL', selectionMode: 'RULE',
-    minSpendingRule: 0, minOrderRule: 0,
-    minOrderValue: 1000000, maxDiscountValue: 500000,
-    usageLimit: 100, usageCount: 42, status: 'ACTIVE',
-    startedDate: '2026-03-01', endedDate: '2026-04-30', assignedTo: [],
-    deletedAt: null, createdAt: '2026-01-01', updatedAt: '2026-01-01'
+    _id: 'v-001',
+    name: 'Chương trình Hè 2026',
+    code: 'SUMMER25',
+    description: 'Summer sale campaign',
+    typeDiscount: 'PERCENTAGE',
+    value: 10,
+    applyScope: 'ALL',
+    selectionMode: 'RULE',
+    minSpendingRule: 0,
+    minOrderRule: 0,
+    minOrderValue: 1000000,
+    maxDiscountValue: 500000,
+    usageLimit: 100,
+    usageCount: 42,
+    status: 'ACTIVE',
+    startedDate: '2026-03-01',
+    endedDate: '2026-04-30',
+    assignedTo: [],
+    deletedAt: null,
+    createdAt: '2026-01-01',
+    updatedAt: '2026-01-01'
   },
   {
-    _id: 'v-002', name: 'Chào mừng người dùng mới', code: 'NEWUSER100K', description: 'Welcome voucher',
-    typeDiscount: 'FIXED', value: 100000, applyScope: 'SPECIFIC', selectionMode: 'MANUAL',
-    minSpendingRule: 0, minOrderRule: 0,
-    minOrderValue: 300000, maxDiscountValue: 100000,
-    usageLimit: 200, usageCount: 178, status: 'ACTIVE',
-    startedDate: '2026-01-01', endedDate: '2026-12-31',
+    _id: 'v-002',
+    name: 'Chào mừng người dùng mới',
+    code: 'NEWUSER100K',
+    description: 'Welcome voucher',
+    typeDiscount: 'FIXED',
+    value: 100000,
+    applyScope: 'SPECIFIC',
+    selectionMode: 'MANUAL',
+    minSpendingRule: 0,
+    minOrderRule: 0,
+    minOrderValue: 300000,
+    maxDiscountValue: 100000,
+    usageLimit: 200,
+    usageCount: 178,
+    status: 'ACTIVE',
+    startedDate: '2026-01-01',
+    endedDate: '2026-12-31',
     assignedTo: ['cus-002', 'cus-004', 'cus-005'],
-    deletedAt: null, createdAt: '2026-01-01', updatedAt: '2026-01-01'
+    deletedAt: null,
+    createdAt: '2026-01-01',
+    updatedAt: '2026-01-01'
   },
   {
-    _id: 'v-003', name: 'Flash Sale 50%', code: 'FLASH50', description: 'Quick flash sale',
-    typeDiscount: 'PERCENTAGE', value: 50, applyScope: 'ALL', selectionMode: 'RULE',
-    minSpendingRule: 0, minOrderRule: 0,
-    minOrderValue: 1000000, maxDiscountValue: 300000,
-    usageLimit: 30, usageCount: 30, status: 'INACTIVE',
-    startedDate: '2026-02-14', endedDate: '2026-02-14', assignedTo: [],
-    deletedAt: null, createdAt: '2026-01-01', updatedAt: '2026-01-01'
-  },
+    _id: 'v-003',
+    name: 'Flash Sale 50%',
+    code: 'FLASH50',
+    description: 'Quick flash sale',
+    typeDiscount: 'PERCENTAGE',
+    value: 50,
+    applyScope: 'ALL',
+    selectionMode: 'RULE',
+    minSpendingRule: 0,
+    minOrderRule: 0,
+    minOrderValue: 1000000,
+    maxDiscountValue: 300000,
+    usageLimit: 30,
+    usageCount: 30,
+    status: 'INACTIVE',
+    startedDate: '2026-02-14',
+    endedDate: '2026-02-14',
+    assignedTo: [],
+    deletedAt: null,
+    createdAt: '2026-01-01',
+    updatedAt: '2026-01-01'
+  }
 ]
 
 import {
@@ -58,7 +144,6 @@ import {
   IoFilterOutline,
   IoPricetagOutline
 } from 'react-icons/io5'
-
 
 const STATUS_CFG: Record<VoucherStatus, { label: string; color: string; bg: string }> = {
   ACTIVE: { label: 'Active', color: 'text-emerald-700', bg: 'bg-emerald-50 border-emerald-200' },
@@ -76,19 +161,24 @@ export default function ManagerVouchersPage() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
 
-  const [showForm, setShowForm]   = useState(false)
+  const [showForm, setShowForm] = useState(false)
   const [editingVoucher, setEditingVoucher] = useState<Voucher | null>(null)
-  const [deleteId, setDeleteId]   = useState<string | null>(null)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
   const [assignVoucher, setAssignVoucher] = useState<Voucher | null>(null)
   const [assignSearch, setAssignSearch] = useState('')
 
   // ── Derived ──────────────────────────────────────────────────────
-  const filtered = vouchers.filter((v) => {
-    const q = search.toLowerCase()
-    return (
-      (!q || v.code.toLowerCase().includes(q) || v.description.toLowerCase().includes(q) || v.name.toLowerCase().includes(q))
-    )
-  }).filter((v) => statusFilter === 'all' || v.status === statusFilter)
+  const filtered = vouchers
+    .filter((v) => {
+      const q = search.toLowerCase()
+      return (
+        !q ||
+        v.code.toLowerCase().includes(q) ||
+        v.description.toLowerCase().includes(q) ||
+        v.name.toLowerCase().includes(q)
+      )
+    })
+    .filter((v) => statusFilter === 'all' || v.status === statusFilter)
 
   const counts = {
     all: vouchers.length,
@@ -110,8 +200,13 @@ export default function ManagerVouchersPage() {
 
   const handleSaveVoucher = (formData: Partial<Voucher>) => {
     if (editingVoucher) {
-      setVouchers((prev) => prev.map((v) => v._id === editingVoucher._id
-        ? { ...v, ...formData, updatedAt: new Date().toISOString() } as Voucher : v))
+      setVouchers((prev) =>
+        prev.map((v) =>
+          v._id === editingVoucher._id
+            ? ({ ...v, ...formData, updatedAt: new Date().toISOString() } as Voucher)
+            : v
+        )
+      )
     } else {
       const newV: Voucher = {
         ...formData,
@@ -132,16 +227,20 @@ export default function ManagerVouchersPage() {
     setDeleteId(null)
   }
 
-
-
   // Standalone assign modal
   const toggleAssign = (customerId: string) => {
     if (!assignVoucher) return
-    const update = (prev: Voucher[]) => prev.map((v) => {
-      if (v._id !== assignVoucher._id) return v
-      const already = v.assignedTo.includes(customerId)
-      return { ...v, assignedTo: already ? v.assignedTo.filter((id) => id !== customerId) : [...v.assignedTo, customerId] }
-    })
+    const update = (prev: Voucher[]) =>
+      prev.map((v) => {
+        if (v._id !== assignVoucher._id) return v
+        const already = v.assignedTo.includes(customerId)
+        return {
+          ...v,
+          assignedTo: already
+            ? v.assignedTo.filter((id) => id !== customerId)
+            : [...v.assignedTo, customerId]
+        }
+      })
     setVouchers(update)
     setAssignVoucher((prev) => {
       if (!prev) return null
@@ -166,7 +265,6 @@ export default function ManagerVouchersPage() {
   const fmt = (n: number) => n.toLocaleString('vi-VN')
   const condLabel = (v: Voucher) =>
     `Order ≥ ${fmt(v.minOrderValue)}₫ → ${v.typeDiscount === 'PERCENTAGE' ? `${v.value}%` : `${fmt(v.value)}₫`}${v.maxDiscountValue > 0 ? ` (max ${fmt(v.maxDiscountValue)}₫)` : ''}`
-
 
   // ── Render ───────────────────────────────────────────────────────
   return (
@@ -286,23 +384,40 @@ export default function ManagerVouchersPage() {
           filtered.map((v, idx) => {
             const st = STATUS_CFG[v.status]
             return (
-              <div key={v._id} className={`grid grid-cols-12 gap-4 px-6 py-4 items-start hover:bg-mint-50/30 transition-colors ${idx !== filtered.length - 1 ? 'border-b border-neutral-50' : ''}`}>
+              <div
+                key={v._id}
+                className={`grid grid-cols-12 gap-4 px-6 py-4 items-start hover:bg-mint-50/30 transition-colors ${idx !== filtered.length - 1 ? 'border-b border-neutral-50' : ''}`}
+              >
                 {/* Code */}
                 <div className="col-span-2">
                   <div className="flex items-center gap-1.5">
-                    {v.typeDiscount === 'PERCENTAGE'
-                      ? <span className="w-3.5 h-3.5 flex items-center justify-center text-mint-500 font-bold text-xs">%</span>
-                      : <IoPricetagOutline className="text-violet-500" size={13} />}
+                    {v.typeDiscount === 'PERCENTAGE' ? (
+                      <span className="w-3.5 h-3.5 flex items-center justify-center text-mint-500 font-bold text-xs">
+                        %
+                      </span>
+                    ) : (
+                      <IoPricetagOutline className="text-violet-500" size={13} />
+                    )}
                     <span className="font-mono text-sm font-bold text-neutral-800">{v.code}</span>
                   </div>
-                  <span className={`mt-1 inline-block text-[10px] font-bold px-1.5 py-0.5 rounded border ${v.applyScope === 'ALL' ? 'bg-neutral-100 text-neutral-500 border-neutral-200' : 'bg-blue-50 text-blue-600 border-blue-200'}`}>
-                    {v.applyScope === 'ALL' ? 'ALL USERS' : (v.selectionMode === 'RULE' ? 'AUTO RULES' : 'MANUAL')}
+                  <span
+                    className={`mt-1 inline-block text-[10px] font-bold px-1.5 py-0.5 rounded border ${v.applyScope === 'ALL' ? 'bg-neutral-100 text-neutral-500 border-neutral-200' : 'bg-blue-50 text-blue-600 border-blue-200'}`}
+                  >
+                    {v.applyScope === 'ALL'
+                      ? 'ALL USERS'
+                      : v.selectionMode === 'RULE'
+                        ? 'AUTO RULES'
+                        : 'MANUAL'}
                   </span>
                 </div>
                 {/* Description */}
                 <div className="col-span-3 pt-0.5">
-                  <p className="text-sm font-bold text-neutral-800 truncate" title={v.name}>{v.name}</p>
-                  <p className="text-xs text-neutral-500 truncate mt-0.5" title={v.description}>{v.description}</p>
+                  <p className="text-sm font-bold text-neutral-800 truncate" title={v.name}>
+                    {v.name}
+                  </p>
+                  <p className="text-xs text-neutral-500 truncate mt-0.5" title={v.description}>
+                    {v.description}
+                  </p>
                 </div>
                 {/* Conditions */}
                 <div className="col-span-3 space-y-1">
@@ -312,10 +427,14 @@ export default function ManagerVouchersPage() {
                 </div>
                 {/* Usage */}
                 <div className="col-span-1 flex flex-col items-center gap-1 pt-0.5">
-                  <span className="text-xs font-semibold text-neutral-700">{v.usageCount}/{v.usageLimit}</span>
+                  <span className="text-xs font-semibold text-neutral-700">
+                    {v.usageCount}/{v.usageLimit}
+                  </span>
                   <div className="w-full h-1.5 bg-neutral-100 rounded-full overflow-hidden">
-                    <div className={`h-full rounded-full ${v.usageCount >= v.usageLimit ? 'bg-red-400' : 'bg-mint-400'}`}
-                      style={{ width: `${Math.min((v.usageCount / v.usageLimit) * 100, 100)}%` }} />
+                    <div
+                      className={`h-full rounded-full ${v.usageCount >= v.usageLimit ? 'bg-red-400' : 'bg-mint-400'}`}
+                      style={{ width: `${Math.min((v.usageCount / v.usageLimit) * 100, 100)}%` }}
+                    />
                   </div>
                 </div>
                 {/* Assigned */}
@@ -341,8 +460,20 @@ export default function ManagerVouchersPage() {
                 </div>
                 {/* Actions */}
                 <div className="col-span-1 flex justify-center gap-1 pt-0.5">
-                  <button onClick={() => openEdit(v)} className="p-1.5 rounded-lg text-neutral-400 hover:text-mint-600 hover:bg-mint-50 transition" title="Edit"><IoCreateOutline size={16} /></button>
-                  <button onClick={() => setDeleteId(v._id)} className="p-1.5 rounded-lg text-neutral-400 hover:text-red-500 hover:bg-red-50 transition" title="Delete"><IoTrashOutline size={16} /></button>
+                  <button
+                    onClick={() => openEdit(v)}
+                    className="p-1.5 rounded-lg text-neutral-400 hover:text-mint-600 hover:bg-mint-50 transition"
+                    title="Edit"
+                  >
+                    <IoCreateOutline size={16} />
+                  </button>
+                  <button
+                    onClick={() => setDeleteId(v._id)}
+                    className="p-1.5 rounded-lg text-neutral-400 hover:text-red-500 hover:bg-red-50 transition"
+                    title="Delete"
+                  >
+                    <IoTrashOutline size={16} />
+                  </button>
                 </div>
               </div>
             )
@@ -473,4 +604,3 @@ function ModalOverlay({ children, onClose }: { children: React.ReactNode; onClos
     modalRoot
   )
 }
-

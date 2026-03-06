@@ -232,7 +232,7 @@ export default function PrescriptionVerification({
                 : order.rejectedAt || order.updatedAt
             )}
             rejectionNote={
-              order.rejectedNote || order.rejectionNote || (order.invoice as any)?.note
+              isRejected ? order.invoice?.rejectedNote || order.rejectedNote || '' : ''
             }
           />
         </div>

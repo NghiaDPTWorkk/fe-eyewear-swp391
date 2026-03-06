@@ -21,6 +21,7 @@ export interface Invoice {
   approvedOrdersCount?: number
   totalOrdersCount?: number
   hasManufacturing?: boolean
+  rejectedNote?: string
 }
 
 export interface OrderDetail {

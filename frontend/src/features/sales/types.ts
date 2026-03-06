@@ -64,6 +64,7 @@ export interface OrderDetail {
   approvedAt?: string
   updatedAt?: string
   note?: string
+  staffNote?: string
   customerEmail?: string
 }
 

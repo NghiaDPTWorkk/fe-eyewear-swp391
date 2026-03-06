@@ -212,7 +212,11 @@ export default function PrescriptionVerification({
           <TranscriptionForm
             parameters={localParameters || parameters}
             onParametersChange={setLocalParameters}
-            note={localNote || (parameters as any)?.note || ''}
+            note={
+              isApproved
+                ? order.staffNote || (parameters as any)?.note || ''
+                : localNote || (parameters as any)?.note || ''
+            }
             onNoteChange={setLocalNote}
             isReadOnly={isReadOnly}
             isApproved={isApproved}

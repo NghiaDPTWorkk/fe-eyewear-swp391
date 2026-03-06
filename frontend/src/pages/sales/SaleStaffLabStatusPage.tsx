@@ -38,29 +38,23 @@ export default function SaleStaffLabStatusPage() {
   }
 
   return (
-    <div className="space-y-8 relative">
-      {/* Decorative Background Glows */}
-      <div className="absolute -top-24 -right-24 w-96 h-96 bg-mint-400/10 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute top-1/2 -left-24 w-72 h-72 bg-blue-400/10 blur-[100px] rounded-full pointer-events-none" />
-
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
-        <PageHeader
-          title="Lab Status Tracking"
-          subtitle="Monitor production stages, urgent requests, and lens specifications."
-          breadcrumbs={[
-            { label: 'Dashboard', path: '/salestaff/dashboard' },
-            { label: 'Lab Status' }
-          ]}
-          noMargin={true}
-        />
-      </div>
+    <div className="space-y-8">
+      <PageHeader
+        title="Lab Status Tracking"
+        subtitle="Monitor production stages, urgent requests, and lens specifications."
+        breadcrumbs={[
+          { label: 'Dashboard', path: '/salestaff/dashboard' },
+          { label: 'Lab Status' }
+        ]}
+        noMargin={true}
+      />
 
       <div className="grid grid-cols-12 gap-6">
         <LabStatusMetrics orders={labOrders} />
         <LensSpecificationsCard selectedOrder={selectedOrder} />
       </div>
 
-      <div className="bg-white border border-neutral-50/50 shadow-sm rounded-2xl overflow-hidden">
+      <div className="bg-white border border-neutral-100 shadow-sm rounded-2xl overflow-hidden">
         <ActiveLabOrdersTable
           orders={labOrders}
           selectedOrderId={selectedOrder?.id || null}

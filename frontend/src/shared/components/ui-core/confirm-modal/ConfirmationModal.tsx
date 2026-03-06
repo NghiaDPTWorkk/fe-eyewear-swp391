@@ -114,8 +114,21 @@ export default function ConfirmationModal({
         <div className="flex-1 overflow-y-auto px-6 py-2 space-y-4 custom-scrollbar">
           <div className="bg-slate-50/50 p-5 rounded-2xl border border-slate-100/50 relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-24 h-24 bg-white/40 blur-3xl rounded-full -mr-12 -mt-12 group-hover:bg-white/60 transition-colors" />
-            <div className="text-[13.5px] font-medium text-slate-600 leading-relaxed relative z-10">
-              {message}
+            <div className="text-[13.5px] text-slate-700 leading-7 relative z-10 font-normal">
+              {typeof message === 'string'
+                ? message.split(/(IRREVERSIBLE)/g).map((part, i) =>
+                    part === 'IRREVERSIBLE' ? (
+                      <span
+                        key={i}
+                        className="font-bold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded-md border border-rose-100 mx-0.5"
+                      >
+                        IRREVERSIBLE
+                      </span>
+                    ) : (
+                      <span key={i}>{part}</span>
+                    )
+                  )
+                : message}
             </div>
           </div>
 

@@ -16,6 +16,24 @@ import {
   VoucherStatus as Status
 } from '@/shared/utils/enums/voucher.enum'
 
+/**
+ * Human-readable labels for each ApplyScope enum value.
+ * Add a new key here whenever the backend adds a new scope — no changes elsewhere needed.
+ */
+const APPLY_SCOPE_LABELS: Record<string, string> = {
+  [ApplyScope.ALL]:      'Public — All Users',
+  [ApplyScope.SPECIFIC]: 'Targeted — Specific Users'
+}
+
+/**
+ * Status display config — driven from the Status enum so new values auto-appear.
+ */
+const STATUS_CFG: Record<string, { label: string; active: string; idle: string }> = {
+  [Status.DRAFT]:   { label: 'Draft',    active: 'bg-amber-50 border-amber-400 text-amber-700',  idle: 'border-slate-200 text-slate-400' },
+  [Status.ACTIVE]:  { label: 'Active',   active: 'bg-emerald-50 border-emerald-400 text-emerald-700', idle: 'border-slate-200 text-slate-400' },
+  [Status.DISABLE]: { label: 'Disabled', active: 'bg-slate-100 border-slate-400 text-slate-600', idle: 'border-slate-200 text-slate-400' }
+}
+
 // ─── Form state (mirrors Voucher but only editable fields) ────────
 interface FormState {
   _id?: string
@@ -48,11 +66,27 @@ const EMPTY_FORM: FormState = {
   status: Status.DRAFT
 }
 
+/**
+ * Converts an ISO datetime string ("2026-01-01T00:00:00.000Z")
+ * to the "YYYY-MM-DD" format that <input type="date"> requires.
+ * Returns '' for falsy inputs.
+ */
+function isoToDateInput(iso: string | undefined | null): string {
+  if (!iso) return ''
+  try {
+    return new Date(iso).toISOString().slice(0, 10)
+  } catch {
+    return ''
+  }
+}
+
 interface VoucherAdditionProps {
   isOpen: boolean
   onClose: () => void
   onSave: (voucher: Partial<Voucher>) => void
   editingVoucher: Voucher | null
+  /** Pass true while the parent mutation is in-flight to disable the Save button */
+  isSaving?: boolean
 }
 
 // ─── Component ────────────────────────────────────────────────────
@@ -60,26 +94,28 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
   isOpen,
   onClose,
   onSave,
-  editingVoucher
+  editingVoucher,
+  isSaving = false
 }) => {
   const [form, setForm] = useState<FormState>(EMPTY_FORM)
 
   useEffect(() => {
     if (editingVoucher) {
       setForm({
-        _id: editingVoucher._id,
-        name: editingVoucher.name,
-        description: editingVoucher.description,
-        code: editingVoucher.code,
-        typeDiscount: editingVoucher.typeDiscount,
-        value: editingVoucher.value,
-        usageLimit: editingVoucher.usageLimit,
-        startedDate: editingVoucher.startedDate || '',
-        endedDate: editingVoucher.endedDate || '',
-        minOrderValue: editingVoucher.minOrderValue,
-        maxDiscountValue: editingVoucher.maxDiscountValue,
-        applyScope: editingVoucher.applyScope,
-        status: editingVoucher.status
+        _id:              editingVoucher._id,
+        name:             editingVoucher.name             ?? '',
+        description:      editingVoucher.description      ?? '',
+        code:             editingVoucher.code             ?? '',
+        typeDiscount:     editingVoucher.typeDiscount     ?? DiscountType.PERCENTAGE,
+        value:            editingVoucher.value            ?? 0,
+        usageLimit:       editingVoucher.usageLimit       ?? 100,
+        // Convert ISO → YYYY-MM-DD so <input type="date"> renders correctly
+        startedDate:      isoToDateInput(editingVoucher.startedDate),
+        endedDate:        isoToDateInput(editingVoucher.endedDate),
+        minOrderValue:    editingVoucher.minOrderValue    ?? 0,
+        maxDiscountValue: editingVoucher.maxDiscountValue ?? 0,
+        applyScope:       editingVoucher.applyScope       ?? ApplyScope.ALL,
+        status:           editingVoucher.status           ?? Status.DRAFT
       })
     } else {
       setForm(EMPTY_FORM)
@@ -227,8 +263,12 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
                   onChange={(e) => setForm({ ...form, applyScope: e.target.value as VoucherApplyScope })}
                   className={inputCls}
                 >
-                  <option value={ApplyScope.ALL}>Public — All Users</option>
-                  <option value={ApplyScope.SPECIFIC}>Targeted — Specific Users</option>
+                  {/* Dynamically driven from ApplyScope enum — add new values to the enum + APPLY_SCOPE_LABELS map only */}
+                  {Object.values(ApplyScope).map((scopeVal) => (
+                    <option key={scopeVal} value={scopeVal}>
+                      {APPLY_SCOPE_LABELS[scopeVal] ?? scopeVal}
+                    </option>
+                  ))}
                 </select>
               </FormRow>
               <FormRow label="Usage Limit">
@@ -280,16 +320,12 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
             )}
           </Section>
 
-          {/* Status override */}
+          {/* Status — driven from Status enum + STATUS_CFG map */}
           <Section title="Status">
             <div className="grid grid-cols-3 gap-2">
-              {([Status.DRAFT, Status.ACTIVE, Status.DISABLE] as const).map((s) => {
-                const cfg: Record<string, { label: string; active: string; idle: string }> = {
-                  [Status.DRAFT]: { label: 'Draft', active: 'bg-amber-50 border-amber-400 text-amber-700', idle: 'border-slate-200 text-slate-400' },
-                  [Status.ACTIVE]: { label: 'Active', active: 'bg-emerald-50 border-emerald-400 text-emerald-700', idle: 'border-slate-200 text-slate-400' },
-                  [Status.DISABLE]: { label: 'Disabled', active: 'bg-slate-100 border-slate-400 text-slate-600', idle: 'border-slate-200 text-slate-400' }
-                }
-                const c = cfg[s]
+              {Object.values(Status).map((s) => {
+                const c = STATUS_CFG[s]
+                if (!c) return null
                 const sel = form.status === s
                 return (
                   <button
@@ -311,18 +347,23 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-bold hover:bg-slate-50 transition"
+            disabled={isSaving}
+            className="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-bold hover:bg-slate-50 transition disabled:opacity-40"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={handleSave}
-            disabled={!form.code.trim() || !form.name.trim() || form.value <= 0}
+            disabled={!form.code?.trim() || !form.name?.trim() || (form.value ?? 0) <= 0 || isSaving}
             className="px-8 py-2.5 rounded-xl bg-gradient-to-r from-mint-500 to-mint-600 text-white text-sm font-black hover:from-mint-600 hover:to-mint-700 transition shadow-lg shadow-mint-200/50 disabled:opacity-40 disabled:shadow-none flex items-center gap-2"
           >
-            <IoCheckmarkOutline size={16} />
-            {editingVoucher ? 'Save Changes' : 'Create Voucher'}
+            {isSaving ? (
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : (
+              <IoCheckmarkOutline size={16} />
+            )}
+            {isSaving ? 'Saving…' : editingVoucher ? 'Save Changes' : 'Create Voucher'}
           </button>
         </div>
       </div>

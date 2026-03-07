@@ -16,6 +16,8 @@ interface VoucherTrProps {
   columns?: VoucherColumn[]
   /** Slot for the actions cell content */
   actions?: ReactNode
+  /** Called when anywhere on the row is clicked */
+  onClick?: () => void
   /** Extra className on the row wrapper */
   className?: string
 }
@@ -24,11 +26,13 @@ export function VoucherTr({
   voucher,
   columns = DEFAULT_VOUCHER_COLUMNS,
   actions,
+  onClick,
   className = ''
 }: VoucherTrProps) {
   return (
     <div
-      className={`grid grid-cols-12 gap-3 px-6 py-4 items-center group hover:bg-slate-50/60 transition-colors ${className}`}
+      onClick={onClick}
+      className={`grid grid-cols-12 gap-3 px-6 py-4 items-center group hover:bg-slate-50/60 transition-colors ${onClick ? 'cursor-pointer' : ''} ${className}`}
     >
       {columns.map((col) => {
         if (col.key === 'actions') {

@@ -16,6 +16,8 @@ interface VoucherTableProps {
   columns?: VoucherColumn[]
   /** Render-prop: given a voucher, returns the actions ReactNode for that row */
   renderActions?: (voucher: Voucher) => ReactNode
+  /** Called when the user clicks anywhere on a data row */
+  onRowClick?: (voucher: Voucher) => void
   /** Extra className on the outer wrapper */
   className?: string
 }
@@ -25,6 +27,7 @@ export function VoucherTable({
   isLoading = false,
   columns = DEFAULT_VOUCHER_COLUMNS,
   renderActions,
+  onRowClick,
   className = ''
 }: VoucherTableProps) {
   return (
@@ -58,6 +61,7 @@ export function VoucherTable({
               columns={columns}
               actions={renderActions?.(v)}
               className={idx % 2 === 1 ? 'bg-slate-50/20' : ''}
+              onClick={onRowClick ? () => onRowClick(v) : undefined}
             />
           ))}
         </div>

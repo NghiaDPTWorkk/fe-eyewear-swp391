@@ -53,3 +53,33 @@ export interface AdminVoucherListResponse {
     }
   }
 }
+
+/** Writable fields sent to POST /admin/vouchers or PATCH /admin/vouchers/:id */
+export interface VoucherPayload {
+  name: string
+  description: string
+  code: string
+  typeDiscount: string
+  value: number
+  usageLimit: number
+  startedDate: string
+  endedDate: string
+  minOrderValue: number
+  maxDiscountValue: number
+  applyScope: string
+  status: string
+}
+
+/** Generic mutation response */
+export interface VoucherMutateResponse {
+  success: boolean
+  message: string
+  data: Voucher
+}
+
+/** Response shape: GET /admin/vouchers/:id */
+export interface VoucherDetailResponse {
+  success: boolean
+  message: string
+  data: Voucher
+}

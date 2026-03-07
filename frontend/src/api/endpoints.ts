@@ -271,6 +271,7 @@ export const ENDPOINTS = {
       if (status && status !== 'all') params.append('status', status)
       return `/admin/vouchers?${params.toString()}`
     },
+    VOUCHER_DETAIL: (id: string) => `/admin/vouchers/${id}`,
     VOUCHER_CREATE: '/admin/vouchers',
     VOUCHER_UPDATE: (id: string) => `/admin/vouchers/${id}`,
     VOUCHER_DELETE: (id: string) => `/admin/vouchers/${id}`

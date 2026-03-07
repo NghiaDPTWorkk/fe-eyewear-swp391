@@ -12,7 +12,7 @@ import {
   IoInformationCircleOutline
 } from 'react-icons/io5'
 import type { Voucher, VoucherPayload } from '@/shared/types'
-import { VoucherDiscountType } from '@/shared/utils/enums/voucher.enum'
+import { VoucherApplyScope, VoucherDiscountType } from '@/shared/utils/enums/voucher.enum'
 import { VOUCHER_STATUS_CFG, fmtVND, fmtDate } from '@/components/layout/staff/managerstaff/vouchertable/VoucherTdata'
 import {
   useVoucherDetail,
@@ -20,6 +20,8 @@ import {
   useDeleteVoucher
 } from '@/features/manager/hooks/useManagerVouchers'
 import { VoucherAddition } from '@/components/layout/staff/managerstaff/voucheraddition/VoucherAddition'
+import VoucherTicket from '@/components/layout/staff/managerstaff/voucherticket/VoucherTicket'
+import VoucherTicketSpecification from '@/components/layout/staff/managerstaff/voucherticket/VoucherTicketSpecification'
 import { PATHS } from '@/routes/paths'
 import { createPortal } from 'react-dom'
 
@@ -167,34 +169,28 @@ export default function ManagerVoucherDetail() {
         </div>
       </div>
 
+      <div className="flex justify-center py-6 perspective-1000">
+        <div className="animate-voucher-pop">
+           {v.applyScope === VoucherApplyScope.ALL ? (
+             <VoucherTicket voucher={v} />
+           ) : (
+             <VoucherTicketSpecification voucher={v} />
+           )}
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {/* ── Main Details Card ─────────────────────────────────── */}
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden animate-in slide-in-from-bottom-5 duration-500">
             <div className="p-8 space-y-8">
-
-              {/* Value Highlight */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 bg-slate-50 rounded-3xl border border-slate-100">
-                <div className="space-y-4">
-                   <div className="space-y-1">
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Promotion Logic</p>
-                      <h3 className="text-lg font-bold text-slate-900 leading-tight">
-                        {isPerc ? `Get ${v.value}% off your purchase` : `Save ${fmtVND(v.value)}đ on your order`}
-                      </h3>
-                   </div>
-                   <p className="text-sm text-slate-500 leading-relaxed max-w-sm">
-                      {v.description || "This voucher applies a discount based on the specific campaign rules defined below."}
-                   </p>
+              {/* Description */}
+              {v.description && (
+                <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 italic text-slate-600 text-sm leading-relaxed">
+                  {v.description}
                 </div>
-                <div className={`px-8 py-4 rounded-2xl text-center border-2 ${isPerc ? 'bg-mint-50 border-mint-100 text-mint-600' : 'bg-blue-50 border-blue-100 text-blue-600'}`}>
-                   <p className="text-4xl font-black tracking-tight leading-none">
-                      {isPerc ? `${v.value}%` : fmtVND(v.value)}
-                      {!isPerc && <span className="text-xl ml-1 font-bold">đ</span>}
-                   </p>
-                   <p className="text-[10px] font-black uppercase tracking-widest mt-1 opacity-60">Value</p>
-                </div>
-              </div>
+              )}
 
               {/* Specific Conditions */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

@@ -81,5 +81,7 @@ export interface VoucherMutateResponse {
 export interface VoucherDetailResponse {
   success: boolean
   message: string
-  data: Voucher
+  data: {
+    voucher: Voucher
+  }
 }

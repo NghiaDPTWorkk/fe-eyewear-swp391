@@ -33,3 +33,23 @@ export interface GetMyVouchersResponse {
     vouchers: Voucher[]
   }
 }
+
+/** Pagination metadata from admin voucher list */
+export interface VoucherPagination {
+  total: number
+  page: number
+  limit: number
+  totalPages: number
+}
+
+/** Response shape: GET /admin/vouchers */
+export interface AdminVoucherListResponse {
+  success: boolean
+  message: string
+  data: {
+    items: {
+      data: Voucher[]
+      pagination: VoucherPagination
+    }
+  }
+}

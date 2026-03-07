@@ -259,8 +259,20 @@ export const ENDPOINTS = {
     MESSAGES: (id: string, lastItem: string = '') =>
       `/admin/ai-conversations/${id}/messages?lastItem=${lastItem}`
   },
-  // Vouchers
+  // Vouchers (Customer)
   VOUCHERS: {
     MY_VOUCHERS: '/vouchers/my-vouchers'
+  },
+
+  // Manager
+  MANAGER: {
+    VOUCHERS: (page: number = 1, limit: number = 10, status?: string) => {
+      const params = new URLSearchParams({ page: String(page), limit: String(limit) })
+      if (status && status !== 'all') params.append('status', status)
+      return `/admin/vouchers?${params.toString()}`
+    },
+    VOUCHER_CREATE: '/admin/vouchers',
+    VOUCHER_UPDATE: (id: string) => `/admin/vouchers/${id}`,
+    VOUCHER_DELETE: (id: string) => `/admin/vouchers/${id}`
   }
 } as const

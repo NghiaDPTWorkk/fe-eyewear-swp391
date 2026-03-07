@@ -5,15 +5,12 @@ import {
   IoCreateOutline,
   IoTrashOutline,
   IoTicketOutline,
-  IoCalendarOutline,
-  IoPricetagOutline,
-  IoGlobeOutline,
   IoStatsChartOutline,
   IoInformationCircleOutline
 } from 'react-icons/io5'
 import type { Voucher, VoucherPayload } from '@/shared/types'
 import { VoucherApplyScope, VoucherDiscountType } from '@/shared/utils/enums/voucher.enum'
-import { VOUCHER_STATUS_CFG, fmtVND, fmtDate } from '@/components/layout/staff/managerstaff/vouchertable/VoucherTdata'
+import { VOUCHER_STATUS_CFG, fmtDate } from '@/components/layout/staff/managerstaff/vouchertable/VoucherTdata'
 import {
   useVoucherDetail,
   useUpdateVoucher,
@@ -22,6 +19,7 @@ import {
 import { VoucherAddition } from '@/components/layout/staff/managerstaff/voucheraddition/VoucherAddition'
 import VoucherTicket from '@/components/layout/staff/managerstaff/voucherticket/VoucherTicket'
 import VoucherTicketSpecification from '@/components/layout/staff/managerstaff/voucherticket/VoucherTicketSpecification'
+import MainDetailVoucher from '@/components/layout/staff/managerstaff/maindetailvoucher/MainDetailVoucher'
 import { PATHS } from '@/routes/paths'
 import { createPortal } from 'react-dom'
 
@@ -119,53 +117,31 @@ export default function ManagerVoucherDetail() {
   const isDeleting = deleteMutation.isPending
 
   return (
-    <div className="animate-fade-in-up space-y-6 max-w-5xl mx-auto pb-10">
+    <div className="animate-fade-in-up space-y-6 max-w-5xl mx-auto pb-24 relative">
 
-      {/* ── Header Area ─────────────────────────────────────────── */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div className="space-y-1">
+      {/* ── Header Area: Focus on Code ─────────────────────────── */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-100 pb-4">
+        <div className="space-y-4 w-full">
           <button
             onClick={handleBack}
-            className="group flex items-center gap-2 text-slate-400 hover:text-mint-600 font-bold transition-all mb-1"
+            className="group flex items-center gap-2 text-slate-400 hover:text-mint-600 font-bold transition-all"
           >
             <IoArrowBackOutline size={18} className="group-hover:-translate-x-1 transition-transform" />
             <span className="text-sm">Back to Vouchers</span>
           </button>
-          <div className="flex items-center gap-3">
-             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${isPerc ? 'bg-mint-50 text-mint-600' : 'bg-blue-50 text-blue-600'}`}>
-                <IoTicketOutline size={28} />
-             </div>
-             <div>
-                <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-                  {v.name}
-                </h1>
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="font-mono bg-slate-100 px-2 py-0.5 rounded text-slate-600 font-bold">{v.code}</span>
-                  <span className="text-slate-300">·</span>
-                  <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold ${st.pill}`}>
-                    <span className={`w-1 h-1 rounded-full ${st.dot}`} />
-                    {st.label}
-                  </span>
-                </div>
-             </div>
-          </div>
-        </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowDeleteModal(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white border border-slate-200 text-slate-500 text-sm font-bold hover:text-red-500 hover:border-red-100 hover:bg-red-50 transition-all active:scale-95"
-          >
-            <IoTrashOutline size={18} />
-            Delete
-          </button>
-          <button
-            onClick={() => setShowEditForm(true)}
-            className="flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-mint-500 text-white text-sm font-bold hover:bg-mint-600 transition-all active:scale-95 shadow-lg shadow-mint-100"
-          >
-            <IoCreateOutline size={18} />
-            Edit Voucher
-          </button>
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-4">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isPerc ? 'bg-mint-50 text-mint-600' : 'bg-blue-50 text-blue-600'} shadow-sm border border-slate-100/50`}>
+                <IoTicketOutline size={32} />
+              </div>
+              <div>
+                <h1 className="text-xl font-black text-slate-900 tracking-tighter font-mono bg-slate-50 px-3 py-1 rounded-xl border border-slate-100">
+                  Voucher Code: {v.code}
+                </h1>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -180,64 +156,9 @@ export default function ManagerVoucherDetail() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-        {/* ── Main Details Card ─────────────────────────────────── */}
+        {/* ── Main Details Card (Refactored) ────────────────────── */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden animate-in slide-in-from-bottom-5 duration-500">
-            <div className="p-8 space-y-8">
-              {/* Description */}
-              {v.description && (
-                <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 italic text-slate-600 text-sm leading-relaxed">
-                  {v.description}
-                </div>
-              )}
-
-              {/* Specific Conditions */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                 <DetailGroup
-                    icon={<IoPricetagOutline className="text-amber-500" />}
-                    title="Order Requirements"
-                    items={[
-                      { label: "Minimum Spend", value: `${fmtVND(v.minOrderValue)}đ` },
-                      { label: "Maximum Discount", value: v.maxDiscountValue > 0 ? `${fmtVND(v.maxDiscountValue)}đ` : "No limit" }
-                    ]}
-                 />
-                 <DetailGroup
-                    icon={<IoGlobeOutline className="text-blue-500" />}
-                    title="Accessibility"
-                    items={[
-                      { label: "Apply Scope", value: v.applyScope === 'ALL' ? 'Open to everyone' : 'Targeted users only' },
-                      { label: "Visibility", value: 'Publicly listed' }
-                    ]}
-                 />
-              </div>
-
-              {/* Validity Section */}
-              <div className="pt-6 border-t border-slate-100">
-                <div className="flex items-center gap-2 mb-4">
-                   <IoCalendarOutline className="text-indigo-500" size={18} />
-                   <h3 className="text-sm font-bold text-slate-800">Validity Period</h3>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                   <div className="flex items-center gap-4 p-4 rounded-2xl bg-white border border-slate-100">
-                      <div className="w-1.5 h-1.5 rounded-full bg-mint-500" />
-                      <div>
-                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active From</p>
-                         <p className="text-sm font-bold text-slate-700">{fmtDate(v.startedDate)}</p>
-                      </div>
-                   </div>
-                   <div className="flex items-center gap-4 p-4 rounded-2xl bg-white border border-slate-100">
-                      <div className="w-1.5 h-1.5 rounded-full bg-red-400" />
-                      <div>
-                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Expires On</p>
-                         <p className="text-sm font-bold text-slate-700">{fmtDate(v.endedDate)}</p>
-                      </div>
-                   </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
+          <MainDetailVoucher voucher={v} statusConfig={st} />
         </div>
 
         {/* ── Sidebar: Usage & Meta ─────────────────────────────── */}
@@ -293,7 +214,27 @@ export default function ManagerVoucherDetail() {
               </div>
            </div>
         </div>
+      </div>
 
+      {/* ── Footer Actions: Permanent Placement ────────────────── */}
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-xl px-4">
+        <div className="bg-white/90 backdrop-blur-xl border border-slate-200 shadow-2xl p-3 rounded-[1rem] flex items-center justify-between gap-3 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <button
+            onClick={() => setShowDeleteModal(true)}
+            className="flex items-center gap-2 px-6 py-3.5 rounded-[2rem] text-slate-400 font-bold hover:text-red-500 hover:bg-red-50 transition-all active:scale-95"
+          >
+            <IoTrashOutline size={20} />
+            <span className="text-sm">Delete Voucher</span>
+          </button>
+
+          <button
+            onClick={() => setShowEditForm(true)}
+            className="flex-1 flex items-center justify-center gap-2 px-8 py-3.5 rounded-[2rem] bg-mint-500 text-white text-sm font-black hover:bg-mint-600 transition-all active:scale-95 shadow-xl shadow-mint-200/50"
+          >
+            <IoCreateOutline size={20} />
+            Modify Voucher
+          </button>
+        </div>
       </div>
 
       {/* ── Modals ──────────────────────────────────────────────── */}
@@ -318,25 +259,6 @@ export default function ManagerVoucherDetail() {
 }
 
 // ─── Sub-components ───────────────────────────────────────────────
-
-function DetailGroup({ icon, title, items }: { icon: React.ReactNode; title: string; items: { label: string; value: string }[] }) {
-  return (
-    <div className="space-y-4">
-       <div className="flex items-center gap-2">
-          <span className="text-lg">{icon}</span>
-          <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">{title}</h4>
-       </div>
-       <div className="space-y-3">
-          {items.map((item, idx) => (
-            <div key={idx} className="flex flex-col">
-               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{item.label}</span>
-               <span className="text-sm font-bold text-slate-700">{item.value}</span>
-            </div>
-          ))}
-       </div>
-    </div>
-  )
-}
 
 function MetaRow({ label, value, isMono = false }: { label: string; value: string; isMono?: boolean }) {
   return (

@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import {
   IoTicketOutline,
-  IoPricetagOutline,
   IoInfiniteOutline,
   IoAlertCircleOutline,
   IoCalendarOutline,
   IoCloseOutline,
-  IoCheckmarkOutline
+  IoCheckmarkOutline,
+  IoCashOutline
 } from 'react-icons/io5'
 import type { Voucher, VoucherDiscountType, VoucherApplyScope, VoucherStatus } from '@/shared/types'
 import {
@@ -207,12 +207,12 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
                   >
                     <span className="text-base">%</span> Percent
                   </button>
-                  <button
+                   <button
                     type="button"
                     onClick={() => setForm({ ...form, typeDiscount: DiscountType.FIXED })}
                     className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg transition-all ${!isPerc ? 'bg-white text-mint-600 shadow-sm border border-mint-100' : 'text-slate-400 hover:text-slate-500'}`}
                   >
-                    <IoPricetagOutline size={11} /> Fixed ₫
+                    <IoCashOutline size={14} /> Fixed ₫
                   </button>
                 </div>
               </FormRow>

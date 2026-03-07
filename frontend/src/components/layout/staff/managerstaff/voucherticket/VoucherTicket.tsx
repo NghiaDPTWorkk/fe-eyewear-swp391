@@ -1,5 +1,5 @@
 import type { Voucher } from '@/shared/types'
-import { fmtVND, fmtDate } from '@/components/layout/staff/managerstaff/vouchertable/VoucherTdata'
+import { fmtVND, fmtDate } from '@/components/layout/staff/managerstaff/vouchertable/VoucherTdata.utils'
 import { VoucherDiscountType } from '@/shared/utils/enums/voucher.enum'
 
 interface Props {

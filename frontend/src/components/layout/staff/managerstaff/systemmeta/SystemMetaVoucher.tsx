@@ -1,4 +1,4 @@
-import { fmtDate } from '@/components/layout/staff/managerstaff/vouchertable/VoucherTdata'
+import { fmtDate } from '@/components/layout/staff/managerstaff/vouchertable/VoucherTdata.utils'
 
 interface SystemMetaVoucherProps {
   id: string

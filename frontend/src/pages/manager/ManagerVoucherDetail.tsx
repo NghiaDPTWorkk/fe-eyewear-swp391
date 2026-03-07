@@ -5,13 +5,12 @@ import {
   IoCreateOutline,
   IoTrashOutline,
   IoTicketOutline,
+  IoCashOutline,
   IoInformationCircleOutline
 } from 'react-icons/io5'
 import type { Voucher, VoucherPayload } from '@/shared/types'
 import { VoucherDiscountType } from '@/shared/utils/enums/voucher.enum'
-import {
-  VOUCHER_STATUS_CFG
-} from '@/components/layout/staff/managerstaff/vouchertable/VoucherTdata'
+
 import {
   useVoucherDetail,
   useUpdateVoucher,
@@ -21,6 +20,7 @@ import { VoucherAddition } from '@/components/layout/staff/managerstaff/vouchera
 import VoucherViewAllDetail from '@/components/layout/staff/managerstaff/voucherviewalldetail/VoucherViewAllDetail'
 import { PATHS } from '@/routes/paths'
 import { createPortal } from 'react-dom'
+import { VOUCHER_STATUS_CFG } from '@/components/layout/staff/managerstaff/vouchertable/VoucherTdata.utils'
 
 export default function ManagerVoucherDetail() {
   const { id } = useParams<{ id: string }>()
@@ -57,8 +57,8 @@ export default function ManagerVoucherDetail() {
       typeDiscount: formData.typeDiscount ?? 'PERCENTAGE',
       value: formData.value ?? 0,
       usageLimit: formData.usageLimit ?? 100,
-      startedDate: formData.startedDate ?? '',
-      endedDate: formData.endedDate ?? '',
+      startedDate: formData.startedDate ? new Date(formData.startedDate).toISOString() : '',
+      endedDate: formData.endedDate ? new Date(formData.endedDate).toISOString() : '',
       minOrderValue: formData.minOrderValue ?? 0,
       maxDiscountValue: formData.maxDiscountValue ?? 0,
       applyScope: formData.applyScope ?? 'ALL',
@@ -139,9 +139,9 @@ export default function ManagerVoucherDetail() {
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-4">
               <div
-                className={`w-10 h-10 rounded-xl flex items-center justify-center ${isPerc ? 'bg-mint-50 text-mint-600' : 'bg-blue-50 text-blue-600'} shadow-sm border border-slate-100/50`}
+                className={`w-10 h-10 rounded-xl flex items-center justify-center bg-mint-50 text-mint-600 shadow-sm border border-slate-100/50`}
               >
-                <IoTicketOutline size={32} />
+                {isPerc ? <IoTicketOutline size={22} /> : <IoCashOutline size={22} />}
               </div>
               <div>
                 <h1 className="text-xl font-black text-slate-900 tracking-tighter font-mono bg-slate-50 px-3 py-1 rounded-xl border border-slate-100">

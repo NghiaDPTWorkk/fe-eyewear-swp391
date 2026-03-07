@@ -3,47 +3,10 @@
  * Decouples cell rendering logic from the row, making individual cells
  * independently testable and swappable.
  */
-import { IoCalendarOutline } from 'react-icons/io5'
+import { IoCalendarOutline, IoCashOutline } from 'react-icons/io5'
 import type { Voucher } from '@/shared/types'
 import { VoucherDiscountType, VoucherStatus } from '@/shared/utils/enums/voucher.enum'
-
-// ─── Status config ────────────────────────────────────────────────
-export const VOUCHER_STATUS_CFG: Record<string, { label: string; dot: string; pill: string }> = {
-  [VoucherStatus.ACTIVE]: {
-    label: 'Active',
-    dot: 'bg-emerald-400 animate-pulse',
-    pill: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200'
-  },
-  [VoucherStatus.DRAFT]: {
-    label: 'Draft',
-    dot: 'bg-amber-400',
-    pill: 'bg-amber-50 text-amber-700 ring-1 ring-amber-200'
-  },
-  [VoucherStatus.DISABLE]: {
-    label: 'Disabled',
-    dot: 'bg-slate-300',
-    pill: 'bg-slate-100 text-slate-500 ring-1 ring-slate-200'
-  }
-}
-
-// ─── Helpers ──────────────────────────────────────────────────────
-export function fmtVND(n: number | undefined | null) {
-  if (n == null) return '—'
-  return n.toLocaleString('vi-VN')
-}
-
-export function fmtDate(d: string) {
-  if (!d) return '—'
-  try {
-    return new Date(d).toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: '2-digit'
-    })
-  } catch {
-    return d
-  }
-}
+import { VOUCHER_STATUS_CFG, fmtVND, fmtDate } from './VoucherTdata.utils'
 
 // ─── Cell types ───────────────────────────────────────────────────
 export type VoucherCellKey =
@@ -70,11 +33,9 @@ export function VoucherTdata({ voucher: v, field }: VoucherTdataProps) {
         <div className="flex items-center gap-3 min-w-0">
           {/* Discount type icon chip */}
           <div
-            className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm font-black shrink-0 ${
-              isPerc ? 'bg-mint-50 text-mint-600' : 'bg-violet-50 text-violet-600'
-            }`}
+            className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm font-black shrink-0 bg-mint-50 text-mint-600`}
           >
-            {isPerc ? '%' : '₫'}
+            {isPerc ? '%' : <IoCashOutline size={18} />}
           </div>
           <div className="min-w-0">
             <p className="font-mono text-sm font-black text-slate-800 leading-none truncate">
@@ -85,7 +46,7 @@ export function VoucherTdata({ voucher: v, field }: VoucherTdataProps) {
               className={`inline-block mt-1 text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md ${
                 v.applyScope === 'ALL'
                   ? 'bg-slate-100 text-slate-500'
-                  : 'bg-blue-50 text-blue-500'
+                  : 'bg-mint-50 text-mint-500'
               }`}
             >
               {v.applyScope === 'ALL' ? 'Public' : 'Targeted'}
@@ -98,7 +59,7 @@ export function VoucherTdata({ voucher: v, field }: VoucherTdataProps) {
       return (
         <div className="flex flex-col items-center">
           <span
-            className={`inline-flex items-baseline gap-0.5 font-black ${isPerc ? 'text-mint-600' : 'text-violet-600'}`}
+            className={`inline-flex items-baseline gap-0.5 font-black text-mint-600`}
           >
             <span className="text-xl">{isPerc ? v.value : fmtVND(v.value)}</span>
             <span className="text-xs">{isPerc ? '%' : '₫'}</span>

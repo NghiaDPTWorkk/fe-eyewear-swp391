@@ -1,11 +1,10 @@
-import React from 'react'
 import { 
-  IoPricetagOutline, 
+  IoCashOutline, 
   IoGlobeOutline, 
   IoCalendarOutline 
 } from 'react-icons/io5'
 import type { Voucher } from '@/shared/types'
-import { fmtVND, fmtDate } from '@/components/layout/staff/managerstaff/vouchertable/VoucherTdata'
+import { fmtVND, fmtDate } from '@/components/layout/staff/managerstaff/vouchertable/VoucherTdata.utils'
 
 interface MainDetailVoucherProps {
   voucher: Voucher
@@ -45,7 +44,7 @@ export default function MainDetailVoucher({ voucher: v, statusConfig: st }: Main
         {/* Specific Conditions */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <DetailGroup
-            icon={<IoPricetagOutline className="text-amber-500" />}
+            icon={<IoCashOutline className="text-mint-500" />}
             title="Order Requirements"
             items={[
               { label: "Minimum Spend", value: `${fmtVND(v.minOrderValue)}đ` },
@@ -53,7 +52,7 @@ export default function MainDetailVoucher({ voucher: v, statusConfig: st }: Main
             ]}
           />
           <DetailGroup
-            icon={<IoGlobeOutline className="text-blue-500" />}
+            icon={<IoGlobeOutline className="text-mint-500" />}
             title="Accessibility"
             items={[
               { label: "Apply Scope", value: v.applyScope === 'ALL' ? 'Open to everyone' : 'Targeted users only' },
@@ -65,7 +64,7 @@ export default function MainDetailVoucher({ voucher: v, statusConfig: st }: Main
         {/* Validity Section */}
         <div className="pt-6 border-t border-slate-100">
           <div className="flex items-center gap-2 mb-4">
-            <IoCalendarOutline className="text-indigo-500" size={18} />
+            <IoCalendarOutline className="text-mint-500" size={18} />
             <h3 className="text-sm font-bold text-slate-800">Validity Period</h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

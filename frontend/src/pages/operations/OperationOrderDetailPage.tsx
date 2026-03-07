@@ -226,12 +226,14 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
     variantApiProductSku = manufacturingOrderFrameItem.sku
   }
 
-
   // Gọi API: GET /products/:id/variants/:sku
   const { data: productVariantApiResponse, isLoading: isProductVariantApiLoading } = useQuery({
     queryKey: ['productVariant', variantApiProductId, variantApiProductSku],
     queryFn: () =>
-      productsService.getProductVariant(variantApiProductId!, encodeURIComponent(variantApiProductSku!)),
+      productsService.getProductVariant(
+        variantApiProductId!,
+        encodeURIComponent(variantApiProductSku!)
+      ),
     enabled: !!variantApiProductId && !!variantApiProductSku
   })
 
@@ -338,7 +340,6 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
     }
   }
 
-
   return (
     <Container className="animate-fade-in-up">
       {/* Breadcrumb Path */}
@@ -405,14 +406,11 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
           <Button
             className="px-6 py-3 bg-mint-900 hover:bg-mint-700 text-white rounded-lg font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleStartProcessing}
-            disabled={
-              updatePackaging.isPending || 
-              orderDetailData.status === 'WAITING_STOCK'
-            }
+            disabled={updatePackaging.isPending || orderDetailData.status === 'WAITING_STOCK'}
           >
-            {updatePackaging.isPending 
-              ? 'Processing...' 
-              : orderDetailData.status === 'WAITING_STOCK' 
+            {updatePackaging.isPending
+              ? 'Processing...'
+              : orderDetailData.status === 'WAITING_STOCK'
                 ? 'Waiting for Stock'
                 : 'Start Processing'}
           </Button>

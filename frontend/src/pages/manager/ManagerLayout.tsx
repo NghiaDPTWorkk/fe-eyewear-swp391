@@ -14,7 +14,8 @@ import {
   IoBarChart,
   IoSettings,
   IoHelpCircle,
-  IoStorefront
+  IoStorefront,
+  IoPricetagOutline
 } from 'react-icons/io5'
 
 import { getInitials } from '@/shared/utils'
@@ -66,7 +67,7 @@ export default function ManagerLayout() {
           active={location.pathname.startsWith('/manager/products')}
         />
         <SidebarStaff.MenuItem
-          icon={<IoGrid />}
+          icon={<IoPricetagOutline />}
           label="Vouchers"
           to="/manager/vouchers"
           active={location.pathname === '/manager/vouchers'}

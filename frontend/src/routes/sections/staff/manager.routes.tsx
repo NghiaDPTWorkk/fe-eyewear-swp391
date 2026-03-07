@@ -34,6 +34,9 @@ const ManagerAddProductPage = lazy(() =>
 const ManagerAddAttributePage = lazy(() =>
   import('@/pages/manager/ManagerAddAttributePage').then((m) => ({ default: m.default }))
 )
+const ManagerImportPage = lazy(() =>
+  import('@/pages/manager/ManagerImportPage').then((m) => ({ default: m.default }))
+)
 
 export const managerRoutes = [
   {
@@ -123,6 +126,14 @@ export const managerRoutes = [
         element: (
           <LazyPage>
             <ManagerVouchersPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'imports',
+        element: (
+          <LazyPage>
+            <ManagerImportPage />
           </LazyPage>
         )
       }

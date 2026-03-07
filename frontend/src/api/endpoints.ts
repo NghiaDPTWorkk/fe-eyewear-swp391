@@ -178,7 +178,10 @@ export const ENDPOINTS = {
       return qs ? `/admin/products?${qs}` : '/admin/products'
     },
     PRODUCT_DETAIL: (id: string) => `/admin/products/${id}`,
-    ATTRIBUTES: '/admin/attributes'
+    ATTRIBUTES: '/admin/attributes',
+    PRE_ORDER_IMPORTS: (page: number = 1, limit: number = 10) =>
+      `/admin/pre-order-imports?page=${page}&limit=${limit}`,
+    IMPORT_PRODUCTS: '/admin/import-products'
   },
 
   ADMINS: {

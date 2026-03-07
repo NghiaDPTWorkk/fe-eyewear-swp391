@@ -15,11 +15,7 @@ import {
   IoSettings,
   IoHelpCircle,
   IoStorefront,
-<<<<<<< HEAD
   IoPricetagOutline
-=======
-  IoArrowDown
->>>>>>> 9716e2ff054d57b91bf32ff5e31707fe17816b7d
 } from 'react-icons/io5'
 
 import { getInitials } from '@/shared/utils'
@@ -71,17 +67,7 @@ export default function ManagerLayout() {
           active={location.pathname.startsWith('/manager/products')}
         />
         <SidebarStaff.MenuItem
-<<<<<<< HEAD
           icon={<IoPricetagOutline />}
-=======
-          icon={<IoArrowDown />}
-          label="Imports"
-          to="/manager/imports"
-          active={location.pathname === '/manager/imports'}
-        />
-        <SidebarStaff.MenuItem
-          icon={<IoGrid />}
->>>>>>> 9716e2ff054d57b91bf32ff5e31707fe17816b7d
           label="Vouchers"
           to="/manager/vouchers"
           active={location.pathname === '/manager/vouchers'}

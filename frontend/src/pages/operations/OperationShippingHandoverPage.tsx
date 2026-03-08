@@ -21,6 +21,7 @@ import {
 } from '@/components/layout/staff/operationstaff/checkorderlistfrominvoice'
 import {
   useOperationInvoiceDetail,
+  useActualInvoiceDetail,
   useUpdateInvoiceReadyToShip,
   useOperationShipCode
 } from '@/features/operations/hooks/useOperationInvoiceDetail'
@@ -29,20 +30,29 @@ import ShippingInfoSeal from '@/components/layout/staff/operationstaff/shippingi
 import { createPortal } from 'react-dom'
 import toast from 'react-hot-toast'
 
+
+
 export default function OperationShippingHandoverPage() {
   const { invoiceId } = useParams<{ invoiceId: string }>()
-  const { data, isLoading, isError } = useOperationInvoiceDetail(invoiceId ?? '')
+  const { data: listData, isLoading: isListLoading, isError: isListError } = useOperationInvoiceDetail(invoiceId ?? '')
+  const { data: detailData, isLoading: isDetailLoading, isError: isDetailError } = useActualInvoiceDetail(invoiceId ?? '')
   const updateInvoiceStatus = useUpdateInvoiceReadyToShip()
 
   const { data: fetchedShipCode } = useOperationShipCode(invoiceId ?? '')
 
-  const invoice = data
+  const invoice = listData
+  const actualDetail = detailData
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isLabelModalOpen, setIsLabelModalOpen] = useState(false)
   const [internalShipCode, setInternalShipCode] = useState<string | undefined>(undefined)
 
   const activeShipCode = internalShipCode || fetchedShipCode || undefined
+
+  const subTotal = actualDetail?.totalPrice || 0
+  const feeShip = actualDetail?.feeShip || 0
+  const totalDiscount = actualDetail?.totalDiscount || 0
+  const totalAmount = subTotal + feeShip - totalDiscount
 
   const orders = invoice?.orders ?? []
 
@@ -55,12 +65,9 @@ export default function OperationShippingHandoverPage() {
 
   const isReadyToShip = invoice?.status === 'READY_TO_SHIP'
 
-  const totalAmount = orderDetailQueries.reduce((sum: number, query: any) => {
-    const orderData = (query.data as any)?.data?.order
-    return sum + (orderData?.price || 0)
-  }, 0)
 
-  const isDetailsLoading = orderDetailQueries.some((q: any) => q.isLoading)
+  const isDetailsLoading =
+    orderDetailQueries.some((q: any) => q.isLoading) || isListLoading || isDetailLoading
 
   const handleProcessShipping = () => {
     setIsModalOpen(true)
@@ -92,11 +99,13 @@ export default function OperationShippingHandoverPage() {
 
   // Build a friendly address string
   const getAddressString = () => {
-    if (!invoice) return ''
-    return invoice.address ?? ''
+    if (!actualDetail) return ''
+    if (typeof actualDetail.address === 'string') return actualDetail.address
+    const { street, ward, city } = actualDetail.address
+    return [street, ward, city].filter(Boolean).join(', ')
   }
 
-  if (isLoading) {
+  if (isListLoading || isDetailLoading) {
     return (
       <Container className="animate-fade-in-up">
         <BreadcrumbPath paths={['Dashboard', 'Shipping Handover']} />
@@ -111,7 +120,7 @@ export default function OperationShippingHandoverPage() {
     )
   }
 
-  if (isError || !invoice) {
+  if (isListError || isDetailError || !invoice) {
     return (
       <Container className="animate-fade-in-up">
         <BreadcrumbPath paths={['Dashboard', 'Shipping Handover']} />
@@ -216,10 +225,56 @@ export default function OperationShippingHandoverPage() {
                 </p>
               </div>
             )}
-            {/* Total Amount */}
+            {/* Subtotal */}
             <div className="mt-6 pt-6 border-t border-gray-100 flex justify-between items-center">
               <span className="text-sm font-semibold text-neutral-500 uppercase tracking-wider">
-                Invoice Total Amount
+                Invoice Subtotal
+              </span>
+              <div className="text-right">
+                {isDetailsLoading ? (
+                  <div className="h-6 w-24 bg-neutral-100 animate-pulse rounded" />
+                ) : (
+                  <span className="text-xl font-bold font-mono text-neutral-900 pb-0.5">
+                    {subTotal.toLocaleString('vi-VN')}{' '}
+                    <span className="text-sm font-normal text-neutral-400">₫</span>
+                  </span>
+                )}
+              </div>
+            </div>
+            {/* Shipping Fee */}
+            <div className="mt-2 pt-2 flex justify-between items-center">
+              <span className="text-xs text-neutral-500 uppercase tracking-wider">
+                Shipping Fee
+              </span>
+              <div className="text-right">
+                {isDetailsLoading ? (
+                  <div className="h-6 w-24 bg-neutral-100 animate-pulse rounded" />
+                ) : (
+                  <span className="text-sm font-mono text-neutral-900 pb-0.2">
+                    + {feeShip.toLocaleString('vi-VN')}{' '}
+                    <span className="text-sm font-normal text-neutral-400">₫</span>
+                  </span>
+                )}
+              </div>
+            </div>
+            {/* Discount */}
+            <div className="mt-2 pt-2 flex justify-between items-center">
+              <span className="text-xs text-neutral-500 uppercase tracking-wider">Discount</span>
+              <div className="text-right">
+                {isDetailsLoading ? (
+                  <div className="h-6 w-24 bg-neutral-100 animate-pulse rounded" />
+                ) : (
+                  <span className="text-sm font-mono text-danger-500 pb-0.2">
+                    - {totalDiscount.toLocaleString('vi-VN')}{' '}
+                    <span className="text-sm font-normal text-danger-500">₫</span>
+                  </span>
+                )}
+              </div>
+            </div>
+            {/* Total Price */}
+            <div className="mt-6 pt-6 border-t border-gray-100 flex justify-between items-center">
+              <span className="text-sm font-semibold text-neutral-500 uppercase tracking-wider">
+                Total Price
               </span>
               <div className="text-right">
                 {isDetailsLoading ? (
@@ -248,7 +303,7 @@ export default function OperationShippingHandoverPage() {
                 phone={invoice.phone}
                 address={getAddressString()}
                 shipCode={activeShipCode}
-                totalAmount={totalAmount}
+                totalPrice={totalAmount}
               />
             </div>
           )}
@@ -327,7 +382,7 @@ export default function OperationShippingHandoverPage() {
                   phone={invoice.phone}
                   address={getAddressString()}
                   shipCode={activeShipCode}
-                  totalAmount={totalAmount}
+                  totalPrice={totalAmount}
                 />
               </div>
 

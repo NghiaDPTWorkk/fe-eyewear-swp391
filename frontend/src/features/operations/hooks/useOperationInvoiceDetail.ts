@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import type { OperationInvoiceListItem } from '@/shared/types'
+import type { OperationInvoiceListItem, AdminInvoiceDetail } from '@/shared/types'
 import { operationInvoiceService } from '../services/operationInvoiceService'
 
 /**
@@ -12,6 +12,21 @@ export function useOperationInvoiceDetail(invoiceId: string) {
     queryFn: async () => {
       const response = await operationInvoiceService.getHandleDeliveryInvoices(1, 100)
       return response.data?.invoiceList?.find((inv) => inv.id === invoiceId)
+    },
+    enabled: Boolean(invoiceId),
+    staleTime: 30_000
+  })
+}
+
+/**
+ * Fetches the full invoice detail (with address object, feeShip, totalPrice, etc.)
+ */
+export function useActualInvoiceDetail(invoiceId: string) {
+  return useQuery<AdminInvoiceDetail | undefined>({
+    queryKey: ['invoice-detail-actual', invoiceId],
+    queryFn: async () => {
+      const response = await operationInvoiceService.getInvoiceById(invoiceId)
+      return response.data
     },
     enabled: Boolean(invoiceId),
     staleTime: 30_000

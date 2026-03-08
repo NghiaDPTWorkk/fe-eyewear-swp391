@@ -10,6 +10,7 @@ import {
 } from '@/features/manager/hooks/useManagerVouchers'
 import { VoucherTable } from '@/components/layout/staff/managerstaff/vouchertable'
 import { VoucherAddition } from '@/components/layout/staff/managerstaff/voucheraddition/VoucherAddition'
+import { Pagination } from '@/shared/components/ui-core/pagination/Pagination'
 import { createPortal } from 'react-dom'
 import {
   IoTicketOutline,
@@ -18,9 +19,7 @@ import {
   IoTrashOutline,
   IoFilterOutline,
   IoBarChartOutline,
-  IoRefreshOutline,
-  IoChevronBackOutline,
-  IoChevronForwardOutline
+  IoRefreshOutline
 } from 'react-icons/io5'
 import { useState } from 'react'
 
@@ -45,23 +44,14 @@ export default function ManagerVouchersPage() {
 
   const { data, isLoading, refetch } = useManagerVouchers(
     page, LIMIT,
-    statusFilter === 'all' ? undefined : statusFilter
+    statusFilter === 'all' ? undefined : statusFilter,
+    search.trim() || undefined
   )
   const { stats, isLoading: isStatsLoading } = useVoucherStats()
 
   const vouchers   = data?.data?.items?.data ?? []
   const pagination = data?.data?.items?.pagination
 
-  const filtered = search.trim()
-    ? vouchers.filter((v) => {
-        const q = search.toLowerCase()
-        return (
-          v.code.toLowerCase().includes(q) ||
-          v.name.toLowerCase().includes(q) ||
-          (v.description ?? '').toLowerCase().includes(q)
-        )
-      })
-    : vouchers
 
   // ── Modal state ───────────────────────────────────────────────────
   // We only need local state for creating a new voucher, and deleting.
@@ -214,7 +204,7 @@ export default function ManagerVouchersPage() {
       {/* ── Table ───────────────────────────────────────────────── */}
       {/* Click any row → detail. Delete icon stays inline. */}
       <VoucherTable
-        vouchers={filtered}
+        vouchers={vouchers}
         isLoading={isLoading}
         renderActions={(v) => (
           <button
@@ -230,29 +220,16 @@ export default function ManagerVouchersPage() {
 
       {/* ── Pagination ──────────────────────────────────────────── */}
       {pagination && pagination.totalPages > 1 && (
-        <div className="flex items-center justify-between px-1">
+        <div className="flex items-center justify-between px-1 py-4 border-t border-slate-50">
           <p className="text-xs font-bold text-slate-400">
-            Page <span className="text-slate-700">{pagination.page}</span> of{' '}
-            <span className="text-slate-700">{pagination.totalPages}</span>
-            {' '}·{' '}
-            <span className="text-slate-700">{pagination.total}</span> total
+            Showing <span className="text-slate-700">{vouchers.length}</span> of{' '}
+            <span className="text-slate-700">{pagination.total}</span> vouchers
           </p>
-          <div className="flex items-center gap-1.5">
-            <button
-              disabled={page <= 1}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              className="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-500 hover:border-mint-300 hover:text-mint-600 hover:bg-mint-50 transition-all disabled:opacity-30"
-            >
-              <IoChevronBackOutline size={16} />
-            </button>
-            <button
-              disabled={page >= pagination.totalPages}
-              onClick={() => setPage((p) => p + 1)}
-              className="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-500 hover:border-mint-300 hover:text-mint-600 hover:bg-mint-50 transition-all disabled:opacity-30"
-            >
-              <IoChevronForwardOutline size={16} />
-            </button>
-          </div>
+          <Pagination
+            currentPage={page}
+            totalPages={pagination.totalPages}
+            onPageChange={(p) => setPage(p)}
+          />
         </div>
       )}
 

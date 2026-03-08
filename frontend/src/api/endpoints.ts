@@ -266,9 +266,10 @@ export const ENDPOINTS = {
 
   // Manager
   MANAGER: {
-    VOUCHERS: (page: number = 1, limit: number = 10, status?: string) => {
+    VOUCHERS: (page: number = 1, limit: number = 10, status?: string, search?: string) => {
       const params = new URLSearchParams({ page: String(page), limit: String(limit) })
       if (status && status !== 'all') params.append('status', status)
+      if (search) params.append('search', search)
       return `/admin/vouchers?${params.toString()}`
     },
     VOUCHER_DETAIL: (id: string) => `/admin/vouchers/${id}`,

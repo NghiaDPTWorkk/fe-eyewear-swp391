@@ -13,11 +13,13 @@ import { toast } from 'react-hot-toast'
 const QK = 'manager-vouchers'
 
 /** GET /admin/vouchers — paginated list */
-export function useManagerVouchers(page = 1, limit = 10, status?: string) {
+export function useManagerVouchers(page = 1, limit = 10, status?: string, search?: string) {
   return useQuery<AdminVoucherListResponse>({
-    queryKey: [QK, page, limit, status],
+    queryKey: [QK, page, limit, status, search],
     queryFn: () =>
-      httpClient.get<AdminVoucherListResponse>(ENDPOINTS.MANAGER.VOUCHERS(page, limit, status)),
+      httpClient.get<AdminVoucherListResponse>(
+        ENDPOINTS.MANAGER.VOUCHERS(page, limit, status, search)
+      ),
     staleTime: 30_000
   })
 }

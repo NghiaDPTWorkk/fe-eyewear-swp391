@@ -25,6 +25,12 @@ const ManagerTransactionsPage = lazy(() =>
 const ManagerProductsPage = lazy(() =>
   import('@/pages/manager/ManagerProductsPage').then((m) => ({ default: m.default }))
 )
+const ManagerProductDetailPage = lazy(() =>
+  import('@/pages/manager/ManagerProductDetailPage').then((m) => ({ default: m.default }))
+)
+const ManagerEditProductPage = lazy(() =>
+  import('@/pages/manager/ManagerEditProductPage').then((m) => ({ default: m.default }))
+)
 const ManagerAddProductPage = lazy(() =>
   import('@/pages/manager/ManagerAddProductPage').then((m) => ({ default: m.default }))
 )
@@ -102,6 +108,22 @@ export const managerRoutes = [
         element: (
           <LazyPage>
             <ManagerAddProductPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'products/:id',
+        element: (
+          <LazyPage>
+            <ManagerProductDetailPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'products/:id/edit',
+        element: (
+          <LazyPage>
+            <ManagerEditProductPage />
           </LazyPage>
         )
       },

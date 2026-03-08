@@ -77,15 +77,13 @@ export default function ManagerProductsPage() {
   // Compute summary counts from data
   const totalProducts = pagination?.total ?? 0
   const frameCount = products.filter((p) => p.type === 'frame').length
-  const sunglassCount = products.filter(
-    (p) => p.type === 'sunglasses' || p.type === 'sunglass'
-  ).length
+  const sunglassCount = products.filter((p) => p.type === 'sunglass').length
   const lowStockCount = products.filter((p) => p.totalVariants <= 1).length
 
   const typeTabs = [
     { label: 'All', value: undefined },
     { label: 'Frame', value: 'frame' },
-    { label: 'Sunglasses', value: 'sunglasses' },
+    { label: 'Sunglasses', value: 'sunglass' },
     { label: 'Lens', value: 'lens' }
   ]
 

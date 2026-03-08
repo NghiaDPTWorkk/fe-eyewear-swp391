@@ -62,7 +62,7 @@ export default function ManagerLayout() {
         />
         <SidebarStaff.MenuItem
           icon={<IoCube />}
-          label="Product"
+          label="Products"
           to="/manager/products"
           active={location.pathname.startsWith('/manager/products')}
         />
@@ -84,14 +84,14 @@ export default function ManagerLayout() {
         <SidebarStaff.MenuItem
           icon={<IoSettings />}
           label="Settings"
-          to="/manager/settings"
-          active={location.pathname.startsWith('/manager/settings')}
+          to="/manager/profile"
+          active={location.pathname === '/manager/profile'}
         />
         <SidebarStaff.MenuItem
           icon={<IoHelpCircle />}
           label="Support"
-          to="/manager/support"
-          active={location.pathname.startsWith('/manager/support')}
+          to="/manager/reports"
+          active={location.pathname === '/manager/reports'}
         />
         <ThemeToggle />
       </SidebarStaff.MenuSection>

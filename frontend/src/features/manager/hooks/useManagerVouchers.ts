@@ -1,6 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient, useQueries } from '@tanstack/react-query'
 import { httpClient } from '@/api/apiClients'
 import { ENDPOINTS } from '@/api/endpoints'
+import { VoucherStatus } from '@/shared/utils/enums/voucher.enum'
 import type {
   AdminVoucherListResponse,
   VoucherDetailResponse,
@@ -19,6 +20,39 @@ export function useManagerVouchers(page = 1, limit = 10, status?: string) {
       httpClient.get<AdminVoucherListResponse>(ENDPOINTS.MANAGER.VOUCHERS(page, limit, status)),
     staleTime: 30_000
   })
+}
+
+/** Fetch counts for all known statuses + "all" */
+export function useVoucherStats() {
+  const statuses = ['all', VoucherStatus.ACTIVE, VoucherStatus.DRAFT, VoucherStatus.DISABLE]
+
+  const queries = useQueries({
+    queries: statuses.map((status) => ({
+      queryKey: [QK, 'stats', status],
+      queryFn: () =>
+        httpClient.get<AdminVoucherListResponse>(
+          ENDPOINTS.MANAGER.VOUCHERS(1, 10, status === 'all' ? undefined : status)
+        ),
+      staleTime: 30_000
+    }))
+  })
+
+  const stats: Record<string, number> = {}
+  statuses.forEach((status, index) => {
+    const data = queries[index].data?.data
+    // Handle both possible pagination paths
+    const total =
+      data?.items?.pagination?.total ??
+      (data as any)?.pagination?.total ??
+      0
+    stats[status] = total
+  })
+
+  return {
+    stats,
+    isLoading: queries.some((q) => q.isLoading),
+    isError: queries.some((q) => q.isError)
+  }
 }
 
 /** GET /admin/vouchers/:id — lazy detail fetch (only runs when id is truthy) */

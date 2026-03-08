@@ -13,14 +13,11 @@ const ManagerDashboardPage = lazy(() =>
 const ManagerInvoicesPage = lazy(() =>
   import('@/pages/manager/ManagerInvoicesPage').then((m) => ({ default: m.default }))
 )
-const ManagerSettingsPage = lazy(() =>
-  import('@/pages/manager/ManagerSettingsPage').then((m) => ({ default: m.default }))
-)
-const ManagerSupportPage = lazy(() =>
-  import('@/pages/manager/ManagerSupportPage').then((m) => ({ default: m.default }))
-)
 const ManagerReportsPage = lazy(() =>
   import('@/pages/manager/ManagerReportsPage').then((m) => ({ default: m.default }))
+)
+const ManagerProfilePage = lazy(() =>
+  import('@/pages/manager/ManagerProfilePage').then((m) => ({ default: m.default }))
 )
 const ManagerTransactionsPage = lazy(() =>
   import('@/pages/manager/ManagerTransactionsPage').then((m) => ({ default: m.default }))
@@ -69,18 +66,10 @@ export const managerRoutes = [
         )
       },
       {
-        path: 'settings',
+        path: 'profile',
         element: (
           <LazyPage>
-            <ManagerSettingsPage />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'help',
-        element: (
-          <LazyPage>
-            <ManagerSupportPage />
+            <ManagerProfilePage />
           </LazyPage>
         )
       },

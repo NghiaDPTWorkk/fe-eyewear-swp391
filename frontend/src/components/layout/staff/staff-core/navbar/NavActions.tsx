@@ -181,9 +181,13 @@ export function NavActions({
                 {
                   icon: IoTicketOutline,
                   label: 'Report History',
-                  to: `${basePrefix}/support?tab=history`
+                  to: isManager ? `${basePrefix}/reports` : `${basePrefix}/support?tab=history`
                 },
-                { icon: IoSettingsOutline, label: 'Settings', to: `${basePrefix}/settings` }
+                { 
+                  icon: IoSettingsOutline, 
+                  label: 'Settings', 
+                  to: isManager ? `${basePrefix}/profile` : `${basePrefix}/settings` 
+                }
               ].map((item) => (
                 <Link
                   key={item.label}

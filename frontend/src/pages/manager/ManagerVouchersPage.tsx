@@ -4,6 +4,7 @@ import type { Voucher, VoucherPayload } from '@/shared/types'
 import { VoucherStatus } from '@/shared/utils/enums/voucher.enum'
 import {
   useManagerVouchers,
+  useVoucherStats,
   useCreateVoucher,
   useDeleteVoucher
 } from '@/features/manager/hooks/useManagerVouchers'
@@ -46,6 +47,8 @@ export default function ManagerVouchersPage() {
     page, LIMIT,
     statusFilter === 'all' ? undefined : statusFilter
   )
+  const { stats, isLoading: isStatsLoading } = useVoucherStats()
+
   const vouchers   = data?.data?.items?.data ?? []
   const pagination = data?.data?.items?.pagination
 
@@ -136,7 +139,7 @@ export default function ManagerVouchersPage() {
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => refetch()}
+            onClick={() => { refetch(); }}
             className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white border border-slate-200 text-slate-500 text-sm font-bold hover:border-mint-300 hover:text-mint-600 hover:bg-mint-50/40 transition-all active:scale-95"
           >
             <IoRefreshOutline size={16} />
@@ -161,7 +164,7 @@ export default function ManagerVouchersPage() {
             DISABLE: { text: 'text-slate-400',   iconBg: 'bg-slate-50'   }
           }
           const c     = colors[tab.key]
-          const count = tab.key === 'all' ? (pagination?.total ?? '—') : '—'
+          const count = isStatsLoading ? '...' : (stats[tab.key] ?? 0)
           return (
             <div
               key={tab.key}

@@ -53,7 +53,7 @@ export default function OperationShippingHandoverPage() {
   const feeShip = actualDetail?.feeShip || 0
   const totalDiscount = actualDetail?.totalDiscount || 0
   const totalAmount = subTotal + feeShip - totalDiscount
- 
+
   const orders = invoice?.orders ?? []
 
   // Fetch details for all orders to calculate total amount
@@ -119,7 +119,7 @@ export default function OperationShippingHandoverPage() {
       </Container>
     )
   }
- 
+
   if (isListError || isDetailError || !invoice) {
     return (
       <Container className="animate-fade-in-up">
@@ -303,7 +303,7 @@ export default function OperationShippingHandoverPage() {
                 phone={invoice.phone}
                 address={getAddressString()}
                 shipCode={activeShipCode}
-                totalAmount={totalAmount}
+                totalPrice={totalAmount}
               />
             </div>
           )}
@@ -382,7 +382,7 @@ export default function OperationShippingHandoverPage() {
                   phone={invoice.phone}
                   address={getAddressString()}
                   shipCode={activeShipCode}
-                  totalAmount={totalAmount}
+                  totalPrice={totalAmount}
                 />
               </div>
 

@@ -4,7 +4,7 @@ interface ShippingInfoSealProps {
   phone: string
   address: string
   shipCode?: string
-  totalAmount: number
+  totalPrice: number
 }
 
 export default function ShippingInfoSeal({
@@ -13,7 +13,7 @@ export default function ShippingInfoSeal({
   phone,
   address,
   shipCode,
-  totalAmount
+  totalPrice
 }: ShippingInfoSealProps) {
   return (
     <div className="bg-white p-8 font-sans max-w-2xl mx-auto w-full border border-gray-300">
@@ -103,9 +103,10 @@ export default function ShippingInfoSeal({
               Total Amount:
             </span>
             <div className="text-xl ps-4 font-black text-gray-900 text-right">
-              {totalAmount.toLocaleString('vi-VN')} VND
+              {totalPrice.toLocaleString('vi-VN')} VND
             </div>
           </div>
+
         </div>
       </div>
     </div>

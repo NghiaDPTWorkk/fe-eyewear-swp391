@@ -12,7 +12,8 @@ import {
 import type { OperationInvoiceListItem } from '@/shared/types'
 import { FilterButtonList } from '@/components/staff'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
-import OperationInvoiceSearch from '@/components/layout/staff/operationstaff/OperationInvoiceSearch'
+import OperationInvoiceSearch from '@/components/layout/staff/operationstaff/invoiceserach/OperationInvoiceSearch'
+
 // import OperationPagination from '@/pages/operations/OperationPagination'
 
 const PAGE_LIMIT = 10

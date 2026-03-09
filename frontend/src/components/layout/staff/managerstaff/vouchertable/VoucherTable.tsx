@@ -29,9 +29,7 @@ export function VoucherTable({
   className = ''
 }: VoucherTableProps) {
   return (
-    <div
-      className={`bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden ${className}`}
-    >
+    <div className={`overflow-hidden ${className}`}>
       <VoucherHeader columns={columns} />
 
       {isLoading ? (

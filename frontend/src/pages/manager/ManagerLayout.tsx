@@ -110,7 +110,7 @@ export default function ManagerLayout() {
         />
       }
       mainClassName="px-4 md:px-8 lg:px-10 py-8 bg-mint-200"
-      headerContainerClassName="px-4 md:px-8 lg:px-10"
+      headerContainerClassName="px-4 md:px-8 lg:pl-10 lg:pr-6"
       headerContainerWidth="none"
       contentMaxWidth="max-w-[1600px]"
     />

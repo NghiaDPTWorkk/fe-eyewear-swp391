@@ -71,7 +71,7 @@ export default function PasswordForm() {
       </div>
       <div className="space-y-6">
         <div className="space-y-2">
-          <label className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest pl-1">
+          <label className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.15em] pl-1">
             Current Password
           </label>
           <input
@@ -79,12 +79,13 @@ export default function PasswordForm() {
             placeholder="••••••••"
             value={formData.currentPassword}
             onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
-            className="w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 focus:bg-white transition-all cursor-pointer"
+            className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all cursor-pointer autofill:bg-white"
+            style={{ WebkitBoxShadow: '0 0 0 30px white inset' }}
           />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <label className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest pl-1">
+            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.15em] pl-1">
               New Password
             </label>
             <input
@@ -92,11 +93,12 @@ export default function PasswordForm() {
               placeholder="••••••••"
               value={formData.newPassword}
               onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
-              className="w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 focus:bg-white transition-all cursor-pointer"
+              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all cursor-pointer autofill:bg-white"
+              style={{ WebkitBoxShadow: '0 0 0 30px white inset' }}
             />
           </div>
           <div className="space-y-2">
-            <label className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest pl-1">
+            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.15em] pl-1">
               Confirm New Password
             </label>
             <input
@@ -104,7 +106,8 @@ export default function PasswordForm() {
               placeholder="••••••••"
               value={formData.confirmPassword}
               onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-              className="w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 focus:bg-white transition-all cursor-pointer"
+              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all cursor-pointer autofill:bg-white"
+              style={{ WebkitBoxShadow: '0 0 0 30px white inset' }}
             />
           </div>
         </div>

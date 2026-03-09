@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { useProfile } from '../../hooks/useProfile'
 import { Card, Button } from '@/shared/components/ui-core'
 import {
@@ -9,6 +10,7 @@ import {
   IoCameraOutline,
   IoShieldCheckmarkOutline
 } from 'react-icons/io5'
+import toast from 'react-hot-toast'
 
 interface StaffProfileContentProps {
   onEdit?: () => void
@@ -21,6 +23,21 @@ export const StaffProfileContent = ({
 }: StaffProfileContentProps) => {
   const { data: profileData, isLoading } = useProfile()
   const profile = profileData?.data
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleImageClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      // In a real implementation, you would upload this to a server (S3/Cloudinary)
+      // and then update the profile avatar via API.
+      toast.success('Image selected: ' + file.name + '. Admin approval required to update.')
+      console.log('Selected file:', file)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -37,6 +54,13 @@ export const StaffProfileContent = ({
         <div className="absolute top-0 left-0 w-full h-32 bg-mint-50/50 -z-0" />
 
         <div className="relative mt-8 mb-6">
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept="image/*"
+            onChange={handleImageUpload}
+          />
           <div className="w-32 h-32 rounded-[40px] border-4 border-white shadow-2xl overflow-hidden bg-mint-100 flex items-center justify-center text-4xl font-semibold text-mint-600 relative z-10 transition-transform duration-500 group-hover:scale-105">
             {profile?.avatar ? (
               <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover" />
@@ -45,13 +69,16 @@ export const StaffProfileContent = ({
               {profile?.name
                 ?.split(' ')
                 .filter(Boolean)
-                .map((n) => n[0])
+                .map((n: string) => n[0])
                 .join('')
                 .toUpperCase()
                 .slice(0, 2)}
             </span>
           </div>
-          <button className="absolute bottom-0 right-0 w-10 h-10 bg-white rounded-2xl shadow-lg border border-slate-100 flex items-center justify-center text-slate-500 hover:text-mint-600 transition-all z-20 hover:scale-110 active:scale-95">
+          <button
+            onClick={handleImageClick}
+            className="absolute bottom-0 right-0 w-10 h-10 bg-white rounded-2xl shadow-lg border border-slate-100 flex items-center justify-center text-slate-500 hover:text-mint-600 transition-all z-20 hover:scale-110 active:scale-95 cursor-pointer"
+          >
             <IoCameraOutline size={20} />
           </button>
         </div>

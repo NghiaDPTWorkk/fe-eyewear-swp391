@@ -100,7 +100,7 @@ export default function SaleStaffLayout() {
         />
       }
       mainClassName={cn(LAYOUT.px, LAYOUT.py, 'bg-mint-200')}
-      headerContainerClassName="px-4 md:px-8 lg:px-10"
+      headerContainerClassName={cn('px-4 md:px-8 lg:pl-10 lg:pr-6')}
       headerContainerWidth="none"
       contentMaxWidth={LAYOUT.maxWidth}
     />

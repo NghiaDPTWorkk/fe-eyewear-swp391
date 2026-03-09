@@ -276,5 +276,50 @@ export const ENDPOINTS = {
     VOUCHER_CREATE: '/admin/vouchers',
     VOUCHER_UPDATE: (id: string) => `/admin/vouchers/${id}`,
     VOUCHER_DELETE: (id: string) => `/admin/vouchers/${id}`
+  },
+  REPORTS: {
+    REVENUE: (period?: string, fromDate?: string, toDate?: string, userId?: string) => {
+      const params = new URLSearchParams()
+      if (period) params.append('period', period)
+      if (fromDate) params.append('fromDate', fromDate)
+      if (toDate) params.append('toDate', toDate)
+      if (userId) params.append('userId', userId)
+      const qs = params.toString()
+      return qs ? `/admin/invoices/stats/revenue?${qs}` : '/admin/invoices/stats/revenue'
+    }
+  },
+  RETURN_TICKETS: {
+    ADMIN_LIST: (params: {
+      page?: number
+      limit?: number
+      status?: string
+      orderId?: string
+      customerId?: string
+      staffVerify?: string
+      search?: string
+    }) => {
+      const q = new URLSearchParams()
+      Object.entries(params).forEach(([k, v]) => {
+        if (v !== undefined && v !== '') q.append(k, String(v))
+      })
+      return `/admin/return-tickets?${q.toString()}`
+    },
+    RETURNED_ORDERS: (page?: number, limit?: number, search?: string) => {
+      const p = new URLSearchParams()
+      if (page) p.append('page', String(page))
+      if (limit) p.append('limit', String(limit))
+      if (search) p.append('search', search)
+      return `/admin/return-tickets/returned-orders?${p.toString()}`
+    },
+    STAFF_VERIFY: (id: string) => `/admin/return-tickets/${id}/staff-verify`,
+    UPDATE_STATUS: (id: string, status: string) =>
+      `/admin/return-tickets/${id}/status/${status.toLowerCase()}`,
+    CLIENT_CREATE: '/client/return-tickets',
+    CLIENT_LIST: (page: number = 1, limit: number = 10, status?: string, search?: string) => {
+      const p = new URLSearchParams({ page: String(page), limit: String(limit) })
+      if (status) p.append('status', status)
+      if (search) p.append('search', search)
+      return `/client/return-tickets?${p.toString()}`
+    }
   }
 } as const

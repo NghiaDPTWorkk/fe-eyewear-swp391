@@ -6,3 +6,4 @@ export const generateId = (): string => {
 export * from './jwt.utils'
 export * from './string.utils'
 export * from './style.utils'
+export * from './format.utils'

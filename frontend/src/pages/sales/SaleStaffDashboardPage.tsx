@@ -12,6 +12,9 @@ import { PageHeader, SalesMetricCard } from '@/features/sales/components/common'
 import { Charts } from '@/features/sales/components/dashboard/Charts'
 import { InvoiceOrdersDrawer } from '@/features/sales/components/dashboard/InvoiceOrdersDrawer'
 import { Table } from '@/features/sales/components/dashboard/Table'
+import { useAuth } from '@/features/auth/hooks/useAuth'
+import { useRevenueStats } from '@/features/manager/hooks/useManagerReports'
+import { formatPrice } from '@/shared/utils'
 
 import type { Invoice } from '@/features/sales/types'
 import { Card } from '@/shared/components/ui-core'
@@ -61,8 +64,23 @@ export default function SaleStaffDashboardPage() {
     }
   }, [fetchInvoices])
 
+  const { user } = useAuth()
+  const { data: revenueData } = useRevenueStats({ period: 'month', userId: user?._id })
+
   const metrics = useMemo(() => {
-    // Calculate total orders and approved orders across all loaded invoices
+    // Total revenue and invoice count from stats (usually more accurate than local slice)
+    const statsRevenue =
+      revenueData?.rows?.reduce(
+        (acc: number, r: { totalRevenue: number }) => acc + r.totalRevenue,
+        0
+      ) || 0
+    const statsInvoices =
+      revenueData?.rows?.reduce(
+        (acc: number, r: { invoiceCount: number }) => acc + r.invoiceCount,
+        0
+      ) || 0
+
+    // Calculate completion rate from current loaded invoices (or we could fetch more specific stats if needed)
     const totalOrders = invoices.reduce(
       (sum: number, inv: Invoice) => sum + (inv.totalOrdersCount || 0),
       0
@@ -72,48 +90,44 @@ export default function SaleStaffDashboardPage() {
       0
     )
 
-    // Use the actual total count from pagination or the current invoices length
+    // Pending count from pagination is good for "Deposited" status
     const pendingCount = pagination?.total || invoices.length
-    const totalRevenue = invoices.reduce((sum: number, inv: Invoice) => {
-      const price = parseFloat(inv.finalPrice?.replace(/[^0-9.-]+/g, '') || '0')
-      return sum + price
-    }, 0)
 
     return [
       {
         label: 'Pending Invoices',
         value: String(pendingCount),
         icon: <IoClipboardOutline className="text-2xl" />,
-        trend: { label: 'total orders', value: totalOrders, isPositive: true },
+        trend: { label: 'awaiting action', value: pendingCount, isPositive: true },
         colorScheme: 'warning' as const
       },
       {
         label: 'Total Revenue',
-        value: `$${totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+        value: formatPrice(statsRevenue),
         icon: <IoWalletOutline className="text-2xl" />,
         trend: {
-          label: 'from invoices',
-          value: pagination?.total || invoices.length,
+          label: 'this month',
+          value: statsRevenue ? 1 : 0,
           isPositive: true
         },
         colorScheme: 'success' as const
       },
       {
-        label: 'Total Invoices',
-        value: String(pagination?.total || invoices.length),
+        label: 'Closed Invoices',
+        value: String(statsInvoices),
         icon: <IoTicketOutline className="text-2xl" />,
-        trend: { label: 'pending', value: pendingCount, isPositive: false },
+        trend: { label: 'in month', value: statsInvoices, isPositive: true },
         colorScheme: 'danger' as const
       },
       {
-        label: 'Completion Rate',
+        label: 'Recent Quality',
         value: totalOrders > 0 ? `${Math.round((approvedOrders / totalOrders) * 100)}%` : '0%',
         subValue: `${approvedOrders}/${totalOrders} orders passed`,
         icon: <IoFlagOutline className="text-2xl" />,
         colorScheme: 'primary' as const
       }
     ]
-  }, [invoices, pagination?.total])
+  }, [invoices, pagination?.total, revenueData])
 
   const handleInvoiceClick = (invoice: Invoice) => {
     openDrawer(invoice.id)

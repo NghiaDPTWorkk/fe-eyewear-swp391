@@ -53,12 +53,12 @@ interface FormState {
   description: string
   code: string
   typeDiscount: VoucherDiscountType
-  value: number
-  usageLimit: number
+  value: number | string
+  usageLimit: number | string
   startedDate: string
   endedDate: string
-  minOrderValue: number
-  maxDiscountValue: number
+  minOrderValue: number | string
+  maxDiscountValue: number | string
   applyScope: VoucherApplyScope
   status: VoucherStatus
 }
@@ -137,7 +137,15 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
   if (!isOpen) return null
 
   const handleSave = () => {
-    onSave({ ...form })
+    // Ensure all numeric strings are converted back to numbers before saving
+    const finalForm = {
+      ...form,
+      value: Number(form.value) || 0,
+      usageLimit: Number(form.usageLimit) || 0,
+      minOrderValue: Number(form.minOrderValue) || 0,
+      maxDiscountValue: Number(form.maxDiscountValue) || 0
+    }
+    onSave(finalForm)
   }
 
   const inputCls =
@@ -234,7 +242,8 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
                   min={0}
                   max={isPerc ? 100 : undefined}
                   value={form.value}
-                  onChange={(e) => setForm({ ...form, value: +e.target.value })}
+                  onFocus={() => setForm({ ...form, value: '' })}
+                  onChange={(e) => setForm({ ...form, value: e.target.value })}
                   className={`${inputCls} font-black text-mint-600`}
                   placeholder={isPerc ? '25' : '100000'}
                 />
@@ -246,7 +255,8 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
                   type="number"
                   min={0}
                   value={form.minOrderValue}
-                  onChange={(e) => setForm({ ...form, minOrderValue: +e.target.value })}
+                  onFocus={() => setForm({ ...form, minOrderValue: '' })}
+                  onChange={(e) => setForm({ ...form, minOrderValue: e.target.value })}
                   className={inputCls}
                   placeholder="0 = no minimum"
                 />
@@ -257,7 +267,8 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
                     type="number"
                     min={0}
                     value={form.maxDiscountValue}
-                    onChange={(e) => setForm({ ...form, maxDiscountValue: +e.target.value })}
+                    onFocus={() => setForm({ ...form, maxDiscountValue: '' })}
+                    onChange={(e) => setForm({ ...form, maxDiscountValue: e.target.value })}
                     className={inputCls}
                     placeholder="0 = unlimited"
                   />
@@ -295,7 +306,8 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
                     type="number"
                     min={1}
                     value={form.usageLimit}
-                    onChange={(e) => setForm({ ...form, usageLimit: +e.target.value })}
+                    onFocus={() => setForm({ ...form, usageLimit: '' })}
+                    onChange={(e) => setForm({ ...form, usageLimit: e.target.value })}
                     className={`${inputCls} pl-9`}
                   />
                 </div>
@@ -381,7 +393,10 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
             type="button"
             onClick={handleSave}
             disabled={
-              !form.code?.trim() || !form.name?.trim() || (form.value ?? 0) <= 0 || isSaving
+              !form.code?.trim() ||
+              !form.name?.trim() ||
+              Number(form.value) <= 0 ||
+              isSaving
             }
             className="px-8 py-2.5 rounded-xl bg-gradient-to-r from-mint-500 to-mint-600 text-white text-sm font-black hover:from-mint-600 hover:to-mint-700 transition shadow-lg shadow-mint-200/50 disabled:opacity-40 disabled:shadow-none flex items-center gap-2"
           >

@@ -18,18 +18,11 @@ import {
   IoPricetagOutline
 } from 'react-icons/io5'
 
-import { getInitials } from '@/shared/utils'
-import { useProfile } from '@/features/staff/hooks/useProfile'
+import { useStaffLayoutProfile } from '@/features/staff/hooks/useStaffLayoutProfile'
 
 export default function ManagerLayout() {
   const location = useLocation()
-  const { data: profileData } = useProfile()
-
-  // Extract profile data
-  const profile = profileData?.data
-  const userName = profile?.name || 'Loading...'
-  const userRole = profile?.role === 'MANAGER' ? 'Manager' : profile?.role || 'Loading...'
-  const userInitials = profile?.name ? getInitials(profile.name) : '...'
+  const { userName, userRole, userInitials, userEmail } = useStaffLayoutProfile()
 
   const sidebar = (
     <SidebarStaff
@@ -103,7 +96,7 @@ export default function ManagerLayout() {
       sidebar={sidebar}
       headerLeft={
         <NavSearch
-          styleVariant="manager"
+          styleVariant="operation"
           placeholder="Search products, orders..."
           inputContainerClassName="lg:pl-0"
         />
@@ -113,10 +106,10 @@ export default function ManagerLayout() {
           userName={userName}
           userRole={userRole}
           userInitials={userInitials}
-          userEmail={profile?.email || ''}
+          userEmail={userEmail}
         />
       }
-      mainClassName="px-4 md:px-8 lg:px-10 py-6 md:py-8 bg-white"
+      mainClassName="px-4 md:px-8 lg:px-10 py-6 md:py-8 bg-mint-200"
       headerContainerClassName="pl-4 md:pl-8 lg:pl-10 pr-2 md:pr-4"
       headerContainerWidth="none"
       contentMaxWidth="max-w-[1600px]"

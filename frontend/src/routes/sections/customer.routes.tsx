@@ -15,9 +15,6 @@ const AccountLayout = lazy(() =>
 const LandingPage = lazy(() =>
   import('@/pages/LandingPage').then((m) => ({ default: m.LandingPage }))
 )
-const CustomerHomePage = lazy(() =>
-  import('@/pages/customer/CustomerHomePage').then((m) => ({ default: m.CustomerHomePage }))
-)
 const CustomerProductPage = lazy(() =>
   import('@/pages/customer/CustomerProductPage').then((m) => ({ default: m.CustomerProductPage }))
 )
@@ -200,15 +197,5 @@ export const customerRoutes = [
         )
       }
     ]
-  },
-  {
-    path: '/admin/dashboard',
-    element: (
-      <AuthGuard allowedRoles={['CUSTOMER']}>
-        <LazyPage>
-          <CustomerHomePage />
-        </LazyPage>
-      </AuthGuard>
-    )
   }
 ]

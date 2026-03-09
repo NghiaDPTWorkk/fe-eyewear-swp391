@@ -5,10 +5,8 @@
  */
 import type { ReactNode } from 'react'
 import type { Voucher } from '@/shared/types'
-import type { VoucherColumn } from './VoucherHeader'
-import { DEFAULT_VOUCHER_COLUMNS } from './VoucherHeader'
-import { VoucherTdata } from './VoucherTdata'
-import type { VoucherCellKey } from './VoucherTdata'
+import { DEFAULT_VOUCHER_COLUMNS, type VoucherColumn } from './VoucherHeader'
+import { VoucherTdata, type VoucherCellKey } from './VoucherTdata'
 
 interface VoucherTrProps {
   voucher: Voucher

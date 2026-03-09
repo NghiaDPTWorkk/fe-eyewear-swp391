@@ -43,10 +43,7 @@ export function useVoucherStats() {
   statuses.forEach((status, index) => {
     const data = queries[index].data?.data
     // Handle both possible pagination paths
-    const total =
-      data?.items?.pagination?.total ??
-      (data as any)?.pagination?.total ??
-      0
+    const total = data?.items?.pagination?.total ?? (data as any)?.pagination?.total ?? 0
     stats[status] = total
   })
 
@@ -61,8 +58,7 @@ export function useVoucherStats() {
 export function useVoucherDetail(id: string | null) {
   return useQuery<VoucherDetailResponse>({
     queryKey: [QK, 'detail', id],
-    queryFn: () =>
-      httpClient.get<VoucherDetailResponse>(ENDPOINTS.MANAGER.VOUCHER_DETAIL(id!)),
+    queryFn: () => httpClient.get<VoucherDetailResponse>(ENDPOINTS.MANAGER.VOUCHER_DETAIL(id!)),
     enabled: !!id,
     staleTime: 0 // always re-fetch to get fresh data
   })
@@ -91,7 +87,11 @@ export function useCreateVoucher() {
 /** PATCH /admin/vouchers/:id — update */
 export function useUpdateVoucher() {
   const qc = useQueryClient()
-  return useMutation<VoucherMutateResponse, Error, { id: string; payload: Partial<VoucherPayload> }>({
+  return useMutation<
+    VoucherMutateResponse,
+    Error,
+    { id: string; payload: Partial<VoucherPayload> }
+  >({
     mutationFn: ({ id, payload }) =>
       httpClient.patch<VoucherMutateResponse>(ENDPOINTS.MANAGER.VOUCHER_UPDATE(id), payload),
     onSuccess: (res) => {

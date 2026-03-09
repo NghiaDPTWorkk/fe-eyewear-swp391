@@ -17,7 +17,7 @@ export function NavSearch({
   className,
   inputContainerClassName,
   placeholder,
-  styleVariant = 'default'
+  styleVariant = 'operation'
 }: NavSearchProps) {
   const { toggleSidebar } = useLayoutStore()
   const inputRef = useRef<HTMLInputElement>(null)

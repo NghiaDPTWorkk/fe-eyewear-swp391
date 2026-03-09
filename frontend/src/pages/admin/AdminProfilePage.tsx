@@ -3,18 +3,18 @@ import { Container } from '@/shared/components/ui-core'
 import { useNavigate } from 'react-router-dom'
 import { StaffProfileContent } from '@/features/staff/components/Profile/StaffProfileContent'
 
-export default function SaleStaffProfilePage() {
+export default function AdminProfilePage() {
   const navigate = useNavigate()
 
   return (
     <Container maxWidth="1400px" className="space-y-8 animate-in fade-in duration-500">
       <PageHeader
-        title="My Profile"
-        subtitle="View and manage your personal professional information"
-        breadcrumbs={[{ label: 'Dashboard', path: '/salestaff/dashboard' }, { label: 'Profile' }]}
+        title="Admin Profile"
+        subtitle="Manage system administrator details and professional record"
+        breadcrumbs={[{ label: 'Dashboard', path: '/admin/dashboard' }, { label: 'Profile' }]}
       />
 
-      <StaffProfileContent onEdit={() => navigate('/salestaff/settings')} />
+      <StaffProfileContent onEdit={() => navigate('/admin/settings')} />
     </Container>
   )
 }

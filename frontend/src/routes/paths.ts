@@ -20,7 +20,11 @@ export const PATHS = {
     FAVORITES: '/account/favorites'
   },
   ADMIN: {
-    DASHBOARD: '/admin/dashboard'
+    DASHBOARD: '/admin/dashboard',
+    USERS: '/admin/users',
+    STAFF: '/admin/staff',
+    SETTINGS: '/admin/settings',
+    SUPPORT: '/admin/support'
   },
   SALESTAFF: {
     DASHBOARD: '/salestaff/dashboard',

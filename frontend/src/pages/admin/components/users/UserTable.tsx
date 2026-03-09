@@ -1,7 +1,6 @@
 import React from 'react'
 import { IoPersonCircleOutline } from 'react-icons/io5'
 import type { Customer } from '@/shared/types/customer.types'
-import { format } from 'date-fns'
 
 interface UserTableProps {
   users: Customer[]
@@ -25,7 +24,11 @@ const safeFormatDate = (input?: Date | string | null) => {
   if (!input) return 'N/A'
   const date = input instanceof Date ? input : new Date(input)
   if (Number.isNaN(date.getTime())) return 'N/A'
-  return format(date, 'MMM dd, yyyy')
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: '2-digit',
+    year: 'numeric'
+  }).format(date)
 }
 
 export const UserTable: React.FC<UserTableProps> = ({ users, selectedUserId, onSelectUser }) => {

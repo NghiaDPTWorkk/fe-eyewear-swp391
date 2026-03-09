@@ -1,25 +1,31 @@
-import { 
-  IoCashOutline, 
-  IoGlobeOutline, 
-  IoCalendarOutline 
-} from 'react-icons/io5'
+import { IoCashOutline, IoGlobeOutline, IoCalendarOutline } from 'react-icons/io5'
 import type { Voucher } from '@/shared/types'
-import { fmtVND, fmtDate } from '@/components/layout/staff/managerstaff/vouchertable/VoucherTdata.utils'
+import {
+  fmtVND,
+  fmtDate
+} from '@/components/layout/staff/managerstaff/vouchertable/VoucherTdata.utils'
 
 interface MainDetailVoucherProps {
   voucher: Voucher
   statusConfig: { pill: string; dot: string; label: string }
 }
 
-export default function MainDetailVoucher({ voucher: v, statusConfig: st }: MainDetailVoucherProps) {
+export default function MainDetailVoucher({
+  voucher: v,
+  statusConfig: st
+}: MainDetailVoucherProps) {
   return (
     <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden animate-in slide-in-from-bottom-5 duration-500">
       <div className="p-8 space-y-8">
         {/* Identification & Status */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Identification</span>
-            <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold ${st.pill}`}>
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+              Identification
+            </span>
+            <span
+              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold ${st.pill}`}
+            >
               <span className={`w-1 h-1 rounded-full ${st.dot}`} />
               {st.label}
             </span>
@@ -29,10 +35,10 @@ export default function MainDetailVoucher({ voucher: v, statusConfig: st }: Main
         {/* Voucher Title & Overview */}
         <div className="space-y-4">
           <div className="space-y-1">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Promotion Title</p>
-            <h2 className="text-2xl font-black text-slate-900 leading-tight">
-              {v.name}
-            </h2>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+              Promotion Title
+            </p>
+            <h2 className="text-2xl font-black text-slate-900 leading-tight">{v.name}</h2>
           </div>
           {v.description && (
             <div className="p-5 bg-slate-50/50 rounded-2xl border border-slate-100 italic text-slate-600 text-sm leading-relaxed">
@@ -47,16 +53,22 @@ export default function MainDetailVoucher({ voucher: v, statusConfig: st }: Main
             icon={<IoCashOutline className="text-mint-500" />}
             title="Order Requirements"
             items={[
-              { label: "Minimum Spend", value: `${fmtVND(v.minOrderValue)}đ` },
-              { label: "Maximum Discount", value: v.maxDiscountValue > 0 ? `${fmtVND(v.maxDiscountValue)}đ` : "No limit" }
+              { label: 'Minimum Spend', value: `${fmtVND(v.minOrderValue)}đ` },
+              {
+                label: 'Maximum Discount',
+                value: v.maxDiscountValue > 0 ? `${fmtVND(v.maxDiscountValue)}đ` : 'No limit'
+              }
             ]}
           />
           <DetailGroup
             icon={<IoGlobeOutline className="text-mint-500" />}
             title="Accessibility"
             items={[
-              { label: "Apply Scope", value: v.applyScope === 'ALL' ? 'Open to everyone' : 'Targeted users only' },
-              { label: "Visibility", value: 'Publicly listed' }
+              {
+                label: 'Apply Scope',
+                value: v.applyScope === 'ALL' ? 'Open to everyone' : 'Targeted users only'
+              },
+              { label: 'Visibility', value: 'Publicly listed' }
             ]}
           />
         </div>
@@ -71,14 +83,18 @@ export default function MainDetailVoucher({ voucher: v, statusConfig: st }: Main
             <div className="flex items-center gap-4 p-4 rounded-2xl bg-white border border-slate-100">
               <div className="w-1.5 h-1.5 rounded-full bg-mint-500" />
               <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active From</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                  Active From
+                </p>
                 <p className="text-sm font-bold text-slate-700">{fmtDate(v.startedDate)}</p>
               </div>
             </div>
             <div className="flex items-center gap-4 p-4 rounded-2xl bg-white border border-slate-100">
               <div className="w-1.5 h-1.5 rounded-full bg-red-400" />
               <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Expires On</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                  Expires On
+                </p>
                 <p className="text-sm font-bold text-slate-700">{fmtDate(v.endedDate)}</p>
               </div>
             </div>
@@ -89,7 +105,15 @@ export default function MainDetailVoucher({ voucher: v, statusConfig: st }: Main
   )
 }
 
-function DetailGroup({ icon, title, items }: { icon: React.ReactNode; title: string; items: { label: string; value: string }[] }) {
+function DetailGroup({
+  icon,
+  title,
+  items
+}: {
+  icon: React.ReactNode
+  title: string
+  items: { label: string; value: string }[]
+}) {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2">
@@ -99,7 +123,9 @@ function DetailGroup({ icon, title, items }: { icon: React.ReactNode; title: str
       <div className="space-y-3">
         {items.map((item, idx) => (
           <div key={idx} className="flex flex-col">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{item.label}</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">
+              {item.label}
+            </span>
             <span className="text-sm font-bold text-slate-700">{item.value}</span>
           </div>
         ))}

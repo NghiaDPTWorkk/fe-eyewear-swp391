@@ -6,11 +6,7 @@ interface SystemMetaVoucherProps {
   updatedAt: string
 }
 
-export default function SystemMetaVoucher({
-  id,
-  createdAt,
-  updatedAt
-}: SystemMetaVoucherProps) {
+export default function SystemMetaVoucher({ id, createdAt, updatedAt }: SystemMetaVoucherProps) {
   return (
     <div className="bg-slate-50 rounded-3xl border border-slate-100 p-6 space-y-4">
       <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">

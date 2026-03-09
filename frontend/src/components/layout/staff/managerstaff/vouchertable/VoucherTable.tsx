@@ -5,9 +5,7 @@
 import type { ReactNode } from 'react'
 import { IoTicketOutline } from 'react-icons/io5'
 import type { Voucher } from '@/shared/types'
-import { VoucherHeader } from './VoucherHeader'
-import type { VoucherColumn } from './VoucherHeader'
-import { DEFAULT_VOUCHER_COLUMNS } from './VoucherHeader'
+import { VoucherHeader, type VoucherColumn, DEFAULT_VOUCHER_COLUMNS } from './VoucherHeader'
 import { VoucherTr } from './VoucherTr'
 
 interface VoucherTableProps {
@@ -49,7 +47,9 @@ export function VoucherTable({
             <IoTicketOutline className="text-slate-300" size={32} />
           </div>
           <p className="text-sm font-bold text-slate-400">No vouchers found</p>
-          <p className="text-xs text-slate-300 font-medium">Try adjusting your search or filters.</p>
+          <p className="text-xs text-slate-300 font-medium">
+            Try adjusting your search or filters.
+          </p>
         </div>
       ) : (
         /* Rows */

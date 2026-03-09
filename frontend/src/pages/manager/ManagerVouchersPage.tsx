@@ -25,9 +25,9 @@ import { useState } from 'react'
 
 // ─── Filter tabs ──────────────────────────────────────────────────
 const FILTER_TABS = [
-  { key: 'all',                 label: 'All'      },
-  { key: VoucherStatus.ACTIVE,  label: 'Active'   },
-  { key: VoucherStatus.DRAFT,   label: 'Draft'    },
+  { key: 'all', label: 'All' },
+  { key: VoucherStatus.ACTIVE, label: 'Active' },
+  { key: VoucherStatus.DRAFT, label: 'Draft' },
   { key: VoucherStatus.DISABLE, label: 'Disabled' }
 ] as const
 
@@ -37,21 +37,21 @@ export default function ManagerVouchersPage() {
   const navigate = useNavigate()
 
   // ── List / filter state ──────────────────────────────────────────
-  const [page, setPage]               = useState(1)
-  const LIMIT                          = 10
+  const [page, setPage] = useState(1)
+  const LIMIT = 10
   const [statusFilter, setStatusFilter] = useState<FilterKey>('all')
-  const [search, setSearch]            = useState('')
+  const [search, setSearch] = useState('')
 
   const { data, isLoading, refetch } = useManagerVouchers(
-    page, LIMIT,
+    page,
+    LIMIT,
     statusFilter === 'all' ? undefined : statusFilter,
     search.trim() || undefined
   )
   const { stats, isLoading: isStatsLoading } = useVoucherStats()
 
-  const vouchers   = data?.data?.items?.data ?? []
+  const vouchers = data?.data?.items?.data ?? []
   const pagination = data?.data?.items?.pagination
-
 
   // ── Modal state ───────────────────────────────────────────────────
   // We only need local state for creating a new voucher, and deleting.
@@ -79,22 +79,24 @@ export default function ManagerVouchersPage() {
 
   const handleSave = (formData: Partial<Voucher>) => {
     const payload: VoucherPayload = {
-      name:             formData.name             ?? '',
-      description:      formData.description      ?? '',
-      code:             formData.code             ?? '',
-      typeDiscount:     formData.typeDiscount      ?? 'PERCENTAGE',
-      value:            formData.value             ?? 0,
-      usageLimit:       formData.usageLimit        ?? 100,
+      name: formData.name ?? '',
+      description: formData.description ?? '',
+      code: formData.code ?? '',
+      typeDiscount: formData.typeDiscount ?? 'PERCENTAGE',
+      value: formData.value ?? 0,
+      usageLimit: formData.usageLimit ?? 100,
       startedDate: formData.startedDate ? new Date(formData.startedDate).toISOString() : '',
       endedDate: formData.endedDate ? new Date(formData.endedDate).toISOString() : '',
-      minOrderValue:    formData.minOrderValue      ?? 0,
-      maxDiscountValue: formData.maxDiscountValue   ?? 0,
-      applyScope:       formData.applyScope        ?? 'ALL',
-      status:           formData.status            ?? 'DRAFT'
+      minOrderValue: formData.minOrderValue ?? 0,
+      maxDiscountValue: formData.maxDiscountValue ?? 0,
+      applyScope: formData.applyScope ?? 'ALL',
+      status: formData.status ?? 'DRAFT'
     }
 
     createMutation.mutate(payload, {
-      onSuccess: (res) => { if (res.success) handleClose() }
+      onSuccess: (res) => {
+        if (res.success) handleClose()
+      }
     })
   }
 
@@ -109,13 +111,12 @@ export default function ManagerVouchersPage() {
     })
   }
 
-  const isSaving   = createMutation.isPending
+  const isSaving = createMutation.isPending
   const isDeleting = deleteMutation.isPending
 
   // ── Render ────────────────────────────────────────────────────────
   return (
     <div className="animate-fade-in-up space-y-6">
-
       {/* ── Header ──────────────────────────────────────────────── */}
       <div className="flex items-center justify-between">
         <div>
@@ -129,7 +130,9 @@ export default function ManagerVouchersPage() {
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => { refetch(); }}
+            onClick={() => {
+              refetch()
+            }}
             className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white border border-slate-200 text-slate-500 text-sm font-bold hover:border-mint-300 hover:text-mint-600 hover:bg-mint-50/40 transition-all active:scale-95"
           >
             <IoRefreshOutline size={16} />
@@ -148,23 +151,27 @@ export default function ManagerVouchersPage() {
       <div className="grid grid-cols-4 gap-3">
         {FILTER_TABS.map((tab) => {
           const colors: Record<FilterKey, { text: string; iconBg: string }> = {
-            all:     { text: 'text-slate-700',   iconBg: 'bg-slate-100'  },
-            ACTIVE:  { text: 'text-emerald-700', iconBg: 'bg-emerald-50' },
-            DRAFT:   { text: 'text-amber-600',   iconBg: 'bg-amber-50'   },
-            DISABLE: { text: 'text-slate-400',   iconBg: 'bg-slate-50'   }
+            all: { text: 'text-slate-700', iconBg: 'bg-slate-100' },
+            ACTIVE: { text: 'text-emerald-700', iconBg: 'bg-emerald-50' },
+            DRAFT: { text: 'text-amber-600', iconBg: 'bg-amber-50' },
+            DISABLE: { text: 'text-slate-400', iconBg: 'bg-slate-50' }
           }
-          const c     = colors[tab.key]
+          const c = colors[tab.key]
           const count = isStatsLoading ? '...' : (stats[tab.key] ?? 0)
           return (
             <div
               key={tab.key}
               className="bg-white rounded-2xl border border-slate-100 px-5 py-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow"
             >
-              <div className={`w-10 h-10 rounded-xl ${c.iconBg} flex items-center justify-center shrink-0`}>
+              <div
+                className={`w-10 h-10 rounded-xl ${c.iconBg} flex items-center justify-center shrink-0`}
+              >
                 <IoBarChartOutline className={c.text} size={18} />
               </div>
               <div>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">{tab.label}</p>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">
+                  {tab.label}
+                </p>
                 <p className={`text-2xl font-black mt-0.5 ${c.text}`}>{count}</p>
               </div>
             </div>
@@ -175,12 +182,18 @@ export default function ManagerVouchersPage() {
       {/* ── Filters ─────────────────────────────────────────────── */}
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[220px] max-w-xs">
-          <IoSearchOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+          <IoSearchOutline
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+            size={16}
+          />
           <input
             type="text"
             placeholder="Search code or name…"
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1) }}
+            onChange={(e) => {
+              setSearch(e.target.value)
+              setPage(1)
+            }}
             className="w-full pl-9 pr-4 py-2.5 rounded-2xl border border-slate-200 bg-white text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-mint-300/50 focus:border-mint-400 transition"
           />
         </div>
@@ -191,7 +204,11 @@ export default function ManagerVouchersPage() {
             return (
               <button
                 key={tab.key}
-                onClick={() => { setStatusFilter(tab.key); setPage(1); setSearch('') }}
+                onClick={() => {
+                  setStatusFilter(tab.key)
+                  setPage(1)
+                  setSearch('')
+                }}
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${isActive ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
               >
                 {tab.label}
@@ -208,7 +225,10 @@ export default function ManagerVouchersPage() {
         isLoading={isLoading}
         renderActions={(v) => (
           <button
-            onClick={(e) => { e.stopPropagation(); setDeleteId(v._id) }}
+            onClick={(e) => {
+              e.stopPropagation()
+              setDeleteId(v._id)
+            }}
             className="p-1.5 rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all"
             title="Delete"
           >
@@ -286,7 +306,9 @@ function DeleteModal({
             disabled={isDeleting}
             className="px-6 py-2 rounded-xl bg-red-500 text-white text-sm font-black hover:bg-red-600 transition disabled:opacity-60 flex items-center gap-2"
           >
-            {isDeleting && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
+            {isDeleting && (
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            )}
             {isDeleting ? 'Deleting…' : 'Delete'}
           </button>
         </div>

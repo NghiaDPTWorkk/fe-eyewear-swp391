@@ -241,12 +241,13 @@ export const ENDPOINTS = {
 
   // Operation Staff
   OPERATION_STAFF: {
-    INVOICES_HANDLE_DELIVERY: (page: number, limit: number, status?: string) => {
+    INVOICES_HANDLE_DELIVERY: (page: number, limit: number, status?: string, search?: string) => {
       const params = new URLSearchParams({
         page: String(page),
         limit: String(limit)
       })
       if (status) params.append('status', status)
+      if (search) params.append('search', search)
       return `/admin/invoices/handle-delivery?${params.toString()}`
     },
     INVOICE_DETAIL: (id: string) => `/admin/invoices/${id}`

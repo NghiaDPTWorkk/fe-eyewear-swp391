@@ -30,12 +30,18 @@ import ShippingInfoSeal from '@/components/layout/staff/operationstaff/shippingi
 import { createPortal } from 'react-dom'
 import toast from 'react-hot-toast'
 
-
-
 export default function OperationShippingHandoverPage() {
   const { invoiceId } = useParams<{ invoiceId: string }>()
-  const { data: listData, isLoading: isListLoading, isError: isListError } = useOperationInvoiceDetail(invoiceId ?? '')
-  const { data: detailData, isLoading: isDetailLoading, isError: isDetailError } = useActualInvoiceDetail(invoiceId ?? '')
+  const {
+    data: listData,
+    isLoading: isListLoading,
+    isError: isListError
+  } = useOperationInvoiceDetail(invoiceId ?? '')
+  const {
+    data: detailData,
+    isLoading: isDetailLoading,
+    isError: isDetailError
+  } = useActualInvoiceDetail(invoiceId ?? '')
   const updateInvoiceStatus = useUpdateInvoiceReadyToShip()
 
   const { data: fetchedShipCode } = useOperationShipCode(invoiceId ?? '')
@@ -64,7 +70,6 @@ export default function OperationShippingHandoverPage() {
     orderDetailQueries.every((q: any) => q.isSuccess && q.data?.data?.order?.status === 'COMPLETED')
 
   const isReadyToShip = invoice?.status === 'READY_TO_SHIP'
-
 
   const isDetailsLoading =
     orderDetailQueries.some((q: any) => q.isLoading) || isListLoading || isDetailLoading

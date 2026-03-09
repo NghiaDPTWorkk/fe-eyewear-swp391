@@ -1,5 +1,8 @@
 import type { Voucher } from '@/shared/types'
-import { fmtVND, fmtDate } from '@/components/layout/staff/managerstaff/vouchertable/VoucherTdata.utils'
+import {
+  fmtVND,
+  fmtDate
+} from '@/components/layout/staff/managerstaff/vouchertable/VoucherTdata.utils'
 import { VoucherDiscountType } from '@/shared/utils/enums/voucher.enum'
 
 interface Props {
@@ -195,47 +198,42 @@ export default function VoucherTicket({ voucher: v }: Props) {
       <div className="voucher-ticket-container scale-[0.85] origin-top">
         <div className="vt-edge vt-edge-left"></div>
         <div className="vt-edge vt-edge-right"></div>
-        
+
         <div className="vt-voucher">
-            <div className="vt-bg-circles">
-                <div className="vt-circle vt-c1"></div>
-                <div className="vt-circle vt-c2"></div>
-                <div className="vt-circle vt-c3"></div>
+          <div className="vt-bg-circles">
+            <div className="vt-circle vt-c1"></div>
+            <div className="vt-circle vt-c2"></div>
+            <div className="vt-circle vt-c3"></div>
+          </div>
+
+          <div className="vt-main-border">
+            <div className="vt-content-left">
+              <div className="vt-system-name">{v.name}</div>
+
+              <div className="vt-discount-title">
+                <span className="vt-val">{isPerc ? `${v.value}%` : fmtVND(v.value)}</span>
+                <span className="vt-lbl">DISCOUNT</span>
+              </div>
+
+              <div className="vt-date-box">{dateRange}</div>
             </div>
 
-            <div className="vt-main-border">
-                <div className="vt-content-left">
-                    <div className="vt-system-name">{v.name}</div>
-                    
-                    <div className="vt-discount-title">
-                        <span className="vt-val">
-                          {isPerc ? `${v.value}%` : fmtVND(v.value)}
-                        </span>
-                        <span className="vt-lbl">DISCOUNT</span>
-                    </div>
-
-                    <div className="vt-date-box">
-                        {dateRange}
-                    </div>
+            <div className="vt-content-right">
+              <div className="vt-barcode-area">
+                <div className="vt-barcode-wrapper">
+                  <div className="vt-bars"></div>
+                  <div className="vt-barcode-numbers font-mono">
+                    <span>{v.code.slice(0, 5)}</span>
+                    <span className="opacity-50">{v._id}</span>
+                    <span>{v.code}</span>
+                  </div>
                 </div>
-
-                <div className="vt-content-right">
-                    <div className="vt-barcode-area">
-                        <div className="vt-barcode-wrapper">
-                            <div className="vt-bars"></div>
-                            <div className="vt-barcode-numbers font-mono">
-                                <span>{v.code.slice(0, 5)}</span>
-                                <span className="opacity-50">{v._id}</span>
-                                <span>{v.code}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="vt-admit-text">OPTIC VIEW</div>
-                </div>
+              </div>
+              <div className="vt-admit-text">OPTIC VIEW</div>
             </div>
+          </div>
         </div>
       </div>
     </>
   )
 }
-

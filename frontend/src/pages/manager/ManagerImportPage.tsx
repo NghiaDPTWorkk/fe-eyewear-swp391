@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { format } from 'date-fns'
 import { Container } from '@/components'
 import { PageHeader } from '@/features/sales/components/common'
 import { usePreOrderImports } from '@/features/manager/hooks/usePreOrderImports'
@@ -16,7 +15,6 @@ import {
 import { ImportProductModal } from './components/ImportProductModal'
 import type { PreOrderImport } from '@/shared/types'
 
-
 export default function ManagerImportPage() {
   const [page, setPage] = useState(1)
   const limit = 10
@@ -24,6 +22,14 @@ export default function ManagerImportPage() {
 
   const [isImportModalOpen, setIsImportModalOpen] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState<PreOrderImport | null>(null)
+
+  const formatDate = (date: string | Date) => {
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: '2-digit',
+      year: 'numeric'
+    }).format(new Date(date))
+  }
 
   const plans = data?.data?.preOrderImports ?? []
   const pagination = data?.data?.pagination
@@ -167,13 +173,13 @@ export default function ManagerImportPage() {
                         <div className="flex items-center gap-2 text-slate-500">
                           <IoTimeOutline size={14} className="text-slate-300" />
                           <span className="text-[11px] font-bold tracking-tight">
-                            Started: {format(new Date(plan.startedDate), 'MMM dd, yyyy')}
+                            Started: {formatDate(plan.startedDate)}
                           </span>
                         </div>
                         <div className="flex items-center gap-2 text-slate-500">
                           <IoCalendarOutline size={14} className="text-slate-300" />
                           <span className="text-[11px] font-bold tracking-tight text-amber-600/80">
-                            Due: {format(new Date(plan.endedDate), 'MMM dd, yyyy')}
+                            Due: {formatDate(plan.endedDate)}
                           </span>
                         </div>
                       </div>

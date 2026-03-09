@@ -250,9 +250,7 @@ export default function VoucherTicketSpecification({ voucher: v }: Props) {
               <div className="system-name">{v.name}</div>
 
               <div className="discount-title">
-                <span className="val">
-                  {isPerc ? `${v.value}%` : fmtVND(v.value)}
-                </span>
+                <span className="val">{isPerc ? `${v.value}%` : fmtVND(v.value)}</span>
                 <span className="lbl">DISCOUNT</span>
               </div>
 

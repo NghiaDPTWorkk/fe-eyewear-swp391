@@ -106,7 +106,6 @@ export default function ShippingInfoSeal({
               {totalPrice.toLocaleString('vi-VN')} VND
             </div>
           </div>
-
         </div>
       </div>
     </div>

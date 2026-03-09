@@ -9,13 +9,7 @@ import { VoucherDiscountType, VoucherStatus } from '@/shared/utils/enums/voucher
 import { VOUCHER_STATUS_CFG, fmtVND, fmtDate } from './VoucherTdata.utils'
 
 // ─── Cell types ───────────────────────────────────────────────────
-export type VoucherCellKey =
-  | 'voucher'
-  | 'discount'
-  | 'minOrder'
-  | 'validity'
-  | 'usage'
-  | 'status'
+export type VoucherCellKey = 'voucher' | 'discount' | 'minOrder' | 'validity' | 'usage' | 'status'
 
 interface VoucherTdataProps {
   voucher: Voucher
@@ -44,9 +38,7 @@ export function VoucherTdata({ voucher: v, field }: VoucherTdataProps) {
             <p className="text-[11px] text-slate-400 font-medium mt-0.5 truncate">{v.name}</p>
             <span
               className={`inline-block mt-1 text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md ${
-                v.applyScope === 'ALL'
-                  ? 'bg-slate-100 text-slate-500'
-                  : 'bg-mint-50 text-mint-500'
+                v.applyScope === 'ALL' ? 'bg-slate-100 text-slate-500' : 'bg-mint-50 text-mint-500'
               }`}
             >
               {v.applyScope === 'ALL' ? 'Public' : 'Targeted'}
@@ -58,9 +50,7 @@ export function VoucherTdata({ voucher: v, field }: VoucherTdataProps) {
     case 'discount':
       return (
         <div className="flex flex-col items-center">
-          <span
-            className={`inline-flex items-baseline gap-0.5 font-black text-mint-600`}
-          >
+          <span className={`inline-flex items-baseline gap-0.5 font-black text-mint-600`}>
             <span className="text-xl">{isPerc ? v.value : fmtVND(v.value)}</span>
             <span className="text-xs">{isPerc ? '%' : '₫'}</span>
           </span>
@@ -105,11 +95,7 @@ export function VoucherTdata({ voucher: v, field }: VoucherTdataProps) {
           <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
             <div
               className={`h-full rounded-full transition-all ${
-                usagePct >= 100
-                  ? 'bg-red-400'
-                  : usagePct >= 75
-                    ? 'bg-amber-400'
-                    : 'bg-mint-400'
+                usagePct >= 100 ? 'bg-red-400' : usagePct >= 75 ? 'bg-amber-400' : 'bg-mint-400'
               }`}
               style={{ width: `${usagePct}%` }}
             />

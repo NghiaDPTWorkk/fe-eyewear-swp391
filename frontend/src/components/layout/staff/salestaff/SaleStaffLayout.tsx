@@ -17,21 +17,13 @@ import {
   UserWidgetWithLogout
 } from '@/components/layout/staff/staff-core'
 import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layout/StaffMainLayout'
-import { useProfile } from '@/features/staff/hooks/useProfile'
+import { useStaffLayoutProfile } from '@/features/staff/hooks/useStaffLayoutProfile'
 import { LAYOUT } from '@/features/sales/constants/saleStaffDesignSystem'
-import { getInitials } from '@/shared/utils'
 import { cn } from '@/lib/utils'
 
 export default function SaleStaffLayout() {
   const location = useLocation()
-  const { data: profileData } = useProfile()
-
-  // Extract profile data
-  const profile = profileData?.data
-  const userName = profile?.name || 'Loading...'
-  const userEmail = profile?.email || ''
-  const userRole = profile?.role === 'SALE_STAFF' ? 'Sales Staff' : profile?.role || 'Loading...'
-  const userInitials = getInitials(userName)
+  const { userName, userEmail, userRole, userInitials } = useStaffLayoutProfile()
 
   const sidebar = (
     <SidebarStaff
@@ -98,7 +90,7 @@ export default function SaleStaffLayout() {
   return (
     <StaffMainLayout
       sidebar={sidebar}
-      headerLeft={<NavSearch inputContainerClassName="lg:pl-0" />}
+      headerLeft={<NavSearch styleVariant="operation" inputContainerClassName="lg:pl-0" />}
       headerRight={
         <NavActions
           userName={userName}
@@ -107,7 +99,7 @@ export default function SaleStaffLayout() {
           userEmail={userEmail}
         />
       }
-      mainClassName={cn(LAYOUT.px, LAYOUT.py, 'bg-white')}
+      mainClassName={cn(LAYOUT.px, LAYOUT.py, 'bg-mint-200')}
       headerContainerClassName="pl-4 md:pl-8 lg:pl-10 pr-2 md:pr-4"
       headerContainerWidth="none"
       contentMaxWidth={LAYOUT.maxWidth}

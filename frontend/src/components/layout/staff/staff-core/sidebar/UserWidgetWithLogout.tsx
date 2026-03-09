@@ -23,11 +23,15 @@ export function UserWidgetWithLogout({
 
   const isOperation = location.pathname.startsWith('/operationstaff')
   const isManager = location.pathname.startsWith('/manager')
-  const profilePath = isManager
-    ? '/manager/profile'
-    : isOperation
-      ? '/operationstaff/profile'
-      : '/salestaff/profile'
+  const isAdmin = location.pathname.startsWith('/admin')
+
+  const profilePath = isAdmin
+    ? '/admin/profile'
+    : isManager
+      ? '/manager/profile'
+      : isOperation
+        ? '/operationstaff/settings'
+        : '/salestaff/profile'
 
   const logoutAction = onLogout || handleLogout
 

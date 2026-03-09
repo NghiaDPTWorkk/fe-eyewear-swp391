@@ -8,18 +8,17 @@ import { useCartStore } from '@/store/cart.store'
 import { showError, showSuccess } from '@/features/sales/utils/errorHandler'
 import { queryClient } from '@/lib/react-query'
 
-// Helper function to map roles to their corresponding paths
-const getRolePath = (
-  role: 'customer' | 'SALE_STAFF' | 'SYSTEM_ADMIN' | 'MANAGER' | 'OPERATION_STAFF'
-): string => {
+const getRolePath = (role: string): string => {
+  const normalizedRole = role.toUpperCase().replace(/\s+/g, '_')
   const rolePathMap: Record<string, string> = {
-    customer: 'customer',
+    CUSTOMER: 'customer',
     SALE_STAFF: 'salestaff',
     OPERATION_STAFF: 'operationstaff',
     MANAGER: 'manager',
-    SYSTEM_ADMIN: 'admin'
+    SYSTEM_ADMIN: 'admin',
+    ADMIN: 'admin'
   }
-  return rolePathMap[role] || 'customer'
+  return rolePathMap[normalizedRole] || 'customer'
 }
 
 export const useLogin = () => {
@@ -109,9 +108,7 @@ export const useLogin = () => {
         navigate(from, { replace: true })
       } else if (roleFromToken) {
         // For staff: redirect to role-specific dashboard
-        const rolePath = getRolePath(
-          roleFromToken as 'SALE_STAFF' | 'SYSTEM_ADMIN' | 'MANAGER' | 'OPERATION_STAFF'
-        )
+        const rolePath = getRolePath(roleFromToken)
         navigate(`/${rolePath}/dashboard`)
       } else {
         // Fallback: if something went wrong, go to home

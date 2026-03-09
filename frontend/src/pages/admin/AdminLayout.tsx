@@ -1,77 +1,102 @@
 import { useLocation, useNavigate } from 'react-router-dom'
-import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layout/StaffMainLayout'
 import {
+  StaffMainLayout,
   SidebarStaff,
   UserWidgetWithLogout,
-  ThemeToggle,
   NavActions,
-  NavSearch
-} from '@/components/staff'
+  NavSearch,
+  ThemeToggle
+} from '@/components/layout/staff/staff-core'
 import {
-  IoGrid,
-  IoPeople,
-  IoPersonAdd,
-  IoSettings,
-  IoHelpCircle,
-  IoStorefront
+  IoGridOutline,
+  IoPeopleOutline,
+  IoPersonAddOutline,
+  IoSettingsOutline,
+  IoHelpCircleOutline,
+  IoShieldCheckmarkOutline,
+  IoStatsChartOutline,
+  IoDocumentTextOutline
 } from 'react-icons/io5'
+
+import { useStaffLayoutProfile } from '@/features/staff/hooks/useStaffLayoutProfile'
 
 export default function AdminLayout() {
   const location = useLocation()
   const navigate = useNavigate()
+  const { userName, userRole, userInitials, userEmail } = useStaffLayoutProfile()
 
   const sidebar = (
     <SidebarStaff
       logo={
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center shadow-sm shadow-indigo-100/30">
-            <span className="text-white font-semibold text-lg leading-none">A</span>
+          <div className="w-8 h-8 bg-mint-500 rounded-lg flex items-center justify-center">
+            <IoShieldCheckmarkOutline className="text-white text-lg" />
           </div>
-          <span className="font-semibold text-gray-900 tracking-tight">Admin Panel</span>
+          <div className="flex flex-col">
+            <span className="font-bold text-gray-900 tracking-tight leading-none text-sm">
+              OpticView
+            </span>
+            <span className="text-[10px] font-extrabold text-mint-600 uppercase tracking-widest mt-0.5">
+              HQ / Admin
+            </span>
+          </div>
         </div>
       }
-      storeName="OpticView HQ"
-      storeIcon={<IoStorefront />}
       userWidget={
         <UserWidgetWithLogout
-          userInitials="AD"
-          userName="Administrator"
-          userRole="Super Admin"
+          userInitials={userInitials}
+          userName={userName}
+          userRole={userRole}
           onLogout={() => navigate('/admin/login')}
         />
       }
     >
-      <SidebarStaff.MenuSection label="GENERAL">
+      <SidebarStaff.MenuSection label="OVERVIEW">
         <SidebarStaff.MenuItem
-          icon={<IoGrid />}
+          icon={<IoGridOutline />}
           label="Dashboard"
           to="/admin/dashboard"
           active={location.pathname === '/admin/dashboard'}
         />
         <SidebarStaff.MenuItem
-          icon={<IoPeople />}
-          label="Users"
+          icon={<IoStatsChartOutline />}
+          label="Analytics"
+          to="/admin/analytics"
+          active={location.pathname === '/admin/analytics'}
+        />
+      </SidebarStaff.MenuSection>
+
+      <SidebarStaff.MenuSection label="MANAGEMENT">
+        <SidebarStaff.MenuItem
+          icon={<IoPeopleOutline />}
+          label="User Directory"
           to="/admin/users"
           active={location.pathname.startsWith('/admin/users')}
         />
         <SidebarStaff.MenuItem
-          icon={<IoPersonAdd />}
+          icon={<IoPersonAddOutline />}
           label="Staff Accounts"
           to="/admin/staff"
           active={location.pathname.startsWith('/admin/staff')}
         />
       </SidebarStaff.MenuSection>
 
-      <SidebarStaff.MenuSection label="TOOLS">
+      <SidebarStaff.MenuSection label="SYSTEM & UTILS">
         <SidebarStaff.MenuItem
-          icon={<IoSettings />}
-          label="Settings"
+          icon={<IoDocumentTextOutline />}
+          label="System Logs"
+          to="/admin/logs"
+          active={location.pathname.startsWith('/admin/logs')}
+        />
+        <SidebarStaff.MenuItem
+          icon={<IoSettingsOutline />}
+          label="Global Settings"
           to="/admin/settings"
           active={location.pathname.startsWith('/admin/settings')}
         />
         <SidebarStaff.MenuItem
-          icon={<IoHelpCircle />}
-          label="Support"
+          icon={<IoHelpCircleOutline />}
+          label="Technical Support"
           to="/admin/support"
           active={location.pathname.startsWith('/admin/support')}
         />
@@ -85,14 +110,22 @@ export default function AdminLayout() {
       sidebar={sidebar}
       headerLeft={
         <NavSearch
-          styleVariant="manager"
-          placeholder="Search users, staff..."
+          styleVariant="operation"
+          placeholder="Quick search user, staff or setting..."
           inputContainerClassName="lg:pl-0"
         />
       }
-      headerRight={<NavActions />}
-      mainClassName="p-4 md:p-6 bg-neutral-50"
-      headerClassName="px-4 md:px-6"
+      headerRight={
+        <NavActions
+          userName={userName}
+          userRole={userRole}
+          userInitials={userInitials}
+          userEmail={userEmail}
+        />
+      }
+      mainClassName="p-4 md:p-8 bg-mint-200"
+      headerContainerClassName="pl-4 md:pl-8 lg:pl-10 pr-2 md:pr-4"
+      headerContainerWidth="none"
     />
   )
 }

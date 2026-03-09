@@ -21,7 +21,7 @@ import {
  * Add a new key here whenever the backend adds a new scope — no changes elsewhere needed.
  */
 const APPLY_SCOPE_LABELS: Record<string, string> = {
-  [ApplyScope.ALL]:      'Public — All Users',
+  [ApplyScope.ALL]: 'Public — All Users',
   [ApplyScope.SPECIFIC]: 'Targeted — Specific Users'
 }
 
@@ -29,9 +29,21 @@ const APPLY_SCOPE_LABELS: Record<string, string> = {
  * Status display config — driven from the Status enum so new values auto-appear.
  */
 const STATUS_CFG: Record<string, { label: string; active: string; idle: string }> = {
-  [Status.DRAFT]:   { label: 'Draft',    active: 'bg-amber-50 border-amber-400 text-amber-700',  idle: 'border-slate-200 text-slate-400' },
-  [Status.ACTIVE]:  { label: 'Active',   active: 'bg-emerald-50 border-emerald-400 text-emerald-700', idle: 'border-slate-200 text-slate-400' },
-  [Status.DISABLE]: { label: 'Disabled', active: 'bg-slate-100 border-slate-400 text-slate-600', idle: 'border-slate-200 text-slate-400' }
+  [Status.DRAFT]: {
+    label: 'Draft',
+    active: 'bg-amber-50 border-amber-400 text-amber-700',
+    idle: 'border-slate-200 text-slate-400'
+  },
+  [Status.ACTIVE]: {
+    label: 'Active',
+    active: 'bg-emerald-50 border-emerald-400 text-emerald-700',
+    idle: 'border-slate-200 text-slate-400'
+  },
+  [Status.DISABLE]: {
+    label: 'Disabled',
+    active: 'bg-slate-100 border-slate-400 text-slate-600',
+    idle: 'border-slate-200 text-slate-400'
+  }
 }
 
 // ─── Form state (mirrors Voucher but only editable fields) ────────
@@ -102,20 +114,20 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
   useEffect(() => {
     if (editingVoucher) {
       setForm({
-        _id:              editingVoucher._id,
-        name:             editingVoucher.name             ?? '',
-        description:      editingVoucher.description      ?? '',
-        code:             editingVoucher.code             ?? '',
-        typeDiscount:     editingVoucher.typeDiscount     ?? DiscountType.PERCENTAGE,
-        value:            editingVoucher.value            ?? 0,
-        usageLimit:       editingVoucher.usageLimit       ?? 100,
+        _id: editingVoucher._id,
+        name: editingVoucher.name ?? '',
+        description: editingVoucher.description ?? '',
+        code: editingVoucher.code ?? '',
+        typeDiscount: editingVoucher.typeDiscount ?? DiscountType.PERCENTAGE,
+        value: editingVoucher.value ?? 0,
+        usageLimit: editingVoucher.usageLimit ?? 100,
         // Convert ISO → YYYY-MM-DD so <input type="date"> renders correctly
-        startedDate:      isoToDateInput(editingVoucher.startedDate),
-        endedDate:        isoToDateInput(editingVoucher.endedDate),
-        minOrderValue:    editingVoucher.minOrderValue    ?? 0,
+        startedDate: isoToDateInput(editingVoucher.startedDate),
+        endedDate: isoToDateInput(editingVoucher.endedDate),
+        minOrderValue: editingVoucher.minOrderValue ?? 0,
         maxDiscountValue: editingVoucher.maxDiscountValue ?? 0,
-        applyScope:       editingVoucher.applyScope       ?? ApplyScope.ALL,
-        status:           editingVoucher.status           ?? Status.DRAFT
+        applyScope: editingVoucher.applyScope ?? ApplyScope.ALL,
+        status: editingVoucher.status ?? Status.DRAFT
       })
     } else {
       setForm(EMPTY_FORM)
@@ -207,7 +219,7 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
                   >
                     <span className="text-base">%</span> Percent
                   </button>
-                   <button
+                  <button
                     type="button"
                     onClick={() => setForm({ ...form, typeDiscount: DiscountType.FIXED })}
                     className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg transition-all ${!isPerc ? 'bg-white text-mint-600 shadow-sm border border-mint-100' : 'text-slate-400 hover:text-slate-500'}`}
@@ -260,7 +272,9 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
               <FormRow label="Apply Scope">
                 <select
                   value={form.applyScope}
-                  onChange={(e) => setForm({ ...form, applyScope: e.target.value as VoucherApplyScope })}
+                  onChange={(e) =>
+                    setForm({ ...form, applyScope: e.target.value as VoucherApplyScope })
+                  }
                   className={inputCls}
                 >
                   {/* Dynamically driven from ApplyScope enum — add new values to the enum + APPLY_SCOPE_LABELS map only */}
@@ -273,7 +287,10 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
               </FormRow>
               <FormRow label="Usage Limit">
                 <div className="relative">
-                  <IoInfiniteOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" size={17} />
+                  <IoInfiniteOutline
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300"
+                    size={17}
+                  />
                   <input
                     type="number"
                     min={1}
@@ -291,7 +308,10 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
             <div className="grid grid-cols-2 gap-3">
               <FormRow label="Active From">
                 <div className="relative">
-                  <IoCalendarOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" size={15} />
+                  <IoCalendarOutline
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300"
+                    size={15}
+                  />
                   <input
                     type="date"
                     value={form.startedDate}
@@ -302,7 +322,10 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
               </FormRow>
               <FormRow label="Valid Until">
                 <div className="relative">
-                  <IoCalendarOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" size={15} />
+                  <IoCalendarOutline
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300"
+                    size={15}
+                  />
                   <input
                     type="date"
                     value={form.endedDate}
@@ -315,7 +338,9 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
             {(!form.startedDate || !form.endedDate) && (
               <div className="mt-2 p-3 bg-amber-50 border border-amber-100 rounded-xl flex items-center gap-2.5">
                 <IoAlertCircleOutline className="text-amber-500 shrink-0" size={16} />
-                <p className="text-[11px] font-bold text-amber-700">Please set both start and end dates.</p>
+                <p className="text-[11px] font-bold text-amber-700">
+                  Please set both start and end dates.
+                </p>
               </div>
             )}
           </Section>
@@ -355,7 +380,9 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
           <button
             type="button"
             onClick={handleSave}
-            disabled={!form.code?.trim() || !form.name?.trim() || (form.value ?? 0) <= 0 || isSaving}
+            disabled={
+              !form.code?.trim() || !form.name?.trim() || (form.value ?? 0) <= 0 || isSaving
+            }
             className="px-8 py-2.5 rounded-xl bg-gradient-to-r from-mint-500 to-mint-600 text-white text-sm font-black hover:from-mint-600 hover:to-mint-700 transition shadow-lg shadow-mint-200/50 disabled:opacity-40 disabled:shadow-none flex items-center gap-2"
           >
             {isSaving ? (
@@ -386,7 +413,9 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   return (
     <div className="rounded-xl border border-slate-100 overflow-hidden">
       <div className="px-4 py-2.5 bg-slate-50 border-b border-slate-100">
-        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{title}</span>
+        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+          {title}
+        </span>
       </div>
       <div className="p-4 space-y-3">{children}</div>
     </div>
@@ -396,7 +425,9 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function FormRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="space-y-1.5">
-      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{label}</label>
+      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+        {label}
+      </label>
       {children}
     </div>
   )

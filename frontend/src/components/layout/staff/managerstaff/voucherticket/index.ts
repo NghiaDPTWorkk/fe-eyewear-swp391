@@ -1,2 +1,2 @@
-export * from "./VoucherTicket"
-export * from "./VoucherTicketSpecification"
+export * from './VoucherTicket'
+export * from './VoucherTicketSpecification'

@@ -282,7 +282,7 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
     }
   }
 
-  const shipping: number = 0
+  const shipping: number = 10000
 
   let discountAmount = 0
   if (selectedVoucher) {

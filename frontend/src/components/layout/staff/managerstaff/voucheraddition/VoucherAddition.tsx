@@ -155,7 +155,7 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
 
   return (
     <ModalOverlay onClose={onClose}>
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] flex flex-col">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] flex flex-col overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/60">
           <div className="flex items-center gap-3">

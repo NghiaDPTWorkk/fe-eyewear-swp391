@@ -96,7 +96,7 @@ export function CustomerOrderDetailPage() {
           {invoice.note && (
             <Card className="p-6 border-mint-100/50 bg-yellow-50/30">
               <h3 className="font-bold text-mint-1200 text-sm mb-2 flex items-center gap-2">
-                <span className="text-lg">📝</span> Special Instructions
+                <span className="text-lg"></span> Special Instructions
               </h3>
               <p className="text-sm text-gray-600 italic leading-relaxed">"{invoice.note}"</p>
             </Card>
@@ -105,7 +105,11 @@ export function CustomerOrderDetailPage() {
 
         {/* Sidebar */}
         <div className="space-y-8">
-          <OrderSummary totalPrice={invoice.totalPrice} totalDiscount={invoice.totalDiscount} />
+          <OrderSummary
+            totalPrice={invoice.totalPrice}
+            totalDiscount={invoice.totalDiscount}
+            feeShip={invoice.feeShip}
+          />
           <OrderCustomerDetails
             fullName={invoice.fullName}
             phone={invoice.phone}

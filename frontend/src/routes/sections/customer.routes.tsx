@@ -55,6 +55,11 @@ const CustomerOrderDetailPage = lazy(() =>
     default: m.CustomerOrderDetailPage
   }))
 )
+const ReturnRequestPage = lazy(() =>
+  import('@/pages/customer/account/ReturnRequestPage').then((m) => ({
+    default: m.ReturnRequestPage
+  }))
+)
 
 export const customerRoutes = [
   {
@@ -143,6 +148,14 @@ export const customerRoutes = [
             element: (
               <LazyPage>
                 <CustomerOrderDetailPage />
+              </LazyPage>
+            )
+          },
+          {
+            path: 'orders/:invoiceId/return',
+            element: (
+              <LazyPage>
+                <ReturnRequestPage />
               </LazyPage>
             )
           },

@@ -1,15 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import {
-  IoArrowBackOutline,
-  IoCreateOutline,
-  IoTrashOutline,
-  IoTicketOutline,
-  IoCashOutline,
-  IoInformationCircleOutline
-} from 'react-icons/io5'
+import { IoCreateOutline, IoTrashOutline, IoInformationCircleOutline } from 'react-icons/io5'
+import PageHeader from '@/features/staff/components/common/PageHeader'
 import type { Voucher, VoucherPayload } from '@/shared/types'
-import { VoucherDiscountType } from '@/shared/utils/enums/voucher.enum'
 
 import {
   useVoucherDetail,
@@ -115,43 +108,22 @@ export default function ManagerVoucherDetail() {
     )
   }
 
-  const isPerc = v.typeDiscount === VoucherDiscountType.PERCENTAGE
   const st = VOUCHER_STATUS_CFG[v.status] ?? VOUCHER_STATUS_CFG['DISABLE']
   const isSaving = updateMutation.isPending
   const isDeleting = deleteMutation.isPending
 
   return (
-    <div className="animate-fade-in-up space-y-6 max-w-5xl mx-auto pb-24 relative">
-      {/* ── Header Area: Focus on Code ─────────────────────────── */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-100 pb-4">
-        <div className="space-y-4 w-full">
-          <button
-            onClick={handleBack}
-            className="group flex items-center gap-2 text-slate-400 hover:text-mint-600 font-bold transition-all"
-          >
-            <IoArrowBackOutline
-              size={18}
-              className="group-hover:-translate-x-1 transition-transform"
-            />
-            <span className="text-sm">Back to Vouchers</span>
-          </button>
-
-          <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-4">
-              <div
-                className={`w-10 h-10 rounded-xl flex items-center justify-center bg-mint-50 text-mint-600 shadow-sm border border-slate-100/50`}
-              >
-                {isPerc ? <IoTicketOutline size={22} /> : <IoCashOutline size={22} />}
-              </div>
-              <div>
-                <h1 className="text-xl font-black text-slate-900 tracking-tighter font-mono bg-slate-50 px-3 py-1 rounded-xl border border-slate-100">
-                  Code:{v.code}
-                </h1>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="animate-fade-in-up space-y-8 max-w-5xl mx-auto pb-24 relative">
+      {/* ── Header Area ────────────────────────────────────────── */}
+      <PageHeader
+        title={`Voucher: ${v.code}`}
+        subtitle={v.name || 'Voucher details and configuration'}
+        breadcrumbs={[
+          { label: 'Dashboard', path: PATHS.MANAGER.DASHBOARD },
+          { label: 'Vouchers', path: PATHS.MANAGER.VOUCHERS },
+          { label: v.code }
+        ]}
+      />
 
       {/* ── All Voucher Detail View Area (Aggregated) ───────────── */}
       <VoucherViewAllDetail voucher={v} statusConfig={st} />
@@ -161,7 +133,7 @@ export default function ManagerVoucherDetail() {
         <div className="bg-white/90 backdrop-blur-xl border border-slate-200 shadow-2xl p-3 rounded-[1rem] flex items-center justify-between gap-3 animate-in fade-in slide-in-from-bottom-4 duration-700">
           <button
             onClick={() => setShowDeleteModal(true)}
-            className="flex items-center gap-2 px-6 py-3.5 rounded-[2rem] text-slate-400 font-bold hover:text-red-500 hover:bg-red-50 transition-all active:scale-95"
+            className="flex items-center gap-2 px-6 py-3.5 rounded-[2rem] text-slate-400 font-semibold hover:text-red-500 hover:bg-red-50 transition-all active:scale-95"
           >
             <IoTrashOutline size={20} />
             <span className="text-sm">Delete Voucher</span>
@@ -169,7 +141,7 @@ export default function ManagerVoucherDetail() {
 
           <button
             onClick={() => setShowEditForm(true)}
-            className="flex-1 flex items-center justify-center gap-2 px-8 py-3.5 rounded-[2rem] bg-mint-500 text-white text-sm font-black hover:bg-mint-600 transition-all active:scale-95 shadow-xl shadow-mint-200/50"
+            className="flex-1 flex items-center justify-center gap-2 px-8 py-3.5 rounded-[2rem] bg-mint-500 text-white text-sm font-semibold hover:bg-mint-600 transition-all active:scale-95 shadow-xl shadow-mint-200/50"
           >
             <IoCreateOutline size={20} />
             Modify Voucher

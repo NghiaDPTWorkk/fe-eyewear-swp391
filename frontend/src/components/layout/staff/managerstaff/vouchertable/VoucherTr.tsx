@@ -30,7 +30,7 @@ export function VoucherTr({
   return (
     <div
       onClick={onClick}
-      className={`grid grid-cols-12 gap-3 px-6 py-4 items-center group hover:bg-slate-50/60 transition-colors ${onClick ? 'cursor-pointer' : ''} ${className}`}
+      className={`grid grid-cols-12 gap-3 px-6 py-6 items-center group hover:bg-neutral-50 transition-colors ${onClick ? 'cursor-pointer' : ''} ${className}`}
     >
       {columns.map((col) => {
         if (col.key === 'actions') {

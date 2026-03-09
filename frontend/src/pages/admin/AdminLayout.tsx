@@ -123,8 +123,8 @@ export default function AdminLayout() {
           userEmail={userEmail}
         />
       }
-      mainClassName="p-4 md:p-8 bg-mint-200"
-      headerContainerClassName="pl-4 md:pl-8 lg:pl-10 pr-2 md:pr-4"
+      mainClassName="px-4 md:px-8 lg:px-10 py-8 bg-mint-200"
+      headerContainerClassName="px-4 md:px-8 lg:px-10"
       headerContainerWidth="none"
     />
   )

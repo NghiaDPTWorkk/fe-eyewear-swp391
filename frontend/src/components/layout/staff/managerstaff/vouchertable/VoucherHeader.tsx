@@ -31,7 +31,7 @@ interface VoucherHeaderProps {
 
 export function VoucherHeader({ columns = DEFAULT_VOUCHER_COLUMNS }: VoucherHeaderProps) {
   return (
-    <div className="grid grid-cols-12 gap-3 px-6 py-3.5 bg-slate-50/70 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-widest select-none">
+    <div className="grid grid-cols-12 gap-3 px-6 py-5 bg-white border-b border-neutral-50/50 text-[11px] font-semibold text-neutral-400 uppercase tracking-widest select-none">
       {columns.map((col) => (
         <div
           key={col.key}

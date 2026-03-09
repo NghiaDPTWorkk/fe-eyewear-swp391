@@ -114,7 +114,7 @@ export default function OperationNavSearch() {
       </button>
 
       {/* Search input + dropdown wrapper */}
-      <div ref={wrapperRef} className="relative max-w-lg flex-1 lg:pl-6">
+      <div ref={wrapperRef} className="relative max-w-lg flex-1">
         {/* Input */}
         {/* Input area with anti-autofill dummy fields */}
         <div className="relative">

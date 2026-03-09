@@ -13,10 +13,9 @@ import {
   IoAlertCircleOutline,
   IoChevronBackOutline,
   IoChevronForwardOutline,
-  IoEyeOutline
+  IoFilterOutline
 } from 'react-icons/io5'
 
-// ─── Summary Card ───
 const SummaryCard: React.FC<{
   label: string
   value: string | number
@@ -24,8 +23,17 @@ const SummaryCard: React.FC<{
   isUp: boolean
   icon: React.ReactNode
   iconBg: string
-}> = ({ label, value, percent, isUp, icon, iconBg }) => (
-  <div className="bg-white p-6 rounded-3xl border-none shadow-sm ring-1 ring-neutral-100/50 hover:shadow-md transition-all group">
+  isActive?: boolean
+  onClick?: () => void
+}> = ({ label, value, percent, isUp, icon, iconBg, isActive, onClick }) => (
+  <div
+    onClick={onClick}
+    className={`bg-white p-6 rounded-3xl border-none shadow-sm ring-1 ring-neutral-100/50 transition-all cursor-pointer active:scale-95 ${
+      isActive
+        ? 'ring-2 ring-mint-500 ring-offset-4 shadow-2xl shadow-mint-100/50 scale-[1.02]'
+        : 'hover:shadow-md'
+    }`}
+  >
     <div className="flex justify-between items-start">
       <div>
         <p className="text-[12px] font-bold text-slate-400 tracking-wider uppercase whitespace-nowrap">
@@ -62,6 +70,7 @@ export default function ManagerProductsPage() {
   const [typeFilter, setTypeFilter] = useState<string | undefined>(undefined)
   const [page, setPage] = useState(1)
   const limit = 10
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
 
   const { data, isLoading, refetch } = useAdminProducts(
     page,
@@ -78,10 +87,9 @@ export default function ManagerProductsPage() {
   const totalProducts = pagination?.total ?? 0
   const frameCount = products.filter((p) => p.type === 'frame').length
   const sunglassCount = products.filter((p) => p.type === 'sunglass').length
-  const lowStockCount = products.filter((p) => p.totalVariants <= 1).length
 
   const typeTabs = [
-    { label: 'All', value: undefined },
+    { label: 'All Products', value: undefined },
     { label: 'Frame', value: 'frame' },
     { label: 'Sunglasses', value: 'sunglass' },
     { label: 'Lens', value: 'lens' }
@@ -100,10 +108,15 @@ export default function ManagerProductsPage() {
         <SummaryCard
           label="Total Products"
           value={totalProducts}
-          percent="—"
+          percent="100%"
           isUp={true}
           icon={<IoCubeOutline className="text-xl" />}
           iconBg="bg-mint-50 text-mint-700"
+          isActive={typeFilter === undefined}
+          onClick={() => {
+            setTypeFilter(undefined)
+            setPage(1)
+          }}
         />
         <SummaryCard
           label="Frames"
@@ -112,6 +125,11 @@ export default function ManagerProductsPage() {
           isUp={true}
           icon={<IoShirtOutline className="text-xl" />}
           iconBg="bg-purple-50 text-purple-600"
+          isActive={typeFilter === 'frame'}
+          onClick={() => {
+            setTypeFilter('frame')
+            setPage(1)
+          }}
         />
         <SummaryCard
           label="Sunglasses"
@@ -120,84 +138,130 @@ export default function ManagerProductsPage() {
           isUp={false}
           icon={<IoSparklesOutline className="text-xl" />}
           iconBg="bg-sky-50 text-sky-600"
+          isActive={typeFilter === 'sunglass'}
+          onClick={() => {
+            setTypeFilter('sunglass')
+            setPage(1)
+          }}
         />
         <SummaryCard
-          label="Low Variant"
-          value={lowStockCount}
-          percent="—"
-          isUp={false}
+          label="Lens"
+          value={products.filter((p) => p.type === 'lens').length}
+          percent={
+            totalProducts
+              ? Math.round(
+                  (products.filter((p) => p.type === 'lens').length / totalProducts) * 100
+                ) + '%'
+              : '0%'
+          }
+          isUp={true}
           icon={<IoAlertCircleOutline className="text-xl" />}
           iconBg="bg-orange-50 text-orange-600"
+          isActive={typeFilter === 'lens'}
+          onClick={() => {
+            setTypeFilter('lens')
+            setPage(1)
+          }}
         />
       </div>
 
-      {/* Type Filter Tabs */}
-      <div className="flex items-center gap-2">
-        {typeTabs.map((tab) => (
-          <button
-            key={tab.label}
-            onClick={() => {
-              setTypeFilter(tab.value)
-              setPage(1)
-            }}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
-              typeFilter === tab.value
-                ? 'bg-mint-500 text-white shadow-lg shadow-mint-100/50'
-                : 'bg-white text-slate-500 ring-1 ring-neutral-100 hover:bg-neutral-50'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Product List Table */}
-      <div className="bg-white rounded-[32px] border-none shadow-sm ring-1 ring-neutral-100/50 overflow-hidden">
-        <div className="p-6 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <p className="text-[12px] font-bold text-slate-400 uppercase tracking-wider">
-              Product List
-            </p>
-            <div className="flex items-baseline gap-2">
-              <h2 className="text-xl font-bold text-slate-900 tracking-tight">
-                {pagination?.total ?? '—'}
-              </h2>
-              <span className="text-[11px] font-medium text-slate-400">products</span>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="relative">
+      {/* Filters & Search */}
+      <div className="space-y-6">
+        <div className="bg-white rounded-3xl border border-neutral-50/50 shadow-sm relative">
+          <div className="p-6 border-b border-neutral-50/30 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div className="flex-1 max-w-md relative">
               <IoSearchOutline
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
-                size={16}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400"
+                size={18}
               />
               <input
                 type="text"
-                placeholder="Search product..."
+                placeholder="Search by name, code or SKU..."
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value)
                   setPage(1)
                 }}
-                className="w-full md:w-64 pl-10 pr-4 py-2 bg-neutral-50 border border-neutral-100 rounded-xl text-xs font-medium focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all h-10"
+                className="w-full pl-11 pr-4 py-2.5 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all font-sans"
               />
             </div>
-            <button
-              onClick={() => refetch()}
-              className="flex items-center justify-center gap-2 px-4 h-10 bg-neutral-50 rounded-xl border border-neutral-100 text-neutral-400 hover:text-mint-600 transition-colors"
-            >
-              <IoRefreshOutline />
-            </button>
-            <button
-              onClick={() => navigate('/manager/products/add')}
-              className="hidden md:flex items-center gap-2 px-5 h-10 bg-mint-600 text-white rounded-xl text-xs font-semibold shadow-lg shadow-mint-100/50 hover:bg-mint-700 transition-all active:scale-95"
-            >
-              <IoAddOutline size={16} />
-              Add Product
-            </button>
+
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <button
+                  onClick={() => setIsFilterOpen(!isFilterOpen)}
+                  className={`flex items-center gap-2 px-4 py-2 border rounded-xl text-sm font-semibold transition-all min-w-[160px] justify-between h-[42px] ${
+                    isFilterOpen || typeFilter !== undefined
+                      ? 'border-mint-500 bg-mint-50 text-mint-600 ring-4 ring-mint-500/10'
+                      : 'border-neutral-100 bg-neutral-50 text-neutral-600 hover:bg-neutral-100'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <IoFilterOutline
+                      className={
+                        isFilterOpen || typeFilter !== undefined
+                          ? 'text-mint-600'
+                          : 'text-neutral-400'
+                      }
+                      size={16}
+                    />
+                    <span className="capitalize">
+                      {typeFilter === undefined ? 'All Types' : typeFilter}
+                    </span>
+                  </div>
+                  <IoChevronBackOutline
+                    className={`transition-transform duration-200 ${isFilterOpen ? 'rotate-90' : '-rotate-90'}`}
+                    size={12}
+                  />
+                </button>
+                {isFilterOpen && (
+                  <>
+                    <div className="fixed inset-0 z-10" onClick={() => setIsFilterOpen(false)} />
+                    <div className="absolute top-full mt-2 right-0 w-56 z-20 p-2 bg-white rounded-2xl shadow-xl shadow-mint-900/5 border border-neutral-100 animate-in fade-in slide-in-from-top-2 duration-200">
+                      <div className="space-y-1">
+                        {typeTabs.map((tab) => (
+                          <button
+                            key={tab.label}
+                            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm transition-all text-left ${
+                              typeFilter === tab.value
+                                ? 'bg-mint-50 text-mint-600 font-bold'
+                                : 'text-neutral-600 hover:bg-neutral-50 hover:pl-4'
+                            }`}
+                            onClick={() => {
+                              setTypeFilter(tab.value)
+                              setPage(1)
+                              setIsFilterOpen(false)
+                            }}
+                          >
+                            {tab.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+              <button
+                disabled={isLoading}
+                onClick={() => refetch()}
+                className="flex items-center justify-center h-11 w-11 bg-white border border-neutral-200 rounded-xl text-neutral-400 hover:text-mint-600 hover:border-mint-200 transition-all active:scale-95 disabled:opacity-50"
+              >
+                <IoRefreshOutline className={isLoading ? 'animate-spin' : ''} size={20} />
+              </button>
+              <button
+                onClick={() => navigate('/manager/products/add')}
+                className="flex items-center gap-2 px-6 h-11 bg-mint-600 text-white rounded-xl text-xs font-semibold shadow-lg shadow-mint-100/50 hover:bg-mint-700 transition-all active:scale-95"
+              >
+                <IoAddOutline size={18} />
+                Add Product
+              </button>
+            </div>
           </div>
         </div>
+      </div>
 
+      {/* Product List Table */}
+      <div className="bg-white rounded-[32px] border-none shadow-sm ring-1 ring-neutral-100/50 overflow-hidden">
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
             <div className="w-8 h-8 border-4 border-mint-200 border-t-mint-600 rounded-full animate-spin" />
@@ -209,83 +273,86 @@ export default function ManagerProductsPage() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead className="bg-neutral-50/50 text-[11px] text-slate-400 font-semibold tracking-wider uppercase border-b border-neutral-100">
+            <table className="w-full text-left border-collapse">
+              <thead className="bg-white text-[11px] text-neutral-400 font-semibold tracking-widest uppercase border-b border-neutral-50/50">
                 <tr>
-                  <th className="px-6 py-4 w-[35%]">Product</th>
-                  <th className="px-6 py-4">Brand</th>
-                  <th className="px-6 py-4">Type</th>
-                  <th className="px-6 py-4 text-right">Price</th>
-                  <th className="px-6 py-4 text-center">Variants</th>
-                  <th className="px-6 py-4 text-center">Action</th>
+                  <th className="px-6 py-5 w-[35%]">Product</th>
+                  <th className="px-6 py-5">Brand</th>
+                  <th className="px-6 py-5">Type</th>
+                  <th className="px-6 py-5 text-right">Price</th>
+                  <th className="px-6 py-5 text-center">Variants</th>
+                  <th className="px-6 py-5 text-center">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-50">
                 {products.map((p) => (
                   <tr
                     key={p.id}
-                    className="group hover:bg-neutral-50/30 transition-colors cursor-pointer"
+                    className="group hover:bg-neutral-50 transition-colors cursor-pointer"
                     onClick={() => navigate(`/manager/products/${p.id}`)}
                   >
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-neutral-100 border border-neutral-200 overflow-hidden flex items-center justify-center shrink-0">
+                    <td className="px-6 py-6">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-neutral-50 flex items-center justify-center text-neutral-400 border border-neutral-100 shadow-sm shrink-0 overflow-hidden">
                           {p.defaultVariantImage ? (
                             <img
                               src={p.defaultVariantImage}
                               alt={p.nameBase}
-                              className="w-full h-full object-cover"
+                              className="w-full h-full object-cover transition-transform group-hover:scale-110"
                               onError={(e) => {
                                 ;(e.target as HTMLImageElement).style.display = 'none'
                               }}
                             />
                           ) : (
-                            <IoCubeOutline className="text-neutral-400" size={20} />
+                            <IoCubeOutline size={24} />
                           )}
                         </div>
                         <div className="min-w-0">
-                          <p className="text-xs font-semibold text-slate-700 truncate group-hover:text-mint-600 transition-colors">
+                          <p className="text-sm font-semibold text-gray-900 leading-none mb-1.5 truncate group-hover:text-mint-600 transition-colors">
                             {p.nameBase}
                           </p>
-                          <p className="text-[10px] text-slate-400 font-medium">{p.skuBase}</p>
+                          <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider truncate">
+                            {p.skuBase}
+                          </p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <span className="text-xs font-medium text-slate-500">{p.brand}</span>
+                    <td className="px-6 py-6 font-primary">
+                      <span className="text-sm font-semibold text-gray-600 uppercase tracking-tight">
+                        {p.brand}
+                      </span>
                     </td>
-                    <td className="px-6 py-4">
-                      <span className="inline-flex px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-slate-50 text-slate-600 ring-1 ring-slate-100 capitalize">
+                    <td className="px-6 py-6">
+                      <span className="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-slate-50 text-slate-600 border border-slate-100 font-primary">
                         {p.type}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-6 text-right font-primary">
                       <div>
-                        <p className="text-xs font-semibold text-slate-800">
+                        <p className="text-sm font-bold text-gray-900 leading-none mb-1">
                           {formatPrice(p.defaultVariantFinalPrice)}
                         </p>
                         {p.defaultVariantPrice !== p.defaultVariantFinalPrice && (
-                          <p className="text-[10px] text-slate-400 line-through">
+                          <p className="text-[10px] font-semibold text-neutral-400 line-through">
                             {formatPrice(p.defaultVariantPrice)}
                           </p>
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-mint-50 text-mint-700 text-xs font-bold">
+                    <td className="px-6 py-6 text-center">
+                      <span className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-mint-50 text-mint-700 text-xs font-bold ring-1 ring-mint-100">
                         {p.totalVariants}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-center">
+                    <td className="px-6 py-6 text-center">
                       <button
                         onClick={(e) => {
                           e.stopPropagation()
                           navigate(`/manager/products/${p.id}`)
                         }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold text-mint-600 bg-mint-50 hover:bg-mint-100 transition-colors"
+                        className="inline-flex items-center px-4 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider text-white bg-mint-600 hover:bg-mint-700 shadow-lg shadow-mint-100 transition-all active:scale-95"
                       >
-                        <IoEyeOutline size={14} />
-                        View
+                        View Details
                       </button>
                     </td>
                   </tr>

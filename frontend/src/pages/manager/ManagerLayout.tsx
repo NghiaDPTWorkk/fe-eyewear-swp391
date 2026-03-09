@@ -109,8 +109,8 @@ export default function ManagerLayout() {
           userEmail={userEmail}
         />
       }
-      mainClassName="px-4 md:px-8 lg:px-10 py-6 md:py-8 bg-mint-200"
-      headerContainerClassName="pl-4 md:pl-8 lg:pl-10 pr-2 md:pr-4"
+      mainClassName="px-4 md:px-8 lg:px-10 py-8 bg-mint-200"
+      headerContainerClassName="px-4 md:px-8 lg:px-10"
       headerContainerWidth="none"
       contentMaxWidth="max-w-[1600px]"
     />

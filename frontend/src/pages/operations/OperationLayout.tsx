@@ -204,7 +204,9 @@ export default function OperationLayout() {
           userEmail={userEmail}
         />
       }
-      mainClassName="p-4 md:p-8 bg-mint-200 relative overflow-x-hidden"
+      mainClassName="px-4 md:px-8 lg:px-10 py-8 bg-mint-200 relative overflow-x-hidden"
+      headerContainerClassName="px-4 md:px-8 lg:px-10"
+      headerContainerWidth="none"
     />
   )
 }

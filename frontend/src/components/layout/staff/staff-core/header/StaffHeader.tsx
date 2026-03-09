@@ -25,7 +25,7 @@ export function StaffHeader({
   return (
     <header
       className={cn(
-        'w-full bg-white border-b border-neutral-200 sticky top-0 z-30 transition-all duration-300 px-3',
+        'w-full bg-white border-b border-neutral-200 sticky top-0 z-30 transition-all duration-300',
         className
       )}
     >

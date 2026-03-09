@@ -127,3 +127,16 @@ export function useDeleteVoucher() {
     }
   })
 }
+
+/** Specialized search for dropdown */
+export function useSearchVouchersByCode(code: string) {
+  return useQuery<AdminVoucherListResponse>({
+    queryKey: [QK, 'search', code],
+    queryFn: () =>
+      httpClient.get<AdminVoucherListResponse>(
+        `${ENDPOINTS.MANAGER.VOUCHERS(1, 20)}&code=${encodeURIComponent(code)}`
+      ),
+    enabled: code.trim().length >= 2,
+    staleTime: 10_000
+  })
+}

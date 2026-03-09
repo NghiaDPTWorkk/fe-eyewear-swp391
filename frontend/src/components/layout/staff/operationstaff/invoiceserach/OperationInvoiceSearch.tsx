@@ -141,6 +141,7 @@ export default function OperationInvoiceSearch({ onSelectInvoice }: OperationInv
             query={debouncedQuery}
             onSelect={handleSelect}
             onSelectHistory={handleSelectHistory}
+            label="invoices"
           />
         )}
       </div>

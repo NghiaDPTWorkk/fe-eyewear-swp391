@@ -18,6 +18,7 @@ interface ResultSearchTableProps {
   query: string
   onSelect: (item: SearchResultItem) => void
   onSelectHistory: (orderCode: string) => void
+  label?: string
 }
 
 export default function ResultSearchTable({
@@ -26,7 +27,8 @@ export default function ResultSearchTable({
   isLoading,
   query,
   onSelect,
-  onSelectHistory
+  onSelectHistory,
+  label = 'orders'
 }: ResultSearchTableProps) {
   const hasQuery = query.trim().length >= 2
 
@@ -69,7 +71,9 @@ export default function ResultSearchTable({
                 <p className="text-sm font-semibold text-neutral-400 tracking-wider">
                   Search results for &ldquo;{query}&rdquo;
                 </p>
-                <p className="text-xs text-neutral-400">{results.length} orders found</p>
+                <p className="text-xs text-neutral-400">
+                  {results.length} {label} found
+                </p>
               </div>
 
               <div className="divide-y divide-neutral-50">
@@ -90,7 +94,7 @@ export default function ResultSearchTable({
                   className="w-full flex items-center justify-center gap-1.5 py-3 text-sm font-semibold text-mint-600 hover:bg-mint-50 transition-colors border-t border-neutral-50"
                 >
                   <IoChevronDown size={16} />
-                  View more ({results.length - visibleResultCount} more orders )
+                  View more ({results.length - visibleResultCount} more {label} )
                 </button>
               )}
             </div>

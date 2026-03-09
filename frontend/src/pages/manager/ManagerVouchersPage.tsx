@@ -14,7 +14,6 @@ import { VoucherAddition } from '@/components/layout/staff/managerstaff/vouchera
 import { createPortal } from 'react-dom'
 import {
   IoAddOutline,
-  IoSearchOutline,
   IoTrashOutline,
   IoRefreshOutline,
   IoTicketOutline,
@@ -27,6 +26,7 @@ import {
 } from 'react-icons/io5'
 import { useState } from 'react'
 import PageHeader from '@/features/staff/components/common/PageHeader'
+import ManagerVoucherSearch from '@/components/layout/staff/managerstaff/vouchersearch/ManagerVoucherSearch'
 
 // ─── Filter tabs ──────────────────────────────────────────────────
 const FILTER_TABS = [
@@ -45,15 +45,13 @@ export default function ManagerVouchersPage() {
   const [page, setPage] = useState(1)
   const LIMIT = 10
   const [statusFilter, setStatusFilter] = useState<FilterKey>('all')
-  const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState<'all' | 'PERCENTAGE' | 'FIXED'>('all')
   const [isFilterOpen, setIsFilterOpen] = useState(false)
 
   const { data, isLoading, refetch } = useManagerVouchers(
     page,
     LIMIT,
-    statusFilter === 'all' ? undefined : statusFilter,
-    search.trim() || undefined
+    statusFilter === 'all' ? undefined : statusFilter
   )
   const { stats, isLoading: isStatsLoading } = useVoucherStats()
 
@@ -273,22 +271,7 @@ export default function ManagerVouchersPage() {
 
         <div className="bg-white rounded-3xl border border-neutral-50/50 shadow-sm relative">
           <div className="p-6 border-b border-neutral-50/30 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-            <div className="flex-1 max-w-md relative">
-              <IoSearchOutline
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400"
-                size={18}
-              />
-              <input
-                type="text"
-                placeholder="Search by name or code..."
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value)
-                  setPage(1)
-                }}
-                className="w-full pl-11 pr-4 py-2.5 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all font-sans"
-              />
-            </div>
+            <ManagerVoucherSearch />
 
             <div className="flex items-center gap-3">
               <div className="relative">

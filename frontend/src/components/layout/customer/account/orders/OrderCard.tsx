@@ -221,7 +221,7 @@ export function OrderCard({
                     : 'bg-white border-mint-100 text-mint-1200 hover:bg-danger-50 hover:text-danger-600 hover:border-danger-100 shadow-sm'
                 )}
               >
-                {status === InvoiceStatus.DELIVERING ? 'Track 🚚' : 'Return'}
+                {status === InvoiceStatus.DELIVERING ? 'Track' : 'Return'}
               </Button>
             )}
           </div>

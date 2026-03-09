@@ -6,6 +6,112 @@ import { useChatMessages } from '@/shared/hooks/chat/useChatMessages'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { Link } from 'react-router-dom'
 
+interface MessageContentProps {
+  text: string
+  isUser: boolean
+}
+
+const MessageContent = ({ text, isUser }: MessageContentProps) => {
+  const parseLine = (line: string) => {
+    // Regex matches: **bold**, [label](url), or raw URL
+    const regex = /(\*\*.*?\*\*|\[.*?\]\(https?:\/\/[^\s)]+\)|https?:\/\/[^\s\n]+)/g
+    const parts = line.split(regex)
+
+    return parts.map((part, i) => {
+      // Bold: **text**
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return (
+          <strong key={i} className={isUser ? 'font-bold' : 'font-bold text-primary-700'}>
+            {part.slice(2, -2)}
+          </strong>
+        )
+      }
+      // Markdown link: [label](url)
+      const mdLinkMatch = part.match(/^\[(.*?)\]\((https?:\/\/.*?)\)$/)
+      if (mdLinkMatch) {
+        const [, label, url] = mdLinkMatch
+        return (
+          <a
+            key={i}
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={
+              isUser
+                ? 'underline font-medium text-white/90 hover:text-white transition-colors'
+                : 'underline font-medium text-primary-600 hover:text-primary-700 transition-colors'
+            }
+            onClick={(e) => e.stopPropagation()}
+          >
+            {label}
+          </a>
+        )
+      }
+      // Raw URL
+      if (part.startsWith('http')) {
+        return (
+          <a
+            key={i}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={
+              isUser
+                ? 'underline font-medium text-white/90 hover:text-white transition-colors break-all'
+                : 'underline font-medium text-primary-600 hover:text-primary-700 transition-colors break-all'
+            }
+            onClick={(e) => e.stopPropagation()}
+          >
+            {part}
+          </a>
+        )
+      }
+      return part
+    })
+  }
+
+  const lines = text.split('\n')
+
+  return (
+    <div className="space-y-1.5 flex flex-col min-w-0">
+      {lines.map((line, i) => {
+        const trimmedLine = line.trim()
+
+        // Handle Bullet Points
+        if (trimmedLine.startsWith('* ') || trimmedLine.startsWith('- ')) {
+          return (
+            <div key={i} className="flex gap-2 pl-1 mb-0.5 items-start min-w-0 w-full">
+              <span
+                className={
+                  isUser ? 'text-white/70 mt-1.5 shrink-0' : 'text-primary-500 mt-1.5 shrink-0'
+                }
+                style={{ fontSize: '8px' }}
+              >
+                ●
+              </span>
+              <div className="flex-1 leading-relaxed break-words min-w-0">
+                {parseLine(trimmedLine.substring(2))}
+              </div>
+            </div>
+          )
+        }
+
+        // Empty lines as spacing
+        if (line === '') {
+          return <div key={i} className="h-1" />
+        }
+
+        // Normal paragraph
+        return (
+          <p key={i} className="leading-relaxed break-words min-w-0">
+            {parseLine(line)}
+          </p>
+        )
+      })}
+    </div>
+  )
+}
+
 export const ChatBot = () => {
   const { isAuthenticated } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
@@ -157,13 +263,13 @@ export const ChatBot = () => {
                     className={`max-w-[85%] flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
                   >
                     <div
-                      className={`w-full px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-line break-words ${
+                      className={`w-full px-4 py-2.5 rounded-2xl text-sm break-words ${
                         msg.sender === 'user'
                           ? 'bg-primary-500 text-white rounded-br-md'
                           : 'bg-white text-mint-1200 rounded-bl-md shadow-sm border border-mint-300'
                       }`}
                     >
-                      {msg.text}
+                      <MessageContent text={msg.text} isUser={msg.sender === 'user'} />
                     </div>
                     <span className="text-[10px] text-gray-eyewear mt-1 px-1">
                       {formatTime(msg.timestamp)}

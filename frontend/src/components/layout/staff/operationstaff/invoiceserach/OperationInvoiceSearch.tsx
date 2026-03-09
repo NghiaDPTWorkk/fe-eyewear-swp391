@@ -54,7 +54,7 @@ export default function OperationInvoiceSearch({ onSelectInvoice }: OperationInv
   // Here orderCode maps to invoiceCode
   const searchResults = rawResults.map((inv) => ({
     id: inv.id || (inv as any)._id,
-    orderCode: inv.invoiceCode
+    searchCode: inv.invoiceCode
   }))
 
   useEffect(() => {
@@ -74,8 +74,8 @@ export default function OperationInvoiceSearch({ onSelectInvoice }: OperationInv
   }, [])
 
   const handleSelect = useCallback(
-    (item: { id: string; orderCode: string }) => {
-      saveToHistory(item.orderCode)
+    (item: { id: string; searchCode: string }) => {
+      saveToHistory(item.searchCode)
       setIsOpen(false)
       setInputValue('')
       

@@ -46,7 +46,7 @@ export default function ManagerVoucherSearch() {
   const rawResults = data?.data?.items?.data || []
   const searchResults = rawResults.map((v) => ({
     id: v._id,
-    orderCode: v.code
+    searchCode: v.code
   }))
 
   useEffect(() => {
@@ -65,8 +65,8 @@ export default function ManagerVoucherSearch() {
   }, [])
 
   const handleSelect = useCallback(
-    (item: { id: string; orderCode: string }) => {
-      saveToHistory(item.orderCode)
+    (item: { id: string; searchCode: string }) => {
+      saveToHistory(item.searchCode)
       setIsOpen(false)
       setInputValue('')
       navigate(PATHS.MANAGER.VOUCHER_DETAIL(item.id))

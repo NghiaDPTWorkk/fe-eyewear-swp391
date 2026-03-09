@@ -66,7 +66,7 @@ export default function OperationNavSearch() {
   // Lấy danh sách orders từ response — map sang { id, orderCode }
   const searchResults = (data?.data?.orders?.data || []).map((o: any) => ({
     id: o._id,
-    orderCode: o.orderCode
+    searchCode: o.orderCode
   }))
 
   // Đóng dropdown và reset input khi click bên ngoài
@@ -89,8 +89,8 @@ export default function OperationNavSearch() {
 
   // Xử lý khi chọn 1 kết quả search
   const handleSelect = useCallback(
-    (item: { id: string; orderCode: string }) => {
-      saveToHistory(item.orderCode)
+    (item: { id: string; searchCode: string }) => {
+      saveToHistory(item.searchCode)
       setIsOpen(false)
       setInputValue('')
       navigate(PATHS.OPERATIONSTAFF.ORDER_DETAIL(item.id))
@@ -99,8 +99,8 @@ export default function OperationNavSearch() {
   )
 
   // Xử lý khi chọn từ lịch sử — chỉ điền vào input và search lại
-  const handleSelectHistory = useCallback((orderCode: string) => {
-    setInputValue(orderCode)
+  const handleSelectHistory = useCallback((searchCode: string) => {
+    setInputValue(searchCode)
   }, [])
 
   return (

@@ -10,7 +10,7 @@ import {
 } from '@/features/manager/hooks/useManagerVouchers'
 import { VoucherTable } from '@/components/layout/staff/managerstaff/vouchertable'
 import { VoucherAddition } from '@/components/layout/staff/managerstaff/voucheraddition/VoucherAddition'
-import { Pagination } from '@/shared/components/ui-core/pagination/Pagination'
+
 import { createPortal } from 'react-dom'
 import {
   IoAddOutline,
@@ -22,7 +22,8 @@ import {
   IoTimeOutline,
   IoCloseCircleOutline,
   IoFilterOutline,
-  IoChevronBackOutline
+  IoChevronBackOutline,
+  IoChevronForwardOutline
 } from 'react-icons/io5'
 import { useState } from 'react'
 import PageHeader from '@/features/staff/components/common/PageHeader'
@@ -67,8 +68,6 @@ export default function ManagerVouchersPage() {
   const [showForm, setShowForm] = useState(false)
   const [deleteId, setDeleteId] = useState<string | null>(null)
 
-  // ── Handlers ──────────────────────────────────────────────────────
-  /** Click any row → navigate to detail page */
   const handleRowClick = (id: string) => {
     navigate(PATHS.MANAGER.VOUCHER_DETAIL(id))
   }
@@ -367,40 +366,51 @@ export default function ManagerVouchersPage() {
         </div>
       </div>
 
-      {/* ── Table ───────────────────────────────────────────────── */}
-      {/* Click any row → detail. Delete icon stays inline. */}
-      <VoucherTable
-        vouchers={vouchers}
-        isLoading={isLoading}
-        renderActions={(v) => (
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              setDeleteId(v._id)
-            }}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all"
-            title="Delete"
-          >
-            <IoTrashOutline size={15} />
-          </button>
-        )}
-        onRowClick={(v) => handleRowClick(v._id)}
-      />
+      {/* ── Table & Pagination Container ────────────────────────── */}
+      <div className="bg-white rounded-3xl border border-neutral-50/50 shadow-sm overflow-hidden">
+        <VoucherTable
+          vouchers={vouchers}
+          isLoading={isLoading}
+          renderActions={(v) => (
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                setDeleteId(v._id)
+              }}
+              className="p-1.5 rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all"
+              title="Delete"
+            >
+              <IoTrashOutline size={15} />
+            </button>
+          )}
+          onRowClick={(v) => handleRowClick(v._id)}
+        />
 
-      {/* ── Pagination ──────────────────────────────────────────── */}
-      {pagination && pagination.totalPages > 1 && (
-        <div className="flex items-center justify-between px-1 py-4 border-t border-slate-50">
-          <p className="text-xs font-bold text-slate-400">
-            Showing <span className="text-slate-700">{vouchers.length}</span> of{' '}
-            <span className="text-slate-700">{pagination.total}</span> vouchers
+        {/* ── Pagination Footer ──────────────────────────────────── */}
+        <div className="p-6 bg-white border-t border-neutral-50/50 flex items-center justify-between">
+          <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest pl-2">
+            {pagination
+              ? `Page ${pagination.page} of ${pagination.totalPages}`
+              : `Page ${page}`}
           </p>
-          <Pagination
-            currentPage={page}
-            totalPages={pagination.totalPages}
-            onPageChange={(p) => setPage(p)}
-          />
+          <div className="flex gap-2">
+            <button
+              disabled={page === 1 || isLoading}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              className="flex items-center justify-center h-10 w-10 bg-white border border-neutral-200 rounded-xl text-neutral-400 hover:text-mint-600 hover:border-mint-200 transition-all active:scale-95 disabled:opacity-50"
+            >
+              <IoChevronBackOutline size={18} />
+            </button>
+            <button
+              disabled={!pagination || page >= pagination.totalPages || isLoading}
+              onClick={() => setPage((p) => p + 1)}
+              className="flex items-center justify-center h-10 w-10 bg-white border border-neutral-200 rounded-xl text-neutral-400 hover:text-mint-600 hover:border-mint-200 transition-all active:scale-95 disabled:opacity-50"
+            >
+              <IoChevronForwardOutline size={18} />
+            </button>
+          </div>
         </div>
-      )}
+      </div>
 
       {/* ── VoucherAddition form (Create only here) ───────────────── */}
       <VoucherAddition

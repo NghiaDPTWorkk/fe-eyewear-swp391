@@ -7,9 +7,9 @@ const AdminLayout = lazy(() => import('@/pages/admin/AdminLayout'))
 const AdminDashboardPage = lazy(() => import('@/pages/admin/AdminDashboardPage'))
 const AdminUsersPage = lazy(() => import('@/pages/admin/AdminUsersPage'))
 const AdminStaffPage = lazy(() => import('@/pages/admin/AdminStaffPage'))
-const AdminSettingsPage = lazy(() => import('@/pages/admin/AdminSettingsPage'))
-const AdminSupportPage = lazy(() => import('@/pages/admin/AdminSupportPage'))
-const AdminProfilePage = lazy(() => import('@/pages/admin/AdminProfilePage'))
+const StaffSettingsPage = lazy(() => import('@/pages/staff/StaffSettingsPage'))
+const StaffSupportPage = lazy(() => import('@/pages/staff/StaffSupportPage'))
+const StaffProfilePage = lazy(() => import('@/pages/staff/StaffProfilePage'))
 
 export const adminRoutes = [
   {
@@ -54,7 +54,7 @@ export const adminRoutes = [
         path: 'settings',
         element: (
           <LazyPage>
-            <AdminSettingsPage />
+            <StaffSettingsPage dashboardPath="/admin/dashboard" roleName="Admin" />
           </LazyPage>
         )
       },
@@ -62,7 +62,7 @@ export const adminRoutes = [
         path: 'support',
         element: (
           <LazyPage>
-            <AdminSupportPage />
+            <StaffSupportPage dashboardPath="/admin/dashboard" />
           </LazyPage>
         )
       },
@@ -70,7 +70,7 @@ export const adminRoutes = [
         path: 'profile',
         element: (
           <LazyPage>
-            <AdminProfilePage />
+            <StaffProfilePage dashboardPath="/admin/dashboard" settingsPath="/admin/settings" />
           </LazyPage>
         )
       }

@@ -46,6 +46,14 @@ export default function OperationNavSearch() {
   const [inputValue, setInputValue] = useState('')
   const [isOpen, setIsOpen] = useState(false)
   const [historyItems, setHistoryItems] = useState<string[]>([])
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  // Explicitly clear value on mount to defeat browser autofill
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.value = ''
+    }
+  }, [])
 
   const wrapperRef = useRef<HTMLDivElement>(null)
 
@@ -108,7 +116,12 @@ export default function OperationNavSearch() {
       {/* Search input + dropdown wrapper */}
       <div ref={wrapperRef} className="relative max-w-lg flex-1 lg:pl-6">
         {/* Input */}
+        {/* Input area with anti-autofill dummy fields */}
         <div className="relative">
+          {/* Hidden inputs to trick browsers that try to autofill the search bar */}
+          <input type="email" style={{ display: 'none' }} aria-hidden="true" />
+          <input type="password" style={{ display: 'none' }} aria-hidden="true" />
+
           {/* Icon kính lúp */}
           <span className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none flex items-center">
             <FiSearch
@@ -120,11 +133,16 @@ export default function OperationNavSearch() {
           </span>
 
           <input
+            ref={inputRef}
             type="text"
+            id="opticview-op-nav-search-v3"
+            name="opticview-op-nav-search-v3"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onFocus={handleFocus}
             placeholder="Search orders..."
+            autoComplete="one-time-code"
+            data-lpignore="true"
             className={cn(
               'w-full h-10 pl-10 pr-4 text-sm font-medium transition-all duration-200 outline-none',
               'bg-mint-200 border rounded-xl',

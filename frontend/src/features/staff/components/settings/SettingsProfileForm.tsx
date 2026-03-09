@@ -13,7 +13,8 @@ import { Card, Button } from '@/shared/components/ui-core'
 export default function ProfileForm() {
   const { data: profileData, isLoading, refetch } = useProfile()
   const profile = profileData?.data
-  const isSaleStaff = profile?.role === 'SALE_STAFF'
+  const staffRoles = ['SALE_STAFF', 'OPERATION_STAFF', 'MANAGER', 'ADMIN', 'SYSTEM_ADMIN']
+  const isStaffRole = !!profile?.role && staffRoles.includes(profile.role)
 
   const [formData, setFormData] = useState({
     name: '',
@@ -22,7 +23,17 @@ export default function ProfileForm() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Initialize form data when profile is loaded
+  // Helper to format role names (e.g., OPERATION_STAFF -> Operation Staff)
+  const formatRole = (roleName?: string) => {
+    if (!roleName) return ''
+    return roleName
+      .toLowerCase()
+      .split('_')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')
+  }
+
+  // Initialize form data when profile is loaded or changed
   useEffect(() => {
     if (profile) {
       setFormData({
@@ -40,7 +51,7 @@ export default function ProfileForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!isSaleStaff) return
+    if (!isStaffRole) return
 
     // Validation
     if (!formData.name.trim()) {
@@ -103,10 +114,10 @@ export default function ProfileForm() {
             Profile Information
           </h3>
           <p className="text-xs text-slate-400 font-medium mt-1 uppercase tracking-widest">
-            {isSaleStaff ? 'Request changes to your profile' : 'View your profile details'}
+            {isStaffRole ? 'Request changes to your profile' : 'View your profile details'}
           </p>
         </div>
-        {isSaleStaff && (
+        {isStaffRole && (
           <div className="flex items-center gap-2 text-[10px] font-semibold text-mint-600 bg-mint-50 px-3 py-1.5 rounded-full border border-mint-100 uppercase tracking-widest">
             <IoInformationCircleOutline size={14} /> Approval Required
           </div>
@@ -127,9 +138,9 @@ export default function ProfileForm() {
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              readOnly={!isSaleStaff}
+              readOnly={!isStaffRole}
               className={`w-full px-4 py-3 border rounded-xl text-sm font-semibold transition-all focus:outline-none ${
-                isSaleStaff
+                isStaffRole
                   ? 'bg-white border-slate-200 text-slate-700 focus:border-mint-500 focus:ring-4 focus:ring-mint-500/5 cursor-pointer'
                   : 'bg-slate-50 border-slate-100 text-slate-400 cursor-not-allowed'
               }`}
@@ -141,7 +152,7 @@ export default function ProfileForm() {
             </label>
             <input
               type="text"
-              value={profile?.role === 'SALE_STAFF' ? 'Sales Staff' : profile?.role || ''}
+              value={formatRole(profile?.role)}
               readOnly
               className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-semibold text-slate-400 cursor-not-allowed focus:outline-none"
             />
@@ -155,9 +166,9 @@ export default function ProfileForm() {
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              readOnly={!isSaleStaff}
+              readOnly={!isStaffRole}
               className={`w-full px-4 py-3 border rounded-xl text-sm font-semibold transition-all focus:outline-none ${
-                isSaleStaff
+                isStaffRole
                   ? 'bg-white border-slate-200 text-slate-700 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5 cursor-pointer'
                   : 'bg-slate-50 border-slate-100 text-slate-400 cursor-not-allowed'
               }`}
@@ -172,9 +183,9 @@ export default function ProfileForm() {
               name="phone"
               value={formData.phone}
               onChange={handleInputChange}
-              readOnly={!isSaleStaff}
+              readOnly={!isStaffRole}
               className={`w-full px-4 py-3 border rounded-xl text-sm font-semibold transition-all focus:outline-none ${
-                isSaleStaff
+                isStaffRole
                   ? 'bg-white border-slate-200 text-slate-700 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5 cursor-pointer'
                   : 'bg-slate-50 border-slate-100 text-slate-400 cursor-not-allowed'
               }`}
@@ -182,7 +193,7 @@ export default function ProfileForm() {
           </div>
         </div>
 
-        {isSaleStaff && (
+        {isStaffRole && (
           <div className="flex justify-end pt-4">
             <Button
               type="submit"

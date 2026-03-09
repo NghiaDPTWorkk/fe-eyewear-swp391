@@ -20,8 +20,7 @@ import { AiOutlineFileDone } from 'react-icons/ai'
 import { useAllOrders, useCompletedOrders } from '@/features/staff/hooks/orders/useOrders'
 import { transformApiOrderToTableOrder } from '@/features/staff/components/OrderTable/orderTransformers'
 import { useAuthStore } from '@/store/auth.store'
-import { useProfile } from '@/features/staff/hooks/useProfile'
-import type { AdminAccount } from '@/shared/types'
+import { useStaffLayoutProfile } from '@/features/staff/hooks/useStaffLayoutProfile'
 
 export default function OperationLayout() {
   const location = useLocation()
@@ -36,17 +35,14 @@ export default function OperationLayout() {
     setCompletedLoadingState
   } = useOrderCountStore()
 
-  // Gọi API để hiển thị avt thông qua Zustand store
-  const { user, setUser } = useAuthStore()
-  const { data: profileData } = useProfile()
-  const profile = user as AdminAccount | null
+  const { setUser } = useAuthStore()
+  const { userName, userRole, userInitials, userEmail, profile } = useStaffLayoutProfile()
 
   useEffect(() => {
-    // Sync data from React Query to Zustand Store
-    if (profileData?.data) {
-      setUser(profileData.data)
+    if (profile) {
+      setUser(profile)
     }
-  }, [profileData, setUser])
+  }, [profile, setUser])
 
   // Gọi API để lấy số lượng đơn hàng để xíu lọc theo từng trạng thái
   const { data: ordersData, isLoading, isError, error } = useAllOrders()
@@ -96,17 +92,7 @@ export default function OperationLayout() {
     localStorage.removeItem(STORAGE_KEYS.USER_INFO)
   }
 
-  // Lấy thông tin profile từ store
-  const userInitials = profile?.name
-    ? profile.name
-        .split(' ')
-        .map((word) => word[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2)
-    : 'OP'
-  const userName = profile?.name || 'Loading...'
-  const userRole = profile?.role === 'OPERATION_STAFF' ? 'Operation Staff' : 'Loading...'
+  // (using hook values instead of manual computation)
 
   const sidebar = (
     <SidebarStaff
@@ -198,7 +184,7 @@ export default function OperationLayout() {
         <SidebarStaff.MenuItem
           icon={<IoHelpCircleOutline />}
           label="Support"
-          active={location.pathname === '/operationstaff/packed-success'}
+          active={location.pathname === '/operationstaff/support'}
           onClick={() => navigate('/operationstaff/support')}
         />
         <ThemeToggle />
@@ -215,7 +201,7 @@ export default function OperationLayout() {
           userName={userName}
           userRole={userRole}
           userInitials={userInitials}
-          userEmail={profile?.email || 'loading@example.com'}
+          userEmail={userEmail}
         />
       }
       mainClassName="p-4 md:p-8 bg-mint-200 relative overflow-x-hidden"

@@ -8,5 +8,4 @@ export { default as ManagerInvoiceCard } from './components/invoices/ManagerInvo
 export { default as ManagerVouchersPage } from './ManagerVouchersPage'
 export { default as ManagerImportPage } from './ManagerImportPage'
 export { default as ManagerVoucherDetail } from './ManagerVoucherDetail'
-export { default as ManagerProfilePage } from './ManagerProfilePage'
 export { default as ManagerReportsPage } from './ManagerReportsPage'

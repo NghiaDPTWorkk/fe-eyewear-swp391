@@ -194,7 +194,7 @@ export function NavActions({
                 {
                   icon: IoSettingsOutline,
                   label: 'Settings',
-                  to: isManager ? `${basePrefix}/profile` : `${basePrefix}/settings`
+                  to: `${basePrefix}/settings`
                 }
               ].map((item) => (
                 <Link

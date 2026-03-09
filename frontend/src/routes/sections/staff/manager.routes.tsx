@@ -16,9 +16,6 @@ const ManagerInvoicesPage = lazy(() =>
 const ManagerReportsPage = lazy(() =>
   import('@/pages/manager/ManagerReportsPage').then((m) => ({ default: m.default }))
 )
-const ManagerProfilePage = lazy(() =>
-  import('@/pages/manager/ManagerProfilePage').then((m) => ({ default: m.default }))
-)
 const ManagerTransactionsPage = lazy(() =>
   import('@/pages/manager/ManagerTransactionsPage').then((m) => ({ default: m.default }))
 )
@@ -34,6 +31,11 @@ const ManagerEditProductPage = lazy(() =>
 const ManagerAddProductPage = lazy(() =>
   import('@/pages/manager/ManagerAddProductPage').then((m) => ({ default: m.default }))
 )
+
+const StaffSettingsPage = lazy(() => import('@/pages/staff/StaffSettingsPage'))
+const StaffSupportPage = lazy(() => import('@/pages/staff/StaffSupportPage'))
+const StaffProfilePage = lazy(() => import('@/pages/staff/StaffProfilePage'))
+
 const ManagerAddAttributePage = lazy(() =>
   import('@/pages/manager/ManagerAddAttributePage').then((m) => ({ default: m.default }))
 )
@@ -75,7 +77,23 @@ export const managerRoutes = [
         path: 'profile',
         element: (
           <LazyPage>
-            <ManagerProfilePage />
+            <StaffProfilePage dashboardPath="/manager/dashboard" settingsPath="/manager/settings" />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'settings',
+        element: (
+          <LazyPage>
+            <StaffSettingsPage dashboardPath="/manager/dashboard" roleName="Manager" />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'support',
+        element: (
+          <LazyPage>
+            <StaffSupportPage dashboardPath="/manager/dashboard" />
           </LazyPage>
         )
       },

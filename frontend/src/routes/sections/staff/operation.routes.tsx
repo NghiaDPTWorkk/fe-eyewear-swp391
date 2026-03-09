@@ -16,12 +16,10 @@ const OperationOrderPackingProcess = lazy(
 const OperationManufacturingProcess = lazy(
   () => import('@/pages/operations/OperationManufacturingProcess')
 )
-const OperationSettingPage = lazy(() =>
-  import('@/pages/operations/OperationSettingPage').then((m) => ({ default: m.default }))
-)
-const OperationSupportPage = lazy(() =>
-  import('@/pages/operations/OperationSupportPage').then((m) => ({ default: m.default }))
-)
+const StaffSettingsPage = lazy(() => import('@/pages/staff/StaffSettingsPage'))
+const StaffSupportPage = lazy(() => import('@/pages/staff/StaffSupportPage'))
+const StaffProfilePage = lazy(() => import('@/pages/staff/StaffProfilePage'))
+
 const OperationCompleteOrdersPage = lazy(() =>
   import('@/pages/operations/OperationCompleteOrdersPage').then((m) => ({
     default: m.default
@@ -36,10 +34,6 @@ const OperationAllInvoices = lazy(() =>
   import('@/pages/operations/OperationAllInvoices').then((m) => ({
     default: m.default
   }))
-)
-
-const OperationPersonalProfile = lazy(() =>
-  import('@/pages/operations/OperationPersonalProfile').then((m) => ({ default: m.default }))
 )
 
 const OperationInventoryReceivingPage = lazy(() =>
@@ -159,7 +153,10 @@ export const operationRoutes = [
         path: 'settings',
         element: (
           <LazyPage>
-            <OperationSettingPage />
+            <StaffSettingsPage
+              dashboardPath="/operationstaff/dashboard"
+              roleName="Operation Staff"
+            />
           </LazyPage>
         )
       },
@@ -167,7 +164,7 @@ export const operationRoutes = [
         path: 'support',
         element: (
           <LazyPage>
-            <OperationSupportPage />
+            <StaffSupportPage dashboardPath="/operationstaff/dashboard" />
           </LazyPage>
         )
       },
@@ -175,7 +172,10 @@ export const operationRoutes = [
         path: 'profile',
         element: (
           <LazyPage>
-            <OperationPersonalProfile />
+            <StaffProfilePage
+              dashboardPath="/operationstaff/dashboard"
+              settingsPath="/operationstaff/settings"
+            />
           </LazyPage>
         )
       },

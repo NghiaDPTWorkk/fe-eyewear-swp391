@@ -77,14 +77,14 @@ export default function ManagerLayout() {
         <SidebarStaff.MenuItem
           icon={<IoSettings />}
           label="Settings"
-          to="/manager/profile"
-          active={location.pathname === '/manager/profile'}
+          to="/manager/settings"
+          active={location.pathname === '/manager/settings'}
         />
         <SidebarStaff.MenuItem
           icon={<IoHelpCircle />}
           label="Support"
-          to="/manager/reports"
-          active={location.pathname === '/manager/reports'}
+          to="/manager/support"
+          active={location.pathname === '/manager/support'}
         />
         <ThemeToggle />
       </SidebarStaff.MenuSection>

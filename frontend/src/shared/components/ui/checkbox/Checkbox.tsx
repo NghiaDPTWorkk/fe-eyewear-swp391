@@ -85,19 +85,21 @@ export function Checkbox({
       />
 
       <span className={checkboxBoxVariants({ size, isChecked })}>
-        <svg
-          className={cn('h-3 w-3', size === 'sm' && 'h-2.5 w-2.5', size === 'lg' && 'h-4 w-4')}
-          viewBox="0 0 12 12"
-          fill="none"
-        >
-          <path
-            d="M2 6L5 9L10 3"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        {isChecked && (
+          <svg
+            className={cn('h-3 w-3', size === 'sm' && 'h-2.5 w-2.5', size === 'lg' && 'h-4 w-4')}
+            viewBox="0 0 12 12"
+            fill="none"
+          >
+            <path
+              d="M2 6L5 9L10 3"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        )}
       </span>
 
       {label && <span>{label}</span>}

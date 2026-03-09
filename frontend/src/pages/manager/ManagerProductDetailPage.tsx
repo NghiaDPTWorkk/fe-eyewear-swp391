@@ -21,6 +21,7 @@ import type { AdminProductVariant } from '@/shared/types'
 import { httpClient } from '@/api/apiClients'
 import { ENDPOINTS } from '@/api/endpoints'
 import { toast } from 'react-hot-toast'
+import ManagerViewImage from './ManagerViewImage'
 
 // ─── Format price ───
 function formatPrice(price: number) {
@@ -53,6 +54,7 @@ export default function ManagerProductDetailPage() {
   const [selectedVariantIdx, setSelectedVariantIdx] = useState(0)
   const [imgIdx, setImgIdx] = useState(0)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [isImageViewerOpen, setIsImageViewerOpen] = useState(false)
 
   const handleDelete = async () => {
     if (!id) return
@@ -111,7 +113,8 @@ export default function ManagerProductDetailPage() {
   const spec = product.spec
 
   return (
-    <Container className="max-w-none space-y-8">
+    <>
+      <Container className="max-w-none space-y-8">
       <PageHeader
         title={product.nameBase}
         subtitle={`SKU: ${product.skuBase} · ${product.brand} · ${product.type}`}
@@ -158,7 +161,8 @@ export default function ManagerProductDetailPage() {
                 <img
                   src={currentImg}
                   alt={selectedVariant.name}
-                  className="w-full h-full object-cover transition-opacity duration-300"
+                  className="w-full h-full object-cover transition-opacity duration-300 cursor-zoom-in"
+                  onClick={() => setIsImageViewerOpen(true)}
                   onError={(e) => {
                     ;(e.target as HTMLImageElement).src = ''
                     ;(e.target as HTMLImageElement).style.display = 'none'
@@ -207,7 +211,7 @@ export default function ManagerProductDetailPage() {
                         : 'border-transparent opacity-60 hover:opacity-100'
                     }`}
                   >
-                    <img src={img} alt="" className="w-full h-full object-cover" />
+                    <img src={img} alt="" className="w-full h-full object-cover cursor-zoom-in" />
                   </button>
                 ))}
               </div>
@@ -432,7 +436,15 @@ export default function ManagerProductDetailPage() {
           </div>
         </div>
       </div>
-    </Container>
+      </Container>
+      <ManagerViewImage
+        isOpen={isImageViewerOpen}
+        onClose={() => setIsImageViewerOpen(false)}
+        images={images}
+        currentIndex={imgIdx}
+        onIndexChange={(idx) => setImgIdx(idx)}
+      />
+    </>
   )
 }
 

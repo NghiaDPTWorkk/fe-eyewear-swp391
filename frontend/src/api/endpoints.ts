@@ -323,5 +323,9 @@ export const ENDPOINTS = {
       if (status) p.append('status', status)
       return `/return-tickets?${p.toString()}`
     }
+  },
+  UPLOAD: {
+    SINGLE: '/upload/single',
+    MANY: '/upload/many'
   }
 } as const

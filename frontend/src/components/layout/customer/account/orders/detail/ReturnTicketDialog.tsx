@@ -11,9 +11,15 @@ interface ReturnTicketDialogProps {
   orderId: string
   orderCode: string
   trigger?: React.ReactNode
+  onSuccess?: () => void
 }
 
-export function ReturnTicketDialog({ orderId, orderCode, trigger }: ReturnTicketDialogProps) {
+export function ReturnTicketDialog({
+  orderId,
+  orderCode,
+  trigger,
+  onSuccess
+}: ReturnTicketDialogProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [reason, setReason] = useState<ReturnTicketReason>('DAMAGE')
   const [otherReason, setOtherReason] = useState('')
@@ -90,6 +96,7 @@ export function ReturnTicketDialog({ orderId, orderCode, trigger }: ReturnTicket
 
       if (response.success) {
         toast.success('Return request submitted successfully')
+        onSuccess?.()
         handleClose()
       } else {
         toast.error(response.message || 'Failed to submit return request')

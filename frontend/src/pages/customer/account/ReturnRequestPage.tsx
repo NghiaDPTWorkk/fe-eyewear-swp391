@@ -16,35 +16,35 @@ export function ReturnRequestPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      if (!invoiceId) return
-      try {
-        setIsLoading(true)
-        const [ordersRes, ticketsRes] = await Promise.all([
-          returnService.getOrdersByInvoice(invoiceId),
-          returnService.getReturnTickets(1, 100)
-        ])
+  const fetchData = async () => {
+    if (!invoiceId) return
+    try {
+      setIsLoading(true)
+      const [ordersRes, ticketsRes] = await Promise.all([
+        returnService.getOrdersByInvoice(invoiceId),
+        returnService.getReturnTickets(1, 100)
+      ])
 
-        if (ordersRes.success) {
-          setOrders(ordersRes.data.orderList)
-        } else {
-          setError(ordersRes.message)
-        }
-
-        if (ticketsRes.success) {
-          const ids = new Set(ticketsRes.data.returnTicketList.map((t) => t.orderId))
-          setExistingReturnOrderIds(ids)
-        }
-      } catch (err: any) {
-        setError('Failed to fetch orders or return status.')
-        console.error(err)
-      } finally {
-        setIsLoading(false)
+      if (ordersRes.success) {
+        setOrders(ordersRes.data.orderList)
+      } else {
+        setError(ordersRes.message)
       }
-    }
 
-    fetchOrders()
+      if (ticketsRes.success) {
+        const ids = new Set(ticketsRes.data.returnTicketList.map((t) => t.orderId))
+        setExistingReturnOrderIds(ids)
+      }
+    } catch (err: any) {
+      setError('Failed to fetch orders or return status.')
+      console.error(err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
   }, [invoiceId])
 
   if (isLoading) {
@@ -208,6 +208,7 @@ export function ReturnRequestPage() {
                     <ReturnTicketDialog
                       orderId={order._id}
                       orderCode={order.orderCode}
+                      onSuccess={fetchData}
                       trigger={
                         <Button className="w-full lg:w-auto px-8 h-12 bg-mint-1200 hover:bg-black text-white rounded-2xl font-bold text-[10px] uppercase tracking-[0.2em] transition-all shadow-xl shadow-mint-100/50 transform active:scale-[0.98]">
                           Return Items

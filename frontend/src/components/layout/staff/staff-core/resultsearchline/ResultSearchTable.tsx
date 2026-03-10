@@ -44,7 +44,7 @@ export default function ResultSearchTable({
   const hasMoreHistory = historyItems.length > visibleHistoryCount
 
   return (
-    <div className="absolute left-5 right-0 top-full mt-2 bg-white rounded-2xl shadow-xl border border-neutral-100 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200 max-h-[460px] overflow-y-auto">
+    <div className="absolute left-0 right-0 top-full mt-1 bg-white rounded-2xl shadow-xl border border-neutral-100 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200 max-h-[460px] overflow-y-auto">
       {hasQuery && (
         <>
           {isLoading && (

@@ -1,6 +1,12 @@
 import { PageHeader, SupportContent } from '@/features/staff'
 
-export default function ManagerSupportPage() {
+interface StaffSupportPageProps {
+  dashboardPath: string
+}
+
+export default function StaffSupportPage({
+  dashboardPath = '/salestaff/dashboard'
+}: StaffSupportPageProps) {
   const guidelines = [
     {
       title: 'Data Security',
@@ -25,7 +31,7 @@ export default function ManagerSupportPage() {
       items: [
         'Maintain professional tone in all communications',
         'Do not make promises outside policy scope',
-        'Escalate complaints to superior when needed',
+        'Escalate complaints to supervisor when needed',
         'Document all customer interactions'
       ]
     },
@@ -42,19 +48,19 @@ export default function ManagerSupportPage() {
 
   const contacts = [
     {
-      role: 'Head of Operations',
-      email: 'head.ops@opspanel.com',
-      phone: '+1 (555) 200-0001'
+      role: 'Operations Manager',
+      email: 'ops.manager@opspanel.com',
+      phone: '+1 (555) 100-0001'
     },
     {
-      role: 'Lab Director',
-      email: 'lab.director@opspanel.com',
-      phone: '+1 (555) 200-0002'
+      role: 'Lab Supervisor',
+      email: 'lab.supervisor@opspanel.com',
+      phone: '+1 (555) 100-0002'
     },
     {
-      role: 'Senior IT Support',
-      email: 'sr.it.support@opspanel.com',
-      phone: '+1 (555) 200-0003'
+      role: 'IT Support',
+      email: 'it.support@opspanel.com',
+      phone: '+1 (555) 100-0003'
     },
     {
       role: 'Emergency Hotline',
@@ -65,18 +71,18 @@ export default function ManagerSupportPage() {
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in duration-500">
       <PageHeader
         title="Support & Risk Guidelines"
         subtitle="Important guidelines and bug reporting"
-        breadcrumbs={[{ label: 'Dashboard', path: '/manager/dashboard' }, { label: 'Support' }]}
+        breadcrumbs={[{ label: 'Dashboard', path: dashboardPath }, { label: 'Support' }]}
       />
 
       <SupportContent
         guidelines={guidelines}
         contacts={contacts}
         criticalReminder="Violation of data security policies or financial transaction guidelines may result in immediate suspension and legal action. When in doubt, always escalate to your supervisor."
-        accentColor="primary"
+        accentColor="mint"
       />
     </div>
   )

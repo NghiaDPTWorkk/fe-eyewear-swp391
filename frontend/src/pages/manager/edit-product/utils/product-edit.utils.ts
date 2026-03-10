@@ -52,7 +52,8 @@ export function mapProductToFormState(product: AdminProductDetail): ProductEditF
           value: o.value
         }))
       })
-    )
+    ),
+    optionsConfig: []
   }
 }
 

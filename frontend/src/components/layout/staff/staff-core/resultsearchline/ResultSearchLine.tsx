@@ -2,14 +2,14 @@ import { FiSearch } from 'react-icons/fi'
 import { cn } from '@/lib/utils'
 
 interface ResultSearchLineProps {
-  orderCode: string
+  searchCode: string
   onClick: () => void
   isHistory?: boolean
   className?: string
 }
 
 export default function ResultSearchLine({
-  orderCode,
+  searchCode,
   onClick,
   isHistory = false,
   className
@@ -35,9 +35,9 @@ export default function ResultSearchLine({
         <FiSearch size={14} />
       </span>
 
-      {/* OrderCode text */}
+      {/* searchCode text */}
       <span className="font-medium text-neutral-800 group-hover:text-mint-700 transition-colors text-sm truncate">
-        {orderCode}
+        {searchCode}
       </span>
     </button>
   )

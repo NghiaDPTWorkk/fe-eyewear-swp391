@@ -1,20 +1,33 @@
 import { IoWarningOutline } from 'react-icons/io5'
 
 import {
+  ProfileForm,
   PasswordForm,
   NotificationPreferences,
   AccountInfoSidebar
 } from '@/features/staff/components/settings'
 import { PageHeader } from '@/features/staff/components/common'
-import ManagerProfileForm from './components/ManagerProfileForm'
 
-export default function ManagerSettingsPage() {
+import { useProfile } from '@/features/staff/hooks/useProfile'
+
+interface StaffSettingsPageProps {
+  dashboardPath: string
+  roleName: string
+}
+
+export default function StaffSettingsPage({
+  dashboardPath = '/salestaff/dashboard',
+  roleName = 'Staff'
+}: StaffSettingsPageProps) {
+  const { data: profileData } = useProfile()
+  const profile = profileData?.data
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-in fade-in duration-500">
       <PageHeader
         title="Settings"
-        subtitle="Manage your account and preferences"
-        breadcrumbs={[{ label: 'Dashboard', path: '/manager/dashboard' }, { label: 'Settings' }]}
+        subtitle={`Manage your ${roleName.toLowerCase()} account and preferences`}
+        breadcrumbs={[{ label: 'Dashboard', path: dashboardPath }, { label: 'Settings' }]}
       />
 
       <div>
@@ -28,9 +41,9 @@ export default function ManagerSettingsPage() {
             </h4>
             <p className="text-sm text-amber-800/70 mt-1 leading-relaxed">
               All profile changes require{' '}
-              <span className="font-semibold text-amber-900">Admin approval</span> before they take
-              effect. Your updates will be submitted for review and you will be notified once
-              approved.
+              <span className="font-semibold text-amber-900">Admin or Manager approval</span> before
+              they take effect. Your updates will be submitted for review and you will be notified
+              once approved.
             </p>
           </div>
         </div>
@@ -38,7 +51,7 @@ export default function ManagerSettingsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left Main Column */}
           <div className="lg:col-span-8 space-y-8">
-            <ManagerProfileForm />
+            <ProfileForm key={profile?._id || 'loading'} />
             <PasswordForm />
             <NotificationPreferences />
           </div>

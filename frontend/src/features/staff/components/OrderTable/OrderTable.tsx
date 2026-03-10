@@ -63,7 +63,6 @@ const getOrderTypeStyles = (type: string, role: string) => {
     switch (type) {
       case 'all':
         return 'bg-neutral-50 text-neutral-600'
-      // ========== START NEW CODE ==========
       case OrderType.NORMAL:
         return 'bg-emerald-50 text-emerald-600'
       case OrderType.PRE_ORDER:
@@ -72,7 +71,6 @@ const getOrderTypeStyles = (type: string, role: string) => {
         return 'bg-indigo-50 text-indigo-600'
       case OrderStatus.COMPLETED:
         return 'bg-blue-50 text-blue-600'
-      // ========== END NEW CODE ==========
       default:
         return 'bg-neutral-50 text-neutral-600'
     }
@@ -80,9 +78,9 @@ const getOrderTypeStyles = (type: string, role: string) => {
 }
 
 export default function OrderTable({
-  orders: ordersFromProps, // Nhận orders từ parent
-  isLoading = false, // Trạng thái loading, mặc định false
-  isError = false, // Trạng thái error, mặc định false
+  orders: ordersFromProps,
+  isLoading = false,
+  isError = false,
   columns,
   hiddenColumns = [],
   filterType,
@@ -187,11 +185,21 @@ export default function OrderTable({
       className: 'text-center'
     },
     {
-      header: 'ORDER AT',
+      header: isSales ? 'ORDER AT' : 'CREATED AT',
       render: (order) => (
         <div className={`flex items-center gap-1.5 ${isSales ? 'justify-center' : ''}`}>
           <IoTimeOutline className={isSales ? 'text-neutral-400' : ''} />
-          <span className={isSales ? 'text-neutral-500' : ''}>{order.timeElapsed}</span>
+          <span className={isSales ? 'text-neutral-500' : ''}>
+            {isSales
+              ? order.timeElapsed
+              : new Date(order.createdAt).toLocaleString('vi-VN', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+          </span>
         </div>
       ),
       headerClassName: isSales ? 'text-center' : '',

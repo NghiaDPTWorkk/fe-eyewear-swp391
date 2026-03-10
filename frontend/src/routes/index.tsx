@@ -8,6 +8,7 @@ import { customerRoutes } from './sections/customer.routes'
 import { saleRoutes } from './sections/staff/sale.routes'
 import { operationRoutes } from './sections/staff/operation.routes'
 import { managerRoutes } from './sections/staff/manager.routes'
+import { adminRoutes } from './sections/staff/admin.routes'
 
 const NotFoundPage = lazy(() =>
   import('@/pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage }))
@@ -19,6 +20,7 @@ export const router = createBrowserRouter([
   ...saleRoutes,
   ...operationRoutes,
   ...managerRoutes,
+  ...adminRoutes,
   {
     path: '*',
     element: (

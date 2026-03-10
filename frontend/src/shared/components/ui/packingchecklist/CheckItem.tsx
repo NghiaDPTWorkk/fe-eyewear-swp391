@@ -1,4 +1,3 @@
-import React from 'react'
 import { IoCheckmarkCircle, IoEllipseOutline } from 'react-icons/io5'
 
 interface CheckItemProps {

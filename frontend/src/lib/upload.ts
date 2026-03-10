@@ -1,4 +1,5 @@
 import { httpClient } from '@/api/apiClients'
+import { ENDPOINTS } from '@/api/endpoints'
 
 export const uploadSingle = async (file: File): Promise<string> => {
   const formData = new FormData()
@@ -8,7 +9,7 @@ export const uploadSingle = async (file: File): Promise<string> => {
     const response = await httpClient.post<{
       success: boolean
       data: { file: string }
-    }>('/upload/single', formData, {
+    }>(ENDPOINTS.UPLOAD.SINGLE, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     })
     return response.data.file
@@ -28,7 +29,7 @@ export const uploadMany = async (files: File[]): Promise<string[]> => {
     const response = await httpClient.post<{
       success: boolean
       data: { files: string[] }
-    }>('/common/upload/many', formData, {
+    }>(ENDPOINTS.UPLOAD.MANY, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     })
     return response.data.files

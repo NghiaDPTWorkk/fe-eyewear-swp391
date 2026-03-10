@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import { createPortal } from 'react-dom'
-import { IoArrowForward, IoClose } from 'react-icons/io5'
+import { IoArrowForward, IoClose, IoEyeOutline, IoBodyOutline } from 'react-icons/io5'
 import { useNavigate } from 'react-router-dom'
-
+import { salesService } from '@/features/sales/services/salesService'
+import type { Invoice, OrderDetail } from '../../types'
 import { Button, ConfirmationModal } from '@/shared/components/ui-core'
 import { OrderType } from '@/shared/utils/enums/order.enum'
 import { useSalesStaffAction } from '../../hooks/useSalesStaffAction'
-import type { Invoice } from '../../types'
+import { cn } from '@/lib/utils'
 
 interface InvoiceOrdersDrawerProps {
   isOpen: boolean
@@ -23,13 +24,25 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
   const { approveOrder, processing } = useSalesStaffAction()
   const [showConfirmModal, setShowConfirmModal] = useState(false)
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
+  const [selectedOrderDetails, setSelectedOrderDetails] = useState<OrderDetail | null>(null)
+  const [loadingDetails, setLoadingDetails] = useState(false)
 
   if (!isOpen || !invoice) return null
 
   const handleApproveOrder = async (e: React.MouseEvent, orderId: string) => {
     e.stopPropagation()
     setSelectedOrderId(orderId)
+    setLoadingDetails(true)
     setShowConfirmModal(true)
+
+    try {
+      const res = await salesService.getOrderById(orderId)
+      setSelectedOrderDetails(res.data.order)
+    } catch (err) {
+      console.error('Failed to fetch order details:', err)
+    } finally {
+      setLoadingDetails(false)
+    }
   }
 
   const confirmApproveOrder = async () => {
@@ -259,23 +272,128 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
 
       <ConfirmationModal
         isOpen={showConfirmModal}
-        onClose={() => setShowConfirmModal(false)}
+        onClose={() => {
+          setShowConfirmModal(false)
+          setSelectedOrderDetails(null)
+        }}
         onConfirm={confirmApproveOrder}
         title="Approve Order"
         message="Are you sure you want to verify and approve this order? This will move it to the next processing stage."
         details={
-          <div className="flex flex-col gap-2">
-            <div className="flex justify-between items-center text-xs">
-              <span className="text-slate-400 font-medium">Order ID</span>
-              <span className="text-slate-900 font-bold uppercase tracking-tight">
-                #{selectedOrderId?.slice(-8)}
-              </span>
+          loadingDetails ? (
+            <div className="py-8 flex flex-col items-center justify-center gap-3">
+              <div className="w-6 h-6 border-2 border-mint-500/20 border-t-mint-500 rounded-full animate-spin" />
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                Fetching Order Details...
+              </p>
             </div>
-            <div className="flex justify-between items-center text-xs">
-              <span className="text-slate-400 font-medium">Customer</span>
-              <span className="text-slate-900 font-bold">{invoice.fullName}</span>
+          ) : selectedOrderDetails ? (
+            <div className="space-y-4">
+              {/* Order Basic Info Card */}
+              <div className="bg-slate-50/50 rounded-2xl p-4 border border-slate-100/50 space-y-3">
+                <div className="flex justify-between items-center text-[11px] font-bold uppercase tracking-wider">
+                  <span className="text-slate-400">Order Information</span>
+                  <span className="text-mint-600">
+                    #{selectedOrderDetails.orderCode || selectedOrderId?.slice(-8)}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <p className="text-[10px] text-slate-400 uppercase tracking-widest">Customer</p>
+                    <p className="text-xs font-bold text-slate-900">{invoice.fullName}</p>
+                  </div>
+                  <div className="space-y-1 text-right">
+                    <p className="text-[10px] text-slate-400 uppercase tracking-widest">Phone</p>
+                    <p className="text-xs font-bold text-slate-900">{invoice.phone}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Prescription Details Section */}
+              {selectedOrderDetails.products?.[0]?.lens?.parameters && (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 px-1">
+                    <div className="w-6 h-6 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-500 border border-indigo-100">
+                      <IoEyeOutline size={14} />
+                    </div>
+                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                      Prescription Parameters (RX)
+                    </span>
+                  </div>
+                  <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
+                    <table className="w-full text-[11px] border-collapse">
+                      <thead>
+                        <tr className="bg-slate-50 border-b border-slate-100 text-slate-400">
+                          <th className="py-2.5 px-3 text-left font-bold w-12">EYE</th>
+                          <th className="py-2.5 px-2 font-bold text-center">SPH</th>
+                          <th className="py-2.5 px-2 font-bold text-center">CYL</th>
+                          <th className="py-2.5 px-2 font-bold text-center">AXIS</th>
+                          <th className="py-2.5 px-2 font-bold text-center">ADD</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-50">
+                        {['right', 'left'].map((side) => {
+                          const isRight = side === 'right'
+                          const params =
+                            selectedOrderDetails.products[0].lens?.parameters[
+                              side as 'right' | 'left'
+                            ]
+                          const label = isRight ? 'OD' : 'OS'
+                          const colorClass = isRight
+                            ? 'text-indigo-600 bg-indigo-50/30'
+                            : 'text-emerald-600 bg-emerald-50/30'
+                          const accentClass = isRight ? 'text-indigo-500' : 'text-emerald-500'
+
+                          return (
+                            <tr key={side}>
+                              <td className={cn('py-3 px-3 font-bold', colorClass)}>{label}</td>
+                              <td className="py-3 px-2 text-center font-semibold text-slate-700">
+                                {params?.SPH !== undefined
+                                  ? (params.SPH > 0 ? '+' : '') + params.SPH.toFixed(2)
+                                  : '0.00'}
+                              </td>
+                              <td className="py-3 px-2 text-center font-semibold text-slate-700">
+                                {params?.CYL !== undefined
+                                  ? (params.CYL > 0 ? '+' : '') + params.CYL.toFixed(2)
+                                  : '0.00'}
+                              </td>
+                              <td
+                                className={cn('py-3 px-2 text-center font-semibold', accentClass)}
+                              >
+                                {params?.AXIS || 0}°
+                              </td>
+                              <td className="py-3 px-2 text-center font-semibold text-slate-500">
+                                {params?.ADD !== undefined
+                                  ? (params.ADD > 0 ? '+' : '') + params.ADD.toFixed(2)
+                                  : '—'}
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                    <div className="bg-blue-50/50 p-3 flex justify-between items-center border-t border-blue-100/50">
+                      <div className="flex items-center gap-2">
+                        <div className="w-5 h-5 rounded-md bg-blue-100 flex items-center justify-center text-blue-600">
+                          <IoBodyOutline size={12} />
+                        </div>
+                        <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">
+                          Pupillary Distance (PD)
+                        </span>
+                      </div>
+                      <span className="text-sm font-bold text-blue-700">
+                        {selectedOrderDetails.products[0].lens.parameters.PD || 64}mm
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
+          ) : (
+            <div className="py-8 text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
+              No detailed parameters available
+            </div>
+          )
         }
         confirmText="Approve Order"
         cancelText="Cancel"

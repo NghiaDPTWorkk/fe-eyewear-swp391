@@ -34,7 +34,15 @@ export function NavActions({
   // Determine base path for dynamic links
   const isOperation = location.pathname.startsWith('/operationstaff')
   const isManager = location.pathname.startsWith('/manager')
-  const basePrefix = isManager ? '/manager' : isOperation ? '/operationstaff' : '/salestaff'
+  const isAdmin = location.pathname.startsWith('/admin')
+
+  const basePrefix = isAdmin
+    ? '/admin'
+    : isManager
+      ? '/manager'
+      : isOperation
+        ? '/operationstaff'
+        : '/salestaff'
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -171,7 +179,7 @@ export function NavActions({
                 <p className="text-sm font-medium text-neutral-500 truncate mt-1">{userEmail}</p>
               </div>
               <span className="px-3 py-1 bg-primary-100/50 text-primary-600 text-[11px] font-semibold uppercase tracking-wider rounded-lg border border-primary-200/30">
-                {isManager ? 'Manager' : isOperation ? 'Staff' : 'Staff'}
+                {isAdmin ? 'Admin' : isManager ? 'Manager' : 'Staff'}
               </span>
             </div>
 
@@ -181,9 +189,13 @@ export function NavActions({
                 {
                   icon: IoTicketOutline,
                   label: 'Report History',
-                  to: `${basePrefix}/support?tab=history`
+                  to: isManager ? `${basePrefix}/reports` : `${basePrefix}/support?tab=history`
                 },
-                { icon: IoSettingsOutline, label: 'Settings', to: `${basePrefix}/settings` }
+                {
+                  icon: IoSettingsOutline,
+                  label: 'Settings',
+                  to: `${basePrefix}/settings`
+                }
               ].map((item) => (
                 <Link
                   key={item.label}

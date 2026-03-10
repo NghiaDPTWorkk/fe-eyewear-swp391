@@ -44,7 +44,7 @@ export default function SaleStaffRegularOrderDetailPage() {
           Orders
         </Link>
         <span className="text-neutral-300 mx-1">/</span>
-        <span className="text-mint-500 font-semibold tracking-wider">Order Details</span>
+        <span className="text-mint-700 font-bold tracking-tight">Order Details</span>
       </nav>
 
       {/* Main content */}

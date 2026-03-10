@@ -1,8 +1,6 @@
 import type { OperationOrder } from '@/shared/types/operationOrder.types'
 import type { Order } from './OrderTable'
-// ========== START NEW CODE ==========
 import { OrderType, OrderStatus } from '@/shared/utils/enums/order.enum'
-// ========== END NEW CODE ==========
 
 /**
  * Helper: Tính thời gian đã trôi qua từ createdAt

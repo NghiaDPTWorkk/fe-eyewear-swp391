@@ -13,12 +13,6 @@ const ManagerDashboardPage = lazy(() =>
 const ManagerInvoicesPage = lazy(() =>
   import('@/pages/manager/ManagerInvoicesPage').then((m) => ({ default: m.default }))
 )
-const ManagerSettingsPage = lazy(() =>
-  import('@/pages/manager/ManagerSettingsPage').then((m) => ({ default: m.default }))
-)
-const ManagerSupportPage = lazy(() =>
-  import('@/pages/manager/ManagerSupportPage').then((m) => ({ default: m.default }))
-)
 const ManagerReportsPage = lazy(() =>
   import('@/pages/manager/ManagerReportsPage').then((m) => ({ default: m.default }))
 )
@@ -28,11 +22,28 @@ const ManagerTransactionsPage = lazy(() =>
 const ManagerProductsPage = lazy(() =>
   import('@/pages/manager/ManagerProductsPage').then((m) => ({ default: m.default }))
 )
+const ManagerProductDetailPage = lazy(() =>
+  import('@/pages/manager/ManagerProductDetailPage').then((m) => ({ default: m.default }))
+)
+const ManagerEditProductPage = lazy(() =>
+  import('@/pages/manager/ManagerEditProductPage').then((m) => ({ default: m.default }))
+)
 const ManagerAddProductPage = lazy(() =>
   import('@/pages/manager/ManagerAddProductPage').then((m) => ({ default: m.default }))
 )
+
+const StaffSettingsPage = lazy(() => import('@/pages/staff/StaffSettingsPage'))
+const StaffSupportPage = lazy(() => import('@/pages/staff/StaffSupportPage'))
+const StaffProfilePage = lazy(() => import('@/pages/staff/StaffProfilePage'))
+
 const ManagerAddAttributePage = lazy(() =>
   import('@/pages/manager/ManagerAddAttributePage').then((m) => ({ default: m.default }))
+)
+const ManagerImportPage = lazy(() =>
+  import('@/pages/manager/ManagerImportPage').then((m) => ({ default: m.default }))
+)
+const ManagerVoucherDetailPage = lazy(() =>
+  import('@/pages/manager/ManagerVoucherDetail').then((m) => ({ default: m.default }))
 )
 
 export const managerRoutes = [
@@ -63,18 +74,26 @@ export const managerRoutes = [
         )
       },
       {
-        path: 'settings',
+        path: 'profile',
         element: (
           <LazyPage>
-            <ManagerSettingsPage />
+            <StaffProfilePage dashboardPath="/manager/dashboard" settingsPath="/manager/settings" />
           </LazyPage>
         )
       },
       {
-        path: 'help',
+        path: 'settings',
         element: (
           <LazyPage>
-            <ManagerSupportPage />
+            <StaffSettingsPage dashboardPath="/manager/dashboard" roleName="Manager" />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'support',
+        element: (
+          <LazyPage>
+            <StaffSupportPage dashboardPath="/manager/dashboard" />
           </LazyPage>
         )
       },
@@ -111,6 +130,22 @@ export const managerRoutes = [
         )
       },
       {
+        path: 'products/:id',
+        element: (
+          <LazyPage>
+            <ManagerProductDetailPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'products/:id/edit',
+        element: (
+          <LazyPage>
+            <ManagerEditProductPage />
+          </LazyPage>
+        )
+      },
+      {
         path: 'attributes/add',
         element: (
           <LazyPage>
@@ -123,6 +158,22 @@ export const managerRoutes = [
         element: (
           <LazyPage>
             <ManagerVouchersPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'vouchers/:id',
+        element: (
+          <LazyPage>
+            <ManagerVoucherDetailPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'imports',
+        element: (
+          <LazyPage>
+            <ManagerImportPage />
           </LazyPage>
         )
       }

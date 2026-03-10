@@ -1,9 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import type { OrderResponse } from '@/shared/types'
 import { orderAdminService } from '@/shared/services/admin/orderService'
-
 export function useGetOrderById(orderId?: string | null, enabled = true) {
-  return useQuery<OrderResponse>({
+  return useQuery({
     queryKey: ['admin-order-detail', orderId],
     queryFn: () => {
       if (!orderId) {

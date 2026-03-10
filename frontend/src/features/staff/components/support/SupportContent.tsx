@@ -185,72 +185,79 @@ export default function SupportContent({
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="bg-slate-50/50">
-                  <th className="px-8 py-5 text-[10px] font-semibold text-slate-400 uppercase tracking-[0.2em]">
+                <tr className="bg-slate-50 border-b border-slate-100">
+                  <th className="px-6 py-3.5 text-[10px] font-bold text-slate-500 uppercase tracking-[0.18em] w-1/2">
                     Ticket Information
                   </th>
-                  <th className="px-8 py-5 text-[10px] font-semibold text-slate-400 uppercase tracking-[0.2em] text-center">
+                  <th className="px-4 py-3.5 text-[10px] font-bold text-slate-500 uppercase tracking-[0.18em] text-center">
                     Priority
                   </th>
-                  <th className="px-8 py-5 text-[10px] font-semibold text-slate-400 uppercase tracking-[0.2em] text-center">
-                    Current Status
+                  <th className="px-4 py-3.5 text-[10px] font-bold text-slate-500 uppercase tracking-[0.18em] text-center">
+                    Status
                   </th>
-                  <th className="px-8 py-5 text-[10px] font-semibold text-slate-400 uppercase tracking-[0.2em] text-right">
-                    Date Submitted
+                  <th className="px-6 py-3.5 text-[10px] font-bold text-slate-500 uppercase tracking-[0.18em] text-right">
+                    Submitted
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-50">
+              <tbody className="divide-y divide-slate-100">
                 {isHistoryLoading ? (
                   Array.from({ length: 3 }).map((_, i) => (
                     <tr key={i} className="animate-pulse">
-                      <td colSpan={4} className="px-8 py-8">
-                        <div className="h-4 bg-slate-100 rounded-full w-48 mb-3" />
-                        <div className="h-3 bg-slate-50 rounded-full w-96" />
+                      <td colSpan={4} className="px-6 py-5">
+                        <div className="h-4 bg-slate-100 rounded-full w-48 mb-2" />
+                        <div className="h-3 bg-slate-50 rounded-full w-72" />
                       </td>
                     </tr>
                   ))
                 ) : sortedHistory.length > 0 ? (
-                  sortedHistory.map((report) => (
+                  sortedHistory.map((report, idx) => (
                     <tr
                       key={report.id}
                       onClick={() => setSelectedTicket(report)}
-                      className="hover:bg-slate-50/50 transition-all group cursor-pointer"
+                      className={`hover:bg-mint-50/30 transition-all group cursor-pointer ${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/40'}`}
                     >
-                      <td className="px-8 py-6 max-w-xs md:max-w-md">
-                        <div className="flex flex-col gap-1.5">
+                      <td className="px-6 py-4 max-w-xs md:max-w-sm">
+                        <div className="flex flex-col gap-1">
                           <h4
-                            className={`text-sm font-semibold text-slate-800 transition-colors line-clamp-1 ${accentColor === 'mint' ? 'group-hover:text-mint-600' : 'group-hover:text-primary-600'}`}
+                            className={`text-sm font-semibold text-slate-800 transition-colors line-clamp-1 group-hover:text-mint-600`}
                           >
                             {report.title}
                           </h4>
-                          <p className="text-xs text-slate-500 line-clamp-2 font-medium leading-relaxed">
+                          <p className="text-xs text-slate-400 line-clamp-1 leading-relaxed">
                             {report.description}
                           </p>
                         </div>
                       </td>
-                      <td className="px-8 py-6 text-center">
+                      <td className="px-4 py-4 text-center">
                         <span
-                          className={`px-3 py-1.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider border inline-block ${
+                          className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${
                             report.priorityLevel === 'HIGH'
-                              ? 'bg-rose-50 text-rose-600 border-rose-100 shadow-sm shadow-rose-100/50'
+                              ? 'bg-rose-50 text-rose-600 border-rose-100'
                               : report.priorityLevel === 'MEDIUM'
-                                ? 'bg-amber-50 text-amber-600 border-amber-100 shadow-sm shadow-amber-100/50'
-                                : 'bg-slate-50 text-slate-600 border-slate-100'
+                                ? 'bg-amber-50 text-amber-600 border-amber-100'
+                                : 'bg-slate-100 text-slate-500 border-slate-200'
                           }`}
                         >
                           {report.priorityLevel}
                         </span>
                       </td>
-                      <td className="px-8 py-6 text-center">
+                      <td className="px-4 py-4 text-center">
                         <span
-                          className={`px-3 py-1.5 rounded-xl text-[10px] font-semibold uppercase tracking-wider border inline-block ${statusClass(report.status)} shadow-sm`}
+                          className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${statusClass(report.status)}`}
                         >
                           {report.status}
                         </span>
                       </td>
-                      <td className="px-8 py-6 text-right">
-                        <p className="text-xs text-slate-400 font-medium">{report.createdAt}</p>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex flex-col items-end gap-0.5">
+                          <p className="text-xs font-semibold text-slate-600">
+                            {report.createdAt.split(' ')[1]}
+                          </p>
+                          <p className="text-[10px] text-slate-400">
+                            {report.createdAt.split(' ')[0]}
+                          </p>
+                        </div>
                       </td>
                     </tr>
                   ))

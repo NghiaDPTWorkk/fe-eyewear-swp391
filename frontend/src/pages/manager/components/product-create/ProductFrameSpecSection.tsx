@@ -1,4 +1,3 @@
-import React from 'react'
 import { PRODUCT_CREATE_INPUT_CLASSNAME } from '@/shared/utils/product-create.utils'
 
 export function ProductFrameSpecSection({

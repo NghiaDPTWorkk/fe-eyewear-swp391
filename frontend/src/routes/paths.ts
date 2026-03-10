@@ -20,7 +20,11 @@ export const PATHS = {
     FAVORITES: '/account/favorites'
   },
   ADMIN: {
-    DASHBOARD: '/admin/dashboard'
+    DASHBOARD: '/admin/dashboard',
+    USERS: '/admin/users',
+    STAFF: '/admin/staff',
+    SETTINGS: '/admin/settings',
+    SUPPORT: '/admin/support'
   },
   SALESTAFF: {
     DASHBOARD: '/salestaff/dashboard',
@@ -42,6 +46,7 @@ export const PATHS = {
     DASHBOARD: '/manager/dashboard',
     PRODUCTS: '/manager/products',
     VOUCHERS: '/manager/vouchers',
+    VOUCHER_DETAIL: (id: string) => `/manager/vouchers/${id}`,
     ADD_PRODUCT: '/manager/products/add',
     SUPPORT: '/manager/support'
   },

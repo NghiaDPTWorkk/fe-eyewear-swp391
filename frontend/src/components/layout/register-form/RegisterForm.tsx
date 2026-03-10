@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Button, Divider, FormField, Input } from '@/components'
-import { Gender, type RegisterRequest } from '@/shared/types'
+import type { RegisterRequest } from '@/shared/types'
+import { Gender } from '@/shared/utils/enums/gender.enum'
 import { useRegister } from '@/features/auth/hooks/useRegister'
 
 interface RegisterFormProps {

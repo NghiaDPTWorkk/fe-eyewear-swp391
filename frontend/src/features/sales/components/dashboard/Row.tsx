@@ -136,14 +136,10 @@ export const Row: React.FC<RowProps> = ({ invoice, onClick, onActionSuccess }) =
         details={
           <div className="space-y-4 pt-2">
             <div className="flex justify-between items-center pb-2 border-b border-slate-100">
-              <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
-                Items to Finalize
-              </span>
+              <span className="text-xs font-medium text-slate-400">Items to Finalize</span>
               <div className="flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-mint-500 animate-pulse" />
-                <span className="text-[11px] font-bold text-mint-600 uppercase">
-                  {totalCount} Total
-                </span>
+                <span className="text-xs font-semibold text-mint-600">{totalCount} Total</span>
               </div>
             </div>
 
@@ -151,7 +147,7 @@ export const Row: React.FC<RowProps> = ({ invoice, onClick, onActionSuccess }) =
               {invoice.orders?.map((order, i) => (
                 <div
                   key={order.id || i}
-                  className="group flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100 hover:border-mint-200 hover:shadow-md hover:shadow-mint-50/50 transition-all duration-300"
+                  className="group flex items-center justify-between p-4 bg-white rounded-xl border border-slate-100 hover:border-mint-200 hover:shadow-md hover:shadow-mint-50/50 transition-all duration-300"
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-mint-50 group-hover:text-mint-600 transition-colors">
@@ -208,10 +204,13 @@ export const Row: React.FC<RowProps> = ({ invoice, onClick, onActionSuccess }) =
               ))}
             </div>
 
-            <div className="p-3 bg-mint-50/40 rounded-2xl border border-mint-100/40">
-              <p className="text-[11px] font-medium text-mint-700 leading-relaxed text-center">
+            <div className="p-3 bg-mint-50/40 rounded-xl border border-mint-100/40">
+              <p className="text-xs font-medium text-mint-700 leading-relaxed text-center">
                 Approved items will move to{' '}
-                <span className="font-bold text-mint-900 uppercase">Packaging</span> phase.
+                <span className="font-semibold text-mint-900 underline underline-offset-4">
+                  packaging
+                </span>{' '}
+                phase.
               </p>
             </div>
           </div>

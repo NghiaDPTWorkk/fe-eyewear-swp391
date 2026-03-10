@@ -62,7 +62,7 @@ export const ManagerInvoiceFilters: React.FC<ManagerInvoiceFiltersProps> = ({
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-neutral-50/50 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-3xl border border-neutral-50/50 shadow-sm relative">
         <div className="p-6 border-b border-neutral-50/30 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="flex-1 max-w-md relative">
             <IoSearchOutline
@@ -83,7 +83,7 @@ export const ManagerInvoiceFilters: React.FC<ManagerInvoiceFiltersProps> = ({
               <button
                 onClick={() => setIsFilterOpen(!isFilterOpen)}
                 className={`flex items-center gap-2 px-4 py-2 border rounded-xl text-sm font-semibold transition-all min-w-[160px] justify-between h-[42px] ${
-                  isFilterOpen
+                  isFilterOpen || orderTypeFilter !== 'All'
                     ? 'border-mint-500 bg-mint-50 text-mint-600 ring-4 ring-mint-500/10'
                     : 'border-neutral-100 bg-neutral-50 text-neutral-600 hover:bg-neutral-100'
                 }`}

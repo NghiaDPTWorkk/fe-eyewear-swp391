@@ -9,6 +9,7 @@ import { OrderStatusTracker } from '@/components/layout/customer/account/orders/
 import { OrderItemList } from '@/components/layout/customer/account/orders/detail/OrderItemList'
 import { OrderSummary } from '@/components/layout/customer/account/orders/detail/OrderSummary'
 import { OrderCustomerDetails } from '@/components/layout/customer/account/orders/detail/OrderCustomerDetails'
+import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 
 export function CustomerOrderDetailPage() {
   const { invoiceId } = useParams<{ invoiceId: string }>()
@@ -75,7 +76,7 @@ export function CustomerOrderDetailPage() {
         >
           <ArrowLeft size={24} />
         </button>
-        <div>
+        <div className="flex-1">
           <h2 className="text-3xl font-bold text-mint-1200 mb-1">
             Order #{invoice.invoiceCode.replace('HD_', '')}
           </h2>
@@ -83,6 +84,15 @@ export function CustomerOrderDetailPage() {
             Placed on {new Date(invoice.createdAt).toLocaleString()}
           </p>
         </div>
+
+        {invoice.status === InvoiceStatus.DELIVERED && (
+          <Button
+            onClick={() => navigate(`/account/orders/${invoiceId}/return`)}
+            className="rounded-2xl bg-white border-mint-100 text-mint-1200 hover:bg-danger-50 hover:text-danger-600 hover:border-danger-100 font-bold px-6 h-12 shadow-sm"
+          >
+            Request Return
+          </Button>
+        )}
       </div>
 
       <OrderStatusTracker status={invoice.status} />
@@ -96,7 +106,7 @@ export function CustomerOrderDetailPage() {
           {invoice.note && (
             <Card className="p-6 border-mint-100/50 bg-yellow-50/30">
               <h3 className="font-bold text-mint-1200 text-sm mb-2 flex items-center gap-2">
-                <span className="text-lg">📝</span> Special Instructions
+                <span className="text-lg"></span> Special Instructions
               </h3>
               <p className="text-sm text-gray-600 italic leading-relaxed">"{invoice.note}"</p>
             </Card>
@@ -105,7 +115,11 @@ export function CustomerOrderDetailPage() {
 
         {/* Sidebar */}
         <div className="space-y-8">
-          <OrderSummary totalPrice={invoice.totalPrice} totalDiscount={invoice.totalDiscount} />
+          <OrderSummary
+            totalPrice={invoice.totalPrice}
+            totalDiscount={invoice.totalDiscount}
+            feeShip={invoice.feeShip}
+          />
           <OrderCustomerDetails
             fullName={invoice.fullName}
             phone={invoice.phone}

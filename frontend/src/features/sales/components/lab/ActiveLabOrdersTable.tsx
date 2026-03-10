@@ -43,26 +43,26 @@ export const ActiveLabOrdersTable: React.FC<ActiveLabOrdersTableProps> = ({
         </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
+      <div className="overflow-hidden">
+        <table className="w-full text-left border-collapse table-fixed">
           <thead>
-            <tr className="bg-white border-b border-neutral-50/50">
-              <th className="pl-10 px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] tracking-widest align-middle">
+            <tr className="bg-white border-b border-neutral-100">
+              <th className="pl-6 px-4 py-4 text-[10px] font-semibold text-[#a4a9c1] tracking-widest align-middle w-[28%]">
                 ORDER CODE
               </th>
-              <th className="px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] tracking-widest align-middle">
+              <th className="px-4 py-4 text-[10px] font-semibold text-[#a4a9c1] tracking-widest align-middle w-[22%]">
                 Lens Type
               </th>
-              <th className="px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] tracking-widest text-center align-middle">
+              <th className="px-4 py-4 text-[10px] font-semibold text-[#a4a9c1] tracking-widest text-center align-middle w-[15%]">
                 Lab Station
               </th>
-              <th className="px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] tracking-widest text-center align-middle">
+              <th className="px-4 py-4 text-[10px] font-semibold text-[#a4a9c1] tracking-widest text-center align-middle w-[15%]">
                 Progress
               </th>
-              <th className="px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] tracking-widest text-center align-middle">
-                Time in Stn.
+              <th className="px-4 py-4 text-[10px] font-semibold text-[#a4a9c1] tracking-widest text-center align-middle w-[10%]">
+                Time
               </th>
-              <th className="pr-10 px-6 py-5 text-[10px] font-semibold text-[#a4a9c1] tracking-widest text-right align-middle">
+              <th className="pr-6 px-4 py-4 text-[10px] font-semibold text-[#a4a9c1] tracking-widest text-right align-middle w-[10%]">
                 Action
               </th>
             </tr>
@@ -77,12 +77,12 @@ export const ActiveLabOrdersTable: React.FC<ActiveLabOrdersTableProps> = ({
                 )}
                 onClick={() => onOrderSelect(order)}
               >
-                <td className="pl-10 px-6 py-6 font-primary">
+                <td className="pl-6 px-4 py-5 font-primary">
                   <span className="text-sm font-bold text-neutral-800 tracking-tight">
                     {order.orderCode}
                   </span>
                 </td>
-                <td className="px-6 py-6 font-primary">
+                <td className="px-4 py-5 font-primary">
                   <div className="min-w-0">
                     <p className="text-sm font-semibold text-neutral-800 truncate leading-none mb-1">
                       {order.type}
@@ -92,14 +92,14 @@ export const ActiveLabOrdersTable: React.FC<ActiveLabOrdersTableProps> = ({
                     </p>
                   </div>
                 </td>
-                <td className="px-6 py-6 text-center">
+                <td className="px-4 py-5 text-center">
                   <span
                     className={`inline-flex px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm ring-1 ring-inset ring-neutral-200/50 ${order.stationColor}`}
                   >
                     {order.station}
                   </span>
                 </td>
-                <td className="px-6 py-6 text-center min-w-[140px]">
+                <td className="px-4 py-5 text-center w-[15%]">
                   <div className="flex flex-col items-center gap-2">
                     <div className="w-full bg-neutral-100 rounded-full h-1.5 overflow-hidden border border-neutral-200/50">
                       <div
@@ -114,12 +114,12 @@ export const ActiveLabOrdersTable: React.FC<ActiveLabOrdersTableProps> = ({
                     </span>
                   </div>
                 </td>
-                <td className="px-6 py-6 text-center font-primary">
+                <td className="px-4 py-5 text-center font-primary">
                   <span className="text-sm font-bold text-neutral-600 font-mono tabular-nums">
                     {order.time}
                   </span>
                 </td>
-                <td className="pr-10 px-6 py-6 text-right">
+                <td className="pr-6 px-4 py-5 text-right">
                   <Button
                     size="sm"
                     variant="ghost"

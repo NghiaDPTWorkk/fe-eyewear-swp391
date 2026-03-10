@@ -1,5 +1,3 @@
-import React from 'react'
-
 export function OrderSummary({ orderId }: { orderId?: string }) {
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm border border-mint-200">

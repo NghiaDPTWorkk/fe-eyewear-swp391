@@ -74,7 +74,8 @@ export const ENDPOINTS = {
     UPDATE_STATUS_PACKAGING: (id: string) => `/admin/orders/${id}/status/packaging`,
     UPDATE_STATUS_COMPLETED: (id: string) => `/admin/orders/${id}/status/complete`,
     SEARCH_BY_CODE: (orderCode: string) =>
-      `/admin/orders?orderCode=${encodeURIComponent(orderCode)}`
+      `/admin/orders?orderCode=${encodeURIComponent(orderCode)}`,
+    LIST_BY_INVOICE: (invoiceId: string) => `/orders/list-by-invoice/${invoiceId}`
   },
 
   // Prescription (Custom Lens)
@@ -178,7 +179,10 @@ export const ENDPOINTS = {
       return qs ? `/admin/products?${qs}` : '/admin/products'
     },
     PRODUCT_DETAIL: (id: string) => `/admin/products/${id}`,
-    ATTRIBUTES: '/admin/attributes'
+    ATTRIBUTES: '/admin/attributes',
+    PRE_ORDER_IMPORTS: (page: number = 1, limit: number = 10) =>
+      `/admin/pre-order-imports?page=${page}&limit=${limit}`,
+    IMPORT_PRODUCTS: '/admin/import-products'
   },
 
   ADMINS: {
@@ -238,12 +242,13 @@ export const ENDPOINTS = {
 
   // Operation Staff
   OPERATION_STAFF: {
-    INVOICES_HANDLE_DELIVERY: (page: number, limit: number, status?: string) => {
+    INVOICES_HANDLE_DELIVERY: (page: number, limit: number, status?: string, search?: string) => {
       const params = new URLSearchParams({
         page: String(page),
         limit: String(limit)
       })
       if (status) params.append('status', status)
+      if (search) params.append('search', search)
       return `/admin/invoices/handle-delivery?${params.toString()}`
     },
     INVOICE_DETAIL: (id: string) => `/admin/invoices/${id}`
@@ -256,8 +261,71 @@ export const ENDPOINTS = {
     MESSAGES: (id: string, lastItem: string = '') =>
       `/admin/ai-conversations/${id}/messages?lastItem=${lastItem}`
   },
-  // Vouchers
+  // Vouchers (Customer)
   VOUCHERS: {
     MY_VOUCHERS: '/vouchers/my-vouchers'
+  },
+
+  // Manager
+  MANAGER: {
+    VOUCHERS: (page: number = 1, limit: number = 10, status?: string, search?: string) => {
+      const params = new URLSearchParams({ page: String(page), limit: String(limit) })
+      if (status && status !== 'all') params.append('status', status)
+      if (search) params.append('search', search)
+      return `/admin/vouchers?${params.toString()}`
+    },
+    VOUCHER_DETAIL: (id: string) => `/admin/vouchers/${id}`,
+    VOUCHER_CREATE: '/admin/vouchers',
+    VOUCHER_UPDATE: (id: string) => `/admin/vouchers/${id}`,
+    VOUCHER_DELETE: (id: string) => `/admin/vouchers/${id}`
+  },
+  REPORTS: {
+    REVENUE: (period?: string, fromDate?: string, toDate?: string, userId?: string) => {
+      const params = new URLSearchParams()
+      if (period) params.append('period', period)
+      if (fromDate) params.append('fromDate', fromDate)
+      if (toDate) params.append('toDate', toDate)
+      if (userId) params.append('userId', userId)
+      const qs = params.toString()
+      return qs ? `/admin/invoices/stats/revenue?${qs}` : '/admin/invoices/stats/revenue'
+    }
+  },
+  RETURN_TICKETS: {
+    ADMIN_LIST: (params: {
+      page?: number
+      limit?: number
+      status?: string
+      orderId?: string
+      customerId?: string
+      staffVerify?: string
+      search?: string
+    }) => {
+      const q = new URLSearchParams()
+      Object.entries(params).forEach(([k, v]) => {
+        if (v !== undefined && v !== '') q.append(k, String(v))
+      })
+      return `/admin/return-tickets?${q.toString()}`
+    },
+    RETURNED_ORDERS: (page?: number, limit?: number, search?: string) => {
+      const p = new URLSearchParams()
+      if (page) p.append('page', String(page))
+      if (limit) p.append('limit', String(limit))
+      if (search) p.append('search', search)
+      return `/admin/return-tickets/returned-orders?${p.toString()}`
+    },
+    STAFF_VERIFY: (id: string) => `/admin/return-tickets/${id}/staff-verify`,
+    UPDATE_STATUS: (id: string, status: string) =>
+      `/admin/return-tickets/${id}/status/${status.toLowerCase()}`,
+    CLIENT_CREATE: '/client/return-tickets',
+    CREATE: '/return-tickets',
+    CLIENT_LIST: (page: number = 1, limit: number = 10, status?: string) => {
+      const p = new URLSearchParams({ page: String(page), limit: String(limit) })
+      if (status) p.append('status', status)
+      return `/return-tickets?${p.toString()}`
+    }
+  },
+  UPLOAD: {
+    SINGLE: '/upload/single',
+    MANY: '/upload/many'
   }
 } as const

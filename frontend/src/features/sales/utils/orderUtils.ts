@@ -55,7 +55,11 @@ export const transformOrder = (ord: any, inv?: any): Order => {
       inv?.owner?.email ||
       ord.invoice?.email ||
       ord.invoice?.customer?.email ||
-      ''
+      '',
+    // staffNote: note của staff khi approve order (nằm trong order)
+    staffNote: ord.staffNote || '',
+    // rejectedNote: lý do từ chối (nằm trong invoice)
+    rejectedNote: inv?.rejectedNote || ord.invoice?.rejectedNote || ''
   }
 }
 

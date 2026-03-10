@@ -11,12 +11,12 @@ const SaleStaffPrescriptionPage = lazy(() => import('@/pages/sales/SaleStaffPres
 const SaleStaffPreOrdersPage = lazy(() => import('@/pages/sales/SaleStaffPreOrdersPage'))
 const SaleStaffLiveMapPage = lazy(() => import('@/pages/sales/SaleStaffLiveMapPage'))
 const SaleStaffReturnsPage = lazy(() => import('@/pages/sales/SaleStaffReturnsPage'))
-const SaleStaffSettingsPage = lazy(() => import('@/pages/sales/SaleStaffSettingsPage'))
-const SaleStaffSupportPage = lazy(() => import('@/pages/sales/SaleStaffSupportPage'))
+const StaffSettingsPage = lazy(() => import('@/pages/staff/StaffSettingsPage'))
+const StaffSupportPage = lazy(() => import('@/pages/staff/StaffSupportPage'))
+const StaffProfilePage = lazy(() => import('@/pages/staff/StaffProfilePage'))
 const SaleStaffRxVerificationPage = lazy(() => import('@/pages/sales/SaleStaffRxVerificationPage'))
 const RegularOrderDetailPage = lazy(() => import('@/pages/sales/SaleStaffRegularOrderDetailPage'))
 const PreOrderDetailPage = lazy(() => import('@/pages/sales/SaleStaffPreOrderDetailPage'))
-const SaleStaffProfilePage = lazy(() => import('@/pages/sales/SaleStaffProfilePage'))
 
 export const saleRoutes = [
   {
@@ -121,7 +121,7 @@ export const saleRoutes = [
         path: 'settings',
         element: (
           <LazyPage>
-            <SaleStaffSettingsPage />
+            <StaffSettingsPage dashboardPath="/salestaff/dashboard" roleName="Sale Staff" />
           </LazyPage>
         )
       },
@@ -129,7 +129,7 @@ export const saleRoutes = [
         path: 'support',
         element: (
           <LazyPage>
-            <SaleStaffSupportPage />
+            <StaffSupportPage dashboardPath="/salestaff/dashboard" />
           </LazyPage>
         )
       },
@@ -137,7 +137,10 @@ export const saleRoutes = [
         path: 'profile',
         element: (
           <LazyPage>
-            <SaleStaffProfilePage />
+            <StaffProfilePage
+              dashboardPath="/salestaff/dashboard"
+              settingsPath="/salestaff/settings"
+            />
           </LazyPage>
         )
       }

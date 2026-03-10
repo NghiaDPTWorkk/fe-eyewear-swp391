@@ -1,4 +1,4 @@
-export type ProductCreateFormType = 'frame' | 'lens'
+export type ProductCreateFormType = 'frame' | 'lens' | 'sunglass'
 
 export interface ProductCreateFormState {
   type: ProductCreateFormType

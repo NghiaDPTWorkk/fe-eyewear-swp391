@@ -51,47 +51,49 @@ export function RejectionModal({
       />
 
       {/* Modal Panel */}
-      <div className="relative w-full max-w-md transform overflow-hidden rounded-[2.5rem] bg-white p-8 text-left align-middle shadow-[0_32px_128px_-16px_rgba(0,0,0,0.3)] transition-all border border-neutral-100/50 animate-in zoom-in-95 duration-300">
-        <div className="flex justify-between items-start mb-8">
+      <div className="relative w-full max-w-md max-h-[90vh] flex flex-col transform overflow-hidden rounded-[2.5rem] bg-white text-left align-middle shadow-[0_32px_128px_-16px_rgba(0,0,0,0.3)] transition-all border border-neutral-100/50 animate-in zoom-in-95 duration-300">
+        {/* Header - Fixed */}
+        <div className="flex justify-between items-start p-6 pb-0 mb-4 shrink-0">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-rose-50 flex items-center justify-center text-rose-500 border border-rose-100 shadow-sm shadow-rose-100/50">
-              <IoAlertCircleOutline size={32} />
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 flex items-center justify-center text-rose-500 border border-rose-100 shadow-sm shadow-rose-100/50">
+              <IoAlertCircleOutline size={28} />
             </div>
             <div>
-              <h3 className="text-xl font-semibold text-black leading-tight tracking-tight">
+              <h3 className="text-lg font-semibold text-black leading-tight tracking-tight">
                 {title}
               </h3>
-              <p className="text-[10px] font-semibold text-rose-500 uppercase tracking-[0.2em] mt-2">
+              <p className="text-[9px] font-semibold text-rose-500 uppercase tracking-[0.2em] mt-1.5">
                 Critical Action
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-10 h-10 rounded-2xl bg-neutral-50 flex items-center justify-center text-neutral-400 hover:bg-neutral-100 transition-all border border-neutral-100 active:scale-95"
+            className="w-8 h-8 rounded-xl bg-neutral-50 flex items-center justify-center text-neutral-400 hover:bg-neutral-100 transition-all border border-neutral-100 active:scale-95"
           >
-            <IoClose size={24} />
+            <IoClose size={20} />
           </button>
         </div>
 
-        <div className="space-y-6 mb-8">
-          <div className="bg-neutral-50 p-6 rounded-[2rem] border border-neutral-100/50">
-            <p className="text-sm font-normal text-black leading-relaxed line-clamp-3">{message}</p>
+        {/* Content - Scrollable */}
+        <div className="flex-1 overflow-y-auto px-6 py-2 space-y-4 custom-scrollbar">
+          <div className="bg-neutral-50 p-5 rounded-[1.5rem] border border-neutral-100/50">
+            <p className="text-[13.5px] font-normal text-black leading-relaxed">{message}</p>
           </div>
 
           {details && (
-            <div className="space-y-3">
-              <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest ml-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest ml-2">
                 Operation Details
               </label>
-              <div className="bg-white border border-slate-100 rounded-[1.5rem] p-5 shadow-sm">
+              <div className="bg-white border border-slate-100 rounded-[1.25rem] p-4 shadow-sm">
                 {details}
               </div>
             </div>
           )}
 
-          <div className="space-y-3">
-            <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest ml-4">
+          <div className="space-y-2">
+            <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest ml-2">
               Reason for Rejection <span className="text-rose-500">*</span>
             </label>
             <textarea
@@ -102,14 +104,14 @@ export function RejectionModal({
               }}
               placeholder="e.g., Wrong detail in prescription, missing documents..."
               className={cn(
-                'w-full h-32 px-6 py-5 bg-neutral-50 border rounded-[1.5rem] text-sm font-normal text-black transition-all focus:outline-none focus:ring-8 placeholder:text-slate-300 resize-none',
+                'w-full h-28 px-5 py-4 bg-neutral-50 border rounded-[1.25rem] text-[13.5px] font-normal text-black transition-all focus:outline-none focus:ring-8 placeholder:text-slate-300 resize-none',
                 error
                   ? 'border-rose-200 focus:ring-rose-500/10 focus:border-rose-500'
                   : 'border-neutral-100 focus:ring-rose-500/5 focus:border-rose-500'
               )}
             />
             {error && (
-              <p className="text-[10px] font-semibold text-rose-500 ml-4 flex items-center gap-2 animate-in slide-in-from-top-2">
+              <p className="text-[10px] font-semibold text-rose-500 ml-2 flex items-center gap-2 animate-in slide-in-from-top-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
                 {error}
               </p>
@@ -117,15 +119,16 @@ export function RejectionModal({
           </div>
         </div>
 
-        <div className="flex flex-col gap-3">
+        {/* Footer - Fixed */}
+        <div className="p-6 pt-4 flex flex-col gap-2 shrink-0">
           <Button
             onClick={handleConfirm}
             disabled={isLoading}
-            className="w-full bg-rose-500 hover:bg-rose-600 text-white rounded-2xl h-14 font-semibold text-sm tracking-wide shadow-xl shadow-rose-100 border-none transition-all active:scale-95 disabled:grayscale flex items-center justify-center"
+            className="w-full bg-rose-500 hover:bg-rose-600 text-white rounded-xl h-12 font-semibold text-sm tracking-wide shadow-lg shadow-rose-100 border-none transition-all active:scale-95 disabled:grayscale flex items-center justify-center"
           >
             {isLoading ? (
               <div className="flex items-center gap-3">
-                <div className="w-5 h-5 border-[3px] border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="w-4 h-4 border-[2px] border-white/30 border-t-white rounded-full animate-spin" />
                 Processing...
               </div>
             ) : (
@@ -133,10 +136,10 @@ export function RejectionModal({
             )}
           </Button>
           <Button
-            variant="outline"
+            variant="ghost"
             onClick={onClose}
             disabled={isLoading}
-            className="w-full bg-white border-neutral-200 text-slate-500 hover:bg-neutral-50 rounded-2xl h-12 font-medium text-sm transition-all"
+            className="w-full bg-transparent border-none text-slate-400 hover:text-slate-600 hover:bg-neutral-50 rounded-xl h-10 font-semibold text-[13px] transition-all"
           >
             {cancelText}
           </Button>

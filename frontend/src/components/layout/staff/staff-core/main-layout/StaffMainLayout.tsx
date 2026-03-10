@@ -19,7 +19,7 @@ export function StaffMainLayout({
   sidebar,
   headerLeft,
   headerRight,
-  mainClassName = 'p-4 md:p-6 bg-neutral-50',
+  mainClassName = 'p-4 md:p-8 bg-mint-200',
   headerClassName,
   headerContainerClassName,
   headerContainerWidth = 'none',

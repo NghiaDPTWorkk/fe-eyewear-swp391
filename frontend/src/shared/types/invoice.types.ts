@@ -30,6 +30,7 @@ export interface Invoice {
   staffVerified: string | null
   note?: string | null
   createdAt: string
+  feeShip: number
   updatedAt: string
   deletedAt: string | null
   __v?: number

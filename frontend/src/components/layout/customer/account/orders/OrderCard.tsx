@@ -214,6 +214,11 @@ export function OrderCard({
               status === InvoiceStatus.DELIVERED ||
               status === InvoiceStatus.COMPLETED) && (
               <Button
+                onClick={() =>
+                  status === InvoiceStatus.DELIVERING
+                    ? navigate(`/account/orders/${realId}/tracking`)
+                    : navigate(`/account/orders/${realId}/return`)
+                }
                 className={cn(
                   'flex-1 lg:flex-none h-10 rounded-xl px-6 font-bold text-[10px] uppercase tracking-[0.15em] transition-all shadow-sm flex items-center justify-center gap-2',
                   status === InvoiceStatus.DELIVERING

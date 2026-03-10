@@ -74,7 +74,8 @@ export const ENDPOINTS = {
     UPDATE_STATUS_PACKAGING: (id: string) => `/admin/orders/${id}/status/packaging`,
     UPDATE_STATUS_COMPLETED: (id: string) => `/admin/orders/${id}/status/complete`,
     SEARCH_BY_CODE: (orderCode: string) =>
-      `/admin/orders?orderCode=${encodeURIComponent(orderCode)}`
+      `/admin/orders?orderCode=${encodeURIComponent(orderCode)}`,
+    LIST_BY_INVOICE: (invoiceId: string) => `/orders/list-by-invoice/${invoiceId}`
   },
 
   // Prescription (Custom Lens)
@@ -316,11 +317,11 @@ export const ENDPOINTS = {
     UPDATE_STATUS: (id: string, status: string) =>
       `/admin/return-tickets/${id}/status/${status.toLowerCase()}`,
     CLIENT_CREATE: '/client/return-tickets',
-    CLIENT_LIST: (page: number = 1, limit: number = 10, status?: string, search?: string) => {
+    CREATE: '/return-tickets',
+    CLIENT_LIST: (page: number = 1, limit: number = 10, status?: string) => {
       const p = new URLSearchParams({ page: String(page), limit: String(limit) })
       if (status) p.append('status', status)
-      if (search) p.append('search', search)
-      return `/client/return-tickets?${p.toString()}`
+      return `/return-tickets?${p.toString()}`
     }
   }
 } as const

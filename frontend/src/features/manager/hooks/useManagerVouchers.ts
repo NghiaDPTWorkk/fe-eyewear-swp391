@@ -41,9 +41,13 @@ export function useVoucherStats() {
 
   const stats: Record<string, number> = {}
   statuses.forEach((status, index) => {
-    const data = queries[index].data?.data
-    // Handle both possible pagination paths
-    const total = data?.items?.pagination?.total ?? (data as any)?.pagination?.total ?? 0
+    const res = queries[index].data
+    const items = res?.data?.items
+    const total =
+      res?.pagination?.total ??
+      res?.data?.pagination?.total ??
+      (items && !Array.isArray(items) ? items.pagination?.total : res?.data?.total) ??
+      0
     stats[status] = total
   })
 

@@ -47,11 +47,23 @@ export interface AdminVoucherListResponse {
   success: boolean
   message: string
   data: {
-    items: {
-      data: Voucher[]
-      pagination: VoucherPagination
-    }
+    voucherList?: Voucher[]
+    items?:
+      | {
+          data: Voucher[]
+          total: number
+          page: number
+          limit: number
+          totalPages: number
+        }
+      | Voucher[]
+    pagination?: VoucherPagination
+    total?: number
+    page?: number
+    limit?: number
+    totalPages?: number
   }
+  pagination?: VoucherPagination
 }
 
 /** Writable fields sent to POST /admin/vouchers or PATCH /admin/vouchers/:id */

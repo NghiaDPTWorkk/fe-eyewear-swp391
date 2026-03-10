@@ -48,18 +48,31 @@ export default function ManagerVouchersPage() {
   const [typeFilter, setTypeFilter] = useState<'all' | 'PERCENTAGE' | 'FIXED'>('all')
   const [isFilterOpen, setIsFilterOpen] = useState(false)
 
-  const { data, isLoading, refetch } = useManagerVouchers(
+  const { data, isLoading, isFetching, refetch } = useManagerVouchers(
     page,
     LIMIT,
     statusFilter === 'all' ? undefined : statusFilter
   )
   const { stats, isLoading: isStatsLoading } = useVoucherStats()
 
-  const vouchers = (data?.data?.items?.data ?? []).filter((v) => {
-    if (typeFilter === 'all') return true
-    return v.typeDiscount === typeFilter
-  })
-  const pagination = data?.data?.items?.pagination
+  const rawItems = data?.data?.items
+  const vouchers =
+    data?.data?.voucherList ?? (Array.isArray(rawItems) ? rawItems : (rawItems?.data ?? []))
+
+  const pagination =
+    data?.pagination ||
+    data?.data?.pagination ||
+    (rawItems && !Array.isArray(rawItems)
+      ? {
+          page: (rawItems as any).page,
+          limit: (rawItems as any).limit,
+          total: (rawItems as any).total,
+          totalPages: (rawItems as any).totalPages
+        }
+      : undefined)
+
+  // Use isFetching || isLoading for more responsive loading feedback
+  const isDataLoading = isLoading || isFetching
 
   // ── Modal state ───────────────────────────────────────────────────
   // We only need local state for creating a new voucher, and deleting.
@@ -353,7 +366,7 @@ export default function ManagerVouchersPage() {
       <div className="bg-white rounded-3xl border border-neutral-50/50 shadow-sm overflow-hidden">
         <VoucherTable
           vouchers={vouchers}
-          isLoading={isLoading}
+          isLoading={isDataLoading}
           renderActions={(v) => (
             <button
               onClick={(e) => {
@@ -370,29 +383,52 @@ export default function ManagerVouchersPage() {
         />
 
         {/* ── Pagination Footer ──────────────────────────────────── */}
-        <div className="p-6 bg-white border-t border-neutral-50/50 flex items-center justify-between">
-          <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest pl-2">
-            {pagination
-              ? `Page ${pagination.page} of ${pagination.totalPages}`
-              : `Page ${page}`}
-          </p>
-          <div className="flex gap-2">
-            <button
-              disabled={page === 1 || isLoading}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              className="flex items-center justify-center h-10 w-10 bg-white border border-neutral-200 rounded-xl text-neutral-400 hover:text-mint-600 hover:border-mint-200 transition-all active:scale-95 disabled:opacity-50"
-            >
-              <IoChevronBackOutline size={18} />
-            </button>
-            <button
-              disabled={!pagination || page >= pagination.totalPages || isLoading}
-              onClick={() => setPage((p) => p + 1)}
-              className="flex items-center justify-center h-10 w-10 bg-white border border-neutral-200 rounded-xl text-neutral-400 hover:text-mint-600 hover:border-mint-200 transition-all active:scale-95 disabled:opacity-50"
-            >
-              <IoChevronForwardOutline size={18} />
-            </button>
+        {pagination && pagination.totalPages > 1 && (
+          <div className="p-6 bg-white border-t border-neutral-50 flex items-center justify-between">
+            <p className="text-xs font-medium text-slate-400">
+              Page {pagination.page} of {pagination.totalPages} ({pagination.total} vouchers)
+            </p>
+            <div className="flex items-center gap-2">
+              <button
+                disabled={page <= 1 || isDataLoading}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                className="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-neutral-100 text-neutral-400 hover:text-mint-600 transition-all disabled:opacity-30 ripple-button"
+              >
+                <IoChevronBackOutline />
+              </button>
+              <div className="flex gap-1">
+                {Array.from(
+                  { length: Math.min(pagination.totalPages, 5) },
+                  (_, i) => {
+                    // Simple logic for showing pages near the current page
+                    // This can be improved to be more dynamic if needed
+                    return i + 1
+                  }
+                ).map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => setPage(p)}
+                    disabled={isDataLoading}
+                    className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${
+                      page === p
+                        ? 'bg-mint-500 text-white shadow-lg shadow-mint-100'
+                        : 'bg-white text-neutral-400 hover:bg-neutral-50 hover:text-mint-600'
+                    } disabled:opacity-50`}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+              <button
+                disabled={page >= pagination.totalPages || isDataLoading}
+                onClick={() => setPage((p) => p + 1)}
+                className="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-neutral-100 text-neutral-400 hover:text-mint-600 transition-all disabled:opacity-30 ripple-button"
+              >
+                <IoChevronForwardOutline />
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* ── VoucherAddition form (Create only here) ───────────────── */}

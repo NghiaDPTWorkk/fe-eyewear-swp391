@@ -13,12 +13,10 @@ import {
 } from 'react-icons/io5'
 import {
   usePreOrderImportDetail,
-  useUpdatePreOrderImportStatus
+  useImportProduct
 } from '@/features/operations/hooks/usePreOrderImports'
 import { useQuery } from '@tanstack/react-query'
-import { adminAccountService } from '@/shared/services/admin/adminAccountService'
 import { productService } from '@/shared/services/products/productService'
-import { useMemo } from 'react'
 import { Button } from '@/components'
 import { cn } from '@/shared/utils'
 
@@ -59,41 +57,31 @@ export default function OperationInvenProcessPlan() {
   const navigate = useNavigate()
 
   const { data, isLoading, isError } = usePreOrderImportDetail(receiptId || '')
-  const updateStatus = useUpdatePreOrderImportStatus()
-
-  const { data: staffData } = useQuery({
-    queryKey: ['admin-accounts-list'],
-    queryFn: () => adminAccountService.getAdminAccounts({ page: 1, limit: 100 }),
-    staleTime: 5 * 60 * 1000
-  })
+  const importProduct = useImportProduct()
 
   const detail = data?.data
 
   // Fetch product image based on SKU
   const { data: productSearchData, isLoading: isProductLoading } = useQuery({
     queryKey: ['product-search-sku', detail?.sku],
-    queryFn: () => productService.searchProducts(1, 1, detail?.sku || ''),
+    queryFn: () => productService.searchProductBySKU(detail?.sku || ''),
     enabled: !!detail?.sku
   })
 
-  const productInfo = productSearchData?.data?.products?.[0]
-
-  const staffMap = useMemo(() => {
-    const map: Record<string, string> = {}
-    staffData?.data?.adminAccounts?.forEach((acc) => {
-      map[acc._id] = acc.name
-    })
-    return map
-  }, [staffData])
+  const variantInfo = productSearchData?.data?.variant
 
   const handleConfirmDone = async () => {
-    if (!receiptId) return
+    if (!receiptId || !detail) return
     if (
       window.confirm(
         'Are you sure you want to mark this batch as DONE? This action will update the inventory status.'
       )
     ) {
-      await updateStatus.mutateAsync({ id: receiptId, status: 'DONE' })
+      await importProduct.mutateAsync({
+        sku: detail.sku,
+        quantity: detail.targetQuantity,
+        preOrderImportId: receiptId
+      })
     }
   }
 
@@ -122,7 +110,7 @@ export default function OperationInvenProcessPlan() {
       <BreadcrumbPath paths={['Dashboard', 'Inventory Receiving', 'Process Plan']} />
 
       {/* ── Loading Overlay ── */}
-      {(isLoading || updateStatus.isPending) && (
+      {(isLoading || importProduct.isPending) && (
         <div className="fixed inset-0 bg-white/60 backdrop-blur-sm z-[9999] flex items-center justify-center">
           <div className="flex flex-col items-center gap-4">
             <div className="w-12 h-12 border-4 border-mint-100 border-t-mint-500 rounded-full animate-spin" />
@@ -156,14 +144,18 @@ export default function OperationInvenProcessPlan() {
           </div>
         </div>
 
-        {detail && detail.status === 'PENDING' && (
+        {detail && (
           <Button
             variant="solid"
-            colorScheme="primary"
-            className="px-6 py-3 rounded-xl font-bold text-sm shadow-lg shadow-mint-100"
+            colorScheme={detail.status === 'DONE' ? 'secondary' : 'primary'}
+            className={cn(
+              'px-6 py-3 rounded-xl font-bold text-sm shadow-lg',
+              detail.status === 'DONE' ? 'shadow-slate-100 opacity-70 cursor-not-allowed' : 'shadow-mint-100'
+            )}
             onClick={handleConfirmDone}
+            disabled={detail.status === 'DONE' || importProduct.isPending}
           >
-            Confirm All Received
+            {detail.status === 'DONE' ? 'Completed' : 'Confirm All Received'}
           </Button>
         )}
       </div>
@@ -178,9 +170,9 @@ export default function OperationInvenProcessPlan() {
                 <div className="w-full md:w-40 h-40 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-center overflow-hidden shrink-0">
                   {isProductLoading ? (
                     <div className="w-8 h-8 border-3 border-mint-100 border-t-mint-500 rounded-full animate-spin" />
-                  ) : productInfo?.thumbnail ? (
+                  ) : variantInfo?.imgs?.[0] ? (
                     <img
-                      src={productInfo.thumbnail}
+                      src={variantInfo.imgs[0]}
                       alt={detail.sku}
                       className="w-full h-full object-cover"
                     />
@@ -202,8 +194,13 @@ export default function OperationInvenProcessPlan() {
                     </span>
                   </div>
                   <div>
-                    <h2 className="text-2xl font-black text-slate-900 font-mono">{detail.sku}</h2>
-                    <p className="text-sm text-slate-400 mt-1 font-medium italic">
+                    <h2 className="text-2xl font-black text-slate-900 font-mono leading-tight">{detail.sku}</h2>
+                    {variantInfo?.name && (
+                      <p className="text-xs font-bold text-mint-600 uppercase tracking-widest mt-1">
+                        {variantInfo.name}
+                      </p>
+                    )}
+                    <p className="text-sm text-slate-400 mt-2 font-medium italic">
                       {detail.description || 'No description available for this batch.'}
                     </p>
                   </div>
@@ -277,15 +274,15 @@ export default function OperationInvenProcessPlan() {
                 <span className="text-[10px] font-bold uppercase tracking-widest">Management</span>
               </div>
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-mint-500 rounded-xl flex items-center justify-center text-white font-black">
-                  {staffMap[detail.managerResponsibility]?.slice(0, 2).toUpperCase() || '??'}
+                <div className="w-12 h-12 bg-mint-500 rounded-xl flex items-center justify-center text-white font-black text-xs">
+                  ID
                 </div>
-                <div>
-                  <p className="text-sm font-black text-slate-800 uppercase tracking-tight">
-                    {staffMap[detail.managerResponsibility] || 'Unknown'}
+                <div className="flex-1 min-w-0">
+                  <p className="text-[13px] font-black text-slate-800 uppercase tracking-tight truncate">
+                    {detail.managerResponsibility || 'Unassigned'}
                   </p>
                   <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-                    Responsible
+                    Responsible ID
                   </p>
                 </div>
               </div>

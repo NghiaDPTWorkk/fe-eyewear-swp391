@@ -1,6 +1,6 @@
 import { httpClient } from '@/api/apiClients'
 import { ENDPOINTS } from '@/api/endpoints'
-import type { GenericApiResponse } from '@/shared/types'
+import type { ApiResponse } from '@/shared/types'
 
 export type PreOrderImportStatus = 'PENDING' | 'DONE' | 'CANCELLED'
 
@@ -65,13 +65,17 @@ export const preOrderImportService = {
   },
 
   getPreOrderImportDetail(id: string) {
-    return httpClient.get<GenericApiResponse<PreOrderImport>>(ENDPOINTS.ADMIN.PRE_ORDER_IMPORT_DETAIL(id))
+    return httpClient.get<ApiResponse<PreOrderImport>>(ENDPOINTS.ADMIN.PRE_ORDER_IMPORT_DETAIL(id))
   },
 
   updatePreOrderImportStatus(id: string, status: string) {
-    return httpClient.patch<GenericApiResponse<PreOrderImport>>(
+    return httpClient.patch<ApiResponse<PreOrderImport>>(
       ENDPOINTS.ADMIN.PRE_ORDER_IMPORT_DETAIL(id),
       { status }
     )
+  },
+
+  importProduct(data: { sku: string; quantity: number; preOrderImportId: string }) {
+    return httpClient.post<ApiResponse<any>>(ENDPOINTS.ADMIN.IMPORT_PRODUCTS, data)
   }
 }

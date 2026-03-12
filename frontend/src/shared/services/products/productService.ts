@@ -60,5 +60,9 @@ export const productService = {
   // filter products by specs
   filterProducts(params: Record<string, string | number | string[] | undefined>) {
     return httpClient.get<ApiResponse<ProductListData>>(ENDPOINTS.PRODUCTS.FILTER(params))
+  },
+  // search product by sku
+  searchProductBySKU(sku: string) {
+    return httpClient.get<ProductDetailApiResponse>(ENDPOINTS.PRODUCTS.SEARCH_BY_SKU(sku))
   }
 }

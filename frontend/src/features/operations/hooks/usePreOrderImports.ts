@@ -1,7 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { preOrderImportService, type PreOrderImportsResponse } from '../services/preOrderImportService'
-import type { PreOrderImport } from '../services/preOrderImportService'
-import type { GenericApiResponse } from '@/shared/types'
 import toast from 'react-hot-toast'
 
 export function usePreOrderImports(params: {
@@ -49,6 +47,22 @@ export function useUpdatePreOrderImportStatus() {
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || 'Failed to update status')
+    }
+  })
+}
+
+export function useImportProduct() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (data: { sku: string; quantity: number; preOrderImportId: string }) =>
+      preOrderImportService.importProduct(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pre-order-imports'] })
+      queryClient.invalidateQueries({ queryKey: ['pre-order-import-detail'] })
+      toast.success('Inventory imported successfully')
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to import inventory')
     }
   })
 }

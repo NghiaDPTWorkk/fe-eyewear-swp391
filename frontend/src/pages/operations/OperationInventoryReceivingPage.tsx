@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Container, OperationPagination, MetricCard, Button } from '@/components'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
@@ -13,8 +13,6 @@ import {
   usePreOrderImports,
   usePreOrderImportDetail
 } from '@/features/operations/hooks/usePreOrderImports'
-import { useQuery } from '@tanstack/react-query'
-import { adminAccountService } from '@/shared/services/admin/adminAccountService'
 import { cn } from '@/lib/utils'
 import { formatDate } from '@/shared/utils'
 import STATUS_INVENTORY_PLANNING_CONFIG from '@/shared/utils/enums/inventoryplan.enum'
@@ -199,24 +197,8 @@ export default function OperationInventoryReceivingPage() {
     status: ['PENDING', 'DONE']
   })
   const allBatches = allData?.data?.preOrderImports || []
-
-  // Fetch Staff to map name
-  const { data: staffData } = useQuery({
-    queryKey: ['admin-accounts-list'],
-    queryFn: () => adminAccountService.getAdminAccounts({ page: 1, limit: 100 }),
-    staleTime: 5 * 60 * 1000
-  })
-
   const results = data?.data?.preOrderImports || []
   const pagination = data?.data?.pagination
-
-  const staffMap = useMemo(() => {
-    const map: Record<string, string> = {}
-    staffData?.data.adminAccounts.forEach((acc) => {
-      map[acc._id] = acc.name
-    })
-    return map
-  }, [staffData])
 
   const setFilter = (value: string) => {
     setCurrentPage(1)
@@ -304,7 +286,6 @@ export default function OperationInventoryReceivingPage() {
           <div className="overflow-x-auto">
             <InventoryTable
               results={results}
-              staffMap={staffMap}
               onViewDetail={setSelectedDetailId}
               onNext={(id) => navigate(`/operationstaff/inventory-receiving/${id}`)}
             />

@@ -1,1 +1,1 @@
-export * from './order-table'
+export * from './OrderTable'

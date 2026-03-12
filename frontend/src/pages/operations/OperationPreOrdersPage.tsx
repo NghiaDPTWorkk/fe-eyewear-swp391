@@ -1,10 +1,10 @@
 import { useState, useMemo } from 'react'
 import { Container } from '@/components'
 import { OrderTable } from '@/components/staff'
-import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
+import { BreadcrumbPath } from '@/components/layout/staff/operation-staff/breadcrumb-path'
 import { OrderType } from '@/shared/utils/enums/order.enum'
 import { useOrders } from '@/features/staff/hooks/orders/useOrders'
-import { transformApiOrderToTableOrder } from '@/features/staff/components/OrderTable/orderTransformers'
+import { transformApiOrderToTableOrder } from '@/features/staff/components/order-table/orderTransformers'
 import { OperationPagination } from '@/shared/components/ui/pagination'
 
 const PAGE_LIMIT = 10

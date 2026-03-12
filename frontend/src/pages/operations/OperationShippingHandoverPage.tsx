@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Container } from '@/components'
-import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
+import { BreadcrumbPath } from '@/components/layout/staff/operation-staff/breadcrumb-path'
 import { useOrdersDetails } from '@/features/staff/hooks/orders/useOrders'
-import { ProcessTracker } from '@/components/layout/staff/staff-core/processtracker'
+import { ProcessTracker } from '@/components/layout/staff/staff-core/process-tracker'
 import {
   IoCarOutline,
   IoConstructOutline,
@@ -13,12 +13,12 @@ import {
   IoClose,
   IoPrintOutline
 } from 'react-icons/io5'
-import ScanInvoiceCode from '@/components/layout/staff/operationstaff/scaninvoicecode/ScanInvoiceCode'
+import ScanInvoiceCode from '@/components/layout/staff/operation-staff/scan-invoice-code/ScanInvoiceCode'
 import {
   CheckOrderListFromInvoice,
   OrderCheckItem,
   ShippingInfoPanel
-} from '@/components/layout/staff/operationstaff/checkorderlistfrominvoice'
+} from '@/components/layout/staff/operation-staff/check-order-list-from-invoice'
 import {
   useOperationInvoiceDetail,
   useActualInvoiceDetail,
@@ -26,7 +26,7 @@ import {
   useOperationShipCode
 } from '@/features/operations/hooks/useOperationInvoiceDetail'
 import ConfirmationModal from '@/shared/components/ui/ConfirmationModal'
-import ShippingInfoSeal from '@/components/layout/staff/operationstaff/shippinginfoseal/ShippingInfoSeal'
+import ShippingInfoSeal from '@/components/layout/staff/operation-staff/shipping-info-seal/ShippingInfoSeal'
 import { createPortal } from 'react-dom'
 import toast from 'react-hot-toast'
 

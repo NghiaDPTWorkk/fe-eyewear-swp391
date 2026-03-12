@@ -39,8 +39,8 @@ export function AuthGuard({ children, allowedRoles, requireAuth = true }: AuthGu
       return <>{children}</>
     }
     const isStaffPath =
-      location.pathname.startsWith('/salestaff') ||
-      location.pathname.startsWith('/operationstaff') ||
+      location.pathname.startsWith('/sale-staff') ||
+      location.pathname.startsWith('/operation-staff') ||
       location.pathname.startsWith('/manager') ||
       location.pathname.startsWith('/admin')
 
@@ -55,11 +55,11 @@ export function AuthGuard({ children, allowedRoles, requireAuth = true }: AuthGu
 
   if (isStaffRole && (isPublicPath || (allowedRoles && !allowedRoles.includes(role || '')))) {
     // Redirect to appropriate dashboard based on role
-    if (role === 'SALE_STAFF' && !location.pathname.startsWith('/salestaff')) {
-      return <Navigate to="/salestaff/dashboard" replace />
+    if (role === 'SALE_STAFF' && !location.pathname.startsWith('/sale-staff')) {
+      return <Navigate to="/sale-staff/dashboard" replace />
     }
-    if (role === 'OPERATION_STAFF' && !location.pathname.startsWith('/operationstaff')) {
-      return <Navigate to="/operationstaff/dashboard" replace />
+    if (role === 'OPERATION_STAFF' && !location.pathname.startsWith('/operation-staff')) {
+      return <Navigate to="/operation-staff/dashboard" replace />
     }
     if (role === 'MANAGER' && !location.pathname.startsWith('/manager')) {
       return <Navigate to="/manager/dashboard" replace />

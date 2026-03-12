@@ -8,8 +8,8 @@ import {
   useCreateVoucher,
   useDeleteVoucher
 } from '@/features/manager/hooks/useManagerVouchers'
-import { VoucherTable } from '@/components/layout/staff/managerstaff/vouchertable'
-import { VoucherAddition } from '@/components/layout/staff/managerstaff/voucheraddition/VoucherAddition'
+import { VoucherTable } from '@/components/layout/staff/manager-staff/voucher-table'
+import { VoucherAddition } from '@/components/layout/staff/manager-staff/voucher-addition/VoucherAddition'
 
 import { createPortal } from 'react-dom'
 import {
@@ -26,7 +26,7 @@ import {
 } from 'react-icons/io5'
 import { useState } from 'react'
 import PageHeader from '@/features/staff/components/common/PageHeader'
-import ManagerVoucherSearch from '@/components/layout/staff/managerstaff/vouchersearch/ManagerVoucherSearch'
+import ManagerVoucherSearch from '@/components/layout/staff/manager-staff/voucher-search/ManagerVoucherSearch'
 
 // ─── Filter tabs ──────────────────────────────────────────────────
 const FILTER_TABS = [

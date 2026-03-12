@@ -50,8 +50,8 @@ export default function SaleStaffPrescriptionPage() {
       <PageHeader
         title="Prescription Orders"
         breadcrumbs={[
-          { label: 'Dashboard', path: '/salestaff/dashboard' },
-          { label: 'Orders', path: '/salestaff/orders' },
+          { label: 'Dashboard', path: '/sale-staff/dashboard' },
+          { label: 'Orders', path: '/sale-staff/orders' },
           { label: 'Prescriptions' }
         ]}
       />

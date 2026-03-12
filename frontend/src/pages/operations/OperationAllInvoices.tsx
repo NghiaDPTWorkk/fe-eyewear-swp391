@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { Container, OperationPagination } from '@/components'
-import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
+import { BreadcrumbPath } from '@/components/layout/staff/operation-staff/breadcrumb-path'
 import { IoAirplaneOutline } from 'react-icons/io5'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import OperationInvoicePopup from './OperationInvoicePopup'
-import InvoiceTable from '@/components/layout/staff/operationstaff/operationinvoiceshipping/InvoiceTable'
+import InvoiceTable from '@/components/layout/staff/operation-staff/operation-invoice-shipping/InvoiceTable'
 import {
   useOperationInvoices,
   useAllOperationInvoices
@@ -12,7 +12,7 @@ import {
 import type { OperationInvoiceListItem } from '@/shared/types'
 import { FilterButtonList } from '@/components/staff'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
-import OperationInvoiceSearch from '@/components/layout/staff/operationstaff/invoiceserach/OperationInvoiceSearch'
+import OperationInvoiceSearch from '@/components/layout/staff/operation-staff/invoice-search/OperationInvoiceSearch'
 
 // import OperationPagination from '@/pages/operations/OperationPagination'
 
@@ -69,7 +69,7 @@ export default function OperationAllInvoices() {
   }
 
   const handleNextInvoice = (invoiceId: string) => {
-    navigate(`/operationstaff/shipping-handover/${invoiceId}`)
+    navigate(`/operation-staff/shipping-handover/${invoiceId}`)
   }
 
   const filterButtons = [

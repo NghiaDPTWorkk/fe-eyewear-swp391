@@ -1,5 +1,5 @@
 import { Container } from '@/components'
-import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
+import { BreadcrumbPath } from '@/components/layout/staff/operation-staff/breadcrumb-path'
 
 export default function OperationTechnicalPage() {
   return (

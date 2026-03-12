@@ -3,7 +3,9 @@ import { Navigate } from 'react-router-dom'
 import { LazyPage } from '@/pages/LazyPage'
 import { AuthGuard } from '@/routes/guards'
 
-const OperationLayout = lazy(() => import('@/pages/operations/OperationLayout'))
+const OperationLayout = lazy(
+  () => import('@/components/layout/staff/operation-staff/OperationLayout')
+)
 const OperationDashboardPage = lazy(() => import('@/pages/operations/OperationDashboardPage'))
 const OperationPrescriptionPage = lazy(() => import('@/pages/operations/OperationPrescriptionPage'))
 const OperationPreOrdersPage = lazy(() => import('@/pages/operations/OperationPreOrdersPage'))
@@ -48,7 +50,7 @@ const OperationInventoryViewDetailPage = lazy(() =>
 
 export const operationRoutes = [
   {
-    path: '/operationstaff',
+    path: '/operation-staff',
     element: (
       <AuthGuard allowedRoles={['OPERATION_STAFF']}>
         <LazyPage>
@@ -59,7 +61,7 @@ export const operationRoutes = [
     children: [
       {
         index: true,
-        element: <Navigate to="/operationstaff/dashboard" replace />
+        element: <Navigate to="/operation-staff/dashboard" replace />
       },
       {
         path: 'dashboard',
@@ -154,7 +156,7 @@ export const operationRoutes = [
         element: (
           <LazyPage>
             <StaffSettingsPage
-              dashboardPath="/operationstaff/dashboard"
+              dashboardPath="/operation-staff/dashboard"
               roleName="Operation Staff"
             />
           </LazyPage>
@@ -164,7 +166,7 @@ export const operationRoutes = [
         path: 'support',
         element: (
           <LazyPage>
-            <StaffSupportPage dashboardPath="/operationstaff/dashboard" />
+            <StaffSupportPage dashboardPath="/operation-staff/dashboard" />
           </LazyPage>
         )
       },
@@ -173,8 +175,8 @@ export const operationRoutes = [
         element: (
           <LazyPage>
             <StaffProfilePage
-              dashboardPath="/operationstaff/dashboard"
-              settingsPath="/operationstaff/settings"
+              dashboardPath="/operation-staff/dashboard"
+              settingsPath="/operation-staff/settings"
             />
           </LazyPage>
         )

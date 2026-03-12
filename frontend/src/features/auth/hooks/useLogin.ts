@@ -12,8 +12,8 @@ const getRolePath = (role: string): string => {
   const normalizedRole = role.toUpperCase().replace(/\s+/g, '_')
   const rolePathMap: Record<string, string> = {
     CUSTOMER: 'customer',
-    SALE_STAFF: 'salestaff',
-    OPERATION_STAFF: 'operationstaff',
+    SALE_STAFF: 'sale-staff',
+    OPERATION_STAFF: 'operation-staff',
     MANAGER: 'manager',
     SYSTEM_ADMIN: 'admin',
     ADMIN: 'admin'

@@ -32,10 +32,10 @@ export function GuestGuard({ children }: GuestGuardProps) {
 
   if (isAuthenticated) {
     if (role === 'SALE_STAFF') {
-      return <Navigate to="/salestaff/dashboard" replace />
+      return <Navigate to="/sale-staff/dashboard" replace />
     }
     if (role === 'OPERATION_STAFF') {
-      return <Navigate to="/operationstaff/dashboard" replace />
+      return <Navigate to="/operation-staff/dashboard" replace />
     }
     if (role === 'MANAGER') {
       return <Navigate to="/manager/dashboard" replace />

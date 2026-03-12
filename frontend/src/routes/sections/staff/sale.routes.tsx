@@ -2,7 +2,7 @@ import { lazy } from 'react'
 import { LazyPage } from '@/pages/LazyPage'
 import { AuthGuard } from '@/routes/guards'
 
-const SaleStaffLayout = lazy(() => import('@/components/layout/staff/salestaff/SaleStaffLayout'))
+const SaleStaffLayout = lazy(() => import('@/components/layout/staff/sale-staff/SaleStaffLayout'))
 const SaleStaffDashboardPage = lazy(() => import('@/pages/sales/SaleStaffDashboardPage'))
 const SaleStaffOrderPage = lazy(() => import('@/pages/sales/SaleStaffOrderPage'))
 const SaleStaffCustomerPage = lazy(() => import('@/pages/sales/SaleStaffCustomerPage'))
@@ -20,7 +20,7 @@ const PreOrderDetailPage = lazy(() => import('@/pages/sales/SaleStaffPreOrderDet
 
 export const saleRoutes = [
   {
-    path: '/salestaff',
+    path: '/sale-staff',
     element: (
       <AuthGuard allowedRoles={['SALE_STAFF']}>
         <LazyPage>
@@ -121,7 +121,7 @@ export const saleRoutes = [
         path: 'settings',
         element: (
           <LazyPage>
-            <StaffSettingsPage dashboardPath="/salestaff/dashboard" roleName="Sale Staff" />
+            <StaffSettingsPage dashboardPath="/sale-staff/dashboard" roleName="Sale Staff" />
           </LazyPage>
         )
       },
@@ -129,7 +129,7 @@ export const saleRoutes = [
         path: 'support',
         element: (
           <LazyPage>
-            <StaffSupportPage dashboardPath="/salestaff/dashboard" />
+            <StaffSupportPage dashboardPath="/sale-staff/dashboard" />
           </LazyPage>
         )
       },
@@ -138,8 +138,8 @@ export const saleRoutes = [
         element: (
           <LazyPage>
             <StaffProfilePage
-              dashboardPath="/salestaff/dashboard"
-              settingsPath="/salestaff/settings"
+              dashboardPath="/sale-staff/dashboard"
+              settingsPath="/sale-staff/settings"
             />
           </LazyPage>
         )

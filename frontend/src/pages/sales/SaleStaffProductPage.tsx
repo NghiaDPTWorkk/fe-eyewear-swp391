@@ -96,7 +96,7 @@ export default function SaleStaffProductPage() {
       <PageHeader
         title="Product Management"
         breadcrumbs={[
-          { label: 'Dashboard', path: '/salestaff/dashboard' },
+          { label: 'Dashboard', path: '/sale-staff/dashboard' },
           { label: 'Product Management' }
         ]}
       />

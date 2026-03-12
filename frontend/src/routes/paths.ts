@@ -27,20 +27,20 @@ export const PATHS = {
     SUPPORT: '/admin/support'
   },
   SALESTAFF: {
-    DASHBOARD: '/salestaff/dashboard',
-    CUSTOMERS: '/salestaff/customers',
-    PRESCRIPTION_ORDERS: '/salestaff/orders/prescription-orders',
-    VERIFY_RX: (orderId: string) => `/salestaff/orders/${orderId}/verify-rx`,
-    REGULAR_DETAIL: (orderId: string) => `/salestaff/orders/${orderId}/regular`,
-    PRE_ORDER_DETAIL: (orderId: string) => `/salestaff/orders/${orderId}/pre-order`
+    DASHBOARD: '/sale-staff/dashboard',
+    CUSTOMERS: '/sale-staff/customers',
+    PRESCRIPTION_ORDERS: '/sale-staff/orders/prescription-orders',
+    VERIFY_RX: (orderId: string) => `/sale-staff/orders/${orderId}/verify-rx`,
+    REGULAR_DETAIL: (orderId: string) => `/sale-staff/orders/${orderId}/regular`,
+    PRE_ORDER_DETAIL: (orderId: string) => `/sale-staff/orders/${orderId}/pre-order`
   },
   OPERATIONSTAFF: {
-    DASHBOARD: '/operationstaff/dashboard',
-    PRESCRIPTION_ORDERS: '/operationstaff/prescription-orders',
-    ORDER_DETAIL: (orderId: string) => `/operationstaff/orders/${orderId}`,
-    MANUFACTURING_PROCESS: (orderId: string) => `/operationstaff/orders/${orderId}/manufacturing`,
-    PACKING_PROCESS: (orderId: string) => `/operationstaff/orders/${orderId}/process`,
-    PACKING_SUCCESS: (orderId: string) => `/operationstaff/orders/${orderId}/success`
+    DASHBOARD: '/operation-staff/dashboard',
+    PRESCRIPTION_ORDERS: '/operation-staff/prescription-orders',
+    ORDER_DETAIL: (orderId: string) => `/operation-staff/orders/${orderId}`,
+    MANUFACTURING_PROCESS: (orderId: string) => `/operation-staff/orders/${orderId}/manufacturing`,
+    PACKING_PROCESS: (orderId: string) => `/operation-staff/orders/${orderId}/process`,
+    PACKING_SUCCESS: (orderId: string) => `/operation-staff/orders/${orderId}/success`
   },
   MANAGER: {
     DASHBOARD: '/manager/dashboard',

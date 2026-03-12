@@ -1,7 +1,7 @@
 import { PageHeader } from '@/features/staff/components/common'
 import { Container } from '@/shared/components/ui-core'
 import { useNavigate } from 'react-router-dom'
-import { StaffProfileContent } from '@/features/staff/components/Profile/StaffProfileContent'
+import { StaffProfileContent } from '@/features/staff/components/profile/StaffProfileContent'
 
 interface StaffProfilePageProps {
   dashboardPath: string
@@ -9,8 +9,8 @@ interface StaffProfilePageProps {
 }
 
 export default function StaffProfilePage({
-  dashboardPath = '/salestaff/dashboard',
-  settingsPath = '/salestaff/settings'
+  dashboardPath = '/sale-staff/dashboard',
+  settingsPath = '/sale-staff/settings'
 }: StaffProfilePageProps) {
   const navigate = useNavigate()
 

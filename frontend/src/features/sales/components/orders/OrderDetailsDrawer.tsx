@@ -173,11 +173,11 @@ export const OrderDetailsDrawer: React.FC<{
     if (isPrescription) {
       const isVerified =
         order.status === 'VERIFIED' || order.status === 'APPROVED' || order.status === 'COMPLETED'
-      navigate(`/salestaff/orders/${order._id}/verify-rx${isVerified ? '?mode=readonly' : ''}`)
+      navigate(`/sale-staff/orders/${order._id}/verify-rx${isVerified ? '?mode=readonly' : ''}`)
     } else if (order.type?.includes(OrderType.PRE_ORDER)) {
-      navigate(`/salestaff/orders/${order._id}/pre-order`)
+      navigate(`/sale-staff/orders/${order._id}/pre-order`)
     } else {
-      navigate(`/salestaff/orders/${order._id}/regular`)
+      navigate(`/sale-staff/orders/${order._id}/regular`)
     }
   }
 

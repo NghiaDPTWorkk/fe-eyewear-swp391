@@ -5,7 +5,7 @@ interface StaffSupportPageProps {
 }
 
 export default function StaffSupportPage({
-  dashboardPath = '/salestaff/dashboard'
+  dashboardPath = '/sale-staff/dashboard'
 }: StaffSupportPageProps) {
   const guidelines = [
     {

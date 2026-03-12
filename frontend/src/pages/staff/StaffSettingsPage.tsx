@@ -16,7 +16,7 @@ interface StaffSettingsPageProps {
 }
 
 export default function StaffSettingsPage({
-  dashboardPath = '/salestaff/dashboard',
+  dashboardPath = '/sale-staff/dashboard',
   roleName = 'Staff'
 }: StaffSettingsPageProps) {
   const { data: profileData } = useProfile()

@@ -9,11 +9,11 @@ import {
   useUpdateVoucher,
   useDeleteVoucher
 } from '@/features/manager/hooks/useManagerVouchers'
-import { VoucherAddition } from '@/components/layout/staff/managerstaff/voucheraddition/VoucherAddition'
-import VoucherViewAllDetail from '@/components/layout/staff/managerstaff/voucherviewalldetail/VoucherViewAllDetail'
+import { VoucherAddition } from '@/components/layout/staff/manager-staff/voucher-addition/VoucherAddition'
+import VoucherViewAllDetail from '@/components/layout/staff/manager-staff/voucher-view-all-detail/VoucherViewAllDetail'
 import { PATHS } from '@/routes/paths'
 import { createPortal } from 'react-dom'
-import { VOUCHER_STATUS_CFG } from '@/components/layout/staff/managerstaff/vouchertable/VoucherTdata.utils'
+import { VOUCHER_STATUS_CFG } from '@/components/layout/staff/manager-staff/voucher-table/VoucherTdata.utils'
 
 export default function ManagerVoucherDetail() {
   const { id } = useParams<{ id: string }>()

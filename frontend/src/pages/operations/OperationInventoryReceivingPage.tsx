@@ -1,7 +1,7 @@
 import { useState, type JSX } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Container } from '@/components'
-import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
+import { BreadcrumbPath } from '@/components/layout/staff/operation-staff/breadcrumb-path'
 import {
   IoArchiveOutline,
   IoSearchOutline,
@@ -357,7 +357,7 @@ export default function OperationInventoryReceivingPage() {
                 {/* View detail */}
                 <div className="col-span-1 flex justify-center">
                   <button
-                    onClick={() => navigate(`/operationstaff/inventory-receiving/${batch._id}`)}
+                    onClick={() => navigate(`/operation-staff/inventory-receiving/${batch._id}`)}
                     className="p-2 rounded-lg text-neutral-400 hover:text-mint-600 hover:bg-mint-50 transition-colors"
                     title="View detail"
                   >

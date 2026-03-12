@@ -32,7 +32,7 @@ export function NavActions({
   const location = useLocation()
 
   // Determine base path for dynamic links
-  const isOperation = location.pathname.startsWith('/operationstaff')
+  const isOperation = location.pathname.startsWith('/operation-staff')
   const isManager = location.pathname.startsWith('/manager')
   const isAdmin = location.pathname.startsWith('/admin')
 
@@ -41,8 +41,8 @@ export function NavActions({
     : isManager
       ? '/manager'
       : isOperation
-        ? '/operationstaff'
-        : '/salestaff'
+        ? '/operation-staff'
+        : '/sale-staff'
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {

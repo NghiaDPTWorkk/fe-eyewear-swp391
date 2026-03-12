@@ -102,9 +102,9 @@ export default function SaleStaffPreOrdersPage() {
   const handleVerify = (order: Order) => {
     const isManufacturing = order.type?.includes(OrderType.MANUFACTURING)
     if (isManufacturing) {
-      navigate(`/salestaff/orders/${order._id}/verify-rx`)
+      navigate(`/sale-staff/orders/${order._id}/verify-rx`)
     } else {
-      navigate(`/salestaff/orders/${order._id}/pre-order`)
+      navigate(`/sale-staff/orders/${order._id}/pre-order`)
     }
   }
 
@@ -119,8 +119,8 @@ export default function SaleStaffPreOrdersPage() {
         title="Pre-order Tracking"
         subtitle="Manage outstanding orders and supplier ETA updates."
         breadcrumbs={[
-          { label: 'Dashboard', path: '/salestaff/dashboard' },
-          { label: 'Orders', path: '/salestaff/orders' },
+          { label: 'Dashboard', path: '/sale-staff/dashboard' },
+          { label: 'Orders', path: '/sale-staff/orders' },
           { label: 'Pre-orders' }
         ]}
       />

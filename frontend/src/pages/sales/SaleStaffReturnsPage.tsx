@@ -24,8 +24,8 @@ export default function SaleStaffReturnsPage() {
         title="Returns Management"
         subtitle="Process customer returns and refunds."
         breadcrumbs={[
-          { label: 'Dashboard', path: '/salestaff/dashboard' },
-          { label: 'Orders', path: '/salestaff/orders' },
+          { label: 'Dashboard', path: '/sale-staff/dashboard' },
+          { label: 'Orders', path: '/sale-staff/orders' },
           { label: 'Returns' }
         ]}
       />

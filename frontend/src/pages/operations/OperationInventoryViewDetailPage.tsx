@@ -1,7 +1,7 @@
 import React from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Container } from '@/components'
-import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
+import { BreadcrumbPath } from '@/components/layout/staff/operation-staff/breadcrumb-path'
 import {
   IoArchiveOutline,
   IoArrowBack,
@@ -165,7 +165,7 @@ export default function OperationInventoryViewDetailPage() {
           </div>
           <p className="text-sm font-semibold text-neutral-700">Batch not found</p>
           <button
-            onClick={() => navigate('/operationstaff/inventory-receiving')}
+            onClick={() => navigate('/operation-staff/inventory-receiving')}
             className="mt-2 px-5 py-2 rounded-lg bg-mint-500 text-white text-sm font-semibold hover:bg-mint-600 transition"
           >
             Back to list
@@ -196,7 +196,7 @@ export default function OperationInventoryViewDetailPage() {
       <div className="flex items-start justify-between mb-8 gap-4">
         <div className="flex items-start gap-4">
           <button
-            onClick={() => navigate('/operationstaff/inventory-receiving')}
+            onClick={() => navigate('/operation-staff/inventory-receiving')}
             className="mt-1 p-2 rounded-lg border border-neutral-200 text-neutral-500 hover:text-mint-600 hover:border-mint-300 hover:bg-mint-50 transition-all"
           >
             <IoArrowBack size={18} />

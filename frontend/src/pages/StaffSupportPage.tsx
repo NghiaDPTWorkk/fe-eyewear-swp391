@@ -6,9 +6,9 @@ import {
   IoChevronDownOutline,
   IoChevronUpOutline
 } from 'react-icons/io5'
-import ContactSupportTeam from '@/shared/components/ui/contactsupportteam'
+import ContactSupportTeam from '@/shared/components/ui/contact-support-team'
 import { Container } from '@/components'
-import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
+import { BreadcrumbPath } from '@/components/layout/staff/operation-staff/breadcrumb-path'
 
 export default function StaffSupportPage() {
   return (

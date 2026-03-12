@@ -1,4 +1,4 @@
-import { StaffProfileContent } from '@/features/staff/components/Profile/StaffProfileContent'
+import { StaffProfileContent } from '@/features/staff/components/profile/StaffProfileContent'
 import { Link, useNavigate } from 'react-router-dom'
 import { IoChevronForward } from 'react-icons/io5'
 import { Container } from '@/shared/components'

@@ -5,7 +5,7 @@ import { Input } from '@/shared/components/ui/input/Input'
 import { Switch } from '@/shared/components/ui'
 import { IoCameraOutline } from 'react-icons/io5'
 import { useAuthStore } from '@/store/auth.store'
-import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
+import { BreadcrumbPath } from '@/components/layout/staff/operation-staff/breadcrumb-path'
 import type { AdminAccount } from '@/shared/types'
 import { ERROR_MESSAGES } from '@/shared/constants'
 

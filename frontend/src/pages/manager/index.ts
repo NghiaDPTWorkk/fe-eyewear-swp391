@@ -1,6 +1,6 @@
 export { default as ManagerDashboardPage } from './ManagerDashboardPage'
 export { default as ManagerInvoicesPage } from './ManagerInvoicesPage'
-export { default as ManagerLayout } from './ManagerLayout'
+export { default as ManagerLayout } from '@/components/layout/staff/manager-staff/ManagerLayout'
 export { default as ManagerAddProductPage } from './ManagerAddProductPage'
 export { default as ManagerEditProductPage } from './ManagerEditProductPage'
 export { default as ManagerAddAttributePage } from './ManagerAddAttributePage'

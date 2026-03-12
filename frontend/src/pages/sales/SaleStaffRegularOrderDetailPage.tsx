@@ -1,7 +1,7 @@
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom'
 
 import { useSalesStaffOrderDetail } from '@/features/sales/hooks'
-import OrderDetail from '@/features/staff/components/OrderDetail/OrderDetail'
+import OrderDetail from '@/features/staff/components/order-detail/OrderDetail'
 
 export default function SaleStaffRegularOrderDetailPage() {
   const { orderId } = useParams<{ orderId: string }>()
@@ -18,7 +18,7 @@ export default function SaleStaffRegularOrderDetailPage() {
     } else if (fromPath) {
       navigate(fromPath)
     } else if (invoiceId) {
-      navigate(`/salestaff/dashboard?invoiceId=${invoiceId}`)
+      navigate(`/sale-staff/dashboard?invoiceId=${invoiceId}`)
     } else {
       navigate(-1)
     }
@@ -31,14 +31,14 @@ export default function SaleStaffRegularOrderDetailPage() {
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1 text-sm font-medium mb-6 ml-1">
         <Link
-          to="/salestaff/dashboard"
+          to="/sale-staff/dashboard"
           className="text-neutral-400 hover:text-neutral-600 transition-colors font-normal"
         >
           Dashboard
         </Link>
         <span className="text-neutral-300 mx-1">/</span>
         <Link
-          to="/salestaff/orders"
+          to="/sale-staff/orders"
           className="text-neutral-400 hover:text-neutral-600 transition-colors font-normal"
         >
           Orders

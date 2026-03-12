@@ -354,7 +354,7 @@ export default function SaleStaffOrderPage() {
       <div className="flex items-start justify-between gap-4">
         <PageHeader
           title="Order Management"
-          breadcrumbs={[{ label: 'Dashboard', path: '/salestaff/dashboard' }, { label: 'Orders' }]}
+          breadcrumbs={[{ label: 'Dashboard', path: '/sale-staff/dashboard' }, { label: 'Orders' }]}
           subtitle="Consolidated view of all sales orders, pre-orders, and returns."
         />
         <RealtimeStatusBar

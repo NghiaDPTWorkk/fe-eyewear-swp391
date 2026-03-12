@@ -5,7 +5,9 @@ import { AuthGuard } from '@/routes/guards'
 import { ManagerVouchersPage } from '@/pages/manager'
 
 const ManagerLayout = lazy(() =>
-  import('@/pages/manager/ManagerLayout').then((m) => ({ default: m.default }))
+  import('@/components/layout/staff/manager-staff/ManagerLayout').then((m) => ({
+    default: m.default
+  }))
 )
 const ManagerDashboardPage = lazy(() =>
   import('@/pages/manager/ManagerDashboardPage').then((m) => ({ default: m.default }))

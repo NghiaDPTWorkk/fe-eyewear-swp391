@@ -14,7 +14,7 @@ export default function SaleStaffSettingsPage() {
       <PageHeader
         title="Settings"
         subtitle="Manage your account and preferences"
-        breadcrumbs={[{ label: 'Dashboard', path: '/salestaff/dashboard' }, { label: 'Settings' }]}
+        breadcrumbs={[{ label: 'Dashboard', path: '/sale-staff/dashboard' }, { label: 'Settings' }]}
       />
 
       <div>

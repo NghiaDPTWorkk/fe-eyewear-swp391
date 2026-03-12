@@ -178,7 +178,7 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
                         } else if (hasPreOrder) {
                           pathSuffix = 'pre-order'
                         }
-                        const path = `/salestaff/orders/${order.id}/${pathSuffix}`
+                        const path = `/sale-staff/orders/${order.id}/${pathSuffix}`
                         navigate(`${path}?from=${window.location.pathname}&invoiceId=${invoice.id}`)
                       }}
                     >
@@ -259,7 +259,9 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
           <div className="p-6 border-t border-neutral-100 bg-white">
             <button
               onClick={() =>
-                navigate(`/salestaff/orders?status=${invoice.status}&search=${invoice.invoiceCode}`)
+                navigate(
+                  `/sale-staff/orders?status=${invoice.status}&search=${invoice.invoiceCode}`
+                )
               }
               className="w-full py-4 bg-primary-600 text-white rounded-2xl font-medium text-sm shadow-lg shadow-primary-100 hover:bg-primary-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3 tracking-tight group"
             >

@@ -53,7 +53,7 @@ export default function OperationStaffProfilePage() {
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm mb-6 px-1">
           <Link
-            to="/operationstaff/dashboard"
+            to="/operation-staff/dashboard"
             className="text-neutral-500 hover:text-neutral-700 transition-colors font-medium"
           >
             Dashboard
@@ -87,7 +87,7 @@ export default function OperationStaffProfilePage() {
               </div>
 
               <Button
-                onClick={() => navigate('/operationstaff/settings')}
+                onClick={() => navigate('/operation-staff/settings')}
                 className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white border border-white/20 px-5 py-2.5 rounded-xl font-medium transition-all backdrop-blur-sm"
               >
                 <IoPencil className="text-lg" />

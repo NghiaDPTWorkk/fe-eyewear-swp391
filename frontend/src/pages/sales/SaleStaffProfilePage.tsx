@@ -1,7 +1,7 @@
 import { PageHeader } from '@/features/staff/components/common'
 import { Container } from '@/shared/components/ui-core'
 import { useNavigate } from 'react-router-dom'
-import { StaffProfileContent } from '@/features/staff/components/Profile/StaffProfileContent'
+import { StaffProfileContent } from '@/features/staff/components/profile/StaffProfileContent'
 
 export default function SaleStaffProfilePage() {
   const navigate = useNavigate()
@@ -11,10 +11,10 @@ export default function SaleStaffProfilePage() {
       <PageHeader
         title="My Profile"
         subtitle="View and manage your personal professional information"
-        breadcrumbs={[{ label: 'Dashboard', path: '/salestaff/dashboard' }, { label: 'Profile' }]}
+        breadcrumbs={[{ label: 'Dashboard', path: '/sale-staff/dashboard' }, { label: 'Profile' }]}
       />
 
-      <StaffProfileContent onEdit={() => navigate('/salestaff/settings')} />
+      <StaffProfileContent onEdit={() => navigate('/sale-staff/settings')} />
     </Container>
   )
 }

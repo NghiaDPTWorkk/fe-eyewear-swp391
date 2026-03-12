@@ -47,7 +47,7 @@ export default function SaleStaffRxVerificationPage() {
     } else if (fromPath) {
       navigate(fromPath)
     } else if (invoiceId) {
-      navigate(`/salestaff/dashboard?invoiceId=${invoiceId}`)
+      navigate(`/sale-staff/dashboard?invoiceId=${invoiceId}`)
     } else {
       navigate(-1)
     }
@@ -72,8 +72,8 @@ export default function SaleStaffRxVerificationPage() {
           <PageHeader
             title="Prescription Verification"
             breadcrumbs={[
-              { label: 'Dashboard', path: '/salestaff/dashboard' },
-              { label: 'Orders', path: '/salestaff/orders' },
+              { label: 'Dashboard', path: '/sale-staff/dashboard' },
+              { label: 'Orders', path: '/sale-staff/orders' },
               { label: 'Verification' }
             ]}
             noMargin
@@ -119,8 +119,8 @@ export default function SaleStaffRxVerificationPage() {
         <PageHeader
           title="Prescription Verification"
           breadcrumbs={[
-            { label: 'Dashboard', path: '/salestaff/dashboard' },
-            { label: 'Orders', path: '/salestaff/orders' },
+            { label: 'Dashboard', path: '/sale-staff/dashboard' },
+            { label: 'Orders', path: '/sale-staff/orders' },
             { label: 'Verification' }
           ]}
           noMargin

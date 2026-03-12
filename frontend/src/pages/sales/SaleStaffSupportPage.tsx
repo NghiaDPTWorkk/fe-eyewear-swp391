@@ -69,7 +69,7 @@ export default function SaleStaffSupportPage() {
       <PageHeader
         title="Support & Risk Guidelines"
         subtitle="Important guidelines and bug reporting"
-        breadcrumbs={[{ label: 'Dashboard', path: '/salestaff/dashboard' }, { label: 'Support' }]}
+        breadcrumbs={[{ label: 'Dashboard', path: '/sale-staff/dashboard' }, { label: 'Support' }]}
       />
 
       <SupportContent

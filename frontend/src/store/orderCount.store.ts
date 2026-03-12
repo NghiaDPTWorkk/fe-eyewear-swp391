@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { Order } from '@/features/staff/components/OrderTable/OrderTable'
+import type { Order } from '@/features/staff/components/order-table/OrderTable'
 import { OrderType, OrderStatus } from '@/shared/utils/enums/order.enum'
 
 interface OrderCountStore {

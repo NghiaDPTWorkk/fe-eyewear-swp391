@@ -11,7 +11,7 @@ import { useProfile } from '@/features/staff/hooks/useProfile'
 import { useOrderCountStore } from '@/store'
 import { Container } from '@/shared/components/ui/container/Container'
 import { cn } from '@/lib/utils'
-import ProfileDetailCard from '@/components/layout/staff/operationstaff/profiledetailcard/ProfileDetailCard'
+import ProfileDetailCard from '@/components/layout/staff/operation-staff/profile-detail-card/ProfileDetailCard'
 
 export default function OperationPersonalProfile() {
   const { data: profileData, isLoading: isProfileLoading } = useProfile()
@@ -99,8 +99,8 @@ export default function OperationPersonalProfile() {
       <ProfileDetailCard
         profile={profile}
         userInitials={userInitials}
-        onEditProfile={() => navigate('/operationstaff/settings')}
-        onChangePassword={() => navigate('/operationstaff/settings')}
+        onEditProfile={() => navigate('/operation-staff/settings')}
+        onChangePassword={() => navigate('/operation-staff/settings')}
       />
 
       {/* Stats Cards */}

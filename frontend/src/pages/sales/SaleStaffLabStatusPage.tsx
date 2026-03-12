@@ -43,7 +43,7 @@ export default function SaleStaffLabStatusPage() {
         title="Lab Status Tracking"
         subtitle="Monitor production stages, urgent requests, and lens specifications."
         breadcrumbs={[
-          { label: 'Dashboard', path: '/salestaff/dashboard' },
+          { label: 'Dashboard', path: '/sale-staff/dashboard' },
           { label: 'Lab Status' }
         ]}
         noMargin={true}

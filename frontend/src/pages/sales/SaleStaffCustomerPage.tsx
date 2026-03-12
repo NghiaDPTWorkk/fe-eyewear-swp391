@@ -148,7 +148,10 @@ export default function SaleStaffCustomerPage() {
       <PageHeader
         title="Customer Inbox"
         subtitle="Manage communications and provide personalized support to your clients."
-        breadcrumbs={[{ label: 'Dashboard', path: '/salestaff/dashboard' }, { label: 'Customers' }]}
+        breadcrumbs={[
+          { label: 'Dashboard', path: '/sale-staff/dashboard' },
+          { label: 'Customers' }
+        ]}
       />
 
       <Card className="flex-1 flex overflow-hidden border border-neutral-200 p-0 rounded-[32px] bg-white shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50">

@@ -115,7 +115,7 @@ export default function OperationDashboardPage() {
       <div className="mb-8">
         <div className="flex items-center gap-2 text-sm mb-2 font-medium">
           <Link
-            to="/operationstaff/dashboard"
+            to="/operation-staff/dashboard"
             className="text-neutral-400 hover:text-primary-500 transition-colors"
           >
             Dashboard

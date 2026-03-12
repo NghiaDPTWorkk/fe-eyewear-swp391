@@ -1,5 +1,5 @@
 export * from '@/components/layout/staff/staff-core/sidebar'
 export * from '@/components/layout/staff/staff-core/header'
 export * from '@/components/layout/staff/staff-core/navbar'
-export { default as OrderTable } from '@/features/staff/components/OrderTable/OrderTable'
+export { default as OrderTable } from '@/features/staff/components/order-table/OrderTable'
 export { default as FilterButtonList } from './filter-button-list/FilterButtonList'

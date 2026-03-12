@@ -12,6 +12,9 @@ export interface ProductFilterParams {
   shape?: string[]
   style?: string[]
   gender?: string[]
+  categories?: string[]
+  minPrice?: number
+  maxPrice?: number
 }
 
 interface UseFilteredProductsReturn {
@@ -50,6 +53,11 @@ export const useFilteredProducts = (filters: ProductFilterParams): UseFilteredPr
       if (filters.shape && filters.shape.length > 0) params.shape = filters.shape
       if (filters.style && filters.style.length > 0) params.style = filters.style
       if (filters.gender && filters.gender.length > 0) params.gender = filters.gender
+      if (filters.categories && filters.categories.length > 0) {
+        params.categories = filters.categories.join(',')
+      }
+      if (filters.minPrice !== undefined) params.minPrice = filters.minPrice
+      if (filters.maxPrice !== undefined) params.maxPrice = filters.maxPrice
 
       const apiResponse = await productService.filterProducts(params)
 
@@ -75,7 +83,10 @@ export const useFilteredProducts = (filters: ProductFilterParams): UseFilteredPr
     filters.material,
     filters.shape,
     filters.style,
-    filters.gender
+    filters.gender,
+    filters.categories,
+    filters.minPrice,
+    filters.maxPrice
   ])
 
   useEffect(() => {

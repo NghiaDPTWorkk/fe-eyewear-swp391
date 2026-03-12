@@ -1,19 +1,17 @@
 import { cn } from '@/lib/utils'
 import { PriceRangeFilter, type PriceRange } from '../price-range-filter'
-import { ColorFilter, type ColorOption } from '../color-filter'
 import { FilterSection } from '../filter-section'
 import { Checkbox } from '../checkbox'
 import { Loader2 } from 'lucide-react'
-
-export interface Category {
-  id: string
-  name: string
-}
+import type { SpecCategory } from '@/shared/types/productSpecs.types'
 
 export interface ProductFiltersProps {
-  categories: Category[]
+  categories: SpecCategory[]
   selectedCategories: string[]
   onCategoryChange: (categoryIds: string[]) => void
+  genders: string[]
+  selectedGenders: string[]
+  onGenderChange: (genders: string[]) => void
   brands: string[]
   selectedBrands: string[]
   onBrandChange: (brands: string[]) => void
@@ -31,16 +29,24 @@ export interface ProductFiltersProps {
   onPriceRangeChange: (rangeIds: string[]) => void
   onCustomPriceApply?: (min: number | null, max: number | null) => void
   priceResetKey?: number
-  colors: ColorOption[]
-  selectedColors: string[]
-  onColorChange: (colorIds: string[]) => void
   className?: string
+}
+
+const GENDER_MAP: Record<string, string> = {
+  M: 'Men',
+  F: 'Women',
+  N: 'Non-binary',
+  UNISEX: 'Unisex',
+  unisex: 'Unisex'
 }
 
 export function ProductFilters({
   categories,
   selectedCategories,
   onCategoryChange,
+  genders,
+  selectedGenders,
+  onGenderChange,
   brands,
   selectedBrands,
   onBrandChange,
@@ -58,9 +64,6 @@ export function ProductFilters({
   onPriceRangeChange,
   onCustomPriceApply,
   priceResetKey,
-  colors,
-  selectedColors,
-  onColorChange,
   className
 }: ProductFiltersProps) {
   const toggleSelection = (
@@ -83,6 +86,55 @@ export function ProductFilters({
         </div>
 
         <div className="space-y-0">
+          {/* Categories */}
+          <FilterSection title="Categories" defaultExpanded>
+            <div className="space-y-2 max-h-40 overflow-y-auto">
+              {categories.length > 0 ? (
+                categories.map((category) => (
+                  <label
+                    key={category._id}
+                    className="flex items-center gap-2 cursor-pointer group"
+                  >
+                    <Checkbox
+                      isChecked={selectedCategories.includes(category._id)}
+                      onCheckedChange={() =>
+                        toggleSelection(category._id, selectedCategories, onCategoryChange)
+                      }
+                    />
+                    <span className="text-sm text-mint-1200 group-hover:text-primary-500 transition-colors">
+                      {category.name}
+                    </span>
+                  </label>
+                ))
+              ) : (
+                <div className="text-xs text-mint-800 italic">No categories</div>
+              )}
+            </div>
+          </FilterSection>
+
+          {/* Gender */}
+          <FilterSection title="Gender" defaultExpanded>
+            <div className="space-y-2">
+              {genders.length > 0 ? (
+                genders.map((gender) => (
+                  <label key={gender} className="flex items-center gap-2 cursor-pointer group">
+                    <Checkbox
+                      isChecked={selectedGenders.includes(gender)}
+                      onCheckedChange={() =>
+                        toggleSelection(gender, selectedGenders, onGenderChange)
+                      }
+                    />
+                    <span className="text-sm text-mint-1200 group-hover:text-primary-500 transition-colors">
+                      {GENDER_MAP[gender] || gender}
+                    </span>
+                  </label>
+                ))
+              ) : (
+                <Loader2 className="w-5 h-5 animate-spin text-primary-500" />
+              )}
+            </div>
+          </FilterSection>
+
           {/* Brand */}
           <FilterSection title="Brand" defaultExpanded>
             <div className="space-y-2 max-h-40 overflow-y-auto">
@@ -101,25 +153,6 @@ export function ProductFilters({
               ) : (
                 <Loader2 className="w-5 h-5 animate-spin text-primary-500" />
               )}
-            </div>
-          </FilterSection>
-
-          {/* Gender */}
-          <FilterSection title="Gender" defaultExpanded>
-            <div className="space-y-2">
-              {categories.map((category) => (
-                <label key={category.id} className="flex items-center gap-2 cursor-pointer group">
-                  <Checkbox
-                    isChecked={selectedCategories.includes(category.id)}
-                    onCheckedChange={() =>
-                      toggleSelection(category.id, selectedCategories, onCategoryChange)
-                    }
-                  />
-                  <span className="text-sm text-mint-1200 group-hover:text-primary-500 transition-colors">
-                    {category.name}
-                  </span>
-                </label>
-              ))}
             </div>
           </FilterSection>
 
@@ -198,15 +231,6 @@ export function ProductFilters({
           selectedRanges={selectedPriceRanges}
           onRangeChange={onPriceRangeChange}
           onCustomRangeApply={onCustomPriceApply}
-        />
-      </div>
-
-      {/* Color Section */}
-      <div className="bg-mint-200 rounded-2xl border-2 border-mint-500 p-4">
-        <ColorFilter
-          colors={colors}
-          selectedColors={selectedColors}
-          onColorChange={onColorChange}
         />
       </div>
     </div>

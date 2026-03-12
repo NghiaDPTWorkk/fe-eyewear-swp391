@@ -41,16 +41,16 @@ export function PriceRangeFilter({ onCustomRangeApply, className }: PriceRangeFi
           value={minPrice}
           onChange={(e) => setMinPrice(e.target.value)}
           size="sm"
-          className="flex-1 w-[40%]"
+          className="flex-1 w-[35%]"
         />
-        <Divider text="to" className="w-[20%]"></Divider>
+        <Divider text="to" className="w-[10%] mr-3"></Divider>
         <Input
           type="number"
           placeholder="Max"
           value={maxPrice}
           onChange={(e) => setMaxPrice(e.target.value)}
           size="sm"
-          className="flex-1 w-[40%]"
+          className="flex-1 w-[35%]"
         />
       </div>
 

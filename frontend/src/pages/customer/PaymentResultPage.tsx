@@ -133,6 +133,7 @@ export const PaymentResultPage = () => {
                   <OrderSummary
                     totalPrice={invoiceData?.invoice.totalPrice || 0}
                     totalDiscount={invoiceData?.invoice.totalDiscount || 0}
+                    feeShip={invoiceData?.invoice.feeShip || 0}
                   />
                 </div>
               </div>

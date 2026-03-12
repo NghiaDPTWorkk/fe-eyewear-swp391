@@ -5,13 +5,17 @@ import { Input } from '@/shared/components/ui/input'
 import { useChatMessages } from '@/shared/hooks/chat/useChatMessages'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { Link } from 'react-router-dom'
+import { ProductChatTag } from './ProductChatTag'
 
 interface MessageContentProps {
   text: string
   isUser: boolean
 }
 
-const MessageContent = ({ text, isUser }: MessageContentProps) => {
+const MessageContent = ({ text: originalText, isUser }: MessageContentProps) => {
+  const text = originalText.replace(/link chi tiết/gi, 'Sản phẩm')
+  const PRODUCT_URL_REGEX = /\/products\/([a-f\d]{24})/i
+
   const parseLine = (line: string) => {
     // Regex matches: **bold**, [label](url), or raw URL
     const regex = /(\*\*.*?\*\*|\[.*?\]\(https?:\/\/[^\s)]+\)|https?:\/\/[^\s\n]+)/g
@@ -26,10 +30,20 @@ const MessageContent = ({ text, isUser }: MessageContentProps) => {
           </strong>
         )
       }
+
       // Markdown link: [label](url)
       const mdLinkMatch = part.match(/^\[(.*?)\]\((https?:\/\/.*?)\)$/)
       if (mdLinkMatch) {
         const [, label, url] = mdLinkMatch
+
+        // Check if it's a product link
+        if (!isUser) {
+          const productMatch = url.match(PRODUCT_URL_REGEX)
+          if (productMatch) {
+            return <ProductChatTag key={i} productId={productMatch[1]} />
+          }
+        }
+
         return (
           <a
             key={i}
@@ -47,8 +61,17 @@ const MessageContent = ({ text, isUser }: MessageContentProps) => {
           </a>
         )
       }
+
       // Raw URL
       if (part.startsWith('http')) {
+        // Check if it's a product link
+        if (!isUser) {
+          const productMatch = part.match(PRODUCT_URL_REGEX)
+          if (productMatch) {
+            return <ProductChatTag key={i} productId={productMatch[1]} />
+          }
+        }
+
         return (
           <a
             key={i}
@@ -98,14 +121,14 @@ const MessageContent = ({ text, isUser }: MessageContentProps) => {
 
         // Empty lines as spacing
         if (line === '') {
-          return <div key={i} className="h-1" />
+          return <div key={i} className="" />
         }
 
         // Normal paragraph
         return (
-          <p key={i} className="leading-relaxed break-words min-w-0">
+          <div key={i} className="leading-relaxed break-words min-w-0">
             {parseLine(line)}
-          </p>
+          </div>
         )
       })}
     </div>

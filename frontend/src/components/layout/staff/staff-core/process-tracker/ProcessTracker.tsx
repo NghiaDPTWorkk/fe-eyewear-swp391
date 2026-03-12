@@ -27,7 +27,7 @@ export default function ProgressTracker({
   title = 'Process Progress'
 }: ProcessTrackerProps) {
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border border-mint-200">
+    <div className="bg-white rounded-lg shadow-sm p-6 mb-4 border border-mint-200">
       <h2 className="text-lg font-semibold text-mint-900 mb-6">{title}</h2>
       <div className="flex items-center justify-between">
         {steps.map((step, index) => {

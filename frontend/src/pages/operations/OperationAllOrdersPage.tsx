@@ -39,7 +39,7 @@ export default function OperationAllOrdersPage() {
     currentPage * PAGE_LIMIT
   )
 
-  // Badge counts cho filter buttons
+  // Badge counts cho filter buttons: đếm trực tiếp từ danh sách orders đã lọc ở Layout
   const allCount = orders.length
   const preOrderCount = orders.filter((o: Order) => o.orderType === OrderType.PRE_ORDER).length
   const normalCount = orders.filter((o: Order) => o.orderType === OrderType.NORMAL).length
@@ -56,7 +56,7 @@ export default function OperationAllOrdersPage() {
 
   return (
     <Container>
-      <div className="mb-8">
+      <div className="mb-4">
         <BreadcrumbPath paths={['Dashboard', 'All Orders']} />
         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Order List</h1>
         <p className="text-gray-500 mt-1">Manage the entire database of orders in the system.</p>
@@ -73,7 +73,7 @@ export default function OperationAllOrdersPage() {
         orders={paginatedOrders}
         isLoading={isLoading}
         isError={isError}
-        hiddenColumns={['WAITING FOR', 'CUSTOMER']}
+        hiddenColumns={['CUSTOMER']}
         filterType={filter === 'all' ? undefined : filter}
         role="operation"
       />

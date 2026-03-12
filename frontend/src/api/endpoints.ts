@@ -27,7 +27,8 @@ export const ENDPOINTS = {
     SEARCH: (page: number, limit: number, search: string) =>
       `/products?page=${page}&limit=${limit}&search=${search}`,
     DETAIL: (id: string) => `/products/${id}`,
-    VARIANT: (id: string, sku: string) => `/products/${id}/variants/${sku}`,
+    VARIANT: (id: string, sku: string) => `/products/${id}/variants/${encodeURIComponent(sku)}`,
+    SEARCH_BY_SKU: (sku: string) => `/admin/products/search/sku/${encodeURIComponent(sku)}`,
     SPECS: '/products/specs',
     FILTER: (params: Record<string, string | number | string[] | undefined>) => {
       const query = new URLSearchParams()
@@ -182,6 +183,7 @@ export const ENDPOINTS = {
     ATTRIBUTES: '/admin/attributes',
     PRE_ORDER_IMPORTS: (page: number = 1, limit: number = 10) =>
       `/admin/pre-order-imports?page=${page}&limit=${limit}`,
+    PRE_ORDER_IMPORT_DETAIL: (id: string) => `/admin/pre-order-imports/${id}`,
     IMPORT_PRODUCTS: '/admin/import-products'
   },
 

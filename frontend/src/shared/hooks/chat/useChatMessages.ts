@@ -117,11 +117,16 @@ export const useChatMessages = (): UseChatMessagesReturn => {
     }
   }, [hasMore, isLoading, lastItem, fetchMessages])
 
+  const inputRefValue = useRef(input)
+  useEffect(() => {
+    inputRefValue.current = input
+  }, [input])
+
   const handleSend = useCallback(
     async (text?: string) => {
       if (!isAuthenticated) return
 
-      const msg = (text ?? input).trim()
+      const msg = (text ?? inputRefValue.current).trim()
       if (!msg) return
 
       const userMsg: ChatMessage = {
@@ -156,7 +161,7 @@ export const useChatMessages = (): UseChatMessagesReturn => {
         setIsTyping(false)
       }
     },
-    [input, isAuthenticated, scrollToBottom]
+    [isAuthenticated, scrollToBottom]
   )
 
   const handleKeyDown = useCallback(

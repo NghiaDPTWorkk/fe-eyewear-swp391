@@ -11,11 +11,7 @@ export const InventoryTable = ({ results, onViewDetail, onNext }: InventoryTable
   return (
     <table className="w-full text-left border-collapse">
       <InventoryTableHeader />
-      <InventoryTData
-        results={results}
-        onViewDetail={onViewDetail}
-        onNext={onNext}
-      />
+      <InventoryTData results={results} onViewDetail={onViewDetail} onNext={onNext} />
     </table>
   )
 }

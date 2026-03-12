@@ -1,4 +1,4 @@
-import { useState} from 'react'
+import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Button, Container, FilterButtonList, MetricCard, OperationPagination } from '@/components'
 import { BreadcrumbPath } from '@/components/layout/staff/operation-staff/breadcrumb-path'
@@ -14,7 +14,7 @@ import {
 } from '@/features/operations/hooks/usePreOrderImports'
 import { cn, formatDate } from '@/shared/utils'
 import STATUS_INVENTORY_PLANNING_CONFIG from '@/shared/utils/enums/inventoryplan.enum'
-import { InventoryTable } from '@/components/layout/staff/operationstaff/inventoryplantable/InventoryTable'
+import { InventoryTable } from '@/components/layout/staff/operation-staff/inventoryplantable/InventoryTable'
 
 import { createPortal } from 'react-dom'
 

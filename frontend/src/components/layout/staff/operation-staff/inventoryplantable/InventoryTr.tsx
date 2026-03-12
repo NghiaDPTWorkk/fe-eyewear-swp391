@@ -13,9 +13,7 @@ interface InventoryTrProps {
 
 export const InventoryTr = ({ batch, managerName, onViewDetail, onNext }: InventoryTrProps) => {
   const config =
-    STATUS_INVENTORY_PLANNING_CONFIG[
-      batch.status as keyof typeof STATUS_INVENTORY_PLANNING_CONFIG
-    ]
+    STATUS_INVENTORY_PLANNING_CONFIG[batch.status as keyof typeof STATUS_INVENTORY_PLANNING_CONFIG]
 
   return (
     <tr className="group hover:bg-neutral-50/50 transition-colors">

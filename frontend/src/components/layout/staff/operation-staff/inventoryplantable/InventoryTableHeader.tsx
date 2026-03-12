@@ -1,4 +1,3 @@
-
 export const InventoryTableHeader = () => {
   return (
     <thead>

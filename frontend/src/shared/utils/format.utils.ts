@@ -23,7 +23,6 @@ export function formatDate(date: string | Date | undefined | null): string {
   })
 }
 
-
 export function formatTime(iso: string) {
   if (!iso) return 'N/A'
   return new Date(iso).toLocaleTimeString('vi-VN', {

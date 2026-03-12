@@ -29,7 +29,6 @@ export default function OperationCompleteOrdersPage() {
     )
   }
 
-
   // Fetch orders với statusFilter và typeFilter từ API — có phân trang
   const { data, isLoading, isError } = useOrders(
     currentPage,
@@ -61,8 +60,6 @@ export default function OperationCompleteOrdersPage() {
     { label: 'Pre-order', count: typeCounts.preOrder, value: OrderType.PRE_ORDER },
     { label: 'Manufacturing', count: typeCounts.manufacturing, value: OrderType.MANUFACTURING }
   ]
-
-
 
   // Pagination meta từ BE
   const paginationMeta = data?.data?.orders

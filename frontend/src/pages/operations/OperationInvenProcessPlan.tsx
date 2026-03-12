@@ -94,7 +94,7 @@ export default function OperationInvenProcessPlan() {
             The batch ID you provided does not exist or has been deleted.
           </p>
           <button
-            onClick={() => navigate('/operationstaff/inventory-receiving')}
+            onClick={() => navigate('/operation-staff/inventory-receiving')}
             className="mt-6 px-6 py-2 bg-slate-800 text-white rounded-xl font-bold text-sm hover:bg-slate-900 transition-all focus:outline-none"
           >
             Go Back to List
@@ -122,7 +122,7 @@ export default function OperationInvenProcessPlan() {
       <div className="flex items-center justify-between mb-8 gap-4 mt-6">
         <div className="flex items-center gap-4">
           <button
-            onClick={() => navigate('/operationstaff/inventory-receiving')}
+            onClick={() => navigate('/operation-staff/inventory-receiving')}
             className="p-3 bg-white hover:bg-slate-50 rounded-xl shadow-sm transition-all border border-slate-100 text-slate-400 hover:text-mint-600"
           >
             <IoArrowBack size={20} />
@@ -149,7 +149,9 @@ export default function OperationInvenProcessPlan() {
             colorScheme={detail.status === 'DONE' ? 'secondary' : 'primary'}
             className={cn(
               'px-6 py-3 rounded-xl font-bold text-sm shadow-lg',
-              detail.status === 'DONE' ? 'shadow-slate-100 opacity-70 cursor-not-allowed' : 'shadow-mint-100'
+              detail.status === 'DONE'
+                ? 'shadow-slate-100 opacity-70 cursor-not-allowed'
+                : 'shadow-mint-100'
             )}
             onClick={handleConfirmDone}
             disabled={detail.status === 'DONE' || importProduct.isPending}
@@ -193,7 +195,9 @@ export default function OperationInvenProcessPlan() {
                     </span>
                   </div>
                   <div>
-                    <h2 className="text-2xl font-black text-slate-900 font-mono leading-tight">{detail.sku}</h2>
+                    <h2 className="text-2xl font-black text-slate-900 font-mono leading-tight">
+                      {detail.sku}
+                    </h2>
                     {variantInfo?.name && (
                       <p className="text-xs font-bold text-mint-600 uppercase tracking-widest mt-1">
                         {variantInfo.name}

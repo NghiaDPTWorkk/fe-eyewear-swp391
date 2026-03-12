@@ -45,7 +45,8 @@ export default function OperationPackingPage() {
     all: packingOrdersInStore.length,
     normal: packingOrdersInStore.filter((o) => o.orderType === OrderType.NORMAL).length,
     preOrder: packingOrdersInStore.filter((o) => o.orderType === OrderType.PRE_ORDER).length,
-    manufacturing: packingOrdersInStore.filter((o) => o.orderType === OrderType.MANUFACTURING).length
+    manufacturing: packingOrdersInStore.filter((o) => o.orderType === OrderType.MANUFACTURING)
+      .length
   }
 
   const filterButtons = [

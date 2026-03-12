@@ -83,10 +83,16 @@ export default function ManagerProductsPage() {
   const products = data?.data?.productList ?? []
   const pagination = data?.data?.pagination
 
-  // Compute summary counts from data
-  const totalProducts = pagination?.total ?? 0
-  const frameCount = products.filter((p) => p.type === 'frame').length
-  const sunglassCount = products.filter((p) => p.type === 'sunglass').length
+  // Fetch totals for summary cards explicitly (limit=1 is fast on backend)
+  const { data: allData } = useAdminProducts(1, 1, undefined)
+  const { data: frameData } = useAdminProducts(1, 1, 'frame')
+  const { data: sunglassData } = useAdminProducts(1, 1, 'sunglass')
+  const { data: lensData } = useAdminProducts(1, 1, 'lens')
+
+  const totalProducts = allData?.data?.pagination?.total ?? 0
+  const frameCount = frameData?.data?.pagination?.total ?? 0
+  const sunglassCount = sunglassData?.data?.pagination?.total ?? 0
+  const lensCount = lensData?.data?.pagination?.total ?? 0
 
   const typeTabs = [
     { label: 'All Products', value: undefined },
@@ -146,14 +152,8 @@ export default function ManagerProductsPage() {
         />
         <SummaryCard
           label="Lens"
-          value={products.filter((p) => p.type === 'lens').length}
-          percent={
-            totalProducts
-              ? Math.round(
-                  (products.filter((p) => p.type === 'lens').length / totalProducts) * 100
-                ) + '%'
-              : '0%'
-          }
+          value={lensCount}
+          percent={totalProducts ? Math.round((lensCount / totalProducts) * 100) + '%' : '0%'}
           isUp={true}
           icon={<IoAlertCircleOutline className="text-xl" />}
           iconBg="bg-orange-50 text-orange-600"

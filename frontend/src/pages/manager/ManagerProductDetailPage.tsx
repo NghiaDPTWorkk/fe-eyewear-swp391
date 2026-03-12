@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Container } from '@/components'
 import { PageHeader } from '@/features/sales/components/common'
@@ -15,12 +16,16 @@ import {
   IoChevronForwardOutline,
   IoChevronBackOutline,
   IoPencilOutline,
-  IoTrashOutline
+  IoTrashOutline,
+  IoExpandOutline,
+  IoAdd,
+  IoRemove
 } from 'react-icons/io5'
 import type { AdminProductVariant } from '@/shared/types'
 import { httpClient } from '@/api/apiClients'
 import { ENDPOINTS } from '@/api/endpoints'
 import { toast } from 'react-hot-toast'
+import { ConfirmationModal } from '@/shared/components/ui-core'
 
 // ─── Format price ───
 function formatPrice(price: number) {
@@ -53,14 +58,18 @@ export default function ManagerProductDetailPage() {
   const [selectedVariantIdx, setSelectedVariantIdx] = useState(0)
   const [imgIdx, setImgIdx] = useState(0)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false)
+  const [zoom, setZoom] = useState(1)
 
-  const handleDelete = async () => {
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false)
+
+  const handleDeleteClick = () => {
+    setIsConfirmOpen(true)
+  }
+
+  const handleDeleteConfirm = async () => {
     if (!id) return
-    const confirmed = window.confirm(
-      `Are you sure you want to delete "${product?.nameBase}"? This action cannot be undone.`
-    )
-    if (!confirmed) return
-
+    setIsConfirmOpen(false)
     setIsDeleting(true)
     try {
       await httpClient.delete(ENDPOINTS.ADMIN.PRODUCT_DETAIL(id))
@@ -139,7 +148,7 @@ export default function ManagerProductDetailPage() {
           Edit Product
         </button>
         <button
-          onClick={handleDelete}
+          onClick={handleDeleteClick}
           disabled={isDeleting}
           className="inline-flex items-center gap-2 px-5 py-2.5 bg-red-50 text-red-600 rounded-xl text-sm font-semibold ring-1 ring-red-100 hover:bg-red-100 transition-all active:scale-95 disabled:opacity-50"
         >
@@ -155,15 +164,25 @@ export default function ManagerProductDetailPage() {
             {/* Main Image */}
             <div className="relative aspect-square bg-neutral-50 flex items-center justify-center overflow-hidden">
               {currentImg ? (
-                <img
-                  src={currentImg}
-                  alt={selectedVariant.name}
-                  className="w-full h-full object-cover transition-opacity duration-300"
-                  onError={(e) => {
-                    ;(e.target as HTMLImageElement).src = ''
-                    ;(e.target as HTMLImageElement).style.display = 'none'
-                  }}
-                />
+                <div
+                  className="w-full h-full relative group cursor-zoom-in"
+                  onClick={() => setIsImageModalOpen(true)}
+                >
+                  <img
+                    src={currentImg}
+                    alt={selectedVariant.name}
+                    className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                    onError={(e) => {
+                      ;(e.target as HTMLImageElement).src = ''
+                      ;(e.target as HTMLImageElement).style.display = 'none'
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <div className="bg-white/90 text-mint-600 p-3 rounded-full shadow-lg backdrop-blur-sm transform scale-90 group-hover:scale-100 transition-transform">
+                      <IoExpandOutline size={24} />
+                    </div>
+                  </div>
+                </div>
               ) : (
                 <IoCubeOutline size={80} className="text-neutral-200" />
               )}
@@ -207,7 +226,7 @@ export default function ManagerProductDetailPage() {
                         : 'border-transparent opacity-60 hover:opacity-100'
                     }`}
                   >
-                    <img src={img} alt="" className="w-full h-full object-cover" />
+                    <img src={img} alt="" className="w-full h-full object-contain" />
                   </button>
                 ))}
               </div>
@@ -432,6 +451,91 @@ export default function ManagerProductDetailPage() {
           </div>
         </div>
       </div>
+
+      <ConfirmationModal
+        isOpen={isConfirmOpen}
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Product"
+        message={`Are you sure you want to delete "${product?.nameBase}"?`}
+        details={
+          <div className="space-y-2">
+            <p className="text-slate-500 text-sm">
+              This action cannot be undone and will permanently remove this product and all its
+              variants.
+            </p>
+          </div>
+        }
+        confirmText="Delete Now"
+        type="danger"
+        isLoading={isDeleting}
+      />
+
+      {isImageModalOpen &&
+        createPortal(
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-[4px] animate-in fade-in duration-200">
+            {/* ── Close Button ── */}
+            <button
+              onClick={() => {
+                setIsImageModalOpen(false)
+                setZoom(1)
+              }}
+              className="absolute top-6 right-6 w-12 h-12 bg-white/10 hover:bg-red-500/40 text-white hover:text-red-100 rounded-full flex items-center justify-center transition-all shadow-xl backdrop-blur-md border border-white/20 z-50"
+            >
+              <IoCloseCircle size={32} />
+            </button>
+
+            {/* ── Zoom Controls ── */}
+            <div className="absolute top-6 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/50 p-2.5 rounded-2xl backdrop-blur-md shadow-2xl border border-white/10 z-50 animate-in slide-in-from-top-4 duration-300">
+              <button
+                onClick={() => setZoom((z) => Math.max(0.5, z - 0.25))}
+                className="w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 active:bg-white/10 text-white rounded-xl transition-all shadow-sm"
+              >
+                <IoRemove size={22} />
+              </button>
+              <span className="text-white font-mono text-sm font-semibold w-16 text-center tabular-nums">
+                {Math.round(zoom * 100)}%
+              </span>
+              <button
+                onClick={() => setZoom((z) => Math.min(5, z + 0.25))}
+                className="w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 active:bg-white/10 text-white rounded-xl transition-all shadow-sm"
+              >
+                <IoAdd size={22} />
+              </button>
+            </div>
+
+            {/* ── Image Viewer (Scrollable if overflow) ── */}
+            <div
+              className="w-full h-full overflow-auto flex items-center justify-center p-4 md:p-12 custom-scrollbar"
+              onClick={() => {
+                setIsImageModalOpen(false)
+                setZoom(1)
+              }}
+            >
+              <img
+                src={currentImg}
+                alt={selectedVariant.name}
+                className="max-w-full max-h-full object-contain transition-transform duration-200 shadow-2xl rounded-sm"
+                style={{
+                  transform: `scale(${zoom})`,
+                  transformOrigin: 'center center',
+                  cursor: zoom > 1 ? 'zoom-out' : 'zoom-in'
+                }}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  if (zoom === 1) setZoom(2)
+                  else if (zoom >= 2 && zoom < 4) setZoom(4)
+                  else setZoom(1)
+                }}
+                onError={(e) => {
+                  ;(e.target as HTMLImageElement).src = ''
+                  ;(e.target as HTMLImageElement).style.display = 'none'
+                }}
+              />
+            </div>
+          </div>,
+          document.body
+        )}
     </Container>
   )
 }

@@ -12,7 +12,6 @@ import { PageHeader, SalesMetricCard } from '@/features/sales/components/common'
 import { Charts } from '@/features/sales/components/dashboard/Charts'
 import { InvoiceOrdersDrawer } from '@/features/sales/components/dashboard/InvoiceOrdersDrawer'
 import { Table } from '@/features/sales/components/dashboard/Table'
-import { useAuth } from '@/features/auth/hooks/useAuth'
 import { useRevenueStats } from '@/features/manager/hooks/useManagerReports'
 import { formatPrice } from '@/shared/utils'
 
@@ -23,18 +22,26 @@ import { useDashboard, useSalesStaffInvoices } from '@/features/sales/hooks'
 export default function SaleStaffDashboardPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   // Limit to 8 most recent DEPOSITED invoices for the dashboard to focus on actions
-  const { invoices, loading, fetchInvoices, pagination } = useSalesStaffInvoices(1, 8, 'DEPOSITED')
+  const {
+    invoices: pendingInvoices,
+    loading,
+    fetchInvoices,
+    pagination
+  } = useSalesStaffInvoices(1, 8, 'DEPOSITED')
+
+  // Use a different set of invoices for calculating quality (processed ones)
+  const { invoices: processedInvoices } = useSalesStaffInvoices(1, 20, 'APPROVED_OR_REJECTED')
+
   const { selectedOrderId, isDrawerOpen, openDrawer, closeDrawer } = useDashboard()
 
-  // Track if we've already handled the URL invoiceId
   useEffect(() => {
     const invoiceId = searchParams.get('invoiceId')
     // Only open if we have an invoiceId in URL AND the drawer is not already open
     // AND we're not currently tracking this ID (to prevent double-opening/lag)
-    if (invoiceId && !isDrawerOpen && invoices.length > 0 && selectedOrderId !== invoiceId) {
+    if (invoiceId && !isDrawerOpen && pendingInvoices.length > 0 && selectedOrderId !== invoiceId) {
       openDrawer(invoiceId)
     }
-  }, [searchParams, invoices, isDrawerOpen, openDrawer, selectedOrderId])
+  }, [searchParams, pendingInvoices, isDrawerOpen, openDrawer, selectedOrderId])
 
   const handleCloseDrawer = () => {
     closeDrawer()
@@ -46,8 +53,8 @@ export default function SaleStaffDashboardPage() {
     }
   }
   const selectedInvoice = useMemo(
-    () => invoices.find((inv: Invoice) => inv.id === selectedOrderId) || null,
-    [invoices, selectedOrderId]
+    () => pendingInvoices.find((inv: Invoice) => inv.id === selectedOrderId) || null,
+    [pendingInvoices, selectedOrderId]
   )
 
   useEffect(() => {
@@ -64,8 +71,8 @@ export default function SaleStaffDashboardPage() {
     }
   }, [fetchInvoices])
 
-  const { user } = useAuth()
-  const { data: revenueData } = useRevenueStats({ period: 'month', userId: user?._id })
+  // Show global revenue stats for the "Overview" to avoid constant 0s for new/staff users
+  const { data: revenueData } = useRevenueStats({ period: 'month' })
 
   const metrics = useMemo(() => {
     // Total revenue and invoice count from stats (usually more accurate than local slice)
@@ -80,18 +87,19 @@ export default function SaleStaffDashboardPage() {
         0
       ) || 0
 
-    // Calculate completion rate from current loaded invoices (or we could fetch more specific stats if needed)
-    const totalOrders = invoices.reduce(
+    // Calculate completion rate from processed invoices (Approved vs Rejected)
+    // instead of from the "To-Do" list
+    const totalProcessedOrders = processedInvoices.reduce(
       (sum: number, inv: Invoice) => sum + (inv.totalOrdersCount || 0),
       0
     )
-    const approvedOrders = invoices.reduce(
+    const approvedOrders = processedInvoices.reduce(
       (sum: number, inv: Invoice) => sum + (inv.approvedOrdersCount || 0),
       0
     )
 
     // Pending count from pagination is good for "Deposited" status
-    const pendingCount = pagination?.total || invoices.length
+    const pendingCount = pagination?.total || pendingInvoices.length
 
     return [
       {
@@ -121,21 +129,24 @@ export default function SaleStaffDashboardPage() {
       },
       {
         label: 'Recent Quality',
-        value: totalOrders > 0 ? `${Math.round((approvedOrders / totalOrders) * 100)}%` : '0%',
-        subValue: `${approvedOrders}/${totalOrders} orders passed`,
+        value:
+          totalProcessedOrders > 0
+            ? `${Math.round((approvedOrders / totalProcessedOrders) * 100)}%`
+            : '0%',
+        subValue: `${approvedOrders}/${totalProcessedOrders} orders passed`,
         icon: <IoFlagOutline className="text-2xl" />,
         colorScheme: 'primary' as const
       }
     ]
-  }, [invoices, pagination?.total, revenueData])
+  }, [pendingInvoices, pagination?.total, revenueData, processedInvoices])
 
   const handleInvoiceClick = (invoice: Invoice) => {
     openDrawer(invoice.id)
   }
 
   const filteredInvoicesForTable = useMemo(() => {
-    return invoices
-  }, [invoices])
+    return pendingInvoices
+  }, [pendingInvoices])
 
   return (
     <div className="space-y-8">

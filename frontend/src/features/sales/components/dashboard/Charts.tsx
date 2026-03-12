@@ -1,16 +1,11 @@
 import React, { useMemo } from 'react'
 import { Card } from '@/shared/components'
-import { useAuth } from '@/features/auth/hooks/useAuth'
 import { useRevenueStats } from '@/features/manager/hooks/useManagerReports'
 import { formatPrice } from '@/shared/utils'
 
 export const Charts: React.FC = () => {
-  const { user } = useAuth()
-  const currentUserId = user?._id
-
   const { data: revenueData, isLoading } = useRevenueStats({
-    period: 'day',
-    userId: currentUserId
+    period: 'day'
   })
 
   const trends = useMemo(() => {
@@ -34,7 +29,7 @@ export const Charts: React.FC = () => {
         <div className="flex justify-between items-start mb-6">
           <div className="space-y-1">
             <h3 className="text-xl font-bold text-slate-900 font-heading tracking-tight">
-              My Revenue Trends
+              Revenue Trends
             </h3>
             <p className="text-sm text-slate-400 font-medium">Daily performance tracking</p>
           </div>

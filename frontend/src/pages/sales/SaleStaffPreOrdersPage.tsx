@@ -18,6 +18,7 @@ import { PageHeader, SalesMetricCard } from '@/features/sales/components/common'
 import type { Order } from '@/features/sales/types'
 import { OrderType } from '@/shared/utils/enums/order.enum'
 import { useDebounce } from '@/shared/hooks'
+import { toast } from 'react-hot-toast'
 
 export default function SaleStaffPreOrdersPage() {
   const navigate = useNavigate()
@@ -109,7 +110,7 @@ export default function SaleStaffPreOrdersPage() {
 
   const handleChat = (order: Order) => {
     const customerId = order.invoiceId
-    alert(`Chat with ${order.customerName} (ID: ${customerId})`)
+    toast(`Chat module Placeholder: Chat with ${order.customerName} (ID: ${customerId})`)
   }
 
   return (

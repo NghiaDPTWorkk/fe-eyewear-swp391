@@ -4,6 +4,7 @@ import {
   IoChatbubbleEllipsesOutline
 } from 'react-icons/io5'
 import type { Order } from '../../types'
+import { toast } from 'react-hot-toast'
 
 interface ActionButtonsProps {
   order: Order
@@ -34,7 +35,7 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({ order, onVerify, o
       <button
         onClick={(e) => {
           e.stopPropagation()
-          alert('Chat Modal Placeholder')
+          toast('Chat module placeholder')
         }}
         className="text-blue-400 hover:text-blue-600 transition-colors"
         title="Contact Customer"

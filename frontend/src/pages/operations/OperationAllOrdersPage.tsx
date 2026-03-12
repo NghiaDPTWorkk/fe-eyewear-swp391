@@ -39,7 +39,7 @@ export default function OperationAllOrdersPage() {
     currentPage * PAGE_LIMIT
   )
 
-  // Badge counts cho filter buttons
+  // Badge counts cho filter buttons: đếm trực tiếp từ danh sách orders đã lọc ở Layout
   const allCount = orders.length
   const preOrderCount = orders.filter((o: Order) => o.orderType === OrderType.PRE_ORDER).length
   const normalCount = orders.filter((o: Order) => o.orderType === OrderType.NORMAL).length

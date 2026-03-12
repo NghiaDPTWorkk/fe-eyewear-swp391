@@ -27,17 +27,18 @@ export default function OperationPreOrdersPage() {
   const orders = useMemo(() => {
     if (!paginationMeta?.data) return []
     return paginationMeta.data
-      .filter((o) =>
-        Array.isArray(o.type)
+      .filter((o) => {
+        const isPreOrder = Array.isArray(o.type)
           ? o.type.includes(OrderType.PRE_ORDER)
           : o.type === OrderType.PRE_ORDER
-      )
+        return isPreOrder && o.status !== 'WAITING_STOCK'
+      })
       .map(transformApiOrderToTableOrder)
   }, [paginationMeta])
 
   return (
     <Container>
-      <div className="mb-8">
+      <div className="mb-4">
         <BreadcrumbPath paths={['Dashboard', 'Logistics Waiting Station']} />
         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Pre-order Tracking</h1>
         <p className="text-gray-500 mt-1">Monitor pre-orders waiting for product availability.</p>

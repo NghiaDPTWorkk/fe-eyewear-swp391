@@ -25,7 +25,7 @@ export default function OperationPackingPage() {
 
   return (
     <Container>
-      <div className="mb-8">
+      <div className="mb-4">
         <BreadcrumbPath paths={['Dashboard', 'Packing Station']} />
         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Packing Station</h1>
         <p className="text-gray-500 mt-1">Package and prepare orders for shipping.</p>

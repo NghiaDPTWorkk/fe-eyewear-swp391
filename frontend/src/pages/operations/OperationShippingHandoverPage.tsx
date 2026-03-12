@@ -146,7 +146,7 @@ export default function OperationShippingHandoverPage() {
       <BreadcrumbPath paths={['Dashboard', 'Shipping Handover']} />
 
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
             Shipping Handover
@@ -185,7 +185,7 @@ export default function OperationShippingHandoverPage() {
         return <ProcessTracker title="Invoice Progress" steps={steps} activeStep={activeStep} />
       })()}
 
-      <div className="grid grid-cols-12 gap-6 mt-6">
+      <div className="grid grid-cols-12 gap-6 mt-4">
         {/* Left Column */}
         <div className="col-span-12 lg:col-span-7 space-y-6">
           {/* Scan Invoice ID Section */}

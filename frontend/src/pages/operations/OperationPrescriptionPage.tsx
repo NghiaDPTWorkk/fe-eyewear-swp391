@@ -33,7 +33,7 @@ export default function OperationPrescriptionPage() {
 
   return (
     <Container>
-      <div className="mb-8">
+      <div className="mb-4">
         <BreadcrumbPath paths={['Dashboard', 'Technical']} />
         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Manufacturing Orders</h1>
         <p className="text-gray-500 mt-1">

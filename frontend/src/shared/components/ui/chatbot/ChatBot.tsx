@@ -1,11 +1,12 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { MessageCircle, X, Send, Glasses, Bot, Loader2 } from 'lucide-react'
 import { IconButton } from '@/shared/components/ui/icon-button'
 import { Input } from '@/shared/components/ui/input'
 import { useChatMessages } from '@/shared/hooks/chat/useChatMessages'
-import { useAuth } from '@/features/auth/hooks/useAuth'
+import { useAuthStore, useChatStore } from '@/store'
 import { Link } from 'react-router-dom'
 import { ProductChatTag } from './ProductChatTag'
+import { useShallow } from 'zustand/react/shallow'
 
 interface MessageContentProps {
   text: string
@@ -37,11 +38,9 @@ const MessageContent = ({ text: originalText, isUser }: MessageContentProps) => 
         const [, label, url] = mdLinkMatch
 
         // Check if it's a product link
-        if (!isUser) {
-          const productMatch = url.match(PRODUCT_URL_REGEX)
-          if (productMatch) {
-            return <ProductChatTag key={i} productId={productMatch[1]} />
-          }
+        const productMatch = url.match(PRODUCT_URL_REGEX)
+        if (productMatch) {
+          return <ProductChatTag key={i} productId={productMatch[1]} />
         }
 
         return (
@@ -65,11 +64,9 @@ const MessageContent = ({ text: originalText, isUser }: MessageContentProps) => 
       // Raw URL
       if (part.startsWith('http')) {
         // Check if it's a product link
-        if (!isUser) {
-          const productMatch = part.match(PRODUCT_URL_REGEX)
-          if (productMatch) {
-            return <ProductChatTag key={i} productId={productMatch[1]} />
-          }
+        const productMatch = part.match(PRODUCT_URL_REGEX)
+        if (productMatch) {
+          return <ProductChatTag key={i} productId={productMatch[1]} />
         }
 
         return (
@@ -136,8 +133,21 @@ const MessageContent = ({ text: originalText, isUser }: MessageContentProps) => 
 }
 
 export const ChatBot = () => {
-  const { isAuthenticated } = useAuth()
-  const [isOpen, setIsOpen] = useState(false)
+  const { isAuthenticated } = useAuthStore()
+  const { isOpen, openChat, closeChat, pendingMessage, clearPendingMessage } = useChatStore(
+    useShallow((state) => ({
+      isOpen: state.isOpen,
+      openChat: state.openChat,
+      closeChat: state.closeChat,
+      pendingMessage: state.pendingMessage,
+      clearPendingMessage: state.clearPendingMessage
+    }))
+  )
+  const setIsOpen = useCallback(
+    (open: boolean) => (open ? openChat() : closeChat()),
+    [openChat, closeChat]
+  )
+
   const [unread, setUnread] = useState(0)
   const prevScrollHeightRef = useRef<number>(0)
 
@@ -156,6 +166,15 @@ export const ChatBot = () => {
     scrollContainerRef,
     inputRef
   } = useChatMessages()
+
+  // auto send
+  useEffect(() => {
+    if (pendingMessage && isAuthenticated && !isLoading) {
+      const msg = pendingMessage
+      clearPendingMessage()
+      handleSend(msg)
+    }
+  }, [pendingMessage, isAuthenticated, isLoading, handleSend, clearPendingMessage])
 
   // Preserve scroll position when loading more messages
   useEffect(() => {
@@ -365,11 +384,9 @@ export const ChatBot = () => {
       {/* Floating Toggle Button */}
       <button
         onClick={() => {
-          setIsOpen((o) => {
-            const next = !o
-            if (next) setUnread(0)
-            return next
-          })
+          const next = !isOpen
+          setIsOpen(next)
+          if (next) setUnread(0)
         }}
         className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-xl cursor-pointer ${
           isOpen ? 'bg-mint-1200 rotate-0' : 'bg-gradient-to-br from-primary-500 to-primary-700'

@@ -14,7 +14,7 @@ import { useState } from 'react'
 import type { Product, StandardProduct } from '@/shared/types/product.types'
 import type { CartItem } from '@/shared/types/cart.types'
 import { PATHS } from '@/routes/paths'
-import { useCartStore, useAuthStore, useWishlistStore } from '@/store'
+import { useCartStore, useAuthStore, useWishlistStore, useChatStore } from '@/store'
 import { toast } from 'react-hot-toast'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Button } from '@/shared/components/ui'
@@ -59,6 +59,7 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
   const [isLensModalOpen, setIsLensModalOpen] = useState(false)
   const [isTryOnOpen, setIsTryOnOpen] = useState(false)
   const [purchaseMode, setPurchaseMode] = useState<'cart' | 'buy_now'>('cart')
+  const sendMessage = useChatStore((state) => state.sendMessage)
 
   const isFavorite = isInWishlist(productId)
 
@@ -202,6 +203,22 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
 
       navigate(PATHS.CHECKOUT, { state: { item: itemToBuy } })
     }
+  }
+
+  const handleChatWithExpert = () => {
+    // Check authentication first
+    const token = localStorage.getItem('accessToken') || localStorage.getItem('access_token')
+    const isAuth = isAuthenticated && token
+
+    if (!isAuth) {
+      toast.error('Please login to chat with an expert')
+      navigate('/login', { state: { from: location } })
+      return
+    }
+
+    const productUrl = `${window.location.origin}/products/${product.id || productId}`
+    const message = `I'm interested in this product: ${product.nameBase}. Can you tell me more about it? ${productUrl}`
+    sendMessage(message)
   }
 
   const handleToggleWishlist = async () => {
@@ -458,7 +475,10 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
         </Button>
       </div>
 
-      <button className="flex items-center justify-center gap-2 text-primary-500 font-bold mb-12 hover:underline group transition-all">
+      <button
+        onClick={handleChatWithExpert}
+        className="flex items-center justify-center gap-2 text-primary-500 font-bold mb-12 hover:underline group transition-all"
+      >
         <MessageCircle className="w-5 h-5 group-hover:scale-110 transition-transform" />
         Chat with an Expert about this frame
       </button>

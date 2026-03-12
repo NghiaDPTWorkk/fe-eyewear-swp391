@@ -18,14 +18,6 @@ const priceRanges = [
   { id: 'range3', label: '1.000.000đ - 12.000.000đ', min: 1000000, max: 12000000 }
 ]
 
-const colors = [
-  { id: 'black', name: 'Black', hex: '#000000' },
-  { id: 'brown', name: 'Brown', hex: '#8B4513' },
-  { id: 'red', name: 'Red', hex: '#DC143C' },
-  { id: 'gray', name: 'Gray', hex: '#808080' },
-  { id: 'white', name: 'White', hex: '#FFFFFF' }
-]
-
 // Gender mapping from API codes to labels
 const GENDER_MAP: Record<string, string> = {
   M: 'Men',
@@ -66,12 +58,12 @@ export const CustomerProductPage = () => {
   }
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [selectedGenders, setSelectedGenders] = useState<string[]>([])
   const [selectedBrands, setSelectedBrands] = useState<string[]>([])
   const [selectedMaterials, setSelectedMaterials] = useState<string[]>([])
   const [selectedShapes, setSelectedShapes] = useState<string[]>([])
   const [selectedStyles, setSelectedStyles] = useState<string[]>([])
   const [selectedPriceRanges, setSelectedPriceRanges] = useState<string[]>([])
-  const [selectedColors, setSelectedColors] = useState<string[]>([])
   const [customPriceRange, setCustomPriceRange] = useState<{
     min: number | null
     max: number | null
@@ -81,20 +73,35 @@ export const CustomerProductPage = () => {
   // Fetch product specs for dynamic filters
   const { specs } = useProductSpecs()
 
-  // Build gender categories from specs
-  const categories = useMemo(() => {
-    if (!specs?.genders) return []
-    return specs.genders.map((g) => ({
-      id: g,
-      name: GENDER_MAP[g] || g
-    }))
-  }, [specs])
-
   // Reset page when any filter changes
   const handleFilterChange = <T,>(setter: React.Dispatch<React.SetStateAction<T>>, value: T) => {
     setter(value)
     setPage(1)
   }
+
+  const { minPrice, maxPrice } = useMemo(() => {
+    let min: number | undefined = undefined
+    let max: number | undefined = undefined
+
+    if (customPriceRange.min !== null || customPriceRange.max !== null) {
+      return {
+        minPrice: customPriceRange.min !== null ? customPriceRange.min : undefined,
+        maxPrice: customPriceRange.max !== null ? customPriceRange.max : undefined
+      }
+    }
+
+    if (selectedPriceRanges.length > 0) {
+      selectedPriceRanges.forEach((rangeId) => {
+        const range = priceRanges.find((r) => r.id === rangeId)
+        if (range) {
+          if (min === undefined || range.min < min) min = range.min
+          if (max === undefined || range.max > max) max = range.max
+        }
+      })
+    }
+
+    return { minPrice: min, maxPrice: max }
+  }, [selectedPriceRanges, customPriceRange])
 
   // Single unified hook for fetching products with all filters
   const { products, loading, error, totalPages, currentPage } = useFilteredProducts({
@@ -106,7 +113,10 @@ export const CustomerProductPage = () => {
     material: selectedMaterials.length > 0 ? selectedMaterials : undefined,
     shape: selectedShapes.length > 0 ? selectedShapes : undefined,
     style: selectedStyles.length > 0 ? selectedStyles : undefined,
-    gender: selectedCategories.length > 0 ? selectedCategories : undefined
+    gender: selectedGenders.length > 0 ? selectedGenders : undefined,
+    categories: selectedCategories.length > 0 ? selectedCategories : undefined,
+    minPrice,
+    maxPrice
   })
 
   const handleClearSearch = () => {
@@ -120,10 +130,15 @@ export const CustomerProductPage = () => {
 
     // Add category tags
     selectedCategories.forEach((catId) => {
-      const category = categories.find((c) => c.id === catId)
+      const category = specs?.categories.find((c) => c._id === catId)
       if (category) {
         tags.push({ id: `cat-${catId}`, label: category.name, type: 'category' })
       }
+    })
+
+    // Add gender tags
+    selectedGenders.forEach((gender) => {
+      tags.push({ id: `gender-${gender}`, label: GENDER_MAP[gender] || gender, type: 'gender' })
     })
 
     // Add brand tags
@@ -146,11 +161,11 @@ export const CustomerProductPage = () => {
       tags.push({ id: `style-${style}`, label: style, type: 'style' })
     })
 
-    // Add color tags
-    selectedColors.forEach((colorId) => {
-      const color = colors.find((c) => c.id === colorId)
-      if (color) {
-        tags.push({ id: `color-${colorId}`, label: color.name, type: 'color' })
+    // Add preset price range tags
+    selectedPriceRanges.forEach((rangeId) => {
+      const range = priceRanges.find((r) => r.id === rangeId)
+      if (range) {
+        tags.push({ id: `price-preset-${rangeId}`, label: range.label, type: 'price' })
       }
     })
 
@@ -174,13 +189,14 @@ export const CustomerProductPage = () => {
     return tags
   }, [
     selectedCategories,
+    selectedGenders,
     selectedBrands,
     selectedMaterials,
     selectedShapes,
     selectedStyles,
-    selectedColors,
+    selectedPriceRanges,
     customPriceRange,
-    categories
+    specs
   ])
 
   const handleRemoveTag = (tagId: string) => {
@@ -189,6 +205,12 @@ export const CustomerProductPage = () => {
       handleFilterChange(
         setSelectedCategories,
         selectedCategories.filter((id) => id !== catId)
+      )
+    } else if (tagId.startsWith('gender-')) {
+      const gender = tagId.replace('gender-', '')
+      handleFilterChange(
+        setSelectedGenders,
+        selectedGenders.filter((g) => g !== gender)
       )
     } else if (tagId.startsWith('brand-')) {
       const brand = tagId.replace('brand-', '')
@@ -214,26 +236,23 @@ export const CustomerProductPage = () => {
         setSelectedStyles,
         selectedStyles.filter((s) => s !== style)
       )
-    } else if (tagId.startsWith('color-')) {
-      const colorId = tagId.replace('color-', '')
-      handleFilterChange(
-        setSelectedColors,
-        selectedColors.filter((id) => id !== colorId)
-      )
+    } else if (tagId.startsWith('price-preset-')) {
+      const rangeId = tagId.replace('price-preset-', '')
+      handlePriceRangeChange(selectedPriceRanges.filter((id) => id !== rangeId))
     } else if (tagId === 'price-custom') {
-      setCustomPriceRange({ min: null, max: null })
+      handleCustomPriceApply(null, null)
       setPriceResetKey((prev) => prev + 1)
     }
   }
 
   const handleReset = () => {
     setSelectedCategories([])
+    setSelectedGenders([])
     setSelectedBrands([])
     setSelectedMaterials([])
     setSelectedShapes([])
     setSelectedStyles([])
     setSelectedPriceRanges([])
-    setSelectedColors([])
     setCustomPriceRange({ min: null, max: null })
     setPriceResetKey((prev) => prev + 1)
     setPage(1)
@@ -241,6 +260,16 @@ export const CustomerProductPage = () => {
 
   const handleCustomPriceApply = (min: number | null, max: number | null) => {
     setCustomPriceRange({ min, max })
+    setSelectedPriceRanges([]) // Clear presets when custom range is applied
+    setPage(1)
+  }
+
+  const handlePriceRangeChange = (rangeIds: string[]) => {
+    setSelectedPriceRanges(rangeIds)
+    if (rangeIds.length > 0) {
+      setCustomPriceRange({ min: null, max: null }) // Clear custom range when preset is selected
+    }
+    setPage(1)
   }
 
   return (
@@ -252,29 +281,29 @@ export const CustomerProductPage = () => {
             {/* Filter Sidebar */}
             <aside className="w-64 flex-shrink-0 sticky top-20 self-start">
               <ProductFilters
-                categories={categories}
+                categories={specs?.categories || []}
                 selectedCategories={selectedCategories}
-                onCategoryChange={(v) => handleFilterChange(setSelectedCategories, v)}
+                onCategoryChange={(v: string[]) => handleFilterChange(setSelectedCategories, v)}
+                genders={specs?.genders || []}
+                selectedGenders={selectedGenders}
+                onGenderChange={(v: string[]) => handleFilterChange(setSelectedGenders, v)}
                 brands={specs?.brands || []}
                 selectedBrands={selectedBrands}
-                onBrandChange={(v) => handleFilterChange(setSelectedBrands, v)}
+                onBrandChange={(v: string[]) => handleFilterChange(setSelectedBrands, v)}
                 materials={specs?.materials || []}
                 selectedMaterials={selectedMaterials}
-                onMaterialChange={(v) => handleFilterChange(setSelectedMaterials, v)}
+                onMaterialChange={(v: string[]) => handleFilterChange(setSelectedMaterials, v)}
                 shapes={specs?.shapes || []}
                 selectedShapes={selectedShapes}
-                onShapeChange={(v) => handleFilterChange(setSelectedShapes, v)}
+                onShapeChange={(v: string[]) => handleFilterChange(setSelectedShapes, v)}
                 styles={specs?.styles || []}
                 selectedStyles={selectedStyles}
-                onStyleChange={(v) => handleFilterChange(setSelectedStyles, v)}
+                onStyleChange={(v: string[]) => handleFilterChange(setSelectedStyles, v)}
                 priceRanges={priceRanges}
                 selectedPriceRanges={selectedPriceRanges}
-                onPriceRangeChange={setSelectedPriceRanges}
+                onPriceRangeChange={handlePriceRangeChange}
                 onCustomPriceApply={handleCustomPriceApply}
                 priceResetKey={priceResetKey}
-                colors={colors}
-                selectedColors={selectedColors}
-                onColorChange={setSelectedColors}
               />
             </aside>
 

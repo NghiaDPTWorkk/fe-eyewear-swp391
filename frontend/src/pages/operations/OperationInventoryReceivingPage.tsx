@@ -1,9 +1,16 @@
 import { useState, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Container, OperationPagination, Button } from '@/components'
+import { Container, OperationPagination, Button, MetricCard } from '@/components'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 import { FilterButtonList } from '@/components/staff'
-import { IoEyeOutline, IoTimeOutline, IoChevronForward, IoCloseOutline } from 'react-icons/io5'
+import {
+  IoEyeOutline,
+  IoTimeOutline,
+  IoChevronForward,
+  IoCloseOutline,
+  IoStatsChartOutline,
+  IoCheckmarkCircleOutline
+} from 'react-icons/io5'
 import {
   usePreOrderImports,
   usePreOrderImportDetail
@@ -91,12 +98,12 @@ function DetailModal({ id, onClose }: { id: string; onClose: () => void }) {
                     Status
                   </p>
                   <div
-                    className={`px-4 py-3 rounded-2xl border ${STATUS_CONFIG[detail.status as keyof typeof STATUS_CONFIG]?.bg}`}
+                    className={`px-4 py-3 rounded-2xl border ${STATUS_CONFIG[detail.status as keyof typeof STATUS_CONFIG]?.bg || ''}`}
                   >
                     <span
                       className={cn(
                         'text-[11px] font-black uppercase tracking-widest flex items-center gap-2',
-                        STATUS_CONFIG[detail.status as keyof typeof STATUS_CONFIG]?.color
+                        STATUS_CONFIG[detail.status as keyof typeof STATUS_CONFIG]?.color || ''
                       )}
                     >
                       {detail.status}
@@ -196,15 +203,12 @@ export default function OperationInventoryReceivingPage() {
   })
 
   // Fetch all for counts
-  const { data: allData } = usePreOrderImports({
+  const { data: allData, isLoading: isLoadingCounts } = usePreOrderImports({
     page: 1,
     limit: 1000,
     status: ['PENDING', 'DONE']
   })
   const allBatches = allData?.data?.preOrderImports || []
-
-  const results = data?.data?.preOrderImports || []
-  const pagination = data?.data?.pagination
 
   // Fetch Staff to map name
   const { data: staffData } = useQuery({
@@ -212,6 +216,9 @@ export default function OperationInventoryReceivingPage() {
     queryFn: () => adminAccountService.getAdminAccounts({ page: 1, limit: 100 }),
     staleTime: 5 * 60 * 1000
   })
+
+  const results = data?.data?.preOrderImports || []
+  const pagination = data?.data?.pagination
 
   const staffMap = useMemo(() => {
     const map: Record<string, string> = {}
@@ -252,6 +259,31 @@ export default function OperationInventoryReceivingPage() {
         <p className="text-gray-500 mt-1">
           Manage and track pre-order import batches for efficient stock replenishment.
         </p>
+      </div>
+
+      {/* Metrics Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+        <MetricCard
+          label="TOTAL BATCHES"
+          value={isLoadingCounts ? '...' : allBatches.length}
+          icon={<IoStatsChartOutline size={22} />}
+          colorScheme="mint"
+          subValue="All active and completed batches"
+        />
+        <MetricCard
+          label="PENDING IMPORT"
+          value={isLoadingCounts ? '...' : allBatches.filter((b) => b.status === 'PENDING').length}
+          icon={<IoTimeOutline size={22} />}
+          colorScheme="warning"
+          subValue="Awaiting warehouse processing"
+        />
+        <MetricCard
+          label="DONE / COMPLETED"
+          value={isLoadingCounts ? '...' : allBatches.filter((b) => b.status === 'DONE').length}
+          icon={<IoCheckmarkCircleOutline size={22} />}
+          colorScheme="success"
+          subValue="Successfully received and stocked"
+        />
       </div>
 
       <FilterButtonList
@@ -326,11 +358,11 @@ export default function OperationInventoryReceivingPage() {
                         <span
                           className={cn(
                             'px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider',
-                            config.bg,
-                            config.color
+                            config?.bg || '',
+                            config?.color || ''
                           )}
                         >
-                          {config.label}
+                          {config?.label || batch.status}
                         </span>
                       </td>
                       <td className="px-6 py-5 text-gray-500">

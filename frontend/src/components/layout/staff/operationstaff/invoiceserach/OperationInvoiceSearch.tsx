@@ -47,9 +47,9 @@ export default function OperationInvoiceSearch({ onSelectInvoice }: OperationInv
 
   // Use the new useSearchInvoices hook
   const { data, isFetching } = useSearchInvoices(debouncedQuery)
-  
+
   const rawResults = data?.data?.invoiceList || []
-  
+
   // Transform results into the shape ResultSearchTable expects ({id, orderCode})
   // Here orderCode maps to invoiceCode
   const searchResults = rawResults.map((inv) => ({
@@ -78,7 +78,7 @@ export default function OperationInvoiceSearch({ onSelectInvoice }: OperationInv
       saveToHistory(item.searchCode)
       setIsOpen(false)
       setInputValue('')
-      
+
       // Find the full invoice object to pass back up
       const selectedInvoiceFull = rawResults.find((inv) => (inv.id || (inv as any)._id) === item.id)
       if (selectedInvoiceFull) {

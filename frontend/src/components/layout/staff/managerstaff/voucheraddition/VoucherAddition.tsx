@@ -393,10 +393,7 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
             type="button"
             onClick={handleSave}
             disabled={
-              !form.code?.trim() ||
-              !form.name?.trim() ||
-              Number(form.value) <= 0 ||
-              isSaving
+              !form.code?.trim() || !form.name?.trim() || Number(form.value) <= 0 || isSaving
             }
             className="px-8 py-2.5 rounded-xl bg-gradient-to-r from-mint-500 to-mint-600 text-white text-sm font-black hover:from-mint-600 hover:to-mint-700 transition shadow-lg shadow-mint-200/50 disabled:opacity-40 disabled:shadow-none flex items-center gap-2"
           >

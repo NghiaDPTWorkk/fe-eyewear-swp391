@@ -44,7 +44,7 @@ export default function ManagerVoucherSearch() {
   const { data, isFetching } = useSearchVouchersByCode(debouncedQuery)
 
   const items = data?.data?.items
-  const rawResults = data?.data?.voucherList ?? (Array.isArray(items) ? items : (items?.data || []))
+  const rawResults = data?.data?.voucherList ?? (Array.isArray(items) ? items : items?.data || [])
   const searchResults = rawResults.map((v) => ({
     id: v._id,
     searchCode: v.code

@@ -78,7 +78,6 @@ export function VoucherTdata({ voucher: v, field }: VoucherTdataProps) {
         </div>
       )
 
-
     case 'status':
       return (
         <span

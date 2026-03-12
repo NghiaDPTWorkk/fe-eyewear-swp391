@@ -2,7 +2,12 @@ import { useQuery } from '@tanstack/react-query'
 import type { OperationInvoiceListApiResponse } from '@/shared/types'
 import { operationInvoiceService } from '../services/operationInvoiceService'
 
-export function useOperationInvoices(page: number, limit: number, status?: string, search?: string) {
+export function useOperationInvoices(
+  page: number,
+  limit: number,
+  status?: string,
+  search?: string
+) {
   return useQuery<OperationInvoiceListApiResponse>({
     queryKey: ['operation-invoices-handle-delivery', page, limit, status, search],
     queryFn: () => operationInvoiceService.getHandleDeliveryInvoices(page, limit, status, search),

@@ -397,14 +397,11 @@ export default function ManagerVouchersPage() {
                 <IoChevronBackOutline />
               </button>
               <div className="flex gap-1">
-                {Array.from(
-                  { length: Math.min(pagination.totalPages, 5) },
-                  (_, i) => {
-                    // Simple logic for showing pages near the current page
-                    // This can be improved to be more dynamic if needed
-                    return i + 1
-                  }
-                ).map((p) => (
+                {Array.from({ length: Math.min(pagination.totalPages, 5) }, (_, i) => {
+                  // Simple logic for showing pages near the current page
+                  // This can be improved to be more dynamic if needed
+                  return i + 1
+                }).map((p) => (
                   <button
                     key={p}
                     onClick={() => setPage(p)}

@@ -125,7 +125,7 @@ export default function ManagerProductDetailPage() {
           ]}
         />
 
-        {/* Back + Edit + Delete buttons */}
+        {/* Action buttons */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/manager/products')}
@@ -307,9 +307,7 @@ export default function ManagerProductDetailPage() {
                 </div>
 
                 {product.type === 'lens' ? (
-                  /* ─── Lens Specs ─── */
                   <div className="space-y-5">
-                    {/* Features badges */}
                     {spec.feature && spec.feature.length > 0 && (
                       <div>
                         <p className="text-[11px] font-medium text-slate-400 mb-2">Features</p>
@@ -325,8 +323,6 @@ export default function ManagerProductDetailPage() {
                         </div>
                       </div>
                     )}
-
-                    {/* Origin + Brand */}
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                       <SpecItem label="Origin" value={spec.origin || '—'} />
                       <SpecItem label="Brand" value={product.brand} />
@@ -334,7 +330,6 @@ export default function ManagerProductDetailPage() {
                     </div>
                   </div>
                 ) : (
-                  /* ─── Frame Specs ─── */
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                     <SpecItem label="Material" value={spec.material?.join(', ') || '—'} />
                     <SpecItem label="Shape" value={spec.shape || '—'} />
@@ -380,7 +375,6 @@ export default function ManagerProductDetailPage() {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3 min-w-0">
-                        {/* Variant color swatch or icon */}
                         {v.options.some((o) => o.showType === 'color') ? (
                           <div className="flex items-center gap-1.5">
                             {v.options

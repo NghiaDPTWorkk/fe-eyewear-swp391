@@ -18,15 +18,16 @@ import { adminAccountService } from '@/shared/services/admin/adminAccountService
 import { cn } from '@/lib/utils'
 import { formatDate } from '@/shared/utils'
 import STATUS_INVENTORY_PLANNING_CONFIG from '@/shared/utils/enums/inventoryplan.enum'
-
 import { InventoryTable } from '@/components/layout/staff/operationstaff/inventoryplantable/InventoryTable'
+
+import { createPortal } from 'react-dom'
 
 // ─── Detail Modal ────────────────────────────────────────────────
 function DetailModal({ id, onClose }: { id: string; onClose: () => void }) {
   const { data, isLoading } = usePreOrderImportDetail(id)
   const detail = data?.data
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
       <div className="bg-white rounded-[40px] w-full max-w-xl shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300 border border-slate-100">
         <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-white">
@@ -153,7 +154,8 @@ function DetailModal({ id, onClose }: { id: string; onClose: () => void }) {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 

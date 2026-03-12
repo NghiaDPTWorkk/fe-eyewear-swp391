@@ -12,6 +12,7 @@ export const PATHS = {
     LENSES: '/products/lenses'
   },
   CART: '/cart',
+  CHECKOUT: '/checkout',
   ACCOUNT: {
     SETTINGS: '/account/settings',
     ORDERS: '/account/orders',

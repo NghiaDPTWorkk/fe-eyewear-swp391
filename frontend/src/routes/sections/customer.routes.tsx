@@ -24,6 +24,9 @@ const ProductDetailPage = lazy(() =>
 const CartPage = lazy(() =>
   import('@/pages/customer/CartPage').then((m) => ({ default: m.CartPage }))
 )
+const CheckoutPage = lazy(() =>
+  import('@/pages/customer/CheckoutPage').then((m) => ({ default: m.CheckoutPage }))
+)
 const PaymentResultPage = lazy(() =>
   import('@/pages/customer/PaymentResultPage').then((m) => ({
     default: m.PaymentResultPage
@@ -109,6 +112,16 @@ export const customerRoutes = [
           <AuthGuard allowedRoles={['CUSTOMER']}>
             <LazyPage>
               <CartPage />
+            </LazyPage>
+          </AuthGuard>
+        )
+      },
+      {
+        path: '/checkout',
+        element: (
+          <AuthGuard allowedRoles={['CUSTOMER']}>
+            <LazyPage>
+              <CheckoutPage />
             </LazyPage>
           </AuthGuard>
         )

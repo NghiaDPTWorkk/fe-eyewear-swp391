@@ -7,9 +7,10 @@ import { Checkbox, Card } from '@/shared/components/ui'
 
 interface CartItemProps {
   item: CartItemType
+  isReadOnly?: boolean
 }
 
-export const CartItem = ({ item }: CartItemProps) => {
+export const CartItem = ({ item, isReadOnly = false }: CartItemProps) => {
   const { updateQuantity, removeItem, toggleSelection } = useCartStore()
   const [isLensesOpen, setIsLensesOpen] = useState(false)
 
@@ -68,13 +69,15 @@ export const CartItem = ({ item }: CartItemProps) => {
       <div className="flex flex-col md:flex-row gap-8">
         {/* Selection Checkbox and Image Container */}
         <div className="flex items-center gap-6">
-          <div className="flex-shrink-0">
-            <Checkbox
-              isChecked={item.selected ?? true}
-              onCheckedChange={() => toggleSelection(item)}
-              id={`select-${item._id || item.product_id}`}
-            />
-          </div>
+          {!isReadOnly && (
+            <div className="flex-shrink-0">
+              <Checkbox
+                isChecked={item.selected ?? true}
+                onCheckedChange={() => toggleSelection(item)}
+                id={`select-${item._id || item.product_id}`}
+              />
+            </div>
+          )}
           <div className="flex flex-col items-center gap-4">
             <div className="w-48 h-48 bg-mint-50/30 rounded-2xl overflow-hidden flex items-center justify-center border border-mint-100/50 p-4 relative group/img">
               <img
@@ -88,12 +91,14 @@ export const CartItem = ({ item }: CartItemProps) => {
                 </div>
               )}
             </div>
-            <button
-              onClick={() => removeItem(item)}
-              className="text-xs font-bold text-gray-400 hover:text-red-500 transition-colors uppercase tracking-widest hover:underline"
-            >
-              Remove
-            </button>
+            {!isReadOnly && (
+              <button
+                onClick={() => removeItem(item)}
+                className="text-xs font-bold text-gray-400 hover:text-red-500 transition-colors uppercase tracking-widest hover:underline"
+              >
+                Remove
+              </button>
+            )}
           </div>
         </div>
 
@@ -278,30 +283,36 @@ export const CartItem = ({ item }: CartItemProps) => {
 
           {/* Item Subtotal Area */}
           <div className="flex justify-between items-center pt-6 border-t border-gray-100 mt-auto">
-            <div className="flex items-center gap-3 bg-mint-50/50 p-1 rounded-xl border border-mint-100/50">
-              <button
-                onClick={() => updateQuantity(item, Math.max(1, item.quantity - 1))}
-                className="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm hover:text-primary-500 transition-colors disabled:opacity-50"
-                disabled={item.quantity <= 1}
-              >
-                <Minus className="w-3.5 h-3.5" />
-              </button>
-              <input
-                type="text"
-                value={localQty}
-                onChange={handleQtyChange}
-                onBlur={handleQtyBlur}
-                onKeyDown={handleKeyDown}
-                className="text-sm font-bold text-mint-1200 w-10 text-center bg-transparent border-none focus:outline-none focus:ring-1 focus:ring-primary-400/30 rounded-md transition-all appearance-none"
-              />
-              <button
-                onClick={() => updateQuantity(item, item.quantity + 1)}
-                className="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm hover:text-primary-500 transition-colors"
-                disabled={item.quantity >= 99}
-              >
-                <Plus className="w-3.5 h-3.5" />
-              </button>
-            </div>
+            {!isReadOnly ? (
+              <div className="flex items-center gap-3 bg-mint-50/50 p-1 rounded-xl border border-mint-100/50">
+                <button
+                  onClick={() => updateQuantity(item, Math.max(1, item.quantity - 1))}
+                  className="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm hover:text-primary-500 transition-colors disabled:opacity-50"
+                  disabled={item.quantity <= 1}
+                >
+                  <Minus className="w-3.5 h-3.5" />
+                </button>
+                <input
+                  type="text"
+                  value={localQty}
+                  onChange={handleQtyChange}
+                  onBlur={handleQtyBlur}
+                  onKeyDown={handleKeyDown}
+                  className="text-sm font-bold text-mint-1200 w-10 text-center bg-transparent border-none focus:outline-none focus:ring-1 focus:ring-primary-400/30 rounded-md transition-all appearance-none"
+                />
+                <button
+                  onClick={() => updateQuantity(item, item.quantity + 1)}
+                  className="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm hover:text-primary-500 transition-colors"
+                  disabled={item.quantity >= 99}
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : (
+              <div className="text-sm font-bold text-mint-1200 bg-mint-50 px-3 py-2 rounded-lg border border-mint-100">
+                Quantity: {item.quantity}
+              </div>
+            )}
 
             <div className="text-right">
               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">

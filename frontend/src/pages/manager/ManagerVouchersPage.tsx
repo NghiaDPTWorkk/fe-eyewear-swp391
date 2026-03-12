@@ -10,11 +10,10 @@ import {
 } from '@/features/manager/hooks/useManagerVouchers'
 import { VoucherTable } from '@/components/layout/staff/managerstaff/vouchertable'
 import { VoucherAddition } from '@/components/layout/staff/managerstaff/voucheraddition/VoucherAddition'
-import { Pagination } from '@/shared/components/ui-core/pagination/Pagination'
+
 import { createPortal } from 'react-dom'
 import {
   IoAddOutline,
-  IoSearchOutline,
   IoTrashOutline,
   IoRefreshOutline,
   IoTicketOutline,
@@ -22,10 +21,12 @@ import {
   IoTimeOutline,
   IoCloseCircleOutline,
   IoFilterOutline,
-  IoChevronBackOutline
+  IoChevronBackOutline,
+  IoChevronForwardOutline
 } from 'react-icons/io5'
 import { useState } from 'react'
 import PageHeader from '@/features/staff/components/common/PageHeader'
+import ManagerVoucherSearch from '@/components/layout/staff/managerstaff/vouchersearch/ManagerVoucherSearch'
 
 // ─── Filter tabs ──────────────────────────────────────────────────
 const FILTER_TABS = [
@@ -44,31 +45,40 @@ export default function ManagerVouchersPage() {
   const [page, setPage] = useState(1)
   const LIMIT = 10
   const [statusFilter, setStatusFilter] = useState<FilterKey>('all')
-  const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState<'all' | 'PERCENTAGE' | 'FIXED'>('all')
   const [isFilterOpen, setIsFilterOpen] = useState(false)
 
-  const { data, isLoading, refetch } = useManagerVouchers(
+  const { data, isLoading, isFetching, refetch } = useManagerVouchers(
     page,
     LIMIT,
-    statusFilter === 'all' ? undefined : statusFilter,
-    search.trim() || undefined
+    statusFilter === 'all' ? undefined : statusFilter
   )
   const { stats, isLoading: isStatsLoading } = useVoucherStats()
 
-  const vouchers = (data?.data?.items?.data ?? []).filter((v) => {
-    if (typeFilter === 'all') return true
-    return v.typeDiscount === typeFilter
-  })
-  const pagination = data?.data?.items?.pagination
+  const rawItems = data?.data?.items
+  const vouchers =
+    data?.data?.voucherList ?? (Array.isArray(rawItems) ? rawItems : (rawItems?.data ?? []))
+
+  const pagination =
+    data?.pagination ||
+    data?.data?.pagination ||
+    (rawItems && !Array.isArray(rawItems)
+      ? {
+          page: (rawItems as any).page,
+          limit: (rawItems as any).limit,
+          total: (rawItems as any).total,
+          totalPages: (rawItems as any).totalPages
+        }
+      : undefined)
+
+  // Use isFetching || isLoading for more responsive loading feedback
+  const isDataLoading = isLoading || isFetching
 
   // ── Modal state ───────────────────────────────────────────────────
   // We only need local state for creating a new voucher, and deleting.
   const [showForm, setShowForm] = useState(false)
   const [deleteId, setDeleteId] = useState<string | null>(null)
 
-  // ── Handlers ──────────────────────────────────────────────────────
-  /** Click any row → navigate to detail page */
   const handleRowClick = (id: string) => {
     navigate(PATHS.MANAGER.VOUCHER_DETAIL(id))
   }
@@ -274,22 +284,7 @@ export default function ManagerVouchersPage() {
 
         <div className="bg-white rounded-3xl border border-neutral-50/50 shadow-sm relative">
           <div className="p-6 border-b border-neutral-50/30 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-            <div className="flex-1 max-w-md relative">
-              <IoSearchOutline
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400"
-                size={18}
-              />
-              <input
-                type="text"
-                placeholder="Search by name or code..."
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value)
-                  setPage(1)
-                }}
-                className="w-full pl-11 pr-4 py-2.5 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all font-sans"
-              />
-            </div>
+            <ManagerVoucherSearch />
 
             <div className="flex items-center gap-3">
               <div className="relative">
@@ -367,40 +362,71 @@ export default function ManagerVouchersPage() {
         </div>
       </div>
 
-      {/* ── Table ───────────────────────────────────────────────── */}
-      {/* Click any row → detail. Delete icon stays inline. */}
-      <VoucherTable
-        vouchers={vouchers}
-        isLoading={isLoading}
-        renderActions={(v) => (
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              setDeleteId(v._id)
-            }}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all"
-            title="Delete"
-          >
-            <IoTrashOutline size={15} />
-          </button>
-        )}
-        onRowClick={(v) => handleRowClick(v._id)}
-      />
+      {/* ── Table & Pagination Container ────────────────────────── */}
+      <div className="bg-white rounded-3xl border border-neutral-50/50 shadow-sm overflow-hidden">
+        <VoucherTable
+          vouchers={vouchers}
+          isLoading={isDataLoading}
+          renderActions={(v) => (
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                setDeleteId(v._id)
+              }}
+              className="p-1.5 rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all"
+              title="Delete"
+            >
+              <IoTrashOutline size={15} />
+            </button>
+          )}
+          onRowClick={(v) => handleRowClick(v._id)}
+        />
 
-      {/* ── Pagination ──────────────────────────────────────────── */}
-      {pagination && pagination.totalPages > 1 && (
-        <div className="flex items-center justify-between px-1 py-4 border-t border-slate-50">
-          <p className="text-xs font-bold text-slate-400">
-            Showing <span className="text-slate-700">{vouchers.length}</span> of{' '}
-            <span className="text-slate-700">{pagination.total}</span> vouchers
-          </p>
-          <Pagination
-            currentPage={page}
-            totalPages={pagination.totalPages}
-            onPageChange={(p) => setPage(p)}
-          />
-        </div>
-      )}
+        {/* ── Pagination Footer ──────────────────────────────────── */}
+        {pagination && pagination.totalPages > 1 && (
+          <div className="p-6 bg-white border-t border-neutral-50 flex items-center justify-between">
+            <p className="text-xs font-medium text-slate-400">
+              Page {pagination.page} of {pagination.totalPages} ({pagination.total} vouchers)
+            </p>
+            <div className="flex items-center gap-2">
+              <button
+                disabled={page <= 1 || isDataLoading}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                className="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-neutral-100 text-neutral-400 hover:text-mint-600 transition-all disabled:opacity-30 ripple-button"
+              >
+                <IoChevronBackOutline />
+              </button>
+              <div className="flex gap-1">
+                {Array.from({ length: Math.min(pagination.totalPages, 5) }, (_, i) => {
+                  // Simple logic for showing pages near the current page
+                  // This can be improved to be more dynamic if needed
+                  return i + 1
+                }).map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => setPage(p)}
+                    disabled={isDataLoading}
+                    className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${
+                      page === p
+                        ? 'bg-mint-500 text-white shadow-lg shadow-mint-100'
+                        : 'bg-white text-neutral-400 hover:bg-neutral-50 hover:text-mint-600'
+                    } disabled:opacity-50`}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+              <button
+                disabled={page >= pagination.totalPages || isDataLoading}
+                onClick={() => setPage((p) => p + 1)}
+                className="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-neutral-100 text-neutral-400 hover:text-mint-600 transition-all disabled:opacity-30 ripple-button"
+              >
+                <IoChevronForwardOutline />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* ── VoucherAddition form (Create only here) ───────────────── */}
       <VoucherAddition

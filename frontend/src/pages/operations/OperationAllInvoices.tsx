@@ -12,6 +12,8 @@ import {
 import type { OperationInvoiceListItem } from '@/shared/types'
 import { FilterButtonList } from '@/components/staff'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
+import OperationInvoiceSearch from '@/components/layout/staff/operationstaff/invoiceserach/OperationInvoiceSearch'
+
 // import OperationPagination from '@/pages/operations/OperationPagination'
 
 const PAGE_LIMIT = 10
@@ -89,13 +91,17 @@ export default function OperationAllInvoices() {
           </h1>
           <p className="text-gray-500 mt-1">Manage invoices ready for shipping and delivery.</p>
         </div>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <OperationInvoiceSearch onSelectInvoice={handleViewInvoice} />
+        </div>
 
-        <FilterButtonList
-          buttons={filterButtons}
-          selectedValue={statusFilter}
-          onChange={setStatusFilter}
-          className="mb-6"
-        />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <FilterButtonList
+            buttons={filterButtons}
+            selectedValue={statusFilter}
+            onChange={setStatusFilter}
+          />
+        </div>
 
         {/* Invoice Table */}
         <div className="bg-white rounded-lg shadow-sm border border-neutral-100 overflow-hidden">

@@ -5,7 +5,8 @@
 import type { ReactNode } from 'react'
 import { IoTicketOutline } from 'react-icons/io5'
 import type { Voucher } from '@/shared/types'
-import { VoucherHeader, type VoucherColumn, DEFAULT_VOUCHER_COLUMNS } from './VoucherHeader'
+import { VoucherHeader } from './VoucherHeader'
+import { type VoucherColumn, DEFAULT_VOUCHER_COLUMNS } from './VoucherTypes'
 import { VoucherTr } from './VoucherTr'
 
 interface VoucherTableProps {
@@ -29,9 +30,7 @@ export function VoucherTable({
   className = ''
 }: VoucherTableProps) {
   return (
-    <div
-      className={`bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden ${className}`}
-    >
+    <div className={`overflow-hidden ${className}`}>
       <VoucherHeader columns={columns} />
 
       {isLoading ? (

@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { createPortal } from 'react-dom'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Container } from '@/components'
 import { PageHeader } from '@/features/sales/components/common'
@@ -16,10 +15,7 @@ import {
   IoChevronForwardOutline,
   IoChevronBackOutline,
   IoPencilOutline,
-  IoTrashOutline,
-  IoExpandOutline,
-  IoAdd,
-  IoRemove
+  IoTrashOutline
 } from 'react-icons/io5'
 import type { AdminProductVariant } from '@/shared/types'
 import { httpClient } from '@/api/apiClients'
@@ -58,9 +54,6 @@ export default function ManagerProductDetailPage() {
   const [selectedVariantIdx, setSelectedVariantIdx] = useState(0)
   const [imgIdx, setImgIdx] = useState(0)
   const [isDeleting, setIsDeleting] = useState(false)
-  const [isImageModalOpen, setIsImageModalOpen] = useState(false)
-  const [zoom, setZoom] = useState(1)
-
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
 
   const handleDeleteClick = () => {
@@ -120,423 +113,347 @@ export default function ManagerProductDetailPage() {
   const spec = product.spec
 
   return (
-    <Container className="max-w-none space-y-8">
-      <PageHeader
-        title={product.nameBase}
-        subtitle={`SKU: ${product.skuBase} · ${product.brand} · ${product.type}`}
-        breadcrumbs={[
-          { label: 'Dashboard', path: '/manager/dashboard' },
-          { label: 'Products', path: '/manager/products' },
-          { label: product.nameBase }
-        ]}
-      />
+    <>
+      <Container className="max-w-none space-y-8">
+        <PageHeader
+          title={product.nameBase}
+          subtitle={`SKU: ${product.skuBase} · ${product.brand} · ${product.type}`}
+          breadcrumbs={[
+            { label: 'Dashboard', path: '/manager/dashboard' },
+            { label: 'Products', path: '/manager/products' },
+            { label: product.nameBase }
+          ]}
+        />
 
-      {/* Back + Edit + Delete buttons */}
-      <div className="flex items-center gap-3">
-        <button
-          onClick={() => navigate('/manager/products')}
-          className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-mint-600 transition-colors"
-        >
-          <IoArrowBackOutline size={16} />
-          Back to Products
-        </button>
-        <button
-          onClick={() => navigate(`/manager/products/${id}/edit`)}
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-mint-600 text-white rounded-xl text-sm font-semibold shadow-lg shadow-mint-100/50 hover:bg-mint-700 transition-all active:scale-95"
-        >
-          <IoPencilOutline size={16} />
-          Edit Product
-        </button>
-        <button
-          onClick={handleDeleteClick}
-          disabled={isDeleting}
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-red-50 text-red-600 rounded-xl text-sm font-semibold ring-1 ring-red-100 hover:bg-red-100 transition-all active:scale-95 disabled:opacity-50"
-        >
-          <IoTrashOutline size={16} />
-          {isDeleting ? 'Deleting...' : 'Delete'}
-        </button>
-      </div>
+        {/* Back + Edit + Delete buttons */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate('/manager/products')}
+            className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-mint-600 transition-colors"
+          >
+            <IoArrowBackOutline size={16} />
+            Back to Products
+          </button>
+          <button
+            onClick={() => navigate(`/manager/products/${id}/edit`)}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-mint-600 text-white rounded-xl text-sm font-semibold shadow-lg shadow-mint-100/50 hover:bg-mint-700 transition-all active:scale-95"
+          >
+            <IoPencilOutline size={16} />
+            Edit Product
+          </button>
+          <button
+            onClick={handleDeleteClick}
+            disabled={isDeleting}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-red-50 text-red-600 rounded-xl text-sm font-semibold ring-1 ring-red-100 hover:bg-red-100 transition-all active:scale-95 disabled:opacity-50"
+          >
+            <IoTrashOutline size={16} />
+            {isDeleting ? 'Deleting...' : 'Delete'}
+          </button>
+        </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* ─── LEFT: Image Gallery ─── */}
-        <div className="lg:col-span-5">
-          <div className="bg-white rounded-3xl ring-1 ring-neutral-100/50 shadow-sm overflow-hidden">
-            {/* Main Image */}
-            <div className="relative aspect-square bg-neutral-50 flex items-center justify-center overflow-hidden">
-              {currentImg ? (
-                <div
-                  className="w-full h-full relative group cursor-zoom-in"
-                  onClick={() => setIsImageModalOpen(true)}
-                >
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* ─── LEFT: Image Gallery ─── */}
+          <div className="lg:col-span-5">
+            <div className="bg-white rounded-3xl ring-1 ring-neutral-100/50 shadow-sm overflow-hidden">
+              {/* Main Image */}
+              <div className="relative aspect-square bg-neutral-50 flex items-center justify-center overflow-hidden">
+                {currentImg ? (
                   <img
                     src={currentImg}
                     alt={selectedVariant.name}
-                    className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                    className="w-full h-full object-cover transition-opacity duration-300"
                     onError={(e) => {
                       ;(e.target as HTMLImageElement).src = ''
                       ;(e.target as HTMLImageElement).style.display = 'none'
                     }}
                   />
-                  <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <div className="bg-white/90 text-mint-600 p-3 rounded-full shadow-lg backdrop-blur-sm transform scale-90 group-hover:scale-100 transition-transform">
-                      <IoExpandOutline size={24} />
-                    </div>
+                ) : (
+                  <IoCubeOutline size={80} className="text-neutral-200" />
+                )}
+
+                {/* Image nav arrows */}
+                {images.length > 1 && (
+                  <>
+                    <button
+                      onClick={() => setImgIdx((prev) => (prev > 0 ? prev - 1 : images.length - 1))}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center text-slate-500 hover:text-mint-600 shadow-lg transition-all"
+                    >
+                      <IoChevronBackOutline size={16} />
+                    </button>
+                    <button
+                      onClick={() => setImgIdx((prev) => (prev < images.length - 1 ? prev + 1 : 0))}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center text-slate-500 hover:text-mint-600 shadow-lg transition-all"
+                    >
+                      <IoChevronForwardOutline size={16} />
+                    </button>
+                  </>
+                )}
+
+                {/* Image counter */}
+                {images.length > 1 && (
+                  <div className="absolute bottom-3 right-3 px-2.5 py-1 bg-black/50 backdrop-blur-sm rounded-lg text-[10px] font-semibold text-white">
+                    {imgIdx + 1} / {images.length}
                   </div>
-                </div>
-              ) : (
-                <IoCubeOutline size={80} className="text-neutral-200" />
-              )}
+                )}
+              </div>
 
-              {/* Image nav arrows */}
+              {/* Thumbnail strip */}
               {images.length > 1 && (
-                <>
-                  <button
-                    onClick={() => setImgIdx((prev) => (prev > 0 ? prev - 1 : images.length - 1))}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center text-slate-500 hover:text-mint-600 shadow-lg transition-all"
-                  >
-                    <IoChevronBackOutline size={16} />
-                  </button>
-                  <button
-                    onClick={() => setImgIdx((prev) => (prev < images.length - 1 ? prev + 1 : 0))}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center text-slate-500 hover:text-mint-600 shadow-lg transition-all"
-                  >
-                    <IoChevronForwardOutline size={16} />
-                  </button>
-                </>
-              )}
-
-              {/* Image counter */}
-              {images.length > 1 && (
-                <div className="absolute bottom-3 right-3 px-2.5 py-1 bg-black/50 backdrop-blur-sm rounded-lg text-[10px] font-semibold text-white">
-                  {imgIdx + 1} / {images.length}
+                <div className="flex gap-2 p-4">
+                  {images.map((img, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setImgIdx(idx)}
+                      className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition-all shrink-0 ${
+                        imgIdx === idx
+                          ? 'border-mint-500 shadow-lg'
+                          : 'border-transparent opacity-60 hover:opacity-100'
+                      }`}
+                    >
+                      <img src={img} alt="" className="w-full h-full object-cover" />
+                    </button>
+                  ))}
                 </div>
               )}
             </div>
+          </div>
 
-            {/* Thumbnail strip */}
-            {images.length > 1 && (
-              <div className="flex gap-2 p-4">
-                {images.map((img, idx) => (
+          {/* ─── RIGHT: Product Info ─── */}
+          <div className="lg:col-span-7 space-y-6">
+            {/* Price Card */}
+            <div className="bg-white rounded-3xl ring-1 ring-neutral-100/50 shadow-sm p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <p className="text-[12px] font-bold text-slate-400 tracking-wider uppercase">
+                    Default Price
+                  </p>
+                  <div className="flex items-baseline gap-3 mt-1">
+                    <h3 className="text-3xl font-bold text-slate-900 tracking-tight">
+                      {formatPrice(defaultVariant.finalPrice)}
+                    </h3>
+                    {defaultVariant.price !== defaultVariant.finalPrice && (
+                      <span className="text-lg text-slate-400 line-through">
+                        {formatPrice(defaultVariant.price)}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex px-3 py-1.5 rounded-xl text-xs font-semibold bg-mint-50 text-mint-700 ring-1 ring-mint-100 capitalize">
+                    {product.type}
+                  </span>
+                  <span className="inline-flex px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-50 text-purple-600 ring-1 ring-purple-100">
+                    {product.brand}
+                  </span>
+                </div>
+              </div>
+
+              {/* Quick info */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-neutral-50">
+                <div>
+                  <p className="text-[11px] font-medium text-slate-400">Total Variants</p>
+                  <p className="text-sm font-bold text-slate-800 mt-0.5">
+                    {product.variants.length}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[11px] font-medium text-slate-400">Total Stock</p>
+                  <p className="text-sm font-bold text-slate-800 mt-0.5">
+                    {product.variants.reduce((sum, v) => sum + v.stock, 0)}
+                  </p>
+                </div>
+                {product.type === 'lens' ? (
+                  <>
+                    <div>
+                      <p className="text-[11px] font-medium text-slate-400">Origin</p>
+                      <p className="text-sm font-bold text-slate-800 mt-0.5">
+                        {spec?.origin || '—'}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-medium text-slate-400">Features</p>
+                      <p className="text-sm font-bold text-slate-800 mt-0.5">
+                        {spec?.feature?.length ?? 0}
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div>
+                      <p className="text-[11px] font-medium text-slate-400">Shape</p>
+                      <p className="text-sm font-bold text-slate-800 mt-0.5">
+                        {spec?.shape || '—'}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-medium text-slate-400">Gender</p>
+                      <p className="text-sm font-bold text-slate-800 mt-0.5">
+                        {spec?.gender ? genderLabel(spec.gender) : '—'}
+                      </p>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Specifications Card */}
+            {spec && (
+              <div className="bg-white rounded-3xl ring-1 ring-neutral-100/50 shadow-sm p-6">
+                <div className="flex items-center gap-2 mb-5">
+                  <div className="p-2 rounded-xl bg-sky-50 text-sky-600">
+                    <IoResizeOutline size={18} />
+                  </div>
+                  <h4 className="text-[13px] font-bold text-slate-700">Specifications</h4>
+                </div>
+
+                {product.type === 'lens' ? (
+                  /* ─── Lens Specs ─── */
+                  <div className="space-y-5">
+                    {/* Features badges */}
+                    {spec.feature && spec.feature.length > 0 && (
+                      <div>
+                        <p className="text-[11px] font-medium text-slate-400 mb-2">Features</p>
+                        <div className="flex flex-wrap gap-2">
+                          {spec.feature.map((f) => (
+                            <span
+                              key={f}
+                              className="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-semibold bg-sky-50 text-sky-700 ring-1 ring-sky-100"
+                            >
+                              {f}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Origin + Brand */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                      <SpecItem label="Origin" value={spec.origin || '—'} />
+                      <SpecItem label="Brand" value={product.brand} />
+                      <SpecItem label="Type" value={product.type} />
+                    </div>
+                  </div>
+                ) : (
+                  /* ─── Frame Specs ─── */
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    <SpecItem label="Material" value={spec.material?.join(', ') || '—'} />
+                    <SpecItem label="Shape" value={spec.shape || '—'} />
+                    <SpecItem label="Style" value={spec.style || '—'} />
+                    <SpecItem label="Gender" value={genderLabel(spec.gender || '—')} />
+                    <SpecItem label="Weight" value={spec.weight ? `${spec.weight}g` : '—'} />
+                    {spec.dimensions && (
+                      <>
+                        <SpecItem label="Width" value={`${spec.dimensions.width}mm`} />
+                        <SpecItem label="Height" value={`${spec.dimensions.height}mm`} />
+                        <SpecItem label="Depth" value={`${spec.dimensions.depth}mm`} />
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Variants Card */}
+            <div className="bg-white rounded-3xl ring-1 ring-neutral-100/50 shadow-sm p-6">
+              <div className="flex items-center gap-2 mb-5">
+                <div className="p-2 rounded-xl bg-purple-50 text-purple-600">
+                  <IoLayersOutline size={18} />
+                </div>
+                <h4 className="text-[13px] font-bold text-slate-700">
+                  Variants ({product.variants.length})
+                </h4>
+              </div>
+
+              <div className="space-y-3">
+                {product.variants.map((v, idx) => (
                   <button
-                    key={idx}
-                    onClick={() => setImgIdx(idx)}
-                    className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition-all shrink-0 ${
-                      imgIdx === idx
-                        ? 'border-mint-500 shadow-lg'
-                        : 'border-transparent opacity-60 hover:opacity-100'
+                    key={v.sku}
+                    onClick={() => {
+                      setSelectedVariantIdx(idx)
+                      setImgIdx(0)
+                    }}
+                    className={`w-full text-left p-4 rounded-2xl border transition-all ${
+                      selectedVariantIdx === idx
+                        ? 'border-mint-300 bg-mint-50/30 ring-2 ring-mint-200 shadow-sm'
+                        : 'border-neutral-100 hover:border-neutral-200 hover:bg-neutral-50/50'
                     }`}
                   >
-                    <img src={img} alt="" className="w-full h-full object-contain" />
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3 min-w-0">
+                        {/* Variant color swatch or icon */}
+                        {v.options.some((o) => o.showType === 'color') ? (
+                          <div className="flex items-center gap-1.5">
+                            {v.options
+                              .filter((o) => o.showType === 'color')
+                              .map((o) => (
+                                <div
+                                  key={o.attributeId}
+                                  className="w-6 h-6 rounded-full border-2 border-white shadow-md"
+                                  style={{ backgroundColor: o.value }}
+                                  title={o.label}
+                                />
+                              ))}
+                          </div>
+                        ) : (
+                          <IoColorPaletteOutline className="text-slate-400" size={18} />
+                        )}
+
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-slate-700 truncate">
+                            {v.options.map((o) => o.label).join(' · ')}
+                          </p>
+                          <p className="text-[10px] text-slate-400 font-medium">{v.sku}</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-4 shrink-0 ml-4">
+                        <div className="text-right">
+                          <p className="text-xs font-bold text-slate-800">
+                            {formatPrice(v.finalPrice)}
+                          </p>
+                          {v.price !== v.finalPrice && (
+                            <p className="text-[10px] text-slate-400 line-through">
+                              {formatPrice(v.price)}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <IoPricetagOutline className="text-slate-400" size={12} />
+                          <span className="text-[11px] font-medium text-slate-500">
+                            Stock: {v.stock}
+                          </span>
+                        </div>
+                        {v.mode === 'AVAILABLE' ? (
+                          <IoCheckmarkCircle className="text-emerald-500" size={18} />
+                        ) : (
+                          <IoCloseCircle className="text-red-400" size={18} />
+                        )}
+                        {v.isDefault && (
+                          <span className="px-2 py-0.5 rounded-md bg-mint-100 text-mint-700 text-[9px] font-bold uppercase">
+                            Default
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </button>
                 ))}
               </div>
-            )}
-          </div>
-        </div>
-
-        {/* ─── RIGHT: Product Info ─── */}
-        <div className="lg:col-span-7 space-y-6">
-          {/* Price Card */}
-          <div className="bg-white rounded-3xl ring-1 ring-neutral-100/50 shadow-sm p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <p className="text-[12px] font-bold text-slate-400 tracking-wider uppercase">
-                  Default Price
-                </p>
-                <div className="flex items-baseline gap-3 mt-1">
-                  <h3 className="text-3xl font-bold text-slate-900 tracking-tight">
-                    {formatPrice(defaultVariant.finalPrice)}
-                  </h3>
-                  {defaultVariant.price !== defaultVariant.finalPrice && (
-                    <span className="text-lg text-slate-400 line-through">
-                      {formatPrice(defaultVariant.price)}
-                    </span>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="inline-flex px-3 py-1.5 rounded-xl text-xs font-semibold bg-mint-50 text-mint-700 ring-1 ring-mint-100 capitalize">
-                  {product.type}
-                </span>
-                <span className="inline-flex px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-50 text-purple-600 ring-1 ring-purple-100">
-                  {product.brand}
-                </span>
-              </div>
-            </div>
-
-            {/* Quick info */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-neutral-50">
-              <div>
-                <p className="text-[11px] font-medium text-slate-400">Total Variants</p>
-                <p className="text-sm font-bold text-slate-800 mt-0.5">{product.variants.length}</p>
-              </div>
-              <div>
-                <p className="text-[11px] font-medium text-slate-400">Total Stock</p>
-                <p className="text-sm font-bold text-slate-800 mt-0.5">
-                  {product.variants.reduce((sum, v) => sum + v.stock, 0)}
-                </p>
-              </div>
-              {product.type === 'lens' ? (
-                <>
-                  <div>
-                    <p className="text-[11px] font-medium text-slate-400">Origin</p>
-                    <p className="text-sm font-bold text-slate-800 mt-0.5">{spec?.origin || '—'}</p>
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-medium text-slate-400">Features</p>
-                    <p className="text-sm font-bold text-slate-800 mt-0.5">
-                      {spec?.feature?.length ?? 0}
-                    </p>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div>
-                    <p className="text-[11px] font-medium text-slate-400">Shape</p>
-                    <p className="text-sm font-bold text-slate-800 mt-0.5">{spec?.shape || '—'}</p>
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-medium text-slate-400">Gender</p>
-                    <p className="text-sm font-bold text-slate-800 mt-0.5">
-                      {spec?.gender ? genderLabel(spec.gender) : '—'}
-                    </p>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* Specifications Card */}
-          {spec && (
-            <div className="bg-white rounded-3xl ring-1 ring-neutral-100/50 shadow-sm p-6">
-              <div className="flex items-center gap-2 mb-5">
-                <div className="p-2 rounded-xl bg-sky-50 text-sky-600">
-                  <IoResizeOutline size={18} />
-                </div>
-                <h4 className="text-[13px] font-bold text-slate-700">Specifications</h4>
-              </div>
-
-              {product.type === 'lens' ? (
-                /* ─── Lens Specs ─── */
-                <div className="space-y-5">
-                  {/* Features badges */}
-                  {spec.feature && spec.feature.length > 0 && (
-                    <div>
-                      <p className="text-[11px] font-medium text-slate-400 mb-2">Features</p>
-                      <div className="flex flex-wrap gap-2">
-                        {spec.feature.map((f) => (
-                          <span
-                            key={f}
-                            className="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-semibold bg-sky-50 text-sky-700 ring-1 ring-sky-100"
-                          >
-                            {f}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Origin + Brand */}
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                    <SpecItem label="Origin" value={spec.origin || '—'} />
-                    <SpecItem label="Brand" value={product.brand} />
-                    <SpecItem label="Type" value={product.type} />
-                  </div>
-                </div>
-              ) : (
-                /* ─── Frame Specs ─── */
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                  <SpecItem label="Material" value={spec.material?.join(', ') || '—'} />
-                  <SpecItem label="Shape" value={spec.shape || '—'} />
-                  <SpecItem label="Style" value={spec.style || '—'} />
-                  <SpecItem label="Gender" value={genderLabel(spec.gender || '—')} />
-                  <SpecItem label="Weight" value={spec.weight ? `${spec.weight}g` : '—'} />
-                  {spec.dimensions && (
-                    <>
-                      <SpecItem label="Width" value={`${spec.dimensions.width}mm`} />
-                      <SpecItem label="Height" value={`${spec.dimensions.height}mm`} />
-                      <SpecItem label="Depth" value={`${spec.dimensions.depth}mm`} />
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Variants Card */}
-          <div className="bg-white rounded-3xl ring-1 ring-neutral-100/50 shadow-sm p-6">
-            <div className="flex items-center gap-2 mb-5">
-              <div className="p-2 rounded-xl bg-purple-50 text-purple-600">
-                <IoLayersOutline size={18} />
-              </div>
-              <h4 className="text-[13px] font-bold text-slate-700">
-                Variants ({product.variants.length})
-              </h4>
-            </div>
-
-            <div className="space-y-3">
-              {product.variants.map((v, idx) => (
-                <button
-                  key={v.sku}
-                  onClick={() => {
-                    setSelectedVariantIdx(idx)
-                    setImgIdx(0)
-                  }}
-                  className={`w-full text-left p-4 rounded-2xl border transition-all ${
-                    selectedVariantIdx === idx
-                      ? 'border-mint-300 bg-mint-50/30 ring-2 ring-mint-200 shadow-sm'
-                      : 'border-neutral-100 hover:border-neutral-200 hover:bg-neutral-50/50'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3 min-w-0">
-                      {/* Variant color swatch or icon */}
-                      {v.options.some((o) => o.showType === 'color') ? (
-                        <div className="flex items-center gap-1.5">
-                          {v.options
-                            .filter((o) => o.showType === 'color')
-                            .map((o) => (
-                              <div
-                                key={o.attributeId}
-                                className="w-6 h-6 rounded-full border-2 border-white shadow-md"
-                                style={{ backgroundColor: o.value }}
-                                title={o.label}
-                              />
-                            ))}
-                        </div>
-                      ) : (
-                        <IoColorPaletteOutline className="text-slate-400" size={18} />
-                      )}
-
-                      <div className="min-w-0">
-                        <p className="text-xs font-semibold text-slate-700 truncate">
-                          {v.options.map((o) => o.label).join(' · ')}
-                        </p>
-                        <p className="text-[10px] text-slate-400 font-medium">{v.sku}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-4 shrink-0 ml-4">
-                      <div className="text-right">
-                        <p className="text-xs font-bold text-slate-800">
-                          {formatPrice(v.finalPrice)}
-                        </p>
-                        {v.price !== v.finalPrice && (
-                          <p className="text-[10px] text-slate-400 line-through">
-                            {formatPrice(v.price)}
-                          </p>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <IoPricetagOutline className="text-slate-400" size={12} />
-                        <span className="text-[11px] font-medium text-slate-500">
-                          Stock: {v.stock}
-                        </span>
-                      </div>
-                      {v.mode === 'AVAILABLE' ? (
-                        <IoCheckmarkCircle className="text-emerald-500" size={18} />
-                      ) : (
-                        <IoCloseCircle className="text-red-400" size={18} />
-                      )}
-                      {v.isDefault && (
-                        <span className="px-2 py-0.5 rounded-md bg-mint-100 text-mint-700 text-[9px] font-bold uppercase">
-                          Default
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </button>
-              ))}
             </div>
           </div>
         </div>
-      </div>
+      </Container>
 
       <ConfirmationModal
         isOpen={isConfirmOpen}
         onClose={() => setIsConfirmOpen(false)}
         onConfirm={handleDeleteConfirm}
         title="Delete Product"
-        message={`Are you sure you want to delete "${product?.nameBase}"?`}
-        details={
-          <div className="space-y-2">
-            <p className="text-slate-500 text-sm">
-              This action cannot be undone and will permanently remove this product and all its
-              variants.
-            </p>
-          </div>
-        }
-        confirmText="Delete Now"
+        message={`Are you sure you want to delete "${product.nameBase}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
         type="danger"
-        isLoading={isDeleting}
       />
-
-      {isImageModalOpen &&
-        createPortal(
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-[4px] animate-in fade-in duration-200">
-            {/* ── Close Button ── */}
-            <button
-              onClick={() => {
-                setIsImageModalOpen(false)
-                setZoom(1)
-              }}
-              className="absolute top-6 right-6 w-12 h-12 bg-white/10 hover:bg-red-500/40 text-white hover:text-red-100 rounded-full flex items-center justify-center transition-all shadow-xl backdrop-blur-md border border-white/20 z-50"
-            >
-              <IoCloseCircle size={32} />
-            </button>
-
-            {/* ── Zoom Controls ── */}
-            <div className="absolute top-6 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/50 p-2.5 rounded-2xl backdrop-blur-md shadow-2xl border border-white/10 z-50 animate-in slide-in-from-top-4 duration-300">
-              <button
-                onClick={() => setZoom((z) => Math.max(0.5, z - 0.25))}
-                className="w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 active:bg-white/10 text-white rounded-xl transition-all shadow-sm"
-              >
-                <IoRemove size={22} />
-              </button>
-              <span className="text-white font-mono text-sm font-semibold w-16 text-center tabular-nums">
-                {Math.round(zoom * 100)}%
-              </span>
-              <button
-                onClick={() => setZoom((z) => Math.min(5, z + 0.25))}
-                className="w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 active:bg-white/10 text-white rounded-xl transition-all shadow-sm"
-              >
-                <IoAdd size={22} />
-              </button>
-            </div>
-
-            {/* ── Image Viewer (Scrollable if overflow) ── */}
-            <div
-              className="w-full h-full overflow-auto flex items-center justify-center p-4 md:p-12 custom-scrollbar"
-              onClick={() => {
-                setIsImageModalOpen(false)
-                setZoom(1)
-              }}
-            >
-              <img
-                src={currentImg}
-                alt={selectedVariant.name}
-                className="max-w-full max-h-full object-contain transition-transform duration-200 shadow-2xl rounded-sm"
-                style={{
-                  transform: `scale(${zoom})`,
-                  transformOrigin: 'center center',
-                  cursor: zoom > 1 ? 'zoom-out' : 'zoom-in'
-                }}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  if (zoom === 1) setZoom(2)
-                  else if (zoom >= 2 && zoom < 4) setZoom(4)
-                  else setZoom(1)
-                }}
-                onError={(e) => {
-                  ;(e.target as HTMLImageElement).src = ''
-                  ;(e.target as HTMLImageElement).style.display = 'none'
-                }}
-              />
-            </div>
-          </div>,
-          document.body
-        )}
-    </Container>
+    </>
   )
 }
 

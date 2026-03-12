@@ -185,11 +185,21 @@ export default function OrderTable({
       className: 'text-center'
     },
     {
-      header: 'ORDER AT',
+      header: isSales ? 'ORDER AT' : 'CREATED AT',
       render: (order) => (
         <div className={`flex items-center gap-1.5 ${isSales ? 'justify-center' : ''}`}>
           <IoTimeOutline className={isSales ? 'text-neutral-400' : ''} />
-          <span className={isSales ? 'text-neutral-500' : ''}>{order.timeElapsed}</span>
+          <span className={isSales ? 'text-neutral-500' : ''}>
+            {isSales
+              ? order.timeElapsed
+              : new Date(order.createdAt).toLocaleString('vi-VN', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+          </span>
         </div>
       ),
       headerClassName: isSales ? 'text-center' : '',

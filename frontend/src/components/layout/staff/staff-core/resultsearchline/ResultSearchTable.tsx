@@ -8,7 +8,7 @@ const PAGE_SIZE = 8 // Hiện 8 dòng mỗi lần
 
 interface SearchResultItem {
   id: string
-  orderCode: string
+  searchCode: string
 }
 
 interface ResultSearchTableProps {
@@ -17,7 +17,8 @@ interface ResultSearchTableProps {
   isLoading: boolean
   query: string
   onSelect: (item: SearchResultItem) => void
-  onSelectHistory: (orderCode: string) => void
+  onSelectHistory: (searchCode: string) => void
+  label?: string
 }
 
 export default function ResultSearchTable({
@@ -26,23 +27,24 @@ export default function ResultSearchTable({
   isLoading,
   query,
   onSelect,
-  onSelectHistory
+  onSelectHistory,
+  label = 'orders'
 }: ResultSearchTableProps) {
   const hasQuery = query.trim().length >= 2
 
   // Số dòng đang hiển thị cho kết quả search
-  const [visibleResultCount, setVisibleResultCount] = useState(PAGE_SIZE)
+  const [visibleItemCount, setVisibleItemCount] = useState(PAGE_SIZE)
   // Số dòng đang hiển thị cho lịch sử
   const [visibleHistoryCount, setVisibleHistoryCount] = useState(PAGE_SIZE)
 
-  const visibleResults = results.slice(0, visibleResultCount)
-  const hasMoreResults = results.length > visibleResultCount
+  const visibleResults = results.slice(0, visibleItemCount)
+  const hasMoreResults = results.length > visibleItemCount
 
   const visibleHistory = historyItems.slice(0, visibleHistoryCount)
   const hasMoreHistory = historyItems.length > visibleHistoryCount
 
   return (
-    <div className="absolute left-5 right-0 top-full mt-2 bg-white rounded-2xl shadow-xl border border-neutral-100 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200 max-h-[460px] overflow-y-auto">
+    <div className="absolute left-0 right-0 top-full mt-1 bg-white rounded-2xl shadow-xl border border-neutral-100 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200 max-h-[460px] overflow-y-auto">
       {hasQuery && (
         <>
           {isLoading && (
@@ -69,14 +71,16 @@ export default function ResultSearchTable({
                 <p className="text-sm font-semibold text-neutral-400 tracking-wider">
                   Search results for &ldquo;{query}&rdquo;
                 </p>
-                <p className="text-xs text-neutral-400">{results.length} orders found</p>
+                <p className="text-xs text-neutral-400">
+                  {results.length} {label} found
+                </p>
               </div>
 
               <div className="divide-y divide-neutral-50">
                 {visibleResults.map((item) => (
                   <ResultSearchLine
                     key={item.id}
-                    orderCode={item.orderCode}
+                    searchCode={item.searchCode}
                     onClick={() => onSelect(item)}
                   />
                 ))}
@@ -86,11 +90,11 @@ export default function ResultSearchTable({
               {hasMoreResults && (
                 <button
                   type="button"
-                  onClick={() => setVisibleResultCount((prev) => prev + PAGE_SIZE)}
+                  onClick={() => setVisibleItemCount((prev) => prev + PAGE_SIZE)}
                   className="w-full flex items-center justify-center gap-1.5 py-3 text-sm font-semibold text-mint-600 hover:bg-mint-50 transition-colors border-t border-neutral-50"
                 >
                   <IoChevronDown size={16} />
-                  View more ({results.length - visibleResultCount} more orders )
+                  View more ({results.length - visibleItemCount} more {label} )
                 </button>
               )}
             </div>
@@ -120,7 +124,7 @@ export default function ResultSearchTable({
                 {visibleHistory.map((code) => (
                   <ResultSearchLine
                     key={code}
-                    orderCode={code}
+                    searchCode={code}
                     isHistory
                     onClick={() => onSelectHistory(code)}
                   />

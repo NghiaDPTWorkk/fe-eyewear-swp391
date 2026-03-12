@@ -9,7 +9,7 @@ import { VoucherDiscountType, VoucherStatus } from '@/shared/utils/enums/voucher
 import { fmtVND, fmtDate } from './VoucherTdata.utils'
 
 // ─── Cell types ───────────────────────────────────────────────────
-export type VoucherCellKey = 'voucher' | 'discount' | 'minOrder' | 'validity' | 'usage' | 'status'
+export type VoucherCellKey = 'voucher' | 'discount' | 'minOrder' | 'validity' | 'status'
 
 interface VoucherTdataProps {
   voucher: Voucher
@@ -18,7 +18,6 @@ interface VoucherTdataProps {
 
 export function VoucherTdata({ voucher: v, field }: VoucherTdataProps) {
   const isPerc = v.typeDiscount === VoucherDiscountType.PERCENTAGE
-  const usagePct = Math.min((v.usageCount / (v.usageLimit || 1)) * 100, 100)
 
   switch (field) {
     case 'voucher':
@@ -75,24 +74,6 @@ export function VoucherTdata({ voucher: v, field }: VoucherTdataProps) {
           <div className="flex items-center gap-2 text-[11px] text-neutral-500 font-semibold uppercase tracking-wider">
             <IoCalendarOutline size={12} className="text-amber-400 shrink-0" />
             {fmtDate(v.endedDate)}
-          </div>
-        </div>
-      )
-
-    case 'usage':
-      return (
-        <div className="flex flex-col items-center gap-2 w-full max-w-[120px]">
-          <span className="text-[11px] font-bold text-gray-600 tabular-nums tracking-widest">
-            {v.usageCount}
-            <span className="text-neutral-300 font-medium"> / {v.usageLimit}</span>
-          </span>
-          <div className="w-full h-1.5 bg-neutral-100 rounded-full overflow-hidden">
-            <div
-              className={`h-full rounded-full transition-all duration-1000 ${
-                usagePct >= 100 ? 'bg-red-500' : usagePct >= 75 ? 'bg-amber-500' : 'bg-mint-500'
-              }`}
-              style={{ width: `${usagePct}%` }}
-            />
           </div>
         </div>
       )

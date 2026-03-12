@@ -1,6 +1,9 @@
 import glasses_blue from '@/assets/images/glasses_blue.avif'
+import { useNavigate } from 'react-router-dom'
 
 export const Hero = () => {
+  const navigate = useNavigate()
+
   return (
     <section className="relative bg-gradient-to-br from-mint-300 via-mint-200 to-primary-100 overflow-hidden">
       <div className="container mx-auto px-4 py-20 lg:py-32">
@@ -17,7 +20,10 @@ export const Hero = () => {
               curated collection of modern designs.
             </p>
             <div className="flex flex-wrap gap-4">
-              <button className="px-8 py-4 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+              <button
+                onClick={() => navigate('/eyeglasses')}
+                className="px-8 py-4 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              >
                 Shop Now
               </button>
               <button className="px-8 py-4 bg-white text-mint-1200 font-semibold rounded-xl hover:bg-mint-300 transition-all duration-300 border-2 border-mint-300">

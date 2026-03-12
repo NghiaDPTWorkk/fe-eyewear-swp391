@@ -157,12 +157,6 @@ function DetailModal({ id, onClose }: { id: string; onClose: () => void }) {
 
         {/* Footer */}
         <div className="p-8 bg-slate-50/50 border-t border-slate-50 flex gap-4 sticky bottom-0 z-10">
-          <button
-            onClick={onClose}
-            className="flex-1 py-4 bg-white border border-slate-200 rounded-2xl text-xs font-black text-slate-800 uppercase tracking-widest hover:bg-slate-100 transition-all active:scale-[0.98]"
-          >
-            Close
-          </button>
           <Button
             variant="solid"
             colorScheme="primary"

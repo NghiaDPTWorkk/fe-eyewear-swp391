@@ -45,7 +45,7 @@ export default function OperationPrescriptionPage() {
         orders={orders}
         isLoading={isLoading}
         isError={isError}
-        hiddenColumns={['WAITING FOR', 'CUSTOMER']}
+        hiddenColumns={['CUSTOMER']}
         filterType={OrderType.MANUFACTURING}
         role="operation"
       />

@@ -73,7 +73,7 @@ export default function OperationAllOrdersPage() {
         orders={paginatedOrders}
         isLoading={isLoading}
         isError={isError}
-        hiddenColumns={['WAITING FOR', 'CUSTOMER']}
+        hiddenColumns={['CUSTOMER']}
         filterType={filter === 'all' ? undefined : filter}
         role="operation"
       />

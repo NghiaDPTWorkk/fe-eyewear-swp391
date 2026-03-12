@@ -26,9 +26,6 @@ export const Hero = () => {
               >
                 Shop Now
               </button>
-              <button className="px-8 py-4 bg-white text-mint-1200 font-semibold rounded-xl hover:bg-mint-300 transition-all duration-300 border-2 border-mint-300">
-                Try Virtual Try-On
-              </button>
             </div>
           </div>
           <div className="relative">

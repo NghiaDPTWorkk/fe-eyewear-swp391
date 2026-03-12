@@ -17,8 +17,8 @@ const BreadcrumbPath = ({ paths }: BreadcrumbProps) => {
             ) : (
               <>
                 <Link
-                  to={`/operationstaff/${path.toLowerCase()}`}
-                  className="text-neutral-400 hover:text-primary-500 transition-colors capitalize"
+                  to={`/operationstaff/${path.toLowerCase().replace(/\s+/g, '-')}`}
+                  className="text-neutral-400 hover:text-primary-500 transition-colors"
                 >
                   {path}
                 </Link>

@@ -9,3 +9,4 @@ export { default as OperationOrderPackingProcess } from './OperationOrderPacking
 export { default as OperationLayout } from './OperationLayout'
 export { default as OperationInventoryReceivingPage } from './OperationInventoryReceivingPage'
 export { default as OperationInventoryViewDetailPage } from './OperationInventoryViewDetailPage'
+export { default as OperationInvenProcessPlan } from './OperationInvenProcessPlan'

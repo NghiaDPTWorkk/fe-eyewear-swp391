@@ -1,12 +1,10 @@
 import { useState, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Container, OperationPagination, Button, MetricCard } from '@/components'
+import { Container, OperationPagination, MetricCard } from '@/components'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 import { FilterButtonList } from '@/components/staff'
 import {
-  IoEyeOutline,
   IoTimeOutline,
-  IoChevronForward,
   IoCloseOutline,
   IoStatsChartOutline,
   IoCheckmarkCircleOutline
@@ -18,38 +16,10 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { adminAccountService } from '@/shared/services/admin/adminAccountService'
 import { cn } from '@/lib/utils'
+import { formatDate } from '@/shared/utils'
+import STATUS_INVENTORY_PLANNING_CONFIG from '@/shared/utils/enums/inventoryplan.enum'
 
-// ─── Helpers ──────────────────────────────────────────────────────
-function formatDate(iso: string) {
-  if (!iso) return 'N/A'
-  return new Date(iso).toLocaleDateString('vi-VN', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  })
-}
-
-function formatTime(iso: string) {
-  if (!iso) return 'N/A'
-  return new Date(iso).toLocaleTimeString('vi-VN', {
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-}
-
-// ─── Status Config ────────────────────────────────────────────────
-const STATUS_CONFIG = {
-  PENDING: {
-    label: 'PENDING',
-    color: 'text-amber-700',
-    bg: 'bg-amber-50 border-amber-200'
-  },
-  DONE: {
-    label: 'COMPLETED',
-    color: 'text-emerald-700',
-    bg: 'bg-emerald-50 border-emerald-200'
-  }
-}
+import { InventoryTable } from '@/components/layout/staff/operationstaff/inventoryplantable/InventoryTable'
 
 // ─── Detail Modal ────────────────────────────────────────────────
 function DetailModal({ id, onClose }: { id: string; onClose: () => void }) {
@@ -98,12 +68,14 @@ function DetailModal({ id, onClose }: { id: string; onClose: () => void }) {
                     Status
                   </p>
                   <div
-                    className={`px-4 py-3 rounded-2xl border ${STATUS_CONFIG[detail.status as keyof typeof STATUS_CONFIG]?.bg || ''}`}
+                    className={`px-4 py-3 rounded-2xl border ${STATUS_INVENTORY_PLANNING_CONFIG[detail.status as keyof typeof STATUS_INVENTORY_PLANNING_CONFIG]?.bg || ''}`}
                   >
                     <span
                       className={cn(
                         'text-[11px] font-black uppercase tracking-widest flex items-center gap-2',
-                        STATUS_CONFIG[detail.status as keyof typeof STATUS_CONFIG]?.color || ''
+                        STATUS_INVENTORY_PLANNING_CONFIG[
+                          detail.status as keyof typeof STATUS_INVENTORY_PLANNING_CONFIG
+                        ]?.color || ''
                       )}
                     >
                       {detail.status}
@@ -312,98 +284,12 @@ export default function OperationInventoryReceivingPage() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-white border-b border-slate-100">
-                  <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-widest">
-                    SKU
-                  </th>
-                  <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-widest">
-                    MANAGER
-                  </th>
-                  <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-widest text-center">
-                    TARGET QTY
-                  </th>
-                  <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-widest text-center">
-                    STATUS
-                  </th>
-                  <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-widest text-center">
-                    CREATED AT
-                  </th>
-                  <th className="px-6 py-4 text-[11px] font-bold text-gray-400 uppercase tracking-widest text-center">
-                    ACTION
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50">
-                {results.map((batch) => {
-                  const config = STATUS_CONFIG[batch.status as keyof typeof STATUS_CONFIG]
-                  return (
-                    <tr key={batch._id} className="group hover:bg-neutral-50/50 transition-colors">
-                      <td className="px-6 py-5">
-                        <div className="text-sm font-semibold text-gray-900">{batch.sku}</div>
-                        <div className="w-12 mt-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                          <div className="bg-emerald-400 h-full w-3/4 rounded-full"></div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-5">
-                        <div className="text-gray-400 text-sm">
-                          {staffMap[batch.managerResponsibility] || 'Unassigned'}
-                        </div>
-                      </td>
-                      <td className="px-6 py-5 text-center">
-                        <div className="text-gray-900 font-medium">{batch.targetQuantity}</div>
-                      </td>
-                      <td className="px-6 py-5 text-center">
-                        <span
-                          className={cn(
-                            'px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider',
-                            config?.bg || '',
-                            config?.color || ''
-                          )}
-                        >
-                          {config?.label || batch.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-5 text-gray-500">
-                        <div className="flex items-center justify-center gap-1.5">
-                          <IoTimeOutline />
-                          <div className="flex flex-col text-[13px]">
-                            <span>{formatTime(batch.createdAt)}</span>
-                            <span>{formatDate(batch.createdAt)}</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-5">
-                        <div className="flex items-center justify-center gap-3">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            colorScheme="secondary"
-                            className="p-2"
-                            onClick={() => setSelectedDetailId(batch._id)}
-                          >
-                            <IoEyeOutline size={20} />
-                          </Button>
-                          <Button
-                            variant="solid"
-                            colorScheme="primary"
-                            size="sm"
-                            className="text-xs rounded-xl h-8 px-4 font-bold"
-                            rightIcon={<IoChevronForward />}
-                            onClick={() =>
-                              navigate(`/operationstaff/inventory-receiving/${batch._id}`)
-                            }
-                          >
-                            Next
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+            <InventoryTable
+              results={results}
+              staffMap={staffMap}
+              onViewDetail={setSelectedDetailId}
+              onNext={(id) => navigate(`/operationstaff/inventory-receiving/${id}`)}
+            />
           </div>
         )}
       </div>

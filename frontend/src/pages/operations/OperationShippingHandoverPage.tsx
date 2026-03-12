@@ -149,7 +149,7 @@ export default function OperationShippingHandoverPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
-            <IoAirplaneOutline className="text-blue-500" /> Shipping Handover
+            Shipping Handover
           </h1>
           <p className="text-sm text-neutral-500 mt-1 font-medium italic opacity-80 uppercase tracking-widest text-[10px]">
             PREPARE INVOICES FOR DELIVERY

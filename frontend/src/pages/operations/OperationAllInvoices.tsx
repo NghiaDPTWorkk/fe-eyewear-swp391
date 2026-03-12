@@ -87,7 +87,7 @@ export default function OperationAllInvoices() {
         <div className="mb-8">
           <BreadcrumbPath paths={['Dashboard', 'Shipping Handover']} />
           <h1 className="text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
-            <IoAirplaneOutline className="text-mint-600" /> Shipping Handover
+            Shipping Handover
           </h1>
           <p className="text-gray-500 mt-1">Manage invoices ready for shipping and delivery.</p>
         </div>

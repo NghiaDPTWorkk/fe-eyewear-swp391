@@ -42,10 +42,8 @@ const OperationInventoryReceivingPage = lazy(() =>
   import('@/pages/operations/OperationInventoryReceivingPage').then((m) => ({ default: m.default }))
 )
 
-const OperationInventoryViewDetailPage = lazy(() =>
-  import('@/pages/operations/OperationInventoryViewDetailPage').then((m) => ({
-    default: m.default
-  }))
+const OperationInvenProcessPlan = lazy(() =>
+  import('@/pages/operations/OperationInvenProcessPlan').then((m) => ({ default: m.default }))
 )
 
 export const operationRoutes = [
@@ -193,7 +191,7 @@ export const operationRoutes = [
         path: 'inventory-receiving/:receiptId',
         element: (
           <LazyPage>
-            <OperationInventoryViewDetailPage />
+            <OperationInvenProcessPlan />
           </LazyPage>
         )
       }

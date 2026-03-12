@@ -139,6 +139,7 @@ export interface ProductListApiResponse {
 
 export interface ProductDetailData {
   product: Product
+  variant?: Variant
 }
 
 export interface ProductDetailApiResponse {

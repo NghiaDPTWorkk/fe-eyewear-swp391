@@ -21,6 +21,7 @@ import { useAllOrders, useCompletedOrders } from '@/features/staff/hooks/orders/
 import { transformApiOrderToTableOrder } from '@/features/staff/components/order-table/orderTransformers'
 import { useAuthStore } from '@/store/auth.store'
 import { useStaffLayoutProfile } from '@/features/staff/hooks/useStaffLayoutProfile'
+import { OrderType } from '@/shared/utils/enums/order.enum'
 
 export default function OperationLayout() {
   const location = useLocation()
@@ -61,11 +62,16 @@ export default function OperationLayout() {
       // Transform order để nhét vô OrderTable á
       const transformedOrders = apiOrders.map(transformApiOrderToTableOrder)
 
+      // Lọc bỏ đơn WAITING_STOCK của PRE-ORDER theo yêu cầu
+      const filteredOrders = transformedOrders.filter(
+        (o) => !(o.orderType === OrderType.PRE_ORDER && o.currentStatus === 'WAITING_STOCK')
+      )
+
       // Lưu orders vào Zustand store để các trang khác dùng
-      setOrders(transformedOrders)
+      setOrders(filteredOrders)
 
       // Initialize counts vào Zustand store
-      initializeCounts(transformedOrders)
+      initializeCounts(filteredOrders)
     }
     if (isError) {
       console.error('Error when calling API:', error)

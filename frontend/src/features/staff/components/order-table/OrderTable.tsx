@@ -161,12 +161,6 @@ export default function OrderTable({
       headerClassName: isSales ? 'text-center' : ''
     },
     {
-      header: 'WAITING FOR',
-      render: (order) => order.waitingFor || '-',
-      className: 'text-purple-600 font-medium text-center',
-      headerClassName: 'text-center'
-    },
-    {
       header: 'STATUS',
       render: (order) => (
         <span

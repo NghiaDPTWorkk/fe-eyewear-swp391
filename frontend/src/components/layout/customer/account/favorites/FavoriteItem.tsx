@@ -98,7 +98,7 @@ export function FavoriteItem({
               onClick={onAddToCart}
               className="rounded-xl px-10 py-6 bg-white border border-primary-100 text-primary-600 font-bold text-xs uppercase tracking-[0.2em] shadow-sm hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-all flex items-center gap-2"
             >
-              Add to Bag
+              Add to Cart
             </Button>
           </div>
         </div>

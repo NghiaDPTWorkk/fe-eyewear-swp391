@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import type { Column, Order } from './order-table'
+import type { Column, Order } from './OrderTable'
 
 interface OrderHeaderTableProps {
   columns: Column<Order>[]

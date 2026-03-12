@@ -4,9 +4,9 @@ import {
   ProfileForm,
   PasswordForm,
   NotificationPreferences,
-  AccountInfoSidebar
-} from '@/features/staff/components/settings'
-import { PageHeader } from '@/features/staff/components/common'
+  AccountInfoSidebar,
+  PageHeader
+} from '@/features/staff/components'
 
 export default function SaleStaffSettingsPage() {
   return (

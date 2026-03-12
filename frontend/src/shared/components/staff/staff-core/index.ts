@@ -1,5 +1,5 @@
 export * from './sidebar'
-export * from './ordertable'
+export * from './order-table'
 export * from './filter-button-list'
 export * from './metric-card'
 export * from './contact-support-team'

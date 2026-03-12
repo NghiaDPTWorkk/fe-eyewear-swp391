@@ -1,5 +1,5 @@
 import type { OperationOrder } from '@/shared/types/operationOrder.types'
-import type { Order } from './order-table'
+import type { Order } from './OrderTable'
 import { OrderType, OrderStatus } from '@/shared/utils/enums/order.enum'
 
 /**

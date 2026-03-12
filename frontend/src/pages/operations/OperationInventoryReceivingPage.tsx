@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Container, OperationPagination, MetricCard } from '@/components'
+import { Container, OperationPagination, MetricCard, Button } from '@/components'
 import { BreadcrumbPath } from '@/components/layout/staff/operationstaff/breadcrumbpath'
 import { FilterButtonList } from '@/components/staff'
 import {
@@ -24,13 +24,22 @@ import { createPortal } from 'react-dom'
 
 // ─── Detail Modal ────────────────────────────────────────────────
 function DetailModal({ id, onClose }: { id: string; onClose: () => void }) {
+  const navigate = useNavigate()
   const { data, isLoading } = usePreOrderImportDetail(id)
   const detail = data?.data
 
   return createPortal(
-    <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
-      <div className="bg-white rounded-[40px] w-full max-w-xl shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300 border border-slate-100">
-        <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-white">
+    <div className="fixed inset-0 z-[40] flex justify-end overflow-hidden">
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300"
+        onClick={onClose}
+      />
+
+      {/* Drawer Content */}
+      <div className="bg-white h-screen w-full max-w-xl shadow-2xl relative animate-in slide-in-from-right duration-300 border-l border-slate-100 flex flex-col">
+        {/* Header */}
+        <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-white sticky top-0 z-10">
           <div>
             <h3 className="text-2xl font-black text-slate-900 tracking-tight">Batch Information</h3>
             <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">
@@ -45,7 +54,8 @@ function DetailModal({ id, onClose }: { id: string; onClose: () => void }) {
           </button>
         </div>
 
-        <div className="p-8">
+        {/* Scrollable Body */}
+        <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-20 gap-4">
               <div className="w-12 h-12 border-[5px] border-mint-100 border-t-mint-500 rounded-full animate-spin" />
@@ -54,7 +64,7 @@ function DetailModal({ id, onClose }: { id: string; onClose: () => void }) {
               </p>
             </div>
           ) : detail ? (
-            <div className="space-y-8">
+            <>
               <div className="grid grid-cols-2 gap-8">
                 <div className="space-y-2">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">
@@ -137,7 +147,7 @@ function DetailModal({ id, onClose }: { id: string; onClose: () => void }) {
                   <p className="text-xs font-bold text-slate-700">{formatDate(detail.endedDate)}</p>
                 </div>
               </div>
-            </div>
+            </>
           ) : (
             <div className="text-center py-20 text-slate-400 font-bold uppercase tracking-widest text-sm">
               Entity data stream failed.
@@ -145,13 +155,25 @@ function DetailModal({ id, onClose }: { id: string; onClose: () => void }) {
           )}
         </div>
 
-        <div className="p-8 bg-slate-50/50 border-t border-slate-50 flex gap-4">
+        {/* Footer */}
+        <div className="p-8 bg-slate-50/50 border-t border-slate-50 flex gap-4 sticky bottom-0 z-10">
           <button
             onClick={onClose}
-            className="w-full py-4 bg-white border border-slate-200 rounded-2xl text-xs font-black text-slate-800 uppercase tracking-widest hover:bg-slate-100 transition-all active:scale-[0.98]"
+            className="flex-1 py-4 bg-white border border-slate-200 rounded-2xl text-xs font-black text-slate-800 uppercase tracking-widest hover:bg-slate-100 transition-all active:scale-[0.98]"
           >
-            Close Viewer
+            Close
           </button>
+          <Button
+            variant="solid"
+            colorScheme="primary"
+            className="flex-[2] py-4 rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg shadow-mint-100"
+            onClick={() => {
+              navigate(`/operationstaff/inventory-receiving/${id}`)
+              onClose()
+            }}
+          >
+            {detail?.status === 'PENDING' ? 'Receiving Inventory' : 'View Inventory'}
+          </Button>
         </div>
       </div>
     </div>,

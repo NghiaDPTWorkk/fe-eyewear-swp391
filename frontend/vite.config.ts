@@ -36,6 +36,20 @@ export default defineConfig(({ mode }) => {
         '@/pages': path.resolve(__dirname, './src/pages'),
         '@/components': path.resolve(__dirname, './src/components')
       }
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              if (id.includes('react') || id.includes('react-dom')) return 'react-vendor'
+              if (id.includes('react-router')) return 'router'
+              if (id.includes('zustand')) return 'state'
+              return 'vendor'
+            }
+          }
+        }
+      }
     }
   }
 })

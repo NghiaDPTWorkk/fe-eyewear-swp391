@@ -40,13 +40,11 @@ export default defineConfig(({ mode }) => {
     build: {
       rollupOptions: {
         output: {
-          manualChunks(id) {
-            if (id.includes('node_modules')) {
-              if (id.includes('react') || id.includes('react-dom')) return 'react-vendor'
-              if (id.includes('react-router')) return 'router'
-              if (id.includes('zustand')) return 'state'
-              return 'vendor'
-            }
+          // Sử dụng Object thay vì Function để chia chunk chính xác, tránh gom nhầm file
+          manualChunks: {
+            'react-vendor': ['react', 'react-dom'],
+            router: ['react-router', 'react-router-dom'],
+            state: ['zustand']
           }
         }
       }

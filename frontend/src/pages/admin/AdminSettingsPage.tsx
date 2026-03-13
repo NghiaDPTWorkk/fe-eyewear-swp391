@@ -1,5 +1,6 @@
 import { Container } from '@/components'
 import { IoWarningOutline } from 'react-icons/io5'
+import { Link, Outlet, useNavigate } from 'react-router-dom'
 import {
   ProfileForm,
   PasswordForm,
@@ -9,6 +10,8 @@ import {
 import { PageHeader } from '@/features/sales/components/common'
 
 export default function AdminSettingsPage() {
+  const navigate = useNavigate()
+
   return (
     <Container className="pt-2 pb-8 px-2 max-w-none">
       <PageHeader
@@ -16,6 +19,27 @@ export default function AdminSettingsPage() {
         subtitle="Manage your admin account and preferences"
         breadcrumbs={[{ label: 'Home', path: '/admin/dashboard' }, { label: 'Settings' }]}
       />
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <Link
+          to="/admin/dashboard"
+          className="rounded-lg border border-neutral-200 bg-white px-3 py-2 text-xs font-semibold text-neutral-600 transition hover:border-indigo-200 hover:text-indigo-600"
+        >
+          Back to dashboard
+        </Link>
+        <Link
+          to="/admin/profile"
+          className="rounded-lg border border-neutral-200 bg-white px-3 py-2 text-xs font-semibold text-neutral-600 transition hover:border-indigo-200 hover:text-indigo-600"
+        >
+          Admin profile
+        </Link>
+        <button
+          type="button"
+          onClick={() => navigate('/admin/support')}
+          className="rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-indigo-700"
+        >
+          Security support
+        </button>
+      </div>
 
       <div className="mb-8 p-5 bg-indigo-50/50 border border-indigo-100 rounded-2xl flex gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
         <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center shrink-0">
@@ -43,6 +67,10 @@ export default function AdminSettingsPage() {
         <div className="lg:col-span-4">
           <AccountInfoSidebar />
         </div>
+      </div>
+
+      <div className="mt-8 px-4">
+        <Outlet />
       </div>
     </Container>
   )

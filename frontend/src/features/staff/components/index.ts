@@ -15,5 +15,5 @@ export * from './order-details-drawer'
 // Feature Specific Components
 export * from './prescription-verification'
 export * from './return-details'
-export * from './profile'
+export * from './Profile'
 export * from './customer-communication-drawer'

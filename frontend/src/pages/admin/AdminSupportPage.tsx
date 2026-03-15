@@ -6,9 +6,11 @@ import {
   IoMailOutline,
   IoCallOutline
 } from 'react-icons/io5'
+import { Link, Outlet, useNavigate } from 'react-router-dom'
 import { PageHeader } from '@/features/sales/components/common'
 
 export default function AdminSupportPage() {
+  const navigate = useNavigate()
   const guidelines = [
     {
       title: 'System Security',
@@ -85,6 +87,27 @@ export default function AdminSupportPage() {
         subtitle="Important guidelines and system support"
         breadcrumbs={[{ label: 'Dashboard', path: '/admin/dashboard' }, { label: 'Support' }]}
       />
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <Link
+          to="/admin/dashboard"
+          className="rounded-lg border border-neutral-200 bg-white px-3 py-2 text-xs font-semibold text-neutral-600 transition hover:border-indigo-200 hover:text-indigo-600"
+        >
+          Back to dashboard
+        </Link>
+        <Link
+          to="/admin/settings"
+          className="rounded-lg border border-neutral-200 bg-white px-3 py-2 text-xs font-semibold text-neutral-600 transition hover:border-indigo-200 hover:text-indigo-600"
+        >
+          Settings
+        </Link>
+        <button
+          type="button"
+          onClick={() => navigate('/admin/profile')}
+          className="rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-indigo-700"
+        >
+          Admin profile
+        </button>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 px-4">
         <div className="lg:col-span-8 space-y-8">

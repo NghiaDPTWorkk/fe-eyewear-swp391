@@ -36,6 +36,18 @@ export default defineConfig(({ mode }) => {
         '@/pages': path.resolve(__dirname, './src/pages'),
         '@/components': path.resolve(__dirname, './src/components')
       }
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          // Sử dụng Object thay vì Function để chia chunk chính xác, tránh gom nhầm file
+          manualChunks: {
+            'react-vendor': ['react', 'react-dom'],
+            router: ['react-router', 'react-router-dom'],
+            state: ['zustand']
+          }
+        }
+      }
     }
   }
 })

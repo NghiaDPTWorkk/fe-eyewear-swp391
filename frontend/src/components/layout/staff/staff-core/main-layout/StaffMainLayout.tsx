@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import { useLayoutStore } from '@/store/layout.store'
-import { cn } from '@/lib/utils'
+import { cn } from '@/shared/utils'
 import { StaffHeader } from '@/components/layout/staff/staff-core/header'
 
 interface StaffMainLayoutProps {
@@ -26,6 +26,7 @@ export function StaffMainLayout({
   contentMaxWidth
 }: StaffMainLayoutProps) {
   const { sidebarCollapsed, toggleSidebar } = useLayoutStore()
+  const location = useLocation()
 
   return (
     <div className="flex h-screen bg-white overflow-hidden">

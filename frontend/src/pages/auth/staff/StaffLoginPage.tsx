@@ -1,4 +1,5 @@
 import { LoginForm } from '@/components/layout/login-form'
+import LogoEyewearIcon from '@/shared/components/ui-core/logoeyewear/LogoEyewearIcon'
 
 export const StaffLoginPage = () => {
   return (
@@ -8,12 +9,7 @@ export const StaffLoginPage = () => {
         <div className="mx-auto w-full max-w-md">
           {/* Logo */}
           <div className="mb-8 flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary-400 to-primary-600">
-              <svg className="h-6 w-6 text-white" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2L2 7L12 12L22 7L12 2Z" />
-                <path d="M2 17L12 22L22 17" opacity="0.7" />
-              </svg>
-            </div>
+            <LogoEyewearIcon />
             <span className="text-2xl font-bold text-primary-600">Eyewear</span>
           </div>
 

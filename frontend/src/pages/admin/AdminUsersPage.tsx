@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link, Outlet, useNavigate } from 'react-router-dom'
 import { Container } from '@/components'
 import { PageHeader } from '@/features/sales/components/common'
 import { UserTable } from './components/users/UserTable'
@@ -53,6 +54,7 @@ const SummaryCard: React.FC<{
 )
 
 export default function AdminUsersPage() {
+  const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
   const debouncedSearch = useDebounce(searchQuery, 500)
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
@@ -92,6 +94,27 @@ export default function AdminUsersPage() {
           subtitle="Manage all registered customer accounts."
           breadcrumbs={[{ label: 'Dashboard', path: '/admin/dashboard' }, { label: 'Users' }]}
         />
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <Link
+            to="/admin/dashboard"
+            className="rounded-lg border border-neutral-200 bg-white px-3 py-2 text-xs font-semibold text-neutral-600 transition hover:border-indigo-200 hover:text-indigo-600"
+          >
+            Back to dashboard
+          </Link>
+          <Link
+            to="/admin/staff"
+            className="rounded-lg border border-neutral-200 bg-white px-3 py-2 text-xs font-semibold text-neutral-600 transition hover:border-indigo-200 hover:text-indigo-600"
+          >
+            Staff accounts
+          </Link>
+          <button
+            type="button"
+            onClick={() => navigate('/admin/support')}
+            className="rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-indigo-700"
+          >
+            Open support
+          </button>
+        </div>
       </div>
 
       {/* Summary Cards */}
@@ -265,6 +288,10 @@ export default function AdminUsersPage() {
         onClose={() => setSelectedUserId(null)}
         user={selectedUser}
       />
+
+      <div className="px-4">
+        <Outlet />
+      </div>
     </Container>
   )
 }

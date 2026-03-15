@@ -22,3 +22,11 @@ export function formatDate(date: string | Date | undefined | null): string {
     year: 'numeric'
   })
 }
+
+export function formatTime(iso: string) {
+  if (!iso) return 'N/A'
+  return new Date(iso).toLocaleTimeString('vi-VN', {
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+}

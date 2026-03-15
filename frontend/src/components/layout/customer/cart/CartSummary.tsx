@@ -12,6 +12,7 @@ import { PaymentMethodType } from '@/shared/utils/enums/payment.enum'
 import type { Address } from '@/shared/types/address.types'
 import type { CreateInvoiceRequest } from '@/shared/types/invoice.types'
 import type { Voucher } from '@/shared/types/voucher.types'
+import type { CartItem } from '@/shared/types/cart.types'
 
 import { CustomerInfoSection } from './sections/CustomerInfoSection'
 import { ShippingAddressSection } from './sections/ShippingAddressSection'
@@ -21,12 +22,16 @@ import { VoucherSection } from './sections/VoucherSection'
 
 interface CartSummaryProps {
   subtotal: number
+  items?: CartItem[] // Optional: if provided, use these items; otherwise use selected items from store
 }
 
-export const CartSummary = ({ subtotal }: CartSummaryProps) => {
+export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) => {
   const navigate = useNavigate()
   const { user } = useAuth()
-  const { items } = useCartStore()
+  const { items: storeItems } = useCartStore()
+
+  // Use propItems if provided, otherwise filter selected items from store
+  const items = propItems || storeItems.filter((item) => item.selected)
 
   const [customerInfo, setCustomerInfo] = useState({
     fullName: (user as any)?.fullName || user?.name || '',
@@ -165,15 +170,15 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
       return
     }
 
-    const selectedItems = items.filter((item) => item.selected)
-    if (selectedItems.length === 0) {
+    const checkoutItems = items
+    if (checkoutItems.length === 0) {
       toast.error('Giỏ hàng chưa chọn sản phẩm nào')
       return
     }
 
     setIsProcessing(true)
     try {
-      const productsPayload = selectedItems.map((item) => ({
+      const productsPayload = checkoutItems.map((item) => ({
         product: {
           product_id: item.product_id,
           sku: item.sku || ''
@@ -229,13 +234,16 @@ export const CartSummary = ({ subtotal }: CartSummaryProps) => {
       const response = await invoiceService.createInvoice(payload)
       if (response.success) {
         toast.success(response.message || 'Đặt hàng thành công!')
-        const selectedItemsCopy = selectedItems.map((item) => ({ ...item }))
+        const checkoutItemsCopy = checkoutItems.map((item) => ({ ...item }))
         const { clearCart, removeItems, items: currentItems } = useCartStore.getState()
 
-        if (selectedItemsCopy.length === currentItems.length) {
-          await clearCart()
-        } else {
-          await removeItems(selectedItemsCopy)
+        // Only clear/remove from cart if we are NOT in direct checkout mode (propItems is undefined)
+        if (!propItems) {
+          if (checkoutItemsCopy.length === currentItems.length) {
+            await clearCart()
+          } else {
+            await removeItems(checkoutItemsCopy)
+          }
         }
 
         if (paymentMethod === PaymentMethodType.VNPAY) {

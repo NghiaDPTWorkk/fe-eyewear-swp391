@@ -1,374 +1,310 @@
-import { useState, type JSX } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Container } from '@/components'
+import { useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Button, Container, FilterButtonList, MetricCard, OperationPagination } from '@/components'
 import { BreadcrumbPath } from '@/components/layout/staff/operation-staff/breadcrumb-path'
 import {
-  IoArchiveOutline,
-  IoSearchOutline,
-  IoEyeOutline,
-  IoCheckmarkCircleOutline,
   IoTimeOutline,
-  IoCloseCircleOutline,
-  IoFilterOutline,
-  IoPersonOutline,
-  IoCalendarOutline,
-  IoLayersOutline
+  IoCloseOutline,
+  IoStatsChartOutline,
+  IoCheckmarkCircleOutline
 } from 'react-icons/io5'
+import {
+  usePreOrderImports,
+  usePreOrderImportDetail
+} from '@/features/operations/hooks/usePreOrderImports'
+import { cn, formatDate } from '@/shared/utils'
+import STATUS_INVENTORY_PLANNING_CONFIG from '@/shared/utils/enums/inventoryplan.enum'
+import { InventoryTable } from '@/components/layout/staff/operation-staff/inventoryplantable/InventoryTable'
 
-// ─── Types ────────────────────────────────────────────────────────
-export type PreOrderImportStatus = 'PENDING' | 'DONE' | 'CANCELLED'
+import { createPortal } from 'react-dom'
 
-export interface PreOrderImportBatch {
-  _id: string
-  sku: string
-  description: string
-  targetDate: string
-  targetQuantity: number
-  preOrderedQuantity: number
-  managerResponsibility: string
-  startedDate: string
-  endedDate: string
-  status: PreOrderImportStatus
-  createdAt: string
-  updatedAt: string
-}
-
-// ─── Hardcoded mock data ──────────────────────────────────────────
-const MOCK_BATCHES: PreOrderImportBatch[] = [
-  {
-    _id: '699fb913c23363fb666a30a7',
-    sku: 'FRAME-011-02',
-    description: 'Import frame FRAME-011-02',
-    targetDate: '2026-04-01T00:00:00.000Z',
-    targetQuantity: 100,
-    preOrderedQuantity: 4,
-    managerResponsibility: 'Nguyen Van An',
-    startedDate: '2026-02-01T00:00:00.000Z',
-    endedDate: '2026-03-28T23:59:59.999Z',
-    status: 'PENDING',
-    createdAt: '2026-02-26T03:08:03.723Z',
-    updatedAt: '2026-02-26T03:09:23.580Z'
-  },
-  {
-    _id: '699fb913c23363fb666a30b1',
-    sku: 'LENS-BL-001',
-    description: 'Import blue light lens batch Q1',
-    targetDate: '2026-03-20T00:00:00.000Z',
-    targetQuantity: 200,
-    preOrderedQuantity: 120,
-    managerResponsibility: 'Tran Thi Mai',
-    startedDate: '2026-01-15T00:00:00.000Z',
-    endedDate: '2026-03-15T23:59:59.999Z',
-    status: 'DONE',
-    createdAt: '2026-01-15T08:00:00.000Z',
-    updatedAt: '2026-03-15T10:30:00.000Z'
-  },
-  {
-    _id: '699fb913c23363fb666a30c2',
-    sku: 'SG-OV-2001',
-    description: 'Import sunglasses OpticView Sport Wrap',
-    targetDate: '2026-05-01T00:00:00.000Z',
-    targetQuantity: 50,
-    preOrderedQuantity: 18,
-    managerResponsibility: 'Le Minh Duc',
-    startedDate: '2026-03-01T00:00:00.000Z',
-    endedDate: '2026-04-25T23:59:59.999Z',
-    status: 'PENDING',
-    createdAt: '2026-03-01T09:00:00.000Z',
-    updatedAt: '2026-03-01T09:00:00.000Z'
-  },
-  {
-    _id: '699fb913c23363fb666a30d3',
-    sku: 'FRAME-TN-001',
-    description: 'Import titanium slim frame – matte black',
-    targetDate: '2026-02-28T00:00:00.000Z',
-    targetQuantity: 80,
-    preOrderedQuantity: 0,
-    managerResponsibility: 'Pham Quoc Bao',
-    startedDate: '2026-01-10T00:00:00.000Z',
-    endedDate: '2026-02-25T23:59:59.999Z',
-    status: 'CANCELLED',
-    createdAt: '2026-01-10T07:00:00.000Z',
-    updatedAt: '2026-02-20T14:00:00.000Z'
-  },
-  {
-    _id: '699fb913c23363fb666a30e4',
-    sku: 'LENS-PR-002',
-    description: 'Import progressive lens 1.67 transition batch',
-    targetDate: '2026-04-15T00:00:00.000Z',
-    targetQuantity: 60,
-    preOrderedQuantity: 35,
-    managerResponsibility: 'Nguyen Van An',
-    startedDate: '2026-02-20T00:00:00.000Z',
-    endedDate: '2026-04-10T23:59:59.999Z',
-    status: 'PENDING',
-    createdAt: '2026-02-20T08:30:00.000Z',
-    updatedAt: '2026-03-04T11:20:00.000Z'
-  },
-  {
-    _id: '699fb913c23363fb666a30f5',
-    sku: 'FRAME-AC-002',
-    description: 'Import acetate square frame – tortoise',
-    targetDate: '2026-03-10T00:00:00.000Z',
-    targetQuantity: 120,
-    preOrderedQuantity: 120,
-    managerResponsibility: 'Tran Thi Mai',
-    startedDate: '2026-01-20T00:00:00.000Z',
-    endedDate: '2026-03-08T23:59:59.999Z',
-    status: 'DONE',
-    createdAt: '2026-01-20T09:15:00.000Z',
-    updatedAt: '2026-03-08T16:45:00.000Z'
-  }
-]
-
-// ─── Status config ────────────────────────────────────────────────
-const STATUS_CONFIG: Record<
-  PreOrderImportStatus,
-  { label: string; color: string; bg: string; icon: JSX.Element }
-> = {
-  PENDING: {
-    label: 'Pending',
-    color: 'text-amber-700',
-    bg: 'bg-amber-50 border-amber-200',
-    icon: <IoTimeOutline size={13} />
-  },
-  DONE: {
-    label: 'Done',
-    color: 'text-emerald-700',
-    bg: 'bg-emerald-50 border-emerald-200',
-    icon: <IoCheckmarkCircleOutline size={13} />
-  },
-  CANCELLED: {
-    label: 'Cancelled',
-    color: 'text-red-700',
-    bg: 'bg-red-50 border-red-200',
-    icon: <IoCloseCircleOutline size={13} />
-  }
-}
-
-const STATUS_FILTERS = [
-  { label: 'All', value: 'all' },
-  { label: 'Pending', value: 'PENDING' },
-  { label: 'Done', value: 'DONE' },
-  { label: 'Cancelled', value: 'CANCELLED' }
-]
-
-// ─── Helpers ──────────────────────────────────────────────────────
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('vi-VN', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  })
-}
-
-// ─── Component ────────────────────────────────────────────────────
-export default function OperationInventoryReceivingPage() {
+// ─── Detail Modal ────────────────────────────────────────────────
+function DetailModal({ id, onClose }: { id: string; onClose: () => void }) {
   const navigate = useNavigate()
-  const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState<string>('all')
+  const { data, isLoading } = usePreOrderImportDetail(id)
+  const detail = data?.data
 
-  const filtered = MOCK_BATCHES.filter((b) => {
-    const matchStatus = statusFilter === 'all' || b.status === statusFilter
-    const q = search.toLowerCase()
-    const matchSearch =
-      !q ||
-      b.sku.toLowerCase().includes(q) ||
-      b.managerResponsibility.toLowerCase().includes(q) ||
-      b.description.toLowerCase().includes(q)
-    return matchStatus && matchSearch
-  })
+  return createPortal(
+    <div className="fixed inset-0 z-[40] flex justify-end overflow-hidden">
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300"
+        onClick={onClose}
+      />
 
-  const counts = {
-    all: MOCK_BATCHES.length,
-    PENDING: MOCK_BATCHES.filter((b) => b.status === 'PENDING').length,
-    DONE: MOCK_BATCHES.filter((b) => b.status === 'DONE').length,
-    CANCELLED: MOCK_BATCHES.filter((b) => b.status === 'CANCELLED').length
-  }
-
-  return (
-    <Container className="animate-fade-in-up">
-      <BreadcrumbPath paths={['Dashboard', 'Inventory Receiving']} />
-
-      {/* ── Header ── */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
-            <IoArchiveOutline className="text-mint-500" />
-            Inventory Receiving
-          </h1>
-          <p className="text-sm text-neutral-500 mt-1">
-            Track pre-order import batches and their receiving status.
-          </p>
-        </div>
-        <div className="px-5 py-2 bg-mint-50 border border-mint-200 text-mint-700 rounded-full text-xs font-bold uppercase tracking-widest">
-          {counts.all} Batches
-        </div>
-      </div>
-
-      {/* ── Filters row ── */}
-      <div className="flex flex-wrap items-center gap-3 mb-6">
-        {/* Search */}
-        <div className="relative flex-1 min-w-[220px] max-w-sm">
-          <IoSearchOutline
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
-            size={18}
-          />
-          <input
-            type="text"
-            placeholder="Search SKU, manager or description..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-neutral-200 bg-white text-sm text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-mint-300/50 focus:border-mint-400 transition"
-          />
-        </div>
-
-        {/* Status filter pills */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <IoFilterOutline className="text-neutral-400" size={16} />
-          {STATUS_FILTERS.map((f) => {
-            const cnt = f.value === 'all' ? counts.all : counts[f.value as PreOrderImportStatus]
-            const active = statusFilter === f.value
-            return (
-              <button
-                key={f.value}
-                onClick={() => setStatusFilter(f.value)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all ${
-                  active
-                    ? 'bg-mint-500 border-mint-500 text-white shadow-sm shadow-mint-200'
-                    : 'bg-white border-neutral-200 text-neutral-600 hover:border-mint-300 hover:text-mint-600'
-                }`}
-              >
-                {f.label}
-                <span
-                  className={`ml-1.5 px-1.5 py-0.5 rounded-full text-[10px] font-bold ${active ? 'bg-white/25 text-white' : 'bg-neutral-100 text-neutral-500'}`}
-                >
-                  {cnt}
-                </span>
-              </button>
-            )
-          })}
-        </div>
-      </div>
-
-      {/* ── Table ── */}
-      <div className="bg-white rounded-xl shadow-sm border border-neutral-100 overflow-hidden">
-        {/* Table header */}
-        <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-neutral-50 border-b border-neutral-100 text-[11px] font-bold text-neutral-500 uppercase tracking-widest">
-          <div className="col-span-3 flex items-center gap-1.5">
-            <IoLayersOutline size={13} /> SKU
+      {/* Drawer Content */}
+      <div className="bg-white h-screen w-full max-w-xl shadow-2xl relative animate-in slide-in-from-right duration-300 border-l border-slate-100 flex flex-col">
+        {/* Header */}
+        <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-white sticky top-0 z-10">
+          <div>
+            <h3 className="text-2xl font-black text-slate-900 tracking-tight">Batch Information</h3>
+            <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">
+              Full detailed overview of pre-order batch
+            </p>
           </div>
-          <div className="col-span-2 text-center">Pre-Ordered Qty</div>
-          <div className="col-span-3 flex items-center gap-1.5">
-            <IoPersonOutline size={13} /> Manager
-          </div>
-          <div className="col-span-2 flex items-center gap-1.5">
-            <IoCalendarOutline size={13} /> Started Date
-          </div>
-          <div className="col-span-1 text-center">Status</div>
-          <div className="col-span-1 text-center">Detail</div>
+          <button
+            onClick={onClose}
+            className="p-3 bg-slate-50 hover:bg-red-50 hover:text-red-500 rounded-2xl transition-all text-slate-400"
+          >
+            <IoCloseOutline size={28} />
+          </button>
         </div>
 
-        {/* Rows */}
-        {filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-3">
-            <IoArchiveOutline className="text-neutral-300" size={40} />
-            <p className="text-sm font-semibold text-neutral-500">No batches found</p>
-            <p className="text-xs text-neutral-400">Try adjusting your filters or search term.</p>
-          </div>
-        ) : (
-          filtered.map((batch, idx) => {
-            const st = STATUS_CONFIG[batch.status]
-            const fillPct =
-              batch.targetQuantity > 0 ? (batch.preOrderedQuantity / batch.targetQuantity) * 100 : 0
-            return (
-              <div
-                key={batch._id}
-                className={`grid grid-cols-12 gap-4 px-6 py-4 items-center transition-colors hover:bg-mint-50/40 ${
-                  idx !== filtered.length - 1 ? 'border-b border-neutral-50' : ''
-                }`}
-              >
-                {/* SKU */}
-                <div className="col-span-3">
-                  <span className="font-mono text-sm font-bold text-neutral-800 bg-neutral-100 px-2 py-0.5 rounded">
-                    {batch.sku}
-                  </span>
-                </div>
-
-                {/* Pre-Ordered Qty + mini progress */}
-                <div className="col-span-2 flex flex-col items-center gap-1">
-                  <span className="text-sm font-bold text-neutral-800">
-                    {batch.preOrderedQuantity}
-                    <span className="text-xs text-neutral-400 font-normal">
-                      /{batch.targetQuantity}
-                    </span>
-                  </span>
-                  <div className="w-full h-1.5 bg-neutral-100 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all ${
-                        batch.status === 'CANCELLED'
-                          ? 'bg-red-300'
-                          : fillPct >= 100
-                            ? 'bg-emerald-400'
-                            : 'bg-mint-400'
-                      }`}
-                      style={{ width: `${Math.min(fillPct, 100)}%` }}
-                    />
+        {/* Scrollable Body */}
+        <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-20 gap-4">
+              <div className="w-12 h-12 border-[5px] border-mint-100 border-t-mint-500 rounded-full animate-spin" />
+              <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em]">
+                Synchronizing Data
+              </p>
+            </div>
+          ) : detail ? (
+            <>
+              <div className="grid grid-cols-2 gap-8">
+                <div className="space-y-2">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">
+                    Product SKU
+                  </p>
+                  <div className="bg-slate-50 border border-slate-100 px-4 py-3 rounded-2xl">
+                    <p className="text-sm font-mono font-black text-slate-900">{detail.sku}</p>
                   </div>
                 </div>
-
-                {/* Manager */}
-                <div className="col-span-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-full bg-mint-100 flex items-center justify-center flex-shrink-0">
-                      <span className="text-[10px] font-bold text-mint-700 uppercase">
-                        {batch.managerResponsibility
-                          .split(' ')
-                          .map((w) => w[0])
-                          .join('')
-                          .slice(0, 2)}
-                      </span>
-                    </div>
+                <div className="space-y-2">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">
+                    Status
+                  </p>
+                  <div
+                    className={`px-4 py-3 rounded-2xl border ${STATUS_INVENTORY_PLANNING_CONFIG[detail.status as keyof typeof STATUS_INVENTORY_PLANNING_CONFIG]?.bg || ''}`}
+                  >
                     <span
-                      className="text-sm text-neutral-700 truncate"
-                      title={batch.managerResponsibility}
+                      className={cn(
+                        'text-[11px] font-black uppercase tracking-widest flex items-center gap-2',
+                        STATUS_INVENTORY_PLANNING_CONFIG[
+                          detail.status as keyof typeof STATUS_INVENTORY_PLANNING_CONFIG
+                        ]?.color || ''
+                      )}
                     >
-                      {batch.managerResponsibility}
+                      {detail.status}
                     </span>
                   </div>
-                </div>
-
-                {/* Started Date */}
-                <div className="col-span-2">
-                  <p className="text-sm text-neutral-600">{formatDate(batch.startedDate)}</p>
-                  <p className="text-xs text-neutral-400 mt-0.5">→ {formatDate(batch.endedDate)}</p>
-                </div>
-
-                {/* Status badge */}
-                <div className="col-span-1 flex justify-center">
-                  <span
-                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border ${st.bg} ${st.color}`}
-                  >
-                    {st.icon}
-                    {st.label}
-                  </span>
-                </div>
-
-                {/* View detail */}
-                <div className="col-span-1 flex justify-center">
-                  <button
-                    onClick={() => navigate(`/operation-staff/inventory-receiving/${batch._id}`)}
-                    className="p-2 rounded-lg text-neutral-400 hover:text-mint-600 hover:bg-mint-50 transition-colors"
-                    title="View detail"
-                  >
-                    <IoEyeOutline size={18} />
-                  </button>
                 </div>
               </div>
-            )
-          })
+
+              <div className="space-y-2">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">
+                  Batch Description
+                </p>
+                <div className="bg-slate-50 p-5 rounded-3xl border border-slate-100 min-h-[80px]">
+                  <p className="text-sm text-slate-600 font-medium leading-relaxed italic">
+                    {detail.description || 'No additional information available for this batch.'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-8">
+                <div className="bg-white border-2 border-slate-50 p-6 rounded-[32px] flex flex-col gap-1">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    Expected Goal
+                  </p>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-3xl font-black text-slate-900">
+                      {detail.targetQuantity}
+                    </span>
+                    <span className="text-xs font-bold text-slate-400 uppercase">units</span>
+                  </div>
+                </div>
+                <div className="bg-mint-50 border border-mint-100 p-6 rounded-[32px] flex flex-col gap-1">
+                  <p className="text-[10px] font-black text-mint-600 uppercase tracking-widest">
+                    Pre-Ordered
+                  </p>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-3xl font-black text-mint-600">
+                      {detail.preOrderedQuantity}
+                    </span>
+                    <span className="text-xs font-bold text-mint-400 uppercase">units</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                <div className="flex-1 space-y-1 text-center border-r border-slate-200">
+                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                    Started from
+                  </p>
+                  <p className="text-xs font-bold text-slate-700">
+                    {formatDate(detail.startedDate)}
+                  </p>
+                </div>
+                <div className="flex-1 space-y-1 text-center">
+                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                    Estimated end
+                  </p>
+                  <p className="text-xs font-bold text-slate-700">{formatDate(detail.endedDate)}</p>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-20 text-slate-400 font-bold uppercase tracking-widest text-sm">
+              Entity data stream failed.
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="p-8 bg-slate-50/50 border-t border-slate-50 flex gap-4 sticky bottom-0 z-10">
+          <Button
+            variant="solid"
+            colorScheme="primary"
+            className="flex-[2] py-4 rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg shadow-mint-100"
+            onClick={() => {
+              navigate(`/operation-staff/inventory-receiving/${id}`)
+              onClose()
+            }}
+          >
+            {detail?.status === 'PENDING' ? 'Receiving Inventory' : 'View Inventory'}
+          </Button>
+        </div>
+      </div>
+    </div>,
+    document.body
+  )
+}
+
+// ─── Main Page Component ──────────────────────────────────────────
+export default function OperationInventoryReceivingPage() {
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const filter = searchParams.get('filter') ?? 'all'
+  const [currentPage, setCurrentPage] = useState(1)
+  const [limit] = useState(10)
+
+  const [selectedDetailId, setSelectedDetailId] = useState<string | null>(null)
+
+  // Fetch Imports
+  const { data, isLoading, isError } = usePreOrderImports({
+    page: currentPage,
+    limit,
+    status: filter === 'all' ? ['PENDING', 'DONE'] : [filter]
+  })
+
+  // Fetch all for counts
+  const { data: allData, isLoading: isLoadingCounts } = usePreOrderImports({
+    page: 1,
+    limit: 1000,
+    status: ['PENDING', 'DONE']
+  })
+  const allBatches = allData?.data?.preOrderImports || []
+  const results = data?.data?.preOrderImports || []
+  const pagination = data?.data?.pagination
+
+  const setFilter = (value: string) => {
+    setCurrentPage(1)
+    if (value === 'all') setSearchParams({})
+    else setSearchParams({ filter: value })
+  }
+
+  const filterButtons = [
+    { label: 'All', count: allBatches.length, value: 'all' },
+    {
+      label: 'Pending',
+      count: allBatches.filter((b) => b.status === 'PENDING').length,
+      value: 'PENDING'
+    },
+    {
+      label: 'Completed',
+      count: allBatches.filter((b) => b.status === 'DONE').length,
+      value: 'DONE'
+    }
+  ]
+
+  return (
+    <Container>
+      {/* Header */}
+      <div className="mb-8">
+        <BreadcrumbPath paths={['Dashboard', 'Inventory Receiving']} />
+        <h1 className="text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
+          Inventory Receiving
+        </h1>
+        <p className="text-gray-500 mt-1">
+          Manage and track pre-order import batches for efficient stock replenishment.
+        </p>
+      </div>
+
+      {/* Metrics Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+        <MetricCard
+          label="TOTAL BATCHES"
+          value={isLoadingCounts ? '...' : allBatches.length}
+          icon={<IoStatsChartOutline size={22} />}
+          colorScheme="mint"
+          subValue="All active and completed batches"
+        />
+        <MetricCard
+          label="PENDING IMPORT"
+          value={isLoadingCounts ? '...' : allBatches.filter((b) => b.status === 'PENDING').length}
+          icon={<IoTimeOutline size={22} />}
+          colorScheme="warning"
+          subValue="Awaiting warehouse processing"
+        />
+        <MetricCard
+          label="DONE / COMPLETED"
+          value={isLoadingCounts ? '...' : allBatches.filter((b) => b.status === 'DONE').length}
+          icon={<IoCheckmarkCircleOutline size={22} />}
+          colorScheme="success"
+          subValue="Successfully received and stocked"
+        />
+      </div>
+
+      <FilterButtonList
+        buttons={filterButtons}
+        selectedValue={filter}
+        onChange={setFilter}
+        className="mb-6"
+      />
+
+      <div className="bg-white rounded-lg shadow-sm border border-neutral-100 overflow-hidden">
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-20 gap-4">
+            <div className="relative">
+              <div className="w-14 h-14 rounded-full border-4 border-neutral-100" />
+              <div className="absolute inset-0 w-14 h-14 rounded-full border-4 border-t-mint-500 animate-spin" />
+            </div>
+            <p className="text-sm font-semibold text-neutral-700">Loading receiving plans...</p>
+          </div>
+        ) : isError ? (
+          <div className="flex flex-col items-center justify-center py-20 gap-4 text-red-500 font-semibold">
+            Failed to load data.
+          </div>
+        ) : results.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 gap-4 text-neutral-400">
+            No receiving plans found.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <InventoryTable
+              results={results}
+              onViewDetail={setSelectedDetailId}
+              onNext={(id) => navigate(`/operation-staff/inventory-receiving/${id}`)}
+            />
+          </div>
         )}
       </div>
+
+      {pagination && pagination.totalPages > 1 && (
+        <OperationPagination
+          page={currentPage}
+          totalPages={pagination.totalPages}
+          total={pagination.total}
+          limit={limit}
+          itemsOnPage={results.length}
+          onPageChange={setCurrentPage}
+        />
+      )}
+
+      {selectedDetailId && (
+        <DetailModal id={selectedDetailId} onClose={() => setSelectedDetailId(null)} />
+      )}
     </Container>
   )
 }

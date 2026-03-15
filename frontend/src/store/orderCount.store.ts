@@ -10,6 +10,7 @@ interface OrderCountStore {
     all: number
     completed: number
     assigned: number // Số đơn có status ASSIGNED
+    normal: number // Số đơn loại NORMAL
   }
   orders: Order[] // Lưu toàn bộ orders từ API
   setOrders: (orders: Order[]) => void // Action để set orders
@@ -33,7 +34,8 @@ export const useOrderCountStore = create<OrderCountStore>((set) => ({
     packing: 0,
     all: 0,
     completed: 0,
-    assigned: 0
+    assigned: 0,
+    normal: 0
   },
 
   orders: [],
@@ -59,11 +61,14 @@ export const useOrderCountStore = create<OrderCountStore>((set) => ({
     const technical = orders.filter(
       (o) => o.orderType === OrderType.MANUFACTURING && o.currentStatus === OrderStatus.MAKING
     ).length
-    const logistics = orders.filter((o) => o.orderType === OrderType.PRE_ORDER).length
+    const logistics = orders.filter(
+      (o) => o.orderType === OrderType.PRE_ORDER && o.currentStatus !== 'WAITING_STOCK'
+    ).length
     // const all = orders.length
     // const completed = orders.filter((o) => o.currentStatus === OrderStatus.COMPLETED).length
     const packing = orders.filter((o) => o.currentStatus === OrderStatus.PACKAGING).length
     const assigned = orders.filter((o) => o.currentStatus === OrderStatus.ASSIGNED).length
+    const normal = orders.filter((o) => o.orderType === OrderType.NORMAL).length
 
     set((state) => ({
       counts: {
@@ -72,7 +77,8 @@ export const useOrderCountStore = create<OrderCountStore>((set) => ({
         packing,
         all: orders.length,
         completed: state.counts.completed, //  Giữ nguyên giá trị completed hiện tại
-        assigned
+        assigned,
+        normal
       }
     }))
   },
@@ -84,7 +90,8 @@ export const useOrderCountStore = create<OrderCountStore>((set) => ({
         packing: 0,
         all: 0,
         completed: 0,
-        assigned: 0
+        assigned: 0,
+        normal: 0
       }
     })
 }))

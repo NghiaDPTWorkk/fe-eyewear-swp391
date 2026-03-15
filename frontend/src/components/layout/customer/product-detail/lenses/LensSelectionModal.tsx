@@ -62,8 +62,14 @@ export default function LensSelectionModal({
     }
   }
 
-  const handleLensSelect = (lensId: string, lensSku: string, price: number) => {
-    setState((prev) => ({ ...prev, lensId, sku: lensSku, lensPrice: price }))
+  const handleLensSelect = (
+    lensId: string,
+    lensSku: string,
+    price: number,
+    name?: string,
+    image?: string
+  ) => {
+    setState((prev) => ({ ...prev, lensId, sku: lensSku, lensPrice: price, name, image }))
     setStep('PRESCRIPTION_OPTION')
   }
 

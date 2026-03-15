@@ -6,12 +6,15 @@ import {
   Truck,
   ShieldCheck,
   RotateCcw,
-  PenTool
+  PenTool,
+  Zap
 } from 'lucide-react'
 import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 import { useState } from 'react'
 import type { Product, StandardProduct } from '@/shared/types/product.types'
-import { useCartStore, useAuthStore, useWishlistStore } from '@/store'
+import type { CartItem } from '@/shared/types/cart.types'
+import { PATHS } from '@/routes/paths'
+import { useCartStore, useAuthStore, useWishlistStore, useChatStore } from '@/store'
 import { toast } from 'react-hot-toast'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Button } from '@/shared/components/ui'
@@ -55,10 +58,13 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
   const location = useLocation()
   const [isLensModalOpen, setIsLensModalOpen] = useState(false)
   const [isTryOnOpen, setIsTryOnOpen] = useState(false)
+  const [purchaseMode, setPurchaseMode] = useState<'cart' | 'buy_now'>('cart')
+  const sendMessage = useChatStore((state) => state.sendMessage)
 
   const isFavorite = isInWishlist(productId)
 
   const handleAddToCart = () => {
+    setPurchaseMode('cart')
     // Check for token in both possible localStorage keys
     const token = localStorage.getItem('accessToken') || localStorage.getItem('access_token')
     const isAuth = isAuthenticated && token
@@ -77,17 +83,39 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
     }
 
     // Sunglass or default frame path
-    performAddToCart()
+    performAction()
+  }
+
+  const handleBuyNow = () => {
+    // Check for token in both possible localStorage keys
+    const token = localStorage.getItem('accessToken') || localStorage.getItem('access_token')
+    const isAuth = isAuthenticated && token
+
+    if (!isAuth) {
+      toast.error('Please login to purchase')
+      navigate('/login', { state: { from: location } })
+      return
+    }
+
+    setPurchaseMode('buy_now')
+    const type = product.type || 'frame'
+
+    if (type === 'frame') {
+      setIsLensModalOpen(true)
+      return
+    }
+
+    performAction()
   }
 
   const handleLensConfirm = (selection: LensSelectionState) => {
-    performAddToCart({
+    performAction({
       ...selection,
       sku: selection.sku
     })
   }
 
-  const performAddToCart = async (lensSelection?: LensSelectionState) => {
+  const performAction = async (lensSelection?: LensSelectionState) => {
     // Validation: Check if variant is selected and in stock
     if (!currentVariant) {
       toast.error('Please select a valid product variant')
@@ -104,41 +132,93 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
     const finalProductId = product.id || productId
 
     if (!finalProductId) {
-      toast.error('Unable to add to cart: Product ID not found')
+      toast.error('Unable to proceed: Product ID not found')
       return
     }
 
     if (!currentVariant.sku) {
-      toast.error('Unable to add to cart: SKU not found for this variant')
+      toast.error('Unable to proceed: SKU not found for this variant')
       return
     }
 
-    try {
-      // Call async add to cart with API integration
-      await addItemAsync(finalProductId, currentVariant.sku, 1, lensSelection)
+    if (purchaseMode === 'cart') {
+      try {
+        // Call async add to cart with API integration
+        await addItemAsync(finalProductId, currentVariant.sku, 1, lensSelection)
 
-      // Show success message
-      const actionLabel = isPreOrder ? 'Pre-ordered' : 'added to cart'
-      if (lensSelection) {
-        toast.success(`${product.nameBase} with ${lensSelection.visionNeed} lenses ${actionLabel}!`)
-      } else {
-        toast.success(`${currentVariant.name} ${actionLabel}!`)
+        // Show success message
+        const actionLabel = isPreOrder ? 'Pre-ordered' : 'added to cart'
+        if (lensSelection) {
+          toast.success(
+            `${product.nameBase} with ${lensSelection.visionNeed} lenses ${actionLabel}!`
+          )
+        } else {
+          toast.success(`${currentVariant.name} ${actionLabel}!`)
+        }
+
+        // Close lens modal if open
+        if (isLensModalOpen) {
+          setIsLensModalOpen(false)
+        }
+      } catch (error) {
+        // Handle specific errors
+        const err = error as Error
+        if (err.message === 'UNAUTHORIZED') {
+          toast.error('Please login to add items to cart')
+          navigate('/login', { state: { from: location } })
+        } else {
+          toast.error(err.message || 'Failed to add item to cart')
+        }
+      }
+    } else {
+      // Direct buy flow: redirect to checkout with item data
+      const itemToBuy: CartItem = {
+        product_id: finalProductId,
+        sku: currentVariant.sku || '',
+        quantity: 1,
+        name: product.nameBase,
+        price: finalPrice,
+        image: currentVariant.imgs?.[1] || images[1] || '',
+        addAt: new Date(),
+        selected: true,
+        productType: product.type,
+        selectedOptions: selectedOptions,
+        lens: lensSelection
+          ? {
+              lensId: lensSelection.lensId || undefined,
+              sku: lensSelection.sku || undefined,
+              visionNeed: lensSelection.visionNeed || 'non-prescription',
+              prescription: lensSelection.prescription,
+              name: lensSelection.name,
+              price: lensSelection.lensPrice || 0,
+              image: lensSelection.image
+            }
+          : undefined
       }
 
       // Close lens modal if open
       if (isLensModalOpen) {
         setIsLensModalOpen(false)
       }
-    } catch (error) {
-      // Handle specific errors
-      const err = error as Error
-      if (err.message === 'UNAUTHORIZED') {
-        toast.error('Please login to add items to cart')
-        navigate('/login', { state: { from: location } })
-      } else {
-        toast.error(err.message || 'Failed to add item to cart')
-      }
+
+      navigate(PATHS.CHECKOUT, { state: { item: itemToBuy } })
     }
+  }
+
+  const handleChatWithExpert = () => {
+    // Check authentication first
+    const token = localStorage.getItem('accessToken') || localStorage.getItem('access_token')
+    const isAuth = isAuthenticated && token
+
+    if (!isAuth) {
+      toast.error('Please login to chat with an expert')
+      navigate('/login', { state: { from: location } })
+      return
+    }
+
+    const productUrl = `${window.location.origin}/products/${product.id || productId}`
+    const message = `I'm interested in this product: ${product.nameBase}. Can you tell me more about it? ${productUrl}`
+    sendMessage(message)
   }
 
   const handleToggleWishlist = async () => {
@@ -372,6 +452,17 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
                     : 'Add to Cart'}
         </Button>
         <Button
+          onClick={handleBuyNow}
+          size="lg"
+          variant="outline"
+          isFullWidth
+          disabled={!isValidCombination || !isInStock}
+          className="h-16 rounded-2xl border-2 border-primary-500 text-primary-600 hover:bg-primary-50 font-bold"
+          leftIcon={<Zap className="w-6 h-6" />}
+        >
+          Buy It Now
+        </Button>
+        <Button
           variant="outline"
           size="lg"
           isFullWidth
@@ -384,7 +475,10 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
         </Button>
       </div>
 
-      <button className="flex items-center justify-center gap-2 text-primary-500 font-bold mb-12 hover:underline group transition-all">
+      <button
+        onClick={handleChatWithExpert}
+        className="flex items-center justify-center gap-2 text-primary-500 font-bold mb-12 hover:underline group transition-all"
+      >
         <MessageCircle className="w-5 h-5 group-hover:scale-110 transition-transform" />
         Chat with an Expert about this frame
       </button>

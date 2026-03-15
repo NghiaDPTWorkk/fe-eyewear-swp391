@@ -1,11 +1,12 @@
 import Header from '@/shared/components/ui/header/Header'
 import { Input } from '@/components'
-import { Search, ShoppingCart, User, X, Glasses, Heart } from 'lucide-react'
+import { Search, ShoppingCart, User, X, Heart } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useCartStore, useAuthStore } from '@/store'
 
 import { ProfileDropdown as ProjectProfileDropdown } from './ProfileDropdown'
+import LogoEyewearIcon from '@/shared/components/ui-core/logoeyewear/LogoEyewearIcon'
 
 export default function CustomerHeader() {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false)
@@ -82,9 +83,10 @@ export default function CustomerHeader() {
       containerWidth="1200px"
       logo={
         <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
-          <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-md">
-            <Glasses className="w-6 h-6 text-white" />
-          </div>
+          <LogoEyewearIcon
+            className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl shadow-md"
+            iconClassName="w-7 h-7 text-white"
+          />
           <span className="text-2xl font-heading font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent">
             Eyewear
           </span>

@@ -10,4 +10,6 @@ export interface LensSelectionState {
   lensPrice: number | null
   prescription: PrescriptionData | null
   useSavedPrescription: boolean
+  name?: string
+  image?: string
 }

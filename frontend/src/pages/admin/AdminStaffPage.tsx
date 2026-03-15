@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Link, Outlet, useNavigate } from 'react-router-dom'
 import { Form, Formik, type FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -330,6 +331,7 @@ function CreateStaffModal({ open, onClose, onSubmit, isSubmitting }: CreateStaff
 }
 
 export default function AdminStaffPage() {
+  const navigate = useNavigate()
   const queryClient = useQueryClient()
 
   const [searchQuery, setSearchQuery] = useState('')
@@ -458,6 +460,27 @@ export default function AdminStaffPage() {
             { label: 'Staff Accounts' }
           ]}
         />
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <Link
+            to="/admin/dashboard"
+            className="rounded-lg border border-neutral-200 bg-white px-3 py-2 text-xs font-semibold text-neutral-600 transition hover:border-indigo-200 hover:text-indigo-600"
+          >
+            Back to dashboard
+          </Link>
+          <Link
+            to="/admin/users"
+            className="rounded-lg border border-neutral-200 bg-white px-3 py-2 text-xs font-semibold text-neutral-600 transition hover:border-indigo-200 hover:text-indigo-600"
+          >
+            User directory
+          </Link>
+          <button
+            type="button"
+            onClick={() => navigate('/admin/settings')}
+            className="rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-indigo-700"
+          >
+            Staff settings
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 px-4">
@@ -607,6 +630,10 @@ export default function AdminStaffPage() {
         onSubmit={handleSubmitCreate}
         isSubmitting={createMutation.isPending}
       />
+
+      <div className="px-4">
+        <Outlet />
+      </div>
     </Container>
   )
 }

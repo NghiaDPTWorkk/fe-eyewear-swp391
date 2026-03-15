@@ -144,7 +144,7 @@ export const VoucherSection = ({
                           : 'border-mint-100 bg-mint-50/30 opacity-70 cursor-not-allowed'
                     }`}
                   >
-                    {/* Ticket notches */}
+                    {}
                     <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-mint-50 rounded-full border-r-2 border-inherit" />
                     <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-mint-50 rounded-full border-l-2 border-inherit" />
 

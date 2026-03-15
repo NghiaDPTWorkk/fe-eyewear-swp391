@@ -1,7 +1,8 @@
-import { LoginForm } from '@/components/layout/login-form'
+import { LoginForm } from '@/components/layout/login-form/LoginForm'
+import { UserRole } from '@/shared/constants/user-role'
 import LogoEyewearIcon from '@/shared/components/ui/logoeyewear/LogoEyewearIcon'
 
-export const StaffLoginPage = () => {
+export function StaffLoginPage() {
   return (
     <div className="flex min-h-screen w-full">
       {}
@@ -21,7 +22,7 @@ export const StaffLoginPage = () => {
               Eyewear.
             </p>
 
-            <LoginForm role="staff" />
+            <LoginForm role={UserRole.STAFF} />
           </div>
         </div>
       </div>

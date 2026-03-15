@@ -25,32 +25,14 @@ const extractBlock = (startStr, endStr) => {
   return text.substring(start, end)
 }
 
-const orderItems = extractBlock(
-  '          {/* Order Items Table-style Card */}',
-  '          {/* Activity Timeline */}'
-)
-const activityFlow = extractBlock(
-  '          {/* Activity Timeline */}',
-  '          {/* Transactions Section - Moved here */}'
-)
-const transactions = extractBlock(
-  '          {/* Transactions Section - Moved here */}',
-  '        </div>\n\n        {/* Sidebar */}'
-)
+const orderItems = extractBlock('          {}', '          {}')
+const activityFlow = extractBlock('          {}', '          {}')
+const transactions = extractBlock('          {}', '        </div>\n\n        {}')
 
-const customerInfo = extractBlock(
-  '          {/* Customer Card */}',
-  '          {/* Delivery & Address */}'
-)
-const fulfillment = extractBlock('          {/* Delivery & Address */}', '          {children}')
-const childrenStr = extractBlock(
-  '          {children}',
-  '          {/* Staff Memo - Moved here */}'
-)
-const staffMemo = extractBlock(
-  '          {/* Staff Memo - Moved here */}',
-  '        </div>\n      </div>\n    </div>\n  )\n}'
-)
+const customerInfo = extractBlock('          {}', '          {}')
+const fulfillment = extractBlock('          {}', '          {children}')
+const childrenStr = extractBlock('          {children}', '          {}')
+const staffMemo = extractBlock('          {}', '        </div>\n      </div>\n    </div>\n  )\n}')
 
 const stretchCard = (block, span) => {
   return block.replace(

@@ -8,17 +8,23 @@ import { useCartStore } from '@/store/cart.store'
 import { showError, showSuccess } from '@/features/sale-staff/utils/errorHandler'
 import { queryClient } from '@/lib/react-query'
 
+import { UserRole, ROLE_MAP } from '@/shared/constants/user-role'
+import { MESSAGES, ERROR_MESSAGES } from '@/shared/constants/messages'
+
 const getRolePath = (role: string): string => {
   const normalizedRole = role.toUpperCase().replace(/\s+/g, '_')
-  const rolePathMap: Record<string, string> = {
-    CUSTOMER: 'customer',
-    SALE_STAFF: 'sale-staff',
-    OPERATION_STAFF: 'operation-staff',
-    MANAGER: 'manager',
-    SYSTEM_ADMIN: 'admin',
-    ADMIN: 'admin'
+  const roleId = ROLE_MAP[normalizedRole] || UserRole.CUSTOMER
+
+  const rolePathMap: Record<UserRole, string> = {
+    [UserRole.CUSTOMER]: 'customer',
+    [UserRole.SALE_STAFF]: 'sale-staff',
+    [UserRole.OPERATION_STAFF]: 'operation-staff',
+    [UserRole.MANAGER]: 'manager',
+    [UserRole.ADMIN]: 'admin',
+    [UserRole.STAFF]: 'staff'
   }
-  return rolePathMap[normalizedRole] || 'customer'
+
+  return rolePathMap[roleId] || 'customer'
 }
 
 export const useLogin = () => {
@@ -39,23 +45,16 @@ export const useLogin = () => {
       return authApi.loginCustomer(payload)
     },
     onSuccess: async (response: LoginResponse) => {
-      console.log('Login Success Response:', response)
-
-      console.group('[LOGIN] Login successful')
-      console.info('document.cookie:', document.cookie || '(empty - cookie may be HttpOnly)')
-      console.info('deviceId used:', localStorage.getItem('x_device_id'))
-      console.groupEnd()
-
       const authData = (response as any).data || response
 
       const token = authData.token || authData.accessToken || (response as any).token
 
       if (!token) {
-        console.error('No token found in response:', response)
+        const tokenError = MESSAGES.COMMON.INVALID_DATA
         if (isStaffLogin()) {
-          showError('Invalid login response: Token missing')
+          showError(tokenError)
         } else {
-          toast.error('Invalid login response: Token missing')
+          toast.error(tokenError)
         }
         return
       }
@@ -79,14 +78,15 @@ export const useLogin = () => {
       }
 
       if (isStaffLogin()) {
-        showSuccess('Login successful! Welcome to OpticView Staff Portal')
+        showSuccess(
+          MESSAGES.STAFF.AUTH?.LOGIN_SUCCESS ||
+            'Login successful! Welcome to OpticView Staff Portal'
+        )
       } else {
-        toast.success('Login successful!')
+        toast.success(MESSAGES.CUSTOMER.AUTH.LOGIN_SUCCESS)
       }
 
       const roleFromToken = useAuthStore.getState().role
-
-      console.log('Role from token:', roleFromToken)
 
       if (!roleFromToken && !isStaffLogin()) {
         const from = (location.state as any)?.from?.pathname || '/'
@@ -100,10 +100,11 @@ export const useLogin = () => {
       }
     },
     onError: (error: any) => {
+      const loginError = error.message || ERROR_MESSAGES.AUTH.LOGIN_FAILED
       if (isStaffLogin()) {
-        showError(error, 'Login failed. Please check your credentials and try again.')
+        showError(error, loginError)
       } else {
-        toast.error(error.message || 'Login failed. Please try again.')
+        toast.error(loginError)
       }
       console.error('Login failed', error)
     }

@@ -4,6 +4,7 @@ import { User as UserIcon, Check, Mail, Phone } from 'lucide-react'
 import type { User } from '@/shared/types'
 import { useAuthStore } from '@/store'
 import { toast } from 'react-hot-toast'
+import { MESSAGES } from '@/shared/constants/messages'
 
 interface PersonalInfoSectionProps {
   user: User | null
@@ -30,16 +31,16 @@ export const PersonalInfoSection = ({ user }: PersonalInfoSectionProps) => {
 
   const handleUpdate = async () => {
     if (!formData.name.trim()) {
-      toast.error('Name cannot be empty')
+      toast.error(MESSAGES.CUSTOMER.AUTH.NAME_REQUIRED)
       return
     }
 
     setIsUpdating(true)
     try {
       await updateProfile(formData)
-      toast.success('Profile updated successfully!')
+      toast.success(MESSAGES.CUSTOMER.AUTH.UPDATE_PROFILE_SUCCESS)
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to update profile')
+      toast.error(error.response?.data?.message || MESSAGES.COMMON.ERROR)
     } finally {
       setIsUpdating(false)
     }

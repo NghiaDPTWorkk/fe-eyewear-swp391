@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
+import { MESSAGES } from '@/shared/constants/messages'
 import { Card } from '@/shared/components/ui'
 import { addressService, type Province, type Ward } from '@/shared/services/addressService'
 import { customerAddressService } from '@/features/customer/services/customerAddress.service'
@@ -154,18 +155,18 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
 
   const handleCheckout = async () => {
     if (!customerInfo.fullName || !customerInfo.phone) {
-      toast.error('Vui lòng nhập đầy đủ thông tin khách hàng')
+      toast.error(MESSAGES.CUSTOMER.AUTH.INFO_REQUIRED)
       return
     }
 
     if (!address.city || !address.ward || !address.street) {
-      toast.error('Vui lòng nhập đầy đủ địa chỉ giao hàng')
+      toast.error(MESSAGES.CUSTOMER.ORDER.ADDRESS_REQUIRED)
       return
     }
 
     const checkoutItems = items
     if (checkoutItems.length === 0) {
-      toast.error('Giỏ hàng chưa chọn sản phẩm nào')
+      toast.error(MESSAGES.CUSTOMER.ORDER.EMPTY_CART)
       return
     }
 
@@ -226,7 +227,7 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
 
       const response = await invoiceService.createInvoice(payload)
       if (response.success) {
-        toast.success(response.message || 'Đặt hàng thành công!')
+        toast.success(response.message || MESSAGES.CUSTOMER.ORDER.PLACE_SUCCESS)
         const checkoutItemsCopy = checkoutItems.map((item) => ({ ...item }))
         const { clearCart, removeItems, items: currentItems } = useCartStore.getState()
 
@@ -248,9 +249,7 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
             }
           } catch (error) {
             console.error('Failed to get VNPay URL:', error)
-            toast.error(
-              'Không thể tạo liên kết thanh toán VNPay. Vui lòng thử lại trong Lịch sử đơn hàng.'
-            )
+            toast.error(MESSAGES.CUSTOMER.ORDER.PAYMENT_LINK_FAILED)
           }
         }
 
@@ -264,18 +263,16 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
             }
           } catch (error) {
             console.error('Failed to get PayOS URL:', error)
-            toast.error(
-              'Không thể tạo liên kết thanh toán PayOS. Vui lòng thử lại trong Lịch sử đơn hàng.'
-            )
+            toast.error(MESSAGES.CUSTOMER.ORDER.PAYMENT_LINK_FAILED)
           }
         }
 
         navigate('/account/orders')
       } else {
-        toast.error(response.message || 'Tạo đơn hàng thất bại')
+        toast.error(response.message || MESSAGES.COMMON.ERROR)
       }
     } catch (error: any) {
-      const errorMsg = error.response?.data?.message || 'Có lỗi xảy ra khi đặt hàng'
+      const errorMsg = error.response?.data?.message || MESSAGES.COMMON.ERROR
       toast.error(errorMsg)
     } finally {
       setIsProcessing(false)

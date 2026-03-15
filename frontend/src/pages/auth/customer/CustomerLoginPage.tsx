@@ -1,7 +1,8 @@
-import { LoginForm } from '@/components/layout/login-form'
+import { LoginForm } from '@/components/layout/login-form/LoginForm'
 import LogoEyewearIcon from '@/shared/components/ui/logoeyewear/LogoEyewearIcon'
+import { UserRole } from '@/shared/constants/user-role'
 
-export const CustomerLoginPage = () => {
+export function CustomerLoginPage() {
   return (
     <div className="flex min-h-screen w-full">
       {}
@@ -21,7 +22,7 @@ export const CustomerLoginPage = () => {
               OpticView Eyewear.
             </p>
 
-            <LoginForm role="customer" />
+            <LoginForm role={UserRole.CUSTOMER} />
           </div>
         </div>
       </div>

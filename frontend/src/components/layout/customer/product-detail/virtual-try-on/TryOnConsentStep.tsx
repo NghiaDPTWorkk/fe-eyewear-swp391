@@ -58,7 +58,7 @@ export default function TryOnConsentStep({ onAgree, onDisagree }: TryOnConsentSt
             We detect generic points on your face, and that's it!
           </h2>
 
-          {/* Privacy bullets */}
+          {}
           <div className="space-y-4 mb-6">
             <div className="flex items-center gap-3">
               <div className="w-6 h-6 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">

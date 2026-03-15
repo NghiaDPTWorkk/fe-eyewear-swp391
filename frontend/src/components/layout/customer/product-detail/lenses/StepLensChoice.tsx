@@ -101,7 +101,6 @@ export default function StepLensChoice({ onSelect }: StepLensChoiceProps) {
             const price = variant.finalPrice
             const originalPrice = variant.price
 
-            // Pick image: 2nd image if exists, otherwise 1st, otherwise null
             const variantImage =
               variant.imgs?.length >= 2
                 ? variant.imgs[1]

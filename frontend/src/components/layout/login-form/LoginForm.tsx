@@ -6,6 +6,7 @@ import { useLogin } from '@/features/auth/hooks/useLogin'
 import { Button, Checkbox, Input, FormField, Divider } from '@/components'
 import { getOrCreateDeviceId } from '@/shared/utils/device.utils'
 import { ENDPOINTS } from '@/api/endpoints'
+import { UserRole } from '@/shared/constants/user-role'
 
 interface LoginFormProps {
   role?: string
@@ -146,7 +147,7 @@ export const LoginForm = ({ role: _role }: LoginFormProps) => {
           Sign Up
         </Link>
       </p>
-      {_role !== 'staff' && (
+      {_role !== UserRole.STAFF && (
         <div className="mt-6 pt-2 border-t border-gray-100 text-center">
           <span className="text-xs text-gray-400">Are you a staff member? </span>
           <Link

@@ -4,11 +4,13 @@ import { HiMenuAlt2 } from 'react-icons/hi'
 import { Button, Input } from '@/shared/components/ui'
 import { FiSearch } from 'react-icons/fi'
 
+import { UserRole } from '@/shared/constants/user-role'
+
 export interface NavSearchProps {
   className?: string
   inputContainerClassName?: string
   placeholder?: string
-  styleVariant?: 'default' | 'operation' | 'manager'
+  styleVariant?: 'default' | typeof UserRole.OPERATION_STAFF | typeof UserRole.MANAGER | 'operation'
 }
 
 import { useEffect, useRef } from 'react'
@@ -17,7 +19,7 @@ export function NavSearch({
   className,
   inputContainerClassName,
   placeholder,
-  styleVariant = 'operation'
+  styleVariant = 'default'
 }: NavSearchProps) {
   const { toggleSidebar } = useLayoutStore()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -28,19 +30,16 @@ export function NavSearch({
     }
   }, [])
 
-  const inputStyles =
-    styleVariant === 'operation'
-      ? 'bg-mint-200 border-mint-500 rounded-xl'
-      : styleVariant === 'manager'
-        ? 'bg-mint-50 border-mint-200 rounded-xl shadow-sm'
-        : 'bg-neutral-50 border-neutral-100 rounded-xl'
+  const isOperation = styleVariant === UserRole.OPERATION_STAFF || styleVariant === 'operation'
+  const isManager = styleVariant === UserRole.MANAGER
 
-  const iconColor =
-    styleVariant === 'operation'
-      ? 'text-mint-700'
-      : styleVariant === 'manager'
-        ? 'text-mint-600'
-        : 'text-neutral-400'
+  const inputStyles = isOperation
+    ? 'bg-mint-200 border-mint-500 rounded-xl'
+    : isManager
+      ? 'bg-mint-50 border-mint-200 rounded-xl shadow-sm'
+      : 'bg-neutral-50 border-neutral-100 rounded-xl'
+
+  const iconColor = isOperation ? 'text-mint-700' : isManager ? 'text-mint-600' : 'text-neutral-400'
 
   return (
     <div className={cn('flex items-center gap-3 w-full pr-2', className)}>

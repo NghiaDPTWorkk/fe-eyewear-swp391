@@ -11,6 +11,7 @@ import {
   IoShieldCheckmarkOutline
 } from 'react-icons/io5'
 import toast from 'react-hot-toast'
+import { MESSAGES } from '@/shared/constants/messages'
 
 interface StaffProfileContentProps {
   onEdit?: () => void
@@ -32,8 +33,7 @@ export const StaffProfileContent = ({
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      toast.success('Image selected: ' + file.name + '. Admin approval required to update.')
-      console.log('Selected file:', file)
+      toast.success(MESSAGES.COMMON.ACTION_PENDING_APPROVAL)
     }
   }
 

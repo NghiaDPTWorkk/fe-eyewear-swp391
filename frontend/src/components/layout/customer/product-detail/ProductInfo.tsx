@@ -188,17 +188,18 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
         selected: true,
         productType: product.type,
         selectedOptions: selectedOptions,
-        lens: lensSelection
-          ? {
-              lensId: lensSelection.lensId || undefined,
-              sku: lensSelection.sku || undefined,
-              visionNeed: lensSelection.visionNeed || 'non-prescription',
-              prescription: lensSelection.prescription,
-              name: lensSelection.name,
-              price: lensSelection.lensPrice || 0,
-              image: lensSelection.image
-            }
-          : undefined
+        lens:
+          lensSelection && lensSelection.lensId
+            ? {
+                lensId: lensSelection.lensId,
+                sku: lensSelection.sku || undefined,
+                visionNeed: lensSelection.visionNeed || 'non-prescription',
+                prescription: lensSelection.prescription,
+                name: lensSelection.name,
+                price: lensSelection.lensPrice || 0,
+                image: lensSelection.image
+              }
+            : undefined
       }
 
       // Close lens modal if open

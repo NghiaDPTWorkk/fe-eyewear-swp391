@@ -71,7 +71,10 @@ export default function ManagerInvoiceCard({
       queryKey: ['admin-order-detail', id],
       queryFn: () => orderAdminService.getOrderById(id),
       enabled: isExpanded && !!id,
-      staleTime: 30000
+      staleTime: 0,
+      refetchOnWindowFocus: true,
+      refetchOnMount: 'always',
+      refetchOnReconnect: true
     }))
   })
   const { data: staffData, isLoading: isStaffLoading } = useGetAdminsByRole(

@@ -10,6 +10,9 @@ export function useGetOrderById(orderId?: string | null, enabled = true) {
       return orderAdminService.getOrderById(orderId)
     },
     enabled: enabled && !!orderId,
-    staleTime: 30_000
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+    refetchOnMount: 'always',
+    refetchOnReconnect: true
   })
 }

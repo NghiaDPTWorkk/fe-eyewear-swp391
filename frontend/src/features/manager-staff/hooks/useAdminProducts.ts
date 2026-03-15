@@ -16,7 +16,10 @@ export function useAdminProducts(
       httpClient.get<AdminProductListApiResponse>(
         ENDPOINTS.ADMIN.PRODUCTS_LIST(page, limit, type, brand, search)
       ),
-    staleTime: 30_000
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+    refetchOnMount: 'always',
+    refetchOnReconnect: true
   })
 }
 
@@ -26,6 +29,9 @@ export function useAdminProductDetail(id: string) {
     queryFn: () =>
       httpClient.get<AdminProductDetailApiResponse>(ENDPOINTS.ADMIN.PRODUCT_DETAIL(id)),
     enabled: !!id,
-    staleTime: 60_000
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+    refetchOnMount: 'always',
+    refetchOnReconnect: true
   })
 }

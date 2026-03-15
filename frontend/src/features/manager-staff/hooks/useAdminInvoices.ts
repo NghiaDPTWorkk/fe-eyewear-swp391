@@ -111,6 +111,9 @@ export function useAdminInvoices(page: number, limit: number, status?: string) {
         }
       }
     },
-    staleTime: 60_000
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+    refetchOnMount: 'always',
+    refetchOnReconnect: true
   })
 }

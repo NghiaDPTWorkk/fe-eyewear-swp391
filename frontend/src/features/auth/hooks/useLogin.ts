@@ -5,26 +5,20 @@ import { authApi } from '../services/auth.api.legacy'
 import toast from 'react-hot-toast'
 import { useAuthStore } from '@/store/auth.store'
 import { useCartStore } from '@/store/cart.store'
-import { showError, showSuccess } from '@/features/sale-staff/utils/errorHandler'
+import { showError, showSuccess } from '@/features/sales/utils/errorHandler'
 import { queryClient } from '@/lib/react-query'
-
-import { UserRole, ROLE_MAP } from '@/shared/constants/user-role'
-import { MESSAGES, ERROR_MESSAGES } from '@/shared/constants/messages'
 
 const getRolePath = (role: string): string => {
   const normalizedRole = role.toUpperCase().replace(/\s+/g, '_')
-  const roleId = ROLE_MAP[normalizedRole] || UserRole.CUSTOMER
-
-  const rolePathMap: Record<UserRole, string> = {
-    [UserRole.CUSTOMER]: 'customer',
-    [UserRole.SALE_STAFF]: 'sale-staff',
-    [UserRole.OPERATION_STAFF]: 'operation-staff',
-    [UserRole.MANAGER]: 'manager',
-    [UserRole.ADMIN]: 'admin',
-    [UserRole.STAFF]: 'staff'
+  const rolePathMap: Record<string, string> = {
+    CUSTOMER: 'customer',
+    SALE_STAFF: 'sale-staff',
+    OPERATION_STAFF: 'operation-staff',
+    MANAGER: 'manager',
+    SYSTEM_ADMIN: 'admin',
+    ADMIN: 'admin'
   }
-
-  return rolePathMap[roleId] || 'customer'
+  return rolePathMap[normalizedRole] || 'customer'
 }
 
 export const useLogin = () => {
@@ -33,35 +27,51 @@ export const useLogin = () => {
   const { setToken, fetchProfile } = useAuthStore()
   const { fetchCart } = useCartStore()
 
+  // Determine if this is a staff login based on current URL path
+  // If path includes '/admin/', use staff login, otherwise use customer login
   const isStaffLogin = () => {
     return location.pathname.toLowerCase().includes('/admin/')
   }
+  // console.log('isStaffLogin:', isStaffLogin())
 
   return useMutation({
     mutationFn: (payload: LoginRequest) => {
+      // Use staff login API if URL contains '/admin/'
       if (isStaffLogin()) {
         return authApi.loginStaff(payload)
       }
       return authApi.loginCustomer(payload)
     },
     onSuccess: async (response: LoginResponse) => {
+      console.log('Login Success Response:', response)
+
+      // DEBUG
+      console.group('[LOGIN] Login successful')
+      console.info('document.cookie:', document.cookie || '(empty - cookie may be HttpOnly)')
+      console.info('deviceId used:', localStorage.getItem('x_device_id'))
+      console.groupEnd()
+
+      // 1. Robust Token Extraction
+
       const authData = (response as any).data || response
 
       const token = authData.token || authData.accessToken || (response as any).token
 
       if (!token) {
-        const tokenError = MESSAGES.COMMON.INVALID_DATA
+        console.error('No token found in response:', response)
         if (isStaffLogin()) {
-          showError(tokenError)
+          showError('Invalid login response: Token missing')
         } else {
-          toast.error(tokenError)
+          toast.error('Invalid login response: Token missing')
         }
         return
       }
 
+      // 2. Store token (this will automatically extract and set role from JWT)
       localStorage.setItem('access_token', token)
       setToken(token)
 
+      // 3. Clear stale cache and fetch fresh profile (automatically handles Admin vs Customer profile)
       try {
         queryClient.clear()
         await fetchProfile()
@@ -69,6 +79,7 @@ export const useLogin = () => {
         console.error('Failed to fetch profile after login:', error)
       }
 
+      // 4. Fetch cart ONLY for customers
       if (!isStaffLogin()) {
         try {
           await fetchCart()
@@ -77,34 +88,40 @@ export const useLogin = () => {
         }
       }
 
+      // Use appropriate success message based on login type
       if (isStaffLogin()) {
-        showSuccess(
-          MESSAGES.STAFF.AUTH?.LOGIN_SUCCESS ||
-            'Login successful! Welcome to OpticView Staff Portal'
-        )
+        showSuccess('Login successful! Welcome to OpticView Staff Portal')
       } else {
-        toast.success(MESSAGES.CUSTOMER.AUTH.LOGIN_SUCCESS)
+        toast.success('Login successful!')
       }
 
+      // Get role from store (it was automatically extracted from JWT by setToken)
       const roleFromToken = useAuthStore.getState().role
 
+      console.log('Role from token:', roleFromToken)
+
+      // Navigation logic based on role
+      // Customer: no role in JWT token and not staff login
       if (!roleFromToken && !isStaffLogin()) {
+        // For customers: redirect to previous page or home
         const from = (location.state as any)?.from?.pathname || '/'
         navigate(from, { replace: true })
       } else if (roleFromToken) {
+        // For staff: redirect to role-specific dashboard
         const rolePath = getRolePath(roleFromToken)
         navigate(`/${rolePath}/dashboard`)
       } else {
+        // Fallback: if something went wrong, go to home
         console.error('Unexpected state: roleFromToken and isStaffLogin mismatch')
         navigate('/')
       }
     },
     onError: (error: any) => {
-      const loginError = error.message || ERROR_MESSAGES.AUTH.LOGIN_FAILED
+      // Use Sales Staff error handler for staff login, regular toast for customer login
       if (isStaffLogin()) {
-        showError(error, loginError)
+        showError(error, 'Login failed. Please check your credentials and try again.')
       } else {
-        toast.error(loginError)
+        toast.error(error.message || 'Login failed. Please try again.')
       }
       console.error('Login failed', error)
     }

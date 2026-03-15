@@ -1,6 +1,6 @@
 import { IoChevronDownOutline } from 'react-icons/io5'
 
-import { Button, Input, Select } from '@/shared/components/ui'
+import { Button, Input, Select } from '@/shared/components/ui-core'
 
 export function ContactSupportTeam() {
   return (

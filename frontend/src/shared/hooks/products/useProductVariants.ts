@@ -2,27 +2,39 @@ import { useState, useMemo } from 'react'
 import type { Product } from '@/shared/types/product.types'
 import type { Variant } from '@/shared/types/variant.types'
 
+/**
+ * Cấu trúc attribute được extract từ variants
+ */
 export interface AttributeValue {
   value: string
   label: string
 }
 
 export interface AttributeInfo {
-  name: string
+  name: string // attributeName
   showType: 'text' | 'color' | 'image'
-  values: AttributeValue[]
+  values: AttributeValue[] // unique values with labels
   attributeId: string
 }
 
-type SelectedOptions = Record<string, string>
+/**
+ * State cho selected options
+ */
+type SelectedOptions = Record<string, string> // { attributeName: value }
 
+/**
+ * Return type của hook
+ */
 export interface UseProductVariantsReturn {
+  // Current state
   currentVariant: Variant | null
   selectedOptions: SelectedOptions
   attributes: AttributeInfo[]
 
+  // Actions
   selectOption: (attributeName: string, value: string) => void
 
+  // Computed values
   price: number
   finalPrice: number
   stock: number
@@ -30,16 +42,28 @@ export interface UseProductVariantsReturn {
   isInStock: boolean
   isPreOrder: boolean
 
+  // Validation
   isValidCombination: boolean
   availableOptionsForAttribute: (attributeName: string) => string[]
 }
 
+/**
+ * Custom hook để quản lý product variants và selection logic
+ *
+ * @param product - Product object từ API
+ * @returns Variant state và helper functions
+ */
 export const useProductVariants = (product: Product): UseProductVariantsReturn => {
   const variants: Variant[] = product.variants || []
 
+  /**
+   * STEP 1: Initialize selected options với default variant
+   * Sử dụng lazy initialization để tránh setState trong useEffect
+   */
   const [selectedOptions, setSelectedOptions] = useState<SelectedOptions>(() => {
     if (variants.length === 0) return {}
 
+    // Tìm default variant hoặc lấy variant đầu tiên
     const defaultVariant = variants.find((v) => v.isDefault) || variants[0]
 
     if (defaultVariant?.options) {
@@ -53,6 +77,9 @@ export const useProductVariants = (product: Product): UseProductVariantsReturn =
     return {}
   })
 
+  /**
+   * STEP 2: Extract unique attributes từ tất cả variants
+   */
   const attributes = useMemo((): AttributeInfo[] => {
     const attributesMap = new Map<string, AttributeInfo>()
 
@@ -80,11 +107,16 @@ export const useProductVariants = (product: Product): UseProductVariantsReturn =
     return Array.from(attributesMap.values())
   }, [variants])
 
+  /**
+   * STEP 3: Find matching variant based on selected options
+   */
   const currentVariant = useMemo((): Variant | null => {
+    // Nếu chưa có options nào được chọn, return null
     if (Object.keys(selectedOptions).length === 0) {
       return null
     }
 
+    // Tìm variant match với tất cả selected options
     const matchedVariant = variants.find((variant) => {
       return variant.options?.every((opt) => selectedOptions[opt.attributeName] === opt.value)
     })
@@ -92,6 +124,9 @@ export const useProductVariants = (product: Product): UseProductVariantsReturn =
     return matchedVariant || null
   }, [variants, selectedOptions])
 
+  /**
+   * STEP 4: Action - Select option
+   */
   const selectOption = (attributeName: string, value: string) => {
     setSelectedOptions((prev) => ({
       ...prev,
@@ -99,10 +134,16 @@ export const useProductVariants = (product: Product): UseProductVariantsReturn =
     }))
   }
 
+  /**
+   * STEP 5: Tính available options cho mỗi attribute
+   * Chỉ show options tạo thành valid combination
+   */
   const availableOptionsForAttribute = (attributeName: string): string[] => {
+    // Lấy tất cả options đã chọn NGOẠI TRỪ attribute hiện tại
     const otherSelectedOptions = { ...selectedOptions }
     delete otherSelectedOptions[attributeName]
 
+    // Tìm tất cả variants match với other selected options
     const matchingVariants = variants.filter((variant) => {
       return Object.entries(otherSelectedOptions).every(([attrName, attrValue]) => {
         return variant.options?.some(
@@ -111,6 +152,7 @@ export const useProductVariants = (product: Product): UseProductVariantsReturn =
       })
     })
 
+    // Extract unique values cho attribute này từ matching variants
     const availableValues = new Set<string>()
     matchingVariants.forEach((variant) => {
       const option = variant.options?.find((opt) => opt.attributeName === attributeName)
@@ -122,6 +164,9 @@ export const useProductVariants = (product: Product): UseProductVariantsReturn =
     return Array.from(availableValues)
   }
 
+  /**
+   * STEP 6: Computed values từ current variant
+   */
   const defaultVariant = variants.find((v) => v.isDefault) || variants[0]
   const activeVariant = currentVariant || defaultVariant
 
@@ -132,6 +177,9 @@ export const useProductVariants = (product: Product): UseProductVariantsReturn =
   const isPreOrder = activeVariant?.mode === 'PRE_ORDER'
   const isInStock = isPreOrder || stock > 0
 
+  /**
+   * STEP 7: Validation - Check if current combination is valid
+   */
   const isValidCombination = currentVariant !== null
 
   return {

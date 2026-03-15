@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, Outlet, useNavigate } from 'react-router-dom'
 import { Container } from '@/components'
-import { PageHeader } from '@/features/sale-staff/components/common'
+import { PageHeader } from '@/features/sales/components/common'
 import { UserTable } from './components/users/UserTable'
 import { UserDetailDrawer } from './components/users/UserDetailDrawer'
 import { useAdminCustomers } from '@/shared/hooks/admin/useAdminCustomers'
@@ -83,7 +83,7 @@ export default function AdminUsersPage() {
 
   const handleStatusChange = (status: 'All' | 'Active' | 'Inactive' | 'Banned') => {
     setStatusFilter(status)
-    setPage(1)
+    setPage(1) // Reset to page 1 on filter change
   }
 
   return (
@@ -117,7 +117,7 @@ export default function AdminUsersPage() {
         </div>
       </div>
 
-      {}
+      {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 px-4">
         <SummaryCard
           label="Total Users"
@@ -148,7 +148,7 @@ export default function AdminUsersPage() {
         />
       </div>
 
-      {}
+      {/* Status Tabs */}
       <div className="px-4 overflow-x-auto">
         <div className="flex items-center gap-2 p-1.5 bg-neutral-100/50 rounded-2xl w-fit border border-neutral-100">
           {statusTabs.map((tab) => (
@@ -167,7 +167,7 @@ export default function AdminUsersPage() {
         </div>
       </div>
 
-      {}
+      {/* Table */}
       <div className="bg-white rounded-3xl border border-neutral-100 shadow-sm overflow-hidden mx-4">
         <div className="p-6 border-b border-neutral-50 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-1">
@@ -217,7 +217,7 @@ export default function AdminUsersPage() {
           />
         )}
 
-        {}
+        {/* Pagination */}
         <div className="p-8 border-t border-neutral-50 flex items-center justify-between">
           <p className="text-xs font-semibold text-neutral-400 uppercase tracking-widest">
             Showing {(pagination.page - 1) * pagination.limit + 1}-
@@ -235,13 +235,15 @@ export default function AdminUsersPage() {
             <div className="flex gap-1">
               {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
                 .filter((p) => {
+                  // Show current, first, last, and neighbors
                   return (
                     p === 1 || p === pagination.totalPages || Math.abs(p - pagination.page) <= 1
                   )
                 })
                 .reduce((acc, p, i, arr) => {
+                  // Add ellipsis if there's a gap
                   if (i > 0 && p - arr[i - 1] > 1) {
-                    acc.push(-1)
+                    acc.push(-1) // -1 represents ellipsis
                   }
                   acc.push(p)
                   return acc
@@ -280,7 +282,7 @@ export default function AdminUsersPage() {
         </div>
       </div>
 
-      {}
+      {/* User Detail Drawer */}
       <UserDetailDrawer
         isOpen={!!selectedUserId}
         onClose={() => setSelectedUserId(null)}

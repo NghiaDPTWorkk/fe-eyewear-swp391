@@ -11,16 +11,14 @@ import { MdOutlineNotifications } from 'react-icons/md'
 import { useLocation, Link } from 'react-router-dom'
 
 import { cn } from '@/lib/utils'
-import { Button, Input } from '@/shared/components/ui'
+import { Button, Input } from '@/shared/components/ui-core'
 import { useLayoutStore } from '@/store/layout.store'
-
-import { UserRole } from '@/shared/constants/user-role'
 
 export interface NavSearchProps {
   className?: string
   inputContainerClassName?: string
   placeholder?: string
-  styleVariant?: 'default' | typeof UserRole.OPERATION_STAFF | typeof UserRole.MANAGER | 'operation'
+  styleVariant?: 'default' | 'operation' | 'manager'
 }
 
 export function NavSearch({
@@ -31,16 +29,19 @@ export function NavSearch({
 }: NavSearchProps) {
   const { toggleSidebar } = useLayoutStore()
 
-  const isOperation = styleVariant === UserRole.OPERATION_STAFF || styleVariant === 'operation'
-  const isManager = styleVariant === UserRole.MANAGER
+  const inputStyles =
+    styleVariant === 'operation'
+      ? 'bg-mint-200 border-mint-500 rounded-xl'
+      : styleVariant === 'manager'
+        ? 'bg-mint-50 border-mint-200 rounded-xl shadow-sm'
+        : 'bg-neutral-50 border-neutral-100 rounded-xl'
 
-  const inputStyles = isOperation
-    ? 'bg-mint-200 border-mint-500 rounded-xl'
-    : isManager
-      ? 'bg-mint-50 border-mint-200 rounded-xl shadow-sm'
-      : 'bg-neutral-50 border-neutral-100 rounded-xl'
-
-  const iconColor = isOperation ? 'text-mint-700' : isManager ? 'text-mint-600' : 'text-neutral-400'
+  const iconColor =
+    styleVariant === 'operation'
+      ? 'text-mint-700'
+      : styleVariant === 'manager'
+        ? 'text-mint-600'
+        : 'text-neutral-400'
 
   return (
     <div className={cn('flex items-center gap-3 w-full pr-2', className)}>
@@ -86,6 +87,7 @@ export function NavActions({
   const containerRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
 
+  // Determine base path for dynamic links
   const isOperation = location.pathname.startsWith('/operation-staff')
   const basePrefix = isOperation ? '/operation-staff' : '/sale-staff'
 

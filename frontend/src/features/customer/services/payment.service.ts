@@ -9,6 +9,11 @@ export interface VNPayUrlResponse {
 }
 
 export const paymentService = {
+  /**
+   * Get VNPay payment URL
+   * @param invoiceId - The ID of the invoice
+   * @param paymentId - The ID of the payment
+   */
   getVNPayUrl: async (invoiceId: string, paymentId: string): Promise<VNPayUrlResponse> => {
     try {
       const response = await httpClient.get<VNPayUrlResponse>(
@@ -21,6 +26,11 @@ export const paymentService = {
     }
   },
 
+  /**
+   * Get PayOS payment URL
+   * @param invoiceId - The ID of the invoice
+   * @param paymentId - The ID of the payment
+   */
   getPayOSUrl: async (invoiceId: string, paymentId: string): Promise<VNPayUrlResponse> => {
     try {
       const response = await httpClient.get<VNPayUrlResponse>(

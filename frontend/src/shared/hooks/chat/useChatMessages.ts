@@ -50,6 +50,7 @@ export const useChatMessages = (): UseChatMessagesReturn => {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
+  // Reset state when user changes
   useEffect(() => {
     setMessages([])
     setHasMore(false)
@@ -78,14 +79,14 @@ export const useChatMessages = (): UseChatMessagesReturn => {
             setMessages((prev) => [...mapped, ...prev])
           } else {
             setMessages(mapped)
-
+            // Scroll to bottom on initial load
             setTimeout(() => scrollToBottom('auto'), 100)
           }
           setHasMore(res.data.pagination.hasNext)
           setLastItem(res.data.pagination.lastItem)
         }
-      } catch (error) {
-        console.error('Failed to fetch messages:', error)
+      } catch {
+        // silently fail
       } finally {
         setIsLoading(false)
       }
@@ -99,6 +100,7 @@ export const useChatMessages = (): UseChatMessagesReturn => {
       hasFetchedInitial.current = true
       setIsLoading(true)
       try {
+        // 1st: get/create conversation to avoid 404 on getMessages
         await chatService.getConversation()
         await fetchMessages()
       } catch (error) {
@@ -137,7 +139,7 @@ export const useChatMessages = (): UseChatMessagesReturn => {
       setMessages((prev) => [...prev, userMsg])
       setInput('')
       setIsTyping(true)
-
+      // Scroll to bottom when user sends a message
       setTimeout(() => scrollToBottom('smooth'), 100)
 
       try {
@@ -150,7 +152,7 @@ export const useChatMessages = (): UseChatMessagesReturn => {
             timestamp: new Date()
           }
           setMessages((prev) => [...prev, botMsg])
-
+          // Scroll to bottom on bot response
           setTimeout(() => scrollToBottom('smooth'), 100)
         }
       } catch (error) {

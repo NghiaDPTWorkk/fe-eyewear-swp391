@@ -9,7 +9,7 @@ interface ProcessStep {
 
 interface ProcessTrackerProps {
   steps?: ProcessStep[]
-  activeStep?: number
+  activeStep?: number // 0-indexed index of the current step
   title?: string
 }
 
@@ -56,3 +56,9 @@ export default function ProgressTracker({
     </div>
   )
 }
+// Pending	-> PENDING, VERIFIED, APPROVED, ASSIGNED
+// Processing ->	MAKING (Order)
+// Packaging -> 	PACKAGING, PACKAGED, PACKING (Order)
+// Ready for Pickup	-> READY_TO_SHIP, COMPLETED (Invoice)
+// Shipping ->	DELIVERING (Invoice)
+// Completed	DELIVERED (Invoice) or COMPLETED (Order)

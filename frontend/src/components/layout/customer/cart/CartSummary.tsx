@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
-import { MESSAGES } from '@/shared/constants/messages'
 import { Card } from '@/shared/components/ui'
 import { addressService, type Province, type Ward } from '@/shared/services/addressService'
 import { customerAddressService } from '@/features/customer/services/customerAddress.service'
@@ -23,7 +22,7 @@ import { VoucherSection } from './sections/VoucherSection'
 
 interface CartSummaryProps {
   subtotal: number
-  items?: CartItem[]
+  items?: CartItem[] // Optional: if provided, use these items; otherwise use selected items from store
 }
 
 export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) => {
@@ -31,6 +30,7 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
   const { user } = useAuth()
   const { items: storeItems } = useCartStore()
 
+  // Use propItems if provided, otherwise filter selected items from store
   const items = propItems || storeItems.filter((item) => item.selected)
 
   const [customerInfo, setCustomerInfo] = useState({
@@ -56,6 +56,7 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
   const [isAddressDropdownOpen, setIsAddressDropdownOpen] = useState(false)
   const [selectedProvinceCode, setSelectedProvinceCode] = useState<number | null>(null)
 
+  // Sync user info if it loads late
   useEffect(() => {
     if (user) {
       setCustomerInfo((prev) => ({
@@ -66,6 +67,7 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
     }
   }, [user])
 
+  // Fetch requirements
   useEffect(() => {
     const initData = async () => {
       try {
@@ -84,7 +86,9 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
             ward: defaultAddr.ward,
             city: defaultAddr.city
           })
+          // Provinces will be fetched on-demand if user switches to manual mode
         } else {
+          // No saved addresses or not logged in, fetch provinces for manual entry
           const provinceData = await addressService.getProvinces()
           setProvinces(Array.isArray(provinceData) ? provinceData : [])
           setAddressMode('manual')
@@ -104,6 +108,7 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
       setSelectedProvinceCode(null)
       setWards([])
 
+      // Fetch provinces on demand if not already loaded
       if (provinces.length === 0) {
         try {
           const provinceData = await addressService.getProvinces()
@@ -124,6 +129,7 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
         city: addr.city
       })
 
+      // If we need to sync manual fields (like ward/province dropdowns) when selecting a saved address
       if (provinces.length > 0) {
         const province = provinces.find((p) => p.name.toLowerCase() === addr.city.toLowerCase())
         if (province) {
@@ -155,18 +161,18 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
 
   const handleCheckout = async () => {
     if (!customerInfo.fullName || !customerInfo.phone) {
-      toast.error(MESSAGES.CUSTOMER.AUTH.INFO_REQUIRED)
+      toast.error('Vui lòng nhập đầy đủ thông tin khách hàng')
       return
     }
 
     if (!address.city || !address.ward || !address.street) {
-      toast.error(MESSAGES.CUSTOMER.ORDER.ADDRESS_REQUIRED)
+      toast.error('Vui lòng nhập đầy đủ địa chỉ giao hàng')
       return
     }
 
     const checkoutItems = items
     if (checkoutItems.length === 0) {
-      toast.error(MESSAGES.CUSTOMER.ORDER.EMPTY_CART)
+      toast.error('Giỏ hàng chưa chọn sản phẩm nào')
       return
     }
 
@@ -227,10 +233,11 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
 
       const response = await invoiceService.createInvoice(payload)
       if (response.success) {
-        toast.success(response.message || MESSAGES.CUSTOMER.ORDER.PLACE_SUCCESS)
+        toast.success(response.message || 'Đặt hàng thành công!')
         const checkoutItemsCopy = checkoutItems.map((item) => ({ ...item }))
         const { clearCart, removeItems, items: currentItems } = useCartStore.getState()
 
+        // Only clear/remove from cart if we are NOT in direct checkout mode (propItems is undefined)
         if (!propItems) {
           if (checkoutItemsCopy.length === currentItems.length) {
             await clearCart()
@@ -245,11 +252,13 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
             const urlResponse = await paymentService.getVNPayUrl(invoice._id, payment._id)
             if (urlResponse.success && urlResponse.data.url) {
               window.location.href = urlResponse.data.url
-              return
+              return // Stop further execution
             }
           } catch (error) {
             console.error('Failed to get VNPay URL:', error)
-            toast.error(MESSAGES.CUSTOMER.ORDER.PAYMENT_LINK_FAILED)
+            toast.error(
+              'Không thể tạo liên kết thanh toán VNPay. Vui lòng thử lại trong Lịch sử đơn hàng.'
+            )
           }
         }
 
@@ -259,20 +268,22 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
             const urlResponse = await paymentService.getPayOSUrl(invoice._id, payment._id)
             if (urlResponse.success && urlResponse.data.url) {
               window.location.href = urlResponse.data.url
-              return
+              return // Stop further execution
             }
           } catch (error) {
             console.error('Failed to get PayOS URL:', error)
-            toast.error(MESSAGES.CUSTOMER.ORDER.PAYMENT_LINK_FAILED)
+            toast.error(
+              'Không thể tạo liên kết thanh toán PayOS. Vui lòng thử lại trong Lịch sử đơn hàng.'
+            )
           }
         }
 
         navigate('/account/orders')
       } else {
-        toast.error(response.message || MESSAGES.COMMON.ERROR)
+        toast.error(response.message || 'Tạo đơn hàng thất bại')
       }
     } catch (error: any) {
-      const errorMsg = error.response?.data?.message || MESSAGES.COMMON.ERROR
+      const errorMsg = error.response?.data?.message || 'Có lỗi xảy ra khi đặt hàng'
       toast.error(errorMsg)
     } finally {
       setIsProcessing(false)

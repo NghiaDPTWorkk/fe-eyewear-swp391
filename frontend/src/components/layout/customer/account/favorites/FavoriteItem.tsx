@@ -33,7 +33,7 @@ export function FavoriteItem({
   return (
     <Card className="p-0 border-mint-100/50 hover:shadow-lg transition-all overflow-hidden group mb-6">
       <div className="flex flex-col sm:flex-row">
-        {}
+        {/* Product Image Area */}
         <div className="w-full sm:w-[45%] bg-[#F9FBFC] p-8 flex items-center justify-center relative min-h-[200px]">
           <span className="absolute top-4 left-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
             Universal Fit
@@ -45,7 +45,7 @@ export function FavoriteItem({
           />
         </div>
 
-        {}
+        {/* Content Area */}
         <div className="flex-1 p-8 flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-start mb-4">

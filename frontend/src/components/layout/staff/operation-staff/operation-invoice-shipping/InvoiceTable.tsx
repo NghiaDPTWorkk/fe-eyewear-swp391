@@ -7,7 +7,7 @@ interface InvoiceTableProps {
   invoices: OperationInvoiceListItem[]
   onView: (invoice: OperationInvoiceListItem) => void
   onNext: (invoiceId: string) => void
-
+  /** Override or extend the header columns. Defaults to the standard 5 columns. */
   columns?: InvoiceTableColumn[]
 }
 

@@ -50,7 +50,7 @@ export default function VoucherTicket({ voucher: v }: Props) {
             transform-style: preserve-3d;
         }
 
-        
+        /* Răng cưa màu xanh nước biển */
         .vt-edge {
             position: absolute;
             top: 0;
@@ -74,7 +74,7 @@ export default function VoucherTicket({ voucher: v }: Props) {
             border-radius: 4px;
         }
 
-        
+        /* Nền 3 vòng tròn đè lên nhau sang trọng */
         .vt-bg-circles {
             position: absolute;
             width: 100%;

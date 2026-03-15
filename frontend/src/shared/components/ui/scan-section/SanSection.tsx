@@ -18,7 +18,9 @@ export default function SanSection({ orderId }: { orderId?: string }) {
               defaultValue={orderId}
             />
           </div>
-          {}
+          {/* <button className="px-4 py-2 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition-colors">
+            Auto generated
+          </button> */}
         </div>
         <div className="mt-2 text-xs text-gray-500">OrderID: {'ex: REG-001'}</div>
       </div>

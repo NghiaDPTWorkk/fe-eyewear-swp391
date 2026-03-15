@@ -1,3 +1,4 @@
+// ─── Admin Product List Types ───
 export interface AdminProductListItem {
   id: string
   nameBase: string
@@ -31,6 +32,7 @@ export interface AdminProductListApiResponse {
   data: AdminProductListData
 }
 
+// ─── Admin Product Detail Types ───
 export interface AdminProductVariantOption {
   attributeId: string
   attributeName: string
@@ -53,6 +55,7 @@ export interface AdminProductVariant {
 }
 
 export interface AdminProductSpec {
+  // Frame fields
   material?: string[]
   shape?: string
   style?: string
@@ -63,7 +66,7 @@ export interface AdminProductSpec {
     height: number
     depth: number
   }
-
+  // Lens fields
   feature?: string[]
   origin?: string
 }

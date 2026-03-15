@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
-import { Card } from '@/shared/components/ui'
+import { Card } from '@/shared/components/ui-core'
 
-export interface StaffMetricCardProps {
+export interface MetricCardProps {
   label: string
   value: string | number
   subValue?: string
@@ -20,7 +20,7 @@ export interface StaffMetricCardProps {
   }
 }
 
-export function StaffMetricCard({
+export function MetricCard({
   label,
   value,
   subValue,
@@ -29,7 +29,7 @@ export function StaffMetricCard({
   colorScheme = 'primary',
   className,
   progress
-}: StaffMetricCardProps) {
+}: MetricCardProps) {
   const getIconBgColor = () => {
     switch (colorScheme) {
       case 'primary':

@@ -1,6 +1,6 @@
 import { useAuthStore } from '@/store'
 import { PenTool, Database, Lock } from 'lucide-react'
-import { Card, Button } from '@/shared/components/ui'
+import { Card, Button } from '@/shared/components/ui-core'
 
 interface StepPrescriptionOptionProps {
   onSelect: (option: 'manual' | 'saved') => void
@@ -8,6 +8,8 @@ interface StepPrescriptionOptionProps {
 
 export default function StepPrescriptionOption({ onSelect }: StepPrescriptionOptionProps) {
   const { isAuthenticated } = useAuthStore()
+
+  // handleSavedSelect is no longer needed as logic is embedded in JSX
 
   return (
     <div className="animate-in fade-in slide-in-from-right-4 duration-500">

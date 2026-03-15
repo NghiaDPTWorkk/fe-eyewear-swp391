@@ -1,5 +1,5 @@
 import { PageHeader } from '@/features/staff/components/common'
-import { Container } from '@/shared/components/ui'
+import { Container } from '@/shared/components/ui-core'
 import { useNavigate } from 'react-router-dom'
 import { StaffProfileContent } from '@/features/staff/components/Profile/StaffProfileContent'
 

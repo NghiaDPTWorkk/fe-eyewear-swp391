@@ -1,4 +1,7 @@
+// API Endpoints Configuration
+
 export const ENDPOINTS = {
+  // Auth
   AUTH: {
     LOGIN_CUSTOMER: '/auth/login',
     LOGIN_STAFF: '/admin/auth/login',
@@ -8,7 +11,7 @@ export const ENDPOINTS = {
     PROFILE: '/customer',
     UPDATE_PROFILE: '/customer/profile',
     CHANGE_PASSWORD_CUSTOMER: '/customer/profile/password',
-    GET_PROFILE: '/admin/auth/profile',
+    GET_PROFILE: '/admin/auth/profile', // Get admin/staff profile - Keep from target
     CHANGE_PASSWORD: '/admin/auth/profile/change-password',
     ADDRESS_LIST: '/customer/profile/address',
     ADDRESS_ADD: '/customer/profile/address',
@@ -16,6 +19,7 @@ export const ENDPOINTS = {
     GOOGLE: '/auth/google'
   },
 
+  // Products
   PRODUCTS: {
     COMMON_GET: (page: number, limit: number) => `/products?page=${page}&limit=${limit}`,
     COMMON_GET_BY_TYPE: (page: number, limit: number, type: string) =>
@@ -41,6 +45,7 @@ export const ENDPOINTS = {
     }
   },
 
+  // Cart
   CART: {
     GET: '/cart',
     ADD: '/cart/add-product',
@@ -49,6 +54,7 @@ export const ENDPOINTS = {
     CLEAR: '/cart/clear'
   },
 
+  // Orders
   ORDERS: {
     CREATE: '/orders',
     LIST: '/orders',
@@ -65,7 +71,7 @@ export const ENDPOINTS = {
       return `/admin/orders?${params.toString()}`
     },
     UPDATE: (id: string) => `/admin/orders/${id}`,
-    UPDATE_STATUS_MAKING: (id: string) => `/admin/orders/${id}/status/making`,
+    UPDATE_STATUS_MAKING: (id: string) => `/admin/orders/${id}/status/making`, // Keep from target
     UPDATE_STATUS_PACKAGING: (id: string) => `/admin/orders/${id}/status/packaging`,
     UPDATE_STATUS_COMPLETED: (id: string) => `/admin/orders/${id}/status/complete`,
     SEARCH_BY_CODE: (orderCode: string) =>
@@ -73,6 +79,7 @@ export const ENDPOINTS = {
     LIST_BY_INVOICE: (invoiceId: string) => `/orders/list-by-invoice/${invoiceId}`
   },
 
+  // Prescription (Custom Lens)
   PRESCRIPTION: {
     VALIDATE: '/prescription/validate',
     CALCULATE: '/prescription/calculate',
@@ -83,6 +90,7 @@ export const ENDPOINTS = {
     DELETE: (id: string) => `/customer/profile/prescription/${id}`
   },
 
+  // Payment
   PAYMENT: {
     MOMO: '/payment/momo',
     VNPAY: '/payment/vnpay',
@@ -93,6 +101,7 @@ export const ENDPOINTS = {
     STATUS: (transactionId: string) => `/payment/status/${transactionId}`
   },
 
+  // Admin
   ADMIN: {
     INVOICES: (
       page: number,
@@ -204,27 +213,28 @@ export const ENDPOINTS = {
     DELETE: (id: string) => `/admin/admin-accounts/${id}`
   },
 
+  // Invoices
   INVOICE: {
     CREATE: '/invoices',
     LIST: '/invoices',
     DETAIL: (id: string) => `/invoices/${id}`
   },
-
+  // Wishlist
   WISHLIST: {
     GET: '/wishlist',
     ADD: (id: string) => `/wishlist/products/${id}`,
     REMOVE: (id: string) => `/wishlist/products/${id}`
   },
-
+  // Categories
   CATEGORIES: {
     TREE: '/categories/tree'
   },
-
+  // Support
   SUPPORT: {
     REPORT_TICKETS: '/admin/report-tickets',
     MY_HISTORY: '/admin/report-tickets/my-history'
   },
-
+  // AI Chat
   AI_CHAT: {
     GET_CONVERSATION: '/ai-conversation',
     GET_MESSAGES: (lastMessageAt?: number) =>
@@ -232,6 +242,7 @@ export const ENDPOINTS = {
     SEND_MESSAGE: '/ai-conversation/chat'
   },
 
+  // Operation Staff
   OPERATION_STAFF: {
     INVOICES_HANDLE_DELIVERY: (page: number, limit: number, status?: string, search?: string) => {
       const params = new URLSearchParams({
@@ -245,17 +256,19 @@ export const ENDPOINTS = {
     INVOICE_DETAIL: (id: string) => `/admin/invoices/${id}`
   },
 
+  // Admin AI Conversations
   ADMIN_AI_CONVERSATIONS: {
     LIST: (search: string = '', lastItem: string = '') =>
       `/admin/ai-conversations?search=${encodeURIComponent(search)}&lastItem=${lastItem}`,
     MESSAGES: (id: string, lastItem: string = '') =>
       `/admin/ai-conversations/${id}/messages?lastItem=${lastItem}`
   },
-
+  // Vouchers (Customer)
   VOUCHERS: {
     MY_VOUCHERS: '/vouchers/my-vouchers'
   },
 
+  // Manager
   MANAGER: {
     VOUCHERS: (page: number = 1, limit: number = 10, status?: string, search?: string) => {
       const params = new URLSearchParams({ page: String(page), limit: String(limit) })

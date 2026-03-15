@@ -3,7 +3,6 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { STORAGE_KEYS } from '@/shared/constants/storage'
 import { useAuthStore } from '@/store/auth.store'
 import { toast } from 'react-hot-toast'
-import { MESSAGES, ERROR_MESSAGES } from '@/shared/constants/messages'
 
 export const GoogleCallbackPage = () => {
   const [searchParams] = useSearchParams()
@@ -16,18 +15,21 @@ export const GoogleCallbackPage = () => {
     if (accessToken) {
       const handleLoginSuccess = async () => {
         try {
+          // 1. Set token in store and localStorage (setToken now handles localStorage too)
           setToken(accessToken)
           localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken)
           localStorage.setItem('accessToken', accessToken)
 
+          // 2. Fetch user profile
           await fetchProfile()
 
-          toast.success(MESSAGES.CUSTOMER.AUTH.LOGIN_SUCCESS)
+          toast.success('Login successful!')
 
+          // Redirect to home or intended page
           navigate('/')
         } catch (error) {
           console.error('Login failed:', error)
-          toast.error(ERROR_MESSAGES.AUTH.LOGIN_FAILED)
+          toast.error('Failed to complete login. Please try again.')
           navigate('/login')
         }
       }
@@ -36,9 +38,9 @@ export const GoogleCallbackPage = () => {
     } else {
       const error = searchParams.get('error')
       if (error) {
-        toast.error(`${MESSAGES.COMMON.ERROR}: ${error}`)
+        toast.error(`Login failed: ${error}`)
       } else {
-        toast.error(MESSAGES.COMMON.INVALID_DATA)
+        toast.error('No access token found.')
       }
       navigate('/login')
     }

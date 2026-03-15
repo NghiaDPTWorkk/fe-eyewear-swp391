@@ -33,7 +33,7 @@ export function ReturnTicketDialog({
   const handleClose = () => {
     if (isSubmitting) return
     setIsOpen(false)
-
+    // Reset form
     setReason('DAMAGE')
     setOtherReason('')
     setDescription('')
@@ -146,7 +146,7 @@ export function ReturnTicketDialog({
               </div>
 
               <form onSubmit={handleSubmit} className="p-6 space-y-5">
-                {}
+                {/* Reason Selection */}
                 <div className="space-y-2">
                   <label className="text-[13px] font-bold text-gray-700 ml-1">
                     Reason for Return
@@ -172,7 +172,7 @@ export function ReturnTicketDialog({
                   </div>
                 </div>
 
-                {}
+                {/* Other Reason Input */}
                 {reason === 'OTHER' && (
                   <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-200">
                     <label className="text-[13px] font-bold text-gray-700 ml-1">
@@ -189,7 +189,7 @@ export function ReturnTicketDialog({
                   </div>
                 )}
 
-                {}
+                {/* Description */}
                 <div className="space-y-2">
                   <label className="text-[13px] font-bold text-gray-700 ml-1">
                     Detailed Description
@@ -203,7 +203,7 @@ export function ReturnTicketDialog({
                   />
                 </div>
 
-                {}
+                {/* Media Upload */}
                 <div className="space-y-2">
                   <label className="text-[13px] font-bold text-gray-700 ml-1">Images (max 5)</label>
                   <div className="flex flex-wrap gap-3">

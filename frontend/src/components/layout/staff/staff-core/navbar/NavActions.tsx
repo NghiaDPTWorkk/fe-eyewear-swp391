@@ -8,11 +8,9 @@ import {
   IoChevronForward,
   IoTicketOutline
 } from 'react-icons/io5'
-import { useLocation, Link, useNavigate } from 'react-router-dom'
+import { useLocation, Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { useLogout } from '@/shared/hooks/useLogout'
-import { useNotificationStore } from '@/store'
-import type { AppNotification } from '@/store/notification.store'
 
 interface NavActionsProps {
   className?: string
@@ -32,13 +30,11 @@ export function NavActions({
   const [openDropdown, setOpenDropdown] = useState<'notifications' | 'profile' | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
-  const navigate = useNavigate()
 
+  // Determine base path for dynamic links
   const isOperation = location.pathname.startsWith('/operation-staff')
   const isManager = location.pathname.startsWith('/manager')
   const isAdmin = location.pathname.startsWith('/admin')
-
-  const { notifications, unreadCount, markAsRead } = useNotificationStore()
 
   const basePrefix = isAdmin
     ? '/admin'
@@ -58,26 +54,36 @@ export function NavActions({
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const resolveNotificationPath = (notification: AppNotification) => {
-    switch (notification.type) {
-      case 'INVOICE_CREATE':
-      case 'ASSIGN_INVOICE':
-      case 'COMPLETE_INVOICE':
-        return `${basePrefix}/invoices/${notification.metadata.invoiceId}`
-      case 'ASSIGN_ORDER':
-        return isOperation
-          ? `/operation-staff/orders/${notification.metadata.orderId}`
-          : `/sale-staff/orders/${notification.metadata.orderId}/regular`
-      default:
-        return null
+  const notifications = [
+    {
+      id: 1,
+      title: 'Return Request',
+      description: 'Return #RTN-2024-089 requires your approval',
+      time: '5 min ago',
+      color: 'bg-red-500'
+    },
+    {
+      id: 2,
+      title: 'Rx Verification Pending',
+      description: '12 prescriptions waiting for verification',
+      time: '15 min ago',
+      color: 'bg-amber-500'
+    },
+    {
+      id: 3,
+      title: 'New Pre-order',
+      description: 'Pre-order #PRE-2024-456 has been placed',
+      time: '1 hour ago',
+      color: 'bg-blue-500'
+    },
+    {
+      id: 4,
+      title: 'Order Completed',
+      description: 'Order #ORD-2024-1234 has been shipped',
+      time: '2 hours ago',
+      color: 'bg-emerald-500'
     }
-  }
-
-  const handleNotificationClick = (notification: AppNotification) => {
-    markAsRead(notification._id)
-    const path = resolveNotificationPath(notification)
-    if (path) navigate(path)
-  }
+  ]
 
   const { handleLogout } = useLogout()
 
@@ -107,50 +113,32 @@ export function NavActions({
             title="View Notifications"
           >
             <MdOutlineNotifications className="text-2xl" />
-            {unreadCount > 0 && (
-              <span className="absolute top-0 right-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary-500 px-1 text-[10px] font-bold text-white ring-2 ring-white">
-                {unreadCount > 9 ? '9+' : unreadCount}
-              </span>
-            )}
+            <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-primary-500 ring-2 ring-white"></span>
           </button>
 
           {openDropdown === 'notifications' && (
             <div className="absolute right-0 mt-6 w-80 bg-white rounded-2xl shadow-xl border border-neutral-100 py-4 z-50 animate-in fade-in zoom-in-95 duration-200">
               <div className="px-5 mb-4">
                 <h3 className="text-lg font-semibold text-neutral-900">Notifications</h3>
-                <p className="text-xs font-medium text-neutral-400">
-                  You have {unreadCount} unread {unreadCount === 1 ? 'message' : 'messages'}
-                </p>
+                <p className="text-xs font-medium text-neutral-400">You have 4 unread messages</p>
               </div>
 
               <div className="divide-y divide-neutral-50">
-                {notifications.length === 0 && (
-                  <div className="px-5 py-6 text-sm text-neutral-400">No notifications yet</div>
-                )}
-
                 {notifications.map((n) => (
                   <div
-                    key={n._id}
+                    key={n.id}
                     className="px-5 py-4 hover:bg-neutral-50 cursor-pointer transition-colors group"
-                    onClick={() => handleNotificationClick(n)}
                   >
                     <div className="flex gap-3">
-                      <div
-                        className={cn(
-                          'w-2 h-2 rounded-full mt-1.5 shrink-0',
-                          n.isRead ? 'bg-neutral-200' : 'bg-primary-500'
-                        )}
-                      />
+                      <div className={cn('w-2 h-2 rounded-full mt-1.5 shrink-0', n.color)} />
                       <div className="flex-1">
                         <h4 className="text-sm font-semibold text-neutral-900 group-hover:text-primary-600 transition-colors">
                           {n.title}
                         </h4>
                         <p className="text-[13px] text-neutral-500 mt-0.5 leading-relaxed font-normal">
-                          {n.message}
+                          {n.description}
                         </p>
-                        <p className="text-[11px] text-neutral-400 mt-1 font-medium">
-                          {new Date(n.createdAt).toLocaleString()}
-                        </p>
+                        <p className="text-[11px] text-neutral-400 mt-1 font-medium">{n.time}</p>
                       </div>
                     </div>
                   </div>

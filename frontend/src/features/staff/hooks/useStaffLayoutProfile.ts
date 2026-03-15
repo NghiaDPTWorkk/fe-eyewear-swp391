@@ -1,6 +1,10 @@
 import { useProfile } from './useProfile'
 import { getInitials } from '@/shared/utils'
 
+/**
+ * Custom hook to get and format profile information for staff layouts.
+ * Consolidates common logic used across Admin, Manager, and Staff layouts.
+ */
 export const useStaffLayoutProfile = () => {
   const { data: profileData, isLoading, isError } = useProfile()
   const profile = profileData?.data
@@ -9,6 +13,7 @@ export const useStaffLayoutProfile = () => {
   const userEmail = profile?.email || ''
   const rawRole = profile?.role || ''
 
+  // Format role for better display (e.g., OPERATION_STAFF -> Operation Staff)
   const formatRole = (role?: string) => {
     if (!role) return 'Loading...'
     return role

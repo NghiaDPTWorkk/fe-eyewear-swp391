@@ -6,7 +6,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { useCartStore, useAuthStore } from '@/store'
 
 import { ProfileDropdown as ProjectProfileDropdown } from './ProfileDropdown'
-import LogoEyewearIcon from '@/shared/components/ui/logoeyewear/LogoEyewearIcon'
+import LogoEyewearIcon from '@/shared/components/ui-core/logoeyewear/LogoEyewearIcon'
 
 export default function CustomerHeader() {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false)
@@ -20,16 +20,20 @@ export default function CustomerHeader() {
   const fetchCart = useCartStore((state) => state.fetchCart)
   const [isBagAnimating, setIsBagAnimating] = useState(false)
 
+  // đợi Component mount xong
   const [hasHydrated, setHasHydrated] = useState(false)
 
   useEffect(() => {
+    // đã mount, chúng ta coi như đã nạp xong (vì localStorage là đồng bộ)
     setHasHydrated(true)
 
+    // Fetch cart on mount if authenticated to persist badge across pages
     if (isAuthenticated) {
       fetchCart()
     }
   }, [isAuthenticated, fetchCart])
 
+  // Animation effect for cart badge
   useEffect(() => {
     if (totalItems === 0) return
 
@@ -69,6 +73,7 @@ export default function CustomerHeader() {
     }
   }
 
+  // Helper function to check if link is active
   const isActive = (path: string) => {
     return location.pathname === path
   }
@@ -227,6 +232,7 @@ export default function CustomerHeader() {
               )}
             </button>
             {!hasHydrated ? (
+              // Placeholder để giữ layout ổn định trong khi chờ hydrate
               <div className="w-9 h-9" />
             ) : isAuthenticated ? (
               <ProjectProfileDropdown />

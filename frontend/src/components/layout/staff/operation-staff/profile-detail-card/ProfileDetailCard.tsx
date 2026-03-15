@@ -19,7 +19,7 @@ export default function ProfileDetailCard({
       <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-primary-50/50 rounded-full blur-3xl opacity-50" />
 
       <div className="relative flex flex-col md:flex-row items-center gap-8 md:gap-12">
-        {}
+        {/* Avatar Area */}
         <div className="relative group">
           <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white text-4xl md:text-5xl font-bold shadow-2xl shadow-primary-200 border-4 border-white">
             {userInitials}
@@ -30,7 +30,7 @@ export default function ProfileDetailCard({
           />
         </div>
 
-        {}
+        {/* User Info */}
         <div className="flex-1 text-center md:text-left">
           <div className="flex flex-col md:flex-row md:items-center gap-3 mb-4">
             <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 tracking-tight">

@@ -17,7 +17,7 @@ export default function MainDetailVoucher({
   return (
     <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden animate-in slide-in-from-bottom-5 duration-500">
       <div className="p-8 space-y-8">
-        {}
+        {/* Identification & Status */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
@@ -32,7 +32,7 @@ export default function MainDetailVoucher({
           </div>
         </div>
 
-        {}
+        {/* Voucher Title & Overview */}
         <div className="space-y-4">
           <div className="space-y-1">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
@@ -47,7 +47,7 @@ export default function MainDetailVoucher({
           )}
         </div>
 
-        {}
+        {/* Specific Conditions */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <DetailGroup
             icon={<IoCashOutline className="text-mint-500" />}
@@ -73,7 +73,7 @@ export default function MainDetailVoucher({
           />
         </div>
 
-        {}
+        {/* Validity Section */}
         <div className="pt-6 border-t border-slate-100">
           <div className="flex items-center gap-2 mb-4">
             <IoCalendarOutline className="text-mint-500" size={18} />

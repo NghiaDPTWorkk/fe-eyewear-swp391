@@ -40,7 +40,7 @@ const LensNormalOrder = ({
         )}
       </div>
       <div className="flex flex-col md:flex-row gap-6">
-        {}
+        {/* Lens Image */}
         <div className="w-55 h-55 md:w-1/3 bg-gray-50 rounded-lg p-4 flex justify-center">
           <img src={imageSrc} alt="Lens" className="max-w-full h-auto object-contain" />
         </div>

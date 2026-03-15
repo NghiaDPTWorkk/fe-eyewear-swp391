@@ -151,7 +151,7 @@ export function PrescriptionsPage() {
         </div>
       )}
 
-      {}
+      {/* Info Tip */}
       <div className="mt-12 flex items-start gap-4 p-8 bg-mint-50/50 rounded-3xl border border-mint-100/50">
         <div className="mt-1 w-6 h-6 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-[10px]">
           !

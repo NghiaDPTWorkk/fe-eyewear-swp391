@@ -20,14 +20,11 @@ interface StaffTableProps {
   onToggleStatus: (id: string) => void
 }
 
-import { UserRole } from '@/shared/constants/user-role'
-
 const getRoleStyles = (role: string): string => {
   const normalized = role.toLowerCase()
-  if (normalized.includes(UserRole.SALE_STAFF)) return 'bg-blue-50 text-blue-600 border-blue-100'
-  if (normalized.includes(UserRole.OPERATION_STAFF))
-    return 'bg-amber-50 text-amber-600 border-amber-100'
-  if (normalized.includes(UserRole.MANAGER)) return 'bg-purple-50 text-purple-600 border-purple-100'
+  if (normalized.includes('sale')) return 'bg-blue-50 text-blue-600 border-blue-100'
+  if (normalized.includes('operation')) return 'bg-amber-50 text-amber-600 border-amber-100'
+  if (normalized.includes('manager')) return 'bg-purple-50 text-purple-600 border-purple-100'
   return 'bg-indigo-50 text-indigo-600 border-indigo-100'
 }
 

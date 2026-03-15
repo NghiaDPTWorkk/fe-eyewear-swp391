@@ -1,6 +1,10 @@
 import type { Address } from './address.types'
 import type { Gender } from '@/shared/utils/enums/gender.enum'
 
+/**
+ * Customer types matching backend structure
+ */
+
 export interface LinkedAccount {
   provider: string
   providerId: string
@@ -76,27 +80,4 @@ export interface AdminCustomerListResponse {
       totalPages: number
     }
   }
-}
-export interface BasicSuccessResponse {
-  success: boolean
-  message: string
-}
-
-export interface CustomerProfileResponse {
-  success: boolean
-  message: string
-  data: Customer
-}
-
-export interface UpdateCustomerProfileRequest {
-  name?: string
-  phone?: string
-  gender?: Gender
-  address?: Address[]
-  hobbies?: string[]
-}
-
-export interface UpdateCustomerPasswordRequest {
-  oldPassword?: string
-  newPassword?: string
 }

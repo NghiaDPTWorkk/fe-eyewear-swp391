@@ -5,7 +5,7 @@ import { formatDate, formatTime } from '@/shared/utils'
 import STATUS_INVENTORY_PLANNING_CONFIG from '@/shared/utils/enums/inventoryplan.enum'
 
 interface InventoryTrProps {
-  batch: any
+  batch: any // Ideally use a proper type from your features/operations/types
   managerName: string
   onViewDetail: (id: string) => void
   onNext: (id: string) => void

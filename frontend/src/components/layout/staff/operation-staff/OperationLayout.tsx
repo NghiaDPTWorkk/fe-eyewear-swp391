@@ -18,7 +18,7 @@ import { FaBoxesPacking } from 'react-icons/fa6'
 import { useOrderCountStore } from '@/store'
 import { AiOutlineFileDone } from 'react-icons/ai'
 import { useAllOrders, useCompletedOrders } from '@/features/staff/hooks/orders/useOrders'
-import { transformApiOrderToTableOrder } from '@/shared/components/staff/staff-core/order-table/order-utils'
+import { transformApiOrderToTableOrder } from '@/features/staff/components/order-table/orderTransformers'
 import { useAuthStore } from '@/store/auth.store'
 import { useStaffLayoutProfile } from '@/features/staff/hooks/useStaffLayoutProfile'
 import { OrderType } from '@/shared/utils/enums/order.enum'
@@ -45,24 +45,32 @@ export default function OperationLayout() {
     }
   }, [profile, setUser])
 
+  // Gọi API để lấy số lượng đơn hàng để xíu lọc theo từng trạng thái
   const { data: ordersData, isLoading, isError, error } = useAllOrders()
 
+  // Gọi API riêng để lấy số đơn hàng COMPLETED
   const { data: completedData, isLoading: isLoadingCompleted } = useCompletedOrders()
 
   useEffect(() => {
+    // Set loading và error states vào store
     setLoadingState(isLoading, isError)
 
     if (ordersData) {
+      // Transform data từ API sang format UI
       const apiOrders = ordersData?.data?.orders?.data || []
 
+      // Transform order để nhét vô OrderTable á
       const transformedOrders = apiOrders.map(transformApiOrderToTableOrder)
 
+      // Lọc bỏ đơn WAITING_STOCK của PRE-ORDER theo yêu cầu
       const filteredOrders = transformedOrders.filter(
         (o) => !(o.orderType === OrderType.PRE_ORDER && o.currentStatus === 'WAITING_STOCK')
       )
 
+      // Lưu orders vào Zustand store để các trang khác dùng
       setOrders(filteredOrders)
 
+      // Initialize counts vào Zustand store
       initializeCounts(filteredOrders)
     }
     if (isError) {
@@ -71,11 +79,12 @@ export default function OperationLayout() {
   }, [ordersData, isLoading, isError, error, initializeCounts, setOrders, setLoadingState])
 
   useEffect(() => {
+    // Set loading state cho completed
     setCompletedLoadingState(isLoadingCompleted)
 
     if (completedData) {
       const completedOrders = completedData?.data?.orders?.data || []
-
+      // Set count cho completed orders
       setCount('completed', completedOrders.length)
     }
   }, [completedData, isLoadingCompleted, setCount, setCompletedLoadingState])
@@ -88,6 +97,8 @@ export default function OperationLayout() {
     localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN)
     localStorage.removeItem(STORAGE_KEYS.USER_INFO)
   }
+
+  // (using hook values instead of manual computation)
 
   const sidebar = (
     <SidebarStaff

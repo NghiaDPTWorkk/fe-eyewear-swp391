@@ -16,11 +16,18 @@ import {
   VoucherStatus as Status
 } from '@/shared/utils/enums/voucher.enum'
 
+/**
+ * Human-readable labels for each ApplyScope enum value.
+ * Add a new key here whenever the backend adds a new scope — no changes elsewhere needed.
+ */
 const APPLY_SCOPE_LABELS: Record<string, string> = {
   [ApplyScope.ALL]: 'Public — All Users',
   [ApplyScope.SPECIFIC]: 'Targeted — Specific Users'
 }
 
+/**
+ * Status display config — driven from the Status enum so new values auto-appear.
+ */
 const STATUS_CFG: Record<string, { label: string; active: string; idle: string }> = {
   [Status.DRAFT]: {
     label: 'Draft',
@@ -39,6 +46,7 @@ const STATUS_CFG: Record<string, { label: string; active: string; idle: string }
   }
 }
 
+// ─── Form state (mirrors Voucher but only editable fields) ────────
 interface FormState {
   _id?: string
   name: string
@@ -70,6 +78,11 @@ const EMPTY_FORM: FormState = {
   status: Status.DRAFT
 }
 
+/**
+ * Converts an ISO datetime string ("2026-01-01T00:00:00.000Z")
+ * to the "YYYY-MM-DD" format that <input type="date"> requires.
+ * Returns '' for falsy inputs.
+ */
 function isoToDateInput(iso: string | undefined | null): string {
   if (!iso) return ''
   try {
@@ -84,10 +97,11 @@ interface VoucherAdditionProps {
   onClose: () => void
   onSave: (voucher: Partial<Voucher>) => void
   editingVoucher: Voucher | null
-
+  /** Pass true while the parent mutation is in-flight to disable the Save button */
   isSaving?: boolean
 }
 
+// ─── Component ────────────────────────────────────────────────────
 export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
   isOpen,
   onClose,
@@ -107,7 +121,7 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
         typeDiscount: editingVoucher.typeDiscount ?? DiscountType.PERCENTAGE,
         value: editingVoucher.value ?? 0,
         usageLimit: editingVoucher.usageLimit ?? 100,
-
+        // Convert ISO → YYYY-MM-DD so <input type="date"> renders correctly
         startedDate: isoToDateInput(editingVoucher.startedDate),
         endedDate: isoToDateInput(editingVoucher.endedDate),
         minOrderValue: editingVoucher.minOrderValue ?? 0,
@@ -123,6 +137,7 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
   if (!isOpen) return null
 
   const handleSave = () => {
+    // Ensure all numeric strings are converted back to numbers before saving
     const finalForm = {
       ...form,
       value: Number(form.value) || 0,
@@ -141,7 +156,7 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
   return (
     <ModalOverlay onClose={onClose}>
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] flex flex-col overflow-hidden">
-        {}
+        {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/60">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-mint-400 to-mint-600 flex items-center justify-center text-white shadow-lg shadow-mint-200/50">
@@ -164,9 +179,9 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
           </button>
         </div>
 
-        {}
+        {/* Body */}
         <div className="overflow-y-auto px-6 py-5 space-y-5 flex-1">
-          {}
+          {/* Identity */}
           <Section title="Identity">
             <div className="grid grid-cols-5 gap-3">
               <div className="col-span-2">
@@ -200,7 +215,7 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
             </FormRow>
           </Section>
 
-          {}
+          {/* Discount */}
           <Section title="Discount">
             <div className="grid grid-cols-2 gap-3">
               <FormRow label="Type">
@@ -262,7 +277,7 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
             </div>
           </Section>
 
-          {}
+          {/* Scope & Limits */}
           <Section title="Scope & Limits">
             <div className="grid grid-cols-2 gap-3">
               <FormRow label="Apply Scope">
@@ -273,7 +288,7 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
                   }
                   className={inputCls}
                 >
-                  {}
+                  {/* Dynamically driven from ApplyScope enum — add new values to the enum + APPLY_SCOPE_LABELS map only */}
                   {Object.values(ApplyScope).map((scopeVal) => (
                     <option key={scopeVal} value={scopeVal}>
                       {APPLY_SCOPE_LABELS[scopeVal] ?? scopeVal}
@@ -300,7 +315,7 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
             </div>
           </Section>
 
-          {}
+          {/* Schedule */}
           <Section title="Schedule">
             <div className="grid grid-cols-2 gap-3">
               <FormRow label="Active From">
@@ -342,7 +357,7 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
             )}
           </Section>
 
-          {}
+          {/* Status — driven from Status enum + STATUS_CFG map */}
           <Section title="Status">
             <div className="grid grid-cols-3 gap-2">
               {Object.values(Status).map((s) => {
@@ -364,7 +379,7 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
           </Section>
         </div>
 
-        {}
+        {/* Footer */}
         <div className="flex justify-end gap-3 px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex-shrink-0">
           <button
             type="button"
@@ -395,6 +410,7 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
   )
 }
 
+// ─── Helpers ──────────────────────────────────────────────────────
 function ModalOverlay({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">

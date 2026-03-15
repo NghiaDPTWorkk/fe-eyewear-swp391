@@ -1,3 +1,4 @@
+// Order Type Enum
 export enum OrderType {
   NORMAL = 'NORMAL',
   PRE_ORDER = 'PRE-ORDER',
@@ -5,20 +6,21 @@ export enum OrderType {
   RETURN = 'RETURN'
 }
 
+// Order Status Enum
 export enum OrderStatus {
-  PENDING = 'PENDING',
-  WAITING_VERIFY = 'WAITING_VERIFY',
-  VERIFIED = 'VERIFIED',
-  APPROVE = 'APPROVE',
-  REJECT = 'REJECT',
-  WAITING_ASSIGN = 'WAITING_ASSIGN',
-  ASSIGNED = 'ASSIGNED',
-  MAKING = 'MAKING',
-  PACKAGING = 'PACKAGING',
+  PENDING = 'PENDING', // Chờ xác minh
+  WAITING_VERIFY = 'WAITING_VERIFY', // Chờ xác minh
+  VERIFIED = 'VERIFIED', // Đã xác minh
+  APPROVE = 'APPROVE', // Đã duyệt
+  REJECT = 'REJECT', // Đã từ chối
+  WAITING_ASSIGN = 'WAITING_ASSIGN', // Chờ phân công
+  ASSIGNED = 'ASSIGNED', // Đã phân công
+  MAKING = 'MAKING', // Đang sản xuất
+  PACKAGING = 'PACKAGING', // Đã đóng gói
   COMPLETED = 'COMPLETED',
   CANCELED = 'CANCELED',
-  WAITING_REFUND = 'WAITING_REFUND',
-  REFUNDED = 'REFUNDED'
+  WAITING_REFUND = 'WAITING_REFUND', // Chờ hoàn tiền
+  REFUNDED = 'REFUNDED' // Đã hoàn tiền
 }
 
 export const AssignmentOrderStatus = {

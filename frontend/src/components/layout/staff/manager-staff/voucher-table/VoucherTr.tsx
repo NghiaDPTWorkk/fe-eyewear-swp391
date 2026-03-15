@@ -1,3 +1,8 @@
+/**
+ * VoucherTr — renders one full row of data cells for a single voucher.
+ * Accepts optional render-prop for the actions column to keep the row
+ * decoupled from any specific page-level handlers.
+ */
 import type { ReactNode } from 'react'
 import type { Voucher } from '@/shared/types'
 import { DEFAULT_VOUCHER_COLUMNS, type VoucherColumn } from './VoucherTypes'
@@ -5,13 +10,13 @@ import { VoucherTdata, type VoucherCellKey } from './VoucherTdata'
 
 interface VoucherTrProps {
   voucher: Voucher
-
+  /** Column definitions — must match those passed to <VoucherHeader /> */
   columns?: VoucherColumn[]
-
+  /** Slot for the actions cell content */
   actions?: ReactNode
-
+  /** Called when anywhere on the row is clicked */
   onClick?: () => void
-
+  /** Extra className on the row wrapper */
   className?: string
 }
 

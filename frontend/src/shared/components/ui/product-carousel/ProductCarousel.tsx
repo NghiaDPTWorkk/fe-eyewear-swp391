@@ -34,7 +34,7 @@ export const ProductCarousel = ({ products, itemsPerView = 4 }: ProductCarouselP
 
   return (
     <div className="relative">
-      {}
+      {/* Carousel Container */}
       <div className="overflow-hidden">
         <div
           className="flex transition-transform duration-500 ease-out gap-6"
@@ -43,7 +43,8 @@ export const ProductCarousel = ({ products, itemsPerView = 4 }: ProductCarouselP
           }}
         >
           {products.map((product) => {
-            const p = product as any
+            // StandardProduct type matches the list view API response
+            const p = product as any // Still need a quick cast if the union doesn't have id on all members
 
             const productId = p.id || 'unknown'
             const productName = p.nameBase || 'Unnamed Product'
@@ -84,7 +85,7 @@ export const ProductCarousel = ({ products, itemsPerView = 4 }: ProductCarouselP
         </div>
       </div>
 
-      {}
+      {/* Navigation Buttons */}
       {products.length > itemsPerView && (
         <>
           <button

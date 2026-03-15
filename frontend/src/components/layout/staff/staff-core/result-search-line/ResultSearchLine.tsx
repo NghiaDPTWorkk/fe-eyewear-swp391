@@ -23,7 +23,7 @@ export default function ResultSearchLine({
         className
       )}
     >
-      {}
+      {/* Icon kính lúp bên tay trái */}
       <span
         className={cn(
           'flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors',
@@ -35,7 +35,7 @@ export default function ResultSearchLine({
         <FiSearch size={14} />
       </span>
 
-      {}
+      {/* searchCode text */}
       <span className="font-medium text-neutral-800 group-hover:text-mint-700 transition-colors text-sm truncate">
         {searchCode}
       </span>

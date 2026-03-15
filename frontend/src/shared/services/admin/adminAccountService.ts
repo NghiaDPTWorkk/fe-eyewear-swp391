@@ -10,6 +10,7 @@ import type {
 } from '@/shared/types'
 
 export const adminAccountService = {
+  // Keep old endpoint/service for backward compatibility
   getAdmins(role?: string) {
     return httpClient.get<AdminAccountListApiResponse>(ENDPOINTS.ADMINS.GET_ADMIN(role))
   },

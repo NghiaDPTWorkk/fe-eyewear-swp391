@@ -30,10 +30,10 @@ export function StaffMainLayout({
 
   return (
     <div className="flex h-screen bg-white overflow-hidden">
-      {}
+      {/* Sidebar - fixed and handles its own transitions */}
       {sidebar}
 
-      {}
+      {/* Overlay for mobile */}
       {!sidebarCollapsed && (
         <div
           className="fixed inset-0 bg-neutral-900/40 z-40 lg:hidden backdrop-blur-sm transition-all duration-300"
@@ -41,7 +41,7 @@ export function StaffMainLayout({
         />
       )}
 
-      {}
+      {/* Main Content Area */}
       <div
         className={cn(
           'flex-1 flex flex-col min-h-screen transition-all duration-300 ease-in-out relative',

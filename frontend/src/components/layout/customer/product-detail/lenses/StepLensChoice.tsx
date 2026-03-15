@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Glasses, Loader2, AlertCircle, ArrowLeft, Check } from 'lucide-react'
 import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
-import { Card, Button } from '@/shared/components/ui'
+import { Card, Button } from '@/shared/components/ui-core'
 import { useGetProductWithType } from '@/shared/hooks/products/useGetProductWithType'
 import { productService } from '@/shared/services/products/productService'
 import type { Product } from '@/shared/types/product.types'
@@ -101,6 +101,7 @@ export default function StepLensChoice({ onSelect }: StepLensChoiceProps) {
             const price = variant.finalPrice
             const originalPrice = variant.price
 
+            // Pick image: 2nd image if exists, otherwise 1st, otherwise null
             const variantImage =
               variant.imgs?.length >= 2
                 ? variant.imgs[1]

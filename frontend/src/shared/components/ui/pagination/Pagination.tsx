@@ -55,7 +55,7 @@ export function Pagination({
 
   return (
     <div className={cn('flex flex-col items-center gap-4', className)}>
-      {}
+      {/* Page Numbers */}
       <div className="flex items-center gap-2">
         {getPageNumbers().map((page, index) => {
           if (page === '...') {
@@ -86,7 +86,7 @@ export function Pagination({
         })}
       </div>
 
-      {}
+      {/* Load More Button */}
       {showLoadMore && currentPage < totalPages && (
         <Button variant="outline" colorScheme="primary" size="md" onClick={onLoadMore}>
           Load More

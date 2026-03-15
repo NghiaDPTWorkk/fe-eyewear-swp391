@@ -14,6 +14,7 @@ export const CartItem = ({ item, isReadOnly = false }: CartItemProps) => {
   const { updateQuantity, removeItem, toggleSelection } = useCartStore()
   const [isLensesOpen, setIsLensesOpen] = useState(false)
 
+  // Local state for quantity input to allow typing
   const [localQty, setLocalQty] = useState(item.quantity.toString())
 
   useEffect(() => {
@@ -21,6 +22,7 @@ export const CartItem = ({ item, isReadOnly = false }: CartItemProps) => {
   }, [item.quantity])
 
   const handleQtyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Only allow digits
     const val = e.target.value.replace(/\D/g, '')
     setLocalQty(val)
   }
@@ -46,11 +48,14 @@ export const CartItem = ({ item, isReadOnly = false }: CartItemProps) => {
     }
   }
 
+  // Dynamic data from item
+  // Calculate totals
   const frameUnitPrice = item.price
   const lensUnitPrice = item.lens?.price || 0
   const itemTotalUnitPrice = frameUnitPrice + lensUnitPrice
   const itemTotalSubtotal = itemTotalUnitPrice * item.quantity
 
+  // Calculate discount percentage
   const displayDiscount = item.discount
     ? item.discount.type === 'percentage'
       ? `-${item.discount.value}%`
@@ -62,7 +67,7 @@ export const CartItem = ({ item, isReadOnly = false }: CartItemProps) => {
   return (
     <Card className="p-8 border-mint-300/50 relative group bg-white hover:shadow-md transition-shadow">
       <div className="flex flex-col md:flex-row gap-8">
-        {}
+        {/* Selection Checkbox and Image Container */}
         <div className="flex items-center gap-6">
           {!isReadOnly && (
             <div className="flex-shrink-0">
@@ -97,11 +102,11 @@ export const CartItem = ({ item, isReadOnly = false }: CartItemProps) => {
           </div>
         </div>
 
-        {}
+        {/* Product Details */}
         <div className="flex-grow pt-2">
           <div className="flex justify-between items-start mb-6">
             <div className="flex-grow">
-              {}
+              {/* Product (Frame) Row */}
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h3 className="text-xl font-bold text-mint-1200 tracking-tight leading-tight">
@@ -134,7 +139,7 @@ export const CartItem = ({ item, isReadOnly = false }: CartItemProps) => {
                 </div>
               </div>
 
-              {}
+              {/* Lens Row */}
               {item.lens && (
                 <div className="flex gap-4 pl-6 py-3 border-l-2 border-mint-100 mb-6 bg-mint-50/20 rounded-r-xl">
                   <div className="w-12 h-12 bg-white rounded-lg border border-mint-100 flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
@@ -170,7 +175,7 @@ export const CartItem = ({ item, isReadOnly = false }: CartItemProps) => {
             </div>
           </div>
 
-          {}
+          {/* Collapsible Lenses Section */}
           {item.lens && (
             <div className="mb-6">
               <button
@@ -267,7 +272,7 @@ export const CartItem = ({ item, isReadOnly = false }: CartItemProps) => {
             </div>
           )}
 
-          {}
+          {/* Promo Info */}
           {displayDiscount && (
             <div className="py-3 border-t border-mint-50 flex items-center gap-2">
               <div className="px-2 py-0.5 bg-primary-50 text-primary-600 text-[10px] font-bold rounded uppercase tracking-wider border border-primary-100">
@@ -276,7 +281,7 @@ export const CartItem = ({ item, isReadOnly = false }: CartItemProps) => {
             </div>
           )}
 
-          {}
+          {/* Item Subtotal Area */}
           <div className="flex justify-between items-center pt-6 border-t border-gray-100 mt-auto">
             {!isReadOnly ? (
               <div className="flex items-center gap-3 bg-mint-50/50 p-1 rounded-xl border border-mint-100/50">

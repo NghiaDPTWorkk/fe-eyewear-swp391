@@ -5,9 +5,11 @@ interface HeaderProps {
   containerWidth?: string
   containerJustify?: string
 
+  // Mode 1: [Logo + NavList] | [Search + NavListIcon]
   logoNavList?: ReactNode
   searchNavListIcon?: ReactNode
 
+  // Mode 2: Logo | NavListContent | NavListIcon
   logo?: ReactNode
   navListContent?: ReactNode
   navListIcon?: ReactNode
@@ -21,13 +23,16 @@ export default function Header({
   containerWidth = '100%',
   containerJustify,
 
+  // Mode 1 props
   logoNavList,
   searchNavListIcon,
 
+  // Mode 2 props
   logo,
   navListContent,
   navListIcon,
 
+  // Custom justify
   leftJustify = 'flex-start',
   centerJustify = 'center',
   rightJustify = 'flex-end'
@@ -57,6 +62,7 @@ export default function Header({
     )
   }
 
+  // Mode 2: 3 sections layout
   return (
     <header className="w-full bg-white border-b border-mint-300 sticky top-0 z-50 shadow-sm">
       <Container maxWidth={containerWidth} justify={containerJustify}>

@@ -13,7 +13,7 @@ export function useOnboard() {
     mutationFn: (invoiceId: string) =>
       httpClient.patch<OnboardInvoiceResponse>(ENDPOINTS.ADMIN.INVOICES_ONBOARD(invoiceId)),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['operation-invoices-handle-delivery'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-invoices-enriched'] })
     }
   })
 

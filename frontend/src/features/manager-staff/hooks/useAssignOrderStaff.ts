@@ -9,7 +9,7 @@ export function useAssignOrderStaff() {
       orderAdminService.assignStaff(orderId, assignedStaff),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['admin-order-detail', variables.orderId] })
-      queryClient.invalidateQueries({ queryKey: ['admin-invoices'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-invoices-enriched'] })
     }
   })
 }

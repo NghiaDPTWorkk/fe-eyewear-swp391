@@ -13,7 +13,7 @@ export function useComplete() {
     mutationFn: (invoiceId: string) =>
       httpClient.patch<CompleteInvoiceResponse>(ENDPOINTS.ADMIN.INVOICES_COMPLETE(invoiceId)),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['operation-invoices-handle-delivery'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-invoices-enriched'] })
     }
   })
 

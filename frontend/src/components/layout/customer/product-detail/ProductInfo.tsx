@@ -141,10 +141,13 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
       return
     }
 
+    const normalizedLensSelection =
+      lensSelection?.visionNeed === 'non-prescription' ? undefined : lensSelection
+
     if (purchaseMode === 'cart') {
       try {
         // Call async add to cart with API integration
-        await addItemAsync(finalProductId, currentVariant.sku, 1, lensSelection)
+        await addItemAsync(finalProductId, currentVariant.sku, 1, normalizedLensSelection)
 
         // Show success message
         const actionLabel = isPreOrder ? 'Pre-ordered' : 'added to cart'
@@ -183,15 +186,15 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
         selected: true,
         productType: product.type,
         selectedOptions: selectedOptions,
-        lens: lensSelection
+        lens: normalizedLensSelection
           ? {
-              lensId: lensSelection.lensId || undefined,
-              sku: lensSelection.sku || undefined,
-              visionNeed: lensSelection.visionNeed || 'non-prescription',
-              prescription: lensSelection.prescription,
-              name: lensSelection.name,
-              price: lensSelection.lensPrice || 0,
-              image: lensSelection.image
+              lensId: normalizedLensSelection.lensId || undefined,
+              sku: normalizedLensSelection.sku || undefined,
+              visionNeed: normalizedLensSelection.visionNeed || 'non-prescription',
+              prescription: normalizedLensSelection.prescription,
+              name: normalizedLensSelection.name,
+              price: normalizedLensSelection.lensPrice || 0,
+              image: normalizedLensSelection.image
             }
           : undefined
       }

@@ -13,7 +13,7 @@ export function useDelivering() {
     mutationFn: (invoiceId: string) =>
       httpClient.patch<DeliveringInvoiceResponse>(ENDPOINTS.ADMIN.INVOICES_DELIVERING(invoiceId)),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['operation-invoices-handle-delivery'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-invoices-enriched'] })
     }
   })
 

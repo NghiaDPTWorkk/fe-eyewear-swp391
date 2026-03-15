@@ -6,6 +6,7 @@ import { salesService } from '@/features/sales/services/salesService'
 import type { Invoice, OrderDetail } from '../../types'
 import { Button, ConfirmationModal } from '@/shared/components/ui-core'
 import { OrderType } from '@/shared/utils/enums/order.enum'
+import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import { useSalesStaffAction } from '../../hooks/useSalesStaffAction'
 import { cn } from '@/lib/utils'
 
@@ -101,132 +102,148 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
               </div>
 
               <div className="space-y-4">
-                {invoice.orders?.map((order, idx) => {
-                  // Safely handle order.type which can be array, string, or undefined
-                  const orderTypes = Array.isArray(order.type)
-                    ? order.type
-                    : order.type
-                      ? [order.type]
-                      : [OrderType.NORMAL]
-
-                  const hasManufacturing = orderTypes.some((t: OrderType | string) =>
-                    String(t).includes(OrderType.MANUFACTURING)
-                  )
-                  const hasPreOrder = orderTypes.some((t: OrderType | string) =>
-                    String(t).includes(OrderType.PRE_ORDER)
-                  )
-
-                  const getSimplifiedStatus = (order: { status: string }) => {
-                    const status = (order.status || 'PENDING').toUpperCase()
-                    const isRejected = ['REJECT', 'REJECTED', 'CANCELED'].includes(status)
-
-                    if (isRejected) {
-                      return {
-                        label: 'REJECTED',
-                        className: 'bg-rose-50 text-rose-600 border-rose-100'
-                      }
+                {invoice.orders
+                  ?.filter((order) => {
+                    if (invoice.status === InvoiceStatus.REFUNDED) {
+                      const types = Array.isArray(order.type)
+                        ? order.type
+                        : order.type
+                          ? [order.type]
+                          : []
+                      return types.some((t: OrderType | string) =>
+                        String(t).includes(OrderType.RETURN)
+                      )
                     }
+                    return true
+                  })
+                  ?.map((order, idx) => {
+                    // Safely handle order.type which can be array, string, or undefined
+                    const orderTypes = Array.isArray(order.type)
+                      ? order.type
+                      : order.type
+                        ? [order.type]
+                        : [OrderType.NORMAL]
 
-                    // All orders must be in one of the approved/verified states
-                    const isAccepted = [
-                      'VERIFIED',
-                      'APPROVE',
-                      'APPROVED',
-                      'WAITING_ASSIGN',
-                      'ASSIGNED',
-                      'MAKING',
-                      'PACKAGING',
-                      'COMPLETED',
-                      'ONBOARD',
-                      'DELIVERED',
-                      'DELIVERING',
-                      'SHIPPED',
-                      'PROCESSING'
-                    ].includes(status)
+                    const hasManufacturing = orderTypes.some((t: OrderType | string) =>
+                      String(t).includes(OrderType.MANUFACTURING)
+                    )
+                    const hasPreOrder = orderTypes.some((t: OrderType | string) =>
+                      String(t).includes(OrderType.PRE_ORDER)
+                    )
 
-                    if (isAccepted) {
-                      return {
-                        label: 'ACCEPTED',
-                        className: 'bg-emerald-50 text-emerald-600 border-emerald-100'
-                      }
-                    }
+                    const getSimplifiedStatus = (order: { status: string }) => {
+                      const status = (order.status || 'PENDING').toUpperCase()
+                      const isRejected = ['REJECT', 'REJECTED', 'CANCELED'].includes(status)
 
-                    return {
-                      label: 'NEED VERIFY',
-                      className: 'bg-amber-50 text-amber-600 border-amber-100'
-                    }
-                  }
-
-                  const displayStatus = getSimplifiedStatus(order)
-
-                  const isApprovable = displayStatus.label === 'NEED VERIFY'
-
-                  const displayType = (() => {
-                    if (hasManufacturing || order.isPrescription) return 'PRESCRIPTION'
-                    if (hasPreOrder) return 'PRE-ORDER'
-                    return (orderTypes.join(' & ') || 'REGULAR').toUpperCase()
-                  })()
-
-                  return (
-                    <div
-                      key={order.id}
-                      className="group relative bg-white border border-neutral-100 rounded-2xl p-5 hover:border-primary-300 hover:shadow-xl hover:shadow-primary-100/20 transition-all cursor-pointer ring-1 ring-transparent hover:ring-primary-100"
-                      onClick={() => {
-                        let pathSuffix = 'regular'
-                        if (hasManufacturing || order.isPrescription) {
-                          pathSuffix = 'verify-rx'
-                        } else if (hasPreOrder) {
-                          pathSuffix = 'pre-order'
+                      if (isRejected) {
+                        return {
+                          label: 'REJECTED',
+                          className: 'bg-rose-50 text-rose-600 border-rose-100'
                         }
-                        const path = `/sale-staff/orders/${order.id}/${pathSuffix}`
-                        navigate(`${path}?from=${window.location.pathname}&invoiceId=${invoice.id}`)
-                      }}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="space-y-1.5">
-                          <div className="flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 rounded-full bg-primary-500" />
-                            <span className="text-xs text-mint-600 font-medium uppercase tracking-wide">
-                              Order #{String(idx + 1).padStart(2, '0')}
+                      }
+
+                      // All orders must be in one of the approved/verified states
+                      const isAccepted = [
+                        'VERIFIED',
+                        'APPROVE',
+                        'APPROVED',
+                        'WAITING_ASSIGN',
+                        'ASSIGNED',
+                        'MAKING',
+                        'PACKAGING',
+                        'COMPLETED',
+                        'ONBOARD',
+                        'DELIVERED',
+                        'DELIVERING',
+                        'SHIPPED',
+                        'PROCESSING'
+                      ].includes(status)
+
+                      if (isAccepted) {
+                        return {
+                          label: 'ACCEPTED',
+                          className: 'bg-emerald-50 text-emerald-600 border-emerald-100'
+                        }
+                      }
+
+                      return {
+                        label: 'NEED VERIFY',
+                        className: 'bg-amber-50 text-amber-600 border-amber-100'
+                      }
+                    }
+
+                    const displayStatus = getSimplifiedStatus(order)
+
+                    const isApprovable = displayStatus.label === 'NEED VERIFY'
+
+                    const displayType = (() => {
+                      if (hasManufacturing || order.isPrescription) return 'PRESCRIPTION'
+                      if (hasPreOrder) return 'PRE-ORDER'
+                      return (orderTypes.join(' & ') || 'REGULAR').toUpperCase()
+                    })()
+
+                    return (
+                      <div
+                        key={order.id}
+                        className="group relative bg-white border border-neutral-100 rounded-2xl p-5 hover:border-primary-300 hover:shadow-xl hover:shadow-primary-100/20 transition-all cursor-pointer ring-1 ring-transparent hover:ring-primary-100"
+                        onClick={() => {
+                          let pathSuffix = 'regular'
+                          if (hasManufacturing || order.isPrescription) {
+                            pathSuffix = 'verify-rx'
+                          } else if (hasPreOrder) {
+                            pathSuffix = 'pre-order'
+                          }
+                          const path = `/sale-staff/orders/${order.id}/${pathSuffix}`
+                          navigate(
+                            `${path}?from=${window.location.pathname}&invoiceId=${invoice.id}`
+                          )
+                        }}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="space-y-1.5">
+                            <div className="flex items-center gap-2">
+                              <div className="w-1.5 h-1.5 rounded-full bg-primary-500" />
+                              <span className="text-xs text-mint-600 font-medium uppercase tracking-wide">
+                                Order #{String(idx + 1).padStart(2, '0')}
+                              </span>
+                            </div>
+                            <span className="text-base font-medium text-slate-900 group-hover:text-primary-700 transition-colors font-heading tracking-tight">
+                              {displayType}
                             </span>
                           </div>
-                          <span className="text-base font-medium text-slate-900 group-hover:text-primary-700 transition-colors font-heading tracking-tight">
-                            {displayType}
-                          </span>
-                        </div>
-                        <div className="flex flex-col items-end gap-2 text-right">
-                          <span
-                            className={`px-3 py-1 rounded-full text-[10px] font-semibold tracking-wide border ${displayStatus.className}`}
-                          >
-                            {displayStatus.label}
-                          </span>
-                          {isApprovable && (
-                            <Button
-                              size="sm"
-                              className="text-[9px] h-7 bg-emerald-500 hover:bg-emerald-600 text-white border-none shadow-sm mt-1"
-                              disabled={processing}
-                              onClick={(e) => handleApproveOrder(e, order.id)}
+                          <div className="flex flex-col items-end gap-2 text-right">
+                            <span
+                              className={`px-3 py-1 rounded-full text-[10px] font-semibold tracking-wide border ${displayStatus.className}`}
                             >
-                              Approve Order
-                            </Button>
-                          )}
+                              {displayStatus.label}
+                            </span>
+                            {isApprovable && (
+                              <Button
+                                size="sm"
+                                className="text-[9px] h-7 bg-emerald-500 hover:bg-emerald-600 text-white border-none shadow-sm mt-1"
+                                disabled={processing}
+                                onClick={(e) => handleApproveOrder(e, order.id)}
+                              >
+                                Approve Order
+                              </Button>
+                            )}
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="flex items-center justify-between mt-5 pt-4 border-t border-neutral-50">
-                        <span className="text-xs text-slate-400 font-normal group-hover:text-slate-600 transition-colors">
-                          Click to view details
-                        </span>
-                        <div className="w-8 h-8 rounded-full bg-neutral-50 flex items-center justify-center group-hover:bg-primary-500 group-hover:text-white transition-all transform group-hover:translate-x-1">
-                          <IoArrowForward
-                            size={14}
-                            className="group-hover:translate-x-0.5 transition-transform"
-                          />
+                        <div className="flex items-center justify-between mt-5 pt-4 border-t border-neutral-50">
+                          <span className="text-xs text-slate-400 font-normal group-hover:text-slate-600 transition-colors">
+                            Click to view details
+                          </span>
+                          <div className="w-8 h-8 rounded-full bg-neutral-50 flex items-center justify-center group-hover:bg-primary-500 group-hover:text-white transition-all transform group-hover:translate-x-1">
+                            <IoArrowForward
+                              size={14}
+                              className="group-hover:translate-x-0.5 transition-transform"
+                            />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )
-                })}
+                    )
+                  })}
               </div>
             </div>
 

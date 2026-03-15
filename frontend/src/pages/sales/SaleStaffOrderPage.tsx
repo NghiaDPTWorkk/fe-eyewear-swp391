@@ -81,13 +81,17 @@ export default function SaleStaffOrderPage() {
       list = list.filter((inv: Invoice) => inv.orders?.some((o) => o.isPrescription))
     }
 
-    // 3. Approved/Refunded tabs: No client filter needed as server handles it.
-    // We only keep the Pending (DEPOSITED) specific prescription filter if server can't do it.
-    if (statusFilter === InvoiceStatus.DEPOSITED) {
-      list = list.filter((inv: Invoice) => inv.orders?.some((o) => o.isPrescription))
+    // 2. Refunded tab: only show invoices with return tickets (OrderType.RETURN)
+    if (statusFilter === InvoiceStatus.REFUNDED) {
+      list = list.filter((inv: Invoice) =>
+        inv.orders?.some((order) => {
+          const types = Array.isArray(order.type) ? order.type : [order.type]
+          return types.some((t: OrderType | string) => String(t).includes(OrderType.RETURN))
+        })
+      )
     }
 
-    // 4. Search filtering
+    // 3. Search filtering
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase()
       list = list.filter(
@@ -98,7 +102,7 @@ export default function SaleStaffOrderPage() {
       )
     }
 
-    // 5. Order type filter
+    // 4. Order type filter
     if (orderTypeFilter !== 'All') {
       list = list.filter((inv: Invoice) =>
         inv.orders?.some((order) => {
@@ -108,7 +112,7 @@ export default function SaleStaffOrderPage() {
       )
     }
 
-    // 6. Sort by newest first
+    // 5. Sort by newest first
     list = list.sort((a: Invoice, b: Invoice) => {
       const dateA = new Date(a.createdAt).getTime()
       const dateB = new Date(b.createdAt).getTime()

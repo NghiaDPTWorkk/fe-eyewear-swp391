@@ -1,422 +1,142 @@
-# DEVELOPER GUIDE - Eyewear Project
+# HƯỚNG DẪN PHÁT TRIỂN DỰ ÁN EYEWEAR
 
-> Hướng dẫn phát triển chi tiết cho team Frontend Developer
+**Tài liệu hướng dẫn chi tiết dành cho đội ngũ Phát triển Frontend**
+
+_Người thực hiện: NghiaDPTWork_
 
 ---
 
-## CẤU TRÚC THƯ MỤC
+## 1. CẤU TRÚC THƯ MỤC DỰ ÁN
+
+Cấu trúc thư mục được thiết kế theo hướng module hóa nhằm đảm bảo tính mở rộng và dễ bảo trì:
 
 ```
 src/
-├── api/                      # API Layer
-│   ├── apiClients.ts         # authClient, mainClient
-│   └── endpoints.ts          # All API endpoints
-│
-├── lib/                      # Core Configuration
-│   ├── axios.ts              # Axios factory + interceptors
-│   └── react-query.ts        # QueryClient configuration
-│
-├── store/                    # Zustand Stores
-│   ├── auth.store.ts         # Authentication state
-│   └── cart.store.ts         # Shopping cart state
-│
-├── context/                  # Global Context Types
-│   ├── AppContext.tsx        # App theme type definitions
-│   └── index.ts              # Barrel export
-│
-├── shared/                   # Shared Resources
-│   ├── components/ui/        # Button, Card
-│   ├── constants/            # Messages, UserRole
-│   ├── types/                # User, Product, Cart, API types
-│   ├── hooks/                # useApiError
-│   └── utils/                # Helper functions
-│
-├── features/                 # Feature Modules
-│   └── [feature]/
-│       ├── components/       # Feature-specific UI
-│       ├── hooks/            # React Query hooks
-│       ├── services/         # API calls
-│       ├── types/            # Feature types
-│       └── index.ts          # Barrel export
-│
-├── routes/                   # Router
-│   ├── guards/               # AuthGuard, GuestGuard
-│   └── index.tsx             # Router config (lazy loading)
-│
-├── pages/                    # Page Components
-│   ├── auth/                 # LoginPage
-│   ├── customer/             # HomePage
-│   ├── LazyPage.tsx          # Lazy loading wrapper
-│   └── NotFoundPage.tsx
-│
-└── components/               # Layout Components
-    ├── layout/               # Header, Footer
-    └── common/               # ProductCard
+├── api/                      # Lớp API (Clients, Endpoints)
+├── lib/                      # Cấu hình cốt lõi (Axios, React Query)
+├── store/                    # Quản lý trạng thái toàn cục (Zustand)
+├── context/                  # Context API toàn cục
+├── shared/                   # Tài nguyên dùng chung
+│   ├── components/ui/        # UI Components cơ bản
+│   ├── constants/            # Hằng số hệ thống
+│   ├── types/                # Kiểu dữ liệu dùng chung
+│   ├── hooks/                # Custom hooks toàn cục
+│   └── utils/                # Các hàm tiện ích
+├── features/                 # Các module tính năng (Domain-driven)
+│   └── [feature]/            # Cấu trúc nội bộ của từng tính năng
+├── routes/                   # Cấu hình định tuyến và Bảo mật
+├── pages/                    # Các trang của ứng dụng
+└── components/               # Các component Layout hoặc dùng chung quy mô lớn
 ```
 
 ---
 
-## LUỒNG XỬ LÝ
+## 2. QUY TRÌNH XỬ LÝ DỮ LIỆU
 
-```
-User Action → Router → Page → Feature Component → Hook → Service → API Client → Backend
-                                                    ↓
-                                              React Query Cache
-                                                    ↓
-                                               UI Updates
-```
+Luồng xử lý dữ liệu chuẩn trong ứng dụng tuân thủ mô hình phân lớp như sau:
+
+**Action người dùng → Router → Page → Feature Component → Hook → Service → API Client → Backend**
+
+Dữ liệu phản hồi sẽ được quản lý qua **React Query Cache** trước khi cập nhật lên giao diện người dùng (UI).
 
 ---
 
-## API CLIENTS
+## 3. QUẢN LÝ API
 
-| Client       | Base URL | Mô tả                                 |
-| ------------ | -------- | ------------------------------------- |
-| `authClient` | `/auth`  | Authentication APIs                   |
-| `mainClient` | `/api`   | General APIs (products, orders, etc.) |
+Hệ thống sử dụng hai client chính cho các mục đích khác nhau:
 
-```typescript
-// Import
-import { authClient, mainClient } from '@/api'
-import { ENDPOINTS } from '@/api'
+| Tên Client   | Base URL | Mục đích sử dụng                                    |
+| :----------- | :------- | :-------------------------------------------------- |
+| `authClient` | `/auth`  | Xử lý các nghiệp vụ liên quan đến xác thực          |
+| `mainClient` | `/api`   | Truy xuất dữ liệu nghiệp vụ (sản phẩm, đơn hàng...) |
 
-// Usage
-const response = await mainClient.get(ENDPOINTS.PRODUCTS.LIST)
-```
-
----
-
-## ️ ROUTE GUARDS
-
-| Guard        | Mô tả             | Redirect   |
-| ------------ | ----------------- | ---------- |
-| `AuthGuard`  | Yêu cầu đăng nhập | → `/login` |
-| `GuestGuard` | Chỉ cho guest     | → `/`      |
+Ví dụ sử dụng:
 
 ```typescript
-import { AuthGuard, GuestGuard } from '@/routes/guards'
-
-// Protected route
-{ path: '/profile', element: <AuthGuard><ProfilePage /></AuthGuard> }
-
-// Guest only route
-{ path: '/login', element: <GuestGuard><LoginPage /></GuestGuard> }
-```
-
----
-
-## UI COMPONENT LIBRARY
-
-### Available Components
-
-```typescript
-import {
-  // Basic
-  Button,
-  Input,
-  Card,
-  Modal,
-  ConfirmDialog,
-
-  // Feedback
-  Spinner,
-  LoadingOverlay,
-  Badge,
-  OrderStatusBadge,
-
-  // Loading States
-  Skeleton,
-  ProductCardSkeleton,
-
-  // Error Handling
-  ErrorBoundary,
-  PageErrorBoundary
-} from '@/shared/components/ui'
-```
-
-### Button Examples
-
-```typescript
-// Variants: primary, secondary, outline, ghost, danger
-<Button variant="primary" size="lg">Submit</Button>
-<Button variant="danger" isLoading={isPending}>Delete</Button>
-<Button variant="outline" leftIcon={<Icon />}>With Icon</Button>
-```
-
-### Input Examples
-
-```typescript
-<Input
-  label="Email"
-  type="email"
-  error={errors.email?.message}
-  helperText="We'll never share your email"
-/>
-```
-
-### Modal Examples
-
-```typescript
-<Modal
-  isOpen={isOpen}
-  onClose={handleClose}
-  title="Confirm Order"
-  footer={
-    <>
-      <Button variant="outline" onClick={handleClose}>Cancel</Button>
-      <Button onClick={handleConfirm}>Confirm</Button>
-    </>
-  }
->
-  <p>Are you sure you want to place this order?</p>
-</Modal>
-```
-
----
-
-## TẠO FEATURE MỚI
-
-### Step 1: Types
-
-```typescript
-// features/product/types/product.types.ts
-export interface Product {
-  id: string
-  name: string
-  price: number
-  description: string
-  images: string[]
-  category: string
-  stock: number
-}
-
-export interface ProductFilters {
-  category?: string
-  minPrice?: number
-  maxPrice?: number
-  search?: string
-}
-```
-
-### Step 2: Endpoint
-
-```typescript
-// api/endpoints.ts
-PRODUCTS: {
-  LIST: '/products',
-  DETAIL: (id: string) => `/products/${id}`,
-  SEARCH: '/products/search',
-  CATEGORIES: '/products/categories'
-}
-```
-
-### Step 3: Service
-
-```typescript
-// features/product/services/product.service.ts
 import { mainClient, ENDPOINTS } from '@/api'
-import type { Product, ProductFilters } from '../types'
 
-export const productService = {
-  getAll: (filters?: ProductFilters) =>
-    mainClient.get<Product[]>(ENDPOINTS.PRODUCTS.LIST, { params: filters }),
-
-  getById: (id: string) => mainClient.get<Product>(ENDPOINTS.PRODUCTS.DETAIL(id)),
-
-  search: (query: string) =>
-    mainClient.get<Product[]>(ENDPOINTS.PRODUCTS.SEARCH, { params: { q: query } })
-}
-```
-
-### Step 4: Hook
-
-```typescript
-// features/product/hooks/useProducts.ts
-import { useQuery } from '@tanstack/react-query'
-import { productService } from '../services'
-import type { ProductFilters } from '../types'
-
-// Query Keys
-export const productKeys = {
-  all: ['products'] as const,
-  lists: () => [...productKeys.all, 'list'] as const,
-  list: (filters: ProductFilters) => [...productKeys.lists(), filters] as const,
-  details: () => [...productKeys.all, 'detail'] as const,
-  detail: (id: string) => [...productKeys.details(), id] as const
-}
-
-// Hooks
-export function useProducts(filters?: ProductFilters) {
-  return useQuery({
-    queryKey: productKeys.list(filters || {}),
-    queryFn: () => productService.getAll(filters),
-    staleTime: 5 * 60 * 1000 // 5 minutes
-  })
-}
-
-export function useProduct(id: string) {
-  return useQuery({
-    queryKey: productKeys.detail(id),
-    queryFn: () => productService.getById(id),
-    enabled: !!id
-  })
-}
-```
-
-### Step 5: Component
-
-```typescript
-// features/product/components/ProductCard.tsx
-import { Card, Button, Badge } from '@/shared/components/ui'
-import type { Product } from '../types'
-
-interface ProductCardProps {
-  product: Product
-  onAddToCart: (id: string) => void
-}
-
-export function ProductCard({ product, onAddToCart }: ProductCardProps) {
-  return (
-    <Card variant="elevated" padding="none">
-      <img src={product.images[0]} alt={product.name} className="w-full h-48 object-cover" />
-      <div className="p-4">
-        <h3 className="font-semibold">{product.name}</h3>
-        <p className="text-lg font-bold text-blue-600">
-          {product.price.toLocaleString()}đ
-        </p>
-        {product.stock === 0 && <Badge variant="danger">Hết hàng</Badge>}
-        <Button
-          fullWidth
-          onClick={() => onAddToCart(product.id)}
-          disabled={product.stock === 0}
-        >
-          Thêm vào giỏ
-        </Button>
-      </div>
-    </Card>
-  )
-}
-```
-
-### Step 6: Page
-
-```typescript
-// pages/customer/ProductsPage.tsx
-import { useProducts } from '@/features/product'
-import { ProductCard, ProductCardSkeleton } from '@/features/product/components'
-import { useCartStore } from '@/store'
-
-export function ProductsPage() {
-  const { data: products, isLoading, error } = useProducts()
-  const addToCart = useCartStore(state => state.addItem)
-
-  if (isLoading) {
-    return (
-      <div className="grid grid-cols-3 gap-4">
-        {[...Array(6)].map((_, i) => <ProductCardSkeleton key={i} />)}
-      </div>
-    )
-  }
-
-  if (error) return <ErrorFallback error={error} />
-
-  return (
-    <div className="grid grid-cols-3 gap-4">
-      {products?.map(product => (
-        <ProductCard
-          key={product.id}
-          product={product}
-          onAddToCart={addToCart}
-        />
-      ))}
-    </div>
-  )
-}
-```
-
-### Step 7: Register Route
-
-```typescript
-// routes/index.tsx
-const ProductsPage = lazy(() => import('@/pages/customer/ProductsPage'))
-
-// Add to router
-{
-  path: '/products',
-  element: <LazyPage><ProductsPage /></LazyPage>
+const fetchData = async () => {
+  const response = await mainClient.get(ENDPOINTS.PRODUCTS.LIST)
+  return response.data
 }
 ```
 
 ---
 
-## CHECKLIST
+## 4. QUẢN LÝ ĐỊNH TUYẾN (ROUTE GUARDS)
 
-```
-□ 1. Define Types          → features/[name]/types/
-□ 2. Add Endpoint          → api/endpoints.ts
-□ 3. Create Service        → features/[name]/services/
-□ 4. Create Hook           → features/[name]/hooks/
-□ 5. Create Component      → features/[name]/components/
-□ 6. Create Page           → pages/
-□ 7. Register Route        → routes/index.tsx
-□ 8. Add to barrel export  → features/[name]/index.ts
-```
+Sử dụng các lớp bảo mật để kiểm soát quyền truy cập:
+
+| Guard        | Mô tả                                  | Chuyển hướng khi không thỏa mãn |
+| :----------- | :------------------------------------- | :------------------------------ |
+| `AuthGuard`  | Yêu cầu phải đăng nhập                 | → `/login`                      |
+| `GuestGuard` | Chỉ dành cho người dùng chưa đăng nhập | → `/`                           |
 
 ---
 
-## KHÔNG LÀM
+## 5. HỆ THỐNG THƯ VIỆN UI
 
-| Sai                      | Đúng                                             |
-| ------------------------ | ------------------------------------------------ |
-| Hardcode API URL         | Import từ `@/api`                                |
-| Define types inline      | Import từ `@/shared/types` hoặc feature types    |
-| Hardcode message         | Dùng `ERROR_MESSAGES` từ `@/shared/constants`    |
-| Call API trong component | Qua Hook → Service → Client                      |
-| Import cả thư viện       | Named import chỉ thứ cần dùng                    |
-| `console.log`            | Dùng `console.warn`, `console.error` chỉ khi cần |
-| Magic numbers/strings    | Định nghĩa constants                             |
+Các thành phần giao diện cơ bản được tập trung tại `@/shared/components/ui`. Việc sử dụng thống nhất các component này giúp đảm bảo tính đồng bộ về thiết kế.
+
+### Các thành phần chính:
+
+- **Cơ bản**: Button, Input, Card, Modal, Checkbox...
+- **Trạng thái**: LoadingOverlay, Spinner, Skeleton, Badge...
+- **Thông báo**: ConfirmationModal, Toast...
 
 ---
 
-## GIT COMMIT CONVENTION
+## 6. QUY TRÌNH TRIỂN KHAI TÍNH NĂNG MỚI (CHECKLIST)
 
-```bash
-# Format (JIRA ticket required)
-<JIRA-ID> <type>: <subject>
+Để triển khai một tính năng mới một cách chuẩn xác, lập trình viên cần thực hiện theo các bước:
 
-# JIRA-ID Format
-KAN-123    # Ticket number from JIRA board
-
-# Types
-feat:     # Tính năng mới
-fix:      # Sửa bug
-docs:     # Documentation
-style:    # Format code (không thay đổi logic)
-refactor: # Refactor code
-test:     # Thêm tests
-chore:    # Maintenance
-
-# Examples
-git commit -m "KAN-123 feat: add product listing page"
-git commit -m "KAN-456 fix: resolve cart calculation bug"
-git commit -m "KAN-789 refactor: move API logic to service"
-```
+1.  **Định nghĩa Types**: Thiết lập cấu trúc dữ liệu tại `features/[name]/types/`.
+2.  **Cấu hình Endpoints**: Đăng ký URL API mới tại `api/endpoints.ts`.
+3.  **Xây dựng Service**: Cài đặt các hàm gọi API tại `features/[name]/services/`.
+4.  **Thiết lập Hook**: Sử dụng React Query để quản lý state và cache tại `features/[name]/hooks/`.
+5.  **Xây dựng Component**: Phát triển UI cụ thể cho tính năng tại `features/[name]/components/`.
+6.  **Tạo Trang (Page)**: Lắp ghép các component tại thư mục `pages/`.
+7.  **Đăng ký Route**: Thiết lập đường dẫn tại `routes/index.tsx`.
+8.  **Cấu hình Barrel Export**: Export các thành phần cần thiết tại `features/[name]/index.ts`.
 
 ---
 
-## PATH ALIASES
+## 7. CÁC QUY TẮC PHÁT TRIỂN (CODING CONVENTIONS)
 
-```typescript
-import { useAuth } from '@/features/auth'
-import { UserRole } from '@/shared/types'
-import { ERROR_MESSAGES } from '@/shared/constants'
-import { useAuthStore } from '@/store'
-import { apiClient, ENDPOINTS } from '@/api'
-import { Button, Input, Modal } from '@/shared/components/ui'
-```
+Nhằm đảm bảo chất lượng mã nguồn, tuyệt đối tuân thủ các quy tắc sau:
+
+- **Tuyệt đối không hardcode**: Mọi URL phải thông qua `ENDPOINTS`, mọi thông báo phải sử dụng `CONSTANTS`.
+- **Tách biệt logic**: Không gọi API trực tiếp trong component; phải sử dụng thông qua Service và Hook.
+- **Tối ưu hóa Import**: Chỉ import những thành phần thực sự cần thiết, sử dụng Path Aliases (`@/`) để đường dẫn ngắn gọn.
+- **Quản lý Console**: Không sử dụng `console.log` trong môi trường sản xuất; chỉ sử dụng `warn` hoặc `error` khi thực sự cần thiết.
 
 ---
 
-## TÀI LIỆU LIÊN QUAN
+## 8. QUY TRÌNH COMMIT MÃ NGUỒN (GIT CONVENTIONS)
 
-- [DEVELOPER_HANDOVER.md](./DEVELOPER_HANDOVER.md) - Tài liệu bàn giao chi tiết
+Yêu cầu sử dụng chuẩn Conventional Commits kết hợp với mã ticket JIRA:
+
+**Cấu trúc: <JIRA-ID> <loại>: <nội dung>**
+
+**Các loại commit phổ biến:**
+
+- `feat`: Tính năng mới.
+- `fix`: Sửa lỗi.
+- `docs`: Cập nhật tài liệu.
+- `refactor`: Tái cấu trúc mã nguồn.
+- `style`: Định dạng mã nguồn (không thay đổi logic).
+- `chore`: Bảo trì định kỳ.
+
+Ví dụ: `git commit -m "KAN-123 feat: tích hợp trang danh sách sản phẩm"`
+
+---
+
+## 9. TÀI LIỆU THAM CHIẾU
+
+- [Hồ sơ bàn giao kỹ thuật](./DEVELOPER_HANDOVER.md)
+- [Tài liệu hệ thống Types](./TYPES_DOCUMENTATION.md)
+- [Hệ thống bảng màu chuẩn](./COLOR_TEMPLET.md)
+
+---
+
+_Created by: NghiaDPTWork_

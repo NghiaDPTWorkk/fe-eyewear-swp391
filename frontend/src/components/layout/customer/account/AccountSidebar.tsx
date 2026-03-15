@@ -53,7 +53,6 @@ export function AccountSidebar() {
     try {
       await authApi.logout()
     } catch (e) {
-      // ec ec
       console.error(e)
     }
     logout()
@@ -114,7 +113,7 @@ export function AccountSidebar() {
         ))}
       </div>
 
-      {/* Vision Exam Card from screenshot */}
+      {}
       <div className="bg-[#3D6376] p-6 rounded-[24px] text-white overflow-hidden relative mb-8">
         <div className="relative z-10">
           <p className="text-[10px] font-bold uppercase tracking-widest opacity-60 mb-2">
@@ -125,7 +124,7 @@ export function AccountSidebar() {
             Reschedule
           </button>
         </div>
-        {/* Decorative circle */}
+        {}
         <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/5 rounded-full" />
       </div>
 

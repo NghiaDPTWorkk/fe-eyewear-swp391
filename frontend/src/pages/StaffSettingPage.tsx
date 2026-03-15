@@ -4,13 +4,12 @@ import { Container, Button, Input } from '@/components'
 import { IoCameraOutline } from 'react-icons/io5'
 
 interface StaffSettingPageProps {
-  homeUrl?: string // URL to navigate when clicking "Home" in breadcrumb
+  homeUrl?: string
 }
 
 export default function StaffSettingPage({
   homeUrl = '/salesstaff/dashboard'
 }: StaffSettingPageProps) {
-  // Hardcoded state for demonstration
   const [firstName, setFirstName] = useState('Sarah')
   const [lastName, setLastName] = useState('Jenkins')
   const [email, setEmail] = useState('sarah.jenkins@opticview.com')
@@ -33,7 +32,7 @@ export default function StaffSettingPage({
       </div>
 
       <div className="max-w-4xl space-y-6">
-        {/* Profile Settings Section */}
+        {}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="mb-6">
             <h2 className="text-lg font-bold text-gray-900">Profile Settings</h2>
@@ -94,7 +93,7 @@ export default function StaffSettingPage({
           </div>
         </div>
 
-        {/* Change Password Section */}
+        {}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="mb-6">
             <h2 className="text-lg font-bold text-gray-900">Change Password</h2>
@@ -127,7 +126,7 @@ export default function StaffSettingPage({
           </div>
         </div>
 
-        {/* Notification Preferences */}
+        {}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="mb-6">
             <h2 className="text-lg font-bold text-gray-900">Notification Preferences</h2>
@@ -163,7 +162,6 @@ export default function StaffSettingPage({
   )
 }
 
-// Simple Switch Component defined locally since I didn't find one in the main components
 function Switch({ checked, onChange }: { checked: boolean; onChange: (checked: boolean) => void }) {
   return (
     <button

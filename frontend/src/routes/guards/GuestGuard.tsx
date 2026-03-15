@@ -14,7 +14,6 @@ export function GuestGuard({ children }: GuestGuardProps) {
   useEffect(() => {
     setHasHydrated(true)
 
-    // Sync auth state across tabs
     const syncAuth = (event: StorageEvent) => {
       if (event.key === 'auth-storage') {
         useAuthStore.persist.rehydrate()
@@ -25,7 +24,6 @@ export function GuestGuard({ children }: GuestGuardProps) {
     return () => window.removeEventListener('storage', syncAuth)
   }, [])
 
-  // Wait for zustand to finish hydrating
   if (!hasHydrated || isLoading) {
     return <LazyPage children={<div></div>}></LazyPage>
   }

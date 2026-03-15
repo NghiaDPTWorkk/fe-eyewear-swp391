@@ -21,7 +21,7 @@ export const useAddressStore = create<AddressState>((set) => ({
     set({ isLoading: true, error: null })
     try {
       const addresses = await customerAddressService.getAddresses()
-      // Sort: Default first, then newest first
+
       const defaultAddr = addresses.find((a) => a.isDefault)
       const others = addresses.filter((a) => !a.isDefault).reverse()
       set({
@@ -40,7 +40,7 @@ export const useAddressStore = create<AddressState>((set) => ({
     set({ isLoading: true, error: null })
     try {
       await customerAddressService.addAddress(addressData)
-      // Re-fetch all addresses to ensure state is in sync with backend (handles isDefault logic)
+
       const addresses = await customerAddressService.getAddresses()
       const defaultAddr = addresses.find((a) => a.isDefault)
       const others = addresses.filter((a) => !a.isDefault).reverse()
@@ -61,7 +61,7 @@ export const useAddressStore = create<AddressState>((set) => ({
     set({ isLoading: true, error: null })
     try {
       await customerAddressService.setDefaultAddress(id, { ...address, isDefault: true })
-      // Re-fetch to sync
+
       const addresses = await customerAddressService.getAddresses()
       const defaultAddr = addresses.find((a) => a.isDefault)
       const others = addresses.filter((a) => !a.isDefault).reverse()

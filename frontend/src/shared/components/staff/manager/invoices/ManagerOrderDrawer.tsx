@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { IoCloseOutline, IoReceiptOutline } from 'react-icons/io5'
 
-import { Button } from '@/shared/components/ui-core'
+import { Button } from '@/shared/components/ui'
 import type { AdminInvoiceListItem } from '@/shared/types'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 
@@ -42,15 +42,15 @@ export const ManagerOrderDrawer: React.FC<ManagerOrderDrawerProps> = ({
 
   return createPortal(
     <div className="fixed inset-0 z-[100] flex justify-end">
-      {/* Backdrop */}
+      {}
       <div
         className="absolute inset-0 bg-black/40 backdrop-blur-[2px] animate-in fade-in duration-300"
         onClick={onClose}
       />
 
-      {/* Drawer */}
+      {}
       <div className="relative w-full max-w-2xl h-full bg-neutral-50 shadow-2xl flex flex-col animate-in slide-in-from-right duration-500 overflow-hidden">
-        {/* Header */}
+        {}
         <div className="p-6 bg-white border-b border-neutral-100 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-mint-50 flex items-center justify-center text-mint-600 shadow-sm border border-mint-100">
@@ -71,13 +71,13 @@ export const ManagerOrderDrawer: React.FC<ManagerOrderDrawerProps> = ({
           </Button>
         </div>
 
-        {/* Content */}
+        {}
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           <ManagerInvoiceCard
             invoice={invoice}
             isExpanded={true}
             isOnboarding={isOnboarding}
-            onToggleExpanded={() => {}} // No-op since we're always expanded in drawer
+            onToggleExpanded={() => {}}
             onOnboard={onOnboard}
             onComplete={onComplete}
             onDelivering={onDelivering}
@@ -89,7 +89,7 @@ export const ManagerOrderDrawer: React.FC<ManagerOrderDrawerProps> = ({
           />
         </div>
 
-        {/* Footer */}
+        {}
         <div className="p-6 bg-white border-t border-neutral-100 items-center justify-between flex shrink-0">
           <p className="text-[11px] font-semibold text-neutral-400 uppercase tracking-widest leading-none">
             Last Updated: {new Date(invoice.createdAt).toLocaleString()}

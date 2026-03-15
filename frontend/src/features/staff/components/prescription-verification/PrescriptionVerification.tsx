@@ -16,7 +16,7 @@ import {
   IoCubeOutline
 } from 'react-icons/io5'
 import { Card, Button, Input } from '@/components'
-import { useSalesStaffOrderDetail } from '@/features/sales/hooks/useSalesStaffInvoices'
+import { useSalesStaffOrderDetail } from '@/features/sale-staff/hooks/useSalesStaffInvoices'
 import { OrderType } from '@/shared/utils/enums/order.enum'
 
 interface PrescriptionVerificationProps {
@@ -41,7 +41,6 @@ export default function PrescriptionVerification({
     )
   }
 
-  // Formatting helpers
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'N/A'
     return new Date(dateString).toLocaleDateString('en-GB', {
@@ -57,7 +56,6 @@ export default function PrescriptionVerification({
     return amount.toLocaleString() + ' ₫'
   }
 
-  // Determine priority label for display
   const getPriorityLabel = () => {
     const isManufacturing = order?.type?.includes(OrderType.MANUFACTURING) || order?.isPrescription
     if (isManufacturing) return 'Prescription'
@@ -65,17 +63,15 @@ export default function PrescriptionVerification({
     return 'Regular'
   }
 
-  // Find first prescription image
   const prescriptionScan =
     order?.products?.find((p) => p.prescriptionImageUrl)?.prescriptionImageUrl ||
     'https://placehold.co/600x800/png?text=Prescription+Scan'
 
-  // Prescription Parameters (from first product)
   const firstLensParams = order?.products?.find((p) => p.lens)?.lens?.parameters
 
   return (
     <div className="space-y-6 pb-12 animate-in fade-in slide-in-from-right-4 duration-300">
-      {/* Header */}
+      {}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button
@@ -106,9 +102,9 @@ export default function PrescriptionVerification({
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-        {/* Left Column (Main Content): Image & Data Entry */}
+        {}
         <div className="xl:col-span-8 space-y-6">
-          {/* Image Viewer */}
+          {}
           <Card className="p-0 overflow-hidden h-[600px] flex flex-col border border-neutral-200 shadow-sm relative group rounded-[32px]">
             <div className="flex justify-between items-center p-4 border-b border-neutral-100 bg-gray-50/50">
               <h3 className="font-semibold text-gray-900 text-sm uppercase tracking-wider flex items-center gap-2">
@@ -153,7 +149,7 @@ export default function PrescriptionVerification({
             </div>
           </Card>
 
-          {/* Data Entry Form */}
+          {}
           <Card className="p-0 border border-neutral-200 overflow-hidden shadow-sm rounded-[32px]">
             <div className="p-5 bg-white border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div className="flex items-center gap-4">
@@ -329,9 +325,9 @@ export default function PrescriptionVerification({
           </Card>
         </div>
 
-        {/* Right Column: Information & Operations (Sidebar) */}
+        {}
         <div className="xl:col-span-4 space-y-6">
-          {/* Order Details Card */}
+          {}
           <Card className="p-6 border border-neutral-200 shadow-sm space-y-6 rounded-[32px]">
             <div className="flex justify-between items-center">
               <h3 className="font-semibold text-gray-900 text-sm uppercase tracking-wider">
@@ -373,7 +369,7 @@ export default function PrescriptionVerification({
               </div>
             </div>
 
-            {/* Products & Prices Section */}
+            {}
             <div className="pt-6 border-t border-gray-100 space-y-4">
               <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
                 <IoCubeOutline /> Items ({order?.products?.length || 0})
@@ -422,7 +418,7 @@ export default function PrescriptionVerification({
             </div>
           </Card>
 
-          {/* Laboratory Operations Channel */}
+          {}
           <Card className="p-0 border border-neutral-200 shadow-sm overflow-hidden rounded-[32px]">
             <div className="p-4 bg-mint-50/50 border-b border-mint-100 flex justify-between items-center">
               <h3 className="font-semibold text-mint-900 text-sm flex items-center gap-2">

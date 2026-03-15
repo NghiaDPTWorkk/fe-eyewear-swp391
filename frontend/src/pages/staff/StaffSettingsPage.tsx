@@ -49,14 +49,14 @@ export default function StaffSettingsPage({
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Left Main Column */}
+          {}
           <div className="lg:col-span-8 space-y-8">
             <ProfileForm key={profile?._id || 'loading'} />
             <PasswordForm />
             <NotificationPreferences />
           </div>
 
-          {/* Right Sidebar Column */}
+          {}
           <div className="lg:col-span-4">
             <AccountInfoSidebar />
           </div>

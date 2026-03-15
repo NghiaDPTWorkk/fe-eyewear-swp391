@@ -1,8 +1,6 @@
 @import 'tailwindcss';
 
-/* Custom theme configuration for Eyewear Project */
 @theme {
-  /* ===== MINT COLORS (Brand) ===== */
   --color-mint-50: #f6fffb;
   --color-mint-100: #e6f9f4;
   --color-mint-200: #f6fffb;
@@ -14,23 +12,21 @@
   --color-mint-800: #228a6a;
   --color-mint-900: #2aa57f;
   --color-mint-950: #1a6d53;
-  --color-mint-1200: #043026; /* dùng cho tiêu đề hoặc văn bản đậm màu */
-  --color-gray-eyewear: #5b6b66; /* text chữ nhỏ kiểu z */
+  --color-mint-1200: #043026;
+  --color-gray-eyewear: #5b6b66;
 
-  /* ===== PRIMARY COLORS (Mint Green - Main Actions) ===== */
-  --color-primary-50: #f6fffb; /* same as mint-200 */
+  --color-primary-50: #f6fffb;
   --color-primary-100: #e6f9f4;
-  --color-primary-200: #d4ede5; /* same as mint-300 */
+  --color-primary-200: #d4ede5;
   --color-primary-300: #a8e0d1;
-  --color-primary-400: #7fe3c7; /* same as mint-500 */
-  --color-primary-500: #4ad7b0; /* same as mint-700 - main brand color */
+  --color-primary-400: #7fe3c7;
+  --color-primary-500: #4ad7b0;
   --color-primary-600: #3bc19d;
-  --color-primary-700: #2aa57f; /* same as mint-900 */
+  --color-primary-700: #2aa57f;
   --color-primary-800: #228a6a;
   --color-primary-900: #1a6d53;
-  --color-primary-950: #043026; /* same as mint-1200 */
+  --color-primary-950: #043026;
 
-  /* ===== SECONDARY COLORS (Blue - Dashboard & Charts) ===== */
   --color-secondary-50: #eff6ff;
   --color-secondary-100: #dbeafe;
   --color-secondary-200: #bfdbfe;
@@ -43,7 +39,6 @@
   --color-secondary-900: #1e3a8a;
   --color-secondary-950: #172554;
 
-  /* ===== DANGER COLORS (Red - Errors & Warnings) ===== */
   --color-danger-50: #fef2f2;
   --color-danger-100: #fee2e2;
   --color-danger-200: #fecaca;
@@ -56,7 +51,6 @@
   --color-danger-900: #7f1d1d;
   --color-danger-950: #450a0a;
 
-  /* ===== NEUTRAL COLORS (Gray - Borders & Backgrounds) ===== */
   --color-neutral-50: #f9fafb;
   --color-neutral-100: #f3f4f6;
   --color-neutral-200: #e5e7eb;
@@ -69,22 +63,17 @@
   --color-neutral-900: #111827;
   --color-neutral-950: #030712;
 
-  /* ===== TYPOGRAPHY ===== */
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-heading: 'Outfit', system-ui, sans-serif;
 
-  /* ===== SPACING ===== */
   --spacing-18: 4.5rem;
   --spacing-88: 22rem;
 
-  /* ===== BORDER RADIUS ===== */
   --radius-4xl: 2rem;
 
-  /* ===== DARK MODE: only via .dark class, NOT OS preference ===== */
   --dark-mode: selector;
 }
 
-/* Base styles */
 @layer base {
   * {
     box-sizing: border-box;
@@ -113,7 +102,6 @@
   caret-color: transparent;
 }
 
-/* Animations */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -146,7 +134,6 @@
   }
 }
 
-/* Hide spin buttons for numeric inputs */
 input[type='number']::-webkit-inner-spin-button,
 input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;

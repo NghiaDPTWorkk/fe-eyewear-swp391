@@ -3,20 +3,24 @@ import { LazyPage } from '@/pages/LazyPage'
 import { AuthGuard } from '@/routes/guards'
 
 const SaleStaffLayout = lazy(() => import('@/components/layout/staff/sale-staff/SaleStaffLayout'))
-const SaleStaffDashboardPage = lazy(() => import('@/pages/sales/SaleStaffDashboardPage'))
-const SaleStaffOrderPage = lazy(() => import('@/pages/sales/SaleStaffOrderPage'))
-const SaleStaffCustomerPage = lazy(() => import('@/pages/sales/SaleStaffCustomerPage'))
-const SaleStaffLabStatusPage = lazy(() => import('@/pages/sales/SaleStaffLabStatusPage'))
-const SaleStaffPrescriptionPage = lazy(() => import('@/pages/sales/SaleStaffPrescriptionPage'))
-const SaleStaffPreOrdersPage = lazy(() => import('@/pages/sales/SaleStaffPreOrdersPage'))
-const SaleStaffLiveMapPage = lazy(() => import('@/pages/sales/SaleStaffLiveMapPage'))
-const SaleStaffReturnsPage = lazy(() => import('@/pages/sales/SaleStaffReturnsPage'))
+const SaleStaffDashboardPage = lazy(() => import('@/pages/sale-staff/SaleStaffDashboardPage'))
+const SaleStaffOrderPage = lazy(() => import('@/pages/sale-staff/SaleStaffOrderPage'))
+const SaleStaffCustomerPage = lazy(() => import('@/pages/sale-staff/SaleStaffCustomerPage'))
+const SaleStaffLabStatusPage = lazy(() => import('@/pages/sale-staff/SaleStaffLabStatusPage'))
+const SaleStaffPrescriptionPage = lazy(() => import('@/pages/sale-staff/SaleStaffPrescriptionPage'))
+const SaleStaffPreOrdersPage = lazy(() => import('@/pages/sale-staff/SaleStaffPreOrdersPage'))
+const SaleStaffLiveMapPage = lazy(() => import('@/pages/sale-staff/SaleStaffLiveMapPage'))
+const SaleStaffReturnsPage = lazy(() => import('@/pages/sale-staff/SaleStaffReturnsPage'))
 const StaffSettingsPage = lazy(() => import('@/pages/staff/StaffSettingsPage'))
 const StaffSupportPage = lazy(() => import('@/pages/staff/StaffSupportPage'))
 const StaffProfilePage = lazy(() => import('@/pages/staff/StaffProfilePage'))
-const SaleStaffRxVerificationPage = lazy(() => import('@/pages/sales/SaleStaffRxVerificationPage'))
-const RegularOrderDetailPage = lazy(() => import('@/pages/sales/SaleStaffRegularOrderDetailPage'))
-const PreOrderDetailPage = lazy(() => import('@/pages/sales/SaleStaffPreOrderDetailPage'))
+const SaleStaffRxVerificationPage = lazy(
+  () => import('@/pages/sale-staff/SaleStaffRxVerificationPage')
+)
+const RegularOrderDetailPage = lazy(
+  () => import('@/pages/sale-staff/SaleStaffRegularOrderDetailPage')
+)
+const PreOrderDetailPage = lazy(() => import('@/pages/sale-staff/SaleStaffPreOrderDetailPage'))
 
 export const saleRoutes = [
   {

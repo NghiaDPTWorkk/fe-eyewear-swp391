@@ -1,7 +1,7 @@
 import { useLayoutStore } from '@/store/layout.store'
 import { cn } from '@/lib/utils'
 import { HiMenuAlt2 } from 'react-icons/hi'
-import { Button, Input } from '@/shared/components/ui-core'
+import { Button, Input } from '@/shared/components/ui'
 import { FiSearch } from 'react-icons/fi'
 
 export interface NavSearchProps {
@@ -23,7 +23,6 @@ export function NavSearch({
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    // Explicitly clear value on mount to defeat browser autofill
     if (inputRef.current) {
       inputRef.current.value = ''
     }
@@ -53,7 +52,7 @@ export function NavSearch({
       </Button>
 
       <div className={cn('max-w-lg flex-1 relative', inputContainerClassName)}>
-        {/* Hidden inputs to trick browsers that try to autofill the search bar on settings pages */}
+        {}
         <input type="text" style={{ display: 'none' }} aria-hidden="true" />
         <input type="password" style={{ display: 'none' }} aria-hidden="true" />
         <Input

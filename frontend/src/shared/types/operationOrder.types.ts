@@ -1,8 +1,3 @@
-/**
- * Types for Operation Orders API
- * Matches the backend /orders endpoint response structure
- */
-
 export interface LensParameters {
   left: {
     SPH: number
@@ -41,8 +36,8 @@ export interface OperationOrder {
   _id: string
   orderCode: string
   invoiceId: string
-  type: string[] // ["MANUFACTURING", "PRESCRIPTION", etc.]
-  status: string // "ASSIGNED", "PENDING", "COMPLETED", etc.
+  type: string[]
+  status: string
   products: ProductInOrder[]
   assignerStaff?: string
   assignedStaff?: string

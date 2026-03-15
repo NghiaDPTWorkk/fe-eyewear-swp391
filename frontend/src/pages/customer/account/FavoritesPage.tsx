@@ -32,7 +32,7 @@ export function FavoritesPage() {
   const performSimpleAddToCart = async (product: StandardProduct) => {
     try {
       const productId = product._id || product.id || ''
-      // Find default variant for SKU
+
       const defaultVariant = product.variants?.find((v) => v.isDefault) || product.variants?.[0]
       const sku = product.sku || defaultVariant?.sku || ''
 
@@ -131,8 +131,8 @@ export function FavoritesPage() {
                     ? `${Math.round((1 - item.defaultVariantFinalPrice / item.defaultVariantPrice) * 100)}%`
                     : undefined
                 }
-                frameSize="One Size" // Default for now
-                frameColor="Default" // Default for now
+                frameSize="One Size"
+                frameColor="Default"
                 onRemove={() => toggleWishlist(item)}
                 onAddToCart={() => handleAddToCart(item)}
               />

@@ -16,7 +16,7 @@ export interface Prescription {
   isDefault?: boolean
 }
 
-export type PrescriptionData = Prescription // Maintain backward compatibility if needed
+export type PrescriptionData = Prescription
 
 export interface PrescriptionValidateRequest {
   prescription: PrescriptionData

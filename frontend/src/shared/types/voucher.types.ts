@@ -34,7 +34,6 @@ export interface GetMyVouchersResponse {
   }
 }
 
-/** Pagination metadata from admin voucher list */
 export interface VoucherPagination {
   total: number
   page: number
@@ -42,7 +41,6 @@ export interface VoucherPagination {
   totalPages: number
 }
 
-/** Response shape: GET /admin/vouchers */
 export interface AdminVoucherListResponse {
   success: boolean
   message: string
@@ -66,7 +64,6 @@ export interface AdminVoucherListResponse {
   pagination?: VoucherPagination
 }
 
-/** Writable fields sent to POST /admin/vouchers or PATCH /admin/vouchers/:id */
 export interface VoucherPayload {
   name: string
   description: string
@@ -82,14 +79,12 @@ export interface VoucherPayload {
   status: string
 }
 
-/** Generic mutation response */
 export interface VoucherMutateResponse {
   success: boolean
   message: string
   data: Voucher
 }
 
-/** Response shape: GET /admin/vouchers/:id */
 export interface VoucherDetailResponse {
   success: boolean
   message: string

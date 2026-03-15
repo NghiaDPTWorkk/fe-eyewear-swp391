@@ -11,7 +11,7 @@ import { MdOutlineNotifications } from 'react-icons/md'
 import { useLocation, Link } from 'react-router-dom'
 
 import { cn } from '@/lib/utils'
-import { Button, Input } from '@/shared/components/ui-core'
+import { Button, Input } from '@/shared/components/ui'
 import { useLayoutStore } from '@/store/layout.store'
 
 export interface NavSearchProps {
@@ -87,7 +87,6 @@ export function NavActions({
   const containerRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
 
-  // Determine base path for dynamic links
   const isOperation = location.pathname.startsWith('/operation-staff')
   const basePrefix = isOperation ? '/operation-staff' : '/sale-staff'
 

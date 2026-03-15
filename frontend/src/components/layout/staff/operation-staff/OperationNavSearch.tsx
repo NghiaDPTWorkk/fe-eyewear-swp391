@@ -8,11 +8,9 @@ import { useSearchOrders } from '@/features/staff/hooks/orders/useOrders'
 import { PATHS } from '@/routes/paths'
 import ResultSearchTable from '@/components/layout/staff/staff-core/result-search-line/ResultSearchTable'
 
-// Key lưu lịch sử search vào localStorage
 const HISTORY_KEY = 'op_search_history'
 const MAX_HISTORY = 20
 
-// ===== Helpers =====
 function getHistory(): string[] {
   try {
     const raw = localStorage.getItem(HISTORY_KEY)
@@ -28,7 +26,6 @@ function saveToHistory(orderCode: string) {
   localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, MAX_HISTORY)))
 }
 
-// ===== useDebounce hook nhỏ =====
 function useDebounce(value: string, delay: number) {
   const [debouncedValue, setDebouncedValue] = useState(value)
   useEffect(() => {
@@ -38,7 +35,6 @@ function useDebounce(value: string, delay: number) {
   return debouncedValue
 }
 
-// ===== Component =====
 export default function OperationNavSearch() {
   const navigate = useNavigate()
   const { toggleSidebar } = useLayoutStore()
@@ -48,7 +44,6 @@ export default function OperationNavSearch() {
   const [historyItems, setHistoryItems] = useState<string[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
 
-  // Explicitly clear value on mount to defeat browser autofill
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.value = ''
@@ -57,37 +52,31 @@ export default function OperationNavSearch() {
 
   const wrapperRef = useRef<HTMLDivElement>(null)
 
-  // Debounce input 300ms trước khi truyền vào hook
   const debouncedQuery = useDebounce(inputValue, 300)
 
-  // Gọi API search
   const { data, isFetching } = useSearchOrders(debouncedQuery)
 
-  // Lấy danh sách orders từ response — map sang { id, orderCode }
   const searchResults = (data?.data?.orders?.data || []).map((o: any) => ({
     id: o._id,
     searchCode: o.orderCode
   }))
 
-  // Đóng dropdown và reset input khi click bên ngoài
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
         setIsOpen(false)
-        setInputValue('') // Reset về rỗng để thanh search trở về trạng thái ban đầu
+        setInputValue('')
       }
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // Khi mở dropdown, load lịch sử mới nhất từ localStorage
   const handleFocus = useCallback(() => {
     setHistoryItems(getHistory())
     setIsOpen(true)
   }, [])
 
-  // Xử lý khi chọn 1 kết quả search
   const handleSelect = useCallback(
     (item: { id: string; searchCode: string }) => {
       saveToHistory(item.searchCode)
@@ -98,14 +87,13 @@ export default function OperationNavSearch() {
     [navigate]
   )
 
-  // Xử lý khi chọn từ lịch sử — chỉ điền vào input và search lại
   const handleSelectHistory = useCallback((searchCode: string) => {
     setInputValue(searchCode)
   }, [])
 
   return (
     <div className="flex items-center gap-3 w-full pr-2">
-      {/* Toggle sidebar button (mobile) */}
+      {}
       <button
         onClick={toggleSidebar}
         className="lg:hidden p-2 rounded-lg text-neutral-500 hover:bg-neutral-50 transition-colors"
@@ -113,16 +101,16 @@ export default function OperationNavSearch() {
         <HiMenuAlt2 className="text-2xl" />
       </button>
 
-      {/* Search input + dropdown wrapper */}
+      {}
       <div ref={wrapperRef} className="relative max-w-lg flex-1">
-        {/* Input */}
-        {/* Input area with anti-autofill dummy fields */}
+        {}
+        {}
         <div className="relative">
-          {/* Hidden inputs to trick browsers that try to autofill the search bar */}
+          {}
           <input type="email" style={{ display: 'none' }} aria-hidden="true" />
           <input type="password" style={{ display: 'none' }} aria-hidden="true" />
 
-          {/* Icon kính lúp */}
+          {}
           <span className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none flex items-center">
             <FiSearch
               className={cn(
@@ -152,7 +140,7 @@ export default function OperationNavSearch() {
             )}
           />
 
-          {/* Loading indicator nhỏ trong input */}
+          {}
           {isFetching && debouncedQuery.length >= 2 && (
             <span className="absolute right-3 top-1/2 -translate-y-1/2">
               <div className="w-4 h-4 rounded-full border-2 border-mint-200 border-t-mint-500 animate-spin" />
@@ -160,7 +148,7 @@ export default function OperationNavSearch() {
           )}
         </div>
 
-        {/* Dropdown */}
+        {}
         {isOpen && (
           <ResultSearchTable
             results={searchResults}

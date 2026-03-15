@@ -42,9 +42,6 @@ export const useCartStore = create<CartState>((set, get) => ({
   fetchError: null,
   isInitialized: false,
 
-  /**
-   * Local-only add item (backward compatibility)
-   */
   addItem: (item) =>
     set((state) => {
       const existingItem = state.items.find((i) => {
@@ -65,20 +62,14 @@ export const useCartStore = create<CartState>((set, get) => ({
       return { items: [{ ...item, selected: item.selected ?? true }, ...state.items] }
     }),
 
-  /**
-   * Async add item with API integration
-   */
   addItemAsync: async (productId, sku, quantity, lensSelection) => {
     set({ isAddingToCart: true, addToCartError: null })
 
     try {
-      // Call cart service
       const updatedItems = await cartService.addToCart(productId, sku, quantity, lensSelection)
 
-      // Update cart state with backend response
       set({ items: updatedItems, isAddingToCart: false })
 
-      // If backend didn't return cart data (empty array), fetch cart to get latest state
       if (updatedItems.length === 0) {
         await get().fetchCart()
       }
@@ -86,17 +77,11 @@ export const useCartStore = create<CartState>((set, get) => ({
       const errorMessage = error.message || 'Failed to add item to cart'
       set({ isAddingToCart: false, addToCartError: errorMessage })
 
-      // Re-throw for component-level handling
       throw error
     }
   },
 
-  /**
-   * Fetch cart from backend
-   */
   fetchCart: async (force = false, quiet = false) => {
-    // Optimization: Skip if already initialized and not a forced refresh
-    // But ONLY if we actually have items. If items is empty, we likely need to fetch.
     if (get().isInitialized && !force && get().items.length > 0) {
       return
     }
@@ -113,7 +98,7 @@ export const useCartStore = create<CartState>((set, get) => ({
         isLoading: false,
         fetchError: errorMessage,
         items: [],
-        isInitialized: true // Mark as initialized even on error to prevent infinite retries
+        isInitialized: true
       })
     }
   },
@@ -133,8 +118,6 @@ export const useCartStore = create<CartState>((set, get) => ({
     try {
       const updatedItems = await cartService.updateQuantity(item, quantity)
 
-      // Only update items if we got a valid non-empty list
-      // Otherwise keep current items and do a quiet refresh
       if (updatedItems && updatedItems.length > 0) {
         set({ items: updatedItems, isUpdating: false })
       } else {
@@ -142,7 +125,6 @@ export const useCartStore = create<CartState>((set, get) => ({
         set({ isUpdating: false })
       }
     } catch (error: any) {
-      // Rollback on error
       set({ items: previousItems, isUpdating: false })
       throw error
     }

@@ -1,7 +1,3 @@
-/**
- * VoucherTable — the full table: header + rows + empty/loading states.
- * Acts as the single import point for the voucher table feature.
- */
 import type { ReactNode } from 'react'
 import { IoTicketOutline } from 'react-icons/io5'
 import type { Voucher } from '@/shared/types'
@@ -13,11 +9,11 @@ interface VoucherTableProps {
   vouchers: Voucher[]
   isLoading?: boolean
   columns?: VoucherColumn[]
-  /** Render-prop: given a voucher, returns the actions ReactNode for that row */
+
   renderActions?: (voucher: Voucher) => ReactNode
-  /** Called when the user clicks anywhere on a data row */
+
   onRowClick?: (voucher: Voucher) => void
-  /** Extra className on the outer wrapper */
+
   className?: string
 }
 
@@ -34,13 +30,11 @@ export function VoucherTable({
       <VoucherHeader columns={columns} />
 
       {isLoading ? (
-        /* Loading skeleton */
         <div className="flex flex-col items-center justify-center py-24 gap-4">
           <div className="w-10 h-10 rounded-full border-4 border-mint-100 border-t-mint-500 animate-spin" />
           <p className="text-sm font-bold text-slate-400 animate-pulse">Loading vouchers…</p>
         </div>
       ) : vouchers.length === 0 ? (
-        /* Empty state */
         <div className="flex flex-col items-center justify-center py-24 gap-3">
           <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center">
             <IoTicketOutline className="text-slate-300" size={32} />
@@ -51,7 +45,6 @@ export function VoucherTable({
           </p>
         </div>
       ) : (
-        /* Rows */
         <div className="divide-y divide-slate-50">
           {vouchers.map((v, idx) => (
             <VoucherTr

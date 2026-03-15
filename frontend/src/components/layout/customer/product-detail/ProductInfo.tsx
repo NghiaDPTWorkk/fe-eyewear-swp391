@@ -34,7 +34,6 @@ interface ProductInfoProps {
 }
 
 export const ProductInfo = ({ product, productId, variantState }: ProductInfoProps) => {
-  // Use shared variant selection state from prop
   const {
     currentVariant,
     selectedOptions,
@@ -65,7 +64,7 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
 
   const handleAddToCart = () => {
     setPurchaseMode('cart')
-    // Check for token in both possible localStorage keys
+
     const token = localStorage.getItem('accessToken') || localStorage.getItem('access_token')
     const isAuth = isAuthenticated && token
 
@@ -82,12 +81,10 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
       return
     }
 
-    // Sunglass or default frame path
     performAction()
   }
 
   const handleBuyNow = () => {
-    // Check for token in both possible localStorage keys
     const token = localStorage.getItem('accessToken') || localStorage.getItem('access_token')
     const isAuth = isAuthenticated && token
 
@@ -116,7 +113,6 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
   }
 
   const performAction = async (lensSelection?: LensSelectionState) => {
-    // Validation: Check if variant is selected and in stock
     if (!currentVariant) {
       toast.error('Please select a valid product variant')
       return
@@ -127,8 +123,6 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
       return
     }
 
-    // Prioritize the product ID from the product object if available
-    // Otherwise fallback to the ID from the URL prop
     const finalProductId = product.id || productId
 
     if (!finalProductId) {
@@ -143,10 +137,8 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
 
     if (purchaseMode === 'cart') {
       try {
-        // Call async add to cart with API integration
         await addItemAsync(finalProductId, currentVariant.sku, 1, lensSelection)
 
-        // Show success message
         const actionLabel = isPreOrder ? 'Pre-ordered' : 'added to cart'
         if (lensSelection) {
           toast.success(
@@ -156,12 +148,10 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
           toast.success(`${currentVariant.name} ${actionLabel}!`)
         }
 
-        // Close lens modal if open
         if (isLensModalOpen) {
           setIsLensModalOpen(false)
         }
       } catch (error) {
-        // Handle specific errors
         const err = error as Error
         if (err.message === 'UNAUTHORIZED') {
           toast.error('Please login to add items to cart')
@@ -171,7 +161,6 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
         }
       }
     } else {
-      // Direct buy flow: redirect to checkout with item data
       const itemToBuy: CartItem = {
         product_id: finalProductId,
         sku: currentVariant.sku || '',
@@ -196,7 +185,6 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
           : undefined
       }
 
-      // Close lens modal if open
       if (isLensModalOpen) {
         setIsLensModalOpen(false)
       }
@@ -206,7 +194,6 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
   }
 
   const handleChatWithExpert = () => {
-    // Check authentication first
     const token = localStorage.getItem('accessToken') || localStorage.getItem('access_token')
     const isAuth = isAuthenticated && token
 
@@ -222,7 +209,7 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
   }
 
   const handleToggleWishlist = async () => {
-    const isAuth = useAuthStore.getState().isAuthenticated || !!localStorage.getItem('access_token') // Fixed key to access_token
+    const isAuth = useAuthStore.getState().isAuthenticated || !!localStorage.getItem('access_token')
     if (!isAuth) {
       toast.error('Please login to add items to wishlist')
       navigate('/login', { state: { from: location } })
@@ -230,7 +217,6 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
     }
 
     try {
-      // Ensure we have all necessary fields for StandardProduct
       const productToSave: StandardProduct = {
         ...product,
         id: product.id || productId,
@@ -245,13 +231,11 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
     }
   }
 
-  // Get product description
   const description =
     product.description ||
     product.shortDescription ||
     'A modern interpretation of the classic square silhouette. Crafted from premium Italian acetate with a subtle translucent finish that catches the light from every angle.'
 
-  // Calculate discount percentage if applicable
   const hasDiscount = finalPrice < price
   const discountPercentage = hasDiscount ? Math.round(((price - finalPrice) / price) * 100) : 0
 
@@ -300,7 +284,7 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
         )}
       </div>
 
-      {/* Stock Status */}
+      {}
       {currentVariant && (
         <div className="mb-6">
           {isPreOrder ? (
@@ -329,7 +313,7 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
 
       <p className="text-gray-eyewear leading-relaxed mb-8 max-w-xl">{description}</p>
 
-      {/* Dynamic Options Rendering */}
+      {}
       {attributes.length > 0 && (
         <div className="space-y-8 mb-10">
           {attributes.map((attribute) => {
@@ -338,7 +322,6 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
 
             const isColorAttribute = attribute.showType === 'color'
 
-            // Find label for the selected value
             const selectedLabel =
               currentVariant?.options.find((opt) => opt.attributeName === attribute.name)?.label ||
               attribute.values.find((v) => v.value === selectedValue)?.label ||
@@ -356,7 +339,6 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
                     const isAvailable = availableValues.includes(option.value)
                     const isSelected = selectedValue === option.value
 
-                    // Render color swatch for color attributes
                     if (isColorAttribute) {
                       return (
                         <button
@@ -376,11 +358,11 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
                           onClick={() => isAvailable && selectOption(attribute.name, option.value)}
                           title={option.label}
                         >
-                          {/* Tooltip on hover */}
+                          {}
                           <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
                             {option.label}
                           </span>
-                          {/* Checkmark for selected color */}
+                          {}
                           {isSelected && (
                             <svg
                               className="absolute inset-0 m-auto w-5 h-5 text-white drop-shadow-md"
@@ -403,7 +385,6 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
                       )
                     }
 
-                    // Render regular button for non-color attributes
                     return (
                       <button
                         key={option.value}
@@ -429,7 +410,7 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
         </div>
       )}
 
-      {/* Action Buttons */}
+      {}
       <div className="flex flex-col gap-4 mb-8">
         <Button
           onClick={handleAddToCart}
@@ -483,7 +464,7 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
         Chat with an Expert about this frame
       </button>
 
-      {/* Feature Grid */}
+      {}
       <div className="grid grid-cols-2 gap-y-6 gap-x-8 pt-8 border-t border-mint-300">
         <div className="flex items-center gap-3">
           <Truck className="w-5 h-5 text-primary-500" />

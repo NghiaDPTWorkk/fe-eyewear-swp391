@@ -1,4 +1,3 @@
-// Payment Enums
 export const PaymentMethodType = {
   COD: 'COD',
   VNPAY: 'VNPAY',

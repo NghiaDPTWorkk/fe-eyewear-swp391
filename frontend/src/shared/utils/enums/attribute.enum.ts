@@ -1,4 +1,3 @@
-// Attribute Enums
 export const AttributeShowType = {
   COLOR: 'color',
   TEXT: 'text'

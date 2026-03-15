@@ -22,7 +22,7 @@ import { VoucherSection } from './sections/VoucherSection'
 
 interface CartSummaryProps {
   subtotal: number
-  items?: CartItem[] // Optional: if provided, use these items; otherwise use selected items from store
+  items?: CartItem[]
 }
 
 export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) => {
@@ -30,7 +30,6 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
   const { user } = useAuth()
   const { items: storeItems } = useCartStore()
 
-  // Use propItems if provided, otherwise filter selected items from store
   const items = propItems || storeItems.filter((item) => item.selected)
 
   const [customerInfo, setCustomerInfo] = useState({
@@ -56,7 +55,6 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
   const [isAddressDropdownOpen, setIsAddressDropdownOpen] = useState(false)
   const [selectedProvinceCode, setSelectedProvinceCode] = useState<number | null>(null)
 
-  // Sync user info if it loads late
   useEffect(() => {
     if (user) {
       setCustomerInfo((prev) => ({
@@ -67,7 +65,6 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
     }
   }, [user])
 
-  // Fetch requirements
   useEffect(() => {
     const initData = async () => {
       try {
@@ -86,9 +83,7 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
             ward: defaultAddr.ward,
             city: defaultAddr.city
           })
-          // Provinces will be fetched on-demand if user switches to manual mode
         } else {
-          // No saved addresses or not logged in, fetch provinces for manual entry
           const provinceData = await addressService.getProvinces()
           setProvinces(Array.isArray(provinceData) ? provinceData : [])
           setAddressMode('manual')
@@ -108,7 +103,6 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
       setSelectedProvinceCode(null)
       setWards([])
 
-      // Fetch provinces on demand if not already loaded
       if (provinces.length === 0) {
         try {
           const provinceData = await addressService.getProvinces()
@@ -129,7 +123,6 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
         city: addr.city
       })
 
-      // If we need to sync manual fields (like ward/province dropdowns) when selecting a saved address
       if (provinces.length > 0) {
         const province = provinces.find((p) => p.name.toLowerCase() === addr.city.toLowerCase())
         if (province) {
@@ -237,7 +230,6 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
         const checkoutItemsCopy = checkoutItems.map((item) => ({ ...item }))
         const { clearCart, removeItems, items: currentItems } = useCartStore.getState()
 
-        // Only clear/remove from cart if we are NOT in direct checkout mode (propItems is undefined)
         if (!propItems) {
           if (checkoutItemsCopy.length === currentItems.length) {
             await clearCart()
@@ -252,7 +244,7 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
             const urlResponse = await paymentService.getVNPayUrl(invoice._id, payment._id)
             if (urlResponse.success && urlResponse.data.url) {
               window.location.href = urlResponse.data.url
-              return // Stop further execution
+              return
             }
           } catch (error) {
             console.error('Failed to get VNPay URL:', error)
@@ -268,7 +260,7 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
             const urlResponse = await paymentService.getPayOSUrl(invoice._id, payment._id)
             if (urlResponse.success && urlResponse.data.url) {
               window.location.href = urlResponse.data.url
-              return // Stop further execution
+              return
             }
           } catch (error) {
             console.error('Failed to get PayOS URL:', error)

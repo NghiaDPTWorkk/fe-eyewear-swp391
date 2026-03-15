@@ -56,7 +56,7 @@ export interface MenuItemProps {
   active?: boolean
   badge?: string
   badgeVariant?: 'default' | 'primary' | 'danger'
-  isLoading?: boolean // Shows spinner while loading, then number
+  isLoading?: boolean
   hasDropdown?: boolean
   defaultOpen?: boolean
   children?: ReactNode

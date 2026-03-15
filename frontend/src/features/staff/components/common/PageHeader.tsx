@@ -1,7 +1,3 @@
-/**
- * PageHeader Component
- * Consistent header with breadcrumb navigation for all Staff pages.
- */
 import { Link } from 'react-router-dom'
 import { STYLES, TYPOGRAPHY } from '../../constants/staffDesignSystem'
 
@@ -20,7 +16,7 @@ interface PageHeaderProps {
 export default function PageHeader({ title, subtitle, breadcrumbs, noMargin }: PageHeaderProps) {
   return (
     <div className={noMargin ? '' : 'mb-3'}>
-      {/* Breadcrumbs */}
+      {}
       <div className="flex items-center gap-2 text-sm mb-1 font-medium">
         {breadcrumbs.map((item, index) => {
           const isLast = index === breadcrumbs.length - 1
@@ -41,7 +37,7 @@ export default function PageHeader({ title, subtitle, breadcrumbs, noMargin }: P
         })}
       </div>
 
-      {/* Title */}
+      {}
       <h1 className={TYPOGRAPHY.pageTitle}>{title}</h1>
       {subtitle && <p className={TYPOGRAPHY.pageSubtitle}>{subtitle}</p>}
     </div>

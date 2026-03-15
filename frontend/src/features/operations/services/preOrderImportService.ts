@@ -34,10 +34,6 @@ export interface PreOrderImportsResponse {
 }
 
 export const preOrderImportService = {
-  /**
-   * Get pre-order imports with optional status filtering and pagination
-   * By default, filters for PENDING and DONE as requested by the user.
-   */
   getPreOrderImports: async (
     params: {
       page?: number
@@ -47,10 +43,6 @@ export const preOrderImportService = {
     } = {}
   ) => {
     const { page = 1, limit = 10, status = ['PENDING', 'DONE'], search } = params
-
-    // Construct query manually to handle multiple status parameters correctly if needed,
-    // although httpClient might handle it if passed as part of ENDPOINTS.
-    // Given the previous screenshot, the format is ?status=PENDING&status=DONE
 
     const url = ENDPOINTS.ADMIN.PRE_ORDER_IMPORTS(page, limit)
     const urlObj = new URL(url, window.location.origin)

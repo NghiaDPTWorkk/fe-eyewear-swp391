@@ -1,6 +1,3 @@
-/**
- * Address type matching backend structure
- */
 export interface Address {
   _id?: string
   street: string

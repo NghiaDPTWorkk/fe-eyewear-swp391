@@ -73,7 +73,6 @@ async function refreshAccessToken(): Promise<string> {
     const deviceId = getOrCreateDeviceId()
     const refreshEndpoint = getRefreshEndpoint()
 
-    // NOTE: Refresh token endpoint PHẢI có withCredentials: true để gửi refreshToken cookie
     const res = await apiClient.post<RefreshTokenResponse>(refreshEndpoint, undefined, {
       headers: {
         'x-device-id': deviceId
@@ -88,7 +87,6 @@ async function refreshAccessToken(): Promise<string> {
       throw new Error('Refresh token response missing accessToken')
     }
 
-    // Update both localStorage and zustand store
     localStorage.setItem('access_token', newToken)
     localStorage.setItem('accessToken', newToken)
     useAuthStore.getState().setToken(newToken)
@@ -118,8 +116,6 @@ apiClient.interceptors.request.use(
 
     const url = config.url || ''
 
-    // Security check: if logging in, clear all old auth data first
-    // chỉ clear khi thực sự gọi API login chính thức
     const isLoginEndpoint = url.endsWith('/auth/login') || url.endsWith('/admin/auth/login')
     if (isLoginEndpoint) {
       localStorage.removeItem('access_token')
@@ -153,7 +149,7 @@ apiClient.interceptors.request.use(
         } catch {
           authEventEmitter.emit('UNAUTHORIZED')
           localStorage.removeItem('access_token')
-          // refreshToken is stored in cookie, nothing to remove here
+
           throw new Error('Session expired')
         }
       }
@@ -171,7 +167,6 @@ apiClient.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config
 
-    // If 401 and we haven't retried yet, attempt to refresh the token
     if (
       error.response?.status === 401 &&
       originalRequest &&
@@ -183,9 +178,8 @@ apiClient.interceptors.response.use(
       try {
         const newToken = await refreshAccessToken()
         originalRequest.headers.Authorization = `Bearer ${newToken}`
-        return apiClient(originalRequest) // Retry the original request
+        return apiClient(originalRequest)
       } catch {
-        // Refresh also failed → session truly expired, force logout
         localStorage.removeItem('access_token')
         localStorage.removeItem('accessToken')
         useAuthStore.getState().logout()

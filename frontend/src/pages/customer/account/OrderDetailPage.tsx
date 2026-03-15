@@ -68,7 +68,7 @@ export function CustomerOrderDetailPage() {
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl mx-auto pb-20">
-      {/* Header */}
+      {}
       <div className="flex items-center gap-4 mb-8">
         <button
           onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/account/orders'))}
@@ -98,11 +98,11 @@ export function CustomerOrderDetailPage() {
       <OrderStatusTracker status={invoice.status} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Content */}
+        {}
         <div className="lg:col-span-2 space-y-8">
           <OrderItemList items={productList} />
 
-          {/* Notes */}
+          {}
           {invoice.note && (
             <Card className="p-6 border-mint-100/50 bg-yellow-50/30">
               <h3 className="font-bold text-mint-1200 text-sm mb-2 flex items-center gap-2">
@@ -113,7 +113,7 @@ export function CustomerOrderDetailPage() {
           )}
         </div>
 
-        {/* Sidebar */}
+        {}
         <div className="space-y-8">
           <OrderSummary
             totalPrice={invoice.totalPrice}

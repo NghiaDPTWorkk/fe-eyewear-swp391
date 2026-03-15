@@ -1,7 +1,3 @@
-/**
- * NotificationPreferences Component
- * User preferences for app and email notifications
- */
 import { Card } from '@/shared/components'
 import { IoNotificationsOutline, IoMailOpenOutline, IoAppsOutline } from 'react-icons/io5'
 

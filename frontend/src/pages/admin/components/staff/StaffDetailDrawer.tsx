@@ -40,7 +40,7 @@ export const StaffDetailDrawer: React.FC<StaffDetailDrawerProps> = ({ isOpen, on
         </div>
 
         <div className="flex-1 overflow-auto p-6 space-y-8">
-          {/* Avatar & Name */}
+          {}
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 border border-indigo-100 shrink-0">
               <IoPersonCircleOutline size={40} />
@@ -55,7 +55,7 @@ export const StaffDetailDrawer: React.FC<StaffDetailDrawerProps> = ({ isOpen, on
             </div>
           </div>
 
-          {/* Contact Info */}
+          {}
           <div className="space-y-4">
             <h5 className="text-[11px] font-semibold text-neutral-400 uppercase tracking-widest">
               Contact Information
@@ -76,7 +76,7 @@ export const StaffDetailDrawer: React.FC<StaffDetailDrawerProps> = ({ isOpen, on
             </div>
           </div>
 
-          {/* Status */}
+          {}
           <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-100">
             <div className="flex items-center justify-between">
               <div>
@@ -93,7 +93,7 @@ export const StaffDetailDrawer: React.FC<StaffDetailDrawerProps> = ({ isOpen, on
             </div>
           </div>
 
-          {/* Actions */}
+          {}
           <div className="space-y-3 pt-4">
             <button className="w-full py-3 bg-indigo-600 text-white rounded-2xl text-sm font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95">
               Edit Staff

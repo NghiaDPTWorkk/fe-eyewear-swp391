@@ -5,12 +5,11 @@ interface FrameItem {
 
 interface FrameProps {
   data: FrameItem[]
-  imageSrc?: string // Thêm dấu ? để báo hiệu prop này có thể có hoặc không
+  imageSrc?: string
   quantity?: number
   sku?: string
 }
 
-// Thiết lập giá trị mặc định cho imageSrc ngay tại tham số của function
 const FrameSpecifications = ({
   data,
   imageSrc = 'https://kinhmats.com/wp-content/uploads/2024/05/gentle-monster-jennie-donut-bun-01.webp',

@@ -76,3 +76,15 @@ temp/
 
 *.bak
 *.backup
+
+# AI & Agents
+.agent/
+.agents/
+.cursor/
+.anthropic/
+.gemini/
+.openai/
+.history/
+*.glb
+*.gltf
+public/models/

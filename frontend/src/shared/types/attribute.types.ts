@@ -1,9 +1,5 @@
 import type { AttributeShowType } from '@/shared/utils/enums/attribute.enum'
 
-/**
- * Attribute types matching backend structure
- */
-
 export interface Attribute {
   _id: string
   name: string

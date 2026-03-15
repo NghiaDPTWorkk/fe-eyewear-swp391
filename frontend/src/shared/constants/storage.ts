@@ -3,7 +3,4 @@ export const STORAGE_KEYS = {
   REFRESH_TOKEN: 'refresh_token',
 
   USER_INFO: 'user_info'
-
-  //   THEME: 'theme',       // 'light' | 'dark'
-  //   LANGUAGE: 'language', // 'vi' | 'en'
 } as const

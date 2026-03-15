@@ -44,7 +44,7 @@ export function ProductCardHome({
       )}
       onClick={handleClick}
     >
-      {/* Product Image */}
+      {}
       <div className="relative aspect-square bg-gray-100 flex items-center justify-center overflow-hidden">
         {image ? (
           <img
@@ -58,7 +58,7 @@ export function ProductCardHome({
           </div>
         )}
 
-        {/* Sale Badge */}
+        {}
         {hasSale && (
           <div className="absolute top-2 right-2 bg-primary-500 text-white px-2 py-1 rounded text-xs font-bold">
             -{salePercent}%
@@ -66,17 +66,17 @@ export function ProductCardHome({
         )}
       </div>
 
-      {/* Product Info */}
+      {}
       <div className="p-3 text-center">
-        {/* Model Code */}
+        {}
         {modelCode && <p className="text-xs text-gray-500 mb-1">{modelCode}</p>}
 
-        {/* Brand Name */}
+        {}
         <h3 className="text-sm font-semibold text-mint-1200 mb-2 uppercase tracking-wide">
           {brand || name}
         </h3>
 
-        {/* Pricing */}
+        {}
         <div className="flex items-center justify-center gap-2">
           {hasSale && (
             <span className="text-xs text-gray-400 line-through">

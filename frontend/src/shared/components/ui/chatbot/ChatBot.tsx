@@ -18,12 +18,10 @@ const MessageContent = ({ text: originalText, isUser }: MessageContentProps) => 
   const PRODUCT_URL_REGEX = /\/products\/([a-f\d]{24})/i
 
   const parseLine = (line: string) => {
-    // Regex matches: **bold**, [label](url), or raw URL
     const regex = /(\*\*.*?\*\*|\[.*?\]\(https?:\/\/[^\s)]+\)|https?:\/\/[^\s\n]+)/g
     const parts = line.split(regex)
 
     return parts.map((part, i) => {
-      // Bold: **text**
       if (part.startsWith('**') && part.endsWith('**')) {
         return (
           <strong key={i} className={isUser ? 'font-bold' : 'font-bold text-primary-700'}>
@@ -32,12 +30,10 @@ const MessageContent = ({ text: originalText, isUser }: MessageContentProps) => 
         )
       }
 
-      // Markdown link: [label](url)
       const mdLinkMatch = part.match(/^\[(.*?)\]\((https?:\/\/.*?)\)$/)
       if (mdLinkMatch) {
         const [, label, url] = mdLinkMatch
 
-        // Check if it's a product link
         const productMatch = url.match(PRODUCT_URL_REGEX)
         if (productMatch) {
           return <ProductChatTag key={i} productId={productMatch[1]} />
@@ -61,9 +57,7 @@ const MessageContent = ({ text: originalText, isUser }: MessageContentProps) => 
         )
       }
 
-      // Raw URL
       if (part.startsWith('http')) {
-        // Check if it's a product link
         const productMatch = part.match(PRODUCT_URL_REGEX)
         if (productMatch) {
           return <ProductChatTag key={i} productId={productMatch[1]} />
@@ -97,7 +91,6 @@ const MessageContent = ({ text: originalText, isUser }: MessageContentProps) => 
       {lines.map((line, i) => {
         const trimmedLine = line.trim()
 
-        // Handle Bullet Points
         if (trimmedLine.startsWith('* ') || trimmedLine.startsWith('- ')) {
           return (
             <div key={i} className="flex gap-2 pl-1 mb-0.5 items-start min-w-0 w-full">
@@ -116,12 +109,10 @@ const MessageContent = ({ text: originalText, isUser }: MessageContentProps) => 
           )
         }
 
-        // Empty lines as spacing
         if (line === '') {
           return <div key={i} className="" />
         }
 
-        // Normal paragraph
         return (
           <div key={i} className="leading-relaxed break-words min-w-0">
             {parseLine(line)}
@@ -167,7 +158,6 @@ export const ChatBot = () => {
     inputRef
   } = useChatMessages()
 
-  // auto send
   useEffect(() => {
     if (pendingMessage && isAuthenticated && !isLoading) {
       const msg = pendingMessage
@@ -176,7 +166,6 @@ export const ChatBot = () => {
     }
   }, [pendingMessage, isAuthenticated, isLoading, handleSend, clearPendingMessage])
 
-  // Preserve scroll position when loading more messages
   useEffect(() => {
     if (!isLoading && prevScrollHeightRef.current > 0 && scrollContainerRef.current) {
       const currentScrollHeight = scrollContainerRef.current.scrollHeight
@@ -208,7 +197,7 @@ export const ChatBot = () => {
 
   return (
     <>
-      {/* Chat Window */}
+      {}
       <div
         className={`fixed bottom-24 right-6 z-50 w-[380px] max-w-[calc(100vw-2rem)] flex flex-col rounded-2xl shadow-2xl border border-mint-300 bg-white overflow-hidden transition-all duration-300 origin-bottom-right ${
           isOpen
@@ -217,7 +206,7 @@ export const ChatBot = () => {
         }`}
         style={{ height: '520px' }}
       >
-        {/* Header */}
+        {}
         <div className="flex items-center gap-3 px-5 py-4 bg-gradient-to-r from-primary-500 to-primary-700 text-white shrink-0">
           <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
             <Glasses className="w-5 h-5" />
@@ -240,13 +229,13 @@ export const ChatBot = () => {
           />
         </div>
 
-        {/* Messages */}
+        {}
         <div
           ref={scrollContainerRef}
           onScroll={handleScroll}
           className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 space-y-4 bg-mint-50"
         >
-          {/* Auth required state */}
+          {}
           {!isAuthenticated && (
             <div className="flex flex-col items-center justify-center py-12 px-6 text-center h-full">
               <div className="w-16 h-16 rounded-full bg-primary-100 flex items-center justify-center mb-4">
@@ -268,21 +257,21 @@ export const ChatBot = () => {
 
           {isAuthenticated && (
             <>
-              {/* History Loading Spinner */}
+              {}
               {isLoading && messages.length > 0 && (
                 <div className="flex justify-center py-2">
                   <Loader2 className="w-5 h-5 animate-spin text-primary-500" />
                 </div>
               )}
 
-              {/* Loading initial */}
+              {}
               {isLoading && messages.length === 0 && (
                 <div className="flex justify-center py-8">
                   <Loader2 className="w-6 h-6 animate-spin text-primary-500" />
                 </div>
               )}
 
-              {/* Empty state */}
+              {}
               {!isLoading && messages.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-8 text-gray-eyewear text-sm">
                   <Bot className="w-10 h-10 text-primary-300 mb-3" />
@@ -320,7 +309,7 @@ export const ChatBot = () => {
                 </div>
               ))}
 
-              {/* Typing indicator */}
+              {}
               {isTyping && (
                 <div className="flex gap-2 items-end animate-fade-in-up">
                   <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center shrink-0">
@@ -350,7 +339,7 @@ export const ChatBot = () => {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input */}
+        {}
         <form
           onSubmit={(e) => {
             e.preventDefault()
@@ -381,7 +370,7 @@ export const ChatBot = () => {
         </form>
       </div>
 
-      {/* Floating Toggle Button */}
+      {}
       <button
         onClick={() => {
           const next = !isOpen

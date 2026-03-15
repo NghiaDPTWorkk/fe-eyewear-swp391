@@ -1,13 +1,4 @@
-/**
- * Staff Design System
- * Unified color palette, typography, and styling constants for all Staff pages.
- */
-
-// ─────────────────────────────────────────────────────────────────────────────
-// COLOR PALETTE
-// ─────────────────────────────────────────────────────────────────────────────
 export const COLORS = {
-  // Primary accent (emerald/mint theme)
   primary: {
     50: 'bg-emerald-50',
     100: 'bg-emerald-100',
@@ -17,7 +8,7 @@ export const COLORS = {
     textDark: 'text-emerald-700',
     border: 'border-emerald-200'
   },
-  // Status colors
+
   status: {
     pending: 'bg-amber-50 text-amber-600 border-amber-100',
     processing: 'bg-blue-50 text-blue-600 border-blue-100',
@@ -26,7 +17,7 @@ export const COLORS = {
     delayed: 'bg-amber-50 text-amber-600 border-amber-100',
     arrived: 'bg-emerald-50 text-emerald-600 border-emerald-100'
   },
-  // Neutral tones
+
   neutral: {
     background: 'bg-white',
     backgroundAlt: 'bg-gray-50',
@@ -38,55 +29,44 @@ export const COLORS = {
   }
 } as const
 
-// ─────────────────────────────────────────────────────────────────────────────
-// TYPOGRAPHY
-// ─────────────────────────────────────────────────────────────────────────────
 export const TYPOGRAPHY = {
-  // Heading styles
   pageTitle: 'text-2xl font-bold text-gray-900 tracking-tight',
   pageSubtitle: 'text-gray-500 text-sm font-normal leading-relaxed',
   sectionTitle: 'text-lg font-semibold text-gray-900',
   cardTitle: 'text-sm font-semibold text-gray-900',
-  // Body text
+
   body: 'text-sm text-gray-600',
   bodySmall: 'text-xs text-gray-500',
-  // Labels
+
   label: 'text-xs font-semibold text-gray-400 tracking-wider',
   labelSmall: 'text-[10px] font-semibold text-gray-400 tracking-widest',
-  // Table headers
+
   tableHeader: 'text-[10px] font-semibold text-gray-400 uppercase tracking-widest'
 } as const
 
-// ─────────────────────────────────────────────────────────────────────────────
-// COMPONENT STYLES
-// ─────────────────────────────────────────────────────────────────────────────
 export const STYLES = {
-  // Breadcrumb
   breadcrumbLink:
     'text-neutral-400 hover:text-neutral-600 transition-colors font-normal cursor-pointer',
   breadcrumbActive: 'text-mint-600 font-medium cursor-default',
   breadcrumbSeparator: 'text-neutral-300 mx-1 cursor-default',
-  // Cards
+
   card: 'p-5 border border-neutral-200 shadow-sm rounded-xl',
   cardHover: 'hover:shadow-md transition-shadow cursor-pointer',
-  // Tables
+
   tableRow: 'hover:bg-emerald-50/30 transition-colors cursor-pointer',
   tableCell: 'px-6 py-4 align-middle',
-  // Buttons
+
   primaryButton: 'bg-emerald-500 hover:bg-emerald-600 text-white font-semibold cursor-pointer',
   secondaryButton: 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50 cursor-pointer',
-  // Status badges
+
   statusBadge:
     'px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wide border cursor-default',
-  // Metric cards
+
   metricCard: 'p-5 border border-neutral-100 flex flex-col justify-between shadow-sm',
   metricValue: 'text-3xl font-semibold text-gray-900 mt-2',
   metricLabel: 'text-xs font-semibold text-gray-400 uppercase tracking-wider'
 } as const
 
-// ─────────────────────────────────────────────────────────────────────────────
-// FILTER BUTTON CONFIGS
-// ─────────────────────────────────────────────────────────────────────────────
 export const ORDER_FILTERS = [
   { label: 'All Orders', value: 'all', count: 128 },
   { label: 'Processing', value: 'processing', count: 42 },

@@ -4,7 +4,7 @@ import { MdHistory } from 'react-icons/md'
 import { IoChevronDown } from 'react-icons/io5'
 import ResultSearchLine from './ResultSearchLine'
 
-const PAGE_SIZE = 8 // Hiện 8 dòng mỗi lần
+const PAGE_SIZE = 8
 
 interface SearchResultItem {
   id: string
@@ -32,9 +32,8 @@ export default function ResultSearchTable({
 }: ResultSearchTableProps) {
   const hasQuery = query.trim().length >= 2
 
-  // Số dòng đang hiển thị cho kết quả search
   const [visibleItemCount, setVisibleItemCount] = useState(PAGE_SIZE)
-  // Số dòng đang hiển thị cho lịch sử
+
   const [visibleHistoryCount, setVisibleHistoryCount] = useState(PAGE_SIZE)
 
   const visibleResults = results.slice(0, visibleItemCount)
@@ -86,7 +85,7 @@ export default function ResultSearchTable({
                 ))}
               </div>
 
-              {/* Show more button */}
+              {}
               {hasMoreResults && (
                 <button
                   type="button"
@@ -102,7 +101,7 @@ export default function ResultSearchTable({
         </>
       )}
 
-      {/* ===== Khi KHÔNG CÓ QUERY —  chỉ hiện lịch sử - dùng khi mới nhấp vô thanh search á ===== */}
+      {}
       {!hasQuery && (
         <>
           {historyItems.length === 0 ? (
@@ -131,7 +130,7 @@ export default function ResultSearchTable({
                 ))}
               </div>
 
-              {/* Show more history */}
+              {}
               {hasMoreHistory && (
                 <button
                   type="button"

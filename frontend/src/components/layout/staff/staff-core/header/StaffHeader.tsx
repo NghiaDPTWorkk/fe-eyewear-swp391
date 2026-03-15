@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 
-import { Container } from '@/shared/components/ui-core'
+import { Container } from '@/shared/components/ui'
 import { cn } from '@/lib/utils'
 
 interface StaffHeaderProps {

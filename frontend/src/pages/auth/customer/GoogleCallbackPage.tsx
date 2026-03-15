@@ -15,17 +15,14 @@ export const GoogleCallbackPage = () => {
     if (accessToken) {
       const handleLoginSuccess = async () => {
         try {
-          // 1. Set token in store and localStorage (setToken now handles localStorage too)
           setToken(accessToken)
           localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken)
           localStorage.setItem('accessToken', accessToken)
 
-          // 2. Fetch user profile
           await fetchProfile()
 
           toast.success('Login successful!')
 
-          // Redirect to home or intended page
           navigate('/')
         } catch (error) {
           console.error('Login failed:', error)

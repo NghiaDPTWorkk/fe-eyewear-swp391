@@ -8,23 +8,21 @@ interface HomePageProps {
 }
 
 export default function HomePage({ header }: HomePageProps) {
-  // Fetch products for carousel
   const typedProductsData = useGetProductWithPagination(1, 10)
 
-  // Select the appropriate data source
   const { products, loading } = typedProductsData
 
   return (
     <div className="min-h-screen bg-mint-200">
       {header}
 
-      {/* Hero Section */}
+      {}
       <Hero />
 
-      {/* Benefits Bar */}
+      {}
       <BenefitsBar />
 
-      {/* Featured Products Carousel */}
+      {}
       <section className="py-16 bg-mint-200">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
@@ -43,16 +41,16 @@ export default function HomePage({ header }: HomePageProps) {
         </div>
       </section>
 
-      {/* Beautify Your Space Banner */}
+      {}
       <BusinessBanner />
 
-      {/* Customer Testimonials */}
+      {}
       <Testimonials />
 
-      {/* Newsletter Section */}
+      {}
       <Newsletter />
 
-      {/* Footer */}
+      {}
       <Footer />
     </div>
   )

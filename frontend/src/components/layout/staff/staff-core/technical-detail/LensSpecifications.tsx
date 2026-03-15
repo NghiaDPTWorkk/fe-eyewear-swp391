@@ -20,7 +20,7 @@ interface LensSpecificationsProps {
 const LensSpecifications = ({ prescription, details }: LensSpecificationsProps) => {
   return (
     <div className="space-y-4">
-      {/* Prescription Table  */}
+      {}
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
@@ -66,7 +66,7 @@ const LensSpecifications = ({ prescription, details }: LensSpecificationsProps) 
         </table>
       </div>
 
-      {/* Additional Info - 2 column grid */}
+      {}
       <div className="grid grid-cols-2 gap-x-2 pt-2 ps-4">
         {details.map((info, idx) => (
           <div key={idx}>

@@ -31,7 +31,6 @@ export function NavActions({
   const containerRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
 
-  // Determine base path for dynamic links
   const isOperation = location.pathname.startsWith('/operation-staff')
   const isManager = location.pathname.startsWith('/manager')
   const isAdmin = location.pathname.startsWith('/admin')

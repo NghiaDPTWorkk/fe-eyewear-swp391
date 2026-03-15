@@ -2,7 +2,7 @@ import { IoGrid, IoReceipt, IoPeople, IoFlask, IoSettings, IoHelpCircle } from '
 import { useLocation } from 'react-router-dom'
 
 import { SidebarStaff, StaffLayout } from '@/components/layout/staff/staff-core'
-import { LAYOUT } from '@/features/sales/constants/saleStaffDesignSystem'
+import { LAYOUT } from '@/features/sale-staff/constants/saleStaffDesignSystem'
 import { cn } from '@/lib/utils'
 
 export default function SaleStaffLayout() {

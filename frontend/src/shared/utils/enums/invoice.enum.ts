@@ -1,18 +1,17 @@
-// Invoice Status Enum
 export enum InvoiceStatus {
-  PENDING = 'PENDING', // Chờ đặt cọc
-  DEPOSITED = 'DEPOSITED', // Đã đặt cọc
-  APPROVED = 'APPROVED', // Đã duyệt bởi sale
-  ONBOARD = 'ONBOARD', // Manager đang quản lý
-  COMPLETED = 'COMPLETED', // Hoàn thành (tất cả orders đã COMPLETE)
-  READY_TO_SHIP = 'READY_TO_SHIP', // Chờ đơn vị vận chuyển tới lấy hàng
-  DELIVERING = 'DELIVERING', // Đang giao hàng
-  DELIVERED = 'DELIVERED', // Đã giao hàng
-  REFUNDED = 'REFUNDED', // Đã hoàn tiền
-  REJECTED = 'REJECTED', // Bị từ chối
-  CANCELED = 'CANCELED', // Đã hủy
-  WAITING_ASSIGN = 'WAITING_ASSIGN', // Chờ gán quản lý
-  CANCEL = 'CANCEL' // Đã hủy (alias)
+  PENDING = 'PENDING',
+  DEPOSITED = 'DEPOSITED',
+  APPROVED = 'APPROVED',
+  ONBOARD = 'ONBOARD',
+  COMPLETED = 'COMPLETED',
+  READY_TO_SHIP = 'READY_TO_SHIP',
+  DELIVERING = 'DELIVERING',
+  DELIVERED = 'DELIVERED',
+  REFUNDED = 'REFUNDED',
+  REJECTED = 'REJECTED',
+  CANCELED = 'CANCELED',
+  WAITING_ASSIGN = 'WAITING_ASSIGN',
+  CANCEL = 'CANCEL'
 }
 
 export const CUSTOMER_STATUS = {

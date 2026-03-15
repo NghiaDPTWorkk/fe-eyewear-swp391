@@ -11,14 +11,12 @@ import { useMemo, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { OperationPagination } from '@/shared/components/ui/pagination'
 
-// Static data for filters
 const priceRanges = [
   { id: 'range1', label: '200.000đ - 500.000đ', min: 200000, max: 500000 },
   { id: 'range2', label: '500.000đ - 1.000.000đ', min: 500000, max: 1000000 },
   { id: 'range3', label: '1.000.000đ - 12.000.000đ', min: 1000000, max: 12000000 }
 ]
 
-// Gender mapping from API codes to labels
 const GENDER_MAP: Record<string, string> = {
   M: 'Men',
   F: 'Women',
@@ -33,7 +31,6 @@ export const CustomerProductPage = () => {
   const [page, setPage] = useState(1)
   const limit = 12
 
-  // Read search query from URL
   const searchQuery = searchParams.get('search') || ''
 
   const productType = useMemo(() => {
@@ -50,7 +47,6 @@ export const CustomerProductPage = () => {
     setPage(1)
   }
 
-  // Reset page when search query changes
   const [prevSearch, setPrevSearch] = useState(searchQuery)
   if (searchQuery !== prevSearch) {
     setPrevSearch(searchQuery)
@@ -70,10 +66,8 @@ export const CustomerProductPage = () => {
   }>({ min: null, max: null })
   const [priceResetKey, setPriceResetKey] = useState(0)
 
-  // Fetch product specs for dynamic filters
   const { specs } = useProductSpecs()
 
-  // Reset page when any filter changes
   const handleFilterChange = <T,>(setter: React.Dispatch<React.SetStateAction<T>>, value: T) => {
     setter(value)
     setPage(1)
@@ -103,7 +97,6 @@ export const CustomerProductPage = () => {
     return { minPrice: min, maxPrice: max }
   }, [selectedPriceRanges, customPriceRange])
 
-  // Single unified hook for fetching products with all filters
   const { products, loading, error, totalPages, currentPage } = useFilteredProducts({
     page,
     limit,
@@ -124,11 +117,9 @@ export const CustomerProductPage = () => {
     setPage(1)
   }
 
-  // Generate filter tags
   const filterTags = useMemo<FilterTag[]>(() => {
     const tags: FilterTag[] = []
 
-    // Add category tags
     selectedCategories.forEach((catId) => {
       const category = specs?.categories.find((c) => c._id === catId)
       if (category) {
@@ -136,32 +127,26 @@ export const CustomerProductPage = () => {
       }
     })
 
-    // Add gender tags
     selectedGenders.forEach((gender) => {
       tags.push({ id: `gender-${gender}`, label: GENDER_MAP[gender] || gender, type: 'gender' })
     })
 
-    // Add brand tags
     selectedBrands.forEach((brand) => {
       tags.push({ id: `brand-${brand}`, label: brand, type: 'brand' })
     })
 
-    // Add material tags
     selectedMaterials.forEach((material) => {
       tags.push({ id: `material-${material}`, label: material, type: 'material' })
     })
 
-    // Add shape tags
     selectedShapes.forEach((shape) => {
       tags.push({ id: `shape-${shape}`, label: shape, type: 'shape' })
     })
 
-    // Add style tags
     selectedStyles.forEach((style) => {
       tags.push({ id: `style-${style}`, label: style, type: 'style' })
     })
 
-    // Add preset price range tags
     selectedPriceRanges.forEach((rangeId) => {
       const range = priceRanges.find((r) => r.id === rangeId)
       if (range) {
@@ -169,7 +154,6 @@ export const CustomerProductPage = () => {
       }
     })
 
-    // Add custom price range tag
     if (customPriceRange.min !== null || customPriceRange.max !== null) {
       const minLabel =
         customPriceRange.min !== null
@@ -260,14 +244,14 @@ export const CustomerProductPage = () => {
 
   const handleCustomPriceApply = (min: number | null, max: number | null) => {
     setCustomPriceRange({ min, max })
-    setSelectedPriceRanges([]) // Clear presets when custom range is applied
+    setSelectedPriceRanges([])
     setPage(1)
   }
 
   const handlePriceRangeChange = (rangeIds: string[]) => {
     setSelectedPriceRanges(rangeIds)
     if (rangeIds.length > 0) {
-      setCustomPriceRange({ min: null, max: null }) // Clear custom range when preset is selected
+      setCustomPriceRange({ min: null, max: null })
     }
     setPage(1)
   }
@@ -278,7 +262,7 @@ export const CustomerProductPage = () => {
       <section className="py-10 bg-mint-100">
         <div className="container mx-auto px-4">
           <div className="flex gap-6">
-            {/* Filter Sidebar */}
+            {}
             <aside className="w-64 flex-shrink-0 sticky top-20 self-start">
               <ProductFilters
                 categories={specs?.categories || []}
@@ -307,9 +291,9 @@ export const CustomerProductPage = () => {
               />
             </aside>
 
-            {/* Product Grid */}
+            {}
             <div className="flex-1">
-              {/* Search Results Header */}
+              {}
               {searchQuery && (
                 <div className="mb-6 flex items-center gap-3">
                   <h2 className="text-lg font-semibold text-mint-1200">
@@ -325,7 +309,7 @@ export const CustomerProductPage = () => {
                 </div>
               )}
 
-              {/* Filter Tags */}
+              {}
               {filterTags.length > 0 && (
                 <div className="mb-6">
                   <FilterTags
@@ -348,16 +332,12 @@ export const CustomerProductPage = () => {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {products.map((product, index) => {
-                    // Mock: Add sale to every 3rd product
                     const hasSale = index % 3 === 0
-
-                    // Extract price - handle type safety
 
                     const productAny = product as any
                     const originalPrice = productAny.defaultVariantPrice || 100
                     const currentPrice = productAny.defaultVariantFinalPrice || originalPrice
 
-                    // Only set discount if there's actually a sale
                     const discountPrice = hasSale ? currentPrice : undefined
                     const salePercent = hasSale ? 20 : undefined
 
@@ -378,12 +358,12 @@ export const CustomerProductPage = () => {
                 </div>
               )}
 
-              {/* Pagination */}
+              {}
               <div className="mt-10">
                 <OperationPagination
                   page={currentPage}
                   totalPages={totalPages}
-                  total={products.length > 0 ? totalPages * limit : 0} // Approximate total or use actual total if available
+                  total={products.length > 0 ? totalPages * limit : 0}
                   limit={limit}
                   onPageChange={setPage}
                   itemsOnPage={products.length}

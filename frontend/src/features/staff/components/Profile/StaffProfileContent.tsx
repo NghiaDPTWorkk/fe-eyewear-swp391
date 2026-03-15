@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { useProfile } from '../../hooks/useProfile'
-import { Card, Button } from '@/shared/components/ui-core'
+import { Card, Button } from '@/shared/components/ui'
 import {
   IoMailOutline,
   IoCallOutline,
@@ -32,8 +32,6 @@ export const StaffProfileContent = ({
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      // In a real implementation, you would upload this to a server (S3/Cloudinary)
-      // and then update the profile avatar via API.
       toast.success('Image selected: ' + file.name + '. Admin approval required to update.')
       console.log('Selected file:', file)
     }
@@ -49,7 +47,7 @@ export const StaffProfileContent = ({
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-12 items-stretch">
-      {/* Profile Card */}
+      {}
       <Card className="lg:col-span-4 p-8 border-none shadow-xl shadow-slate-200/40 bg-white rounded-[32px] flex flex-col items-center relative overflow-hidden group h-full">
         <div className="absolute top-0 left-0 w-full h-32 bg-mint-50/50 -z-0" />
 
@@ -132,7 +130,7 @@ export const StaffProfileContent = ({
         </div>
       </Card>
 
-      {/* Detailed Info */}
+      {}
       <div className="lg:col-span-8 flex flex-col gap-8">
         {showSystemActivity && (
           <Card className="p-10 border-none shadow-xl shadow-slate-200/40 bg-white rounded-[32px] flex-1 font-sans">

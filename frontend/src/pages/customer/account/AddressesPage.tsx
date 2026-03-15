@@ -54,7 +54,7 @@ export function AddressesPage() {
             />
           ))}
 
-          {/* Add New Card */}
+          {}
           <button
             onClick={() => setIsModalOpen(true)}
             className="p-6 border-2 border-dashed border-mint-200 rounded-3xl flex flex-col items-center justify-center min-h-[200px] hover:border-primary-400 hover:bg-primary-50/5 transition-all group"

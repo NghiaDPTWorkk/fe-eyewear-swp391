@@ -46,7 +46,6 @@ export interface OrderListItem {
   price: number
   createdAt: string
   updatedAt: string
-  // Add other fields if needed for UI
 }
 
 export interface ListOrderByInvoiceResponse {

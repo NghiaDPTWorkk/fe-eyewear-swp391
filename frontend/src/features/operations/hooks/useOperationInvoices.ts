@@ -28,7 +28,7 @@ export function useSearchInvoices(invoiceCode: string) {
 export function useAllOperationInvoices() {
   return useQuery<OperationInvoiceListApiResponse>({
     queryKey: ['operation-invoices-handle-delivery', 'all'],
-    queryFn: () => operationInvoiceService.getHandleDeliveryInvoices(1, 1000), // Lấy tối đa 1000 đơn để đếm
-    staleTime: 0 // Đảm bảo luôn refetch khi bị invalidate hoặc quay lại trang
+    queryFn: () => operationInvoiceService.getHandleDeliveryInvoices(1, 1000),
+    staleTime: 0
   })
 }

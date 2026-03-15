@@ -1,5 +1,5 @@
 import { IoShieldCheckmarkOutline } from 'react-icons/io5'
-import { Card } from '@/shared/components/ui-core'
+import { Card } from '@/shared/components/ui'
 
 interface SupportGuideline {
   title: string

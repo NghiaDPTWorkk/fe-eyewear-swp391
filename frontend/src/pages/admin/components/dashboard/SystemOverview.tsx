@@ -37,13 +37,13 @@ export const SystemOverview: React.FC = () => {
               <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
             </linearGradient>
           </defs>
-          {/* Grid Lines */}
+          {}
           <line x1="0" y1="180" x2="800" y2="180" stroke="#f1f5f9" strokeWidth="1" />
           <line x1="0" y1="130" x2="800" y2="130" stroke="#f1f5f9" strokeWidth="1" />
           <line x1="0" y1="80" x2="800" y2="80" stroke="#f1f5f9" strokeWidth="1" />
           <line x1="0" y1="30" x2="800" y2="30" stroke="#f1f5f9" strokeWidth="1" />
 
-          {/* Dashed reference line */}
+          {}
           <path
             d="M 0 150 Q 50 140 100 160 T 200 130 T 300 150 T 400 120 T 500 110 T 600 140 T 700 100 T 800 80"
             fill="none"
@@ -52,13 +52,13 @@ export const SystemOverview: React.FC = () => {
             strokeDasharray="4 4"
             opacity="0.5"
           />
-          {/* Area fill */}
+          {}
           <path
             d="M 0 140 Q 50 130 100 110 T 200 90 T 300 100 T 400 70 T 500 50 T 600 80 T 700 60 T 800 40"
             fill="url(#adminChartGradient)"
             stroke="none"
           />
-          {/* Main line */}
+          {}
           <path
             d="M 0 140 Q 50 130 100 110 T 200 90 T 300 100 T 400 70 T 500 50 T 600 80 T 700 60 T 800 40"
             fill="none"
@@ -68,7 +68,7 @@ export const SystemOverview: React.FC = () => {
             strokeLinejoin="round"
           />
 
-          {/* Tooltip dot */}
+          {}
           <line
             x1="400"
             y1="20"

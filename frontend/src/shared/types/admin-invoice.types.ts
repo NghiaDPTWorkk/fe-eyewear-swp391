@@ -38,7 +38,6 @@ export interface AdminInvoiceListApiResponse {
   data: AdminInvoiceListData
 }
 
-/** Shape của GET /admin/invoices/:id */
 export interface AdminInvoiceAddress {
   street: string
   ward: string
@@ -77,7 +76,6 @@ export interface AdminInvoiceDetailResponse {
   data: AdminInvoiceDetail
 }
 
-/** Shape of GET /admin/invoices/handle-delivery */
 export interface OperationInvoiceOrder {
   id: string
   orderCode?: string

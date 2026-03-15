@@ -18,7 +18,6 @@ export const PersonalInfoSection = ({ user }: PersonalInfoSectionProps) => {
     gender: 'N'
   })
 
-  // Sync state with user data
   useEffect(() => {
     if (user) {
       setFormData({
@@ -56,7 +55,7 @@ export const PersonalInfoSection = ({ user }: PersonalInfoSectionProps) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-        {/* Full Name */}
+        {}
         <div className="flex flex-col gap-2 md:col-span-2">
           <label className="text-sm font-semibold text-mint-1100 ml-1">Full name *</label>
           <Input
@@ -70,7 +69,7 @@ export const PersonalInfoSection = ({ user }: PersonalInfoSectionProps) => {
           />
         </div>
 
-        {/* Email - Read Only */}
+        {}
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-mint-1100 ml-1">E-mail address</label>
           <Input
@@ -85,7 +84,7 @@ export const PersonalInfoSection = ({ user }: PersonalInfoSectionProps) => {
           </p>
         </div>
 
-        {/* Phone Number */}
+        {}
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-mint-1100 ml-1">Phone number</label>
           <Input
@@ -98,7 +97,7 @@ export const PersonalInfoSection = ({ user }: PersonalInfoSectionProps) => {
           />
         </div>
 
-        {/* Gender Selection */}
+        {}
         <div className="flex flex-col gap-2 md:col-span-2">
           <label className="text-sm font-semibold text-mint-1100 ml-1">Gender</label>
           <div className="flex flex-wrap gap-4 mt-1">

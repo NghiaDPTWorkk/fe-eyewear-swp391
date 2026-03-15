@@ -1,7 +1,7 @@
 import { PageHeader } from '@/features/staff/components/common'
-import { Container } from '@/shared/components/ui-core'
+import { Container } from '@/shared/components/ui'
 import { useNavigate } from 'react-router-dom'
-import { StaffProfileContent } from '@/features/staff/components/Profile/StaffProfileContent'
+import { StaffProfileContent } from '@/features/staff/components/profile/StaffProfileContent'
 
 interface StaffProfilePageProps {
   dashboardPath: string

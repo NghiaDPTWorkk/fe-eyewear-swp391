@@ -56,7 +56,7 @@ export function useFaceLandmarker() {
     const detect = () => {
       if (video.readyState >= 2) {
         const now = performance.now()
-        // Avoid calling with the same timestamp
+
         if (now !== lastTime) {
           const result = landmarker.detectForVideo(video, now)
           lastTime = now

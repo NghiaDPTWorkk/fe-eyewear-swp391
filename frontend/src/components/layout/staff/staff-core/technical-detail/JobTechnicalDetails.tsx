@@ -2,7 +2,6 @@ import FrameSpecifications from './FrameSpecifications'
 import LensSpecifications from './LensSpecifications'
 import LensNormalOrder from './LensNormalOrder'
 
-// Types for LensSpecifications (Manufacturing orders - có parameters)
 interface PrescriptionItem {
   eye: string
   sph: string
@@ -17,7 +16,6 @@ interface DetailItem {
   value: string
 }
 
-// Types for LensNormalOrder (Normal orders - không có parameters)
 interface LensSpec {
   feature?: string[]
   origin?: string
@@ -51,10 +49,9 @@ interface FrameDataItem {
   value: string
 }
 
-// Union type - check bằng 'parameters' field
 type LensData =
   | {
-      parameters: any // Có parameters → Manufacturing order
+      parameters: any
       prescription: PrescriptionItem[]
       additional: DetailItem[]
       productDetail?: never
@@ -63,7 +60,7 @@ type LensData =
       pricePerUnit?: never
     }
   | {
-      parameters?: never // Không có parameters → Normal order
+      parameters?: never
       productDetail: ProductDetail
       variantDetail: Variant
       quantity: number
@@ -84,11 +81,11 @@ const JobTechnicalDetails = ({ lensData, frameData }: JobTechnicalDetailsProps) 
 
   return (
     <div className="space-y-6">
-      {/* Lens Specifications Section */}
+      {}
       <section className="bg-white rounded-lg shadow-sm p-6 border border-neutral-200">
         <h2 className="text-mint-900 font-semibold text-base mb-4">Lens Specification</h2>
 
-        {/* Kiểm tra sự tồn tại của parameters */}
+        {}
         {hasParameters(lensData) ? (
           <LensSpecifications prescription={lensData.prescription} details={lensData.additional} />
         ) : (
@@ -102,7 +99,7 @@ const JobTechnicalDetails = ({ lensData, frameData }: JobTechnicalDetailsProps) 
         )}
       </section>
 
-      {/* Frame Specifications Section */}
+      {}
       <section className="bg-white rounded-lg shadow-sm p-6 border border-neutral-200">
         <h2 className="text-mint-900 font-semibold text-base mb-4">Frame Specification</h2>
         <FrameSpecifications

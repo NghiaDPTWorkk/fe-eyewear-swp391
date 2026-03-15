@@ -13,21 +13,18 @@ export const CheckoutPage = () => {
   const location = useLocation()
   const { isAuthenticated } = useAuthStore()
 
-  // Expecting a single item or array of items in location state
   const directItem = location.state?.item as CartItem | undefined
   const directItems = location.state?.items as CartItem[] | undefined
 
   const itemsToBuy = directItems || (directItem ? [directItem] : [])
 
   useEffect(() => {
-    // Check authentication
     const token = localStorage.getItem('accessToken') || localStorage.getItem('access_token')
     if (!isAuthenticated && !token) {
       navigate('/login', { state: { from: location } })
       return
     }
 
-    // If no items to buy, redirect to home or cart
     if (itemsToBuy.length === 0) {
       navigate('/')
     }
@@ -60,7 +57,7 @@ export const CheckoutPage = () => {
           </div>
 
           <div className="flex flex-col lg:flex-row gap-8">
-            {/* Main Content */}
+            {}
             <div className="lg:w-2/3">
               <div className="bg-white rounded-3xl p-8 border border-mint-300/50 shadow-sm mb-8">
                 <h2 className="text-2xl font-bold text-mint-1200 mb-6">Review your order</h2>
@@ -77,7 +74,7 @@ export const CheckoutPage = () => {
               </div>
             </div>
 
-            {/* Sidebar Summary */}
+            {}
             <div className="lg:w-1/3">
               <CartSummary subtotal={subtotal} items={itemsToBuy} />
             </div>

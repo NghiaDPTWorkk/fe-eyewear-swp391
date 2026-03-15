@@ -1,7 +1,3 @@
-/**
- * Category types matching backend structure
- */
-
 export interface Category {
   _id: string
   name: string

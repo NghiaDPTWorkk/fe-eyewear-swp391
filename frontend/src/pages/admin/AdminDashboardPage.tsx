@@ -46,7 +46,7 @@ export default function AdminDashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-10 px-4">
-        {/* Left: Stats */}
+        {}
         <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
           <AdminStatCard
             label="Total Users"
@@ -76,18 +76,18 @@ export default function AdminDashboardPage() {
           />
         </div>
 
-        {/* Right: Staff Distribution */}
+        {}
         <div className="lg:col-span-2">
           <StaffDistribution />
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 px-4">
-        {/* Left: System Overview */}
+        {}
         <div className="lg:col-span-3">
           <SystemOverview />
         </div>
-        {/* Right: Recent Activities */}
+        {}
         <div className="lg:col-span-2">
           <RecentActivities />
         </div>

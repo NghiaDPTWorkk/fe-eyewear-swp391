@@ -1,8 +1,8 @@
 import type { PrescriptionData } from './prescription.types'
 
 export interface CartItem {
-  _id?: string // Backend cart-line unique ID (used as React key)
-  product_id: string // SKU
+  _id?: string
+  product_id: string
   quantity: number
   name: string
   price: number
@@ -12,8 +12,8 @@ export interface CartItem {
   sku?: string
   mode?: 'AVAILABLE' | 'PRE_ORDER'
   lens?: {
-    lensId?: string // Backend lens_id for API
-    sku?: string // Lens SKU for API
+    lensId?: string
+    sku?: string
     visionNeed: string
     prescription: PrescriptionData | null
     name?: string
@@ -21,7 +21,7 @@ export interface CartItem {
     image?: string
     nameVariant?: string
   }
-  selectedOptions?: Record<string, string> // For display purposes
+  selectedOptions?: Record<string, string>
   productType?: string
   originalPrice?: number
   discount?: {
@@ -56,52 +56,30 @@ export interface UpdateCartRequest {
   quantity: number
 }
 
-// ============================================
-// Backend API Types
-// ============================================
-
-/**
- * Lens parameters for prescription
- */
 import { type LensParameters } from './order-item.types'
 export type { LensParameters }
 
-/**
- * Product info for add to cart
- */
 export interface CartProductInfo {
   product_id: string
   sku: string
 }
 
-/**
- * Lens info for add to cart
- */
 export interface CartLensInfo {
   lens_id: string
   sku: string
   parameters?: LensParameters
 }
 
-/**
- * Cart item structure for backend API
- */
 export interface CartItemPayload {
   product?: CartProductInfo
   lens?: CartLensInfo
 }
 
-/**
- * Add to cart request payload matching backend API
- */
 export interface AddToCartPayload {
   item: CartItemPayload
   quantity: number
 }
 
-/**
- * Backend cart item response (matches actual API structure)
- */
 export interface BackendCartItem {
   _id: string
   product: {
@@ -118,26 +96,20 @@ export interface BackendCartItem {
     parameters?: LensParameters
   }
   quantity: number
-  addedAt: string // ISO date string from API
+  addedAt: string
 }
 
-/**
- * Backend cart response (matches actual API structure)
- */
 export interface BackendCart {
   _id: string
   owner: string
-  products: BackendCartItem[] // Note: API uses 'products', not 'items'
-  totalProduct: number // Note: API uses 'totalProduct', not 'totalItems'
+  products: BackendCartItem[]
+  totalProduct: number
   deletedAt: string | null
-  createdAt: string // ISO date string
-  updatedAt: string // ISO date string
+  createdAt: string
+  updatedAt: string
   __v: number
 }
 
-/**
- * Get cart API response wrapper
- */
 export interface GetCartResponse {
   success: boolean
   message: string
@@ -146,9 +118,6 @@ export interface GetCartResponse {
   }
 }
 
-/**
- * Add to cart API response
- */
 export interface AddToCartResponse {
   success: boolean
   message: string

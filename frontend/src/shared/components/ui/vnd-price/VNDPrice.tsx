@@ -3,13 +3,6 @@ interface VNDPriceProps {
   className?: string
 }
 
-/**
- * Renders a price in VND with a styled ₫ symbol.
- * The ₫ is rendered smaller (0.75em) with slight opacity for a premium look.
- *
- * Usage: <VNDPrice amount={1500000} />
- * Result: 1.500.000 ₫
- */
 export function VNDPrice({ amount, className }: VNDPriceProps) {
   const formatted = amount.toLocaleString('vi-VN')
   return (

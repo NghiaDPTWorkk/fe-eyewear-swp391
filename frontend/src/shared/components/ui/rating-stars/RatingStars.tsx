@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 
 export interface RatingStarsProps {
-  rating: number // 0-5
+  rating: number
   maxRating?: number
   size?: 'sm' | 'md' | 'lg'
   showValue?: boolean

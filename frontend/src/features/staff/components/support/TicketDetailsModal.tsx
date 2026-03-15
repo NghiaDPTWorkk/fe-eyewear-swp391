@@ -74,7 +74,7 @@ export function TicketDetailsModal({
       />
 
       <div className="relative w-full max-w-2xl bg-white rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 slide-in-from-bottom-5 duration-300">
-        {/* Header */}
+        {}
         <div className="flex items-center justify-between p-6 px-8 border-b border-slate-100 bg-white sticky top-0 z-10">
           <div className="flex items-center gap-3">
             <div className={`p-2 rounded-xl ${status.bg} ${status.text}`}>{status.icon}</div>
@@ -95,9 +95,9 @@ export function TicketDetailsModal({
           </button>
         </div>
 
-        {/* Scrollable Content */}
+        {}
         <div className="flex-1 overflow-y-auto p-8 pt-6 space-y-8 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
-          {/* Title Section */}
+          {}
           <div className="space-y-2">
             <span
               className={`text-[10px] font-semibold ${accentColor === 'mint' ? 'text-mint-600' : 'text-primary-500'} uppercase tracking-[0.2em] px-1`}
@@ -109,7 +109,7 @@ export function TicketDetailsModal({
             </h4>
           </div>
 
-          {/* Stats Grid */}
+          {}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             <div className="p-4 bg-slate-50/80 rounded-2xl border border-slate-100 flex flex-col gap-1">
               <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
@@ -142,7 +142,7 @@ export function TicketDetailsModal({
             </div>
           </div>
 
-          {/* Description */}
+          {}
           <div className="space-y-4">
             <div className="flex items-center gap-2 px-1">
               <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.2em]">
@@ -155,7 +155,7 @@ export function TicketDetailsModal({
             </div>
           </div>
 
-          {/* Image Attachment */}
+          {}
           {ticket.imageUrl && (
             <div className="space-y-4">
               <div className="flex items-center gap-2 px-1">
@@ -178,7 +178,7 @@ export function TicketDetailsModal({
           )}
         </div>
 
-        {/* Footer */}
+        {}
         <div className="p-6 px-8 border-t border-slate-100 bg-mint-50/30 flex justify-end">
           <button
             onClick={onClose}

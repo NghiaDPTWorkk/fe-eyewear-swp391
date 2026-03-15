@@ -46,7 +46,6 @@ export const PaymentResultPage = () => {
         invoiceId = txnRef.split('-')[1] || txnRef.split('-')[0]
         isActuallySuccess = responseCode === '00'
       } else if (payosStatus) {
-        // Ưu tiên invoiceId (MongoID) để fetch detail, nếu không có mới dùng orderCode
         invoiceId = invoiceIdParam || payosOrderCode || ''
         isActuallySuccess = payosStatus === 'PAID'
       } else if (invoiceIdParam) {
@@ -86,7 +85,6 @@ export const PaymentResultPage = () => {
     }
 
     fetchResult()
-    // params is derived from window.location.href which changes when navigation happens
   }, [window.location.href])
 
   const amount = params.get('vnp_Amount')

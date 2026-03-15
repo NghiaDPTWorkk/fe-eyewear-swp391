@@ -9,18 +9,15 @@ interface ShippingLabelProps {
 }
 
 export default function ShippingLabel({ orderId }: ShippingLabelProps) {
-  // ── Step 1: Lấy order để lấy invoiceId ──────────────────────────────────
   const { data: orderApiResponse, isLoading: isOrderLoading } = useOrderDetail(orderId || '')
 
   const orderData = (orderApiResponse as OrderResponse)?.data?.order as any
   const invoiceId: string | undefined = orderData?.invoiceId
 
-  // ── Step 2: Lấy invoice theo invoiceId ──────────────────────────────────
   const { data: invoiceApiResponse, isLoading: isInvoiceLoading } = useInvoiceDetail(invoiceId)
 
   const invoiceData = (invoiceApiResponse as AdminInvoiceDetailResponse)?.data
 
-  // ── Derived values ───────────────────────────────────────────────────────
   const isLoading = isOrderLoading || isInvoiceLoading
 
   const invoiceCode = invoiceData?.invoiceCode || '—'
@@ -46,7 +43,7 @@ export default function ShippingLabel({ orderId }: ShippingLabelProps) {
         </div>
       ) : (
         <div className="space-y-4">
-          {/* Invoice Code */}
+          {}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Invoice Code of Order
@@ -57,7 +54,7 @@ export default function ShippingLabel({ orderId }: ShippingLabelProps) {
             <div className="mt-1 text-xs text-gray-500 text-right">Auto generated</div>
           </div>
 
-          {/* Shipping Address */}
+          {}
           <div className="pt-4 border-t border-gray-100">
             <div className="text-sm font-medium text-gray-700 mb-2">Shipping Address</div>
             <div className="text-sm text-gray-900 font-semibold">{fullName}</div>
@@ -66,7 +63,7 @@ export default function ShippingLabel({ orderId }: ShippingLabelProps) {
             </div>
             {fullAddress && <div className="text-sm text-gray-600 mt-1">{fullAddress}</div>}
           </div>
-          {/* Print button */}
+          {}
           <button className="w-full py-2.5 bg-blue-100 text-blue-700 rounded-lg font-medium hover:bg-blue-200 transition-colors flex items-center justify-center gap-2">
             <IoPrintOutline size={18} /> Shipping Label
           </button>

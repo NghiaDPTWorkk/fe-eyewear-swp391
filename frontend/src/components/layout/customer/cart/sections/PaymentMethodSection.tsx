@@ -17,7 +17,7 @@ export const PaymentMethodSection = ({
         Payment Method
       </h2>
       <div className="space-y-3">
-        {/* Online Payment Methods Row */}
+        {}
         <div className="grid grid-cols-2 gap-3">
           <button
             onClick={() => onPaymentMethodChange(PaymentMethodType.VNPAY)}
@@ -51,7 +51,7 @@ export const PaymentMethodSection = ({
           </button>
         </div>
 
-        {/* COD Row */}
+        {}
         <button
           onClick={() => onPaymentMethodChange(PaymentMethodType.COD)}
           className={`w-full py-3 px-4 rounded-xl border-2 transition-all font-bold text-sm ${

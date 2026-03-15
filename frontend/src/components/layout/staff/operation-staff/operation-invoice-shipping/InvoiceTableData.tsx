@@ -23,19 +23,19 @@ const getStatusColor = (status: string) => {
 export default function InvoiceTableData({ invoice, onView, onNext }: InvoiceTableDataProps) {
   return (
     <>
-      {/* Invoice ID */}
+      {}
       <td className="px-6 py-4 whitespace-nowrap">
         <span className="text-sm font-semibold text-gray-900">{invoice.invoiceCode}</span>
       </td>
 
-      {/* Orders count */}
+      {}
       <td className="px-6 py-4 whitespace-nowrap text-center">
         <span className="text-sm font-medium text-gray-900">
           {invoice.orders?.length ?? 0} orders
         </span>
       </td>
 
-      {/* Status */}
+      {}
       <td className="px-6 py-4 whitespace-nowrap text-center">
         <span
           className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(invoice.status)}`}
@@ -44,10 +44,10 @@ export default function InvoiceTableData({ invoice, onView, onNext }: InvoiceTab
         </span>
       </td>
 
-      {/* Actions */}
+      {}
       <td className="px-6 py-4 whitespace-nowrap text-center">
         <div className="flex items-center justify-center gap-2">
-          {/* View Button */}
+          {}
           <button
             onClick={() => onView(invoice)}
             className="p-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg transition-all border border-blue-200"
@@ -56,7 +56,7 @@ export default function InvoiceTableData({ invoice, onView, onNext }: InvoiceTab
             <IoEyeOutline size={18} />
           </button>
 
-          {/* Next Button */}
+          {}
           <button
             onClick={() => onNext(invoice.id)}
             className="p-2 rounded-lg transition-all border bg-mint-50 hover:bg-mint-100 text-mint-600 border-mint-200"

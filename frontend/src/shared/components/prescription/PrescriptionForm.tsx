@@ -42,7 +42,6 @@ export function PrescriptionForm({
   showConfirmCheckbox = false,
   confirmText = 'I confirm that the prescription values entered above are valid.'
 }: PrescriptionFormProps) {
-  // Internal state using string for inputs to allow empty values
   const [formData, setFormData] = useState<PrescriptionFormState>(() => {
     if (initialData) {
       return {
@@ -86,12 +85,10 @@ export function PrescriptionForm({
       if (num < rule.min || num > rule.max) {
         errors[fieldName] = `Giá trị phải trong khoảng ${rule.min} và ${rule.max}`
       } else if (Math.abs((num * 100) % (rule.step * 100)) > 0.01) {
-        // Using 100 to avoid floating point issues
         warnings.push(`${fieldName} thường là bội số của ${rule.step}`)
       }
     }
 
-    // Individual field checks
     ;(['left', 'right'] as const).forEach((eye) => {
       const eyeLabel = eye === 'left' ? 'Mắt trái' : 'Mắt phải'
       checkRange(formData[eye].SPH, VALIDATION_RULES.SPH, `${eyeLabel} SPH`)
@@ -99,20 +96,17 @@ export function PrescriptionForm({
       checkRange(formData[eye].AXIS, VALIDATION_RULES.AXIS, `${eyeLabel} AXIS`)
       checkRange(formData[eye].ADD, VALIDATION_RULES.ADD, `${eyeLabel} ADD`)
 
-      // Step 3: CYL & AXIS dependency
       const cyl = parseFloat(formData[eye].CYL)
       if (cyl !== 0 && !formData[eye].AXIS) {
         errors[`${eye}.AXIS`] = 'Bắt buộc nhập AXIS khi có độ loạn (CYL)'
       }
 
-      // Step 5: CYL Sign
       if (cyl > 0) {
         warnings.push(
           `Phát hiện độ loạn dấu cộng (+) ở ${eyeLabel}. Thông thường độ loạn được quy đổi về dấu trừ (-).`
         )
       }
 
-      // Step 6: High Index Warning
       const sph = Math.abs(parseFloat(formData[eye].SPH))
       const absCyl = Math.abs(cyl)
       if (sph > 10 || absCyl > 4) {
@@ -122,7 +116,6 @@ export function PrescriptionForm({
       }
     })
 
-    // PD Validation
     if (formData.PD) {
       const pd = parseFloat(formData.PD)
       if (pd < VALIDATION_RULES.PD.min || pd > VALIDATION_RULES.PD.max) {
@@ -130,7 +123,6 @@ export function PrescriptionForm({
       }
     }
 
-    // Step 4: ADD Equality
     const addLeft = formData.left.ADD
     const addRight = formData.right.ADD
     if (addLeft && addRight && addLeft !== addRight) {
@@ -139,7 +131,6 @@ export function PrescriptionForm({
       )
     }
 
-    // Step 7: SPH and ADD Logic
     const sphRight = parseFloat(formData.right.SPH)
     const addRightNum = parseFloat(formData.right.ADD)
     if (sphRight > 5 && addRightNum === 0) {
@@ -152,7 +143,6 @@ export function PrescriptionForm({
   }, [formData])
 
   const isFormValid = () => {
-    // SPH and PD are always required
     const mandatoryFields = [
       { name: 'right.SPH', value: formData.right.SPH },
       { name: 'left.SPH', value: formData.left.SPH },
@@ -161,7 +151,6 @@ export function PrescriptionForm({
 
     const allMandatoryFilled = mandatoryFields.every((f) => f.value !== '')
 
-    // AXIS is required ONLY if CYL is entered and is not 0
     const rightCylNum = parseFloat(formData.right.CYL) || 0
     const leftCylNum = parseFloat(formData.left.CYL) || 0
 
@@ -235,7 +224,6 @@ export function PrescriptionForm({
       return
     }
 
-    // Convert string values to numbers before submitting, default to 0 if empty
     const rightCyl = parseFloat(formData.right.CYL) || 0
     const leftCyl = parseFloat(formData.left.CYL) || 0
 
@@ -262,7 +250,7 @@ export function PrescriptionForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Right Eye */}
+        {}
         <div className="space-y-4 p-4 bg-primary-50/50 rounded-2xl border border-primary-100 relative">
           <div className="flex justify-between items-center min-h-[2rem] flex-wrap gap-2 mb-2">
             <h4 className="font-bold text-mint-1200 flex items-center gap-2 whitespace-nowrap">
@@ -358,14 +346,14 @@ export function PrescriptionForm({
           </Button>
         </div>
 
-        {/* Left Eye */}
+        {}
         <div className="space-y-4 p-4 bg-primary-50/50 rounded-2xl border border-primary-100">
           <div className="flex justify-between items-center min-h-[2rem] flex-wrap gap-2 mb-2">
             <h4 className="font-bold text-mint-1200 flex items-center gap-2 whitespace-nowrap">
               <span className="w-2 h-2 bg-primary-500 rounded-full shrink-0"></span>
               Left Eye (OS)
             </h4>
-            {/* Empty spacer to align with the 'Same for both eyes' button in the right eye column */}
+            {}
             <div className="h-8 hidden md:block" aria-hidden="true" />
           </div>
           <div className="grid grid-cols-2 gap-4">

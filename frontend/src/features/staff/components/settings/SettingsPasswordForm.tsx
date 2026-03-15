@@ -6,10 +6,6 @@ import { profileService } from '@/features/staff/services/profile.service'
 import { Card, Button } from '@/shared/components'
 import { useLogout } from '@/shared/hooks/useLogout'
 
-/**
- * PasswordForm Component
- * Security settings for password update
- */
 export default function PasswordForm() {
   const { handleLogout } = useLogout()
   const [loading, setLoading] = useState(false)
@@ -20,7 +16,6 @@ export default function PasswordForm() {
   })
 
   const handleSubmit = async () => {
-    // Basic validation
     if (!formData.currentPassword || !formData.newPassword || !formData.confirmPassword) {
       toast.error('Please fill in all password fields')
       return

@@ -4,12 +4,10 @@ import type { AdminInvoiceDetailResponse } from '@/shared/types/admin-invoice.ty
 import FormatSecretPhone from '@/shared/components/ui/format-secret-phone/FormatSecrectPhone'
 
 export default function OrderSumary({ orderId }: { orderId?: string }) {
-  // Step 1: Lấy order → invoiceId
   const { data: orderApiResponse, isLoading: isOrderLoading } = useOrderDetail(orderId || '')
   const orderData = (orderApiResponse as OrderResponse)?.data?.order as any
   const invoiceId: string | undefined = orderData?.invoiceId
 
-  // Step 2: Lấy invoice → fullName, phone
   const { data: invoiceApiResponse, isLoading: isInvoiceLoading } = useInvoiceDetail(invoiceId)
   const invoiceData = (invoiceApiResponse as AdminInvoiceDetailResponse)?.data
 

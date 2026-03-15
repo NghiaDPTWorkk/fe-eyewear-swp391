@@ -3,15 +3,9 @@ import type { LoginRequest, RegisterRequest } from '@/shared/types'
 import { authApi } from './auth.api.legacy'
 
 export const authService = {
-  /**
-   * Đăng nhập cho khách hàng
-   * @param payload - Thông tin đăng nhập
-   * @returns Thông tin đăng nhập và tokens
-   */
   login: async (payload: LoginRequest) => {
     const response = await authApi.loginCustomer(payload)
 
-    // Extract tokens from response
     const accessToken = (response as any)?.accessToken ?? (response as any)?.token
 
     if (accessToken) {
@@ -21,11 +15,6 @@ export const authService = {
     return response
   },
 
-  /**
-   * Đăng ký tài khoản mới
-   * @param payload - Thông tin đăng ký
-   * @returns Thông tin tài khoản mới
-   */
   register: async (payload: RegisterRequest) => {
     const response = await authApi.register(payload)
     return response
@@ -35,7 +24,6 @@ export const authService = {
     const isStaff =
       role && ['SYSTEM_ADMIN', 'SALE_STAFF', 'MANAGER', 'OPERATION_STAFF'].includes(role)
 
-    // Gọi đúng API tùy theo role
     const response = isStaff ? await authApi.getAdminProfile() : await authApi.getProfile()
     return response.data
   },

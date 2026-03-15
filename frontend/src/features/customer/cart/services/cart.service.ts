@@ -9,9 +9,6 @@ import type { LensSelectionState } from '@/components/layout/customer/product-de
 import type { PrescriptionData } from '@/shared/types/prescription.types'
 import { productService } from '@/shared/services/products/productService'
 
-/**
- * Transform prescription data to lens parameters
- */
 const transformPrescriptionToParameters = (prescription: PrescriptionData): LensParameters => {
   return {
     left: {
@@ -30,9 +27,6 @@ const transformPrescriptionToParameters = (prescription: PrescriptionData): Lens
   }
 }
 
-/**
- * Transform backend cart to frontend cart items
- */
 const transformBackendCartToItems = (backendCart: BackendCart): CartItem[] => {
   const items = backendCart.products.map((item) => ({
     _id: item._id,
@@ -46,8 +40,8 @@ const transformBackendCartToItems = (backendCart: BackendCart): CartItem[] => {
     selected: true,
     lens: item.lens
       ? {
-          lensId: item.lens.lens_id, // Save for API
-          sku: item.lens.sku, // Save for API
+          lensId: item.lens.lens_id,
+          sku: item.lens.sku,
           visionNeed: item.lens.parameters ? 'prescription' : 'non-prescription',
           prescription: item.lens.parameters
             ? {
@@ -73,13 +67,7 @@ const transformBackendCartToItems = (backendCart: BackendCart): CartItem[] => {
   return items.reverse()
 }
 
-/**
- * Enrich cart items with full product details from products API
- * @param items - Cart items with basic product info
- * @returns Cart items enriched with full product details
- */
 const enrichCartItemsWithProductDetails = async (items: CartItem[]): Promise<CartItem[]> => {
-  // Extract unique product IDs (both frames and lenses)
   const productIds = [...new Set(items.map((item) => item.product_id).filter(Boolean))]
   const lensIds = [...new Set(items.map((item) => item.lens?.lensId).filter(Boolean))]
   const allIds = [...new Set([...productIds, ...lensIds])]
@@ -89,7 +77,6 @@ const enrichCartItemsWithProductDetails = async (items: CartItem[]): Promise<Car
   }
 
   try {
-    // Fetch all product details in parallel
     const productDetailsPromises = allIds.map((id) =>
       productService
         .getProductDetail(id!)
@@ -99,7 +86,6 @@ const enrichCartItemsWithProductDetails = async (items: CartItem[]): Promise<Car
 
     const productDetailsResponses = await Promise.all(productDetailsPromises)
 
-    // Create product details map
     const productDetailsMap = new Map()
     productDetailsResponses.forEach(({ id, data }) => {
       if (data?.product) {
@@ -107,11 +93,9 @@ const enrichCartItemsWithProductDetails = async (items: CartItem[]): Promise<Car
       }
     })
 
-    // Merge details into cart items
     const enrichedItems = items.map((item) => {
       let enrichedItem = { ...item }
 
-      // Enrich Frame/Product
       const productDetail = productDetailsMap.get(item.product_id)
       if (productDetail) {
         const variant = productDetail.variants?.find((v: any) => v.sku === item.sku)
@@ -144,7 +128,6 @@ const enrichCartItemsWithProductDetails = async (items: CartItem[]): Promise<Car
         }
       }
 
-      // Enrich Lens
       if (item.lens?.lensId) {
         const lensDetail = productDetailsMap.get(item.lens.lensId)
         if (lensDetail) {
@@ -170,9 +153,6 @@ const enrichCartItemsWithProductDetails = async (items: CartItem[]): Promise<Car
   }
 }
 
-/**
- * Build cart item payload from CartItem for API requests
- */
 const buildCartItemPayload = (item: CartItem): AddToCartPayload => {
   const payload: AddToCartPayload = {
     item: {
@@ -184,7 +164,6 @@ const buildCartItemPayload = (item: CartItem): AddToCartPayload => {
     quantity: item.quantity
   }
 
-  // Add lens if exists
   if (item.lens?.lensId) {
     payload.item.lens = {
       lens_id: item.lens.lensId,
@@ -198,20 +177,7 @@ const buildCartItemPayload = (item: CartItem): AddToCartPayload => {
   return payload
 }
 
-/**
- * Cart Service - Business logic layer for cart operations
- */
 export const cartService = {
-  /**
-   * Thêm sản phẩm vào giỏ hàng với xử lý lỗi đầy đủ
-   *
-   * @param productId - id
-   * @param sku - SKU của variant đã chọn
-   * @param quantity - Số lượng
-   * @param lensSelection - Thông tin lens (nếu có)
-   * @returns Cart items đã được transform
-   * @throws Error với message phù hợp cho từng trường hợp lỗi
-   */
   addToCart: async (
     productId: string,
     sku: string,
@@ -219,7 +185,6 @@ export const cartService = {
     lensSelection?: LensSelectionState
   ): Promise<CartItem[]> => {
     try {
-      // Build payload
       const payload: AddToCartPayload = {
         item: {
           product: {
@@ -230,7 +195,6 @@ export const cartService = {
         quantity
       }
 
-      // Add lens info if provided
       if (lensSelection && lensSelection.lensId) {
         payload.item.lens = {
           lens_id: lensSelection.lensId,
@@ -242,25 +206,18 @@ export const cartService = {
         }
       }
 
-      // Make API call
       const response = await cartApi.addProductToCart(payload)
 
-      // Handle case where backend returns success but data is null
       if (!response.data || !response.data.cart) {
-        // Return empty array since we don't have cart data to transform
-        // The operation was successful, just no data returned
         return []
       }
 
-      // Transform backend cart to frontend format
       const transformedItems = transformBackendCartToItems(response.data.cart)
 
-      // Enrich with full product details from products API
       const enrichedItems = await enrichCartItemsWithProductDetails(transformedItems)
 
       return enrichedItems
     } catch (error: any) {
-      // Handle specific error cases
       if (error.response) {
         const status = error.response.status
         const message = error.response.data?.message || error.message
@@ -270,7 +227,6 @@ export const cartService = {
             throw new Error('UNAUTHORIZED')
           case 400:
           case 409:
-            // Out of stock or invalid request
             throw new Error(message || 'Product is out of stock or unavailable')
           case 404:
             throw new Error('Product not found')
@@ -279,34 +235,24 @@ export const cartService = {
         }
       }
 
-      // Network or other errors
       throw new Error('Network error. Please check your connection and try again.')
     }
   },
-  /**
-   * Lấy giỏ hàng từ backend
-   * @returns Cart items đã được transform và enriched với product details
-   * @throws Error với message phù hợp cho từng trường hợp lỗi
-   */
+
   getCart: async (): Promise<CartItem[]> => {
     try {
       const response = await cartApi.getCart()
 
-      // Handle case where backend returns success but data is null
       if (!response.data || !response.data.cart) {
-        // Return empty array since we don't have cart data
         return []
       }
 
-      // Transform backend cart to frontend format
       const transformedItems = transformBackendCartToItems(response.data.cart)
 
-      // Enrich with full product details from products API
       const enrichedItems = await enrichCartItemsWithProductDetails(transformedItems)
 
       return enrichedItems
     } catch (error: any) {
-      // Handle specific error cases
       if (error.response) {
         const status = error.response.status
         const message = error.response.data?.message || error.message
@@ -315,21 +261,16 @@ export const cartService = {
           case 401:
             throw new Error('UNAUTHORIZED')
           case 404:
-            // Cart not found, return empty array
             return []
           default:
             throw new Error(message || 'Failed to get cart')
         }
       }
 
-      // Network or other errors
       throw new Error('Network error. Please check your connection and try again.')
     }
   },
 
-  /**
-   * Cập nhật số lượng cart item
-   */
   updateQuantity: async (item: CartItem, quantity: number): Promise<CartItem[]> => {
     try {
       const payload = buildCartItemPayload({ ...item, quantity })
@@ -350,9 +291,6 @@ export const cartService = {
     }
   },
 
-  /**
-   * Xóa item khỏi giỏ hàng
-   */
   removeItem: async (item: CartItem): Promise<CartItem[]> => {
     try {
       const payload = buildCartItemPayload(item)
@@ -373,11 +311,7 @@ export const cartService = {
     }
   },
 
-  /**
-   * Xóa nhiều item khỏi giỏ hàng
-   */
   removeItems: async (items: CartItem[]): Promise<CartItem[]> => {
-    // Perform deletions sequentially
     for (const item of items) {
       const payload = buildCartItemPayload(item)
       try {
@@ -387,7 +321,6 @@ export const cartService = {
       }
     }
 
-    // After all deletions are attempted, fetch the definitive latest state from server
     try {
       const response = await cartApi.getCart()
       if (response.data?.cart) {
@@ -398,12 +331,9 @@ export const cartService = {
       console.error('Failed to fetch final cart state:', error)
     }
 
-    return [] // Fallback to empty if everything fails
+    return []
   },
 
-  /**
-   * Xóa toàn bộ giỏ hàng
-   */
   clearCart: async (): Promise<CartItem[]> => {
     try {
       await cartApi.clearCart()

@@ -24,12 +24,10 @@ export function ImageSlider({
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(false)
 
-  // Reset to first image when images array changes
   useEffect(() => {
     setActiveIndex(0)
   }, [images])
 
-  // Check thumbnail scroll state
   const updateScrollState = useCallback(() => {
     const el = thumbContainerRef.current
     if (!el) return
@@ -42,7 +40,7 @@ export function ImageSlider({
     if (!el) return
     updateScrollState()
     el.addEventListener('scroll', updateScrollState, { passive: true })
-    // Also check on resize
+
     const ro = new ResizeObserver(updateScrollState)
     ro.observe(el)
     return () => {
@@ -51,7 +49,6 @@ export function ImageSlider({
     }
   }, [images, updateScrollState])
 
-  // Scroll thumbnail into view when active changes
   useEffect(() => {
     const el = thumbContainerRef.current
     if (!el) return
@@ -91,7 +88,7 @@ export function ImageSlider({
 
   return (
     <div className={cn('space-y-4', className)}>
-      {/* Main Image */}
+      {}
       <div
         className={cn(
           'relative bg-white rounded-3xl overflow-hidden shadow-sm border border-mint-300 group',
@@ -104,7 +101,7 @@ export function ImageSlider({
           className="w-full h-full object-contain transition-all duration-500"
         />
 
-        {/* Prev/Next arrows on main image */}
+        {}
         {images.length > 1 && (
           <>
             <button
@@ -124,7 +121,7 @@ export function ImageSlider({
           </>
         )}
 
-        {/* Image counter */}
+        {}
         {images.length > 1 && (
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/40 backdrop-blur-sm text-white text-xs font-medium px-3 py-1 rounded-full">
             {activeIndex + 1} / {images.length}
@@ -132,10 +129,10 @@ export function ImageSlider({
         )}
       </div>
 
-      {/* Thumbnail Slider */}
+      {}
       {images.length > 1 && (
         <div className="relative group/thumbs">
-          {/* Left arrow */}
+          {}
           {canScrollLeft && (
             <button
               onClick={() => scrollThumbs('left')}
@@ -146,7 +143,7 @@ export function ImageSlider({
             </button>
           )}
 
-          {/* Thumbnails container */}
+          {}
           <div
             ref={thumbContainerRef}
             className={cn(
@@ -178,7 +175,7 @@ export function ImageSlider({
             ))}
           </div>
 
-          {/* Right arrow */}
+          {}
           {canScrollRight && (
             <button
               onClick={() => scrollThumbs('right')}

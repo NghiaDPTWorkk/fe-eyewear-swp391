@@ -45,7 +45,6 @@ export default function OperationInvoiceSearch({ onSelectInvoice }: OperationInv
 
   const debouncedQuery = useDebounce(inputValue, 300)
 
-  // Use the new useSearchInvoices hook
   const { data, isFetching } = useSearchInvoices(debouncedQuery)
 
   const rawResults = useMemo(() => data?.data?.invoiceList || [], [data])

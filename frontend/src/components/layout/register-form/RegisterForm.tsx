@@ -27,7 +27,6 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Validate required fields
     if (!formData.name || !formData.email || !formData.password || !formData.phone) {
       return
     }
@@ -49,7 +48,7 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
     <form onSubmit={handleSubmit} className="w-full">
       <Divider className="mb-4" />
 
-      {/* Name Input */}
+      {}
       <FormField label="Full Name" className="mb-4">
         <Input
           type="text"
@@ -61,7 +60,7 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
         />
       </FormField>
 
-      {/* Email Input */}
+      {}
       <FormField label="Email" className="mb-4">
         <Input
           type="email"
@@ -84,7 +83,7 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
         />
       </FormField>
 
-      {/* Phone Input */}
+      {}
       <FormField label="Phone Number" className="mb-4">
         <Input
           type="tel"
@@ -107,7 +106,7 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
         />
       </FormField>
 
-      {/* Password Input */}
+      {}
       <FormField label="Password" className="mb-4">
         <Input
           type={showPassword ? 'text' : 'password'}
@@ -119,7 +118,7 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
         />
       </FormField>
 
-      {/* Gender Selection */}
+      {}
       <FormField label="Gender" className="mb-4">
         <div className="flex gap-4">
           <label className="flex items-center cursor-pointer">
@@ -158,7 +157,7 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
         </div>
       </FormField>
 
-      {/* Register Button */}
+      {}
       <Button
         type="submit"
         variant="solid"
@@ -171,7 +170,7 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
         Sign Up
       </Button>
 
-      {/* Login Link */}
+      {}
       <p className="text-center text-sm text-gray-500">
         Already have an account?{' '}
         <a href="/login" className="font-medium text-primary-600 hover:text-primary-700">

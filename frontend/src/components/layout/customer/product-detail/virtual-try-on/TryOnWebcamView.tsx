@@ -38,7 +38,6 @@ export default function TryOnWebcamView({
     video
       .play()
       .then(() => {
-        // Start face detection once video is playing
         startDetection(video)
       })
       .catch((error) => {
@@ -59,9 +58,9 @@ export default function TryOnWebcamView({
         className="relative w-full max-w-md bg-black rounded-3xl overflow-hidden shadow-2xl animate-fade-in-up flex flex-col"
         style={{ maxHeight: '85vh' }}
       >
-        {/* Top overlay buttons */}
+        {}
         <div className="absolute top-0 left-0 right-0 z-10 flex justify-between items-start p-3">
-          {/* Menu dots */}
+          {}
           <button className="w-9 h-9 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors">
             <div className="flex gap-0.5">
               <span className="w-1 h-1 rounded-full bg-white" />
@@ -83,7 +82,7 @@ export default function TryOnWebcamView({
           </div>
         </div>
 
-        {/* Webcam feed + glasses overlay */}
+        {}
         <div className="relative aspect-[3/4] w-full overflow-hidden">
           <video
             ref={videoRef}
@@ -93,7 +92,7 @@ export default function TryOnWebcamView({
             className="w-full h-full object-cover scale-x-[-1]"
           />
 
-          {/* Glasses overlay canvas */}
+          {}
           <GlassesOverlay
             videoRef={videoRef}
             landmarksRef={landmarksRef}
@@ -101,13 +100,13 @@ export default function TryOnWebcamView({
             glassesImageUrl={productImage}
           />
 
-          {/* Face guide overlay (hidden once landmarks detected) */}
+          {}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="w-44 h-56 rounded-[50%] border-2 border-dashed border-white/15" />
           </div>
         </div>
 
-        {/* Bottom product bar */}
+        {}
         <div className="bg-white px-4 py-3 flex items-center gap-3">
           <button className="w-10 h-10 rounded-xl bg-primary-500 flex items-center justify-center hover:bg-primary-600 transition-colors flex-shrink-0 shadow-md">
             <Camera className="w-5 h-5 text-white" />

@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { Button } from '@/shared/components/ui-core'
+import { Button } from '@/shared/components/ui'
 
 interface FilterButton {
   label: string

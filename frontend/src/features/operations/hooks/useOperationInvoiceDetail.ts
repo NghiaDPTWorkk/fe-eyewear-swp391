@@ -2,10 +2,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { OperationInvoiceListItem, AdminInvoiceDetail } from '@/shared/types'
 import { operationInvoiceService } from '../services/operationInvoiceService'
 
-/**
- * Fetches a single invoice by ID from the handle-delivery list.
- * Uses OperationInvoiceListItem which contains orders: string[].
- */
 export function useOperationInvoiceDetail(invoiceId: string) {
   return useQuery<OperationInvoiceListItem | undefined>({
     queryKey: ['operation-invoice-detail', invoiceId],
@@ -18,9 +14,6 @@ export function useOperationInvoiceDetail(invoiceId: string) {
   })
 }
 
-/**
- * Fetches the full invoice detail (with address object, feeShip, totalPrice, etc.)
- */
 export function useActualInvoiceDetail(invoiceId: string) {
   return useQuery<AdminInvoiceDetail | undefined>({
     queryKey: ['invoice-detail-actual', invoiceId],
@@ -53,7 +46,7 @@ export function useOperationShipCode(invoiceId: string) {
         const response = await operationInvoiceService.getShipCode(invoiceId)
         return response.data?.shipCode || null
       } catch {
-        return null // If API fails (e.g., 404 ship not found), return null
+        return null
       }
     },
     enabled: Boolean(invoiceId),

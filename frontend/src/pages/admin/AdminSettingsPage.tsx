@@ -6,8 +6,8 @@ import {
   PasswordForm,
   NotificationPreferences,
   AccountInfoSidebar
-} from '@/features/sales/components/settings'
-import { PageHeader } from '@/features/sales/components/common'
+} from '@/features/sale-staff/components/settings'
+import { PageHeader } from '@/features/sale-staff/components/common'
 
 export default function AdminSettingsPage() {
   const navigate = useNavigate()
@@ -56,14 +56,14 @@ export default function AdminSettingsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 px-4">
-        {/* Left Main Column */}
+        {}
         <div className="lg:col-span-8 space-y-8">
           <ProfileForm />
           <PasswordForm />
           <NotificationPreferences />
         </div>
 
-        {/* Right Sidebar Column */}
+        {}
         <div className="lg:col-span-4">
           <AccountInfoSidebar />
         </div>

@@ -1,11 +1,11 @@
-import LogoEyewearIcon from '@/shared/components/ui-core/logoeyewear/LogoEyewearIcon'
+import LogoEyewearIcon from '@/shared/components/ui/logoeyewear/LogoEyewearIcon'
 import { useNavigate } from 'react-router-dom'
 export function NotFoundPage() {
   const navigate = useNavigate()
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#f8fcfb] p-4">
-      {/* Nhúng Style cho hiệu ứng Shake và Logo */}
+      {}
       <style>
         {`
           @keyframes shake {
@@ -32,13 +32,13 @@ export function NotFoundPage() {
       </style>
 
       <div className="max-w-[500px] w-full bg-white p-10 rounded-[12px] text-center border border-[#77cbb2] shadow-[0px_4px_20px_rgba(119,203,178,0.15)]">
-        {/* Logo Section */}
+        {}
         <div className="flex items-center justify-center gap-[10px] mb-5 text-mint-600 font-bold text-2xl">
           <LogoEyewearIcon />
           Optic Eyewear
         </div>
 
-        {/* Error Code */}
+        {}
         <div className="error-code shake-hover text-[8rem] font-extrabold text-[#b40a0a] leading-none cursor-help inline-block transition-transform duration-200">
           404
         </div>
@@ -48,7 +48,7 @@ export function NotFoundPage() {
           it's empty. Time to head back!"
         </p>
 
-        {/* Buttons */}
+        {}
         <div className="flex gap-[15px] justify-center">
           <button
             onClick={() => navigate('/')}

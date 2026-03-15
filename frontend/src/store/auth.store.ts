@@ -35,8 +35,6 @@ export const useAuthStore = create<AuthState>()(
       setUser: (user) => set({ user }),
       setToken: (token) => {
         if (token) {
-          // Extract role from JWT token, fallback to existing role if not present in new token
-          // (e.g. some backends don't encode role in refresh-token response)
           const roleFromJwt = getRoleFromToken(token)
           const existingRole = useAuthStore.getState().role
           const role = roleFromJwt || existingRole
@@ -47,12 +45,11 @@ export const useAuthStore = create<AuthState>()(
       },
       setRole: (role) => set({ role }),
       logout: () => {
-        // Clear ALL known token keys from localStorage to prevent stale tokens
         localStorage.removeItem('auth-storage')
         localStorage.removeItem('accessToken')
         localStorage.removeItem('access_token')
         set({ user: null, accessToken: null, isAuthenticated: false, role: null, error: null })
-        // Reset cart immediately so the header count clears without a page reload
+
         useCartStore.setState({ items: [], isInitialized: false })
       },
       setLoading: (loading) => set({ isLoading: loading }),
@@ -86,9 +83,8 @@ export const useAuthStore = create<AuthState>()(
     {
       name: 'auth-storage',
       storage: createJSONStorage(() => localStorage),
-      // No longer partialize _hasHydrated since it is removed from state
+
       onRehydrateStorage: () => (state) => {
-        // neu co token ma khong co user (do refresh), goi fetchProfile lai
         if (state?.accessToken && !state.user) {
           useAuthStore
             .getState()

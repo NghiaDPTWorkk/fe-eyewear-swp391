@@ -29,13 +29,10 @@ export function usePreOrderImportDetail(id: string) {
   })
 }
 
-/**
- * Hook to count all pre-order imports (filtering PENDING & DONE)
- */
 export function useAllPreOrderImportsCount() {
   return useQuery<PreOrderImportsResponse>({
     queryKey: ['pre-order-imports', 'all-count'],
-    queryFn: () => preOrderImportService.getPreOrderImports({ page: 1, limit: 1 }), // Just to get total count
+    queryFn: () => preOrderImportService.getPreOrderImports({ page: 1, limit: 1 }),
     staleTime: 60_000
   })
 }

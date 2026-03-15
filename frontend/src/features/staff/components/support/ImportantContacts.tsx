@@ -1,5 +1,5 @@
 import { IoChatbubblesOutline, IoMailOutline, IoCallOutline } from 'react-icons/io5'
-import { Card } from '@/shared/components/ui-core'
+import { Card } from '@/shared/components/ui'
 import { cn } from '@/lib/utils'
 
 interface SupportContact {

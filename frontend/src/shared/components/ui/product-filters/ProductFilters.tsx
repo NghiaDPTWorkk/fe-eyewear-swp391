@@ -79,14 +79,14 @@ export function ProductFilters({
 
   return (
     <div className={cn('flex flex-col gap-4', className)}>
-      {/* Filters Section */}
+      {}
       <div className="bg-mint-200 rounded-2xl border-2 border-mint-500 p-4">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-mint-1200 font-semibold text-lg">Filters</h2>
         </div>
 
         <div className="space-y-0">
-          {/* Categories */}
+          {}
           <FilterSection title="Categories" defaultExpanded>
             <div className="space-y-2 max-h-40 overflow-y-auto">
               {categories.length > 0 ? (
@@ -112,7 +112,7 @@ export function ProductFilters({
             </div>
           </FilterSection>
 
-          {/* Gender */}
+          {}
           <FilterSection title="Gender" defaultExpanded>
             <div className="space-y-2">
               {genders.length > 0 ? (
@@ -135,7 +135,7 @@ export function ProductFilters({
             </div>
           </FilterSection>
 
-          {/* Brand */}
+          {}
           <FilterSection title="Brand" defaultExpanded>
             <div className="space-y-2 max-h-40 overflow-y-auto">
               {brands.length > 0 ? (
@@ -156,7 +156,7 @@ export function ProductFilters({
             </div>
           </FilterSection>
 
-          {/* Material */}
+          {}
           <FilterSection title="Material">
             <div className="space-y-2 max-h-40 overflow-y-auto">
               {materials.length > 0 ? (
@@ -179,7 +179,7 @@ export function ProductFilters({
             </div>
           </FilterSection>
 
-          {/* Shape */}
+          {}
           <FilterSection title="Shape">
             <div className="space-y-2 max-h-40 overflow-y-auto">
               {shapes.length > 0 ? (
@@ -200,7 +200,7 @@ export function ProductFilters({
             </div>
           </FilterSection>
 
-          {/* Style */}
+          {}
           <FilterSection title="Style">
             <div className="space-y-2">
               {styles.length > 0 ? (
@@ -223,7 +223,7 @@ export function ProductFilters({
         </div>
       </div>
 
-      {/* Price Range Section */}
+      {}
       <div className="bg-mint-200 rounded-2xl border-2 border-mint-500 p-4">
         <PriceRangeFilter
           key={priceResetKey}

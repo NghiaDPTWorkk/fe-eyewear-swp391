@@ -40,7 +40,6 @@ export function AddressForm({
   const [isFetchingWards, setIsFetchingWards] = useState(false)
   const [selectedProvinceCode, setSelectedProvinceCode] = useState<number | null>(null)
 
-  // Fetch provinces on mount
   useEffect(() => {
     const fetchProvinces = async () => {
       setIsFetchingProvinces(true)
@@ -48,7 +47,6 @@ export function AddressForm({
         const data = await addressService.getProvinces()
         setProvinces(data)
 
-        // If editing, try to find the matching province code to load wards
         if (initialData?.city) {
           const match = data.find((p) => p.name === initialData.city)
           if (match) setSelectedProvinceCode(match.code)
@@ -62,7 +60,6 @@ export function AddressForm({
     fetchProvinces()
   }, [initialData?.city])
 
-  // Fetch wards when province changes
   useEffect(() => {
     const fetchWards = async () => {
       if (!selectedProvinceCode) {
@@ -87,7 +84,7 @@ export function AddressForm({
     const province = provinces.find((p) => p.code === code)
     if (province) {
       setSelectedProvinceCode(code)
-      setFormData({ ...formData, city: province.name, ward: '' }) // Reset ward when city changes
+      setFormData({ ...formData, city: province.name, ward: '' })
     } else {
       setSelectedProvinceCode(null)
       setFormData({ ...formData, city: '', ward: '' })

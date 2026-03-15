@@ -40,7 +40,6 @@ export const useFilteredProducts = (filters: ProductFilterParams): UseFilteredPr
       setLoading(true)
       setError(null)
 
-      // Build params object — only include non-empty values
       const params: Record<string, string | number | string[] | undefined> = {
         page: filters.page,
         limit: filters.limit

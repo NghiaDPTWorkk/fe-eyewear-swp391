@@ -81,7 +81,8 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
       return
     }
 
-    performAction()
+    // Sunglass or default frame path
+    performAction(undefined, 'cart')
   }
 
   const handleBuyNow = () => {
@@ -102,7 +103,7 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
       return
     }
 
-    performAction()
+    performAction(undefined, 'buy_now')
   }
 
   const handleLensConfirm = (selection: LensSelectionState) => {
@@ -112,7 +113,11 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
     })
   }
 
-  const performAction = async (lensSelection?: LensSelectionState) => {
+  const performAction = async (
+    lensSelection?: LensSelectionState,
+    explicitMode?: 'cart' | 'buy_now'
+  ) => {
+    // Validation: Check if variant is selected and in stock
     if (!currentVariant) {
       toast.error('Please select a valid product variant')
       return
@@ -135,7 +140,9 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
       return
     }
 
-    if (purchaseMode === 'cart') {
+    const modeToUse = explicitMode || purchaseMode
+
+    if (modeToUse === 'cart') {
       try {
         await addItemAsync(finalProductId, currentVariant.sku, 1, lensSelection)
 
@@ -172,17 +179,18 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
         selected: true,
         productType: product.type,
         selectedOptions: selectedOptions,
-        lens: lensSelection
-          ? {
-              lensId: lensSelection.lensId || undefined,
-              sku: lensSelection.sku || undefined,
-              visionNeed: lensSelection.visionNeed || 'non-prescription',
-              prescription: lensSelection.prescription,
-              name: lensSelection.name,
-              price: lensSelection.lensPrice || 0,
-              image: lensSelection.image
-            }
-          : undefined
+        lens:
+          lensSelection && lensSelection.lensId
+            ? {
+                lensId: lensSelection.lensId,
+                sku: lensSelection.sku || undefined,
+                visionNeed: lensSelection.visionNeed || 'non-prescription',
+                prescription: lensSelection.prescription,
+                name: lensSelection.name,
+                price: lensSelection.lensPrice || 0,
+                image: lensSelection.image
+              }
+            : undefined
       }
 
       if (isLensModalOpen) {
@@ -438,10 +446,14 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
           variant="outline"
           isFullWidth
           disabled={!isValidCombination || !isInStock}
-          className="h-16 rounded-2xl border-2 border-primary-500 text-primary-600 hover:bg-primary-50 font-bold"
-          leftIcon={<Zap className="w-6 h-6" />}
+          className="h-16 rounded-2xl border-2 border-primary-500 text-primary-600 font-bold transition-all duration-300 hover:bg-primary-500 hover:text-white hover:-translate-y-1 hover:shadow-[0_8px_20px_rgba(13,148,136,0.3)] active:translate-y-0 group relative overflow-hidden"
+          leftIcon={
+            <Zap className="w-6 h-6 transition-transform duration-300 group-hover:scale-125 group-hover:animate-pulse" />
+          }
         >
-          Buy It Now
+          <span className="relative z-10">Buy It Now</span>
+          {/* Shine effect */}
+          <div className="absolute inset-0 -translate-x-[150%] skew-x-12 bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:translate-x-[150%] transition-transform duration-1000 ease-in-out" />
         </Button>
         <Button
           variant="outline"

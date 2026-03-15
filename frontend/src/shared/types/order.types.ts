@@ -11,7 +11,7 @@ import type { Invoice } from './invoice.types'
 
 export interface Order {
   _id: string
-  type: OrderType // nếu là đơn PRE-ORDER thì sẽ type có kiểu mảng ([PRE-ORDER,MANUFACTURING], [PRE-ORDER,NOrMAL]) còn MANUFACTURING và NORMAL thì chỉ 1 obejct thui
+  type: OrderType
   status: OrderStatus
   assignmentStatus: AssignmentOrderStatus
   products: OrderProductItem[]

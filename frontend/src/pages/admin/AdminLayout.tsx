@@ -12,34 +12,33 @@ import {
   IoPeopleOutline,
   IoPersonAddOutline,
   IoSettingsOutline,
-  IoHelpCircleOutline,
-  IoShieldCheckmarkOutline,
-  IoStatsChartOutline,
   IoDocumentTextOutline
 } from 'react-icons/io5'
 
 import { useStaffLayoutProfile } from '@/features/staff/hooks/useStaffLayoutProfile'
+import { STORAGE_KEYS } from '@/shared/constants/storage'
+import { useAuthStore } from '@/store'
+import LogoEyewearIcon from '@/shared/components/ui-core/logoeyewear/LogoEyewearIcon'
 
 export default function AdminLayout() {
   const location = useLocation()
   const navigate = useNavigate()
   const { userName, userRole, userInitials, userEmail } = useStaffLayoutProfile()
 
+  const handleLogout = () => {
+    navigate('/admin/login')
+    const { logout } = useAuthStore.getState()
+    logout()
+    localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN)
+    localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN)
+    localStorage.removeItem(STORAGE_KEYS.USER_INFO)
+  }
   const sidebar = (
     <SidebarStaff
       logo={
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-mint-500 rounded-lg flex items-center justify-center">
-            <IoShieldCheckmarkOutline className="text-white text-lg" />
-          </div>
-          <div className="flex flex-col">
-            <span className="font-bold text-gray-900 tracking-tight leading-none text-sm">
-              OpticView
-            </span>
-            <span className="text-[10px] font-extrabold text-mint-600 uppercase tracking-widest mt-0.5">
-              HQ / Admin
-            </span>
-          </div>
+          <LogoEyewearIcon className='w-8 h-8'/>
+          <span className="font-semibold text-gray-900">OpticView</span>
         </div>
       }
       userWidget={
@@ -47,7 +46,7 @@ export default function AdminLayout() {
           userInitials={userInitials}
           userName={userName}
           userRole={userRole}
-          onLogout={() => navigate('/admin/login')}
+          onLogout={handleLogout}
         />
       }
     >
@@ -57,12 +56,6 @@ export default function AdminLayout() {
           label="Dashboard"
           to="/admin/dashboard"
           active={location.pathname === '/admin/dashboard'}
-        />
-        <SidebarStaff.MenuItem
-          icon={<IoStatsChartOutline />}
-          label="Analytics"
-          to="/admin/analytics"
-          active={location.pathname === '/admin/analytics'}
         />
       </SidebarStaff.MenuSection>
 
@@ -93,12 +86,6 @@ export default function AdminLayout() {
           label="Global Settings"
           to="/admin/settings"
           active={location.pathname.startsWith('/admin/settings')}
-        />
-        <SidebarStaff.MenuItem
-          icon={<IoHelpCircleOutline />}
-          label="Technical Support"
-          to="/admin/support"
-          active={location.pathname.startsWith('/admin/support')}
         />
         <ThemeToggle />
       </SidebarStaff.MenuSection>

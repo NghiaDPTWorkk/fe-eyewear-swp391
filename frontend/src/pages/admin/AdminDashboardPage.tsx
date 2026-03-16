@@ -1,79 +1,66 @@
-import { Container } from '@/components'
-import { AdminStatCard } from './components/dashboard/AdminStatCard'
+import { Container, MetricCard, Button } from '@/shared/components/ui'
 import { SystemOverview } from './components/dashboard/SystemOverview'
 import { RecentActivities } from './components/dashboard/RecentActivities'
 import { StaffDistribution } from './components/dashboard/StaffDistribution'
-import { IoPeopleOutline, IoPersonOutline, IoCartOutline, IoWalletOutline } from 'react-icons/io5'
-import { Link, Outlet, useNavigate } from 'react-router-dom'
+import { IoPeopleOutline, IoPersonOutline } from 'react-icons/io5'
+import { Outlet, useNavigate } from 'react-router-dom'
+import { BreadcrumbPath } from '@/components/layout/staff/operation-staff/breadcrumb-path'
 
 export default function AdminDashboardPage() {
   const navigate = useNavigate()
 
   return (
-    <Container className="max-w-none px-2 pt-2 pb-8">
-      <div className="mb-6 px-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+    <Container>
+      {/* Header */}
+      <div className="mb-8">
+        <BreadcrumbPath paths={['Dashboard', 'System Overview']} />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900 tracking-tight font-heading">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">
               Admin Dashboard
             </h1>
-            <p className="text-gray-500 text-sm font-normal leading-relaxed">
-              System overview & management
-            </p>
+            <p className="text-sm md:text-base text-gray-500 mt-1">System overview & management</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <Link
-              to="/admin/users"
-              className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:border-indigo-200 hover:text-indigo-600"
+            <Button
+              variant="outline"
+              onClick={() => navigate('/admin/users')}
+              className="px-6 py-3 text-sm font-bold border-mint-400 text-mint-600 hover:border-mint-700 hover:bg-mint-50/50 hover:shadow-lg hover:shadow-mint-100/50 transition-all duration-300 active:scale-95 rounded-xl"
             >
-              Manage users
-            </Link>
-            <Link
-              to="/admin/orders"
-              className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:border-indigo-200 hover:text-indigo-600"
+              Manage Users
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => navigate('/admin/staff')}
+              className="px-6 py-3 text-sm font-bold border-mint-400 text-mint-600 hover:border-mint-700 hover:bg-mint-50/50 hover:shadow-lg hover:shadow-mint-100/50 transition-all duration-300 active:scale-95 rounded-xl"
             >
-              View orders
-            </Link>
-            <button
-              type="button"
-              onClick={() => navigate('/admin/settings')}
-              className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700"
-            >
-              Admin settings
-            </button>
+              Manage Staffs
+            </Button>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-10 px-4">
+      {/* Metrics Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-10">
         {/* Left: Stats */}
-        <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <AdminStatCard
-            label="Total Users"
-            value="8,234"
-            variant="indigo"
-            trend={{ value: '12.5%', isPositive: true }}
-            icon={<IoPeopleOutline />}
+        <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+          <MetricCard
+            label="TOTAL USERS"
+            value="40"
+            colorScheme="mint"
+            trend={{ value: 12.5, label: 'vs last month', isPositive: true }}
+            icon={<IoPeopleOutline size={22} />}
           />
-          <AdminStatCard
-            label="Total Staff"
+          <MetricCard
+            label="TOTAL STAFF"
             value="30"
-            trend={{ value: '3.2%', isPositive: true }}
-            icon={<IoPersonOutline />}
+            colorScheme="info"
+            trend={{ value: 3.2, label: 'vs last month', isPositive: true }}
+            icon={<IoPersonOutline size={22} />}
           />
-          <AdminStatCard
-            label="Total Orders"
-            value="12,840"
-            variant="indigo"
-            trend={{ value: '8.1%', isPositive: true }}
-            icon={<IoCartOutline />}
-          />
-          <AdminStatCard
-            label="Total Revenue"
-            value="$245,000"
-            trend={{ value: '2.4%', isPositive: false }}
-            icon={<IoWalletOutline />}
-          />
+          <div className="lg:col-span-3">
+            <SystemOverview />
+          </div>
         </div>
 
         {/* Right: Staff Distribution */}
@@ -82,18 +69,14 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 px-4">
-        {/* Left: System Overview */}
-        <div className="lg:col-span-3">
-          <SystemOverview />
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         {/* Right: Recent Activities */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-full">
           <RecentActivities />
         </div>
       </div>
 
-      <div className="mt-8 px-4">
+      <div className="mt-8">
         <Outlet />
       </div>
     </Container>

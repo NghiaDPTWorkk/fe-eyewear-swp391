@@ -24,8 +24,8 @@ const getRoleStyles = (role: string): string => {
   const normalized = role.toLowerCase()
   if (normalized.includes('sale')) return 'bg-blue-50 text-blue-600 border-blue-100'
   if (normalized.includes('operation')) return 'bg-amber-50 text-amber-600 border-amber-100'
-  if (normalized.includes('manager')) return 'bg-purple-50 text-purple-600 border-purple-100'
-  return 'bg-indigo-50 text-indigo-600 border-indigo-100'
+  if (normalized.includes('manager')) return 'bg-emerald-50 text-emerald-600 border-emerald-100'
+  return 'bg-mint-50 text-mint-600 border-mint-100'
 }
 
 export const StaffTable: React.FC<StaffTableProps> = ({
@@ -51,13 +51,13 @@ export const StaffTable: React.FC<StaffTableProps> = ({
             <tr
               key={staff.id}
               className={`group hover:bg-neutral-50 transition-colors cursor-pointer ${
-                selectedStaffId === staff.id ? 'bg-indigo-50/40' : ''
+                selectedStaffId === staff.id ? 'bg-mint-50/40' : ''
               }`}
               onClick={() => onSelectStaff(staff.id)}
             >
               <td className="px-6 py-6 font-primary">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 border border-indigo-100 shrink-0 overflow-hidden">
+                  <div className="w-10 h-10 rounded-full bg-mint-50 flex items-center justify-center text-mint-600 border border-mint-100 shrink-0 overflow-hidden">
                     {staff.avatar ? (
                       <img
                         src={staff.avatar}
@@ -68,7 +68,7 @@ export const StaffTable: React.FC<StaffTableProps> = ({
                       <IoPersonCircleOutline size={24} />
                     )}
                   </div>
-                  <span className="text-sm font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">
+                  <span className="text-sm font-semibold text-gray-900 group-hover:text-mint-600 transition-colors">
                     {staff.name}
                   </span>
                 </div>
@@ -81,12 +81,14 @@ export const StaffTable: React.FC<StaffTableProps> = ({
                   {staff.role}
                 </span>
               </td>
-              <td className="px-6 py-6 text-sm font-medium text-neutral-600">{staff.lastActive}</td>
+              <td className="px-6 py-6 text-sm font-medium text-neutral-600">
+                {staff.lastActive === 'N/A' ? '--' : staff.lastActive}
+              </td>
               <td className="px-6 py-6 text-center" onClick={(e) => e.stopPropagation()}>
                 <button
                   onClick={() => onToggleStatus(staff.id)}
                   className={`w-10 h-5 rounded-full transition-all duration-300 relative ${
-                    staff.status === 'Active' ? 'bg-indigo-500' : 'bg-neutral-200'
+                    staff.status === 'Active' ? 'bg-emerald-500' : 'bg-neutral-200'
                   }`}
                 >
                   <div

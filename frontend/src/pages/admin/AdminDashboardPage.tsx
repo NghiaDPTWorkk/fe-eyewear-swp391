@@ -3,7 +3,7 @@ import { AdminStatCard } from './components/dashboard/AdminStatCard'
 import { SystemOverview } from './components/dashboard/SystemOverview'
 import { RecentActivities } from './components/dashboard/RecentActivities'
 import { StaffDistribution } from './components/dashboard/StaffDistribution'
-import { IoPeopleOutline, IoPersonOutline, IoCartOutline, IoWalletOutline } from 'react-icons/io5'
+import { IoPeopleOutline, IoPersonOutline } from 'react-icons/io5'
 import { Link, Outlet, useNavigate } from 'react-router-dom'
 
 export default function AdminDashboardPage() {
@@ -28,12 +28,7 @@ export default function AdminDashboardPage() {
             >
               Manage users
             </Link>
-            <Link
-              to="/admin/orders"
-              className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:border-indigo-200 hover:text-indigo-600"
-            >
-              View orders
-            </Link>
+
             <button
               type="button"
               onClick={() => navigate('/admin/settings')}
@@ -50,7 +45,7 @@ export default function AdminDashboardPage() {
         <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
           <AdminStatCard
             label="Total Users"
-            value="8,234"
+            value="40"
             variant="indigo"
             trend={{ value: '12.5%', isPositive: true }}
             icon={<IoPeopleOutline />}
@@ -61,19 +56,7 @@ export default function AdminDashboardPage() {
             trend={{ value: '3.2%', isPositive: true }}
             icon={<IoPersonOutline />}
           />
-          <AdminStatCard
-            label="Total Orders"
-            value="12,840"
-            variant="indigo"
-            trend={{ value: '8.1%', isPositive: true }}
-            icon={<IoCartOutline />}
-          />
-          <AdminStatCard
-            label="Total Revenue"
-            value="$245,000"
-            trend={{ value: '2.4%', isPositive: false }}
-            icon={<IoWalletOutline />}
-          />
+
         </div>
 
         {/* Right: Staff Distribution */}

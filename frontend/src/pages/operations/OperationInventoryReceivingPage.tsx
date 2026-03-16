@@ -61,7 +61,7 @@ function DetailModal({ id, onClose }: { id: string; onClose: () => void }) {
             </div>
           ) : detail ? (
             <>
-              <div className="grid grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
                 <div className="space-y-2">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">
                     Product SKU
@@ -102,7 +102,7 @@ function DetailModal({ id, onClose }: { id: string; onClose: () => void }) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
                 <div className="bg-white border-2 border-slate-50 p-6 rounded-[32px] flex flex-col gap-1">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                     Expected Goal
@@ -223,10 +223,10 @@ export default function OperationInventoryReceivingPage() {
       {/* Header */}
       <div className="mb-8">
         <BreadcrumbPath paths={['Dashboard', 'Inventory Receiving']} />
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
           Inventory Receiving
         </h1>
-        <p className="text-gray-500 mt-1">
+        <p className="text-sm md:text-base text-gray-500 mt-1">
           Manage and track pre-order import batches for efficient stock replenishment.
         </p>
       </div>

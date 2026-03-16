@@ -21,7 +21,7 @@ export default function FilterButtonList({
   className
 }: FilterButtonListProps) {
   return (
-    <div className={cn('flex items-center gap-3 mb-6', className)}>
+    <div className={cn('flex flex-wrap items-center gap-2 sm:gap-3 mb-6', className)}>
       {buttons.map((btn) => {
         const isActive = selectedValue === btn.value
         return (

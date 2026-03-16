@@ -123,8 +123,12 @@ export default function OperationDashboardPage() {
           <span className="text-neutral-300">/</span>
           <span className="text-primary-500 font-bold">Operations</span>
         </div>
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Operation Hub</h1>
-        <p className="text-gray-500 mt-1">Monitor priority orders and technical station status.</p>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">
+          Operation Hub
+        </h1>
+        <p className="text-sm md:text-base text-gray-500 mt-1">
+          Monitor priority orders and technical station status.
+        </p>
 
         <div className="mt-5">
           <DashboardMetrics />

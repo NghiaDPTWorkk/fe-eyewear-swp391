@@ -22,6 +22,7 @@ import { transformApiOrderToTableOrder } from '@/features/staff/components/order
 import { useAuthStore } from '@/store/auth.store'
 import { useStaffLayoutProfile } from '@/features/staff/hooks/useStaffLayoutProfile'
 import { OrderType } from '@/shared/utils/enums/order.enum'
+import LogoEyewearIcon from '@/shared/components/ui-core/logoeyewear/LogoEyewearIcon'
 
 export default function OperationLayout() {
   const location = useLocation()
@@ -104,9 +105,7 @@ export default function OperationLayout() {
     <SidebarStaff
       logo={
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-mint-500 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-lg">O</span>
-          </div>
+          <LogoEyewearIcon className="w-8 h-8" />
           <span className="font-semibold text-gray-900">OpticView</span>
         </div>
       }

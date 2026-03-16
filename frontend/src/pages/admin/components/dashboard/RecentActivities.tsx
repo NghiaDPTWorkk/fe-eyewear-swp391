@@ -24,8 +24,8 @@ const mockActivities: Activity[] = [
     user: 'Nguyen Van A',
     time: '2 minutes ago',
     icon: <IoPersonAddOutline size={16} />,
-    iconBg: 'bg-indigo-50',
-    iconColor: 'text-indigo-500'
+    iconBg: 'bg-mint-50',
+    iconColor: 'text-mint-600'
   },
   {
     id: '2',

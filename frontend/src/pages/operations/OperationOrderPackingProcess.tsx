@@ -153,28 +153,31 @@ export default function OperationOrderPackingProcess() {
       {/* Breadcrumb Path */}
       <BreadcrumbPath paths={['Dashboard', 'Packing Station']} />
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-5 mb-8">
+        <div className="flex items-center gap-4">
           <button
             onClick={handleBack}
-            className="p-3 bg-white hover:bg-neutral-50 rounded-xl shadow-sm transition-all border border-neutral-100"
+            className="p-3 bg-white hover:bg-neutral-50 rounded-xl shadow-sm transition-all border border-neutral-100 shrink-0"
           >
             <IoArrowBack size={20} className="text-gray-600" />
           </button>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
-              <IoCubeOutline className="text-primary-500" /> Packing Station
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-2 md:gap-3">
+              <IoCubeOutline className="text-primary-500 shrink-0" />{' '}
+              <span className="truncate">Packing Station</span>
             </h1>
-            <p className="text-sm text-neutral-500 mt-1 font-medium italic opacity-80 uppercase tracking-widest text-[10px]">
+            <p className="text-[10px] text-neutral-500 mt-1 font-medium tracking-widest uppercase opacity-80 italic">
               CHECKLIST & PACKAGING WORKFLOW
             </p>
           </div>
         </div>
-        <span
-          className={`px-6 py-2 border rounded-full text-xs font-bold uppercase tracking-widest ${isCompleted ? 'bg-mint-100 text-mint-700 border-mint-200' : 'bg-amber-100 text-amber-700 border-amber-200'}`}
-        >
-          {isCompleted ? 'COMPLETED' : status || 'In Progress'}
-        </span>
+        <div className="sm:ml-auto">
+          <span
+            className={`inline-block px-6 py-2 border rounded-full text-xs font-bold uppercase tracking-widest text-center ${isCompleted ? 'bg-mint-100 text-mint-700 border-mint-200' : 'bg-amber-100 text-amber-700 border-amber-200'}`}
+          >
+            {isCompleted ? 'COMPLETED' : status || 'In Progress'}
+          </span>
+        </div>
       </div>
       {/* Progress Tracker */}
       {(() => {

@@ -9,8 +9,8 @@ interface RoleData {
 }
 
 const mockRoles: RoleData[] = [
-  { label: 'Sale Staff', count: 12, percent: '40%', color: 'bg-indigo-500' },
-  { label: 'Operation Staff', count: 8, percent: '27%', color: 'bg-blue-500' },
+  { label: 'Sale Staff', count: 12, percent: '40%', color: 'bg-mint-500' },
+  { label: 'Operation Staff', count: 8, percent: '27%', color: 'bg-emerald-500' },
   { label: 'Manager', count: 5, percent: '17%', color: 'bg-amber-500' },
   { label: 'Admin', count: 2, percent: '7%', color: 'bg-red-500' },
   { label: 'Inactive', count: 3, percent: '10%', color: 'bg-neutral-300' }
@@ -31,7 +31,7 @@ export const StaffDistribution: React.FC = () => {
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-2">
           <h4 className="text-3xl font-bold text-gray-900 font-primary leading-tight">30</h4>
-          <span className="text-[10px] font-semibold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded-full">
+          <span className="text-[10px] font-semibold text-mint-600 bg-mint-50 px-1.5 py-0.5 rounded-full">
             Total Staff
           </span>
         </div>

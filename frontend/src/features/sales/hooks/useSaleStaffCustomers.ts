@@ -1,7 +1,3 @@
-/**
- * Custom hook for SaleStaff Customer management
- * Handles customer selection and drawer state
- */
 import { useState, useCallback } from 'react'
 
 interface Customer {

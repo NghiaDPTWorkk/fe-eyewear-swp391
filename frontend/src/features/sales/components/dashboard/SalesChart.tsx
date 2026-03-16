@@ -1,7 +1,3 @@
-/**
- * SalesChart Component
- * Displays the yearly sales chart with Frames vs Lenses
- */
 import { Card } from '@/shared/components'
 
 function LegendItem({ color, label }: { color: string; label: string }) {

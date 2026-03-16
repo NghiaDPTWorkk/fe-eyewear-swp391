@@ -27,9 +27,6 @@ export const InvoiceLockBadge: React.FC<InvoiceLockBadgeProps> = ({ isLocked, cl
   )
 }
 
-/**
- * Modal dialog hiện khi user cố approve/reject invoice đang bị lock.
- */
 interface LockBlockedModalProps {
   isOpen: boolean
   invoiceId: string | null
@@ -45,25 +42,25 @@ export const LockBlockedModal: React.FC<LockBlockedModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center" onClick={onClose}>
-      {/* Backdrop */}
+      {}
       <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" />
 
-      {/* Modal */}
+      {}
       <div
         className="relative z-10 w-full max-w-sm mx-4 bg-white rounded-3xl shadow-2xl shadow-amber-100/50 border border-amber-100 p-6"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Icon */}
+        {}
         <div className="flex justify-center mb-4">
           <div className="w-16 h-16 rounded-2xl bg-amber-50 flex items-center justify-center border border-amber-100">
             <IoLockClosedOutline size={32} className="text-amber-500" />
           </div>
         </div>
 
-        {/* Title */}
+        {}
         <h3 className="text-center text-base font-bold text-slate-800 mb-2">Invoice Locked</h3>
 
-        {/* Message */}
+        {}
         <p className="text-center text-sm text-slate-500 leading-relaxed mb-1">
           Another staff member is currently processing this invoice.
         </p>
@@ -71,14 +68,14 @@ export const LockBlockedModal: React.FC<LockBlockedModalProps> = ({
           Please wait until they finish or the lock expires automatically.
         </p>
 
-        {/* Invoice ID */}
+        {}
         <div className="flex justify-center mb-6">
           <span className="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-100 text-[11px] font-mono text-slate-500 tracking-tight">
             {invoiceId}
           </span>
         </div>
 
-        {/* Close button */}
+        {}
         <button
           onClick={onClose}
           className="w-full py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-semibold transition-colors"

@@ -4,14 +4,13 @@ import { OrderDetailsDrawer } from '@/features/sales/components/orders/OrderDeta
 import { OrderFilterBar } from '@/features/sales/components/orders/OrderFilterBar'
 import { SalesStaffRxTable } from '@/features/sales/components/prescriptions/RxTable'
 import SalesStaffRxMetrics from '@/features/sales/components/prescriptions/RxMetrics'
-import { useSalesStaffOrders } from '@/features/sales/hooks/useSalesStaffOrders'
+import { useSalesStaffOrders } from '@/features/sales/hooks'
 import PageHeader from '@/features/sales/components/common/PageHeader'
 import { isOrderVerified } from '@/features/sales/utils/orderUtils'
 import type { Order } from '@/features/sales/types'
 import { useDebounce } from '@/shared/hooks'
 
 export default function SaleStaffPrescriptionPage() {
-  // Limit to 15 prescription orders per load for better performance
   const { rxOrders, loading, fetchOrders } = useSalesStaffOrders(1, 15)
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)

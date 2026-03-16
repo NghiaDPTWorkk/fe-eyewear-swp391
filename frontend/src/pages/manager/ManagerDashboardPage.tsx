@@ -1,17 +1,19 @@
-import { Container } from '@/components'
-import { PageHeader } from '@/features/sales/components/common'
-import { StatCard } from './components/dashboard/StatCard'
-import { SalesTarget } from './components/dashboard/SalesTarget'
-import { DashboardChart } from './components/dashboard/DashboardChart'
-import { PromoBanner } from './components/dashboard/PromoBanner'
-import { CustomerGrowth } from './components/dashboard/CustomerGrowth'
-import { PopularProducts } from './components/dashboard/PopularProducts'
 import {
   IoTrendingUpOutline,
   IoPeopleOutline,
   IoSwapHorizontalOutline,
   IoCubeOutline
 } from 'react-icons/io5'
+
+import { Container } from '@/components'
+import { PageHeader } from '@/features/sales/components/common'
+
+import { StatCard } from './components/dashboard/StatCard'
+import { SalesTarget } from './components/dashboard/SalesTarget'
+import { DashboardChart } from './components/dashboard/DashboardChart'
+import { PromoBanner } from './components/dashboard/PromoBanner'
+import { CustomerGrowth } from './components/dashboard/CustomerGrowth'
+import { PopularProducts } from './components/dashboard/PopularProducts'
 
 export default function ManagerDashboardPage() {
   return (
@@ -23,12 +25,12 @@ export default function ManagerDashboardPage() {
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        {/* Row 1: Sales Target + Stats Column */}
+        {}
         <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-1 gap-6">
           <SalesTarget />
         </div>
 
-        {/* Right Stats Column */}
+        {}
         <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
           <StatCard
             label="Total Revenue"
@@ -59,7 +61,7 @@ export default function ManagerDashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        {/* Row 2: Charts + Promo */}
+        {}
         <div className="lg:col-span-3">
           <DashboardChart />
         </div>
@@ -69,7 +71,7 @@ export default function ManagerDashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        {/* Row 3: Customer Growth + Popular Products */}
+        {}
         <div className="lg:col-span-2">
           <CustomerGrowth />
         </div>

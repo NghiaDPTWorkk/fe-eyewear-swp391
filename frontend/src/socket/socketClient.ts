@@ -1,6 +1,6 @@
-import { io, type Socket } from 'socket.io-client'
+import { io } from 'socket.io-client'
 
-let socket: Socket | null = null
+let socket: any = null
 
 export type SocketUserType = 'CUSTOMER' | 'STAFF'
 

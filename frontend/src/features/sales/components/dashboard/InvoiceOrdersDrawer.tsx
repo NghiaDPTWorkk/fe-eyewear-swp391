@@ -61,7 +61,7 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
           onClick={onClose}
         />
         <div className="relative w-full max-w-lg h-full bg-white shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
-          {/* Header */}
+          {}
           <div className="px-6 py-6 border-b border-neutral-100 flex items-center justify-between">
             <div className="space-y-1">
               <div className="flex items-center gap-3">
@@ -88,7 +88,7 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
             </Button>
           </div>
 
-          {/* Content */}
+          {}
           <div className="flex-1 overflow-y-auto p-6 space-y-8 bg-neutral-50/30">
             <div>
               <div className="flex items-center justify-between mb-5">
@@ -102,7 +102,6 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
 
               <div className="space-y-4">
                 {invoice.orders?.map((order, idx) => {
-                  // Safely handle order.type which can be array, string, or undefined
                   const orderTypes = Array.isArray(order.type)
                     ? order.type
                     : order.type
@@ -127,7 +126,6 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
                       }
                     }
 
-                    // All orders must be in one of the approved/verified states
                     const isAccepted = [
                       'VERIFIED',
                       'APPROVE',
@@ -255,7 +253,7 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
             </div>
           </div>
 
-          {/* Footer */}
+          {}
           <div className="p-6 border-t border-neutral-100 bg-white">
             <button
               onClick={() =>
@@ -291,7 +289,7 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
             </div>
           ) : selectedOrderDetails ? (
             <div className="space-y-4">
-              {/* Order Basic Info Card */}
+              {}
               <div className="bg-slate-50/50 rounded-2xl p-4 border border-slate-100/50 space-y-3">
                 <div className="flex justify-between items-center text-[11px] font-bold uppercase tracking-wider">
                   <span className="text-slate-400">Order Information</span>
@@ -311,7 +309,7 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
                 </div>
               </div>
 
-              {/* Prescription Details Section */}
+              {}
               {selectedOrderDetails.products?.[0]?.lens?.parameters && (
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 px-1">

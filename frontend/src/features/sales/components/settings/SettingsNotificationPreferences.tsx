@@ -1,7 +1,3 @@
-/**
- * NotificationPreferences Component
- * Email and push notification toggle settings
- */
 import { Card, Button } from '@/components'
 import { IoSaveOutline } from 'react-icons/io5'
 

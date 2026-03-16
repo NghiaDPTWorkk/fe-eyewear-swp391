@@ -1,9 +1,9 @@
 import { useMemo, useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { IoFlashOutline, IoCubeOutline, IoReceiptOutline, IoRepeatOutline } from 'react-icons/io5'
 import { useSearchParams } from 'react-router-dom'
-import { salesService } from '@/features/sales/services/salesService'
+import { IoFlashOutline, IoCubeOutline, IoReceiptOutline, IoRepeatOutline } from 'react-icons/io5'
 
+import { salesService } from '@/features/sales/services/salesService'
 import { InvoiceOrdersDrawer } from '@/features/sales/components/dashboard/InvoiceOrdersDrawer'
 import { OrderMetrics } from '@/features/sales/components/orders/OrderMetrics'
 import { OrderPagination } from '@/features/sales/components/orders/OrderPagination'
@@ -12,11 +12,15 @@ import { StatusFilterBar } from '@/features/sales/components/orders/StatusFilter
 import { RealtimeStatusBar } from '@/features/sales/components/orders/RealtimeStatusBar'
 import { LockBlockedModal } from '@/features/sales/components/orders/InvoiceLockBadge'
 import { PageHeader, RejectionModal } from '@/features/sales/components/common'
-import { useSalesStaffAction } from '@/features/sales/hooks/useSalesStaffAction'
-import { useSalesStaffInvoices } from '@/features/sales/hooks/useSalesStaffInvoices'
-import { useInvoiceLock } from '@/features/sales/hooks/useInvoiceLock'
-import { useSalesStaffRealtime } from '@/features/sales/hooks/useSalesStaffRealtime'
+
+import {
+  useSalesStaffAction,
+  useSalesStaffInvoices,
+  useInvoiceLock,
+  useSalesStaffRealtime
+} from '@/features/sales/hooks'
 import { type Invoice } from '@/features/sales/types'
+
 import { ConfirmationModal } from '@/shared/components/ui-core'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import { OrderType } from '@/shared/utils/enums/order.enum'
@@ -28,16 +32,13 @@ export default function SaleStaffOrderPage() {
   const orderTypeFilter = searchParams.get('orderType') ?? 'All'
   const searchQuery = searchParams.get('search') ?? ''
 
-  // ── Auth: lấy staffId để truyền vào lock ────────────────────────────────
   const currentUser = useAuthStore((s) => s.user)
   const staffId = (currentUser as any)?._id || (currentUser as any)?.id || undefined
 
-  // ── Invoice locking ──────────────────────────────────────────────────────
   const { acquireLock, releaseLock, isLockedByOther, lockedCount } = useInvoiceLock(staffId)
   const [showLockBlockedModal, setShowLockBlockedModal] = useState(false)
   const [lockedInvoiceId, setLockedInvoiceId] = useState<string | null>(null)
 
-  // ── Real-time polling ────────────────────────────────────────────────────
   const { isRefreshing, refresh, getLastUpdatedLabel } = useSalesStaffRealtime()
 
   const { approveInvoice, rejectInvoice, processing } = useSalesStaffAction()
@@ -56,7 +57,6 @@ export default function SaleStaffOrderPage() {
     setSearchParams(next)
   }
 
-  // Reset page to 1 whenever filters change to avoid "empty page" issues
   useEffect(() => {
     setPage(1)
   }, [statusFilter, orderTypeFilter, searchQuery])
@@ -76,18 +76,14 @@ export default function SaleStaffOrderPage() {
   const filteredInvoices = useMemo(() => {
     let list = invoiceList
 
-    // 1. Pending tab: only show invoices with manufacturing/prescription orders
     if (statusFilter === InvoiceStatus.DEPOSITED) {
       list = list.filter((inv: Invoice) => inv.orders?.some((o) => o.isPrescription))
     }
 
-    // 3. Approved/Refunded tabs: No client filter needed as server handles it.
-    // We only keep the Pending (DEPOSITED) specific prescription filter if server can't do it.
     if (statusFilter === InvoiceStatus.DEPOSITED) {
       list = list.filter((inv: Invoice) => inv.orders?.some((o) => o.isPrescription))
     }
 
-    // 4. Search filtering
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase()
       list = list.filter(
@@ -98,7 +94,6 @@ export default function SaleStaffOrderPage() {
       )
     }
 
-    // 5. Order type filter
     if (orderTypeFilter !== 'All') {
       list = list.filter((inv: Invoice) =>
         inv.orders?.some((order) => {
@@ -108,7 +103,6 @@ export default function SaleStaffOrderPage() {
       )
     }
 
-    // 6. Sort by newest first
     list = list.sort((a: Invoice, b: Invoice) => {
       const dateA = new Date(a.createdAt).getTime()
       const dateB = new Date(b.createdAt).getTime()
@@ -118,7 +112,6 @@ export default function SaleStaffOrderPage() {
     return list
   }, [invoiceList, searchQuery, orderTypeFilter, statusFilter])
 
-  // Total pages sanity check: if list is empty on page 1, force total to 1
   const serverTotal = pagination?.total || 0
   const adjustedTotalPages =
     filteredInvoices.length === 0 && page === 1 ? 1 : pagination?.totalPages || 1
@@ -233,7 +226,6 @@ export default function SaleStaffOrderPage() {
               InvoiceStatus.CANCELED
             ].join(',')
           } else if (tab === InvoiceStatus.REFUNDED) {
-            // If backend doesn't support REFUNDED yet, pass an empty list or specific status
             apiStatus = InvoiceStatus.REFUNDED
           } else {
             apiStatus = tab as string
@@ -410,7 +402,6 @@ export default function SaleStaffOrderPage() {
       <ConfirmationModal
         isOpen={showConfirmModal}
         onClose={() => {
-          // Release lock khi user hủy thao tác approve
           if (invoiceToProcess) releaseLock(invoiceToProcess)
           setShowConfirmModal(false)
           setInvoiceToProcess(null)
@@ -524,7 +515,6 @@ export default function SaleStaffOrderPage() {
       <RejectionModal
         isOpen={showRejectModal}
         onClose={() => {
-          // Release lock khi close rejection modal mà không confirm
           if (invoiceToProcess) releaseLock(invoiceToProcess)
           setShowRejectModal(false)
           setInvoiceToProcess(null)
@@ -533,7 +523,7 @@ export default function SaleStaffOrderPage() {
         isLoading={processing}
       />
 
-      {/* Lock blocked notification - hiện khi user cố xử lý invoice đang bị lock */}
+      {}
       <LockBlockedModal
         isOpen={showLockBlockedModal}
         invoiceId={lockedInvoiceId}

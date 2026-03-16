@@ -64,7 +64,6 @@ export const LabOperationsTimeline: React.FC<LabOperationsTimelineProps> = ({ or
     }
   ]
 
-  // Mapping order to the simplified station object expected by ExpediteRequestModal
   const mappedOrder = {
     ...(order || {}),
     orderCode: order?.orderCode || `#${order?._id?.slice(-6) || 'N/A'}`,
@@ -89,7 +88,7 @@ export const LabOperationsTimeline: React.FC<LabOperationsTimelineProps> = ({ or
         </div>
 
         <div className="p-5 space-y-5">
-          {/* Status Timeline */}
+          {}
           <div className="relative border-l border-slate-100 ml-2 space-y-6 py-1">
             {stages.map((stage, index) => {
               const isDone = stage.isCompleted

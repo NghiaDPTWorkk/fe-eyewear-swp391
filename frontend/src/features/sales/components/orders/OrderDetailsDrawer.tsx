@@ -5,11 +5,11 @@ import { IoEyeOutline, IoBodyOutline } from 'react-icons/io5'
 
 import { OrderType } from '@/shared/utils/enums/order.enum'
 
-import { useSalesStaffAction } from '@/features/sales/hooks/useSalesStaffAction'
 import {
+  useSalesStaffAction,
   useSalesStaffInvoices as useSalesStaffOrders,
   useSalesStaffOrderDetail
-} from '@/features/sales/hooks/useSalesStaffInvoices'
+} from '@/features/sales/hooks'
 import ConfirmationModal from '@/shared/components/ui-core/confirm-modal/ConfirmationModal'
 
 import { OrderDrawerActions } from './drawer/OrderDrawerActions'
@@ -113,7 +113,6 @@ export const OrderDetailsDrawer: React.FC<{
   const isPrescription = order?.type?.includes(OrderType.MANUFACTURING) || false
   const isApproved = ['APPROVED', 'VERIFIED', 'COMPLETED'].includes(order?.status || '')
 
-  // Confirmation Modal State
   const [confirmState, setConfirmState] = useState<{
     isOpen: boolean
     action: 'approve' | 'reject' | null
@@ -122,7 +121,6 @@ export const OrderDetailsDrawer: React.FC<{
     action: null
   })
 
-  // Triggered by the child components (buttons)
   const handleActionClick = (action: 'approve' | 'reject') => {
     setConfirmState({
       isOpen: true,
@@ -130,20 +128,17 @@ export const OrderDetailsDrawer: React.FC<{
     })
   }
 
-  // Actual logic executed after confirmation
   const executeAction = async () => {
     const action = confirmState.action
     if (!order || !action) return
 
     let success = false
     if (view === 'rx') {
-      // For Manufacturing/Prescription orders
       success =
         action === 'approve'
           ? await approveOrder(order._id)
           : await rejectOrder(order._id, order.invoiceId)
     } else {
-      // Default to Invoice level actions
       if (order.invoiceId) {
         success =
           action === 'approve'
@@ -261,7 +256,7 @@ export const OrderDetailsDrawer: React.FC<{
         }
         details={
           <div className="space-y-4">
-            {/* Order Basic Info */}
+            {}
             <div className="bg-slate-50/60 rounded-2xl p-4 border border-slate-100 space-y-3">
               <div className="flex justify-between items-center text-[11px] font-bold uppercase tracking-wider pb-2 border-b border-slate-100">
                 <span className="text-slate-400">Order Information</span>
@@ -287,7 +282,7 @@ export const OrderDetailsDrawer: React.FC<{
               </div>
             </div>
 
-            {/* Prescription Parameters */}
+            {}
             {isPrescription && order?.products?.[0]?.lens?.parameters ? (
               <div className="space-y-3">
                 <div className="flex items-center gap-2 px-1">
@@ -341,7 +336,7 @@ export const OrderDetailsDrawer: React.FC<{
                       })}
                     </tbody>
                   </table>
-                  {/* PD Row */}
+                  {}
                   <div className="bg-blue-50/50 p-3 flex justify-between items-center border-t border-blue-100/50">
                     <div className="flex items-center gap-2">
                       <div className="w-5 h-5 rounded-md bg-blue-100 flex items-center justify-center text-blue-600">
@@ -357,7 +352,7 @@ export const OrderDetailsDrawer: React.FC<{
                   </div>
                 </div>
 
-                {/* Prescription image if available */}
+                {}
                 {order.products[0].prescriptionImageUrl && (
                   <div className="rounded-2xl overflow-hidden border border-indigo-100 bg-indigo-50/30">
                     <p className="text-[9px] font-bold text-indigo-500 uppercase tracking-widest px-3 pt-2 pb-1">
@@ -372,7 +367,6 @@ export const OrderDetailsDrawer: React.FC<{
                 )}
               </div>
             ) : isPrescription ? (
-              /* Prescription order but parameters not loaded yet */
               <div className="py-5 text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
                 No prescription parameters on record
               </div>

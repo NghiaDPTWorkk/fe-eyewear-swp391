@@ -9,7 +9,6 @@ export function useSalesStaffInvoiceDetail(invoiceId: string | null) {
     queryFn: async () => {
       if (!invoiceId) return null
 
-      // Use getInvoiceById which returns detail
       const response = await salesService.getInvoiceById(invoiceId)
       const inv = response?.data
 

@@ -153,7 +153,6 @@ export default function ManagerAddProductPage() {
       console.warn('Create product response (JSON):', JSON.stringify(response))
 
       if (state.isPreOrder && response.success) {
-        // Try to find variantSkus in multiple possible locations
         let variantSkus: string[] = []
 
         if (Array.isArray(response.data?.variantSkus)) {
@@ -161,10 +160,8 @@ export default function ManagerAddProductPage() {
         } else if (Array.isArray(response.variantSkus)) {
           variantSkus = response.variantSkus
         } else if (Array.isArray(response.data)) {
-          // If data is directly the array of SKUs
           variantSkus = response.data.filter((item: any) => typeof item === 'string')
         } else if (response.data && typeof response.data === 'object') {
-          // Check for any property that might be the array
           const possibleArray = Object.values(response.data).find((val) => Array.isArray(val))
           if (Array.isArray(possibleArray)) {
             variantSkus = possibleArray.filter((item) => typeof item === 'string')
@@ -180,7 +177,7 @@ export default function ManagerAddProductPage() {
           const formatDate = (d: string) => {
             if (!d) return ''
             const date = new Date(d)
-            if (isNaN(date.getTime())) return d // Return as is if already formatted or invalid
+            if (isNaN(date.getTime())) return d
             const day = String(date.getDate()).padStart(2, '0')
             const month = String(date.getMonth() + 1).padStart(2, '0')
             const year = date.getFullYear()
@@ -212,7 +209,7 @@ export default function ManagerAddProductPage() {
       } else if (state.isPreOrder && !response.success) {
         console.error('Product creation returned failure:', response)
         toast.error(response.message || 'Failed to create pre-order product')
-        return // Stop if pre-order creation failed
+        return
       } else {
         toast.success(
           state.isPreOrder ? 'Pre-order product created!' : 'Product created successfully!'
@@ -249,23 +246,23 @@ export default function ManagerAddProductPage() {
             handleSubmit()
           }}
         >
-          {/* 1. Base Fields */}
+          {}
           <ProductBaseFields state={state} onChange={handleBaseChange} />
 
-          {/* 2. Spec Fields based on type */}
+          {}
           {state.type === 'frame' ? (
             <FrameSpecFields specFrame={state.specFrame} onChange={handleSpecFrameChange} />
           ) : (
             <LensSpecFields specLens={state.specLens} onChange={handleSpecLensChange} />
           )}
 
-          {/* 3. Options Configuration */}
+          {}
           <OptionsConfigEditor
             optionsConfig={state.optionsConfig}
             onChange={(optionsConfig) => setState((prev) => ({ ...prev, optionsConfig }))}
           />
 
-          {/* 4. Variants Editor */}
+          {}
           <VariantsEditor
             variants={state.variants}
             optionsConfig={state.optionsConfig}
@@ -273,7 +270,7 @@ export default function ManagerAddProductPage() {
             onChange={handleVariantsChange}
           />
 
-          {/* 4. Pre-order Configuration */}
+          {}
           <div className="border-t border-neutral-100 pt-10 space-y-6">
             <label className="flex items-center gap-3 cursor-pointer group">
               <div className="relative inline-flex items-center">
@@ -369,7 +366,7 @@ export default function ManagerAddProductPage() {
             )}
           </div>
 
-          {/* 5. Action Buttons */}
+          {}
           <div className="pt-6 flex gap-4 border-t border-neutral-50">
             <button
               type="button"

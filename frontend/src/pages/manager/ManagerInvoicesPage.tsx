@@ -1,19 +1,5 @@
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-
-import { Container, Button } from '@/shared/components/ui-core'
-import { OrderType } from '@/shared/utils/enums/order.enum'
-import { PageHeader } from '@/features/sales/components/common'
-
-import { useAdminInvoices } from '@/features/manager/hooks/useAdminInvoices'
-import { useComplete } from '@/features/manager/hooks/useComplete'
-import { useOnboard } from '@/features/manager/hooks/useOnboard'
-
-import ManagerOrderDrawer from './components/invoices/ManagerOrderDrawer'
-import { ManagerMetricCard } from './components/invoices/ManagerMetricCard'
-import { ManagerInvoiceTable } from './components/invoices/ManagerInvoiceTable'
-import { ManagerInvoiceFilters } from './components/invoices/ManagerInvoiceFilters'
-
 import {
   IoChevronBackOutline,
   IoChevronForwardOutline,
@@ -22,6 +8,17 @@ import {
   IoReceiptOutline,
   IoRepeatOutline
 } from 'react-icons/io5'
+
+import { Container, Button } from '@/shared/components/ui-core'
+import { OrderType } from '@/shared/utils/enums/order.enum'
+import { PageHeader } from '@/features/sales/components/common'
+
+import { useAdminInvoices, useComplete, useOnboard } from '@/features/manager/hooks'
+
+import ManagerOrderDrawer from './components/invoices/ManagerOrderDrawer'
+import { ManagerMetricCard } from './components/invoices/ManagerMetricCard'
+import { ManagerInvoiceTable } from './components/invoices/ManagerInvoiceTable'
+import { ManagerInvoiceFilters } from './components/invoices/ManagerInvoiceFilters'
 
 export default function ManagerInvoicesPage() {
   const [searchParams, setSearchParams] = useSearchParams()

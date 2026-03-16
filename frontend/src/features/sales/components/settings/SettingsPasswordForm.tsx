@@ -1,7 +1,3 @@
-/**
- * PasswordForm Component
- * Change password form with visibility toggles
- */
 import { useState } from 'react'
 import { Card, Button } from '@/components'
 import { IoLockClosedOutline, IoEyeOutline } from 'react-icons/io5'

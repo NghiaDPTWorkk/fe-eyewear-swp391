@@ -1,7 +1,3 @@
-/**
- * LensSpecsCard Component
- * Displays lens specification details (read-only)
- */
 import { Card } from '@/components'
 import { IoCheckmarkCircleOutline } from 'react-icons/io5'
 

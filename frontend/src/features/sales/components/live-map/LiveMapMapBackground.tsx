@@ -1,14 +1,10 @@
-/**
- * MapBackground Component
- * Mock map background with route visualization
- */
 import { IoLocation } from 'react-icons/io5'
 
 export default function LiveMapMapBackground() {
   return (
     <div className="absolute inset-0 z-0">
       <div className="w-full h-full bg-[#eef5f6] relative opacity-60">
-        {/* Mock Map Texture/Grid */}
+        {}
         <div
           className="absolute inset-0"
           style={{
@@ -17,7 +13,7 @@ export default function LiveMapMapBackground() {
           }}
         ></div>
 
-        {/* Route Path (SVG) */}
+        {}
         <svg className="absolute inset-0 w-full h-full pointer-events-none">
           <path
             d="M 200,500 Q 400,300 800,200 T 1200,300"
@@ -32,7 +28,7 @@ export default function LiveMapMapBackground() {
           </g>
         </svg>
 
-        {/* Landmarks */}
+        {}
         <div className="absolute left-[200px] top-[500px] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
           <div className="w-4 h-4 rounded-full bg-gray-800 border-2 border-white shadow-lg"></div>
           <span className="mt-1 text-xs font-bold text-gray-700 bg-white/80 px-2 py-0.5 rounded shadow-sm">

@@ -16,7 +16,7 @@ import {
   IoCubeOutline
 } from 'react-icons/io5'
 import { Card, Button, Input } from '@/components'
-import { useSalesStaffOrderDetail } from '@/features/sales/hooks/useSalesStaffInvoices'
+import { useSalesStaffOrderDetail } from '@/features/sales/hooks'
 import { OrderType } from '@/shared/utils/enums/order.enum'
 
 interface PrescriptionVerificationProps {

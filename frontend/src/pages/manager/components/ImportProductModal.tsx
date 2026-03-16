@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { IoCloseOutline, IoCubeOutline, IoSaveOutline } from 'react-icons/io5'
 import type { PreOrderImport } from '@/shared/types'
-import { useImportProduct } from '@/features/manager/hooks/usePreOrderImports'
+import { useImportProduct } from '@/features/manager/hooks'
 
 interface ImportProductModalProps {
   isOpen: boolean

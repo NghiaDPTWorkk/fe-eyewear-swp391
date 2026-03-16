@@ -6,11 +6,6 @@ import { useProfile } from '@/features/staff/hooks/useProfile'
 import { profileService } from '@/features/staff/services/profile.service'
 import { Card, Button } from '@/shared/components/ui-core'
 
-/**
- * ManagerProfileForm Component
- * Displays profile information and allows MANAGER to request an update
- * Similar to ProfileForm but supports MANAGER role
- */
 export default function ManagerProfileForm() {
   const { data: profileData, isLoading, refetch } = useProfile()
   const profile = profileData?.data
@@ -22,7 +17,6 @@ export default function ManagerProfileForm() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Initialize form data when profile is loaded
   useEffect(() => {
     if (profile) {
       setFormData({
@@ -103,7 +97,7 @@ export default function ManagerProfileForm() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Anti-autofill dummy fields */}
+        {}
         <input type="text" style={{ display: 'none' }} aria-hidden="true" />
         <input type="email" style={{ display: 'none' }} aria-hidden="true" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

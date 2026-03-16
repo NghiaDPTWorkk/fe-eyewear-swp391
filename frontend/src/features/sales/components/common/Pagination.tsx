@@ -1,7 +1,3 @@
-/**
- * Pagination Component
- * Reusable pagination controls for all SaleStaff table views.
- */
 import { Button } from '@/shared/components/ui-core'
 import { IoChevronBackOutline, IoChevronForwardOutline } from 'react-icons/io5'
 
@@ -40,7 +36,7 @@ export default function Pagination({
           <IoChevronBackOutline />
         </Button>
 
-        {/* Page numbers */}
+        {}
         {Array.from({ length: Math.min(3, totalPages) }, (_, i) => i + 1).map((page) => (
           <Button
             key={page}

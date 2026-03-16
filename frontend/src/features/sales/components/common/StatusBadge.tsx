@@ -1,7 +1,3 @@
-/**
- * StatusBadge Component
- * Consistent status indicator for orders across all SaleStaff pages.
- */
 import { cn } from '@/lib/utils'
 import { COLORS, STYLES } from '../../constants/saleStaffDesignSystem'
 

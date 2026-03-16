@@ -31,7 +31,7 @@ export default function SaleStaffReturnsPage() {
       />
 
       <div className="space-y-6">
-        {/* Controls */}
+        {}
         <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
           <div className="relative flex-1 max-w-md w-full">
             <IoSearchOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />

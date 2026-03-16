@@ -43,7 +43,6 @@ export function VariantsEditor(props: {
   const generateVariants = () => {
     if (!optionsConfig.length) return
 
-    // Recursive function to get cartesian product
     const getCombinations = (configs: ProductCreateFormState['optionsConfig']) => {
       const results: any[][] = [[]]
       for (const config of configs) {
@@ -94,10 +93,8 @@ export function VariantsEditor(props: {
     })
 
     if (variants.length > 0 && variants[0].options.length === 0 && !variants[0].name) {
-      // If we only have the initial empty variant, replace it
       onChange(newVariants.map((v, i) => (i === 0 ? { ...v, isDefault: true } : v)))
     } else {
-      // Append new variants
       onChange([...variants, ...newVariants])
     }
   }

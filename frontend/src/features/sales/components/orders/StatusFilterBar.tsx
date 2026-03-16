@@ -30,7 +30,7 @@ export const StatusFilterBar: React.FC<StatusFilterBarProps> = ({
 }) => {
   return (
     <div className="flex flex-col gap-6 mb-8">
-      {/* Status Tabs */}
+      {}
       <div className="overflow-x-auto">
         <div className="flex items-center gap-2 p-1.5 bg-neutral-100/50 rounded-2xl w-fit border border-neutral-100">
           {statusTabs.map((tab) => {
@@ -53,9 +53,9 @@ export const StatusFilterBar: React.FC<StatusFilterBarProps> = ({
         </div>
       </div>
 
-      {/* Search + Filter Row */}
+      {}
       <div className="bg-white border border-neutral-100 rounded-3xl p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-6 shadow-sm">
-        {/* Search input */}
+        {}
         <div className="flex-1 max-w-md relative">
           <IoSearchOutline
             className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400"
@@ -70,7 +70,7 @@ export const StatusFilterBar: React.FC<StatusFilterBarProps> = ({
           />
         </div>
 
-        {/* Action buttons */}
+        {}
         <div className="flex items-center gap-3">
           <button
             onClick={onToggleFilter}

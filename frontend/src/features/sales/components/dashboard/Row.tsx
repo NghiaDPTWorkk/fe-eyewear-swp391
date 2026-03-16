@@ -17,7 +17,6 @@ export const Row: React.FC<RowProps> = ({ invoice, onClick, onActionSuccess }) =
   const { approveInvoice, processing } = useSalesStaffAction()
   const [showConfirmModal, setShowConfirmModal] = useState(false)
 
-  // Calculate approvable status directly from fetched data
   const approvedCount = invoice.approvedOrdersCount || 0
   const totalCount = invoice.totalOrdersCount || 0
   const isApprovable = invoice.hasManufacturing && approvedCount === totalCount && totalCount > 0

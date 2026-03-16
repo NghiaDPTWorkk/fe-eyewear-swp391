@@ -1,16 +1,18 @@
 import { useState, useEffect, useCallback } from 'react'
-import { IoInformationCircleOutline } from 'react-icons/io5'
 import { useSearchParams } from 'react-router-dom'
+import { IoInformationCircleOutline } from 'react-icons/io5'
+
 import { httpClient } from '@/api'
 import { ENDPOINTS } from '@/api/endpoints'
 
+import { PageHeader } from '@/features/staff'
 import CommunicationDrawer from '@/features/sales/components/customer/CommunicationDrawer'
 import { CustomerInboxList } from '@/features/sales/components/customer/CustomerInboxList'
 import { CustomerProfileInsights } from '@/features/sales/components/customer/CustomerProfileInsights'
-import { PageHeader } from '@/features/staff'
-import { cn } from '@/lib/utils'
-import { Button, Card } from '@/shared/components/ui-core'
 import { getInitials } from '@/features/sales/utils/nameUtils'
+
+import { Button, Card } from '@/shared/components/ui-core'
+import { cn } from '@/lib/utils'
 
 interface Customer {
   id: string
@@ -71,13 +73,12 @@ export default function SaleStaffCustomerPage() {
           phone: '',
           email: '',
           website: '',
-          avatar: '', // No hardcoded link
+          avatar: '',
           status: 'online',
           lastMessage: `AI Conversation - ${conv.lastInteractionAt.split(' ')[0]}`
         }))
         setCustomers(initialCustomers)
 
-        // Asynchronously fetch last message for each conversation to populate the preview
         response.data.conversationList.forEach(async (conv) => {
           try {
             const msgResponse = await httpClient.get<{
@@ -114,7 +115,7 @@ export default function SaleStaffCustomerPage() {
 
       if (response.success) {
         setMessages(response.data.messageList)
-        // Update the last message preview in the sidebar list
+
         if (response.data.messageList.length > 0) {
           const lastMsg = response.data.messageList[response.data.messageList.length - 1].content
           setCustomers((prev) =>

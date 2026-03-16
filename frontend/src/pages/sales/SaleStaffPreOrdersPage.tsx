@@ -5,7 +5,7 @@ import { Button, Card } from '@/components'
 import { OrderList } from '@/features/sales/components/orders/OrderList'
 import { OrderDetailsDrawer } from '@/features/sales/components/orders/OrderDetailsDrawer'
 import { OrderFilterBar } from '@/features/sales/components/orders/OrderFilterBar'
-import { useSalesStaffOrders } from '@/features/sales/hooks/useSalesStaffOrders'
+import { useSalesStaffOrders } from '@/features/sales/hooks'
 import {
   IoChevronBackOutline,
   IoChevronForwardOutline,
@@ -22,7 +22,7 @@ import { toast } from 'react-hot-toast'
 
 export default function SaleStaffPreOrdersPage() {
   const navigate = useNavigate()
-  // Limit to 15 orders per fetch to improve performance
+
   const { orders, loading, fetchOrders } = useSalesStaffOrders(1, 15)
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
@@ -35,11 +35,9 @@ export default function SaleStaffPreOrdersPage() {
     fetchOrders()
   }, [fetchOrders])
 
-  // Pagination State
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 20
 
-  // Filter only pre-orders
   const preOrders = useMemo(
     () => orders.filter((o: Order) => o.type?.includes(OrderType.PRE_ORDER)),
     [orders]
@@ -57,7 +55,6 @@ export default function SaleStaffPreOrdersPage() {
     [preOrders, debouncedSearch, statusFilter]
   )
 
-  // Reset pagination when filters change
   const [prevFilters, setPrevFilters] = useState({ debouncedSearch, statusFilter })
   if (
     debouncedSearch !== prevFilters.debouncedSearch ||

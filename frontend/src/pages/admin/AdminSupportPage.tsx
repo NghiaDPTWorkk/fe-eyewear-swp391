@@ -6,7 +6,7 @@ import {
   IoMailOutline,
   IoCallOutline
 } from 'react-icons/io5'
-import { Link, Outlet, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { PageHeader } from '@/features/sales/components/common'
 
 export default function AdminSupportPage() {

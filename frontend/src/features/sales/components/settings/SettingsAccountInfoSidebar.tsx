@@ -1,7 +1,3 @@
-/**
- * AccountInfoSidebar Component
- * Account info with status and session security
- */
 import { Card, Button } from '@/components'
 import {
   IoStorefrontOutline,
@@ -14,7 +10,7 @@ import {
 export default function AccountInfoSidebar() {
   return (
     <div className="space-y-8">
-      {/* Account Info */}
+      {}
       <Card className="p-8 border-none shadow-sm shadow-neutral-200/50 bg-white">
         <h3 className="text-[11px] font-medium text-neutral-500 uppercase tracking-widest mb-8">
           Account Info
@@ -96,7 +92,7 @@ export default function AccountInfoSidebar() {
         </div>
       </Card>
 
-      {/* System Settings */}
+      {}
       <Card className="p-8 border-none shadow-sm shadow-neutral-200/50">
         <h3 className="text-[11px] font-medium text-neutral-500 uppercase tracking-widest mb-8">
           System
@@ -150,7 +146,7 @@ export default function AccountInfoSidebar() {
         </div>
       </Card>
 
-      {/* Danger Zone */}
+      {}
       <Card className="p-8 border border-red-100 shadow-sm shadow-red-50 bg-red-50/10 rounded-2xl">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center shrink-0">

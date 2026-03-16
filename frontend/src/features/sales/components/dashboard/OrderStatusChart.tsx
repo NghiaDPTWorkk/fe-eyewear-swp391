@@ -1,7 +1,3 @@
-/**
- * OrderStatusChart Component
- * Displays order status distribution as a donut chart
- */
 import { Card } from '@/shared/components'
 
 const ORDER_STATUSES = [

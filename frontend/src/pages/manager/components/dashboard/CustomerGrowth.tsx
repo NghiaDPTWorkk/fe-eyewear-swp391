@@ -37,14 +37,14 @@ export const CustomerGrowth: React.FC = () => {
       </div>
 
       <div className="relative rounded-2xl overflow-hidden bg-gray-50/50 h-[300px]">
-        {/* Mock map using a stylized representation */}
+        {}
         <div className="absolute inset-0 bg-[#f8fafc]/50" />
-        {/* Stylized island shapes */}
+        {}
         <div className="absolute top-1/4 left-1/4 w-32 h-20 bg-neutral-200/40 rounded-full blur-xl transform rotate-45" />
         <div className="absolute bottom-1/4 right-1/4 w-48 h-24 bg-neutral-200/40 rounded-full blur-xl" />
         <div className="absolute top-1/2 left-1/2 w-40 h-16 bg-neutral-200/40 rounded-full blur-xl transform -rotate-12" />
 
-        {/* Data Points */}
+        {}
         <div className="absolute bottom-1/4 left-1/3">
           <div className="w-4 h-4 bg-mint-400 rounded-full border-2 border-white shadow-lg animate-pulse" />
         </div>

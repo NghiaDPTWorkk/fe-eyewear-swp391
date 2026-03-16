@@ -55,14 +55,14 @@ export const CommunicationHub: React.FC<CommunicationHubProps> = ({ customerName
 
   return (
     <Card className="p-0 border border-gray-200 shadow-sm overflow-hidden bg-white rounded-xl">
-      {/* Header */}
+      {}
       <div className="p-4 bg-white border-b border-gray-100 flex items-center">
         <h3 className="font-semibold text-slate-800 text-sm flex items-center gap-2">
           <IoChatbubblesOutline className="text-slate-400" /> Communication
         </h3>
       </div>
 
-      {/* Tab bar — view only, Chat tab always active */}
+      {}
       <div className="flex border-b border-neutral-100">
         <button className="flex-1 py-3 text-[10px] font-medium uppercase tracking-widest text-mint-600 border-b-2 border-mint-500 bg-white">
           Chat ({messages.length})
@@ -75,7 +75,7 @@ export const CommunicationHub: React.FC<CommunicationHubProps> = ({ customerName
         </button>
       </div>
 
-      {/* Chat View */}
+      {}
       <div className="h-[240px] flex flex-col">
         <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-white scrollbar-hide">
           {isLoading ? (
@@ -133,7 +133,7 @@ export const CommunicationHub: React.FC<CommunicationHubProps> = ({ customerName
           )}
         </div>
 
-        {/* View-only notice */}
+        {}
         <div className="p-3 bg-slate-50 border-t border-slate-100 flex items-center justify-center shrink-0">
           <span className="text-[11px] font-medium text-slate-400 italic">
             👁 View-only — conversation history with this customer

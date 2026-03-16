@@ -26,7 +26,7 @@ export const DashboardChart: React.FC = () => {
 
       <div className="relative h-64 w-full mt-10">
         <svg viewBox="0 0 800 200" className="w-full h-full preserve-3d">
-          {/* Secondary dashed line */}
+          {}
           <path
             d="M 0 150 Q 50 140 100 160 T 200 130 T 300 150 T 400 120 T 500 110 T 600 140 T 700 100 T 800 80"
             fill="none"
@@ -35,7 +35,7 @@ export const DashboardChart: React.FC = () => {
             strokeDasharray="6 4"
             className="opacity-60"
           />
-          {/* Mint solid line */}
+          {}
           <path
             d="M 0 160 Q 50 170 100 140 T 200 120 T 300 140 T 400 90 T 500 100 T 600 80 T 700 70 T 800 50"
             fill="none"

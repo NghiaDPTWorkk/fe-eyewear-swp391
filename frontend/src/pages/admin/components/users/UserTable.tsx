@@ -21,9 +21,9 @@ const statusStyles: Record<'Active' | 'Inactive' | 'Banned', string> = {
 }
 
 const safeFormatDate = (input?: Date | string | null) => {
-  if (!input) return 'N/A'
+  if (!input) return '--'
   const date = input instanceof Date ? input : new Date(input)
-  if (Number.isNaN(date.getTime())) return 'N/A'
+  if (Number.isNaN(date.getTime())) return '--'
   return new Intl.DateTimeFormat('en-US', {
     month: 'short',
     day: '2-digit',
@@ -52,16 +52,16 @@ export const UserTable: React.FC<UserTableProps> = ({ users, selectedUserId, onS
               <tr
                 key={user._id}
                 className={`group hover:bg-neutral-50 transition-colors cursor-pointer ${
-                  selectedUserId === user._id ? 'bg-indigo-50/40' : ''
+                  selectedUserId === user._id ? 'bg-mint-50/40' : ''
                 }`}
                 onClick={() => onSelectUser(user._id)}
               >
                 <td className="px-6 py-6 font-primary">
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 border border-indigo-100 shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-mint-50 flex items-center justify-center text-mint-600 border border-mint-100 shrink-0">
                       <IoPersonCircleOutline size={24} />
                     </div>
-                    <span className="text-sm font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">
+                    <span className="text-sm font-semibold text-gray-900 group-hover:text-mint-600 transition-colors">
                       {user.name}
                     </span>
                   </div>

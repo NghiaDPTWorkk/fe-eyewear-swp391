@@ -11,8 +11,7 @@ import {
   IoGridOutline,
   IoPeopleOutline,
   IoPersonAddOutline,
-  IoSettingsOutline,
-  IoDocumentTextOutline
+  IoSettingsOutline
 } from 'react-icons/io5'
 
 import { useStaffLayoutProfile } from '@/features/staff/hooks/useStaffLayoutProfile'
@@ -75,15 +74,10 @@ export default function AdminLayout() {
       </SidebarStaff.MenuSection>
 
       <SidebarStaff.MenuSection label="SYSTEM & UTILS">
-        <SidebarStaff.MenuItem
-          icon={<IoDocumentTextOutline />}
-          label="System Logs"
-          to="/admin/logs"
-          active={location.pathname.startsWith('/admin/logs')}
-        />
+
         <SidebarStaff.MenuItem
           icon={<IoSettingsOutline />}
-          label="Global Settings"
+          label="Settings"
           to="/admin/settings"
           active={location.pathname.startsWith('/admin/settings')}
         />

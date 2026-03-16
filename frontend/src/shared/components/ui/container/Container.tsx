@@ -16,7 +16,7 @@ export function Container({
 }: ContainerProps) {
   return (
     <div
-      className={`mx-auto p-0 box-border ${className}`}
+      className={`mx-auto px-4 sm:px-6 md:px-0 box-border ${className}`}
       style={{ maxWidth, justifyContent: justify, ...style }}
       {...props}
     >

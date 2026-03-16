@@ -119,20 +119,20 @@ export default function OperationInvenProcessPlan() {
       )}
 
       {/* ── Header ── */}
-      <div className="flex items-center justify-between mb-8 gap-4 mt-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 mt-6">
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate('/operation-staff/inventory-receiving')}
-            className="p-3 bg-white hover:bg-slate-50 rounded-xl shadow-sm transition-all border border-slate-100 text-slate-400 hover:text-mint-600"
+            className="p-3 bg-white hover:bg-slate-50 rounded-xl shadow-sm transition-all border border-slate-100 text-slate-400 hover:text-mint-600 shrink-0"
           >
             <IoArrowBack size={20} />
           </button>
-          <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-black text-slate-900">Process Inventory Plan</h1>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+            <h1 className="text-xl md:text-2xl font-black text-slate-900 leading-tight">Process Inventory</h1>
             {detail && (
               <div
                 className={cn(
-                  'px-4 py-1.5 rounded-xl text-xs font-black uppercase tracking-widest border flex items-center gap-2 shadow-sm',
+                  'inline-flex self-start sm:self-auto px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border items-center gap-2 shadow-sm',
                   STATUS_CONFIG[detail.status as keyof typeof STATUS_CONFIG]?.bg,
                   STATUS_CONFIG[detail.status as keyof typeof STATUS_CONFIG]?.color
                 )}
@@ -148,7 +148,7 @@ export default function OperationInvenProcessPlan() {
             variant="solid"
             colorScheme={detail.status === 'DONE' ? 'secondary' : 'primary'}
             className={cn(
-              'px-6 py-3 rounded-xl font-bold text-sm shadow-lg',
+              'w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-sm shadow-lg',
               detail.status === 'DONE'
                 ? 'shadow-slate-100 opacity-70 cursor-not-allowed'
                 : 'shadow-mint-100'

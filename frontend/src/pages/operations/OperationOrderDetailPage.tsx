@@ -255,7 +255,8 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
     | 'lens'
     | undefined
   const variantOptions = (productVariantApiResponse as any)?.data?.variantDetail?.options || []
-  const variantImg = (productVariantApiResponse as any)?.data?.variantDetail?.imgs?.[0]
+  const variantImgs = (productVariantApiResponse as any)?.data?.variantDetail?.imgs || []
+  const variantImg = variantImgs[0]
 
   let renderedLensComponent: React.ReactNode = null
   let renderedFrameComponent: React.ReactNode = null
@@ -282,6 +283,7 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
         <FrameSpecifications
           data={mappedOptions}
           imageSrc={variantImg}
+          imageSrcHover={productType === 'frame' ? variantImgs[1] : undefined}
           quantity={totalQty}
           sku={orderProductItems[0].product.sku}
         />
@@ -325,7 +327,9 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
     // 2. Render Frame Specifications
     if (manufacturingOrderFrameItem) {
       const frameOptions = productVariantApiResponse?.data?.variantDetail?.options || []
-      const frameImg = productVariantApiResponse?.data?.variantDetail?.imgs?.[0]
+      const frameImgs = productVariantApiResponse?.data?.variantDetail?.imgs || []
+      const frameImg = frameImgs[0]
+      const frameImgHover = frameImgs[1]
       renderedFrameComponent = (
         <FrameSpecifications
           data={frameOptions.map((attr: any) => ({
@@ -333,6 +337,7 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
             value: attr.label
           }))}
           imageSrc={frameImg}
+          imageSrcHover={frameImgHover}
           sku={manufacturingOrderFrameItem.sku}
           quantity={manufacturingOrderFrameItem.quantity}
         />

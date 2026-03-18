@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import { Container } from '@/components'
-import { PageHeader } from '@/features/sales/components/common'
 import { IoSearchOutline, IoPrintOutline, IoEllipsisVertical } from 'react-icons/io5'
 
-// Types for our mocked data
+import { Container } from '@/components'
+import { PageHeader } from '@/features/sales/components/common'
+
 interface TransactionItemData {
   id: string
   orderCode: string
@@ -124,7 +124,7 @@ const TransactionCard: React.FC<{
         : 'border-neutral-100 hover:border-mint-200 hover:shadow-lg'
     }`}
   >
-    {/* Card Header */}
+    {}
     <div className="flex items-center justify-between mb-4">
       <div className="flex items-center gap-3">
         <div
@@ -151,13 +151,13 @@ const TransactionCard: React.FC<{
       <StatusBadge status={transaction.status} />
     </div>
 
-    {/* Date/Time Row */}
+    {}
     <div className="flex justify-between items-center mb-6 pt-4 border-t border-neutral-50">
       <p className="text-[11px] font-medium text-neutral-400">{transaction.date}</p>
       <p className="text-[11px] font-semibold text-gray-700">{transaction.time}</p>
     </div>
 
-    {/* Items List (Simplified) */}
+    {}
     <div className="space-y-3 mb-6">
       <div className="flex justify-between text-[10px] font-semibold text-neutral-400 uppercase tracking-widest border-b border-neutral-50 pb-2">
         <span>Items</span>
@@ -179,7 +179,7 @@ const TransactionCard: React.FC<{
       ))}
     </div>
 
-    {/* Total and Actions */}
+    {}
     <div className="pt-6 border-t-2 border-dashed border-neutral-100">
       <div className="flex justify-between items-center mb-6">
         <span className="text-sm font-semibold text-gray-900 uppercase tracking-wider">Total</span>
@@ -231,7 +231,7 @@ const DetailSidebar: React.FC<{ transaction: TransactionItemData }> = ({ transac
       </p>
     </div>
 
-    {/* Items Area */}
+    {}
     <div className="space-y-6 mb-8">
       {transaction.items.map((item, idx) => (
         <div key={idx} className="flex gap-4 items-start group">
@@ -261,7 +261,7 @@ const DetailSidebar: React.FC<{ transaction: TransactionItemData }> = ({ transac
       ))}
     </div>
 
-    {/* Pricing Calculation Section */}
+    {}
     <div className="space-y-4 pt-8 border-t border-neutral-50 mb-8">
       <div className="flex justify-between items-center text-xs font-medium text-neutral-400">
         <span>Items ({transaction.items.length})</span>
@@ -281,7 +281,7 @@ const DetailSidebar: React.FC<{ transaction: TransactionItemData }> = ({ transac
       </div>
     </div>
 
-    {/* Action Buttons */}
+    {}
     <div className="flex gap-3">
       <button className="flex-1 py-4 bg-mint-600 text-white rounded-[24px] text-sm font-bold shadow-xl shadow-mint-100 hover:bg-mint-700 transition-all active:scale-95 flex items-center justify-center gap-2">
         <IoPrintOutline size={18} />
@@ -311,7 +311,7 @@ export default function ManagerTransactionsPage() {
         ]}
       />
 
-      {/* Top Controls Bar */}
+      {}
       <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-10 px-4">
         <div className="flex items-center gap-4 w-full md:w-auto">
           <div className="relative flex-1 md:w-80">
@@ -353,7 +353,7 @@ export default function ManagerTransactionsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 px-4">
-        {/* Main Card Grid */}
+        {}
         <div
           className={`transition-all duration-500 ${
             selectedId ? 'lg:col-span-8' : 'lg:col-span-12'
@@ -377,7 +377,7 @@ export default function ManagerTransactionsPage() {
           </div>
         </div>
 
-        {/* Right Detail Sidebar */}
+        {}
         {selectedTransaction && (
           <div className="lg:col-span-4 animate-in fade-in slide-in-from-right-8 duration-500">
             <div className="sticky top-4">

@@ -1,12 +1,12 @@
 import React from 'react'
 
+import { PageHeader } from '@/features/staff'
 import { LabStatusMetrics } from '@/features/sales/components/lab/LabStatusMetrics'
 import { LensSpecificationsCard } from '@/features/sales/components/lab/LensSpecificationsCard'
 import { ActiveLabOrdersTable } from '@/features/sales/components/lab/ActiveLabOrdersTable'
-import { PageHeader } from '@/features/staff'
 import { OrderPagination } from '@/features/sales/components/orders/OrderPagination'
-import { useSalesStaffLabOrders } from '@/features/sales/hooks/useSalesStaffInvoices'
 import { ExpediteRequestModal } from '@/features/sales/components/lab/ExpediteRequestModal'
+import { useSalesStaffLabOrders } from '@/features/sales/hooks'
 
 export default function SaleStaffLabStatusPage() {
   const [page, setPage] = React.useState(1)
@@ -21,7 +21,6 @@ export default function SaleStaffLabStatusPage() {
     return data?.pagination?.totalPages || 1
   }, [data, labOrders, page])
 
-  // Set first order as default selection when data loads
   React.useEffect(() => {
     if (labOrders.length > 0 && !selectedOrder) {
       setSelectedOrder(labOrders[0])

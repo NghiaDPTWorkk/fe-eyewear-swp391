@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { Card } from '@/shared/components'
-import { useRevenueStats } from '@/features/manager/hooks/useManagerReports'
+import { useRevenueStats } from '@/features/manager/hooks'
 import { formatPrice } from '@/shared/utils'
 
 export const Charts: React.FC = () => {
@@ -10,7 +10,7 @@ export const Charts: React.FC = () => {
 
   const trends = useMemo(() => {
     if (!revenueData?.rows) return []
-    // Take last 7 entries for a "Weekly Trend" look
+
     return revenueData.rows.slice(-7)
   }, [revenueData])
 
@@ -60,18 +60,18 @@ export const Charts: React.FC = () => {
                   key={i}
                   className="flex-1 flex flex-col items-center group relative h-full justify-end"
                 >
-                  {/* Tooltip */}
+                  {}
                   <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none font-bold">
                     {formatPrice(row.totalRevenue)}
                   </div>
 
-                  {/* Bar */}
+                  {}
                   <div
                     className="w-full max-w-[40px] bg-mint-100 rounded-t-xl transition-all group-hover:bg-mint-500 group-hover:shadow-lg group-hover:shadow-mint-100 cursor-pointer"
                     style={{ height: `${Math.max(height, 5)}%` }}
                   />
 
-                  {/* Label */}
+                  {}
                   <span className="mt-3 text-[10px] font-bold text-slate-400 uppercase tracking-tighter opacity-70 group-hover:opacity-100 group-hover:text-slate-600 group-hover:font-black transition-all">
                     {row.period.split('-').slice(-1)}
                   </span>

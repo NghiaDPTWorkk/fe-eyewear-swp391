@@ -25,7 +25,7 @@ export const RealtimeStatusBar: React.FC<RealtimeStatusBarProps> = ({
         className
       )}
     >
-      {/* Live indicator */}
+      {}
       <div className="flex items-center gap-1.5">
         <span className="relative flex h-2 w-2">
           <span
@@ -46,17 +46,17 @@ export const RealtimeStatusBar: React.FC<RealtimeStatusBarProps> = ({
         </span>
       </div>
 
-      {/* Divider */}
+      {}
       <span className="w-px h-3 bg-neutral-200" />
 
-      {/* Last updated */}
+      {}
       <div className="flex items-center gap-1 text-[10px] text-slate-400">
         <IoRadioButtonOnOutline size={10} className="text-slate-300" />
         <span>Updated: </span>
         <span className="font-semibold text-slate-500">{lastUpdatedLabel}</span>
       </div>
 
-      {/* Lock warning */}
+      {}
       {lockedCount > 0 && (
         <>
           <span className="w-px h-3 bg-neutral-200" />
@@ -69,7 +69,7 @@ export const RealtimeStatusBar: React.FC<RealtimeStatusBarProps> = ({
         </>
       )}
 
-      {/* Manual refresh */}
+      {}
       <button
         onClick={onRefresh}
         disabled={isRefreshing}

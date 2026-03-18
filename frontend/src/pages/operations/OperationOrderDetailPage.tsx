@@ -355,7 +355,9 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
             <IoArrowBack size={20} className="text-gray-600" />
           </button>
           <div className="min-w-0">
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight truncate">Order #{orderCode}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight truncate">
+              Order #{orderCode}
+            </h1>
             <p className="text-[10px] text-neutral-500 mt-1 font-medium tracking-widest uppercase opacity-80 italic">
               DETAILED ORDER INFORMATION
             </p>

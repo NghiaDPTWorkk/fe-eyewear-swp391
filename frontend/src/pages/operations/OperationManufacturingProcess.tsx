@@ -87,7 +87,8 @@ export default function OperationManufacturingProcess() {
           </button>
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-2 md:gap-3">
-              <IoSettingsOutline className="text-indigo-500 shrink-0" /> <span className="truncate">Lens Grinding & Mounting</span>
+              <IoSettingsOutline className="text-indigo-500 shrink-0" />{' '}
+              <span className="truncate">Lens Grinding & Mounting</span>
             </h1>
             <p className="text-[10px] text-neutral-500 mt-1 font-medium tracking-widest uppercase opacity-80 italic">
               MANUFACTURING WORKFLOW

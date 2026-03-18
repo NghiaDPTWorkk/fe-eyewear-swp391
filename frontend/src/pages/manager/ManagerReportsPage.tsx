@@ -1,6 +1,4 @@
 import React, { useState, useMemo } from 'react'
-import { Container } from '@/components'
-import { PageHeader } from '@/features/sales/components/common'
 import {
   IoTrendingUpOutline,
   IoBarChartOutline,
@@ -10,7 +8,10 @@ import {
   IoArrowBackCircleOutline,
   IoSearchOutline
 } from 'react-icons/io5'
-import { useRevenueStats, useReturnedOrders } from '@/features/manager/hooks/useManagerReports'
+
+import { Container } from '@/components'
+import { PageHeader } from '@/features/sales/components/common'
+import { useRevenueStats, useReturnedOrders } from '@/features/manager/hooks'
 import { formatPrice, formatDate } from '@/shared/utils'
 
 const ManagerReportMetricCard: React.FC<{
@@ -121,7 +122,7 @@ export default function ManagerReportsPage() {
         breadcrumbs={[{ label: 'Dashboard', path: '/manager/dashboard' }, { label: 'Reports' }]}
       />
 
-      {/* Metric Cards */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <ManagerReportMetricCard
           label="Total Revenue"
@@ -144,7 +145,7 @@ export default function ManagerReportsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Overall Sales Chart */}
+        {}
         <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl border-none shadow-sm ring-1 ring-neutral-100/50 relative">
           <div className="flex flex-col sm:flex-row justify-between items-start gap-6 mb-10">
             <div>
@@ -192,7 +193,7 @@ export default function ManagerReportsPage() {
                   <stop offset="95%" stopColor="#4ad7b0" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              {/* Grid Lines */}
+              {}
               {[30, 80, 130, 180].map((y) => (
                 <line
                   key={y}
@@ -206,7 +207,7 @@ export default function ManagerReportsPage() {
                 />
               ))}
 
-              {/* Area & Line */}
+              {}
               {chartInfo.path && (
                 <>
                   <path d={chartInfo.area} fill="url(#chartGradient)" stroke="none" />
@@ -218,7 +219,7 @@ export default function ManagerReportsPage() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
-                  {/* Data points */}
+                  {}
                   {chartInfo.points.map((p, i) => (
                     <g key={i} className="group/point">
                       <circle
@@ -246,7 +247,7 @@ export default function ManagerReportsPage() {
           </div>
         </div>
 
-        {/* Return Summary Card */}
+        {}
         <div className="lg:col-span-4 bg-white p-8 rounded-3xl border-none shadow-sm ring-1 ring-neutral-100/50 flex flex-col h-full">
           <div className="flex justify-between items-center mb-8">
             <p className="text-[12px] font-bold text-slate-400 tracking-wider uppercase leading-none">
@@ -308,7 +309,7 @@ export default function ManagerReportsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Returned Orders Table List */}
+        {}
         <div className="lg:col-span-12 bg-white rounded-3xl border-none shadow-sm ring-1 ring-neutral-100/50 overflow-hidden">
           <div className="p-6 border-b border-neutral-50 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>

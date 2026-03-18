@@ -28,7 +28,7 @@ export function VoiceDatePicker({
       (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition
     if (SpeechRecognition) {
       const recognition = new SpeechRecognition()
-      recognition.lang = 'vi-VN' // Set language to Vietnamese
+      recognition.lang = 'vi-VN'
       recognition.continuous = false
       recognition.interimResults = false
 

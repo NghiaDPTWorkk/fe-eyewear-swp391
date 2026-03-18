@@ -65,7 +65,9 @@ const SummaryCard: React.FC<{
         </div>
       </div>
       <div className="mt-4">
-        <h3 className="text-3xl font-bold text-gray-900 font-heading tracking-tight mb-4">{value}</h3>
+        <h3 className="text-3xl font-bold text-gray-900 font-heading tracking-tight mb-4">
+          {value}
+        </h3>
         <p className="text-[10px] font-medium text-neutral-400 capitalize">Updated just now</p>
       </div>
     </div>
@@ -112,7 +114,6 @@ export default function AdminUsersPage() {
           subtitle="Manage all registered customer accounts."
           breadcrumbs={[{ label: 'Dashboard', path: '/admin/dashboard' }, { label: 'Users' }]}
         />
-
       </div>
 
       {/* Summary Cards */}

@@ -1,17 +1,6 @@
-import { useNavigate } from 'react-router-dom'
-import { PATHS } from '@/routes/paths'
-import type { Voucher, VoucherPayload } from '@/shared/types'
-import { VoucherStatus } from '@/shared/utils/enums/voucher.enum'
-import {
-  useManagerVouchers,
-  useVoucherStats,
-  useCreateVoucher,
-  useDeleteVoucher
-} from '@/features/manager/hooks/useManagerVouchers'
-import { VoucherTable } from '@/components/layout/staff/manager-staff/voucher-table'
-import { VoucherAddition } from '@/components/layout/staff/manager-staff/voucher-addition/VoucherAddition'
-
+import { useState } from 'react'
 import { createPortal } from 'react-dom'
+import { useNavigate } from 'react-router-dom'
 import {
   IoAddOutline,
   IoTrashOutline,
@@ -24,11 +13,23 @@ import {
   IoChevronBackOutline,
   IoChevronForwardOutline
 } from 'react-icons/io5'
-import { useState } from 'react'
-import PageHeader from '@/features/staff/components/common/PageHeader'
+
+import { VoucherTable } from '@/components/layout/staff/manager-staff/voucher-table'
+import { VoucherAddition } from '@/components/layout/staff/manager-staff/voucher-addition/VoucherAddition'
 import ManagerVoucherSearch from '@/components/layout/staff/manager-staff/voucher-search/ManagerVoucherSearch'
 
-// ─── Filter tabs ──────────────────────────────────────────────────
+import {
+  useManagerVouchers,
+  useVoucherStats,
+  useCreateVoucher,
+  useDeleteVoucher
+} from '@/features/manager/hooks'
+import PageHeader from '@/features/staff/components/common/PageHeader'
+
+import { PATHS } from '@/routes/paths'
+import type { Voucher, VoucherPayload } from '@/shared/types'
+import { VoucherStatus } from '@/shared/utils/enums/voucher.enum'
+
 const FILTER_TABS = [
   { key: 'all', label: 'All Vouchers' },
   { key: VoucherStatus.ACTIVE, label: 'Active' },
@@ -41,7 +42,6 @@ type FilterKey = (typeof FILTER_TABS)[number]['key']
 export default function ManagerVouchersPage() {
   const navigate = useNavigate()
 
-  // ── List / filter state ──────────────────────────────────────────
   const [page, setPage] = useState(1)
   const LIMIT = 10
   const [statusFilter, setStatusFilter] = useState<FilterKey>('all')
@@ -71,11 +71,8 @@ export default function ManagerVouchersPage() {
         }
       : undefined)
 
-  // Use isFetching || isLoading for more responsive loading feedback
   const isDataLoading = isLoading || isFetching
 
-  // ── Modal state ───────────────────────────────────────────────────
-  // We only need local state for creating a new voucher, and deleting.
   const [showForm, setShowForm] = useState(false)
   const [deleteId, setDeleteId] = useState<string | null>(null)
 
@@ -83,7 +80,6 @@ export default function ManagerVouchersPage() {
     navigate(PATHS.MANAGER.VOUCHER_DETAIL(id))
   }
 
-  /** "New Voucher" button → open form in create mode */
   const handleOpenCreate = () => {
     setShowForm(true)
   }
@@ -92,7 +88,6 @@ export default function ManagerVouchersPage() {
     setShowForm(false)
   }
 
-  // ── Mutations ─────────────────────────────────────────────────────
   const createMutation = useCreateVoucher()
   const deleteMutation = useDeleteVoucher()
 
@@ -186,10 +181,9 @@ export default function ManagerVouchersPage() {
     }
   ]
 
-  // ── Render ────────────────────────────────────────────────────────
   return (
     <div className="animate-fade-in-up space-y-8">
-      {/* ── Header ──────────────────────────────────────────────── */}
+      {}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <PageHeader
           title="Vouchers"
@@ -202,7 +196,7 @@ export default function ManagerVouchersPage() {
         />
       </div>
 
-      {/* ── Stat cards ──────────────────────────────────────────── */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {metrics.map((m) => {
           const isActive = statusFilter === m.key
@@ -259,7 +253,7 @@ export default function ManagerVouchersPage() {
         })}
       </div>
 
-      {/* ── Filters ─────────────────────────────────────────────── */}
+      {}
       <div className="space-y-6">
         <div className="overflow-x-auto scroller-hide">
           <div className="flex items-center gap-2 p-1.5 bg-neutral-100/50 rounded-2xl w-fit border border-neutral-100">
@@ -362,7 +356,7 @@ export default function ManagerVouchersPage() {
         </div>
       </div>
 
-      {/* ── Table & Pagination Container ────────────────────────── */}
+      {}
       <div className="bg-white rounded-3xl border border-neutral-50/50 shadow-sm overflow-hidden">
         <VoucherTable
           vouchers={vouchers}
@@ -382,7 +376,7 @@ export default function ManagerVouchersPage() {
           onRowClick={(v) => handleRowClick(v._id)}
         />
 
-        {/* ── Pagination Footer ──────────────────────────────────── */}
+        {}
         {pagination && pagination.totalPages > 1 && (
           <div className="p-6 bg-white border-t border-neutral-50 flex items-center justify-between">
             <p className="text-xs font-medium text-slate-400">
@@ -398,8 +392,6 @@ export default function ManagerVouchersPage() {
               </button>
               <div className="flex gap-1">
                 {Array.from({ length: Math.min(pagination.totalPages, 5) }, (_, i) => {
-                  // Simple logic for showing pages near the current page
-                  // This can be improved to be more dynamic if needed
                   return i + 1
                 }).map((p) => (
                   <button
@@ -428,7 +420,7 @@ export default function ManagerVouchersPage() {
         )}
       </div>
 
-      {/* ── VoucherAddition form (Create only here) ───────────────── */}
+      {}
       <VoucherAddition
         isOpen={showForm}
         onClose={handleClose}
@@ -437,7 +429,7 @@ export default function ManagerVouchersPage() {
         isSaving={isSaving}
       />
 
-      {/* ── Delete confirm ───────────────────────────────────────── */}
+      {}
       {deleteId && (
         <DeleteModal
           isDeleting={isDeleting}
@@ -449,7 +441,6 @@ export default function ManagerVouchersPage() {
   )
 }
 
-// ─── DeleteModal ──────────────────────────────────────────────────
 function DeleteModal({
   isDeleting,
   onCancel,

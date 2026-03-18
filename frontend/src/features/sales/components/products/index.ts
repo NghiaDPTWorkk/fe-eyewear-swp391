@@ -1,2 +1,1 @@
-// Product management components
 export {}

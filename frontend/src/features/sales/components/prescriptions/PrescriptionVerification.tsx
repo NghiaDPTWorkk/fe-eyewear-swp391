@@ -3,8 +3,7 @@ import { toast } from 'react-hot-toast'
 import { IoCheckmark, IoClose } from 'react-icons/io5'
 import { useSearchParams } from 'react-router-dom'
 
-import { useSalesStaffAction } from '@/features/sales/hooks/useSalesStaffAction'
-import { useSalesStaffOrderDetail } from '@/features/sales/hooks/useSalesStaffInvoices'
+import { useSalesStaffAction, useSalesStaffOrderDetail } from '@/features/sales/hooks'
 import { useProfile } from '@/features/staff/hooks/useProfile'
 import { Button, ConfirmationModal } from '@/shared/components/ui-core'
 
@@ -52,18 +51,16 @@ export default function PrescriptionVerification({
   const { data: profileData } = useProfile()
   const [searchParams] = useSearchParams()
   const mode = searchParams.get('mode')
-  // We will compute isReadOnly dynamically after getting order status
+
   const isReadOnlyParams = mode === 'readonly'
 
   const { data: order, isLoading: loading, refetch } = useSalesStaffOrderDetail(orderId)
   const [rotation, setRotation] = useState(0)
   const [zoom, setZoom] = useState(100)
 
-  // Prescription Parameters State
   const [localParameters, setLocalParameters] = useState<PrescriptionParameters | null>(null)
   const [localNote, setLocalNote] = useState('')
 
-  // Confirmation Modal State
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const [confirmAction, setConfirmAction] = useState<'approve' | 'reject' | null>(null)
 
@@ -78,7 +75,6 @@ export default function PrescriptionVerification({
   }
 
   const handleConfirm = async () => {
-    // Priority: 1. Local changes, 2. Existing order data (parameters variable), 3. Default empty params
     const rawParams = localParameters ||
       parameters || {
         left: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
@@ -86,7 +82,6 @@ export default function PrescriptionVerification({
         PD: 64
       }
 
-    // Ensure all numeric fields are actual numbers (not strings)
     const finalParams = {
       ...rawParams,
       left: rawParams.left
@@ -108,7 +103,6 @@ export default function PrescriptionVerification({
       PD: Number(rawParams.PD) || 64
     }
 
-    // Always use what the user typed; fallback to existing note only if the user hasn't typed anything
     const finalNote = localNote !== '' ? localNote : ((parameters as any)?.note ?? '')
 
     const success = await approveOrder(orderId, { parameters: finalParams, note: finalNote })
@@ -171,7 +165,7 @@ export default function PrescriptionVerification({
 
   return (
     <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
-      {/* Status Badge */}
+      {}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm text-slate-500">
           <span className="font-normal">Order Status:</span>
@@ -199,7 +193,7 @@ export default function PrescriptionVerification({
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* Left Column (Main Content): Image & Data Entry */}
+        {}
         <div className="xl:col-span-2 space-y-4">
           <ImageViewer
             imageUrl={order.products?.[0]?.prescriptionImageUrl}
@@ -237,7 +231,7 @@ export default function PrescriptionVerification({
           />
         </div>
 
-        {/* Right Column: Information & Operations (Sidebar) */}
+        {}
         <div className="space-y-5">
           <OrderDetailsSidebar order={order} />
           <LabOperationsTimeline order={order} />

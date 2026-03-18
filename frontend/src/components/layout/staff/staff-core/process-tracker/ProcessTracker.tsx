@@ -34,7 +34,7 @@ export default function ProgressTracker({
           {steps.map((step, index) => {
             const isCompleted = index < activeStep
             const isActive = index === activeStep
-  
+
             return (
               <React.Fragment key={index}>
                 <ProgressTrackerItem

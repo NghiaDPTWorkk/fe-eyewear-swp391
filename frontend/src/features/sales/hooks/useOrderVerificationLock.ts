@@ -1,22 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useAuthStore } from '@/store/auth.store'
 
-/**
- * useOrderVerificationLock
- * ─────────────────────────────────────────────────────────────────
- * Chặn 2 staff verify cùng 1 đơn hàng cùng lúc.
- *
- * Cơ chế:
- *  1. BroadcastChannel  – đồng bộ giữa các tab trong CÙNG trình duyệt, cùng máy.
- *  2. localStorage      – persist lock để các tab mới mở cũng biết.
- *
- * Lưu ý: Nếu backend có hỗ trợ lock API thì nên tích hợp thêm phía server.
- */
-
 const CHANNEL_NAME = 'order_verification_locks'
-const LOCK_KEY_PREFIX = 'ovl_' // localStorage key = ovl_<orderId>
-const LOCK_TTL_MS = 60_000 // 60s TTL – auto-expire nếu tab bị kill
-const HEARTBEAT_INTERVAL = 15_000 // refresh lock mỗi 15s
+const LOCK_KEY_PREFIX = 'ovl_'
+const LOCK_TTL_MS = 60_000
+const HEARTBEAT_INTERVAL = 15_000
 
 type LockData = {
   sessionId: string
@@ -58,7 +46,7 @@ function removeLockFromStorage(orderId: string) {
 export type LockStatus = { locked: false } | { locked: true; staffName: string; lockedAt: number }
 
 export function useOrderVerificationLock(orderId: string) {
-  const staffId = SESSION_ID // fallback to session identifier
+  const staffId = SESSION_ID
   const staffName = useAuthStore(
     (s) => (s as any).profile?.name || (s as any).user?.name || 'Staff'
   )
@@ -68,7 +56,6 @@ export function useOrderVerificationLock(orderId: string) {
   const heartbeatRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const isOwnerRef = useRef(false)
 
-  // ── Resolve initial lock state from localStorage ────────────────────────────
   const refreshLockStatus = useCallback(() => {
     const existing = getLockFromStorage(orderId)
     if (!existing || existing.sessionId === SESSION_ID) {
@@ -78,7 +65,6 @@ export function useOrderVerificationLock(orderId: string) {
     }
   }, [orderId])
 
-  // ── BroadcastChannel setup ─────────────────────────────────────────────────
   useEffect(() => {
     if (!orderId) return
     if (typeof BroadcastChannel === 'undefined') return
@@ -112,7 +98,6 @@ export function useOrderVerificationLock(orderId: string) {
       }
     }
 
-    // Run initial check
     refreshLockStatus()
 
     return () => {
@@ -121,10 +106,9 @@ export function useOrderVerificationLock(orderId: string) {
     }
   }, [orderId, refreshLockStatus])
 
-  // ── Acquire lock ────────────────────────────────────────────────────────────
   const acquireLock = useCallback((): boolean => {
     const existing = getLockFromStorage(orderId)
-    // Already locked by someone else?
+
     if (existing && existing.sessionId !== SESSION_ID) {
       setLockStatus({ locked: true, staffName: existing.staffName, lockedAt: existing.lockedAt })
       return false
@@ -146,11 +130,10 @@ export function useOrderVerificationLock(orderId: string) {
       data: lockData
     } satisfies ChannelMessage)
 
-    setLockStatus({ locked: false }) // owner không thấy lock của chính mình
+    setLockStatus({ locked: false })
     return true
   }, [orderId, staffId, staffName])
 
-  // ── Release lock ────────────────────────────────────────────────────────────
   const releaseLock = useCallback(() => {
     if (!isOwnerRef.current) return
     removeLockFromStorage(orderId)
@@ -163,7 +146,6 @@ export function useOrderVerificationLock(orderId: string) {
     } satisfies ChannelMessage)
   }, [orderId])
 
-  // ── Heartbeat: refresh lock mỗi 15s để tránh expire ────────────────────────
   useEffect(() => {
     heartbeatRef.current = setInterval(() => {
       if (!isOwnerRef.current) return
@@ -185,20 +167,19 @@ export function useOrderVerificationLock(orderId: string) {
     }
   }, [orderId])
 
-  // ── Auto-release khi trang đóng / rời tab ──────────────────────────────────
   useEffect(() => {
     const handleUnload = () => releaseLock()
     window.addEventListener('beforeunload', handleUnload)
     return () => {
       window.removeEventListener('beforeunload', handleUnload)
-      // Also release when component unmounts (navigate away)
+
       if (isOwnerRef.current) releaseLock()
     }
   }, [releaseLock])
 
   return {
-    lockStatus, // { locked: false } | { locked: true, staffName, lockedAt }
-    acquireLock, // call on mount → returns false nếu đã bị lock
-    releaseLock // call on unmount / navigate away
+    lockStatus,
+    acquireLock,
+    releaseLock
   }
 }

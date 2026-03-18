@@ -8,7 +8,7 @@ export default function ManagerProfilePage() {
 
   return (
     <Container className="max-w-6xl mx-auto space-y-6 py-6 font-sans">
-      {/* Breadcrumb */}
+      {}
       <div className="flex items-center gap-2 text-sm mb-6 px-1">
         <Link
           to="/manager/dashboard"

@@ -1,4 +1,4 @@
-import { useSalesStaffOrderDetail } from '@/features/sales/hooks/useSalesStaffInvoices'
+import { useSalesStaffOrderDetail } from '@/features/sales/hooks'
 
 import {
   IoMailOutline,

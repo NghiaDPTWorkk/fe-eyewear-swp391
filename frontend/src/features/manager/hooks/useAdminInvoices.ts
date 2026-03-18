@@ -33,7 +33,6 @@ export function useAdminInvoices(page: number, limit: number, status?: string) {
       const invoiceData = apiData?.invoiceList || []
       const pagination = apiData?.pagination
 
-      // Enrich each invoice with order details (same approach as SaleStaff)
       const enrichedInvoices: EnrichedInvoice[] = await Promise.all(
         invoiceData.map(async (inv) => {
           try {
@@ -45,7 +44,6 @@ export function useAdminInvoices(page: number, limit: number, status?: string) {
             const ordersWithDetails = (
               await Promise.all(
                 orderIds.map(async (item) => {
-                  // If order already has type info, use it directly
                   if (typeof item === 'object' && item.type && item.type.length > 0) {
                     const isMfg = item.type.some((t: string) =>
                       String(t).includes(OrderType.MANUFACTURING)
@@ -58,7 +56,6 @@ export function useAdminInvoices(page: number, limit: number, status?: string) {
                     }
                   }
 
-                  // Otherwise fetch order detail
                   const orderId = (typeof item === 'string' ? item : item.id || item._id) as string
                   if (!orderId) return null
 

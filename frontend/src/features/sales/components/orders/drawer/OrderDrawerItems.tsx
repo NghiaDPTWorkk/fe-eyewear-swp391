@@ -25,7 +25,6 @@ export const OrderDrawerItems: React.FC<OrderDrawerItemsProps> = ({ order }) => 
                   alt={p.product.product_name || 'Product'}
                   className="w-full h-full object-cover"
                   onError={(e) => {
-                    // Fallback to placeholder on error
                     e.currentTarget.style.display = 'none'
                     const parent = e.currentTarget.parentElement
                     if (parent) {

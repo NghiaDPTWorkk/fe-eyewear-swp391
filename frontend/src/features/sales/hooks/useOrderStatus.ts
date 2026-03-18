@@ -1,4 +1,5 @@
 import { useCallback } from 'react'
+import { OrderStatus } from '@/shared/utils/enums/order.enum'
 
 export interface SimpleStatus {
   label: 'REJECTED' | 'ACCEPTED' | 'NEED VERIFY'
@@ -7,10 +8,11 @@ export interface SimpleStatus {
 
 export const useOrderStatus = () => {
   const getSimplifiedStatus = useCallback((statusStr: string): SimpleStatus => {
-    const status = (statusStr || 'PENDING').toUpperCase()
+    const status = (statusStr || OrderStatus.PENDING).toUpperCase()
 
-    // List of rejected states
-    const isRejected = ['REJECT', 'REJECTED', 'CANCELED'].includes(status)
+    const isRejected = [OrderStatus.REJECT, OrderStatus.REJECTED, OrderStatus.CANCELED].includes(
+      status as OrderStatus
+    )
 
     if (isRejected) {
       return {
@@ -19,22 +21,21 @@ export const useOrderStatus = () => {
       }
     }
 
-    // List of accepted/verified states
     const isAccepted = [
-      'VERIFIED',
-      'APPROVE',
-      'APPROVED',
-      'WAITING_ASSIGN',
-      'ASSIGNED',
-      'MAKING',
-      'PACKAGING',
-      'COMPLETED',
-      'ONBOARD',
-      'DELIVERED',
-      'DELIVERING',
-      'SHIPPED',
-      'PROCESSING'
-    ].includes(status)
+      OrderStatus.VERIFIED,
+      OrderStatus.APPROVE,
+      OrderStatus.APPROVED,
+      OrderStatus.WAITING_ASSIGN,
+      OrderStatus.ASSIGNED,
+      OrderStatus.MAKING,
+      OrderStatus.PACKAGING,
+      OrderStatus.COMPLETED,
+      OrderStatus.ONBOARD,
+      OrderStatus.DELIVERED,
+      OrderStatus.DELIVERING,
+      OrderStatus.SHIPPED,
+      OrderStatus.PROCESSING
+    ].includes(status as OrderStatus)
 
     if (isAccepted) {
       return {
@@ -43,7 +44,6 @@ export const useOrderStatus = () => {
       }
     }
 
-    // Default: Needs manual verification
     return {
       label: 'NEED VERIFY',
       className: 'bg-amber-50 text-amber-600 border-amber-100'

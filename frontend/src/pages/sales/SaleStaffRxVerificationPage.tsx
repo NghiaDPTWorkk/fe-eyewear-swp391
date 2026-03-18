@@ -4,8 +4,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 import { PageHeader } from '@/features/sales/components/common'
 import PrescriptionVerification from '@/features/sales/components/prescriptions/PrescriptionVerification'
-import { useSalesStaffOrderDetail } from '@/features/sales/hooks/useSalesStaffInvoices'
-import { useOrderVerificationLock } from '@/features/sales/hooks/useOrderVerificationLock'
+import { useSalesStaffOrderDetail, useOrderVerificationLock } from '@/features/sales/hooks'
 import { Button } from '@/shared/components/ui-core'
 
 export default function SaleStaffRxVerificationPage() {
@@ -17,7 +16,6 @@ export default function SaleStaffRxVerificationPage() {
 
   const { lockStatus, acquireLock, releaseLock } = useOrderVerificationLock(orderId || '')
 
-  // Try to acquire lock when this page mounts
   useEffect(() => {
     if (!orderId) return
     const acquired = acquireLock()
@@ -27,10 +25,8 @@ export default function SaleStaffRxVerificationPage() {
     return () => {
       releaseLock()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderId])
 
-  // Also watch for lockStatus changes (another tab claimed the lock after we entered)
   useEffect(() => {
     if (lockStatus.locked) {
       setLockDenied(true)
@@ -57,7 +53,6 @@ export default function SaleStaffRxVerificationPage() {
     window.dispatchEvent(new CustomEvent('orderUpdated'))
   }
 
-  // ── Blocked overlay ──────────────────────────────────────────────────────────
   if (lockDenied) {
     const blockerName = lockStatus.locked ? lockStatus.staffName : 'Another staff'
     return (
@@ -80,7 +75,7 @@ export default function SaleStaffRxVerificationPage() {
           />
         </div>
 
-        {/* Lock Banner */}
+        {}
         <div className="rounded-2xl border border-amber-200 bg-amber-50/60 p-8 flex flex-col items-center gap-5 text-center shadow-sm">
           <div className="w-16 h-16 rounded-2xl bg-amber-100 flex items-center justify-center shadow-inner">
             <IoLockClosedOutline size={32} className="text-amber-600" />
@@ -106,7 +101,6 @@ export default function SaleStaffRxVerificationPage() {
     )
   }
 
-  // ── Normal view ──────────────────────────────────────────────────────────────
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
@@ -127,7 +121,7 @@ export default function SaleStaffRxVerificationPage() {
         />
       </div>
 
-      {/* Active lock indicator */}
+      {}
       <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-mint-50 border border-mint-100 w-fit text-mint-700">
         <IoLockClosedOutline size={14} />
         <span className="text-xs font-semibold">You are currently verifying this order</span>

@@ -7,8 +7,7 @@ import type { AdminInvoiceListItem } from '@/shared/types'
 
 import type { AdminAccount } from '@/shared/types/admin-account.types'
 import { useAdminOrderDetails } from '@/shared/hooks/useAdminOrderDetails'
-import { useGetAdminsByRole } from '@/features/manager/hooks/useGetAdminsByRole'
-import { useAssignOrderStaff } from '@/features/manager/hooks/useAssignOrderStaff'
+import { useGetAdminsByRole, useAssignOrderStaff } from '@/features/manager/hooks'
 import { isManufacturingOrder } from '@/shared/types/order.types'
 
 function getInvoiceStatusBadgeClass(status: string) {

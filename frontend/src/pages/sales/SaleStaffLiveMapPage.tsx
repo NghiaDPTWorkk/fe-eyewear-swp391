@@ -9,6 +9,7 @@ import {
   IoChatbubble,
   IoInformationCircle
 } from 'react-icons/io5'
+
 import { Button, Card } from '@/components'
 
 export default function SaleStaffLiveMapPage() {
@@ -16,7 +17,6 @@ export default function SaleStaffLiveMapPage() {
   const navigate = useNavigate()
   const [eta] = useState('2 hours 15 mins')
 
-  // Mock simulation of movement
   const [progress, setProgress] = useState(65)
 
   useEffect(() => {
@@ -28,11 +28,11 @@ export default function SaleStaffLiveMapPage() {
 
   return (
     <div className="relative w-full h-screen bg-neutral-100 overflow-hidden flex flex-col">
-      {/* Map Background Layer (Mock) */}
+      {}
       <div className="absolute inset-0 z-0">
-        {/* In a real app, this would be <GoogleMap /> */}
+        {}
         <div className="w-full h-full bg-[#cad2d3] relative opacity-60">
-          {/* Mock Map Texture/Grid */}
+          {}
           <div
             className="absolute inset-0"
             style={{
@@ -41,7 +41,7 @@ export default function SaleStaffLiveMapPage() {
             }}
           ></div>
 
-          {/* Route Path (SVG) */}
+          {}
           <svg className="absolute inset-0 w-full h-full pointer-events-none">
             <path
               d="M 200,500 Q 400,300 800,200 T 1200,300"
@@ -51,14 +51,14 @@ export default function SaleStaffLiveMapPage() {
               strokeDasharray="10,5"
               className="drop-shadow-lg"
             />
-            {/* Moving Plane Icon along the path - simplistic positioning for demo */}
+            {}
             <g style={{ transform: 'translate(750px, 210px)' }}>
               <circle r="12" fill="#10b981" className="animate-ping opacity-75" />
               <circle r="6" fill="white" stroke="#10b981" strokeWidth="2" />
             </g>
           </svg>
 
-          {/* Landmarks mock locations */}
+          {}
           <div className="absolute left-[200px] top-[500px] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
             <div className="w-4 h-4 rounded-full bg-gray-800 border-2 border-white shadow-lg"></div>
             <span className="mt-1 text-xs font-semibold text-gray-700 bg-white/80 px-2 py-0.5 rounded shadow-sm">
@@ -77,7 +77,7 @@ export default function SaleStaffLiveMapPage() {
         </div>
       </div>
 
-      {/* Top Floating Header */}
+      {}
       <div className="relative z-10 px-6 py-4 pointer-events-none">
         <div className="bg-white/90 backdrop-blur-md shadow-lg rounded-2xl p-4 flex justify-between items-center max-w-5xl mx-auto pointer-events-auto border border-white/50">
           <div className="flex items-center gap-4">
@@ -112,10 +112,10 @@ export default function SaleStaffLiveMapPage() {
         </div>
       </div>
 
-      {/* Bottom Floating Info Card */}
+      {}
       <div className="mt-auto relative z-10 p-6 pointer-events-none">
         <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 pointer-events-auto">
-          {/* Shipment Status Card */}
+          {}
           <Card className="col-span-2 p-6 rounded-2xl shadow-xl border-0 bg-white/95 backdrop-blur-sm">
             <div className="flex justify-between items-start mb-6">
               <div>
@@ -127,7 +127,7 @@ export default function SaleStaffLiveMapPage() {
               <IoCube className="text-emerald-100 text-4xl" />
             </div>
 
-            {/* Progress Bar */}
+            {}
             <div className="mb-8">
               <div className="flex justify-between text-xs font-semibold text-gray-500 mb-2">
                 <span>Milan (Start)</span>
@@ -143,7 +143,7 @@ export default function SaleStaffLiveMapPage() {
               </div>
             </div>
 
-            {/* Timeline Stepper */}
+            {}
             <div className="grid grid-cols-4 gap-2">
               <div className="flex flex-col gap-2">
                 <div className="h-1 w-full bg-emerald-500 rounded-full"></div>
@@ -170,7 +170,7 @@ export default function SaleStaffLiveMapPage() {
             </div>
           </Card>
 
-          {/* Courier Info Card */}
+          {}
           <Card className="p-6 rounded-2xl shadow-xl border-0 bg-white/95 backdrop-blur-sm flex flex-col justify-between">
             <div>
               <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">
@@ -209,12 +209,12 @@ export default function SaleStaffLiveMapPage() {
             </div>
 
             <div className="mt-6 flex gap-3">
-              <Button variant="outline" className="flex-1 border-gray-200 hover:bg-gray-50">
+              <button className="flex-1 px-4 py-2 border border-gray-200 rounded-xl hover:bg-gray-50 transition flex items-center justify-center">
                 <IoChatbubble className="mr-2" /> Message
-              </Button>
-              <Button className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white">
+              </button>
+              <button className="flex-1 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl transition flex items-center justify-center">
                 <IoCall className="mr-2" /> Call
-              </Button>
+              </button>
             </div>
           </Card>
         </div>

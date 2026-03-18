@@ -1,7 +1,3 @@
-/**
- * CustomerCard Component
- * Displays individual customer information in a card format
- */
 import { Card } from '@/components'
 import { IoEllipsisVertical, IoCallOutline, IoMailOutline, IoLinkOutline } from 'react-icons/io5'
 

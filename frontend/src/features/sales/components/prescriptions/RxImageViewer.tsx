@@ -1,8 +1,3 @@
-/**
- * RxImageViewer Component
- * Left panel of Rx comparison - displays uploaded prescription image.
- * Includes zoom and rotate controls.
- */
 import { useState } from 'react'
 import { Card } from '@/components'
 import { IoAdd, IoRemove, IoRefresh, IoEyeOutline } from 'react-icons/io5'
@@ -17,7 +12,7 @@ export default function RxImageViewer({ imageUrl }: RxImageViewerProps) {
 
   return (
     <Card className="p-0 overflow-hidden h-[500px] flex flex-col border border-neutral-200 shadow-sm">
-      {/* Toolbar */}
+      {}
       <div className="flex justify-between items-center p-4 border-b border-neutral-100 bg-gray-50/50">
         <h3 className="font-semibold text-gray-900 text-sm uppercase tracking-wider flex items-center gap-2">
           <IoEyeOutline /> Uploaded Prescription
@@ -48,7 +43,7 @@ export default function RxImageViewer({ imageUrl }: RxImageViewerProps) {
         </div>
       </div>
 
-      {/* Image Display */}
+      {}
       <div className="flex-1 bg-neutral-100/50 flex items-center justify-center relative overflow-hidden p-8">
         <img
           src={imageUrl}

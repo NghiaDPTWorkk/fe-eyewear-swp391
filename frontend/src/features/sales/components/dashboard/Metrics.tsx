@@ -1,7 +1,3 @@
-/**
- * Metrics Component
- * Displays key performance metrics for the dashboard
- */
 import type { ReactNode } from 'react'
 import {
   IoClipboardOutline,

@@ -1,8 +1,3 @@
-/**
- * RxDataPanel Component
- * Right panel of Rx comparison - displays user-entered prescription data.
- * Shows OD (right eye) and OS (left eye) values.
- */
 import { Card } from '@/components'
 import { IoEyeOutline } from 'react-icons/io5'
 
@@ -17,10 +12,9 @@ interface RxValues {
 interface RxDataPanelProps {
   odData: RxValues
   osData: RxValues
-  children?: React.ReactNode // For action buttons slot
+  children?: React.ReactNode
 }
 
-// Reusable row for displaying Rx values
 function RxValueRow({
   data,
   label,

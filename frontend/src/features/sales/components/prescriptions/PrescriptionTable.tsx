@@ -1,7 +1,3 @@
-/**
- * PrescriptionTable Component
- * Displays prescription orders with lab status
- */
 import { Card, Button } from '@/components'
 import {
   IoFilter,

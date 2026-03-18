@@ -131,7 +131,9 @@ const SummaryCard: React.FC<{
         </div>
       </div>
       <div className="mt-4">
-        <h3 className="text-3xl font-bold text-gray-900 font-heading tracking-tight mb-4">{value}</h3>
+        <h3 className="text-3xl font-bold text-gray-900 font-heading tracking-tight mb-4">
+          {value}
+        </h3>
         <p className="text-[10px] font-medium text-neutral-400 capitalize whitespace-nowrap">
           Updated just now
         </p>

@@ -1,7 +1,3 @@
-/**
- * Custom hook for SaleStaff Returns management
- * Handles return selection and detail view
- */
 import { useState, useCallback } from 'react'
 
 interface UseReturnsReturn {

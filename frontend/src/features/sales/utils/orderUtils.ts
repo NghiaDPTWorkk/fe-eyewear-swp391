@@ -1,10 +1,6 @@
 import { OrderType } from '@/shared/utils/enums/order.enum'
 import type { Order } from '../types'
 
-/**
- * Transforms raw API order/invoice data into a standardized Order object.
- */
-
 export const transformOrder = (ord: any, inv?: any): Order => {
   const orderId = ord.id || ord._id
   const invoiceId = inv?.id || inv?._id || ord.invoiceId || ord.invoice?._id
@@ -44,9 +40,9 @@ export const transformOrder = (ord: any, inv?: any): Order => {
     isPrescription: ord.type?.includes(OrderType.MANUFACTURING) || ord.isPrescription || false,
     products: ord.products || ord.orderItems || [],
     invoice: inv || ord.invoice,
-    // Note: lấy từ order trước, fallback sang invoice note
+
     note: ord.note || ord.orderNote || inv?.note || inv?.orderNote || ord.invoice?.note || '',
-    // Email: thử nhiều paths khác nhau trong response của backend
+
     customerEmail:
       ord.customerEmail ||
       inv?.email ||
@@ -56,25 +52,19 @@ export const transformOrder = (ord: any, inv?: any): Order => {
       ord.invoice?.email ||
       ord.invoice?.customer?.email ||
       '',
-    // staffNote: note của staff khi approve order (nằm trong order)
+
     staffNote: ord.staffNote || '',
-    // rejectedNote: lý do từ chối (nằm trong invoice)
+
     rejectedNote: inv?.rejectedNote || ord.invoice?.rejectedNote || ''
   }
 }
 
-/**
- * Determines the order type label for UI display.
- */
 export const getOrderTypeLabel = (order: Order): 'Prescription' | 'Pre-order' | 'Regular' => {
   if (order.isPrescription || order.type?.includes(OrderType.MANUFACTURING)) return 'Prescription'
   if (order.type?.includes(OrderType.PRE_ORDER)) return 'Pre-order'
   return 'Regular'
 }
 
-/**
- * Checks if an order is verified (for Prescription orders).
- */
 export const isOrderVerified = (order: Order): boolean => {
   return [
     'VERIFIED',
@@ -93,9 +83,6 @@ export const isOrderVerified = (order: Order): boolean => {
   ].includes(order.status.toUpperCase())
 }
 
-/**
- * Checks if an order can be approved.
- */
 export const canApproveOrder = (order: Order): boolean => {
   return (
     order.status === 'WAITING_ASSIGN' || order.status === 'DEPOSITED' || order.status === 'PENDING'

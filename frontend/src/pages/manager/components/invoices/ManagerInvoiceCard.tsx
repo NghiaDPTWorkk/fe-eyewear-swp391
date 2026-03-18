@@ -9,9 +9,11 @@ import type {
 } from '@/shared/types/admin-order.types'
 import type { AdminAccount } from '@/shared/types/admin-account.types'
 import { orderAdminService } from '@/shared/services/admin/orderService'
-import { useGetAdminsByRole } from '@/features/manager/hooks/useGetAdminsByRole'
-import { useAssignOrderStaff } from '@/features/manager/hooks/useAssignOrderStaff'
-import { useAssignLabeling } from '@/features/manager/hooks/useAssignLabeling'
+import {
+  useGetAdminsByRole,
+  useAssignOrderStaff,
+  useAssignLabeling
+} from '@/features/manager/hooks'
 import { isManufacturingOrder } from '@/shared/types/order.types'
 import ConfirmationModal from '@/shared/components/ui/ConfirmationModal'
 import { AxiosError } from 'axios'
@@ -228,7 +230,7 @@ export default function ManagerInvoiceCard({
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Invoice Main Summary Card */}
+      {}
       <div className="rounded-3xl border border-neutral-100 bg-white shadow-sm p-6">
         <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-8">
           <div>
@@ -442,7 +444,7 @@ export default function ManagerInvoiceCard({
                                 res.message || 'The labeling worker has been successfully assigned.'
                               )
                               onRefetch?.()
-                              // Clear staff after success
+
                               setSelectedLabelingStaff('')
                             })
                             .catch((err) => handleError(err, 'Assign Labeling Worker'))
@@ -465,7 +467,7 @@ export default function ManagerInvoiceCard({
         </div>
       </div>
 
-      {/* Linked Orders Section */}
+      {}
       <div className="space-y-4">
         <h3 className="px-2 text-xs font-bold text-neutral-400 uppercase tracking-widest">
           Linked Orders Detail

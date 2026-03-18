@@ -59,7 +59,9 @@ export default function OperationAllOrdersPage() {
       <div className="mb-4">
         <BreadcrumbPath paths={['Dashboard', 'All Orders']} />
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">Order List</h1>
-        <p className="text-sm md:text-base text-gray-500 mt-1">Manage the entire database of orders in the system.</p>
+        <p className="text-sm md:text-base text-gray-500 mt-1">
+          Manage the entire database of orders in the system.
+        </p>
       </div>
 
       <FilterButtonList

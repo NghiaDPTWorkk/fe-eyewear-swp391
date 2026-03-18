@@ -4,11 +4,7 @@ import { IoCreateOutline, IoTrashOutline, IoInformationCircleOutline } from 'rea
 import PageHeader from '@/features/staff/components/common/PageHeader'
 import type { Voucher, VoucherPayload } from '@/shared/types'
 
-import {
-  useVoucherDetail,
-  useUpdateVoucher,
-  useDeleteVoucher
-} from '@/features/manager/hooks/useManagerVouchers'
+import { useVoucherDetail, useUpdateVoucher, useDeleteVoucher } from '@/features/manager/hooks'
 import { VoucherAddition } from '@/components/layout/staff/manager-staff/voucher-addition/VoucherAddition'
 import VoucherViewAllDetail from '@/components/layout/staff/manager-staff/voucher-view-all-detail/VoucherViewAllDetail'
 import { PATHS } from '@/routes/paths'
@@ -19,7 +15,6 @@ export default function ManagerVoucherDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
 
-  // ── Queries / Mutations ──────────────────────────────────────────
   const { data: detailData, isLoading, isError } = useVoucherDetail(id || null)
   const updateMutation = useUpdateVoucher()
   const deleteMutation = useDeleteVoucher()
@@ -32,11 +27,9 @@ export default function ManagerVoucherDetail() {
     }
   }, [detailData])
 
-  // ── Local state ──────────────────────────────────────────────────
   const [showEditForm, setShowEditForm] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
 
-  // ── Handlers ──────────────────────────────────────────────────────
   const handleBack = () => {
     navigate(PATHS.MANAGER.VOUCHERS)
   }
@@ -79,7 +72,6 @@ export default function ManagerVoucherDetail() {
     })
   }
 
-  // ── Render ────────────────────────────────────────────────────────
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -114,7 +106,7 @@ export default function ManagerVoucherDetail() {
 
   return (
     <div className="animate-fade-in-up space-y-8 max-w-5xl mx-auto pb-24 relative">
-      {/* ── Header Area ────────────────────────────────────────── */}
+      {}
       <PageHeader
         title={`Voucher: ${v.code}`}
         subtitle={v.name || 'Voucher details and configuration'}
@@ -125,10 +117,10 @@ export default function ManagerVoucherDetail() {
         ]}
       />
 
-      {/* ── All Voucher Detail View Area (Aggregated) ───────────── */}
+      {}
       <VoucherViewAllDetail voucher={v} statusConfig={st} />
 
-      {/* ── Footer Actions: Permanent Placement ────────────────── */}
+      {}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-xl px-4">
         <div className="bg-white/90 backdrop-blur-xl border border-slate-200 shadow-2xl p-3 rounded-[1rem] flex items-center justify-between gap-3 animate-in fade-in slide-in-from-bottom-4 duration-700">
           <button
@@ -149,7 +141,7 @@ export default function ManagerVoucherDetail() {
         </div>
       </div>
 
-      {/* ── Modals ──────────────────────────────────────────────── */}
+      {}
 
       <VoucherAddition
         isOpen={showEditForm}

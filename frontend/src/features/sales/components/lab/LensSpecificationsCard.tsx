@@ -29,13 +29,11 @@ export const LensSpecificationsCard: React.FC<LensSpecificationsCardProps> = ({
   const orderData = selectedOrder.order
   const firstProduct = orderData?.products?.[0]
 
-  // Fix: parameters is a sibling of lens, not a property of lens
   const parameters = firstProduct?.parameters || firstProduct?.lens?.parameters || {}
 
   const productSku = firstProduct?.product?.sku
   const lensSku = firstProduct?.lens?.sku
 
-  // Logic to determine if it's a Lens-only product or has both
   const isLensOrder = productSku?.startsWith('LENS')
   const displayFrame = isLensOrder ? 'N/A' : productSku || 'N/A'
   const displayLens = isLensOrder ? productSku : lensSku || 'N/A'

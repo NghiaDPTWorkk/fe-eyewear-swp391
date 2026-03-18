@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 
-/** Polling interval khi tab active (ms) */
-const POLL_INTERVAL_MS = 15_000 // 15 giây
+const POLL_INTERVAL_MS = 15_000
 
 export interface RealtimeState {
   lastUpdatedAt: Date | null
@@ -23,10 +22,9 @@ export function useSalesStaffRealtime() {
   const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const tickTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const isActiveRef = useRef(true)
-  // Ref guard to prevent concurrent refreshes (avoids stale closure in interval)
+
   const isRefreshingRef = useRef(false)
 
-  // ── Refresh function ────────────────────────────────────────────────────────
   const refresh = useCallback(async () => {
     if (isRefreshingRef.current) return
     isRefreshingRef.current = true
@@ -48,26 +46,22 @@ export function useSalesStaffRealtime() {
     }
   }, [queryClient])
 
-  // ── Polling setup ───────────────────────────────────────────────────────────
   useEffect(() => {
     const handleVisibilityChange = () => {
       isActiveRef.current = document.visibilityState === 'visible'
       if (isActiveRef.current) {
-        // Tab vừa active lại → refresh ngay
         refresh()
       }
     }
 
     document.addEventListener('visibilitychange', handleVisibilityChange)
 
-    // Bắt đầu polling
     pollTimerRef.current = setInterval(() => {
       if (isActiveRef.current) {
         refresh()
       }
     }, POLL_INTERVAL_MS)
 
-    // Initial update timestamp
     setState((prev) => ({ ...prev, lastUpdatedAt: new Date() }))
 
     return () => {
@@ -76,7 +70,6 @@ export function useSalesStaffRealtime() {
     }
   }, [refresh])
 
-  // ── Tick counter: "X giây trước" ────────────────────────────────────────────
   useEffect(() => {
     tickTimerRef.current = setInterval(() => {
       setState((prev) => {
@@ -91,7 +84,6 @@ export function useSalesStaffRealtime() {
     }
   }, [])
 
-  // ── Formatted last updated string ──────────────────────────────────────────
   const getLastUpdatedLabel = useCallback((): string => {
     if (!state.lastUpdatedAt) return 'Never'
     const s = state.secondsSinceUpdate

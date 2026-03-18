@@ -1,7 +1,3 @@
-/**
- * RxOrderTable Component
- * Table displaying Rx orders pending verification.
- */
 import { IoGlassesOutline, IoEyeOutline } from 'react-icons/io5'
 
 import { Card, Button } from '@/components'
@@ -10,7 +6,6 @@ import { TYPOGRAPHY } from '../../constants/saleStaffDesignSystem'
 import Pagination from '../common/Pagination'
 import StatusBadge from '../common/StatusBadge'
 
-// Mock data
 const RX_ORDERS = [
   {
     id: 'ORD-2023-001',
@@ -115,7 +110,7 @@ export default function RxOrderTable({ onSelectOrder }: RxOrderTableProps) {
                     </div>
                   </div>
                 </td>
-                {/* OD values */}
+                {}
                 {['sph', 'cyl', 'axis', 'add', 'pd'].map((key) => (
                   <td
                     key={`od-${key}`}
@@ -124,7 +119,7 @@ export default function RxOrderTable({ onSelectOrder }: RxOrderTableProps) {
                     {order.od[key as keyof typeof order.od]}
                   </td>
                 ))}
-                {/* OS values */}
+                {}
                 {['sph', 'cyl', 'axis', 'add', 'pd'].map((key) => (
                   <td
                     key={`os-${key}`}

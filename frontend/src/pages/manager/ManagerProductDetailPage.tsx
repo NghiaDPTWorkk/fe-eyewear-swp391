@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Container } from '@/components'
 import { PageHeader } from '@/features/sales/components/common'
-import { useAdminProductDetail } from '@/features/manager/hooks/useAdminProducts'
+import { useAdminProductDetail } from '@/features/manager/hooks'
 import {
   IoArrowBackOutline,
   IoCubeOutline,
@@ -23,7 +23,6 @@ import { ENDPOINTS } from '@/api/endpoints'
 import { toast } from 'react-hot-toast'
 import { ConfirmationModal } from '@/shared/components/ui-core'
 
-// ─── Format price ───
 function formatPrice(price: number) {
   if (price >= 1_000_000) {
     return new Intl.NumberFormat('vi-VN').format(price) + '₫'
@@ -31,7 +30,6 @@ function formatPrice(price: number) {
   return '$' + price.toFixed(2)
 }
 
-// ─── Gender display ───
 function genderLabel(g: string) {
   switch (g) {
     case 'M':
@@ -125,7 +123,7 @@ export default function ManagerProductDetailPage() {
           ]}
         />
 
-        {/* Action buttons */}
+        {}
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/manager/products')}
@@ -152,10 +150,10 @@ export default function ManagerProductDetailPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* ─── LEFT: Image Gallery ─── */}
+          {}
           <div className="lg:col-span-5">
             <div className="bg-white rounded-3xl ring-1 ring-neutral-100/50 shadow-sm overflow-hidden">
-              {/* Main Image */}
+              {}
               <div className="relative aspect-square bg-neutral-50 flex items-center justify-center overflow-hidden">
                 {currentImg ? (
                   <img
@@ -171,7 +169,7 @@ export default function ManagerProductDetailPage() {
                   <IoCubeOutline size={80} className="text-neutral-200" />
                 )}
 
-                {/* Image nav arrows */}
+                {}
                 {images.length > 1 && (
                   <>
                     <button
@@ -189,7 +187,7 @@ export default function ManagerProductDetailPage() {
                   </>
                 )}
 
-                {/* Image counter */}
+                {}
                 {images.length > 1 && (
                   <div className="absolute bottom-3 right-3 px-2.5 py-1 bg-black/50 backdrop-blur-sm rounded-lg text-[10px] font-semibold text-white">
                     {imgIdx + 1} / {images.length}
@@ -197,7 +195,7 @@ export default function ManagerProductDetailPage() {
                 )}
               </div>
 
-              {/* Thumbnail strip */}
+              {}
               {images.length > 1 && (
                 <div className="flex gap-2 p-4">
                   {images.map((img, idx) => (
@@ -218,9 +216,9 @@ export default function ManagerProductDetailPage() {
             </div>
           </div>
 
-          {/* ─── RIGHT: Product Info ─── */}
+          {}
           <div className="lg:col-span-7 space-y-6">
-            {/* Price Card */}
+            {}
             <div className="bg-white rounded-3xl ring-1 ring-neutral-100/50 shadow-sm p-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
@@ -248,7 +246,7 @@ export default function ManagerProductDetailPage() {
                 </div>
               </div>
 
-              {/* Quick info */}
+              {}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-neutral-50">
                 <div>
                   <p className="text-[11px] font-medium text-slate-400">Total Variants</p>
@@ -296,7 +294,7 @@ export default function ManagerProductDetailPage() {
               </div>
             </div>
 
-            {/* Specifications Card */}
+            {}
             {spec && (
               <div className="bg-white rounded-3xl ring-1 ring-neutral-100/50 shadow-sm p-6">
                 <div className="flex items-center gap-2 mb-5">
@@ -348,7 +346,7 @@ export default function ManagerProductDetailPage() {
               </div>
             )}
 
-            {/* Variants Card */}
+            {}
             <div className="bg-white rounded-3xl ring-1 ring-neutral-100/50 shadow-sm p-6">
               <div className="flex items-center gap-2 mb-5">
                 <div className="p-2 rounded-xl bg-purple-50 text-purple-600">
@@ -451,7 +449,6 @@ export default function ManagerProductDetailPage() {
   )
 }
 
-// ─── Spec Item Component ───
 function SpecItem({ label, value }: { label: string; value: string }) {
   return (
     <div className="p-3 rounded-xl bg-neutral-50 border border-neutral-100">

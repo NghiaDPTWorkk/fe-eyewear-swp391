@@ -1,7 +1,3 @@
-/**
- * ReturnsTable Component
- * Displays return requests with status and actions
- */
 import { Card, Button } from '@/components'
 import { IoChevronForward, IoChevronBackOutline, IoChevronForwardOutline } from 'react-icons/io5'
 

@@ -10,7 +10,7 @@ import {
 import toast from 'react-hot-toast'
 import { useQueryClient, useQuery } from '@tanstack/react-query'
 import { productsService } from '@/features/staff/services/products.service'
-import type { OrderResponse, OrderProductItem, LensParameters } from '@/shared/types'
+import type { OrderResponse, OrderProductItem, LensParameters, ProductType } from '@/shared/types'
 import LensNormalOrder from '@/components/layout/staff/staff-core/technical-detail/LensNormalOrder'
 import LensSpecifications from '@/components/layout/staff/staff-core/technical-detail/LensSpecifications'
 import FrameSpecifications from '@/components/layout/staff/staff-core/technical-detail/FrameSpecifications'
@@ -249,11 +249,7 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
   }
 
   // Lấy data từ response
-  const productType = (productVariantApiResponse as any)?.data?.productDetail?.type as
-    | 'frame'
-    | 'sunglass'
-    | 'lens'
-    | undefined
+  const productType = (productVariantApiResponse as any)?.data?.productDetail?.type as ProductType
   const variantOptions = (productVariantApiResponse as any)?.data?.variantDetail?.options || []
   const variantImgs = (productVariantApiResponse as any)?.data?.variantDetail?.imgs || []
   const variantImg = variantImgs[0]
@@ -283,7 +279,11 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
         <FrameSpecifications
           data={mappedOptions}
           imageSrc={variantImg}
-          imageSrcHover={productType === 'frame' ? variantImgs[1] : undefined}
+          imageSrcHover={
+            ['frame', 'sunglass'].includes(productType) && variantImgs.length > 1
+              ? variantImgs[1]
+              : undefined
+          }
           quantity={totalQty}
           sku={orderProductItems[0].product.sku}
         />

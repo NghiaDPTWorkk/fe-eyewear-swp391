@@ -1,5 +1,6 @@
 import { VoucherStatus } from '@/shared/utils/enums/voucher.enum'
 
+// ─── Status config ────────────────────────────────────────────────
 export const VOUCHER_STATUS_CFG: Record<string, { label: string; dot: string; pill: string }> = {
   [VoucherStatus.ACTIVE]: {
     label: 'Active',
@@ -18,6 +19,7 @@ export const VOUCHER_STATUS_CFG: Record<string, { label: string; dot: string; pi
   }
 }
 
+// ─── Helpers ──────────────────────────────────────────────────────
 export function fmtVND(n: number | undefined | null) {
   if (n === null) return '—'
   return n?.toLocaleString('vi-VN')

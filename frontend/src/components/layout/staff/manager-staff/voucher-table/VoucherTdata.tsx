@@ -1,8 +1,14 @@
+/**
+ * VoucherTdata — renders a single data cell for a given field key.
+ * Decouples cell rendering logic from the row, making individual cells
+ * independently testable and swappable.
+ */
 import { IoCalendarOutline, IoCashOutline } from 'react-icons/io5'
 import type { Voucher } from '@/shared/types'
 import { VoucherDiscountType, VoucherStatus } from '@/shared/utils/enums/voucher.enum'
 import { fmtVND, fmtDate } from './VoucherTdata.utils'
 
+// ─── Cell types ───────────────────────────────────────────────────
 export type VoucherCellKey = 'voucher' | 'discount' | 'minOrder' | 'validity' | 'status'
 
 interface VoucherTdataProps {
@@ -17,7 +23,7 @@ export function VoucherTdata({ voucher: v, field }: VoucherTdataProps) {
     case 'voucher':
       return (
         <div className="flex items-center gap-4 min-w-0">
-          {}
+          {/* Discount type icon chip */}
           <div
             className={`w-12 h-12 rounded-2xl flex items-center justify-center text-sm font-bold shrink-0 bg-mint-50 text-mint-600 border border-mint-100 shadow-sm`}
           >

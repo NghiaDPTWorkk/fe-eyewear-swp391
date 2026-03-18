@@ -6,7 +6,7 @@ import {
   IoSearchOutline,
   IoTimeOutline
 } from 'react-icons/io5'
-import { Card, Button } from '@/shared/components/ui'
+import { Card, Button } from '@/shared/components/ui-core'
 import { useState, useRef, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { toast } from 'react-hot-toast'

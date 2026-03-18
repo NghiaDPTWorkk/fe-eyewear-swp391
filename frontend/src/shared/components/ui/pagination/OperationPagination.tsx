@@ -7,7 +7,7 @@ interface OperationPaginationProps {
   total: number
   limit: number
   onPageChange: (newPage: number) => void
-
+  /** Số items đang hiển thị ở trang hiện tại — nếu = 0 thì ẩn pagination */
   itemsOnPage?: number
 }
 
@@ -22,6 +22,7 @@ export default function OperationPagination({
   const [inputValue, setInputValue] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
+  // Ẩn nếu không có data, chỉ 1 trang, hoặc trang hiện tại không có items
   if (total === 0 || totalPages <= 1 || (itemsOnPage !== undefined && itemsOnPage === 0))
     return null
 
@@ -34,6 +35,7 @@ export default function OperationPagination({
   const commitInput = () => {
     const parsed = parseInt(inputValue, 10)
     if (!isNaN(parsed)) {
+      // Clamp trong khoảng [1, totalPages]
       const clamped = Math.min(Math.max(parsed, 1), totalPages)
       onPageChange(clamped)
     }
@@ -53,15 +55,15 @@ export default function OperationPagination({
 
   return (
     <div className="flex items-center justify-between mt-6">
-      {}
+      {/* Chỉ số trang bên trái */}
       <p className="text-sm text-gray-500">
         Page <span className="font-semibold text-gray-700">{page}</span> of{' '}
         <span className="font-semibold text-gray-700">{totalPages}</span>
       </p>
 
-      {}
+      {/* Nút điều hướng */}
       <div className="flex items-center gap-3">
-        {}
+        {/* ← Prev */}
         <button
           onClick={() => onPageChange(page - 1)}
           disabled={page === 1}
@@ -71,7 +73,7 @@ export default function OperationPagination({
           Prev
         </button>
 
-        {}
+        {/* Ô số trang — click để nhập */}
         {isEditing ? (
           <input
             ref={inputRef}
@@ -102,7 +104,7 @@ export default function OperationPagination({
           </button>
         )}
 
-        {}
+        {/* Next → */}
         <button
           onClick={() => onPageChange(page + 1)}
           disabled={page === totalPages}

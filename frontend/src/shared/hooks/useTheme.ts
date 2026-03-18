@@ -1,6 +1,10 @@
 import { useEffect } from 'react'
 import { useThemeStore } from '@/store/theme.store'
 
+/**
+ * useTheme Hook
+ * Manages theme state and applies 'dark' class to document root
+ */
 export const useTheme = () => {
   const { isDark, toggleTheme, setTheme } = useThemeStore()
 

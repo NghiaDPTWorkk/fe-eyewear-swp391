@@ -19,7 +19,7 @@ export function OrderItemList({ items }: OrderItemListProps) {
       <div className="divide-y divide-mint-50/50">
         {items.map((item, idx) => (
           <div key={idx} className="p-6">
-            {}
+            {/* Frame Section */}
             {item.product && (
               <div className="flex gap-5 mb-5">
                 <div className="w-20 h-20 rounded-xl bg-[#F8FAFB] border border-mint-50/40 flex-shrink-0 p-3">
@@ -52,7 +52,7 @@ export function OrderItemList({ items }: OrderItemListProps) {
                 </div>
               </div>
             )}
-            {}
+            {/* Lens Section */}
             {item.lens && (
               <div className="flex gap-4 ml-8 pl-8 border-l border-mint-50 border-dashed">
                 <div className="w-14 h-14 rounded-xl bg-primary-50/30 border border-primary-100/20 flex-shrink-0 p-2.5">

@@ -120,7 +120,7 @@ export function OrderCard({
   return (
     <Card className="p-6 mb-6 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition-all duration-300 border-mint-100/40 group bg-white rounded-[20px]">
       <div className="flex flex-col lg:flex-row gap-8">
-        {}
+        {/* Product Image - Precise Aspect Ratio */}
         <div className="w-full lg:w-40 h-32 rounded-xl overflow-hidden bg-[#F8FAFB] flex-shrink-0 border border-mint-50/30 flex items-center justify-center p-6">
           <img
             src={image}
@@ -129,7 +129,7 @@ export function OrderCard({
           />
         </div>
 
-        {}
+        {/* Info Area - Balanced Spacing */}
         <div className="flex-1 flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-start mb-4">
@@ -176,7 +176,7 @@ export function OrderCard({
             </div>
           </div>
 
-          {}
+          {/* Clean Progress/Status Messages */}
           <div className="mt-6">
             {status === 'DELIVERING' && (
               <div className="w-full max-w-xs">
@@ -192,7 +192,7 @@ export function OrderCard({
           </div>
         </div>
 
-        {}
+        {/* Action Sidebar - Clean Transitions */}
         <div className="flex lg:flex-col justify-end lg:justify-between gap-3 lg:min-w-[180px] border-t lg:border-t-0 lg:border-l border-mint-50/50 pt-6 lg:pt-2 lg:pl-8">
           <div className="mb-2 text-right lg:text-left">
             <PriceTag

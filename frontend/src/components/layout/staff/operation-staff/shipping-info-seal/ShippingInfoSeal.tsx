@@ -18,7 +18,7 @@ export default function ShippingInfoSeal({
   return (
     <div className="bg-white p-8 font-sans max-w-2xl mx-auto w-full border border-gray-300">
       <div className="flex gap-8">
-        {}
+        {/* Left Section */}
         <div className="w-[45%] flex flex-col pr-6 border-r-2 border-dashed border-gray-400">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center">
@@ -49,7 +49,7 @@ export default function ShippingInfoSeal({
           </div>
         </div>
 
-        {}
+        {/* Right Section */}
         <div className="w-[55%] flex flex-col justify-between pl-2">
           <div className="space-y-4">
             <div className="flex flex-col gap-1">

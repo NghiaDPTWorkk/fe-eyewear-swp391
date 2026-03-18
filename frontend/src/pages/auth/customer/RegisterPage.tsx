@@ -3,10 +3,10 @@ import { RegisterForm } from '@/components/layout/register-form/RegisterForm'
 export const RegisterPage = () => {
   return (
     <div className="flex min-h-screen w-full">
-      {}
+      {/* Left Side - Login Form */}
       <div className="flex w-full flex-col justify-center bg-white px-8 py-12 lg:w-1/2 lg:px-16">
         <div className="mx-auto w-full max-w-md">
-          {}
+          {/* Logo */}
           <div className="mb-8 flex items-center gap-2">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary-400 to-primary-600">
               <svg className="h-6 w-6 text-white" viewBox="0 0 24 24" fill="currentColor">
@@ -17,7 +17,7 @@ export const RegisterPage = () => {
             <span className="text-2xl font-bold text-primary-600">Eyewear</span>
           </div>
 
-          {}
+          {/* Form */}
           <div>
             <h1 className="mb-2 text-3xl font-bold text-primary-950">Sign Up</h1>
             <p className="mb-6 text-sm text-gray-eyewear">
@@ -29,9 +29,9 @@ export const RegisterPage = () => {
         </div>
       </div>
 
-      {}
+      {/* Right Side - Dashboard Preview */}
       <div className="hidden w-1/2 flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-primary-50 via-primary-100 to-primary-200 p-12 lg:flex">
-        {}
+        {/* Decorative Hexagons */}
         <div className="absolute right-20 top-10 h-24 w-24 rotate-12 opacity-30">
           <svg viewBox="0 0 100 100" className="h-full w-full text-primary-300">
             <polygon
@@ -63,7 +63,7 @@ export const RegisterPage = () => {
           </svg>
         </div>
 
-        {}
+        {/* Content */}
         <div className="relative z-10 max-w-lg text-center">
           <div className="mb-8 rounded-2xl bg-white p-4 shadow-2xl">
             <img

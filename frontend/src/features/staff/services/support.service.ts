@@ -43,14 +43,24 @@ export interface ReportTicketsListResponse {
 }
 
 export const supportService = {
+  /**
+   * Create a new report ticket
+   * @param payload - The ticket details
+   */
   createReportTicket: async (payload: CreateReportPayload): Promise<ReportTicketResponse> => {
     return httpClient.post<ReportTicketResponse>(ENDPOINTS.SUPPORT.REPORT_TICKETS, payload)
   },
 
+  /**
+   * Get report tickets for the current user
+   */
   getReportTickets: async (): Promise<ReportTicketsListResponse> => {
     return httpClient.get<ReportTicketsListResponse>(ENDPOINTS.SUPPORT.REPORT_TICKETS)
   },
 
+  /**
+   * Get report ticket history for the current user
+   */
   getMyHistory: async (): Promise<ReportTicketsListResponse> => {
     return httpClient.get<ReportTicketsListResponse>(ENDPOINTS.SUPPORT.MY_HISTORY)
   }

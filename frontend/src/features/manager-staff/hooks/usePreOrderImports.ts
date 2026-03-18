@@ -13,7 +13,10 @@ export function usePreOrderImports(page: number = 1, limit: number = 10) {
     queryKey: ['pre-order-imports', page, limit],
     queryFn: () =>
       httpClient.get<PreOrderImportListApiResponse>(ENDPOINTS.ADMIN.PRE_ORDER_IMPORTS(page, limit)),
-    staleTime: 30_000
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
+    refetchOnMount: 'always'
   })
 }
 

@@ -10,7 +10,7 @@ export default function TryOnConsentStep({ onAgree, onDisagree }: TryOnConsentSt
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
       <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden animate-fade-in-up">
-        {}
+        {/* Header with close */}
         <div className="flex justify-end p-4 pb-0">
           <button
             onClick={onDisagree}
@@ -21,9 +21,9 @@ export default function TryOnConsentStep({ onAgree, onDisagree }: TryOnConsentSt
           </button>
         </div>
 
-        {}
+        {/* Content */}
         <div className="px-8 pb-8 pt-2">
-          {}
+          {/* Face illustration area */}
           <div className="flex justify-center mb-6">
             <div className="w-20 h-20 rounded-full bg-mint-100 flex items-center justify-center">
               <svg
@@ -58,7 +58,7 @@ export default function TryOnConsentStep({ onAgree, onDisagree }: TryOnConsentSt
             We detect generic points on your face, and that's it!
           </h2>
 
-          {}
+          {/* Privacy bullets */}
           <div className="space-y-4 mb-6">
             <div className="flex items-center gap-3">
               <div className="w-6 h-6 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
@@ -89,7 +89,7 @@ export default function TryOnConsentStep({ onAgree, onDisagree }: TryOnConsentSt
             before accessing the service.
           </p>
 
-          {}
+          {/* Action buttons */}
           <div className="flex gap-4">
             <Button
               variant="outline"

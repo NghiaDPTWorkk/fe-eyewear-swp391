@@ -56,7 +56,7 @@ export const UserDetailDrawer: React.FC<UserDetailDrawerProps> = ({ isOpen, onCl
         </div>
 
         <div className="flex-1 overflow-auto p-6 space-y-8">
-          {}
+          {/* Avatar & Name */}
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 border border-indigo-100 shrink-0">
               <IoPersonCircleOutline size={40} />
@@ -71,7 +71,7 @@ export const UserDetailDrawer: React.FC<UserDetailDrawerProps> = ({ isOpen, onCl
             </div>
           </div>
 
-          {}
+          {/* Contact Info */}
           <div className="space-y-4">
             <h5 className="text-[11px] font-semibold text-neutral-400 uppercase tracking-widest">
               Contact Information
@@ -92,7 +92,7 @@ export const UserDetailDrawer: React.FC<UserDetailDrawerProps> = ({ isOpen, onCl
             </div>
           </div>
 
-          {}
+          {/* Stats */}
           <div className="grid grid-cols-2 gap-4">
             <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-100">
               <p className="text-[10px] font-semibold text-neutral-400 uppercase mb-1">
@@ -108,7 +108,7 @@ export const UserDetailDrawer: React.FC<UserDetailDrawerProps> = ({ isOpen, onCl
             </div>
           </div>
 
-          {}
+          {/* Actions */}
           <div className="space-y-3 pt-4">
             <button className="w-full py-3 bg-indigo-600 text-white rounded-2xl text-sm font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95">
               Edit User

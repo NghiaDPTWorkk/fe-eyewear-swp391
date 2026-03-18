@@ -13,7 +13,7 @@ export const SystemOverview: React.FC = () => {
             <h3 className="text-2xl md:text-3xl font-bold text-gray-900 font-primary leading-tight">
               12,458
             </h3>
-            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-50 text-indigo-600">
+            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-mint-50 text-mint-600">
               ↑ 12.3%
             </span>
           </div>
@@ -33,17 +33,17 @@ export const SystemOverview: React.FC = () => {
         <svg viewBox="0 0 800 200" className="w-full h-full" preserveAspectRatio="none">
           <defs>
             <linearGradient id="adminChartGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#6366f1" stopOpacity={0.2} />
-              <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+              <stop offset="5%" stopColor="#059669" stopOpacity={0.2} />
+              <stop offset="95%" stopColor="#059669" stopOpacity={0} />
             </linearGradient>
           </defs>
-          {}
+          {/* Grid Lines */}
           <line x1="0" y1="180" x2="800" y2="180" stroke="#f1f5f9" strokeWidth="1" />
           <line x1="0" y1="130" x2="800" y2="130" stroke="#f1f5f9" strokeWidth="1" />
           <line x1="0" y1="80" x2="800" y2="80" stroke="#f1f5f9" strokeWidth="1" />
           <line x1="0" y1="30" x2="800" y2="30" stroke="#f1f5f9" strokeWidth="1" />
 
-          {}
+          {/* Dashed reference line */}
           <path
             d="M 0 150 Q 50 140 100 160 T 200 130 T 300 150 T 400 120 T 500 110 T 600 140 T 700 100 T 800 80"
             fill="none"
@@ -52,34 +52,34 @@ export const SystemOverview: React.FC = () => {
             strokeDasharray="4 4"
             opacity="0.5"
           />
-          {}
+          {/* Area fill */}
           <path
             d="M 0 140 Q 50 130 100 110 T 200 90 T 300 100 T 400 70 T 500 50 T 600 80 T 700 60 T 800 40"
             fill="url(#adminChartGradient)"
             stroke="none"
           />
-          {}
+          {/* Main line */}
           <path
             d="M 0 140 Q 50 130 100 110 T 200 90 T 300 100 T 400 70 T 500 50 T 600 80 T 700 60 T 800 40"
             fill="none"
-            stroke="#6366f1"
+            stroke="#10b981"
             strokeWidth="4"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
 
-          {}
+          {/* Tooltip dot */}
           <line
             x1="400"
             y1="20"
             x2="400"
             y2="180"
-            stroke="#6366f1"
+            stroke="#10b981"
             strokeWidth="1"
             strokeDasharray="4 4"
             opacity="0.3"
           />
-          <circle cx="400" cy="70" r="6" fill="#6366f1" stroke="white" strokeWidth="2" />
+          <circle cx="400" cy="70" r="6" fill="#10b981" stroke="white" strokeWidth="2" />
         </svg>
         <div className="flex justify-between mt-4 text-[10px] font-bold text-neutral-400 uppercase tracking-widest pl-2 font-primary opacity-60">
           <span>Feb 01, 2026</span>

@@ -10,6 +10,8 @@ interface ModalSidebarProps {
 export default function ModalSidebar({ productName, productImage, visionNeed }: ModalSidebarProps) {
   const [imageError, setImageError] = useState(false)
 
+  // Reset error state logic moved to parent via key prop
+
   return (
     <div className="hidden lg:flex w-1/2 bg-[#F8F9FA] items-center justify-center p-12 relative border-r border-mint-100">
       <div className="absolute top-8 left-8">

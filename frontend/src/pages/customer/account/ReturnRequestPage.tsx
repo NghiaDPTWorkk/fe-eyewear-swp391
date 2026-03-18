@@ -69,7 +69,7 @@ export function ReturnRequestPage() {
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl mx-auto pb-20 px-4 md:px-0">
-      {}
+      {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div className="flex items-center gap-5">
           <button
@@ -102,7 +102,7 @@ export function ReturnRequestPage() {
         </div>
       </div>
 
-      {}
+      {/* Info Banner */}
       <div className="mb-10 p-6 bg-gradient-to-r from-primary-50 to-mint-50 rounded-[28px] border border-primary-100/30 flex items-start gap-4">
         <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-primary-600 shadow-sm shrink-0">
           <Clock size={24} />
@@ -116,7 +116,7 @@ export function ReturnRequestPage() {
         </div>
       </div>
 
-      {}
+      {/* Orders List */}
       <div className="space-y-6">
         <h3 className="text-sm font-bold text-gray-400 uppercase tracking-[0.2em] mb-4 ml-2">
           Your Order Items ({orders.length})
@@ -132,7 +132,7 @@ export function ReturnRequestPage() {
 
               <div className="flex flex-col lg:flex-row justify-between gap-10">
                 <div className="flex-1 space-y-6">
-                  {}
+                  {/* Order Header */}
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 bg-mint-50 rounded-xl flex items-center justify-center text-primary-600">
                       <Package size={20} />
@@ -150,7 +150,7 @@ export function ReturnRequestPage() {
                     </div>
                   </div>
 
-                  {}
+                  {/* Products within Order */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {order.products.map((item) => (
                       <div
@@ -180,7 +180,7 @@ export function ReturnRequestPage() {
                   </div>
                 </div>
 
-                {}
+                {/* Right Action Section */}
                 <div className="flex flex-col lg:items-end justify-between lg:min-w-[200px] gap-6 lg:border-l border-mint-50 lg:pl-10">
                   <div className="text-left lg:text-right">
                     <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block mb-1">
@@ -240,7 +240,7 @@ export function ReturnRequestPage() {
         )}
       </div>
 
-      {}
+      {/* Help Footer */}
       <div className="mt-16 p-8 bg-black rounded-[32px] text-white flex flex-col md:flex-row items-center justify-between gap-8 border border-white/10 shadow-2xl">
         <div className="flex items-center gap-6">
           <div className="w-14 h-14 bg-primary-500 rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-primary-500/20">

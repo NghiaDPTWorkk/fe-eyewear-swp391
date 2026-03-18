@@ -1,3 +1,7 @@
+/**
+ * Product variant types matching backend structure
+ */
+
 export interface VariantOption {
   attributeId: string
   attributeName: string

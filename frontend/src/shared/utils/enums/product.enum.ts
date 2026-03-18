@@ -1,3 +1,4 @@
+// Product Enums
 export const ProductType = {
   FRAME: 'frame',
   LENS: 'lens',

@@ -37,6 +37,7 @@ export const ProductDetailPage = () => {
   return <ProductDetailContent product={product} productId={product.id || id || ''} />
 }
 
+// Separate component so useProductVariants hook can be called after product is loaded
 import type { Product } from '@/shared/types/product.types'
 
 interface ProductDetailContentProps {
@@ -52,7 +53,7 @@ const ProductDetailContent = ({ product, productId }: ProductDetailContentProps)
       <CustomerHeader />
 
       <main className="container mx-auto px-4 py-8 lg:py-12">
-        {}
+        {/* Breadcrumbs */}
         <nav className="flex items-center gap-2 text-sm text-gray-eyewear mb-8">
           <a href="/" className="hover:text-primary-500 font-medium transition-colors">
             Home
@@ -66,10 +67,10 @@ const ProductDetailContent = ({ product, productId }: ProductDetailContentProps)
         </nav>
 
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
-          {}
+          {/* Left Column: Image Gallery - images from current variant */}
           <ImageGallery images={variantState.images} />
 
-          {}
+          {/* Right Column: Product Info - pass shared variant state */}
           <ProductInfo product={product} productId={productId} variantState={variantState} />
         </div>
       </main>

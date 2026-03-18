@@ -18,6 +18,7 @@ export function AuthGuard({ children, allowedRoles, requireAuth = true }: AuthGu
   useEffect(() => {
     setHasHydrated(true)
 
+    // Sync auth state across tabs
     const syncAuth = (event: StorageEvent) => {
       if (event.key === 'auth-storage') {
         useAuthStore.persist.rehydrate()
@@ -28,6 +29,7 @@ export function AuthGuard({ children, allowedRoles, requireAuth = true }: AuthGu
     return () => window.removeEventListener('storage', syncAuth)
   }, [])
 
+  // wait for zustand to finish hydrating
   if (!hasHydrated || isLoading) {
     return <LazyPage children={<div></div>}></LazyPage>
   }
@@ -47,10 +49,12 @@ export function AuthGuard({ children, allowedRoles, requireAuth = true }: AuthGu
     )
   }
 
+  // If authenticated, check if role is allowed or if it's a staff role trying to access public pages
   const isStaffRole = ['SALE_STAFF', 'OPERATION_STAFF', 'MANAGER'].includes(role || '')
   const isPublicPath = !allowedRoles || allowedRoles.length === 0
 
   if (isStaffRole && (isPublicPath || (allowedRoles && !allowedRoles.includes(role || '')))) {
+    // Redirect to appropriate dashboard based on role
     if (role === 'SALE_STAFF' && !location.pathname.startsWith('/sale-staff')) {
       return <Navigate to="/sale-staff/dashboard" replace />
     }
@@ -62,7 +66,9 @@ export function AuthGuard({ children, allowedRoles, requireAuth = true }: AuthGu
     }
   }
 
+  // Check if role is allowed (for restricted paths)
   if (allowedRoles && role && !allowedRoles.includes(role)) {
+    // Default for customer or other roles
     return <Navigate to="/" replace />
   }
 

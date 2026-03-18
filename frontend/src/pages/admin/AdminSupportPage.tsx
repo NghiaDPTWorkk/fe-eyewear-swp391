@@ -1,4 +1,4 @@
-import { Container, Card, Button } from '@/components'
+import { Container, Card, Button } from '@/shared/components/ui'
 import {
   IoShieldCheckmarkOutline,
   IoAlertCircleOutline,
@@ -6,8 +6,8 @@ import {
   IoMailOutline,
   IoCallOutline
 } from 'react-icons/io5'
-import { Link, useNavigate } from 'react-router-dom'
-import { PageHeader } from '@/features/sale-staff/components/common'
+import { Outlet, useNavigate } from 'react-router-dom'
+import { PageHeader } from '@/features/sales/components/common'
 
 export default function AdminSupportPage() {
   const navigate = useNavigate()
@@ -88,32 +88,35 @@ export default function AdminSupportPage() {
         breadcrumbs={[{ label: 'Dashboard', path: '/admin/dashboard' }, { label: 'Support' }]}
       />
       <div className="mt-4 flex flex-wrap items-center gap-3">
-        <Link
-          to="/admin/dashboard"
-          className="rounded-lg border border-neutral-200 bg-white px-3 py-2 text-xs font-semibold text-neutral-600 transition hover:border-indigo-200 hover:text-indigo-600"
+        <Button
+          variant="outline"
+          onClick={() => navigate('/admin/dashboard')}
+          className="px-4 py-2 text-sm font-medium"
         >
-          Back to dashboard
-        </Link>
-        <Link
-          to="/admin/settings"
-          className="rounded-lg border border-neutral-200 bg-white px-3 py-2 text-xs font-semibold text-neutral-600 transition hover:border-indigo-200 hover:text-indigo-600"
+          Back to Dashboard
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => navigate('/admin/settings')}
+          className="px-4 py-2 text-sm font-medium"
         >
           Settings
-        </Link>
-        <button
-          type="button"
+        </Button>
+        <Button
+          variant="solid"
+          colorScheme="primary"
           onClick={() => navigate('/admin/profile')}
-          className="rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-indigo-700"
+          className="px-4 py-2 text-sm font-medium shadow-sm"
         >
-          Admin profile
-        </button>
+          Admin Profile
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 px-4">
         <div className="lg:col-span-8 space-y-8">
           <Card className="p-8 border-none shadow-sm shadow-neutral-200/50">
             <div className="flex items-center gap-3 mb-8">
-              <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-500">
+              <div className="w-10 h-10 rounded-xl bg-mint-50 flex items-center justify-center text-mint-600">
                 <IoShieldCheckmarkOutline size={22} />
               </div>
               <h2 className="text-xl font-semibold text-neutral-900">
@@ -131,7 +134,7 @@ export default function AdminSupportPage() {
                     <ul className="space-y-3">
                       {group.items.map((item, i) => (
                         <li key={i} className="flex items-start gap-3 group">
-                          <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0 group-hover:scale-150 transition-transform" />
+                          <div className="w-1.5 h-1.5 rounded-full bg-mint-500 mt-1.5 shrink-0 group-hover:scale-150 transition-transform" />
                           <span className="text-sm text-neutral-600 leading-relaxed font-medium">
                             {item}
                           </span>
@@ -150,7 +153,7 @@ export default function AdminSupportPage() {
               {contacts.map((contact) => (
                 <div
                   key={contact.role}
-                  className="p-5 bg-neutral-50/50 border border-neutral-100 rounded-2xl hover:border-indigo-200 hover:bg-indigo-50/20 transition-all group"
+                  className="p-5 bg-neutral-50/50 border border-neutral-100 rounded-2xl hover:border-mint-200 hover:bg-mint-50/20 transition-all group"
                 >
                   <h4 className="font-semibold text-neutral-900 mb-4">{contact.role}</h4>
                   <div className="space-y-2">
@@ -184,7 +187,7 @@ export default function AdminSupportPage() {
                 <input
                   type="text"
                   placeholder="Brief description of the issue"
-                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white transition-all"
+                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 focus:bg-white transition-all"
                 />
               </div>
 
@@ -192,7 +195,7 @@ export default function AdminSupportPage() {
                 <label className="text-[11px] font-semibold text-neutral-400 tracking-widest pl-1 uppercase">
                   Priority
                 </label>
-                <select className="w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-semibold text-neutral-700 appearance-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all cursor-pointer">
+                <select className="w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-semibold text-neutral-700 appearance-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all cursor-pointer">
                   <option>Low - Cosmetic issue</option>
                   <option defaultValue="Medium">Medium - Affects workflow</option>
                   <option>High - Critical blocker</option>
@@ -206,7 +209,7 @@ export default function AdminSupportPage() {
                 <textarea
                   rows={4}
                   placeholder="Describe the issue in detail..."
-                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 focus:bg-white transition-all resize-none"
+                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 focus:bg-white transition-all resize-none"
                 />
               </div>
 
@@ -214,15 +217,15 @@ export default function AdminSupportPage() {
                 <label className="text-[11px] font-semibold text-neutral-400 tracking-widest pl-1 uppercase">
                   Screenshot (Optional)
                 </label>
-                <div className="border-2 border-dashed border-neutral-200 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 hover:border-indigo-300 hover:bg-indigo-50/20 transition-all cursor-pointer group">
-                  <div className="w-10 h-10 rounded-xl bg-neutral-50 flex items-center justify-center group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-all">
+                <div className="border-2 border-dashed border-neutral-200 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 hover:border-mint-300 hover:bg-mint-50/20 transition-all cursor-pointer group">
+                  <div className="w-10 h-10 rounded-xl bg-neutral-50 flex items-center justify-center group-hover:bg-mint-100 group-hover:text-mint-600 transition-all">
                     <IoCloudUploadOutline
                       size={20}
-                      className="text-neutral-400 group-hover:text-indigo-600"
+                      className="text-neutral-400 group-hover:text-mint-600"
                     />
                   </div>
                   <div className="text-center">
-                    <p className="text-xs font-semibold text-neutral-700 group-hover:text-indigo-700">
+                    <p className="text-xs font-semibold text-neutral-700 group-hover:text-mint-700">
                       Click to upload screenshot
                     </p>
                     <p className="text-[10px] text-neutral-400 mt-1 font-medium">
@@ -234,7 +237,8 @@ export default function AdminSupportPage() {
 
               <Button
                 variant="solid"
-                className="w-full h-11 rounded-xl font-semibold bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-100 transition-all active:scale-95 text-sm tracking-wider text-white border-none"
+                colorScheme="primary"
+                className="w-full h-12 rounded-xl font-bold shadow-xl shadow-mint-100/50 transition-all active:scale-95 text-sm tracking-wider"
               >
                 Submit Report
               </Button>
@@ -250,7 +254,7 @@ export default function AdminSupportPage() {
                 {recentReports.map((report) => (
                   <div
                     key={report.title}
-                    className="flex justify-between items-start p-4 bg-neutral-50/50 border border-neutral-100 rounded-xl hover:border-indigo-200 transition-all group"
+                    className="flex justify-between items-start p-4 bg-neutral-50/50 border border-neutral-100 rounded-xl hover:border-mint-200 transition-all group"
                   >
                     <div>
                       <h4 className="text-sm font-semibold text-neutral-800 group-hover:text-neutral-900">
@@ -262,7 +266,7 @@ export default function AdminSupportPage() {
                       className={`px-3 py-0.5 rounded-full text-[10px] font-semibold tracking-wider border ${
                         report.status === 'Pending'
                           ? 'bg-amber-50 text-amber-600 border-amber-100'
-                          : 'bg-indigo-50 text-indigo-600 border-indigo-100'
+                          : 'bg-mint-50 text-mint-600 border-mint-100'
                       }`}
                     >
                       {report.status}

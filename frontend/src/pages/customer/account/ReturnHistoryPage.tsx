@@ -97,7 +97,7 @@ export function ReturnHistoryPage() {
                 >
                   <div className="flex flex-col lg:flex-row justify-between gap-8">
                     <div className="flex-1 space-y-4">
-                      {}
+                      {/* Header */}
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 bg-mint-50 rounded-xl flex items-center justify-center text-primary-600">
@@ -122,7 +122,7 @@ export function ReturnHistoryPage() {
                         </div>
                       </div>
 
-                      {}
+                      {/* Content */}
                       <div className="bg-gray-50/50 rounded-2xl p-4 border border-gray-100/50">
                         <div className="flex items-start gap-4">
                           <div className="flex-1">
@@ -153,7 +153,7 @@ export function ReturnHistoryPage() {
                         </div>
                       </div>
 
-                      {}
+                      {/* Footer Info */}
                       <div className="flex flex-wrap items-center gap-6 text-[11px] font-bold text-gray-400 uppercase tracking-widest pt-2">
                         <div className="flex items-center gap-2">
                           <Clock size={14} className="text-gray-300" />
@@ -166,7 +166,7 @@ export function ReturnHistoryPage() {
                       </div>
                     </div>
 
-                    {}
+                    {/* Price/Action */}
                     <div className="flex flex-col lg:items-end justify-between lg:min-w-[180px] pt-4 lg:pt-0 lg:border-l border-mint-50 lg:pl-10">
                       <div className="text-left lg:text-right">
                         <span className="text-[10px] font-extrabold text-gray-300 uppercase tracking-widest block mb-1">

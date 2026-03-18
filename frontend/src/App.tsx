@@ -4,8 +4,11 @@ import { RouterProvider } from 'react-router-dom'
 import { router } from './routes'
 
 import { Toaster } from 'react-hot-toast'
+import { useSocketNotifications } from './socket/useSocketNotifications'
 
 function App() {
+  useSocketNotifications()
+
   return (
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />

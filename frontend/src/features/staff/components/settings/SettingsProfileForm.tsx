@@ -4,8 +4,12 @@ import { IoShieldCheckmarkOutline, IoInformationCircleOutline } from 'react-icon
 
 import { useProfile } from '@/features/staff/hooks/useProfile'
 import { profileService } from '@/features/staff/services/profile.service'
-import { Card, Button } from '@/shared/components/ui'
+import { Card, Button } from '@/shared/components/ui-core'
 
+/**
+ * ProfileForm Component
+ * Displays profile information and allows SALE_STAFF to request an update
+ */
 export default function ProfileForm() {
   const { data: profileData, isLoading, refetch } = useProfile()
   const profile = profileData?.data
@@ -19,6 +23,7 @@ export default function ProfileForm() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  // Helper to format role names (e.g., OPERATION_STAFF -> Operation Staff)
   const formatRole = (roleName?: string) => {
     if (!roleName) return ''
     return roleName
@@ -28,6 +33,7 @@ export default function ProfileForm() {
       .join(' ')
   }
 
+  // Initialize form data when profile is loaded or changed
   useEffect(() => {
     if (profile) {
       setFormData({
@@ -47,6 +53,7 @@ export default function ProfileForm() {
     e.preventDefault()
     if (!isStaffRole) return
 
+    // Validation
     if (!formData.name.trim()) {
       toast.error('Name cannot be empty')
       return
@@ -118,7 +125,7 @@ export default function ProfileForm() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {}
+        {/* Anti-autofill dummy fields */}
         <input type="text" style={{ display: 'none' }} aria-hidden="true" />
         <input type="email" style={{ display: 'none' }} aria-hidden="true" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

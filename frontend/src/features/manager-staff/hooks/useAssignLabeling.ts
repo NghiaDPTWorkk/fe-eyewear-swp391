@@ -19,7 +19,7 @@ export function useAssignLabeling() {
         }
       ),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-invoices'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-invoices-enriched'] })
     }
   })
 

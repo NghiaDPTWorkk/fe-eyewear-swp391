@@ -17,7 +17,7 @@ export default function VoucherViewAllDetail({
 }: VoucherViewAllDetailProps) {
   return (
     <div className="space-y-6">
-      {}
+      {/* ── Hero Ticket Area ───────────────────────────────────── */}
       <div className="flex justify-center py-6 perspective-1000">
         <div className="animate-voucher-pop">
           {v.applyScope === VoucherApplyScope.ALL ? (
@@ -29,12 +29,12 @@ export default function VoucherViewAllDetail({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {}
+        {/* ── Main Content Area ─────────────────────────────────── */}
         <div className="lg:col-span-2 space-y-6">
           <MainDetailVoucher voucher={v} statusConfig={st} />
         </div>
 
-        {}
+        {/* ── Sidebar Info Area ─────────────────────────────────── */}
         <div className="space-y-6">
           <UsageMestrictVoucher usageCount={v.usageCount} usageLimit={v.usageLimit} />
 

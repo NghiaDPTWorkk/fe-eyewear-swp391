@@ -46,7 +46,7 @@ export const CartPage = () => {
               <h1 className="text-4xl font-heading font-bold text-mint-1200 mb-8">Your bag</h1>
 
               <div className="flex flex-col lg:flex-row gap-8">
-                {}
+                {/* Main Cart Content */}
                 <div className="lg:w-2/3">
                   <div className="flex items-center gap-3 mb-6">
                     <Checkbox
@@ -82,7 +82,7 @@ export const CartPage = () => {
                   <PromoSection />
                 </div>
 
-                {}
+                {/* Sidebar Summary */}
                 <div className="lg:w-1/3">
                   <CartSummary subtotal={subtotal} />
                 </div>
@@ -90,7 +90,7 @@ export const CartPage = () => {
             </>
           )}
 
-          {}
+          {/* FAQs Placeholder */}
           <section className="mt-20">
             <h2 className="text-3xl font-heading font-bold text-mint-1200 mb-8">FAQs</h2>
             <div className="space-y-4 max-w-3xl">

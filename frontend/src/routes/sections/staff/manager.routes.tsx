@@ -2,7 +2,7 @@ import { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
 import { LazyPage } from '@/pages/LazyPage'
 import { AuthGuard } from '@/routes/guards'
-import { ManagerVouchersPage } from '@/pages/manager-staff'
+import { ManagerVouchersPage } from '@/pages/manager'
 
 const ManagerLayout = lazy(() =>
   import('@/components/layout/staff/manager-staff/ManagerLayout').then((m) => ({
@@ -10,28 +10,28 @@ const ManagerLayout = lazy(() =>
   }))
 )
 const ManagerDashboardPage = lazy(() =>
-  import('@/pages/manager-staff/ManagerDashboardPage').then((m) => ({ default: m.default }))
+  import('@/pages/manager/ManagerDashboardPage').then((m) => ({ default: m.default }))
 )
 const ManagerInvoicesPage = lazy(() =>
-  import('@/pages/manager-staff/ManagerInvoicesPage').then((m) => ({ default: m.default }))
+  import('@/pages/manager/ManagerInvoicesPage').then((m) => ({ default: m.default }))
 )
 const ManagerReportsPage = lazy(() =>
-  import('@/pages/manager-staff/ManagerReportsPage').then((m) => ({ default: m.default }))
+  import('@/pages/manager/ManagerReportsPage').then((m) => ({ default: m.default }))
 )
 const ManagerTransactionsPage = lazy(() =>
-  import('@/pages/manager-staff/ManagerTransactionsPage').then((m) => ({ default: m.default }))
+  import('@/pages/manager/ManagerTransactionsPage').then((m) => ({ default: m.default }))
 )
 const ManagerProductsPage = lazy(() =>
-  import('@/pages/manager-staff/ManagerProductsPage').then((m) => ({ default: m.default }))
+  import('@/pages/manager/ManagerProductsPage').then((m) => ({ default: m.default }))
 )
 const ManagerProductDetailPage = lazy(() =>
-  import('@/pages/manager-staff/ManagerProductDetailPage').then((m) => ({ default: m.default }))
+  import('@/pages/manager/ManagerProductDetailPage').then((m) => ({ default: m.default }))
 )
 const ManagerEditProductPage = lazy(() =>
-  import('@/pages/manager-staff/ManagerEditProductPage').then((m) => ({ default: m.default }))
+  import('@/pages/manager/ManagerEditProductPage').then((m) => ({ default: m.default }))
 )
 const ManagerAddProductPage = lazy(() =>
-  import('@/pages/manager-staff/ManagerAddProductPage').then((m) => ({ default: m.default }))
+  import('@/pages/manager/ManagerAddProductPage').then((m) => ({ default: m.default }))
 )
 
 const StaffSettingsPage = lazy(() => import('@/pages/staff/StaffSettingsPage'))
@@ -39,13 +39,13 @@ const StaffSupportPage = lazy(() => import('@/pages/staff/StaffSupportPage'))
 const StaffProfilePage = lazy(() => import('@/pages/staff/StaffProfilePage'))
 
 const ManagerAddAttributePage = lazy(() =>
-  import('@/pages/manager-staff/ManagerAddAttributePage').then((m) => ({ default: m.default }))
+  import('@/pages/manager/ManagerAddAttributePage').then((m) => ({ default: m.default }))
 )
 const ManagerImportPage = lazy(() =>
-  import('@/pages/manager-staff/ManagerImportPage').then((m) => ({ default: m.default }))
+  import('@/pages/manager/ManagerImportPage').then((m) => ({ default: m.default }))
 )
 const ManagerVoucherDetailPage = lazy(() =>
-  import('@/pages/manager-staff/ManagerVoucherDetail').then((m) => ({ default: m.default }))
+  import('@/pages/manager/ManagerVoucherDetail').then((m) => ({ default: m.default }))
 )
 
 export const managerRoutes = [

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { IoSearchOutline } from 'react-icons/io5'
 import { cn } from '@/lib/utils'
-import { useSearchVouchersByCode } from '@/features/manager-staff/hooks/useManagerVouchers'
+import { useSearchVouchersByCode } from '@/features/manager/hooks/useManagerVouchers'
 import ResultSearchTable from '@/components/layout/staff/staff-core/result-search-line/ResultSearchTable'
 import { useNavigate } from 'react-router-dom'
 import { PATHS } from '@/routes/paths'

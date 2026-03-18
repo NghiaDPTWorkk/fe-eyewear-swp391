@@ -14,6 +14,9 @@ export interface LensParameters {
   PD: number
 }
 
+/**
+ * Order product structure matching backend
+ */
 export interface OrderProductFrame {
   product_id: string
   sku: string

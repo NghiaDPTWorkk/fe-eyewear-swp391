@@ -1,3 +1,6 @@
+// EPIC 2: Sales/Support Staff Features
+// Order Management, Prescription Verification, Warranty/Return, Chat Support
+
 export * from './components'
 export * from './constants/staffDesignSystem'
 

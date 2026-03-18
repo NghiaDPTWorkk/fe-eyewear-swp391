@@ -22,6 +22,7 @@ export function AddAddressModal({ isOpen, onClose }: AddAddressModalProps) {
       await addAddress(formData)
       onClose()
     } catch (error) {
+      // Error is handled in the store
       console.log(error)
     }
   }

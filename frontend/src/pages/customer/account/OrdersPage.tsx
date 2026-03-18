@@ -125,6 +125,7 @@ export function OrdersPage() {
     return true
   })
 
+  // Pagination logic ở client
   const totalPagesLocal =
     activeView === 'returns' ? returnPagination.totalPages : Math.ceil(filteredInvoices.length / 3)
 
@@ -160,7 +161,7 @@ export function OrdersPage() {
           </p>
         </div>
 
-        {}
+        {/* Sleek Segmented Control */}
         <div className="flex bg-mint-50/50 p-1 rounded-xl border border-mint-100/50 self-start md:self-auto">
           <button
             onClick={() => handleViewChange('active')}
@@ -187,7 +188,7 @@ export function OrdersPage() {
         </div>
       </div>
 
-      {}
+      {/* Modern Tabs with Cleaner Spacing */}
       {activeView === 'active' && (
         <div className="flex gap-4 mb-10 overflow-x-auto pb-4 scrollbar-hide border-b border-mint-50">
           {TABS.map((tab) => {
@@ -211,7 +212,7 @@ export function OrdersPage() {
         </div>
       )}
 
-      {}
+      {/* Order List */}
       <div className="flex flex-col gap-2 min-h-[400px]">
         {isLoading ? (
           <div className="flex-1 flex flex-col items-center justify-center p-20 text-gray-400">
@@ -375,7 +376,7 @@ export function OrdersPage() {
         )}
       </div>
 
-      {}
+      {/* Support Footer */}
       <div className="mt-12 p-8 border border-dashed border-mint-200 rounded-3xl flex justify-between items-center bg-white/50">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 bg-primary-50 rounded-full flex items-center justify-center text-primary-600 font-bold text-xl">

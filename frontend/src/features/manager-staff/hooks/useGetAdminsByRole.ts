@@ -6,6 +6,9 @@ export function useGetAdminsByRole(role?: string) {
   return useQuery<AdminAccountListApiResponse>({
     queryKey: ['admin-accounts', role],
     queryFn: () => adminAccountService.getAdmins(role),
-    staleTime: 30_000
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
+    refetchOnMount: 'always'
   })
 }

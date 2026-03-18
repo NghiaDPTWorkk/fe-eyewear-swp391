@@ -5,6 +5,10 @@ import type {
   TransformedFrameData
 } from '@/shared/types'
 
+/**
+ * Chuyển đổi dữ liệu tròng kính (lens)  của đơn hàng
+ * sang định dạng cho component LensSpecifications để hiển thị ui nha
+ */
 export const transformLensData = (lensData: OrderLensData): TransformedLensData => {
   const { parameters } = lensData
 
@@ -14,7 +18,7 @@ export const transformLensData = (lensData: OrderLensData): TransformedLensData 
       sph: parameters.right.SPH.toString(),
       cyl: parameters.right.CYL.toString(),
       axis: `${parameters.right.AXIS}°`,
-      prism: '-',
+      prism: '-', // Không có trong phản hồi API này tui bày
       add: '-'
     },
     {
@@ -36,6 +40,9 @@ export const transformLensData = (lensData: OrderLensData): TransformedLensData 
   return { prescription, details }
 }
 
+/**
+ * Chuyển đổi dữ liệu gọng kính (frame)
+ */
 export const transformFrameDataFromOrder = (
   productItem: OrderProductItem
 ): TransformedFrameData => {
@@ -46,6 +53,9 @@ export const transformFrameDataFromOrder = (
   ]
 }
 
+/**
+ * Trích xuất danh sách gọng kính và tròng kính từ các sản phẩm trong đơn hàng
+ */
 export const extractFramesAndLensesFromOrder = (
   products: OrderProductItem[],
   orderTypes: string[]
@@ -56,8 +66,10 @@ export const extractFramesAndLensesFromOrder = (
   const isManufacturing = orderTypes.includes('MANUFACTURING')
 
   products.forEach((productItem) => {
+    // Luôn thêm sản phẩm vào danh sách gọng
     frames.push(productItem)
 
+    // Nếu là đơn hàng sản xuất và có dữ liệu tròng kính
     if (isManufacturing && productItem.lens) {
       lenses.push(productItem.lens)
     }

@@ -45,7 +45,7 @@ export const VoucherSection = ({
 
   const handleSelect = (voucher: Voucher) => {
     onVoucherSelect(voucher)
-    setIsOpen(false)
+    setIsOpen(false) // Auto close list when selected
   }
 
   return (
@@ -65,10 +65,10 @@ export const VoucherSection = ({
         )}
       </div>
 
-      {}
+      {/* Selected Voucher Display */}
       {selectedVoucher && !isOpen && (
         <div className="relative overflow-hidden bg-white border-2 border-primary-500 rounded-2xl p-4 flex items-center justify-between group">
-          {}
+          {/* Ticket styling elements */}
           <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-mint-50 rounded-full border-r-2 border-primary-500 z-10" />
           <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-mint-50 rounded-full border-l-2 border-primary-500 z-10" />
 
@@ -98,7 +98,7 @@ export const VoucherSection = ({
         </div>
       )}
 
-      {}
+      {/* Empty State / Prompt */}
       {!selectedVoucher && !isOpen && (
         <button
           onClick={() => setIsOpen(true)}
@@ -114,7 +114,7 @@ export const VoucherSection = ({
         </button>
       )}
 
-      {}
+      {/* Vouchers List */}
       {isOpen && (
         <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
           {isLoading ? (
@@ -144,7 +144,7 @@ export const VoucherSection = ({
                           : 'border-mint-100 bg-mint-50/30 opacity-70 cursor-not-allowed'
                     }`}
                   >
-                    {}
+                    {/* Ticket notches */}
                     <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-mint-50 rounded-full border-r-2 border-inherit" />
                     <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-mint-50 rounded-full border-l-2 border-inherit" />
 

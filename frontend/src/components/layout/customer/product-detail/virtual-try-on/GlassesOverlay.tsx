@@ -1,8 +1,19 @@
 import { useRef, useMemo } from 'react'
-import { Canvas, useFrame, type RootState } from '@react-three/fiber'
+import { Canvas, useFrame, type ThreeElements, type RootState } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
 import type { NormalizedLandmark } from '@mediapipe/tasks-vision'
 import * as THREE from 'three'
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace React {
+    // eslint-disable-next-line @typescript-eslint/no-namespace
+    namespace JSX {
+      // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+      interface IntrinsicElements extends ThreeElements {}
+    }
+  }
+}
 
 interface GlassesOverlayProps {
   videoRef: React.RefObject<HTMLVideoElement | null>
@@ -11,19 +22,22 @@ interface GlassesOverlayProps {
   glassesImageUrl: string
 }
 
+// Key landmark indices
 const LEFT_EYE_OUTER = 33
 const RIGHT_EYE_OUTER = 263
 const NOSE_BRIDGE = 6
 
+// GLB model path (served from /public)
 const GLB_MODEL_PATH = '/models/sunglass.glb'
 
-const MODEL_SCALE_FACTOR = 1.15
-const MODEL_INNER_SCALE = 5
-const MODEL_DEPTH_SCALE = 2.3
-const MODEL_OFFSET_X = 0.05
-const MODEL_OFFSET_Y = -0.3
-const MODEL_OFFSET_Z = -6
-const SMOOTHING_ALPHA = 0.2
+// ---- Adjust these offsets to fine-tune model placement ----
+const MODEL_SCALE_FACTOR = 1.15 // larger overall scale
+const MODEL_INNER_SCALE = 5 // extra uniform scale for the loaded model
+const MODEL_DEPTH_SCALE = 2.3 // Lengthen temples to reach ears
+const MODEL_OFFSET_X = 0.05 // shift model left/right
+const MODEL_OFFSET_Y = -0.3 // shift model up/down
+const MODEL_OFFSET_Z = -6 // Push back towards ears
+const SMOOTHING_ALPHA = 0.2 // Smoother transitions
 
 export default function GlassesOverlay({
   videoRef,
@@ -191,8 +205,9 @@ function GlassesModel({
     group.rotation.z = smoothRotZ.current
     group.rotation.y = smoothRotY.current
 
+    // Suppress warning
     if (transformationMatricesRef.current.length > 0) {
-      void transformationMatricesRef.current.length
+      /* placeholder */
     }
   })
 

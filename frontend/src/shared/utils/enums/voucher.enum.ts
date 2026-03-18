@@ -10,6 +10,7 @@ export const VoucherApplyScope = {
 } as const
 export type VoucherApplyScope = (typeof VoucherApplyScope)[keyof typeof VoucherApplyScope]
 
+// Voucher Enums
 export const VoucherStatus = {
   DRAFT: 'DRAFT',
   ACTIVE: 'ACTIVE',

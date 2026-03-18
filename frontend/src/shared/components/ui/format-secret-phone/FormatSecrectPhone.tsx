@@ -6,6 +6,7 @@ export default function FormatSecretPhone({ phone }: FormatSecretPhoneProps) {
   const formatPhone = (phoneStr?: string): string => {
     if (!phoneStr) return '—'
 
+    // Chỉ lấy các ký tự số
     let cleaned = phoneStr.replace(/\D/g, '')
     if (!cleaned) return '—'
 
@@ -14,7 +15,7 @@ export default function FormatSecretPhone({ phone }: FormatSecretPhoneProps) {
     }
 
     const fullPhone = '+' + cleaned
-
+    // Guard: cần tối thiểu 8 ký tự để tạo mask hợp lệ
     if (fullPhone.length < 8) return fullPhone
 
     const countryCode = fullPhone.substring(0, 3)

@@ -8,6 +8,7 @@ export const authEventEmitter = {
   subscribe(listener: Listener) {
     listeners.push(listener)
 
+    // cleanup function
     return () => {
       const idx = listeners.indexOf(listener)
       if (idx !== -1) {

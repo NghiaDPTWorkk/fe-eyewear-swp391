@@ -3,7 +3,6 @@ import { Lock, Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
 import { authService } from '@/features/auth/services/auth.service'
 import { toast } from 'react-hot-toast'
-import { MESSAGES } from '@/shared/constants/messages'
 
 export const ChangePasswordSection = () => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
@@ -21,17 +20,17 @@ export const ChangePasswordSection = () => {
     const { oldPassword, newPassword, confirmPassword } = formData
 
     if (!oldPassword || !newPassword || !confirmPassword) {
-      toast.error(MESSAGES.CUSTOMER.AUTH.INFO_REQUIRED)
+      toast.error('Vui lòng nhập đầy đủ thông tin mật khẩu')
       return
     }
 
     if (newPassword !== confirmPassword) {
-      toast.error(MESSAGES.CUSTOMER.AUTH.PASSWORD_MISMATCH)
+      toast.error('Mật khẩu mới và xác nhận mật khẩu không khớp')
       return
     }
 
     if (newPassword.length < 8) {
-      toast.error(MESSAGES.CUSTOMER.AUTH.PASSWORD_TOO_SHORT)
+      toast.error('Mật khẩu mới phải có ít nhất 8 ký tự')
       return
     }
 
@@ -43,17 +42,17 @@ export const ChangePasswordSection = () => {
       })
 
       if (response.success) {
-        toast.success(response.message || MESSAGES.CUSTOMER.AUTH.CHANGE_PASSWORD_SUCCESS)
+        toast.success(response.message || 'Cập nhật mật khẩu thành công!')
         setFormData({
           oldPassword: '',
           newPassword: '',
           confirmPassword: ''
         })
       } else {
-        toast.error(response.message || MESSAGES.COMMON.ERROR)
+        toast.error(response.message || 'Cập nhật mật khẩu thất bại')
       }
     } catch (error: any) {
-      const errorMsg = error.response?.data?.message || MESSAGES.COMMON.ERROR
+      const errorMsg = error.response?.data?.message || 'Có lỗi xảy ra khi cập nhật mật khẩu'
       toast.error(errorMsg)
     } finally {
       setIsLoading(false)

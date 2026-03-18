@@ -51,6 +51,7 @@ export function ProductCard({
   }
 
   const handleAddToWishlist = async () => {
+    // Auth check
     const isAuth = useAuthStore.getState().isAuthenticated || !!localStorage.getItem('access_token')
     if (!isAuth) {
       toast.error('Please login to add items to wishlist')
@@ -58,11 +59,13 @@ export function ProductCard({
       return
     }
 
+    // If external handler provided, use it
     if (onAddToWishlist) {
       onAddToWishlist(id)
       return
     }
 
+    // Otherwise use internal store logic
     try {
       const product: StandardProduct = {
         id,
@@ -73,7 +76,7 @@ export function ProductCard({
         defaultVariantPrice: price,
         defaultVariantFinalPrice: discountPrice || price,
         type,
-        slugBase: '',
+        slugBase: '', // Reconstructing enough for store/UI
         skuBase: '',
         categories: []
       }
@@ -102,14 +105,14 @@ export function ProductCard({
         className
       )}
     >
-      {}
+      {/* Sale Badge - Top left corner with opacity */}
       {hasSale && (
         <div className="absolute top-0 left-0 z-10 bg-primary-500/90 text-white px-3 py-1.5 rounded-br-2xl text-xs font-bold shadow-lg">
           -{salePercent}%
         </div>
       )}
 
-      {}
+      {/* Wishlist Button */}
       <button
         onClick={(e) => {
           e.stopPropagation()
@@ -128,7 +131,7 @@ export function ProductCard({
         />
       </button>
 
-      {}
+      {/* Product Image - Full width, no padding */}
       <div className="aspect-square bg-gradient-to-br from-mint-100 to-mint-200 flex items-center justify-center overflow-hidden relative">
         {image ? (
           <img
@@ -141,14 +144,14 @@ export function ProductCard({
         )}
       </div>
 
-      {}
+      {/* Product Info */}
       <div className="p-5">
         {brand && (
           <p className="text-xs text-primary-500 font-semibold mb-1 uppercase tracking-wide">
             {brand}
           </p>
         )}
-        {}
+        {/* Fixed height for title to prevent layout shift */}
         <h3 className="font-bold text-mint-1200 mb-3 line-clamp-2 text-lg min-h-[3.5rem]">
           {name}
         </h3>

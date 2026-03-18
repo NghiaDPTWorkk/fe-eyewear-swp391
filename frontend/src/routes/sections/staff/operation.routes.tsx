@@ -6,48 +6,44 @@ import { AuthGuard } from '@/routes/guards'
 const OperationLayout = lazy(
   () => import('@/components/layout/staff/operation-staff/OperationLayout')
 )
-const OperationDashboardPage = lazy(() => import('@/pages/operation-staff/OperationDashboardPage'))
-const OperationPrescriptionPage = lazy(
-  () => import('@/pages/operation-staff/OperationPrescriptionPage')
-)
-const OperationPreOrdersPage = lazy(() => import('@/pages/operation-staff/OperationPreOrdersPage'))
-const OperationAllOrdersPage = lazy(() => import('@/pages/operation-staff/OperationAllOrdersPage'))
-const OperationPackingPage = lazy(() => import('@/pages/operation-staff/OperationPackingPage'))
-const OrderDetailPage = lazy(() => import('@/pages/operation-staff/OperationOrderDetailPage'))
+const OperationDashboardPage = lazy(() => import('@/pages/operations/OperationDashboardPage'))
+const OperationPrescriptionPage = lazy(() => import('@/pages/operations/OperationPrescriptionPage'))
+const OperationPreOrdersPage = lazy(() => import('@/pages/operations/OperationPreOrdersPage'))
+const OperationAllOrdersPage = lazy(() => import('@/pages/operations/OperationAllOrdersPage'))
+const OperationPackingPage = lazy(() => import('@/pages/operations/OperationPackingPage'))
+const OrderDetailPage = lazy(() => import('@/pages/operations/OperationOrderDetailPage'))
 const OperationOrderPackingProcess = lazy(
-  () => import('@/pages/operation-staff/OperationOrderPackingProcess')
+  () => import('@/pages/operations/OperationOrderPackingProcess')
 )
 const OperationManufacturingProcess = lazy(
-  () => import('@/pages/operation-staff/OperationManufacturingProcess')
+  () => import('@/pages/operations/OperationManufacturingProcess')
 )
 const StaffSettingsPage = lazy(() => import('@/pages/staff/StaffSettingsPage'))
 const StaffSupportPage = lazy(() => import('@/pages/staff/StaffSupportPage'))
 const StaffProfilePage = lazy(() => import('@/pages/staff/StaffProfilePage'))
 
 const OperationCompleteOrdersPage = lazy(() =>
-  import('@/pages/operation-staff/OperationCompleteOrdersPage').then((m) => ({
+  import('@/pages/operations/OperationCompleteOrdersPage').then((m) => ({
     default: m.default
   }))
 )
 const OperationShippingHandoverPage = lazy(() =>
-  import('@/pages/operation-staff/OperationShippingHandoverPage').then((m) => ({
+  import('@/pages/operations/OperationShippingHandoverPage').then((m) => ({
     default: m.default
   }))
 )
 const OperationAllInvoices = lazy(() =>
-  import('@/pages/operation-staff/OperationAllInvoices').then((m) => ({
+  import('@/pages/operations/OperationAllInvoices').then((m) => ({
     default: m.default
   }))
 )
 
 const OperationInventoryReceivingPage = lazy(() =>
-  import('@/pages/operation-staff/OperationInventoryReceivingPage').then((m) => ({
-    default: m.default
-  }))
+  import('@/pages/operations/OperationInventoryReceivingPage').then((m) => ({ default: m.default }))
 )
 
 const OperationInvenProcessPlan = lazy(() =>
-  import('@/pages/operation-staff/OperationInvenProcessPlan').then((m) => ({ default: m.default }))
+  import('@/pages/operations/OperationInvenProcessPlan').then((m) => ({ default: m.default }))
 )
 
 export const operationRoutes = [

@@ -19,7 +19,10 @@ export function useManagerVouchers(page = 1, limit = 10, status?: string, search
       httpClient.get<AdminVoucherListResponse>(
         ENDPOINTS.MANAGER.VOUCHERS(page, limit, status, search)
       ),
-    staleTime: 30_000
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+    refetchOnMount: 'always',
+    refetchOnReconnect: true
   })
 }
 
@@ -33,7 +36,10 @@ export function useVoucherStats() {
         httpClient.get<AdminVoucherListResponse>(
           ENDPOINTS.MANAGER.VOUCHERS(1, 10, status === 'all' ? undefined : status)
         ),
-      staleTime: 30_000
+      staleTime: 0,
+      refetchOnWindowFocus: true,
+      refetchOnMount: 'always',
+      refetchOnReconnect: true
     }))
   })
 
@@ -129,6 +135,9 @@ export function useSearchVouchersByCode(code: string) {
         `${ENDPOINTS.MANAGER.VOUCHERS(1, 20)}&code=${encodeURIComponent(code)}`
       ),
     enabled: code.trim().length >= 2,
-    staleTime: 10_000
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+    refetchOnMount: 'always',
+    refetchOnReconnect: true
   })
 }

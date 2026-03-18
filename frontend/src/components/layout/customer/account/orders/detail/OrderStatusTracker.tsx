@@ -131,7 +131,7 @@ export function OrderStatusTracker({ status }: OrderStatusTrackerProps) {
     <Card className="p-8 mb-8 border-mint-100/50 bg-white shadow-sm overflow-x-auto scrollbar-hide">
       <div className="min-w-[700px]">
         <div className="flex justify-between relative mb-12 px-4">
-          {}
+          {/* Progress line */}
           <div className="absolute top-5 left-12 right-12 h-1 bg-mint-50 -z-0">
             <div
               className="h-full bg-primary-500 transition-all duration-1000"
@@ -171,7 +171,7 @@ export function OrderStatusTracker({ status }: OrderStatusTrackerProps) {
           })}
         </div>
 
-        {}
+        {/* Status Highlight */}
         <div className="mt-16 text-center border-t border-mint-50 pt-6">
           <div className="inline-flex flex-col items-center">
             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">

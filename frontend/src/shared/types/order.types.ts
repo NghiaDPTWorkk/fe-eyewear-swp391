@@ -5,9 +5,13 @@ import type { LensParameters } from './order-item.types'
 
 import type { Invoice } from './invoice.types'
 
+/**
+ * Order product structure matching backend - Imported from order-item.types.ts
+ */
+
 export interface Order {
   _id: string
-  type: OrderType
+  type: OrderType // nếu là đơn PRE-ORDER thì sẽ type có kiểu mảng ([PRE-ORDER,MANUFACTURING], [PRE-ORDER,NOrMAL]) còn MANUFACTURING và NORMAL thì chỉ 1 obejct thui
   status: OrderStatus
   assignmentStatus: AssignmentOrderStatus
   products: OrderProductItem[]
@@ -23,6 +27,11 @@ export interface Order {
   deletedAt?: Date | null
 }
 
+// Invoice interface is moved to invoice.types.ts
+
+/**
+ * Create order request matching backend ClientCreateOrderSchema
+ */
 export interface CreateOrderRequest {
   type: OrderType
   products: {
@@ -48,6 +57,9 @@ export interface CreateOrderRequest {
   status?: OrderStatus
 }
 
+/**
+ * Update order request matching backend ClientUpdateOrderSchema
+ */
 export interface UpdateOrderRequest {
   type?: OrderType
   products?: OrderProductItem[]
@@ -100,6 +112,8 @@ export interface OrderListResponse {
   }
 }
 
+// InvoiceResponse is moved to invoice.types.ts
+
 export interface InvoiceListResponse {
   items: Invoice[]
   pagination: {
@@ -113,18 +127,19 @@ export interface InvoiceListResponse {
 export function isManufacturingOrder(order: { type?: Array<string> | null }) {
   return Array.isArray(order.type) && order.type.includes('MANUFACTURING')
 }
+// API của t đừng xó nha
 
 export interface OrderProductInfo {
-  product_id: string
-  sku: string
-  pricePerUnit: number
+  product_id: string // Required
+  sku: string // Required - Bắt đầu bằng "FRAME-" hoặc "LENS-"
+  pricePerUnit: number // Required
 }
 
 export interface OrderLensDetail {
-  lens_id: string
-  sku: string
-  parameters: LensParameters
-  pricePerUnit: number
+  lens_id: string // Required
+  sku: string // Required
+  parameters: LensParameters // Thông số kỹ thuật
+  pricePerUnit: number // Required
 }
 
 export type OrderLensData = OrderLensDetail
@@ -150,7 +165,9 @@ export type TransformedFrameData = Array<{
 }>
 
 export interface OrderProductItem {
-  product: OrderProductInfo
-  quantity: number
-  lens?: OrderLensDetail
+  product: OrderProductInfo // REQUIRED - Frame hoặc Lens
+  quantity: number // REQUIRED - Số lượng (min: 1)
+  lens?: OrderLensDetail // OPTIONAL - Chỉ có khi Manufacturing Order
 }
+
+//----------------------------------------------------------------------

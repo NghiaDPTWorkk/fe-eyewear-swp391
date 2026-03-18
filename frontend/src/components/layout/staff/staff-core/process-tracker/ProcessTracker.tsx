@@ -9,7 +9,7 @@ interface ProcessStep {
 
 interface ProcessTrackerProps {
   steps?: ProcessStep[]
-  activeStep?: number
+  activeStep?: number // 0-indexed index of the current step
   title?: string
 }
 
@@ -29,30 +29,38 @@ export default function ProgressTracker({
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 mb-4 border border-mint-200">
       <h2 className="text-lg font-semibold text-mint-900 mb-6">{title}</h2>
-      <div className="flex items-center justify-between">
-        {steps.map((step, index) => {
-          const isCompleted = index < activeStep
-          const isActive = index === activeStep
-
-          return (
-            <React.Fragment key={index}>
-              <ProgressTrackerItem
-                icon={React.cloneElement(step.icon as any, {
-                  className: isCompleted || isActive ? 'text-white' : 'text-gray-400'
-                })}
-                label={step.label}
-                isActive={isActive}
-                isCompleted={isCompleted}
-              />
-              {index < steps.length - 1 && (
-                <div
-                  className={`flex-1 h-0.5 -mx-2 ${isCompleted ? 'bg-mint-500' : 'bg-gray-200'}`}
-                ></div>
-              )}
-            </React.Fragment>
-          )
-        })}
+      <div className="overflow-x-auto custom-scrollbar pb-2">
+        <div className="flex items-center justify-between min-w-[500px] md:min-w-full">
+          {steps.map((step, index) => {
+            const isCompleted = index < activeStep
+            const isActive = index === activeStep
+  
+            return (
+              <React.Fragment key={index}>
+                <ProgressTrackerItem
+                  icon={React.cloneElement(step.icon as any, {
+                    className: isCompleted || isActive ? 'text-white' : 'text-gray-400'
+                  })}
+                  label={step.label}
+                  isActive={isActive}
+                  isCompleted={isCompleted}
+                />
+                {index < steps.length - 1 && (
+                  <div
+                    className={`flex-1 h-0.5 -mx-2 min-w-[20px] ${isCompleted ? 'bg-mint-500' : 'bg-gray-200'}`}
+                  ></div>
+                )}
+              </React.Fragment>
+            )
+          })}
+        </div>
       </div>
     </div>
   )
 }
+// Pending	-> PENDING, VERIFIED, APPROVED, ASSIGNED
+// Processing ->	MAKING (Order)
+// Packaging -> 	PACKAGING, PACKAGED, PACKING (Order)
+// Ready for Pickup	-> READY_TO_SHIP, COMPLETED (Invoice)
+// Shipping ->	DELIVERING (Invoice)
+// Completed	DELIVERED (Invoice) or COMPLETED (Order)

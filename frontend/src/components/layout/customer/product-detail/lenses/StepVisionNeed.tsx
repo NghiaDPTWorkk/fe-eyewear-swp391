@@ -1,6 +1,6 @@
 import type { VisionNeed } from './types'
 import { Glasses, Info } from 'lucide-react'
-import { Card } from '@/shared/components/ui/card'
+import { Card } from '@/shared/components/ui-core/card'
 
 interface StepVisionNeedProps {
   onSelect: (need: VisionNeed) => void

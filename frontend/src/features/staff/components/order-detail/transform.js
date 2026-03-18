@@ -3,6 +3,7 @@ const path = require('path')
 const file = path.join(__dirname, 'OrderDetail.tsx')
 let text = fs.readFileSync(file, 'utf8')
 
+// 1. Change timeline text
 text = text
   .replace("'PRE-ORDER PLACED'", "'Pre-order Placed'")
   .replace("'SUPPLIER NOTIFICATION'", "'Supplier Notification'")
@@ -10,11 +11,13 @@ text = text
   .replace("'ORDER CREATED'", "'Order Created'")
   .replace("'CURRENT STAGE'", "'Current Stage'")
 
+// 2. Change timeline font
 text = text.replace(
   '<h4 className="text-sm font-semibold text-slate-800">{item.title}</h4>',
   '<h4 className="text-sm font-bold text-slate-800">{item.title}</h4>'
 )
 
+// 3. Grid Restructuring
 const gridStartPattern = '<div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">'
 let beforeGrid = text.substring(0, text.indexOf(gridStartPattern))
 
@@ -25,15 +28,35 @@ const extractBlock = (startStr, endStr) => {
   return text.substring(start, end)
 }
 
-const orderItems = extractBlock('          {}', '          {}')
-const activityFlow = extractBlock('          {}', '          {}')
-const transactions = extractBlock('          {}', '        </div>\n\n        {}')
+// Extractor end markers are the start of next card, or end of col div.
+const orderItems = extractBlock(
+  '          {/* Order Items Table-style Card */}',
+  '          {/* Activity Timeline */}'
+)
+const activityFlow = extractBlock(
+  '          {/* Activity Timeline */}',
+  '          {/* Transactions Section - Moved here */}'
+)
+const transactions = extractBlock(
+  '          {/* Transactions Section - Moved here */}',
+  '        </div>\n\n        {/* Sidebar */}'
+)
 
-const customerInfo = extractBlock('          {}', '          {}')
-const fulfillment = extractBlock('          {}', '          {children}')
-const childrenStr = extractBlock('          {children}', '          {}')
-const staffMemo = extractBlock('          {}', '        </div>\n      </div>\n    </div>\n  )\n}')
+const customerInfo = extractBlock(
+  '          {/* Customer Card */}',
+  '          {/* Delivery & Address */}'
+)
+const fulfillment = extractBlock('          {/* Delivery & Address */}', '          {children}')
+const childrenStr = extractBlock(
+  '          {children}',
+  '          {/* Staff Memo - Moved here */}'
+)
+const staffMemo = extractBlock(
+  '          {/* Staff Memo - Moved here */}',
+  '        </div>\n      </div>\n    </div>\n  )\n}'
+)
 
+// Add h-full to each Card
 const stretchCard = (block, span) => {
   return block.replace(
     /<Card className="([^"]+)">/,

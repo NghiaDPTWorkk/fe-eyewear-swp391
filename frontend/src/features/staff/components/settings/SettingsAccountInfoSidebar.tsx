@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useProfile } from '@/features/staff/hooks/useProfile'
-import { Card, Button } from '@/shared/components/ui'
-import ConfirmationModal from '@/shared/components/ui/ConfirmationModal'
+import { Card, Button } from '@/shared/components/ui-core'
+import ConfirmationModal from '@/shared/components/ui-core/confirm-modal/ConfirmationModal'
 import { toast } from 'react-hot-toast'
 import {
   IoStorefrontOutline,
@@ -10,7 +10,7 @@ import {
   IoGlobeOutline,
   IoTrashOutline
 } from 'react-icons/io5'
-import { CustomSelect } from '@/shared/components/ui/select/CustomSelect'
+import { CustomSelect } from '@/shared/components/ui-core/select/CustomSelect'
 
 export default function AccountInfoSidebar() {
   const { data: profileData, isLoading } = useProfile()
@@ -74,7 +74,7 @@ export default function AccountInfoSidebar() {
 
   return (
     <div className="space-y-8">
-      {}
+      {/* Account Info */}
       <Card className="p-8 border-none shadow-sm shadow-neutral-200/50 bg-white">
         <h3 className="text-[11px] font-medium text-neutral-500 uppercase tracking-widest mb-8">
           Account Info
@@ -160,7 +160,7 @@ export default function AccountInfoSidebar() {
         </div>
       </Card>
 
-      {}
+      {/* System Settings */}
       <Card className="p-8 border-none shadow-sm shadow-neutral-200/50">
         <h3 className="text-[11px] font-medium text-neutral-500 uppercase tracking-widest mb-8">
           System
@@ -207,7 +207,7 @@ export default function AccountInfoSidebar() {
         </div>
       </Card>
 
-      {}
+      {/* Danger Zone */}
       <Card className="p-8 border border-red-100 shadow-sm shadow-red-50 bg-white rounded-2xl">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center shrink-0">

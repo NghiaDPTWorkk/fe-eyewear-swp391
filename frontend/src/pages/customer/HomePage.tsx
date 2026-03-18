@@ -10,7 +10,7 @@ export const HomePage = ({ header }: HomePageProps) => {
     <div className="min-h-screen bg-mint-200">
       {header}
 
-      {}
+      {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-mint-300 via-mint-200 to-primary-100 overflow-hidden">
         <div className="container mx-auto px-4 py-20 lg:py-32">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -46,7 +46,7 @@ export const HomePage = ({ header }: HomePageProps) => {
         </div>
       </section>
 
-      {}
+      {/* Benefits Bar */}
       <section className="bg-white border-y border-mint-300">
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
@@ -90,7 +90,7 @@ export const HomePage = ({ header }: HomePageProps) => {
         </div>
       </section>
 
-      {}
+      {/* NEW YEAR MUST-HAVES Section */}
       <section className="py-16 bg-mint-200">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
@@ -128,7 +128,7 @@ export const HomePage = ({ header }: HomePageProps) => {
         </div>
       </section>
 
-      {}
+      {/* Beautify Your Space Banner */}
       <section className="py-16 bg-gradient-to-r from-mint-300 to-primary-200">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -162,7 +162,7 @@ export const HomePage = ({ header }: HomePageProps) => {
         </div>
       </section>
 
-      {}
+      {/* Customer Testimonials */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
@@ -217,7 +217,7 @@ export const HomePage = ({ header }: HomePageProps) => {
         </div>
       </section>
 
-      {}
+      {/* Newsletter Section */}
       <section className="py-16 bg-gradient-to-br from-primary-500 to-primary-700">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto text-center space-y-6">
@@ -242,7 +242,7 @@ export const HomePage = ({ header }: HomePageProps) => {
         </div>
       </section>
 
-      {}
+      {/* Footer */}
       <footer className="bg-mint-1200 text-mint-300 py-12">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-4 gap-8 mb-8">

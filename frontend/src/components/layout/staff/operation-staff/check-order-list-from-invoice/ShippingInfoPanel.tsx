@@ -37,7 +37,7 @@ export default function ShippingInfoPanel({
         Shipping Information
       </h2>
 
-      {}
+      {/* Invoice Info */}
       <div className="mb-4 pb-4 border-b border-gray-200">
         <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Invoice ID</p>
         <p className="text-base font-semibold text-gray-900">{invoiceCode}</p>
@@ -45,7 +45,7 @@ export default function ShippingInfoPanel({
         <p className="text-sm text-gray-600 mt-1">Phone number: {phone}</p>
       </div>
 
-      {}
+      {/* Carrier */}
       <div className="mb-4">
         <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Delivery Method</p>
         <p className="w-full px-6 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 border-2 border-solid bg-white text-gray-600 border-gray-200">
@@ -63,13 +63,13 @@ export default function ShippingInfoPanel({
         )}
       </div>
 
-      {}
+      {/* Shipping Address */}
       <div className="mb-6">
         <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Shipping Address</p>
         <p className="text-sm text-gray-700 leading-relaxed">{address}</p>
       </div>
 
-      {}
+      {/* Action Buttons */}
       <div className="space-y-3 mb-6">
         <button
           onClick={onProcessShipping}
@@ -103,7 +103,7 @@ export default function ShippingInfoPanel({
         </button>
       </div>
 
-      {}
+      {/* Order Summary */}
       <div className="mt-6 pt-6 border-t border-gray-200">
         <p className="text-xs text-gray-500 uppercase tracking-wide mb-3">Order Summary</p>
         <div className="space-y-2">

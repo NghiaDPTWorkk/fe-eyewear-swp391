@@ -1,4 +1,8 @@
 import type { User } from '@/shared/types'
+/**
+ * Authentication request and response types
+ * Matches backend API structure
+ */
 
 export interface LoginRequest {
   email: string
@@ -25,3 +29,6 @@ export interface LoginResponse {
   message: string
   data: AuthResponse
 }
+
+// Keep LoginResponse for backward compatibility and as the full response type
+// export type LoginResponse = AuthResponse // Removed this to use the interface above

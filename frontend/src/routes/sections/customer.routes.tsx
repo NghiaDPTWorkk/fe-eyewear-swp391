@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom'
 import { LazyPage } from '@/pages/LazyPage'
 import { AuthGuard } from '@/routes/guards'
 
+// Layouts
 const CustomerLayout = lazy(() => import('@/components/layout/customer/CustomerLayout'))
 const AccountLayout = lazy(() =>
   import('@/components/layout/customer/account/AccountLayout').then((m) => ({
@@ -10,6 +11,7 @@ const AccountLayout = lazy(() =>
   }))
 )
 
+// Pages
 const LandingPage = lazy(() =>
   import('@/pages/LandingPage').then((m) => ({ default: m.LandingPage }))
 )
@@ -31,6 +33,7 @@ const PaymentResultPage = lazy(() =>
   }))
 )
 
+// Account Pages
 const AccountSettingsPage = lazy(() =>
   import('@/pages/customer/account/AccountSettingsPage').then((m) => ({
     default: m.AccountSettingsPage

@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, Outlet, useNavigate } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 import { Form, Formik, type FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
-import { Container } from '@/components'
-import { PageHeader } from '@/features/sale-staff/components/common'
+import { Container, Button } from '@/shared/components/ui'
+import OperationPagination from '@/shared/components/ui/pagination/OperationPagination'
+import { PageHeader } from '@/features/sales/components/common'
 import { useDebounce } from '@/shared/hooks/useDebounce'
 import { adminAccountService } from '@/shared/services/admin/adminAccountService'
 import type { AdminAccount, CreateAdminAccountRequest } from '@/shared/types'
@@ -15,8 +16,6 @@ import {
   IoSearchOutline,
   IoRefreshOutline,
   IoAddOutline,
-  IoChevronBackOutline,
-  IoChevronForwardOutline,
   IoPersonOutline,
   IoShieldCheckmarkOutline,
   IoFlashOutline,
@@ -90,34 +89,56 @@ const SummaryCard: React.FC<{
   percent: string
   isUp: boolean
   icon: React.ReactNode
-  iconBg: string
-  iconColor: string
-}> = ({ label, value, percent, isUp, icon, iconBg, iconColor }) => (
-  <div className="bg-white p-6 rounded-3xl border border-neutral-100 shadow-sm hover:shadow-md transition-all">
-    <div className="flex justify-between items-start mb-6">
-      <div className="flex items-center gap-3">
-        <div
-          className={`w-10 h-10 rounded-xl flex items-center justify-center ${iconBg} ${iconColor}`}
-        >
-          {icon}
+  colorScheme: 'mint' | 'info' | 'warning' | 'danger'
+}> = ({ label, value, percent, isUp, icon, colorScheme }) => {
+  const getColors = () => {
+    switch (colorScheme) {
+      case 'mint':
+        return { bg: 'bg-mint-50', text: 'text-mint-600' }
+      case 'info':
+        return { bg: 'bg-sky-50', text: 'text-sky-600' }
+      case 'warning':
+        return { bg: 'bg-amber-50', text: 'text-amber-600' }
+      case 'danger':
+        return { bg: 'bg-red-50', text: 'text-red-600' }
+      default:
+        return { bg: 'bg-gray-50', text: 'text-gray-600' }
+    }
+  }
+
+  const colors = getColors()
+
+  return (
+    <div className="bg-white p-6 rounded-3xl border border-neutral-100 shadow-sm hover:shadow-md transition-all">
+      <div className="flex justify-between items-start mb-6">
+        <div className="flex items-center gap-3">
+          <div
+            className={`w-10 h-10 rounded-xl flex items-center justify-center ${colors.bg} ${colors.text}`}
+          >
+            {icon}
+          </div>
+          <span className="text-xs font-bold text-neutral-400 uppercase tracking-wider">
+            {label}
+          </span>
         </div>
-        <span className="text-xs font-semibold text-neutral-400 line-clamp-1">{label}</span>
+        <div
+          className={`flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold ${
+            isUp ? 'bg-mint-50 text-mint-600' : 'bg-red-50 text-red-600'
+          }`}
+        >
+          {isUp ? <IoTrendingUpOutline /> : <IoTrendingDownOutline />}
+          {percent}
+        </div>
       </div>
-      <div
-        className={`flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold ${
-          isUp ? 'bg-indigo-50 text-indigo-600' : 'bg-red-50 text-red-600'
-        }`}
-      >
-        {isUp ? <IoTrendingUpOutline /> : <IoTrendingDownOutline />}
-        {percent}
+      <div className="mt-4">
+        <h3 className="text-3xl font-bold text-gray-900 font-heading tracking-tight mb-4">{value}</h3>
+        <p className="text-[10px] font-medium text-neutral-400 capitalize whitespace-nowrap">
+          Updated just now
+        </p>
       </div>
     </div>
-    <div className="mt-4">
-      <h3 className="text-3xl font-bold text-gray-900 font-primary leading-tight mb-4">{value}</h3>
-      <p className="text-[10px] font-medium text-neutral-400 capitalize">Updated just now</p>
-    </div>
-  </div>
-)
+  )
+}
 
 interface CreateStaffModalProps {
   open: boolean
@@ -305,21 +326,19 @@ function CreateStaffModal({ open, onClose, onSubmit, isSubmitting }: CreateStaff
                   />
                 </div>
 
-                <div className="flex justify-end gap-3 pt-2 sticky bottom-0 bg-white pb-1">
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className="px-5 py-2.5 rounded-xl border border-neutral-200 text-neutral-600"
-                  >
+                <div className="flex justify-end gap-3 pt-4 sticky bottom-0 bg-white pb-2">
+                  <Button type="button" variant="outline" onClick={onClose} className="px-6">
                     Cancel
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="submit"
+                    variant="solid"
+                    colorScheme="primary"
                     disabled={isSubmitting}
-                    className="px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold disabled:opacity-60"
+                    className="px-6"
                   >
                     {isSubmitting ? 'Creating...' : 'Create Account'}
-                  </button>
+                  </Button>
                 </div>
               </Form>
             )}
@@ -331,7 +350,6 @@ function CreateStaffModal({ open, onClose, onSubmit, isSubmitting }: CreateStaff
 }
 
 export default function AdminStaffPage() {
-  const navigate = useNavigate()
   const queryClient = useQueryClient()
 
   const [searchQuery, setSearchQuery] = useState('')
@@ -460,27 +478,6 @@ export default function AdminStaffPage() {
             { label: 'Staff Accounts' }
           ]}
         />
-        <div className="mt-4 flex flex-wrap items-center gap-3">
-          <Link
-            to="/admin/dashboard"
-            className="rounded-lg border border-neutral-200 bg-white px-3 py-2 text-xs font-semibold text-neutral-600 transition hover:border-indigo-200 hover:text-indigo-600"
-          >
-            Back to dashboard
-          </Link>
-          <Link
-            to="/admin/users"
-            className="rounded-lg border border-neutral-200 bg-white px-3 py-2 text-xs font-semibold text-neutral-600 transition hover:border-indigo-200 hover:text-indigo-600"
-          >
-            User directory
-          </Link>
-          <button
-            type="button"
-            onClick={() => navigate('/admin/settings')}
-            className="rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-indigo-700"
-          >
-            Staff settings
-          </button>
-        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 px-4">
@@ -490,8 +487,7 @@ export default function AdminStaffPage() {
           percent="--"
           isUp={true}
           icon={<IoPersonOutline size={20} />}
-          iconBg="bg-indigo-50"
-          iconColor="text-indigo-600"
+          colorScheme="mint"
         />
         <SummaryCard
           label="Active Staff"
@@ -499,8 +495,7 @@ export default function AdminStaffPage() {
           percent="--"
           isUp={true}
           icon={<IoShieldCheckmarkOutline size={20} />}
-          iconBg="bg-green-50"
-          iconColor="text-green-600"
+          colorScheme="info"
         />
         <SummaryCard
           label="Current Page"
@@ -508,8 +503,7 @@ export default function AdminStaffPage() {
           percent="--"
           isUp={false}
           icon={<IoFlashOutline size={20} />}
-          iconBg="bg-amber-50"
-          iconColor="text-amber-600"
+          colorScheme="warning"
         />
       </div>
 
@@ -522,10 +516,10 @@ export default function AdminStaffPage() {
                 setRoleFilter(tab.value)
                 setCurrentPage(1)
               }}
-              className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${
+              className={`px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${
                 roleFilter === tab.value
-                  ? 'bg-white text-indigo-600 shadow-sm border border-neutral-100'
-                  : 'text-neutral-500 hover:text-neutral-700'
+                  ? 'bg-mint-900 text-white shadow-md shadow-mint-100 border-none'
+                  : 'text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100/50'
               }`}
             >
               {tab.label}
@@ -547,9 +541,9 @@ export default function AdminStaffPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="relative">
+            <div className="relative group">
               <IoSearchOutline
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 group-focus-within:text-mint-600 transition-colors"
                 size={18}
               />
               <input
@@ -560,22 +554,24 @@ export default function AdminStaffPage() {
                   setSearchQuery(e.target.value)
                   setCurrentPage(1)
                 }}
-                className="w-full md:w-64 pl-12 pr-4 py-3 bg-neutral-50/50 border border-neutral-100 rounded-2xl text-[13px] font-medium focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all"
+                className="w-full md:w-72 pl-12 pr-4 py-3 bg-neutral-50/50 border border-neutral-100 rounded-2xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all placeholder:text-neutral-400"
               />
             </div>
             <button
               onClick={() => refetch()}
-              className="w-12 h-12 flex items-center justify-center bg-neutral-50 rounded-2xl text-neutral-400 hover:text-gray-900 transition-all"
+              className="w-12 h-12 flex items-center justify-center bg-neutral-50 rounded-2xl text-neutral-400 hover:text-mint-600 hover:bg-mint-50 transition-all"
             >
               <IoRefreshOutline size={20} className={isFetching ? 'animate-spin' : ''} />
             </button>
-            <button
+            <Button
               onClick={() => setIsCreateModalOpen(true)}
-              className="hidden md:flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-2xl text-sm font-bold shadow-xl shadow-indigo-100/50 hover:bg-indigo-700 transition-all active:scale-95"
+              variant="solid"
+              colorScheme="primary"
+              className="hidden md:flex items-center gap-2 px-6 py-3 h-12 rounded-2xl text-sm font-bold shadow-xl shadow-mint-100/50 active:scale-95"
             >
               <IoAddOutline size={20} />
               Add Staff
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -590,31 +586,14 @@ export default function AdminStaffPage() {
           />
         )}
 
-        <div className="p-8 border-t border-neutral-50 flex items-center justify-between">
-          <p className="text-xs font-semibold text-neutral-400 uppercase tracking-widest">
-            Showing {staffList.length} of {total} Staff
-          </p>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-              disabled={currentPage <= 1}
-              className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-neutral-100 text-neutral-400 hover:text-indigo-600 transition-all disabled:opacity-40"
-            >
-              <IoChevronBackOutline />
-            </button>
-            <div className="flex gap-1">
-              <button className="px-3 h-10 rounded-xl bg-indigo-500 text-white text-xs font-bold shadow-lg shadow-indigo-100">
-                {page}
-              </button>
-            </div>
-            <button
-              onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
-              disabled={currentPage >= totalPages}
-              className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-neutral-100 text-neutral-400 hover:text-indigo-600 transition-all disabled:opacity-40"
-            >
-              <IoChevronForwardOutline />
-            </button>
-          </div>
+        <div className="px-6 py-4 border-t border-neutral-50">
+          <OperationPagination
+            page={page}
+            totalPages={totalPages}
+            total={total}
+            limit={listLimit}
+            onPageChange={(p) => setCurrentPage(p)}
+          />
         </div>
       </div>
 

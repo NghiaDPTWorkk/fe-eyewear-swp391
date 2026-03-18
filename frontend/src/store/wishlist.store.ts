@@ -45,9 +45,11 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
 
     try {
       if (isExist) {
+        // Optimistic update
         set({ items: items.filter((item) => (item._id || item.id) !== productId) })
         await wishlistService.removeFromWishlist(productId)
       } else {
+        // Optimistic update - Default first, then new item
         const defaultIndex = items.findIndex((item) => item.isDefault)
         let newItems: StandardProduct[]
 
@@ -65,6 +67,7 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
         await wishlistService.addToWishlist(productId)
       }
     } catch (error) {
+      // Rollback on error
       set({ items })
       console.error('Wishlist toggle failed:', error)
       throw error

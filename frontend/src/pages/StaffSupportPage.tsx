@@ -22,11 +22,11 @@ export default function StaffSupportPage() {
       </div>
 
       <div className="max-w-4xl grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {}
+        {/* Left Column: Contact Form */}
         <div className="lg:col-span-2 space-y-6">
           <ContactSupportTeam />
 
-          {}
+          {/* FAQ Section */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
             <div className="space-y-4">
@@ -46,7 +46,7 @@ export default function StaffSupportPage() {
           </div>
         </div>
 
-        {}
+        {/* Right Column: Contact Info */}
         <div className="space-y-6">
           <div className="bg-white rounded-2xl p-6 border border-emerald-600/20 shadow-[0_4px_20px_-10px_rgba(16,185,129,0.1)]">
             <h3 className="font-bold text-lg text-emerald-700 mb-6 tracking-tight">

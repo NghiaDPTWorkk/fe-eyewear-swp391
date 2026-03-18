@@ -10,6 +10,7 @@ import {
 } from '@/components/layout/staff/staff-core'
 import { useStaffLayoutProfile } from '@/features/staff/hooks/useStaffLayoutProfile'
 import { cn } from '@/lib/utils'
+import LogoEyewearIcon from '@/shared/components/ui/logoeyewear/LogoEyewearIcon'
 
 interface StaffLayoutProps {
   sidebarContent: ReactNode
@@ -34,9 +35,7 @@ export function StaffLayout({
     <SidebarStaff
       logo={
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-mint-500 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-lg">O</span>
-          </div>
+          <LogoEyewearIcon className="w-8 h-8" />
           <span className="font-semibold text-gray-900">OpticView</span>
         </div>
       }

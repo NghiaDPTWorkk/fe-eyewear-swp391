@@ -19,6 +19,7 @@ export const ENDPOINTS = {
     GOOGLE: '/auth/google'
   },
 
+
   // Products
   PRODUCTS: {
     COMMON_GET: (page: number, limit: number) => `/products?page=${page}&limit=${limit}`,

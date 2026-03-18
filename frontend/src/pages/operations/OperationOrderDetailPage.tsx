@@ -232,7 +232,7 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
     queryFn: () =>
       productsService.getProductVariant(
         variantApiProductId!,
-        variantApiProductSku!
+        variantApiProductSku! //encodeURIComponent(variantApiProductSku!)
       ),
     enabled: !!variantApiProductId && !!variantApiProductSku
   })

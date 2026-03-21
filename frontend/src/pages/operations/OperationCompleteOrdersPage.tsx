@@ -20,7 +20,9 @@ export default function OperationCompleteOrdersPage() {
   // Date filter state
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
-  const [appliedDateRange, setAppliedDateRange] = useState<{ start: string; end: string } | null>(null)
+  const [appliedDateRange, setAppliedDateRange] = useState<{ start: string; end: string } | null>(
+    null
+  )
 
   const setTypeFilter = (value: string) => {
     setCurrentPage(1)
@@ -54,10 +56,17 @@ export default function OperationCompleteOrdersPage() {
     setCurrentPage(1)
   }
 
-  // Get data from store
+  // ═══════════════════════════════════════════════════
+  // DATA FLOW:
+  // 1. OperationDashboardPage gọi API → lưu vào Zustand store (useOrderCountStore).
+  // 2. Trang này ĐỌC THẲNG từ store → không cần fetch API riêng.
+  // 3. useMemo() filter theo statusFilter (COMPLETED / CANCELED...) + date range
+  //    → truyền vào <OrderTable> và <OperationPagination>.
+  // ═══════════════════════════════════════════════════
   const { orders: allOrders, isLoading, isError } = useOrderCountStore()
 
-  // Filter and Paginate on Client Side
+  // ─── Bước 1: Filter client-side ───────────────────
+  // Lọc đơn theo statusFilter (lấy từ URL params) + date range + type
   const { filteredOrders, total } = useMemo(() => {
     let filtered = allOrders.filter((o) => o.currentStatus === statusFilter)
 
@@ -83,7 +92,7 @@ export default function OperationCompleteOrdersPage() {
     }
   }, [allOrders, statusFilter, typeFilter, appliedDateRange, currentPage])
 
-  // Badge counts for filter buttons: should also reflect the date filter
+  // Badge counts trên các nút filter (cũng tính lại theo date range)
   const typeFilteredByDate = useMemo(() => {
     const filtered = allOrders.filter((o) => o.currentStatus === statusFilter)
     if (!appliedDateRange) return filtered
@@ -121,12 +130,14 @@ export default function OperationCompleteOrdersPage() {
         <p className="text-gray-500 mt-1">View all successfully completed and packed orders.</p>
       </div>
 
-      <div className="flex flex-col gap-4 mb-4">
+      <div className="flex flex-col gap-4 mb-0">
         <FilterButtonList
           buttons={typeButtons}
           selectedValue={typeFilter}
           onChange={setTypeFilter}
         />
+      </div>
+      <div style={{ marginTop: '-25px' }}>
         <DateRangeTool
           startDate={startDate}
           endDate={endDate}
@@ -137,7 +148,6 @@ export default function OperationCompleteOrdersPage() {
           isFiltered={!!appliedDateRange}
         />
       </div>
-
       <OrderTable
         orders={filteredOrders}
         isLoading={isLoading}

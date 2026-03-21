@@ -180,27 +180,36 @@ export default function OperationInventoryReceivingPage() {
 
   const [selectedDetailId, setSelectedDetailId] = useState<string | null>(null)
 
-  // Fetch all for filtering and counts
+  // ═══════════════════════════════════════════════════
+  // DATA FLOW (khác các trang Order):
+  // 1. Trang này tự gọi API thông qua hook usePreOrderImports()
+  //    → fetch 1000 records cùng lúc để xử lý client-side.
+  // 2. allBatches = tất cả lô hàng trả về từ API (PENDING + DONE).
+  // 3. useMemo() filter theo status (URL param) → phân trang client-side
+  //    → truyền vào <InventoryTable> và <OperationPagination>.
+  // ═══════════════════════════════════════════════════
+  // Bước 1: Gọi API lấy toàn bộ lô hàng (bulk fetch 1000 records)
   const { data: allData, isLoading: isLoadingData, isError } = usePreOrderImports({
     page: 1,
-    limit: 1000,
+    limit: 1000, // bulk fetch để filter client-side, tránh gọi API nhiều lần
     status: ['PENDING', 'DONE']
   })
 
+  // allBatches = mảng dữ liệu thô từ API, chưa lọc
   const allBatches = allData?.data?.preOrderImports || []
 
 
-  // Filter and Paginate on Client Side
+  // ─── Bước 2: Filter client-side + phân trang ─────────
+  // Lọc allBatches theo filter URL, sau đó cắt trang
   const { paginatedResults, total, typeFilteredByDate } = useMemo(() => {
-    // 1. Filter by Status
     const filtered = allBatches.filter((b) => {
       if (filter === 'all') return b.status === 'PENDING' || b.status === 'DONE'
       return b.status === filter
     })
 
     return {
-      typeFilteredByDate: filtered,
-      paginatedResults: filtered.slice((currentPage - 1) * limit, currentPage * limit),
+      typeFilteredByDate: filtered,          // dùng để tính badge count trên filter buttons
+      paginatedResults: filtered.slice((currentPage - 1) * limit, currentPage * limit), // dành cho trang hiện tại
       total: filtered.length
     }
   }, [allBatches, filter, currentPage, limit])

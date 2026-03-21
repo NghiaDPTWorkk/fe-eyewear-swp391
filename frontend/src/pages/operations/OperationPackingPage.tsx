@@ -49,10 +49,17 @@ export default function OperationPackingPage() {
     setCurrentPage(1)
   }
 
-  // Get data from store
+  // ═══════════════════════════════════════════════════
+  // DATA FLOW:
+  // 1. OperationDashboardPage gọi API → lưu vào Zustand store (useOrderCountStore).
+  // 2. Trang này ĐỌC THẲNG từ store → không cần fetch API riêng.
+  // 3. useMemo() filter client-side theo status PACKAGING + date range
+  //    → truyền vào <OrderTable> và <OperationPagination>.
+  // ═══════════════════════════════════════════════════
   const { orders: allOrders, isLoading, isError } = useOrderCountStore()
 
-  // Filter and Paginate on Client Side
+  // ─── Bước 1: Filter client-side ───────────────────
+  // Lọc từ allOrders theo status=PACKAGING, sau đó theo date range + type
   const { filteredOrders, total } = useMemo(() => {
     let filtered = allOrders.filter((o) => o.currentStatus === 'PACKAGING')
 
@@ -78,7 +85,8 @@ export default function OperationPackingPage() {
     }
   }, [allOrders, typeFilter, appliedDateRange, currentPage])
 
-  // Badge counts for filter buttons: should also reflect the date filter
+  // Badge counts trên các nút filter
+  // Cũng tính lại theo date range để số hiển thị luôn chính xác
   const typeFilteredByDate = useMemo(() => {
     const filtered = allOrders.filter((o) => o.currentStatus === 'PACKAGING')
     if (!appliedDateRange) return filtered

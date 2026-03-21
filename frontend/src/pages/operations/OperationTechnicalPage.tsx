@@ -49,14 +49,22 @@ export default function OperationTechnicalPage() {
     setCurrentPage(1)
   }
 
-  // Get data from store
+  // ═══════════════════════════════════════════════════
+  // DATA FLOW:
+  // 1. Khi app khởi động, OperationDashboardPage gọi API lấy toàn bộ orders
+  //    rồi lưu vào Zustand store (useOrderCountStore) qua setOrders().
+  // 2. Trang này đọc thẳng từ store → không cần gọi API riêng.
+  // 3. useMemo() filter client-side → truyền vào <OrderTable> và <OperationPagination>.
+  // ═══════════════════════════════════════════════════
   const { orders: allOrders, isLoading, isError } = useOrderCountStore()
 
-  // Filter and Paginate on Client Side
+  // ─── Bước 1: Filter client-side ───────────────────
+  // Lọc từ allOrders (Zustand) theo status + date range + type
+  // Không gọi API → tức thời, không giật lag
   const { filteredOrders, total } = useMemo(() => {
     let ordersForStation = allOrders.filter((o) => o.currentStatus === 'MAKING')
 
-    // 1. Date Range Filter
+    // Lọc theo khoảng ngày assignedAt (ngày được giao việc)
     if (appliedDateRange) {
       ordersForStation = ordersForStation.filter((o) => {
         if (!o.assignedAt) return false
@@ -67,18 +75,20 @@ export default function OperationTechnicalPage() {
       })
     }
 
-    // 2. Type Filter
+    // Lọc theo loại đơn hàng (type)
     if (typeFilter !== 'all') {
       ordersForStation = ordersForStation.filter((o) => o.orderType === typeFilter)
     }
 
+    // Bước 2: Phân trang client-side (cắt mảng theo page)
     return {
       filteredOrders: ordersForStation.slice((currentPage - 1) * PAGE_LIMIT, currentPage * PAGE_LIMIT),
       total: ordersForStation.length
     }
   }, [allOrders, typeFilter, appliedDateRange, currentPage])
 
-  // Badge counts for filter buttons: also reflect the date filter
+  // Badge counts trên các nút filter (All / Pre-order / Manufacturing)
+  // Cũng tính lại khi date range thay đổi để số hiển thị luôn chính xác
   const typeFilteredByDate = useMemo(() => {
     const ordersByDate = allOrders.filter((o) => o.currentStatus === 'MAKING')
     if (!appliedDateRange) return ordersByDate
@@ -136,6 +146,7 @@ export default function OperationTechnicalPage() {
 
       <div className="mt-[10px]" />
 
+      {/* Bước 3: Truyền dữ liệu đã lọc vào OrderTable */}
       <OrderTable
         orders={filteredOrders}
         isLoading={isLoading}
@@ -144,6 +155,7 @@ export default function OperationTechnicalPage() {
         role="operation"
       />
 
+      {/* Bước 4: Truyền thông tin phân trang vào OperationPagination */}
       <OperationPagination
         page={currentPage}
         totalPages={totalPages}

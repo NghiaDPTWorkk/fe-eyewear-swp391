@@ -38,17 +38,23 @@ export default function OperationPrescriptionPage() {
     setCurrentPage(1)
   }
 
-  // Get data from store
+  // ═══════════════════════════════════════════════════
+  // DATA FLOW:
+  // 1. OperationDashboardPage gọi API → lưu vào Zustand store (useOrderCountStore).
+  // 2. Trang này ĐỌC THẲNG từ store → không cần fetch API riêng.
+  // 3. useMemo() filter client-side theo status MAKING + type MANUFACTURING
+  //    + date range (assignedAt) → truyền vào <OrderTable> và <OperationPagination>.
+  // ═══════════════════════════════════════════════════
   const { orders: allOrders, isLoading, isError } = useOrderCountStore()
 
-  // Filter and Paginate on Client Side
+  // ─── Bước 1: Filter client-side ───────────────────
+  // Chỉ lấy đơn status=MAKING và type=MANUFACTURING (đơn cần mài kính)
   const { filteredOrders, total } = useMemo(() => {
-    // Technical/Manufacturing: only MAKING status + MANUFACTURING type
     let result = allOrders.filter(
       (o) => o.currentStatus === 'MAKING' && o.orderType === OrderType.MANUFACTURING
     )
 
-    // 1. Date Range Filter
+    // Lọc thêm theo khoảng ngày (assignedAt)
     if (appliedDateRange) {
       result = result.filter((o) => {
         if (!o.assignedAt) return false
@@ -59,6 +65,7 @@ export default function OperationPrescriptionPage() {
       })
     }
 
+    // Bước 2: Phân trang client-side
     return {
       filteredOrders: result.slice((currentPage - 1) * PAGE_LIMIT, currentPage * PAGE_LIMIT),
       total: result.length
@@ -87,6 +94,7 @@ export default function OperationPrescriptionPage() {
         isFiltered={!!appliedDateRange}
       />
 
+      {/* Bước 3: Truyền dữ liệu đã lọc vào OrderTable */}
       <OrderTable
         orders={filteredOrders}
         isLoading={isLoading}
@@ -96,6 +104,7 @@ export default function OperationPrescriptionPage() {
         role="operation"
       />
 
+      {/* Bước 4: Truyền thông tin phân trang vào OperationPagination */}
       <OperationPagination
         page={currentPage}
         totalPages={totalPages}

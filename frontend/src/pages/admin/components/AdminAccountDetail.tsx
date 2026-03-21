@@ -46,16 +46,11 @@ export const AdminAccountDetail: React.FC<AdminAccountDetailProps> = ({
         style={{
           position: 'fixed',
           inset: 0,
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          width: '100vw',
-          height: '100vh',
-          backgroundColor: 'rgba(0,0,0,0.4)',
-          backdropFilter: 'blur(2px)',
-          zIndex: 99998
+          backgroundColor: 'rgba(0,0,0,0.6)',
+          backdropFilter: 'blur(4px)',
+          zIndex: 999998
         }}
+        className="animate-in fade-in duration-300"
       />
       <div
         style={{
@@ -64,41 +59,45 @@ export const AdminAccountDetail: React.FC<AdminAccountDetailProps> = ({
           top: 0,
           height: '100vh',
           width: '100%',
-          maxWidth: '40rem',
-          zIndex: 99999
+          maxWidth: '35rem',
+          backgroundColor: 'white',
+          boxShadow: '-10px 0 30px rgba(0,0,0,0.2)',
+          zIndex: 999999,
+          display: 'flex',
+          flexDirection: 'column'
         }}
-        className="bg-white shadow-2xl animate-in slide-in-from-right duration-300 flex flex-col"
+        className="animate-in slide-in-from-right duration-500"
       >
-        <div className="p-6 border-b border-neutral-100 flex items-center justify-between">
+        <div className="p-6 border-b border-neutral-100 flex items-center justify-between bg-white sticky top-0 z-20">
           <h3 className="text-xl font-bold text-gray-900 font-heading">
             {isCustomer ? 'User Details' : 'Staff Details'}
           </h3>
           <button
             onClick={onClose}
-            className="w-10 h-10 rounded-xl bg-neutral-50 flex items-center justify-center text-neutral-400 hover:text-gray-900 hover:bg-neutral-100 transition-all"
+            className="w-10 h-10 rounded-xl bg-neutral-50 flex items-center justify-center text-neutral-400 hover:text-gray-900 hover:bg-neutral-100 transition-all active:scale-95"
           >
             <IoCloseOutline size={22} />
           </button>
         </div>
 
-        <div className="flex-1 overflow-auto p-6 space-y-8">
+        <div className="flex-1 overflow-auto p-8 space-y-10">
           {/* Avatar & Name */}
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 border border-indigo-100 shrink-0">
+          <div className="flex flex-col items-center text-center space-y-4">
+            <div className="w-24 h-24 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 border-2 border-indigo-100 shadow-sm overflow-hidden">
               {staff.avatar ? (
                 <img
                   src={staff.avatar}
                   alt={staff.name}
-                  className="w-full h-full rounded-full object-cover"
+                  className="w-full h-full object-cover"
                 />
               ) : (
-                <IoPersonCircleOutline size={40} />
+                <IoPersonCircleOutline size={64} />
               )}
             </div>
             <div>
-              <h4 className="text-lg font-bold text-gray-900">{staff.name}</h4>
+              <h4 className="text-2xl font-bold text-gray-900">{staff.name}</h4>
               <span
-                className={`inline-flex items-center px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${getRoleStyles(staff.role)}`}
+                className={`inline-flex items-center px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border ${getRoleStyles(staff.role)}`}
               >
                 {staff.role}
               </span>
@@ -107,65 +106,81 @@ export const AdminAccountDetail: React.FC<AdminAccountDetailProps> = ({
 
           {/* Contact Info */}
           <div className="space-y-4">
-            <h5 className="text-[11px] font-semibold text-neutral-400 uppercase tracking-widest">
+            <h5 className="text-[11px] font-semibold text-neutral-400 uppercase tracking-widest border-b border-neutral-100 pb-2">
               Contact Information
             </h5>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 text-sm text-neutral-600">
-                <IoMailOutline className="text-neutral-400 shrink-0" />
-                <span className="font-medium">{staff.email}</span>
+            <div className="space-y-4">
+              <div className="flex items-center gap-4 group">
+                <div className="w-10 h-10 rounded-xl bg-neutral-50 flex items-center justify-center text-neutral-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+                  <IoMailOutline size={20} />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-neutral-400 uppercase">Email Address</p>
+                  <p className="text-sm font-semibold text-gray-700">{staff.email}</p>
+                </div>
               </div>
-              <div className="flex items-center gap-3 text-sm text-neutral-600">
-                <IoCallOutline className="text-neutral-400 shrink-0" />
-                <span className="font-medium">{staff.phone}</span>
+
+              <div className="flex items-center gap-4 group">
+                <div className="w-10 h-10 rounded-xl bg-neutral-50 flex items-center justify-center text-neutral-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+                  <IoCallOutline size={20} />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-neutral-400 uppercase">Phone Number</p>
+                  <p className="text-sm font-semibold text-gray-700">{staff.phone}</p>
+                </div>
               </div>
-              <div className="flex items-center gap-3 text-sm text-neutral-600">
-                <IoShieldCheckmarkOutline className="text-neutral-400 shrink-0" />
-                <span className="font-medium">Last active: {staff.lastLogin}</span>
+              <div className="flex items-center gap-4 group">
+                <div className="w-10 h-10 rounded-xl bg-neutral-50 flex items-center justify-center text-neutral-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+                  <IoShieldCheckmarkOutline size={20} />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-neutral-400 uppercase">Last Activity</p>
+                  <p className="text-sm font-semibold text-gray-700">{staff.lastLogin}</p>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Status */}
-          <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-100">
+          <div className="p-6 bg-neutral-50/50 rounded-3xl border border-neutral-100 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] font-semibold text-neutral-400 uppercase mb-1">
-                  {isCustomer ? 'Verification Status' : 'Citizen ID'}
+                <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1">
+                  {isCustomer ? 'Member Since' : 'Citizen ID'}
                 </p>
-                <p className="text-lg font-bold text-gray-900 font-primary">
-                  {isCustomer ? (staff.createdAt ? 'Verified' : 'Unverified') : staff.citizenId}
+                <p className="text-2xl font-bold text-gray-900 font-primary">
+                  {isCustomer ? (staff.createdAt || 'New Member') : staff.citizenId}
                 </p>
               </div>
               <div
-                className={`w-3 h-3 rounded-full ${
-                  staff.createdAt ? 'bg-green-500 animate-pulse' : 'bg-neutral-300'
+                className={`w-4 h-4 rounded-full border-2 border-white shadow-sm ${
+                  staff.createdAt ? 'bg-green-500 shadow-green-100' : 'bg-neutral-300'
                 }`}
               />
             </div>
           </div>
 
           {/* Actions */}
-          <div className="space-y-3 pt-4">
+          <div className="space-y-3 pt-6">
             <button
               onClick={() => onEditStaff?.(staff)}
-              className="w-full py-3 bg-mint-900 text-white rounded-2xl text-sm font-bold shadow-lg shadow-indigo-100 hover:bg-mint-600 transition-all active:scale-95"
+              className="w-full py-4 bg-mint-900 text-white rounded-2xl text-sm font-bold shadow-xl shadow-mint-100/50 hover:bg-mint-600 transition-all active:scale-95"
             >
-              {isCustomer ? 'Edit User' : 'Edit Staff'}
+              {isCustomer ? 'Edit User Profile' : 'Edit Staff Account'}
             </button>
             {!isCustomer && (
               <button
                 onClick={() => onChangeRole?.(staff)}
-                className="w-full py-3 bg-neutral-50 text-neutral-600 rounded-2xl text-sm font-semibold border border-neutral-100 hover:bg-neutral-100 transition-all"
+                className="w-full py-4 bg-neutral-50 text-neutral-600 rounded-2xl text-sm font-bold border border-neutral-100 hover:bg-neutral-100 transition-all active:scale-95"
               >
-                Change Role
+                Modify Access Role
               </button>
             )}
             <button
               onClick={() => onDeactivate?.(staff.id)}
-              className="w-full py-3 bg-red-50 text-red-600 rounded-2xl text-sm font-semibold border border-red-100 hover:bg-red-100 transition-all"
+              className="w-full py-4 bg-red-50 text-red-600 rounded-2xl text-sm font-bold border border-red-100 hover:bg-red-100 transition-all active:scale-95"
             >
-              {isCustomer ? 'Ban Account' : 'Deactivate Account'}
+              {isCustomer ? 'Ban Customer Access' : 'Deactivate Staff Access'}
             </button>
           </div>
         </div>

@@ -3,8 +3,13 @@ import { Lock, Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
 import { authService } from '@/features/auth/services/auth.service'
 import { toast } from 'react-hot-toast'
+import { useAuthStore } from '@/store'
+import { type User } from '@/shared/types'
 
 export const ChangePasswordSection = () => {
+  const user = useAuthStore((state) => state.user) as User | null
+  const isLocalLinked = user?.providers?.includes('local') ?? true
+
   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -19,8 +24,13 @@ export const ChangePasswordSection = () => {
   const handleUpdatePassword = async () => {
     const { oldPassword, newPassword, confirmPassword } = formData
 
-    if (!oldPassword || !newPassword || !confirmPassword) {
-      toast.error('Vui lòng nhập đầy đủ thông tin mật khẩu')
+    if (isLocalLinked && !oldPassword) {
+      toast.error('Vui lòng nhập mật khẩu cũ')
+      return
+    }
+
+    if (!newPassword || !confirmPassword) {
+      toast.error('Vui lòng nhập đầy đủ thông tin mật khẩu mới')
       return
     }
 
@@ -36,10 +46,12 @@ export const ChangePasswordSection = () => {
 
     setIsLoading(true)
     try {
-      const response = await authService.changePasswordCustomer({
-        oldPassword,
-        newPassword
-      })
+      const payload: { newPassword: string; oldPassword?: string } = { newPassword }
+      if (isLocalLinked) {
+        payload.oldPassword = oldPassword
+      }
+
+      const response = await authService.changePasswordCustomer(payload)
 
       if (response.success) {
         toast.success(response.message || 'Cập nhật mật khẩu thành công!')
@@ -69,27 +81,33 @@ export const ChangePasswordSection = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 max-w-4xl">
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-gray-eyewear ml-1">Current password *</label>
-          <Input
-            type={showCurrentPassword ? 'text' : 'password'}
-            placeholder="••••••••"
-            value={formData.oldPassword}
-            onChange={(e) => setFormData({ ...formData, oldPassword: e.target.value })}
-            className="bg-white border-primary-500 rounded-xl h-14"
-            rightElement={
-              <button
-                type="button"
-                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                className="p-2 hover:bg-neutral-50 rounded-full transition-colors text-gray-400 hover:text-primary-500"
-              >
-                {showCurrentPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            }
-          />
-        </div>
+        {isLocalLinked && (
+          <>
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium text-gray-eyewear ml-1">
+                Current password *
+              </label>
+              <Input
+                type={showCurrentPassword ? 'text' : 'password'}
+                placeholder="••••••••"
+                value={formData.oldPassword}
+                onChange={(e) => setFormData({ ...formData, oldPassword: e.target.value })}
+                className="bg-white border-primary-500 rounded-xl h-14"
+                rightElement={
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    className="p-2 hover:bg-neutral-50 rounded-full transition-colors text-gray-400 hover:text-primary-500"
+                  >
+                    {showCurrentPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                }
+              />
+            </div>
 
-        <div className="hidden md:block" />
+            <div className="hidden md:block" />
+          </>
+        )}
 
         <div className="flex flex-col gap-2">
           <label className="text-sm font-medium text-gray-eyewear ml-1">New password *</label>

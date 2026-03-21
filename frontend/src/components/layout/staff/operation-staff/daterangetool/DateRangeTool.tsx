@@ -25,7 +25,7 @@ const DateRangeTool: React.FC<DateRangeToolProps> = ({
   const today = new Date().toLocaleDateString('en-CA') // YYYY-MM-DD
 
   return (
-    <div className="mt-6 flex flex-wrap items-end gap-4 bg-white p-5 rounded-2xl shadow-sm border border-neutral-100 transition-all hover:shadow-md">
+    <div className="mt-6 mb-6 flex flex-wrap items-end gap-4 bg-white p-5 rounded-2xl shadow-sm border border-neutral-100 transition-all hover:shadow-md">
       <div className="flex flex-col gap-2 flex-1 min-w-[200px]">
         <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest ml-1">
           From Date

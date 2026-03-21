@@ -20,7 +20,9 @@ export default function OperationAllOrdersPage() {
   // Date filter state
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
-  const [appliedDateRange, setAppliedDateRange] = useState<{ start: string; end: string } | null>(null)
+  const [appliedDateRange, setAppliedDateRange] = useState<{ start: string; end: string } | null>(
+    null
+  )
 
   const setFilter = (value: string) => {
     setCurrentPage(1) // Reset to page 1 when filter changes
@@ -101,8 +103,12 @@ export default function OperationAllOrdersPage() {
   }, [orders, appliedDateRange])
 
   const allCount = typeFilteredByDate.length
-  const preOrderCount = typeFilteredByDate.filter((o: Order) => o.orderType === OrderType.PRE_ORDER).length
-  const normalCount = typeFilteredByDate.filter((o: Order) => o.orderType === OrderType.NORMAL).length
+  const preOrderCount = typeFilteredByDate.filter(
+    (o: Order) => o.orderType === OrderType.PRE_ORDER
+  ).length
+  const normalCount = typeFilteredByDate.filter(
+    (o: Order) => o.orderType === OrderType.NORMAL
+  ).length
   const prescriptionCount = typeFilteredByDate.filter(
     (o: Order) => o.orderType === OrderType.MANUFACTURING
   ).length
@@ -122,16 +128,6 @@ export default function OperationAllOrdersPage() {
         <p className="text-sm md:text-base text-gray-500 mt-1">
           Manage the entire database of orders in the system.
         </p>
-
-        <DateRangeTool
-          startDate={startDate}
-          endDate={endDate}
-          onStartDateChange={setStartDate}
-          onEndDateChange={setEndDate}
-          onSearch={handleSearch}
-          onClear={handleClearDates}
-          isFiltered={!!appliedDateRange}
-        />
       </div>
 
       <FilterButtonList
@@ -140,7 +136,15 @@ export default function OperationAllOrdersPage() {
         onChange={setFilter}
         className="mb-6"
       />
-
+      <DateRangeTool
+        startDate={startDate}
+        endDate={endDate}
+        onStartDateChange={setStartDate}
+        onEndDateChange={setEndDate}
+        onSearch={handleSearch}
+        onClear={handleClearDates}
+        isFiltered={!!appliedDateRange}
+      />
       <OrderTable
         orders={paginatedOrders}
         isLoading={isLoading}

@@ -23,6 +23,7 @@ const getRoleStyles = (role: string): string => {
   if (normalized.includes('sale')) return 'bg-blue-50 text-blue-600 border-blue-100'
   if (normalized.includes('operation')) return 'bg-amber-50 text-amber-600 border-amber-100'
   if (normalized.includes('manager')) return 'bg-purple-50 text-purple-600 border-purple-100'
+  if (normalized.includes('customer')) return 'bg-mint-50 text-mint-600 border-mint-100'
   return 'bg-indigo-50 text-indigo-600 border-indigo-100'
 }
 
@@ -35,6 +36,8 @@ export const AdminAccountDetail: React.FC<AdminAccountDetailProps> = ({
   onDeactivate
 }) => {
   if (!isOpen || !staff) return null
+
+  const isCustomer = staff.role.toLowerCase() === 'customer'
 
   return ReactDOM.createPortal(
     <>
@@ -67,7 +70,9 @@ export const AdminAccountDetail: React.FC<AdminAccountDetailProps> = ({
         className="bg-white shadow-2xl animate-in slide-in-from-right duration-300 flex flex-col"
       >
         <div className="p-6 border-b border-neutral-100 flex items-center justify-between">
-          <h3 className="text-xl font-bold text-gray-900 font-heading">Staff Details</h3>
+          <h3 className="text-xl font-bold text-gray-900 font-heading">
+            {isCustomer ? 'User Details' : 'Staff Details'}
+          </h3>
           <button
             onClick={onClose}
             className="w-10 h-10 rounded-xl bg-neutral-50 flex items-center justify-center text-neutral-400 hover:text-gray-900 hover:bg-neutral-100 transition-all"
@@ -126,9 +131,11 @@ export const AdminAccountDetail: React.FC<AdminAccountDetailProps> = ({
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-[10px] font-semibold text-neutral-400 uppercase mb-1">
-                  Account Active
+                  {isCustomer ? 'Verification Status' : 'Citizen ID'}
                 </p>
-                <p className="text-lg font-bold text-gray-900 font-primary">{staff.citizenId}</p>
+                <p className="text-lg font-bold text-gray-900 font-primary">
+                  {isCustomer ? (staff.createdAt ? 'Verified' : 'Unverified') : staff.citizenId}
+                </p>
               </div>
               <div
                 className={`w-3 h-3 rounded-full ${
@@ -144,19 +151,21 @@ export const AdminAccountDetail: React.FC<AdminAccountDetailProps> = ({
               onClick={() => onEditStaff?.(staff)}
               className="w-full py-3 bg-mint-900 text-white rounded-2xl text-sm font-bold shadow-lg shadow-indigo-100 hover:bg-mint-600 transition-all active:scale-95"
             >
-              Edit Staff
+              {isCustomer ? 'Edit User' : 'Edit Staff'}
             </button>
-            <button
-              onClick={() => onChangeRole?.(staff)}
-              className="w-full py-3 bg-neutral-50 text-neutral-600 rounded-2xl text-sm font-semibold border border-neutral-100 hover:bg-neutral-100 transition-all"
-            >
-              Change Role
-            </button>
+            {!isCustomer && (
+              <button
+                onClick={() => onChangeRole?.(staff)}
+                className="w-full py-3 bg-neutral-50 text-neutral-600 rounded-2xl text-sm font-semibold border border-neutral-100 hover:bg-neutral-100 transition-all"
+              >
+                Change Role
+              </button>
+            )}
             <button
               onClick={() => onDeactivate?.(staff.id)}
               className="w-full py-3 bg-red-50 text-red-600 rounded-2xl text-sm font-semibold border border-red-100 hover:bg-red-100 transition-all"
             >
-              Deactivate Account
+              {isCustomer ? 'Ban Account' : 'Deactivate Account'}
             </button>
           </div>
         </div>

@@ -1,9 +1,10 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import ReactDOM from 'react-dom'
 import { Form, Formik, type FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 import { Button } from '@/shared/components/ui'
 import { IoCloseOutline } from 'react-icons/io5'
+import type { StaffData } from './components/staff/StaffTable'
 
 const VN_PHONE_REGEX = /^(0|\+84)(3|5|7|8|9)\d{8}$/
 const CITIZEN_ID_REGEX = /^\d{12}$/
@@ -18,27 +19,29 @@ export interface CreateAdminAccountFormValues {
   avatar: string
 }
 
-export const createAdminAccountValidationSchema = Yup.object({
-  name: Yup.string().trim().min(1).max(255).required('Name is required'),
-  citizenId: Yup.string()
-    .matches(CITIZEN_ID_REGEX, 'Citizen ID must be exactly 12 digits')
-    .required('Citizen ID is required'),
-  phone: Yup.string()
-    .matches(VN_PHONE_REGEX, 'Invalid Vietnam phone number')
-    .required('Phone is required'),
-  email: Yup.string().email('Invalid email').required('Email is required'),
-  password: Yup.string()
-    .min(8, 'Password must be at least 8 characters')
-    .required('Password is required'),
-  role: Yup.string()
-    .oneOf(['SALE_STAFF', 'OPERATION_STAFF', 'MANAGER', 'SYSTEM_ADMIN'])
-    .required('Role is required'),
-  avatar: Yup.string().trim().nullable().defined()
-})
+export const adminAccountValidationSchema = (isEdit: boolean) =>
+  Yup.object({
+    name: Yup.string().trim().min(1).max(255).required('Name is required'),
+    citizenId: Yup.string()
+      .matches(CITIZEN_ID_REGEX, 'Citizen ID must be exactly 12 digits')
+      .required('Citizen ID is required'),
+    phone: Yup.string()
+      .matches(VN_PHONE_REGEX, 'Invalid Vietnam phone number')
+      .required('Phone is required'),
+    email: Yup.string().email('Invalid email').required('Email is required'),
+    password: isEdit
+      ? Yup.string().min(8, 'Password must be at least 8 characters').optional()
+      : Yup.string().min(8, 'Password must be at least 8 characters').required('Password is required'),
+    role: Yup.string()
+      .oneOf(['SALE_STAFF', 'OPERATION_STAFF', 'MANAGER', 'SYSTEM_ADMIN'])
+      .required('Role is required'),
+    avatar: Yup.string().trim().nullable().defined()
+  })
 
 interface AdminEditAccountProps {
   open: boolean
   onClose: () => void
+  initialData?: StaffData | null
   onSubmit: (
     values: CreateAdminAccountFormValues,
     helpers: FormikHelpers<CreateAdminAccountFormValues>
@@ -56,7 +59,30 @@ const initialValues: CreateAdminAccountFormValues = {
   avatar: ''
 }
 
-export function AdminEditAccount({ open, onClose, onSubmit, isSubmitting }: AdminEditAccountProps) {
+export function AdminEditAccount({
+  open,
+  onClose,
+  initialData,
+  onSubmit,
+  isSubmitting
+}: AdminEditAccountProps) {
+  const isEdit = !!initialData
+
+  const formInitialValues = useMemo(() => {
+    if (initialData) {
+      return {
+        name: initialData.name || '',
+        citizenId: initialData.citizenId || '',
+        phone: initialData.phone || '',
+        email: initialData.email || '',
+        password: '', // Keep empty for edit
+        role: initialData.role.toUpperCase().replace(' ', '_'),
+        avatar: initialData.avatar || ''
+      }
+    }
+    return initialValues
+  }, [initialData])
+
   useEffect(() => {
     if (!open) return
     const originalOverflow = document.body.style.overflow
@@ -104,7 +130,9 @@ export function AdminEditAccount({ open, onClose, onSubmit, isSubmitting }: Admi
       >
         <div className="w-full max-w-2xl max-h-[90vh] bg-white rounded-3xl border border-neutral-100 shadow-2xl overflow-y-auto">
           <div className="p-6 border-b border-neutral-100 flex items-center justify-between sticky top-0 bg-white z-10">
-            <h3 className="text-xl font-bold text-gray-900">Create Staff Account</h3>
+            <h3 className="text-xl font-bold text-gray-900">
+              {isEdit ? 'Edit Staff Account' : 'Create Staff Account'}
+            </h3>
             <button
               onClick={onClose}
               className="w-10 h-10 rounded-xl bg-neutral-50 flex items-center justify-center text-neutral-400 hover:text-gray-900"
@@ -114,8 +142,9 @@ export function AdminEditAccount({ open, onClose, onSubmit, isSubmitting }: Admi
           </div>
 
           <Formik<CreateAdminAccountFormValues>
-            initialValues={initialValues}
-            validationSchema={createAdminAccountValidationSchema}
+            initialValues={formInitialValues}
+            validationSchema={adminAccountValidationSchema(isEdit)}
+            enableReinitialize={true}
             onSubmit={onSubmit}
           >
             {({ values, errors, touched, handleChange, handleBlur, setFieldValue }) => (
@@ -263,7 +292,13 @@ export function AdminEditAccount({ open, onClose, onSubmit, isSubmitting }: Admi
                     disabled={isSubmitting}
                     className="px-6"
                   >
-                    {isSubmitting ? 'Creating...' : 'Create Account'}
+                    {isSubmitting
+                      ? isEdit
+                        ? 'Updating...'
+                        : 'Creating...'
+                      : isEdit
+                        ? 'Update Account'
+                        : 'Create Account'}
                   </Button>
                 </div>
               </Form>

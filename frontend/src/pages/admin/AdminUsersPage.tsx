@@ -4,7 +4,6 @@ import { Container } from '@/shared/components/ui'
 import OperationPagination from '@/shared/components/ui/pagination/OperationPagination'
 import { PageHeader } from '@/features/sales/components/common'
 import { UserTable } from './components/users/UserTable'
-import { UserDetailDrawer } from './components/users/UserDetailDrawer'
 import { useAdminCustomers } from '@/shared/hooks/admin/useAdminCustomers'
 import { useDebounce } from '@/shared/hooks/useDebounce'
 import {
@@ -12,10 +11,15 @@ import {
   IoRefreshOutline,
   IoPeopleOutline,
   IoPersonOutline,
-  IoBanOutline,
   IoTrendingUpOutline,
-  IoTrendingDownOutline
+  IoTrendingDownOutline,
+  IoFlashOutline
 } from 'react-icons/io5'
+import { AdminAccountDetail } from './components/AdminAccountDetail'
+import { AdminEditAccount, type CreateAdminAccountFormValues } from './AdminEditAccount'
+import type { StaffData } from './components/staff/StaffTable'
+import { useQueryClient, useMutation } from '@tanstack/react-query'
+import toast from 'react-hot-toast'
 
 const SummaryCard: React.FC<{
   label: string
@@ -75,9 +79,12 @@ const SummaryCard: React.FC<{
 }
 
 export default function AdminUsersPage() {
+  const queryClient = useQueryClient()
   const [searchQuery, setSearchQuery] = useState('')
   const debouncedSearch = useDebounce(searchQuery, 500)
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [editingUser, setEditingUser] = useState<StaffData | null>(null)
   const [statusFilter, setStatusFilter] = useState<'All' | 'Active' | 'Inactive' | 'Banned'>('All')
   const [page, setPage] = useState(1)
   const limit = 10
@@ -92,7 +99,38 @@ export default function AdminUsersPage() {
   const customers = data?.data.customers ?? []
   const pagination = data?.data.pagination ?? { page: 1, limit: 10, total: 0, totalPages: 1 }
 
-  const selectedUser = customers.find((u) => u._id === selectedUserId) ?? null
+  const selectedUserRaw = customers.find((u) => u._id === selectedUserId) ?? null
+
+  const mapCustomerToStaffData = (user: any): StaffData => ({
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    phone: user.phone || '--',
+    role: 'Customer',
+    createdAt: user.createdAt,
+    lastLogin: '--', // Not available in customer response
+    citizenId: '--',
+    avatar: null
+  })
+
+  const selectedUser = selectedUserRaw ? mapCustomerToStaffData(selectedUserRaw) : null
+
+  // Placeholder mutation for updating user (since customerService doesn't have it yet)
+  const updateMutation = useMutation({
+    mutationFn: (payload: any) => Promise.resolve(payload), // Placeholder
+    onSuccess: () => {
+      toast.success('Update user placeholder success')
+      setIsEditModalOpen(false)
+      setEditingUser(null)
+      queryClient.invalidateQueries({ queryKey: ['admin-customers'] })
+    }
+  })
+
+  const handleSubmitUser = async (_values: CreateAdminAccountFormValues) => {
+    toast('User editing is currently a UI placeholder.')
+    setIsEditModalOpen(false)
+    setEditingUser(null)
+  }
 
   const statusTabs = [
     { label: 'All Users', value: 'All' as const },
@@ -135,12 +173,12 @@ export default function AdminUsersPage() {
           colorScheme="info"
         />
         <SummaryCard
-          label="Banned"
-          value="-"
-          percent="2.1%"
+          label="Current Page"
+          value={`${pagination.page}/${pagination.totalPages}`}
+          percent="--"
           isUp={false}
-          icon={<IoBanOutline size={20} />}
-          colorScheme="danger"
+          icon={<IoFlashOutline size={20} />}
+          colorScheme="warning"
         />
       </div>
 
@@ -226,10 +264,29 @@ export default function AdminUsersPage() {
       </div>
 
       {/* User Detail Drawer */}
-      <UserDetailDrawer
+      <AdminAccountDetail
         isOpen={!!selectedUserId}
         onClose={() => setSelectedUserId(null)}
-        user={selectedUser}
+        staff={selectedUser}
+        onEditStaff={(staff) => {
+          setEditingUser(staff)
+          setIsEditModalOpen(true)
+        }}
+        onDeactivate={() => {
+          toast.error('Banning customers is not implemented yet.')
+        }}
+      />
+
+      {/* User Edit Modal */}
+      <AdminEditAccount
+        open={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false)
+          setEditingUser(null)
+        }}
+        initialData={editingUser}
+        onSubmit={handleSubmitUser as any}
+        isSubmitting={updateMutation.isPending}
       />
 
       <div className="px-4">

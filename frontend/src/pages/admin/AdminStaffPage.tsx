@@ -125,7 +125,8 @@ export default function AdminStaffPage() {
   const [selectedStaffId, setSelectedStaffId] = useState<string | null>(null)
   const [roleFilter, setRoleFilter] = useState<string>('All')
   const [currentPage, setCurrentPage] = useState<number>(1)
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [editingStaff, setEditingStaff] = useState<StaffData | null>(null)
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
 
   const debouncedSearch = useDebounce(searchQuery, 400)
@@ -162,11 +163,26 @@ export default function AdminStaffPage() {
       adminAccountService.createAdminAccount(payload),
     onSuccess: () => {
       toast.success('Create admin account success')
-      setIsCreateModalOpen(false)
+      setIsEditModalOpen(false)
       queryClient.invalidateQueries({ queryKey: ['admin-staff-accounts'] })
     },
     onError: () => {
       toast.error('Create admin account failed')
+    }
+  })
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: any }) =>
+      adminAccountService.updateAdminAccount(id, payload),
+    onSuccess: () => {
+      toast.success('Update admin account success')
+      setIsEditModalOpen(false)
+      setEditingStaff(null)
+      queryClient.invalidateQueries({ queryKey: ['admin-staff-accounts'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-staff-account-detail'] })
+    },
+    onError: () => {
+      toast.error('Update admin account failed')
     }
   })
 
@@ -201,20 +217,42 @@ export default function AdminStaffPage() {
     { label: 'Admin', value: 'Admin' }
   ]
 
-  const handleSubmitCreate = async (
+  const handleSubmitStaff = async (
     values: CreateAdminAccountFormValues,
     helpers: FormikHelpers<CreateAdminAccountFormValues>
   ) => {
     try {
-      await createMutation.mutateAsync({
-        name: values.name.trim(),
-        citizenId: values.citizenId.trim(),
-        phone: values.phone.trim(),
-        email: values.email.trim(),
-        password: values.password,
-        role: values.role,
-        avatar: values.avatar?.trim() ? values.avatar.trim() : null
-      })
+      if (editingStaff) {
+        // Update mode
+        const payload: any = {
+          name: values.name.trim(),
+          citizenId: values.citizenId.trim(),
+          phone: values.phone.trim(),
+          email: values.email.trim(),
+          role: values.role,
+          avatar: values.avatar?.trim() ? values.avatar.trim() : null
+        }
+        // Only include password if it's not empty
+        if (values.password.trim()) {
+          payload.password = values.password
+        }
+
+        await updateMutation.mutateAsync({
+          id: editingStaff.id,
+          payload
+        })
+      } else {
+        // Create mode
+        await createMutation.mutateAsync({
+          name: values.name.trim(),
+          citizenId: values.citizenId.trim(),
+          phone: values.phone.trim(),
+          email: values.email.trim(),
+          password: values.password,
+          role: values.role,
+          avatar: values.avatar?.trim() ? values.avatar.trim() : null
+        })
+      }
       helpers.resetForm()
     } finally {
       helpers.setSubmitting(false)
@@ -345,7 +383,10 @@ export default function AdminStaffPage() {
               <IoRefreshOutline size={20} className={isFetching ? 'animate-spin' : ''} />
             </button>
             <Button
-              onClick={() => setIsCreateModalOpen(true)}
+              onClick={() => {
+                setEditingStaff(null)
+                setIsEditModalOpen(true)
+              }}
               variant="solid"
               colorScheme="primary"
               className="hidden md:flex items-center gap-2 px-6 py-3 h-12 rounded-2xl text-sm font-bold shadow-xl shadow-mint-100/50 active:scale-95"
@@ -383,15 +424,23 @@ export default function AdminStaffPage() {
         isOpen={!!selectedStaffId}
         onClose={() => setSelectedStaffId(null)}
         staff={selectedStaff}
+        onEditStaff={(staff) => {
+          setEditingStaff(staff)
+          setIsEditModalOpen(true)
+        }}
         onDeactivate={(id) => toggleStaffStatus(id)}
       />
 
-      {/* Create Staff Modal */}
+      {/* Staff Editor Modal (Create/Edit) */}
       <AdminEditAccount
-        open={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onSubmit={handleSubmitCreate}
-        isSubmitting={createMutation.isPending}
+        open={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false)
+          setEditingStaff(null)
+        }}
+        initialData={editingStaff}
+        onSubmit={handleSubmitStaff}
+        isSubmitting={createMutation.isPending || updateMutation.isPending}
       />
 
       {/* Confirm Delete Modal */}

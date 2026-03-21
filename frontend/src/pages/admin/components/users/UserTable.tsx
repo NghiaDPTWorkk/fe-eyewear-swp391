@@ -42,7 +42,6 @@ export const UserTable: React.FC<UserTableProps> = ({ users, selectedUserId, onS
             <th className="px-6 py-5">Phone</th>
             <th className="px-6 py-5">Status</th>
             <th className="px-6 py-5">Joined</th>
-            <th className="px-6 py-5 text-center">Orders</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-neutral-50">
@@ -80,7 +79,6 @@ export const UserTable: React.FC<UserTableProps> = ({ users, selectedUserId, onS
                 <td className="px-6 py-6 text-sm font-medium text-neutral-600">
                   {safeFormatDate(user.createdAt)}
                 </td>
-                <td className="px-6 py-6 text-center text-sm font-bold text-gray-900">-</td>
               </tr>
             )
           })}

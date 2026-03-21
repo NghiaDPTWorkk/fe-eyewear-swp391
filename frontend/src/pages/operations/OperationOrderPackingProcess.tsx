@@ -16,6 +16,7 @@ import toast from 'react-hot-toast'
 import { useQueryClient } from '@tanstack/react-query'
 import { useOperationInvoiceDetail } from '@/features/operations/hooks/useOperationInvoiceDetail'
 import { getOrderProgressStep } from '@/shared/utils/order-status.utils'
+import { PATHS } from '@/routes/paths'
 
 export default function OperationOrderPackingProcess() {
   const { orderId } = useParams<{ orderId: string }>()
@@ -115,6 +116,11 @@ export default function OperationOrderPackingProcess() {
           queryClient.invalidateQueries({ queryKey: ['orders'] })
           queryClient.invalidateQueries({ queryKey: ['order', orderId] })
           setIsModalOpen(false)
+
+          // Navigate to completed orders page after a short delay
+          setTimeout(() => {
+            navigate(PATHS.OPERATIONSTAFF.COMPLETE_ORDERS)
+          }, 1500)
         },
         onError: () => {
           toast.error('Failed to update order status')

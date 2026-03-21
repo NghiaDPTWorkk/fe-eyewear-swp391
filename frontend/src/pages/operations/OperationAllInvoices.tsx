@@ -33,14 +33,14 @@ export default function OperationAllInvoices() {
     statusFilter === 'all' ? undefined : statusFilter
   )
 
-  // Lấy toàn bộ invoices để tính count cho badges
+  // Fetch all invoices to calculate counts for badges
   const { data: allData } = useAllOperationInvoices()
   const allInvoicesRaw = allData?.data?.invoiceList ?? []
 
   const invoices = data?.data?.invoiceList ?? []
   const pagination = data?.data?.pagination
 
-  // Tính toán số lượng cho từng status
+  // Calculate counts for each status
   const counts = {
     all: allData?.data?.pagination?.total ?? 0,
     completed: allInvoicesRaw.filter((inv) => inv.status === InvoiceStatus.COMPLETED).length,

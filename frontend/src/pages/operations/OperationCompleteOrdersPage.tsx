@@ -29,7 +29,7 @@ export default function OperationCompleteOrdersPage() {
     )
   }
 
-  // Fetch orders với statusFilter và typeFilter từ API — có phân trang
+  // Fetch orders with statusFilter and typeFilter from API — with pagination
   const { data, isLoading, isError } = useOrders(
     currentPage,
     PAGE_LIMIT,
@@ -37,10 +37,10 @@ export default function OperationCompleteOrdersPage() {
     typeFilter === 'all' ? undefined : typeFilter
   )
 
-  // Lấy dữ liệu từ store để tính counts cho badges
+  // Get data from store to calculate counts for badges
   const { orders: allOrdersForCounts } = useOrderCountStore()
 
-  // Badge counts cho Type Filter (dựa trên status hiện tại)
+  // Badge counts for Type Filter (based on current status)
   const typeCounts = {
     all: allOrdersForCounts.filter((o) => o.currentStatus === statusFilter).length,
     normal: allOrdersForCounts.filter(
@@ -61,10 +61,10 @@ export default function OperationCompleteOrdersPage() {
     { label: 'Manufacturing', count: typeCounts.manufacturing, value: OrderType.MANUFACTURING }
   ]
 
-  // Pagination meta từ BE
+  // Pagination meta from BE
   const paginationMeta = data?.data?.orders
 
-  // Transform data từ API sang format của OrderTable
+  // Transform data from API to OrderTable format
   const orders = useMemo(() => {
     if (!paginationMeta?.data) return []
     return paginationMeta.data.map(transformApiOrderToTableOrder)

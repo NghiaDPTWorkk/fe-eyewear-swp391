@@ -2,50 +2,65 @@ import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { Container, MetricCard } from '@/components'
 import { OrderTable } from '@/components/staff'
-import {
-  IoClipboardOutline,
-  IoFlagOutline,
-  IoTicketOutline,
-  IoWalletOutline
-} from 'react-icons/io5'
+import { IoClipboardOutline, IoBuildOutline } from 'react-icons/io5'
+import { FaBoxesPacking } from 'react-icons/fa6'
+import { AiOutlineFileDone } from 'react-icons/ai'
 import { useOrderCountStore } from '@/store'
-import { OrderType, OrderStatus } from '@/shared/utils/enums/order.enum'
+import { OrderStatus } from '@/shared/utils/enums/order.enum'
 
 function DashboardMetrics() {
-  const { counts } = useOrderCountStore()
+  const { orders } = useOrderCountStore()
+
+  const todayStr = new Date().toLocaleDateString('en-CA') // YYYY-MM-DD
+
+  const countsToday = useMemo(() => {
+    const assigned = orders.filter(
+      (o) => o.currentStatus === OrderStatus.ASSIGNED && o.assignedAt?.startsWith(todayStr)
+    ).length
+    const technical = orders.filter(
+      (o) => o.currentStatus === OrderStatus.MAKING && o.assignedAt?.startsWith(todayStr)
+    ).length
+    const packing = orders.filter(
+      (o) => o.currentStatus === OrderStatus.PACKAGING && o.assignedAt?.startsWith(todayStr)
+    ).length
+    const completed = orders.filter(
+      (o) => o.currentStatus === OrderStatus.COMPLETED && o.assignedAt?.startsWith(todayStr)
+    ).length
+
+    return { assigned, technical, packing, completed }
+  }, [orders, todayStr])
 
   const metrics = [
     {
       title: 'Pending Orders',
-      value: counts.assigned.toString(),
+      value: countsToday.assigned.toString(),
       icon: <IoClipboardOutline className="text-2xl" />,
-      trend: { label: 'from yesterday', value: 12, isPositive: true },
-      progress: { value: 45, colorClass: 'bg-orange-500' },
+      trend: null,
+      progress: { value: 30, colorClass: 'bg-orange-500' },
       colorScheme: 'warning' as const
     },
     {
-      title: 'Daily Revenue',
-      value: '$4,250.00',
-      icon: <IoWalletOutline className="text-2xl" />,
-      trend: { label: 'vs last week', value: 8.2, isPositive: true },
-      progress: { value: 70, colorClass: 'bg-emerald-500' },
+      title: 'Technical Station',
+      value: countsToday.technical.toString(),
+      icon: <IoBuildOutline className="text-2xl" />,
+      trend: null,
+      progress: { value: 50, colorClass: 'bg-emerald-500' },
       colorScheme: 'success' as const
     },
     {
-      title: 'Open Tickets',
-      value: '5',
-      icon: <IoTicketOutline className="text-2xl" />,
-      trend: { label: 'new today', value: -2, isPositive: false },
-      progress: { value: 25, colorClass: 'bg-red-500' },
+      title: 'Packing Station',
+      value: countsToday.packing.toString(),
+      icon: <FaBoxesPacking className="text-2xl" />,
+      trend: null,
+      progress: { value: 20, colorClass: 'bg-red-500' },
       colorScheme: 'danger' as const
     },
     {
-      title: 'Monthly Target',
-      value: '85%',
-      subValue: '$102k achieved',
-      icon: <IoFlagOutline className="text-2xl" />,
+      title: 'Completed Today',
+      value: countsToday.completed.toString(),
+      icon: <AiOutlineFileDone className="text-2xl" />,
       trend: null,
-      progress: { value: 85, colorClass: 'bg-blue-600' },
+      progress: { value: 100, colorClass: 'bg-blue-600' },
       colorScheme: 'primary' as const
     }
   ]
@@ -57,8 +72,6 @@ function DashboardMetrics() {
           key={index}
           label={metric.title}
           value={metric.value}
-          subValue={metric.subValue}
-          trend={metric.trend as any}
           icon={metric.icon}
           colorScheme={metric.colorScheme}
           progress={metric.progress}
@@ -74,39 +87,14 @@ export default function OperationDashboardPage() {
   const prioritizedOrders = useMemo(() => {
     if (!orders) return []
 
-    return [...orders].sort((a, b) => {
-      // 1. Primary Sort: Status (ASSIGNED > MAKING > PACKAGING > COMPLETED)
-      const statusPriority: Record<string, number> = {
-        [OrderStatus.ASSIGNED]: 1,
-        [OrderStatus.MAKING]: 2,
-        [OrderStatus.PACKAGING]: 3,
-        [OrderStatus.COMPLETED]: 4
-      }
+    // 1. Filter: Only keep incomplete orders
+    const filtered = orders.filter((o) => o.currentStatus !== OrderStatus.COMPLETED)
 
-      const sA = statusPriority[a.currentStatus] || 99
-      const sB = statusPriority[b.currentStatus] || 99
-
-      if (sA !== sB) {
-        return sA - sB
-      }
-
-      // 2. Secondary Sort: Time (Oldest First)
-      const timeDiff = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-      if (timeDiff !== 0) {
-        return timeDiff
-      }
-
-      // 3. Tertiary Sort: Type (MANUFACTURING > NORMAL > PRE-ORDER)
-      const typePriority: Record<string, number> = {
-        [OrderType.MANUFACTURING]: 1,
-        [OrderType.NORMAL]: 2,
-        [OrderType.PRE_ORDER]: 3
-      }
-
-      const priorityA = typePriority[a.orderType] || 99
-      const priorityB = typePriority[b.orderType] || 99
-
-      return priorityA - priorityB
+    // 2. Sort: Orders with oldest assignedAt or createdAt first
+    return [...filtered].sort((a, b) => {
+      const timeA = new Date(a.assignedAt || a.createdAt).getTime()
+      const timeB = new Date(b.assignedAt || b.createdAt).getTime()
+      return timeA - timeB // Ascending sort: older (smaller) time first
     })
   }, [orders])
 

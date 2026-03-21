@@ -16,7 +16,7 @@ export default function OperationAllOrdersPage() {
   const [currentPage, setCurrentPage] = useState(1)
 
   const setFilter = (value: string) => {
-    setCurrentPage(1) // Reset về trang 1 khi đổi filter
+    setCurrentPage(1) // Reset to page 1 when filter changes
     if (value === 'all') {
       setSearchParams({})
     } else {
@@ -24,10 +24,10 @@ export default function OperationAllOrdersPage() {
     }
   }
 
-  // Lấy orders từ Zustand store (đã fetch toàn bộ ở OperationLayout)
+  // Get orders from Zustand store (fetched entirely in OperationLayout)
   const { orders, isLoading, isError } = useOrderCountStore()
 
-  // Filter theo loại đơn nếu có
+  // Filter by order type if applicable
   const filteredOrders =
     filter === 'all' ? orders : orders.filter((o: Order) => o.orderType === filter)
 
@@ -39,7 +39,7 @@ export default function OperationAllOrdersPage() {
     currentPage * PAGE_LIMIT
   )
 
-  // Badge counts cho filter buttons: đếm trực tiếp từ danh sách orders đã lọc ở Layout
+  // Badge counts for filter buttons: count directly from filtered orders list in Layout
   const allCount = orders.length
   const preOrderCount = orders.filter((o: Order) => o.orderType === OrderType.PRE_ORDER).length
   const normalCount = orders.filter((o: Order) => o.orderType === OrderType.NORMAL).length

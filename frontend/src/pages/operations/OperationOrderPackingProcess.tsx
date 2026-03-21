@@ -29,7 +29,7 @@ export default function OperationOrderPackingProcess() {
   const location = useLocation()
   const queryClient = useQueryClient()
 
-  // Lấy data từ trang trước
+  // Get data from previous page
   const { status, products } = useMemo(() => {
     const state = location.state as { status?: string; products?: OrderProductItem[] } | null
     return state || { status: 'PACKAGING', products: [] }
@@ -47,7 +47,7 @@ export default function OperationOrderPackingProcess() {
       { id: 'documents', label: 'Documents & Invoices', required: true }
     ]
 
-    // Thêm dynamic items dựa trên products
+    // Add dynamic items based on products
     if (products && products.length > 0) {
       products.forEach((p) => {
         const sku = p.product?.sku || ''
@@ -77,7 +77,7 @@ export default function OperationOrderPackingProcess() {
     return items
   }, [products])
 
-  // State lưu trạng thái checked của từng item (theo ID)
+  // State to store checked status for each item (by ID)
   const [checkedState, setCheckedState] = useState<Record<string, boolean>>(() => {
     if (status === 'COMPLETED') {
       const allCheckedState: Record<string, boolean> = {}
@@ -89,7 +89,7 @@ export default function OperationOrderPackingProcess() {
     return {}
   })
 
-  // Kiểm tra tất cả đã check chưa
+  // Check if all items are checked
   const allChecked = checklistItems.every((item) => checkedState[item.id])
 
   const handleCheck = (id: string) => {
@@ -196,7 +196,7 @@ export default function OperationOrderPackingProcess() {
 
         return <ProcessTracker title="Invoice Progress" activeStep={activeStep} />
       })()}
-      {/* : Trạng thái từ API + Loại đơn hàng = Vị trí nút xanh trên thanh. */}
+      {/* Order progress step calculation based on API status + Order Type */}
       <div className="grid grid-cols-12 gap-6">
         {/* Left Column */}
         <div className="col-span-12 lg:col-span-7 space-y-6">

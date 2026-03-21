@@ -12,7 +12,7 @@ const PAGE_LIMIT = 10
 export default function OperationPrescriptionPage() {
   const [currentPage, setCurrentPage] = useState(1)
 
-  // Fetch orders với type MANUFACTURING và status MAKING từ API — có phân trang
+  // Fetch orders with MANUFACTURING type and MAKING status from API — with pagination
   const { data, isLoading, isError } = useOrders(
     currentPage,
     PAGE_LIMIT,
@@ -20,10 +20,10 @@ export default function OperationPrescriptionPage() {
     OrderType.MANUFACTURING
   )
 
-  // Pagination meta từ BE
+  // Pagination meta from BE
   const paginationMeta = data?.data?.orders
 
-  // Transform data từ API sang format của OrderTable
+  // Transform data from API to OrderTable format
   const orders = useMemo(() => {
     if (!paginationMeta?.data) return []
     return paginationMeta.data

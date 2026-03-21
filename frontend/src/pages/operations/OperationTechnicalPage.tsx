@@ -24,7 +24,7 @@ export default function OperationTechnicalPage() {
     }
   }
 
-  // Fetch orders với status MAKING và typeFilter từ API — có phân trang
+  // Fetch orders with MAKING status and typeFilter from API — with pagination
   const { data, isLoading, isError } = useOrders(
     currentPage,
     PAGE_LIMIT,
@@ -32,10 +32,10 @@ export default function OperationTechnicalPage() {
     typeFilter === 'all' ? undefined : typeFilter
   )
 
-  // Lấy dữ liệu từ store để tính counts cho badges
+  // Get data from store to calculate counts for badges
   const { orders: allOrdersForCounts } = useOrderCountStore()
 
-  // Lọc lấy danh sách đơn đang ở trạng thái MAKING
+  // Filter to get list of orders currently in MAKING status
   const technicalOrdersInStore = useMemo(() => {
     return allOrdersForCounts.filter((o) => o.currentStatus === OrderStatus.MAKING)
   }, [allOrdersForCounts])
@@ -54,10 +54,10 @@ export default function OperationTechnicalPage() {
     { label: 'Manufacturing', count: counts.manufacturing, value: OrderType.MANUFACTURING }
   ]
 
-  // Pagination meta từ BE
+  // Pagination meta from BE
   const paginationMeta = data?.data?.orders
 
-  // Transform data từ API sang format của OrderTable
+  // Transform data from API to OrderTable format
   const orders = useMemo(() => {
     if (!paginationMeta?.data) return []
     return paginationMeta.data.map(transformApiOrderToTableOrder)

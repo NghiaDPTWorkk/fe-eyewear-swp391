@@ -16,9 +16,10 @@ export const ENDPOINTS = {
     ADDRESS_LIST: '/customer/profile/address',
     ADDRESS_ADD: '/customer/profile/address',
     CHANGE_DEFAULT: (id: string) => `/customer/profile/address/change-default/${id}`,
-    GOOGLE: '/auth/google'
+    GOOGLE: '/auth/google',
+    REQUEST_MERGE: '/auth/request-merge-account',
+    VERIFY_MERGE_OTP: '/auth/request-merge-account/verify-otp'
   },
-
 
   // Products
   PRODUCTS: {

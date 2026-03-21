@@ -89,7 +89,7 @@ export const PersonalInfoSection = ({ user }: PersonalInfoSectionProps) => {
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-mint-1100 ml-1">Phone number</label>
           <Input
-            value={formData.phone}
+            value={formData.phone || ''}
             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
             placeholder="Enter your phone number"
             className="bg-white border-mint-200 focus:border-primary-500 rounded-xl h-14"

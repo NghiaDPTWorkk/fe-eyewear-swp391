@@ -66,6 +66,20 @@ export const authApi = {
   },
 
   /**
+   * Yêu cầu nhập account phụ thuộc vào email đã tồn tại do Google Login
+   */
+  requestMergeAccount: (payload: { email: string; password?: string }) => {
+    return httpClient.post<ApiResponse<any>>(ENDPOINTS.AUTH.REQUEST_MERGE, payload)
+  },
+
+  /**
+   * Xác thực OTP quy trình merge account
+   */
+  verifyMergeOtp: (payload: { email: string; otp: string }) => {
+    return httpClient.post<ApiResponse<any>>(ENDPOINTS.AUTH.VERIFY_MERGE_OTP, payload)
+  },
+
+  /**
    * Đăng xuất khỏi hệ thống
    */
   logout: () => {

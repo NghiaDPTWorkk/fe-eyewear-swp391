@@ -33,6 +33,8 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
   // Use propItems if provided, otherwise filter selected items from store
   const items = propItems || storeItems.filter((item) => item.selected)
 
+  const hideCOD = !!propItems && items.some((item) => !!item.lens || item.mode === 'PRE_ORDER')
+
   const [customerInfo, setCustomerInfo] = useState({
     fullName: (user as any)?.fullName || user?.name || '',
     phone: (user as any)?.phone || ''
@@ -44,7 +46,9 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
     city: ''
   })
   const [note, setNote] = useState('')
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>(PaymentMethodType.COD)
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>(
+    hideCOD ? PaymentMethodType.VNPAY : PaymentMethodType.COD
+  )
   const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
 
@@ -351,6 +355,7 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
       <PaymentMethodSection
         paymentMethod={paymentMethod}
         onPaymentMethodChange={setPaymentMethod}
+        hideCOD={hideCOD}
       />
 
       <VoucherSection

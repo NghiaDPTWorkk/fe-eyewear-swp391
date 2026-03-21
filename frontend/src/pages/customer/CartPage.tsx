@@ -24,7 +24,7 @@ export const CartPage = () => {
             <div className="flex justify-center items-center min-h-[400px]">
               <div className="text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto mb-4"></div>
-                <p className="text-mint-800">Đang tải giỏ hàng...</p>
+                <p className="text-mint-800">Loading cart...</p>
               </div>
             </div>
           ) : fetchError ? (
@@ -35,7 +35,7 @@ export const CartPage = () => {
                   onClick={() => window.location.reload()}
                   className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
                 >
-                  Thử lại
+                  Retry
                 </button>
               </div>
             </div>

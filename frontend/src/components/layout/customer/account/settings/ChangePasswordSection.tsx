@@ -25,22 +25,22 @@ export const ChangePasswordSection = () => {
     const { oldPassword, newPassword, confirmPassword } = formData
 
     if (isLocalLinked && !oldPassword) {
-      toast.error('Vui lòng nhập mật khẩu cũ')
+      toast.error('Please enter current password')
       return
     }
 
     if (!newPassword || !confirmPassword) {
-      toast.error('Vui lòng nhập đầy đủ thông tin mật khẩu mới')
+      toast.error('Please fill in the new password')
       return
     }
 
     if (newPassword !== confirmPassword) {
-      toast.error('Mật khẩu mới và xác nhận mật khẩu không khớp')
+      toast.error('New password and confirm password do not match')
       return
     }
 
     if (newPassword.length < 8) {
-      toast.error('Mật khẩu mới phải có ít nhất 8 ký tự')
+      toast.error('New password must be at least 8 characters')
       return
     }
 
@@ -54,17 +54,18 @@ export const ChangePasswordSection = () => {
       const response = await authService.changePasswordCustomer(payload)
 
       if (response.success) {
-        toast.success(response.message || 'Cập nhật mật khẩu thành công!')
+        toast.success(response.message || 'Password updated successfully!')
         setFormData({
           oldPassword: '',
           newPassword: '',
           confirmPassword: ''
         })
       } else {
-        toast.error(response.message || 'Cập nhật mật khẩu thất bại')
+        toast.error(response.message || 'Password update failed')
       }
     } catch (error: any) {
-      const errorMsg = error.response?.data?.message || 'Có lỗi xảy ra khi cập nhật mật khẩu'
+      const errorMsg =
+        error.response?.data?.message || 'An error occurred while updating the password'
       toast.error(errorMsg)
     } finally {
       setIsLoading(false)

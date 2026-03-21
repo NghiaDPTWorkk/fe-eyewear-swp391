@@ -172,13 +172,9 @@ export const CustomerProductPage = () => {
     // Add custom price range tag
     if (customPriceRange.min !== null || customPriceRange.max !== null) {
       const minLabel =
-        customPriceRange.min !== null
-          ? customPriceRange.min.toLocaleString('vi-VN') + 'đ'
-          : 'Bất kỳ'
+        customPriceRange.min !== null ? customPriceRange.min.toLocaleString('vi-VN') + 'đ' : 'Any'
       const maxLabel =
-        customPriceRange.max !== null
-          ? customPriceRange.max.toLocaleString('vi-VN') + 'đ'
-          : 'Bất kỳ'
+        customPriceRange.max !== null ? customPriceRange.max.toLocaleString('vi-VN') + 'đ' : 'Any'
       tags.push({
         id: 'price-custom',
         label: `${minLabel} - ${maxLabel}`,

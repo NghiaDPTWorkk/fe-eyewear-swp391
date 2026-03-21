@@ -11,7 +11,7 @@ export const BenefitsBar = () => {
             </div>
             <div>
               <h3 className="font-semibold text-mint-1200 text-sm">Free Delivery</h3>
-              <p className="text-xs text-gray-eyewear">Đơn hàng trên 500.000đ</p>
+              <p className="text-xs text-gray-eyewear">Orders over 500.000đ</p>
             </div>
           </div>
           <div className="flex items-center gap-3">

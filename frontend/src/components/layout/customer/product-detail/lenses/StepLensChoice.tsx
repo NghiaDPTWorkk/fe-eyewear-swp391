@@ -148,7 +148,7 @@ export default function StepLensChoice({ onSelect }: StepLensChoiceProps) {
                 </div>
                 <div className="text-right">
                   <span className="font-bold text-primary-600 block text-lg">
-                    {price === 0 ? 'MIỄN PHÍ' : <VNDPrice amount={price} />}
+                    {price === 0 ? 'FREE' : <VNDPrice amount={price} />}
                   </span>
                   {price < originalPrice && (
                     <span className="text-xs text-gray-400 line-through">
@@ -219,7 +219,7 @@ export default function StepLensChoice({ onSelect }: StepLensChoiceProps) {
                     </div>
                     <div className="text-right">
                       <span className="font-bold text-primary-600 block text-lg">
-                        {price === 0 ? 'MIỄN PHÍ' : <VNDPrice amount={price} />}
+                        {price === 0 ? 'FREE' : <VNDPrice amount={price} />}
                       </span>
                       {price < originalPrice && (
                         <span className="text-xs text-gray-400 line-through">

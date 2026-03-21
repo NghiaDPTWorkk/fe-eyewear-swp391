@@ -233,17 +233,26 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
 
       const response = await invoiceService.createInvoice(payload)
       if (response.success) {
-        toast.success(response.message || 'Đặt hàng thành công!')
+        const isOnlinePayment =
+          paymentMethod === PaymentMethodType.VNPAY || paymentMethod === PaymentMethodType.PAYOS
         const checkoutItemsCopy = checkoutItems.map((item) => ({ ...item }))
-        const { clearCart, removeItems, items: currentItems } = useCartStore.getState()
 
-        // Only clear/remove from cart if we are NOT in direct checkout mode (propItems is undefined)
-        if (!propItems) {
-          if (checkoutItemsCopy.length === currentItems.length) {
-            await clearCart()
-          } else {
-            await removeItems(checkoutItemsCopy)
+        if (!isOnlinePayment) {
+          toast.success(response.message || 'Đặt hàng thành công!')
+          const { clearCart, removeItems, items: currentItems } = useCartStore.getState()
+
+          // Only clear/remove from cart if we are NOT in direct checkout mode (propItems is undefined)
+          if (!propItems) {
+            if (checkoutItemsCopy.length === currentItems.length) {
+              await clearCart()
+            } else {
+              await removeItems(checkoutItemsCopy)
+            }
           }
+        } else {
+          // Lưu tạm vào sessionStorage để xóa khi callback thành công ở PaymentResultPage
+          sessionStorage.setItem('pendingCheckoutItems', JSON.stringify(checkoutItemsCopy))
+          sessionStorage.setItem('pendingCheckoutIsDirect', propItems ? 'true' : 'false')
         }
 
         if (paymentMethod === PaymentMethodType.VNPAY) {
@@ -278,7 +287,9 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
           }
         }
 
-        navigate('/account/orders')
+        if (!isOnlinePayment) {
+          navigate('/account/orders')
+        }
       } else {
         toast.error(response.message || 'Tạo đơn hàng thất bại')
       }

@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
+import { toast } from 'react-hot-toast'
 import { Loader2 } from 'lucide-react'
 import { Button, Container, Card } from '@/shared/components/ui'
 import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
 import { Footer } from '@/components/layout/customer/homepage/components'
 import { invoiceService } from '@/features/customer/invoice/services/invoice.service'
+import { useCartStore } from '@/store'
 import type { InvoiceDetailData } from '@/shared/types/invoice.types'
 import {
   PaymentStatusHeader,
@@ -29,6 +31,7 @@ export const PaymentResultPage = () => {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
   const [invoiceData, setInvoiceData] = useState<InvoiceDetailData | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const hasHandledSuccess = useRef(false)
 
   useEffect(() => {
     const fetchResult = async () => {
@@ -67,6 +70,37 @@ export const PaymentResultPage = () => {
           setInvoiceData(response.data)
           if (isActuallySuccess) {
             setStatus('success')
+            if (!hasHandledSuccess.current) {
+              toast.success('Thanh toán đơn hàng thành công!')
+
+              // Remove only the purchased items from the cart
+              const handleRemoveCheckedOutItems = async () => {
+                const storedItemsStr = sessionStorage.getItem('pendingCheckoutItems')
+                const isDirect = sessionStorage.getItem('pendingCheckoutIsDirect') === 'true'
+
+                if (storedItemsStr && !isDirect) {
+                  try {
+                    const storedItems = JSON.parse(storedItemsStr)
+                    const { clearCart, removeItems, items: currentItems } = useCartStore.getState()
+
+                    if (storedItems.length === currentItems.length) {
+                      await clearCart()
+                    } else {
+                      await removeItems(storedItems)
+                    }
+                  } catch (e) {
+                    console.error('Failed to parse pending checkout items', e)
+                  }
+                }
+
+                // Clear session storage securely
+                sessionStorage.removeItem('pendingCheckoutItems')
+                sessionStorage.removeItem('pendingCheckoutIsDirect')
+              }
+              handleRemoveCheckedOutItems()
+
+              hasHandledSuccess.current = true
+            }
           } else {
             setStatus('error')
             const errorMsg = responseCode

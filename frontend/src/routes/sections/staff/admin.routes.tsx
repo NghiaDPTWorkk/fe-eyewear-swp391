@@ -10,6 +10,7 @@ const AdminStaffPage = lazy(() => import('@/pages/admin/AdminStaffPage'))
 const StaffSettingsPage = lazy(() => import('@/pages/staff/StaffSettingsPage'))
 const StaffSupportPage = lazy(() => import('@/pages/staff/StaffSupportPage'))
 const StaffProfilePage = lazy(() => import('@/pages/staff/StaffProfilePage'))
+const AdminEditUser = lazy(() => import('@/pages/admin/AdminEditUser'))
 
 export const adminRoutes = [
   {
@@ -39,6 +40,14 @@ export const adminRoutes = [
         element: (
           <LazyPage>
             <AdminUsersPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'users/edit/:id',
+        element: (
+          <LazyPage>
+            <AdminEditUser />
           </LazyPage>
         )
       },

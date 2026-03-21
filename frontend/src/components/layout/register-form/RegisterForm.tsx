@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 import { Button, Divider, FormField, Input } from '@/components'
+import { Eye, EyeOff } from 'lucide-react'
 import type { RegisterRequest } from '@/shared/types'
 import { Gender } from '@/shared/utils/enums/gender.enum'
 import { useRegister } from '@/features/auth/hooks/useRegister'
@@ -29,7 +30,7 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
   const otpRefs = useRef<(HTMLInputElement | null)[]>([])
   const [isMerging, setIsMerging] = useState(false)
 
-  const showPassword = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   const isValidEmail = formData.email.includes('@') && formData.email.includes('.')
   const isValidPhone = /^[0-9]{10,11}$/.test(formData.phone)
@@ -289,6 +290,15 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
           onChange={(e) => handleChange('password', e.target.value)}
           size="lg"
           required
+          rightElement={
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="text-gray-400 hover:text-gray-600 focus:outline-none"
+            >
+              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+            </button>
+          }
         />
       </FormField>
 

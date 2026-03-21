@@ -84,6 +84,7 @@ export const transformApiOrderToTableOrder = (apiOrder: OperationOrder): Order =
     isNextActive:
       apiOrder.status !== OrderStatus.COMPLETED && apiOrder.status !== OrderStatus.PACKAGING,
     price: apiOrder.price,
-    assignedStaff: apiOrder.assignedStaff
+    assignedStaff: apiOrder.assignedStaff,
+    assignedAt: apiOrder.assignedAt
   }
 }

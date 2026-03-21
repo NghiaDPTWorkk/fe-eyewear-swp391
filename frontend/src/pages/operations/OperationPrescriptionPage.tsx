@@ -3,33 +3,76 @@ import { Container } from '@/components'
 import { OrderTable } from '@/components/staff'
 import { BreadcrumbPath } from '@/components/layout/staff/operation-staff/breadcrumb-path'
 import { OrderType } from '@/shared/utils/enums/order.enum'
-import { useOrders } from '@/features/staff/hooks/orders/useOrders'
-import { transformApiOrderToTableOrder } from '@/features/staff/components/order-table/orderTransformers'
+import { useOrderCountStore } from '@/store'
 import { OperationPagination } from '@/shared/components/ui/pagination'
+import DateRangeTool from '@/components/layout/staff/operation-staff/daterangetool/DateRangeTool'
+import toast from 'react-hot-toast'
 
 const PAGE_LIMIT = 10
 
 export default function OperationPrescriptionPage() {
   const [currentPage, setCurrentPage] = useState(1)
 
-  // Fetch orders với type MANUFACTURING và status MAKING từ API — có phân trang
-  const { data, isLoading, isError } = useOrders(
-    currentPage,
-    PAGE_LIMIT,
-    'MAKING',
-    OrderType.MANUFACTURING
-  )
+  // Date filter state
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
+  const [appliedDateRange, setAppliedDateRange] = useState<{ start: string; end: string } | null>(null)
 
-  // Pagination meta từ BE
-  const paginationMeta = data?.data?.orders
+  const handleSearch = () => {
+    setCurrentPage(1)
+    if (!startDate && !endDate) {
+      setAppliedDateRange(null)
+      return
+    }
+    if (startDate && endDate && startDate > endDate) {
+      toast.error('Start date cannot be later than end date')
+      return
+    }
+    setAppliedDateRange({ start: startDate, end: endDate })
+  }
 
-  // Transform data từ API sang format của OrderTable
-  const orders = useMemo(() => {
-    if (!paginationMeta?.data) return []
-    return paginationMeta.data
-      .filter((o) => o.status === 'MAKING')
-      .map(transformApiOrderToTableOrder)
-  }, [paginationMeta])
+  const handleClearDates = () => {
+    setStartDate('')
+    setEndDate('')
+    setAppliedDateRange(null)
+    setCurrentPage(1)
+  }
+
+  // ═══════════════════════════════════════════════════
+  // DATA FLOW:
+  // 1. OperationDashboardPage gọi API → lưu vào Zustand store (useOrderCountStore).
+  // 2. Trang này ĐỌC THẲNG từ store → không cần fetch API riêng.
+  // 3. useMemo() filter client-side theo status MAKING + type MANUFACTURING
+  //    + date range (assignedAt) → truyền vào <OrderTable> và <OperationPagination>.
+  // ═══════════════════════════════════════════════════
+  const { orders: allOrders, isLoading, isError } = useOrderCountStore()
+
+  // ─── Bước 1: Filter client-side ───────────────────
+  // Chỉ lấy đơn status=MAKING và type=MANUFACTURING (đơn cần mài kính)
+  const { filteredOrders, total } = useMemo(() => {
+    let result = allOrders.filter(
+      (o) => o.currentStatus === 'MAKING' && o.orderType === OrderType.MANUFACTURING
+    )
+
+    // Lọc thêm theo khoảng ngày (assignedAt)
+    if (appliedDateRange) {
+      result = result.filter((o) => {
+        if (!o.assignedAt) return false
+        const assignedDate = o.assignedAt.split('T')[0]
+        const isAfterStart = !appliedDateRange.start || assignedDate >= appliedDateRange.start
+        const isBeforeEnd = !appliedDateRange.end || assignedDate <= appliedDateRange.end
+        return isAfterStart && isBeforeEnd
+      })
+    }
+
+    // Bước 2: Phân trang client-side
+    return {
+      filteredOrders: result.slice((currentPage - 1) * PAGE_LIMIT, currentPage * PAGE_LIMIT),
+      total: result.length
+    }
+  }, [allOrders, appliedDateRange, currentPage])
+
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_LIMIT))
 
   return (
     <Container>
@@ -41,8 +84,19 @@ export default function OperationPrescriptionPage() {
         </p>
       </div>
 
+      <DateRangeTool
+        startDate={startDate}
+        endDate={endDate}
+        onStartDateChange={setStartDate}
+        onEndDateChange={setEndDate}
+        onSearch={handleSearch}
+        onClear={handleClearDates}
+        isFiltered={!!appliedDateRange}
+      />
+
+      {/* Bước 3: Truyền dữ liệu đã lọc vào OrderTable */}
       <OrderTable
-        orders={orders}
+        orders={filteredOrders}
         isLoading={isLoading}
         isError={isError}
         hiddenColumns={['CUSTOMER']}
@@ -50,16 +104,15 @@ export default function OperationPrescriptionPage() {
         role="operation"
       />
 
-      {paginationMeta && orders.length > 0 && (
-        <OperationPagination
-          page={paginationMeta.page}
-          totalPages={paginationMeta.totalPages}
-          total={paginationMeta.total}
-          limit={paginationMeta.limit}
-          itemsOnPage={orders.length}
-          onPageChange={setCurrentPage}
-        />
-      )}
+      {/* Bước 4: Truyền thông tin phân trang vào OperationPagination */}
+      <OperationPagination
+        page={currentPage}
+        totalPages={totalPages}
+        total={total}
+        limit={PAGE_LIMIT}
+        itemsOnPage={filteredOrders.length}
+        onPageChange={setCurrentPage}
+      />
     </Container>
   )
 }

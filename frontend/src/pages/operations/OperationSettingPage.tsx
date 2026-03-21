@@ -14,7 +14,7 @@ export default function OperationSettingPage() {
   // Cast user to AdminAccount since this is staff page
   const profile = user as AdminAccount | null
 
-  // Dùng useMemo để xử lý dữ liệu profile, tránh tính toán lại vô ích
+  // Use useMemo to process profile data once
   const initialValues = useMemo(() => {
     const nameParts = profile?.name?.split(' ') || []
     const lastName = nameParts.length > 0 ? nameParts[nameParts.length - 1] : ''
@@ -38,12 +38,12 @@ export default function OperationSettingPage() {
       </div>
     )
   }
-  // GIẢI PHÁP TRIỆT ĐỂ:
-  // Truyền initialValues vào một component con xử lý Form.
-  // Hoặc dùng chính dữ liệu này để khởi tạo State mà KHÔNG cần useEffect.
+  // SOLUTION:
+  // Pass initialValues into a child component that handles the Form.
+  // Or use this data to initialize State WITHOUT needing useEffect.
   return (
     <SettingForm
-      key={profile?._id || 'loading'} // Khi profile._id có (dữ liệu đã load), component sẽ reset sạch state theo data mới
+      key={profile?._id || 'loading'} // When profile._id exists (data loaded), component will reset state according to new data
       initialData={initialValues}
       profile={profile}
       isLoading={isLoading}
@@ -51,7 +51,7 @@ export default function OperationSettingPage() {
   )
 }
 
-// Tách Form ra để quản lý State độc lập và sạch sẽ
+// Separate Form component to manage State independently and cleanly
 function SettingForm({ initialData, profile, isLoading }: any) {
   const [firstName, setFirstName] = useState(initialData.firstName)
   const [lastName, setLastName] = useState(initialData.lastName)

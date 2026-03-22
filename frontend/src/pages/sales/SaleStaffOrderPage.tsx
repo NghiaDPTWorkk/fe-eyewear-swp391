@@ -362,12 +362,14 @@ export default function SaleStaffOrderPage() {
             />
           </div>
 
-          <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-mint-50 border border-mint-100 w-fit text-mint-700 shadow-sm animate-in slide-in-from-left-4 duration-300">
-            <IoLockClosedOutline size={14} className="text-mint-600" />
-            <span className="text-xs font-bold font-heading">
-              You are currently verifying this return
-            </span>
-          </div>
+          {verifyTicket.staffVerify === staffId && (
+            <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-mint-50 border border-mint-100 w-fit text-mint-700 shadow-sm animate-in slide-in-from-left-4 duration-300">
+              <IoLockClosedOutline size={14} className="text-mint-600" />
+              <span className="text-xs font-bold font-heading">
+                You are currently verifying this return
+              </span>
+            </div>
+          )}
 
           <ReturnVerifyView
             ticket={verifyTicket}
@@ -375,6 +377,7 @@ export default function SaleStaffOrderPage() {
               setVerifyTicket(null)
               returnHook.refresh()
               refetch()
+              handleStatusChange('REFUNDED_HISTORY')
             }}
             currentStaffId={staffId || ''}
           />

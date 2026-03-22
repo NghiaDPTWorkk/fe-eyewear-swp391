@@ -110,16 +110,32 @@ export default function ReturnVerifyView({
     try {
       const res = await returnTicketService.claimTicket(ticket.id)
       if (res.success) {
-        // ACTION 2: Sale claims ticket. Status remains PENDING.
-        showToast('success', 'Ticket claimed successfully! You can now verify this return.')
+        // ACTION 2: Sale claims ticket.
+        // Re-fetch to get official state from server
+        const detailRes = (await returnTicketService.getTicketById(ticket.id)) as any
 
-        const currentUserName = (initialTicket as any).staffName || 'You'
-        setTicket((prev) => ({
-          ...prev,
-          status: 'PENDING', // Keep PENDING
-          staffVerify: currentStaffId,
-          staffName: currentUserName
-        }))
+        // Handle potential nesting (e.g. { data: { returnTicket: { ... } } })
+        const updatedTicketData = detailRes?.data?.returnTicket || detailRes?.data || null
+
+        if (updatedTicketData && (updatedTicketData.id || updatedTicketData._id)) {
+          // Normalize ID
+          if (!updatedTicketData.id && updatedTicketData._id)
+            updatedTicketData.id = updatedTicketData._id
+          // Normalize Status
+          if (!updatedTicketData.status && ticket.status) updatedTicketData.status = ticket.status
+
+          setTicket(updatedTicketData)
+          showToast('success', 'Ticket claimed successfully!')
+        } else {
+          // Fallback to manual update if re-fetch structure is unrecognized
+          const currentUserName = (initialTicket as any).staffName || 'You'
+          setTicket((prev) => ({
+            ...prev,
+            staffVerify: currentStaffId,
+            staffName: currentUserName
+          }))
+          showToast('success', 'Ticket claimed successfully! (Local Update)')
+        }
       }
     } catch (err: any) {
       showToast('error', err?.message || 'Failed to claim ticket.')
@@ -140,10 +156,9 @@ export default function ReturnVerifyView({
     try {
       if (action === 'approve') {
         const approvalNote = rejectNote || 'Verified and Approved'
-        // ACTION 3: Sale approves ticket. Status should move to IN_PROGRESS (Progress)
-        // We call startProcessing to move it to IN_PROGRESS according to backend logic
-        await returnTicketService.startProcessing(ticket.id, approvalNote)
-        showToast('success', 'Ticket verified and approved! Moved to IN PROGRESS.')
+        // ACTION 3: Sale approves ticket. Status should move to APPROVED
+        await returnTicketService.approveTicket(ticket.id, approvalNote)
+        showToast('success', 'Ticket verified and approved! Moved to APPROVED.')
       } else {
         // ACTION 3: Sale rejects ticket. Status becomes REJECTED.
         await returnTicketService.rejectTicket(ticket.id, rejectNote)
@@ -154,7 +169,21 @@ export default function ReturnVerifyView({
         onActionSuccess()
       }, 1500)
     } catch (err: any) {
-      showToast('error', err?.message || 'Action failed. Please try again.')
+      console.error('Action failed', err)
+      const errorMsg = err?.response?.data?.message || err?.message || 'Action failed.'
+
+      if (err?.response?.status === 403) {
+        showToast(
+          'error',
+          '403 Forbidden: You might not be assigned as the verifier. Refreshing...'
+        )
+        // Auto refresh state to see who owns it
+        const detailRes = await returnTicketService.getTicketById(ticket.id).catch(() => null)
+        if (detailRes?.success) setTicket(detailRes.data)
+      } else {
+        showToast('error', errorMsg + ' Please try again.')
+      }
+
       setIsSubmitting(false)
     }
   }
@@ -226,13 +255,15 @@ export default function ReturnVerifyView({
             </span>
           ) : (
             <span className="px-3 py-1 bg-white text-slate-400 font-bold rounded-full text-[10px] border border-neutral-100 uppercase tracking-widest">
-              {ticket.status}
+              {ticket?.status || 'UNKNOWN'}
             </span>
           )}
         </div>
         <div className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
           Return ID:{' '}
-          <span className="text-slate-900/40 select-all ml-1">#{ticket.id.slice(-8)}</span>
+          <span className="text-slate-900/40 select-all ml-1">
+            #{ticket?.id?.slice(-8) || '...'}
+          </span>
         </div>
       </div>
 
@@ -247,7 +278,10 @@ export default function ReturnVerifyView({
               Assigned to Another Colleague
             </p>
             <p className="text-sm text-amber-700 mt-1 font-medium leading-relaxed">
-              Member <span className="font-bold font-mono">#{ticket.staffVerify?.slice(-6)}</span>{' '}
+              Member{' '}
+              <span className="font-bold font-mono">
+                #{ticket?.staffVerify?.slice(-6) || 'N/A'}
+              </span>{' '}
               is currently handling this ticket.
             </p>
           </div>
@@ -574,7 +608,7 @@ export default function ReturnVerifyView({
                       {isApproved ? 'APPROVED BY' : 'REJECTED BY'}
                     </p>
                     <p className="text-[15px] font-bold text-slate-800">
-                      {ticket.staffName || `Staff #${ticket.staffVerify?.slice(-6) || 'System'}`}
+                      {ticket?.staffName || `Staff #${ticket?.staffVerify?.slice(-6) || 'System'}`}
                     </p>
                   </div>
                 </div>

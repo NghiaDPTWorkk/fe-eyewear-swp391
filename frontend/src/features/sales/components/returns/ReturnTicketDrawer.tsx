@@ -279,6 +279,46 @@ export default function ReturnTicketDrawer({
             </div>
           </div>
 
+          {/* Verification Result Section (Show if already processed) */}
+          {(ticket.status === 'APPROVED' ||
+            ticket.status === 'REJECTED' ||
+            ticket.status === 'IN_PROGRESS' ||
+            ticket.status === 'RETURNED') && (
+            <div
+              className={`p-4 rounded-2xl border ${
+                ticket.status === 'REJECTED'
+                  ? 'bg-rose-50 border-rose-100'
+                  : 'bg-emerald-50 border-emerald-100'
+              }`}
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <IoShieldCheckmarkOutline
+                  className={ticket.status === 'REJECTED' ? 'text-rose-500' : 'text-emerald-500'}
+                  size={14}
+                />
+                <p
+                  className={`text-[10px] font-bold uppercase tracking-widest ${
+                    ticket.status === 'REJECTED' ? 'text-rose-600' : 'text-emerald-600'
+                  }`}
+                >
+                  Verification Outcome
+                </p>
+              </div>
+              <div className="space-y-3.5">
+                <div className="flex flex-col gap-1">
+                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">
+                    Staff Remark
+                  </span>
+                  <div className="text-sm font-medium text-slate-700 bg-white/50 border border-black/5 rounded-xl p-3 leading-relaxed">
+                    {ticket.staffNote || (
+                      <span className="text-slate-400 italic">No note provided</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Description */}
           {ticket.description && (
             <div>

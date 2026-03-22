@@ -123,7 +123,7 @@ export default function ReturnTicketsTable({
                         </div>
                         <div className="min-w-0">
                           <p className="text-[13px] font-semibold text-slate-700 leading-tight">
-                            {ticket.customerId || 'Customer'}
+                            {ticket.customerName || 'Customer'}
                           </p>
                           <p className="text-[10px] text-slate-400 mt-1 font-mono tracking-tight uppercase">
                             TKT-{ticket.id.slice(-6)}

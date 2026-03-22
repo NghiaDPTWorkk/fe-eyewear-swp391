@@ -1,6 +1,9 @@
 import { useState, useCallback, useEffect } from 'react'
 import { returnTicketService } from '../services/returnTicketService'
+import { salesService } from '../services/salesService'
 import type { ReturnTicketData } from '@/shared/types/return-ticket.types'
+
+const customerCache: Record<string, string> = {}
 
 export type SortField = 'createdAt' | 'updatedAt' | 'money' | 'status'
 export type SortOrder = 'asc' | 'desc'
@@ -48,11 +51,38 @@ export function useReturnPageTickets(
     setIsLoading(true)
     setError(null)
     try {
-      // Fetch from the GENERAL list so we see new (unassigned) tickets too
       const res = await returnTicketService.getAllTickets({ page: 1, limit: 200 })
-      if (res.success) {
-        setAllTickets(res.data.returnTicketList)
+      if (!res.success) throw new Error(res.message || 'Failed')
+
+      const rawTickets = res.data.returnTicketList || []
+
+      // Fetch missing customer names
+      const uniqueCustomerIds = [
+        ...new Set(
+          rawTickets.map((t: any) => t.customerId).filter((id: string) => id && !customerCache[id])
+        )
+      ]
+
+      if (uniqueCustomerIds.length > 0) {
+        await Promise.allSettled(
+          uniqueCustomerIds.map(async (id: any) => {
+            try {
+              const cRes = await salesService.getCustomerById(id)
+              const data = cRes.data || cRes
+              customerCache[id] = data?.fullName || data?.name || data?.username || 'Customer'
+            } catch {
+              customerCache[id] = 'Customer'
+            }
+          })
+        )
       }
+
+      const enriched = rawTickets.map((t: any) => ({
+        ...t,
+        customerName: customerCache[t.customerId] || 'Customer'
+      }))
+
+      setAllTickets(enriched)
     } catch (err: any) {
       console.error('[useReturnPageTickets] fetch error:', err)
       setError(err?.message || 'Failed to load return tickets')
@@ -86,6 +116,7 @@ export function useReturnPageTickets(
           t.id.toLowerCase().includes(search.toLowerCase()) ||
           t.orderId.toLowerCase().includes(search.toLowerCase()) ||
           t.reason.toLowerCase().includes(search.toLowerCase()) ||
+          (t.customerName?.toLowerCase() ?? '').includes(search.toLowerCase()) ||
           (t.description?.toLowerCase() ?? '').includes(search.toLowerCase())
       )
     : activeTickets
@@ -157,9 +188,37 @@ export function useReturnedOrders(enabled: boolean = true): UseReturnsReturn {
     setError(null)
     try {
       const res = await returnTicketService.getReturnedOrders(1, 200)
-      if (res.success) {
-        setAllTickets(res.data.returnTicketList)
+      if (!res.success) throw new Error(res.message || 'Failed')
+
+      const rawTickets = res.data.returnTicketList || []
+
+      // Fetch missing customer names
+      const uniqueCustomerIds = [
+        ...new Set(
+          rawTickets.map((t: any) => t.customerId).filter((id: string) => id && !customerCache[id])
+        )
+      ]
+
+      if (uniqueCustomerIds.length > 0) {
+        await Promise.allSettled(
+          uniqueCustomerIds.map(async (id: any) => {
+            try {
+              const cRes = await salesService.getCustomerById(id)
+              const data = cRes.data || cRes
+              customerCache[id] = data?.fullName || data?.name || data?.username || 'Customer'
+            } catch {
+              customerCache[id] = 'Customer'
+            }
+          })
+        )
       }
+
+      const enriched = rawTickets.map((t: any) => ({
+        ...t,
+        customerName: customerCache[t.customerId] || 'Customer'
+      }))
+
+      setAllTickets(enriched)
     } catch (err: any) {
       console.error('[useReturnedOrders] fetch error:', err)
       setError(err?.message || 'Failed to load returned orders')
@@ -180,7 +239,8 @@ export function useReturnedOrders(enabled: boolean = true): UseReturnsReturn {
         (t) =>
           t.id.toLowerCase().includes(search.toLowerCase()) ||
           t.orderId.toLowerCase().includes(search.toLowerCase()) ||
-          t.reason.toLowerCase().includes(search.toLowerCase())
+          t.reason.toLowerCase().includes(search.toLowerCase()) ||
+          (t.customerName?.toLowerCase() ?? '').includes(search.toLowerCase())
       )
     : allTickets
 
@@ -244,9 +304,37 @@ export function useMyReturnHistory(enabled: boolean = true): UseReturnsReturn {
     setError(null)
     try {
       const res = await returnTicketService.getMyHistory({ page: 1, limit: 200 })
-      if (res.success) {
-        setAllTickets(res.data.returnTicketList)
+      if (!res.success) throw new Error(res.message || 'Failed')
+
+      const rawTickets = res.data.returnTicketList || []
+
+      // Fetch missing customer names
+      const uniqueCustomerIds = [
+        ...new Set(
+          rawTickets.map((t: any) => t.customerId).filter((id: string) => id && !customerCache[id])
+        )
+      ]
+
+      if (uniqueCustomerIds.length > 0) {
+        await Promise.allSettled(
+          uniqueCustomerIds.map(async (id: any) => {
+            try {
+              const cRes = await salesService.getCustomerById(id)
+              const data = cRes.data || cRes
+              customerCache[id] = data?.fullName || data?.name || data?.username || 'Customer'
+            } catch {
+              customerCache[id] = 'Customer'
+            }
+          })
+        )
       }
+
+      const enriched = rawTickets.map((t: any) => ({
+        ...t,
+        customerName: customerCache[t.customerId] || 'Customer'
+      }))
+
+      setAllTickets(enriched)
     } catch (err: any) {
       console.error('[useMyReturnHistory] fetch error:', err)
       setError(err?.message || 'Failed to load return history')
@@ -271,7 +359,8 @@ export function useMyReturnHistory(enabled: boolean = true): UseReturnsReturn {
         (t: any) =>
           t.id.toLowerCase().includes(search.toLowerCase()) ||
           t.orderId.toLowerCase().includes(search.toLowerCase()) ||
-          t.reason.toLowerCase().includes(search.toLowerCase())
+          t.reason.toLowerCase().includes(search.toLowerCase()) ||
+          (t.customerName?.toLowerCase() ?? '').includes(search.toLowerCase())
       )
     : filtered
 

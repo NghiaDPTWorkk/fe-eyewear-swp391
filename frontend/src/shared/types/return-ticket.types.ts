@@ -16,6 +16,7 @@ export interface ReturnTicketData {
   money: number
   staffVerify: string | null
   staffName?: string
+  customerName?: string
   staffNote?: string
   status: string
   createdAt: string

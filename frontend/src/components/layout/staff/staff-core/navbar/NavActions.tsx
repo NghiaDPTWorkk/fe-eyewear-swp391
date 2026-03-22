@@ -193,7 +193,7 @@ export function NavActions({
                 {
                   icon: IoTicketOutline,
                   label: 'Report History',
-                  to: isManager ? `${basePrefix}/dashboard` : `${basePrefix}/support?tab=history`
+                  to: `${basePrefix}/support?tab=history`
                 },
                 {
                   icon: IoSettingsOutline,

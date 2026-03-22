@@ -84,5 +84,12 @@ export const authApi = {
    */
   logout: () => {
     return httpClient.post(ENDPOINTS.AUTH.LOGOUT)
+  },
+
+  /**
+   * Đăng xuất cho nhân viên
+   */
+  logoutStaff: () => {
+    return httpClient.post(ENDPOINTS.AUTH.LOGOUT_STAFF)
   }
 }

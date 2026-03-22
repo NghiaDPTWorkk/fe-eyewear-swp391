@@ -7,6 +7,7 @@ export const ENDPOINTS = {
     LOGIN_STAFF: '/admin/auth/login',
     REGISTER: '/auth/register',
     LOGOUT: '/auth/logout',
+    LOGOUT_STAFF: '/admin/auth/logout',
     REFRESH_TOKEN: '/auth/refresh-token',
     PROFILE: '/customer',
     UPDATE_PROFILE: '/customer/profile',

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { ProductCarousel } from '@/shared/components/ui/product-carousel'
 import { useGetProductWithPagination } from '@/shared/hooks/products/useGetProductWithPagination'
-import { Hero, BenefitsBar, BusinessBanner, Testimonials, Newsletter, Footer } from './components'
+import { Hero, BenefitsBar, Newsletter, Footer } from './components'
 
 interface HomePageProps {
   header: ReactNode
@@ -42,12 +42,6 @@ export default function HomePage({ header }: HomePageProps) {
           )}
         </div>
       </section>
-
-      {/* Beautify Your Space Banner */}
-      <BusinessBanner />
-
-      {/* Customer Testimonials */}
-      <Testimonials />
 
       {/* Newsletter Section */}
       <Newsletter />

@@ -9,8 +9,9 @@ import {
   IoRefreshOutline,
   IoCalendarOutline,
   IoCheckmark,
+  IoAlertCircleOutline,
   IoPersonOutline,
-  IoAlertCircleOutline
+  IoLayersOutline
 } from 'react-icons/io5'
 import { Card } from '@/components'
 import { returnTicketService } from '@/features/sales/services/returnTicketService'
@@ -355,7 +356,7 @@ export default function ReturnVerifyView({
                 <div className="h-32 bg-slate-50 rounded-3xl" />
               </div>
             ) : (
-              <div className="space-y-6">
+              <div className="space-y-8">
                 {/* Customer Section */}
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100/50">
@@ -366,7 +367,7 @@ export default function ReturnVerifyView({
                       Customer
                     </p>
                     <div className="space-y-0.5">
-                      <p className="text-sm font-bold text-slate-900">
+                      <p className="text-sm font-bold text-slate-900 leading-tight">
                         {customerDetail?.fullName || customerDetail?.name || 'Customer'}
                       </p>
                       <p className="text-xs font-medium text-slate-500">
@@ -385,22 +386,83 @@ export default function ReturnVerifyView({
                     <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wide">
                       Timeline
                     </p>
-                    <p className="text-sm font-bold text-slate-900">{ticket.createdAt || 'N/A'}</p>
+                    <p className="text-sm font-bold text-slate-900 leading-tight">
+                      {ticket.createdAt || 'N/A'}
+                    </p>
                   </div>
                 </div>
 
-                {/* Amount Brief */}
-                <div className="pt-6 border-t border-slate-100 flex items-center justify-between mt-auto">
+                {/* Items Section */}
+                <div className="pt-6 border-t border-slate-100 space-y-4">
+                  <div className="flex items-center gap-2">
+                    <IoLayersOutline className="text-slate-300" size={16} />
+                    <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                      Items ({orderDetail?.products?.length || 0})
+                    </h4>
+                  </div>
+
+                  <div className="space-y-3">
+                    {orderDetail?.products?.map((p: any, i: number) => (
+                      <div
+                        key={i}
+                        className="p-4 bg-[#fafbfd] rounded-2xl border border-[#f0f2f5] space-y-3"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="space-y-0.5">
+                            <p className="text-xs font-bold text-slate-900 leading-tight uppercase">
+                              {p.product?.product_name || p.productName || 'Eyewear Item'}
+                            </p>
+                            <p className="text-[9px] font-bold text-slate-300 uppercase tracking-tighter">
+                              SKU: {p.product?.sku || p.sku || 'N/A'}
+                            </p>
+                          </div>
+                          <span className="text-xs font-bold text-slate-900">
+                            {(
+                              (p.product?.pricePerUnit || p.price || 0) * (p.quantity || 1)
+                            ).toLocaleString('vi-VN')}{' '}
+                            đ
+                          </span>
+                        </div>
+
+                        <div className="space-y-2 pt-2 border-t border-slate-100">
+                          {p.lens && (
+                            <div className="flex items-center gap-2">
+                              <span className="text-[10px] font-bold text-slate-400 shrink-0">
+                                Lens:
+                              </span>
+                              <span className="text-[10px] font-medium text-slate-400/80 truncate">
+                                {p.lens?.lensName || p.lens?.name || 'Prescription Lens'}
+                              </span>
+                              {p.lens?.price && (
+                                <span className="text-[9px] text-slate-300 ml-auto">
+                                  {p.lens.price.toLocaleString('vi-VN')} đ
+                                </span>
+                              )}
+                            </div>
+                          )}
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[11px] font-bold text-[#62a0a2] tracking-tighter">
+                              Qty × {p.quantity}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Total Section */}
+                <div className="pt-6 border-t border-slate-100 flex items-center justify-between group/total mt-auto">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-lg bg-indigo-50/50 flex items-center justify-center text-slate-400">
                       <IoReceiptOutline size={16} />
                     </div>
-                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none">
                       Total Value
                     </span>
                   </div>
-                  <span className="text-xl font-bold text-[#3ea6a0]">
-                    {orderDetail?.price?.toLocaleString('vi-VN')} đ
+                  <span className="text-2xl font-bold text-[#3ea6a0]">
+                    {(orderDetail?.price || 0).toLocaleString('vi-VN')} đ
                   </span>
                 </div>
               </div>

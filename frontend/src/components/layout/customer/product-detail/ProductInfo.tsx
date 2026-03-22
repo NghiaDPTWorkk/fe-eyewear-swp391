@@ -262,10 +262,7 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
   }
 
   // Get product description
-  const description =
-    product.description ||
-    product.shortDescription ||
-    'A modern interpretation of the classic square silhouette. Crafted from premium Italian acetate with a subtle translucent finish that catches the light from every angle.'
+  const description = product.description || product.shortDescription
 
   // Calculate discount percentage if applicable
   const hasDiscount = finalPrice < price
@@ -358,7 +355,9 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
         </div>
       )}
 
-      <p className="text-gray-eyewear leading-relaxed mb-8 max-w-xl">{description}</p>
+      {description && (
+        <p className="text-gray-eyewear leading-relaxed mb-8 max-w-xl">{description}</p>
+      )}
 
       {/* Dynamic Options Rendering */}
       {attributes.length > 0 && (

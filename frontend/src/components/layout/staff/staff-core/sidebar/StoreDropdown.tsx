@@ -12,10 +12,10 @@ export function StoreDropdown({ storeName, icon, onSelect: _onSelect }: StoreDro
       <div className="flex items-center gap-3">
         {icon && <div className="text-mint-500 bg-mint-50 p-2.5 rounded-2xl">{icon}</div>}
         <div className="text-left">
-          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">
+          <div className="text-[10px] text-slate-400 uppercase tracking-widest leading-none mb-1">
             Store Location
           </div>
-          <div className="text-sm font-bold text-slate-900 leading-tight">{storeName}</div>
+          <div className="text-sm text-slate-900 leading-tight">{storeName}</div>
         </div>
       </div>
     </div>

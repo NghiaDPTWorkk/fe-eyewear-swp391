@@ -61,7 +61,7 @@ export default function ManagerLayout() {
 
   return (
     <StaffLayout
-      storeName="Kanky Store"
+      storeName="Downtown Vision"
       searchPlaceholder="Search products, orders..."
       sidebarContent={sidebarContent}
       mainClassName="px-4 md:px-8 lg:px-10 py-8"

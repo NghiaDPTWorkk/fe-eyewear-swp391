@@ -165,6 +165,8 @@ export const ENDPOINTS = {
       const qs = params.toString()
       return qs ? `/admin/customers?${qs}` : '/admin/customers'
     },
+    CUSTOMER_DETAIL: (id: string) => `/admin/customers/${id}`,
+    CUSTOMER_UPDATE: (id: string) => `/admin/customers/${id}`,
     PRODUCTS_LIST: (
       page?: number,
       limit?: number,

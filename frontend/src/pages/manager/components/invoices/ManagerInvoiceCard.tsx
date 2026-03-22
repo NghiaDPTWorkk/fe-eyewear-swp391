@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useQueries } from '@tanstack/react-query'
+import { useQueries, useQuery } from '@tanstack/react-query'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import { OrderStatus } from '@/shared/utils/enums/order.enum'
 import type { AdminInvoiceListItem } from '@/shared/types'
@@ -25,7 +25,8 @@ import {
   IoCashOutline,
   IoLocationOutline,
   IoAlertCircleOutline,
-  IoShieldCheckmarkOutline
+  IoShieldCheckmarkOutline,
+  IoListOutline
 } from 'react-icons/io5'
 
 function getInvoiceStatusBadgeClass(status: string) {
@@ -54,13 +55,15 @@ function StaffSelect({
   value,
   onChange,
   disabled,
-  className
+  className,
+  staffOrderStats
 }: {
   staffList: AdminAccount[]
   value: string
   onChange: (v: string) => void
   disabled?: boolean
   className?: string
+  staffOrderStats?: Record<string, { total: number; assigned: number }>
 }) {
   const [isOpen, setIsOpen] = useState(false)
   const selectedStaff = staffList.find((s) => s._id === value)
@@ -120,6 +123,13 @@ function StaffSelect({
                   >
                     {s.email}
                   </span>
+                  <span
+                    className={`text-[10px] mt-0.5 ${value === s._id ? 'text-mint-600' : 'text-neutral-500'}`}
+                  >
+                    <IoListOutline className="inline-block mr-1" />
+                    {staffOrderStats?.[s._id]?.assigned ?? 0} assigned /{' '}
+                    {staffOrderStats?.[s._id]?.total ?? 0} total orders
+                  </span>
                 </button>
               ))
             )}
@@ -174,10 +184,38 @@ export default function ManagerInvoiceCard({
   const { data: staffData, isLoading: isStaffLoading } = useGetAdminsByRole(
     isExpanded ? 'OPERATION_STAFF' : undefined
   )
-  const staffList = staffData?.data?.admins ?? []
+  const staffList = useMemo(() => staffData?.data?.admins ?? [], [staffData])
 
   const assignMutation = useAssignOrderStaff()
   const assignLabelingMutation = useAssignLabeling()
+  const { data: allOrdersData } = useQuery({
+    queryKey: ['admin-all-orders-for-assignment'],
+    queryFn: () => orderAdminService.getAllOrders(1, 1000),
+    enabled: isExpanded,
+    staleTime: 30_000
+  })
+
+  const staffOrderStats = useMemo(() => {
+    const stats: Record<string, { total: number; assigned: number }> = {}
+    const allOrders = allOrdersData?.data?.orders?.data ?? []
+
+    for (const s of staffList) {
+      stats[s._id] = { total: 0, assigned: 0 }
+    }
+
+    for (const order of allOrders) {
+      if (!order.assignedStaff) continue
+      if (!stats[order.assignedStaff]) {
+        stats[order.assignedStaff] = { total: 0, assigned: 0 }
+      }
+      stats[order.assignedStaff].total += 1
+      if (order.status === OrderStatus.ASSIGNED) {
+        stats[order.assignedStaff].assigned += 1
+      }
+    }
+
+    return stats
+  }, [allOrdersData, staffList])
   const [selectedStaffByOrderId, setSelectedStaffByOrderId] = useState<Record<string, string>>({})
   const [selectedLabelingStaff, setSelectedLabelingStaff] = useState('')
   const [responseModal, setResponseModal] = useState<{
@@ -426,6 +464,7 @@ export default function ManagerInvoiceCard({
                           onChange={(v) => setSelectedLabelingStaff(v)}
                           disabled={assignLabelingMutation.isLoading || isStaffLoading}
                           className="w-full"
+                          staffOrderStats={staffOrderStats}
                         />
                       </div>
                       <button
@@ -554,6 +593,7 @@ export default function ManagerInvoiceCard({
                           setSelectedStaffByOrderId((cur) => ({ ...cur, [order._id]: v }))
                         }
                         disabled={assignMutation.isPending || isStaffLoading}
+                        staffOrderStats={staffOrderStats}
                       />
                       <button
                         type="button"

@@ -24,7 +24,7 @@ export default function OperationPreOrdersPage() {
     }
   }
 
-  // Fetch orders với type PRE-ORDER và statusFilter từ API — có phân trang
+  // Fetch orders with PRE-ORDER type and statusFilter from API — with pagination
   const { data, isLoading, isError } = useOrders(
     currentPage,
     PAGE_LIMIT,
@@ -32,10 +32,10 @@ export default function OperationPreOrdersPage() {
     OrderType.PRE_ORDER
   )
 
-  // Lấy dữ liệu từ store để tính counts cho badges
+  // Get data from store to calculate counts for badges
   const { orders: allOrdersForCounts } = useOrderCountStore()
 
-  // Lọc lấy danh sách đơn PRE_ORDER (loại bỏ WAITING_STOCK theo logic chung)
+  // Filter to get list of PRE_ORDER orders (removing WAITING_STOCK according to general logic)
   const preOrdersInStore = useMemo(() => {
     return allOrdersForCounts.filter(
       (o) => o.orderType === OrderType.PRE_ORDER && o.currentStatus !== 'WAITING_STOCK'
@@ -59,10 +59,10 @@ export default function OperationPreOrdersPage() {
     { label: 'Completed', count: counts.completed, value: OrderStatus.COMPLETED }
   ]
 
-  // Pagination meta từ BE
+  // Pagination meta from BE
   const paginationMeta = data?.data?.orders
 
-  // Transform data từ API sang format của OrderTable
+  // Transform data from API to OrderTable format
   const orders = useMemo(() => {
     if (!paginationMeta?.data) return []
     // Note: API already filters by status if provided.

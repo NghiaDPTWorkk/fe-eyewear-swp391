@@ -20,14 +20,8 @@ import { OrderSummary } from '@/components/layout/customer/account/orders/detail
 import { OrderCustomerDetails } from '@/components/layout/customer/account/orders/detail/OrderCustomerDetails'
 
 export const PaymentResultPage = () => {
-  useSearchParams()
+  const [searchParams] = useSearchParams()
   const navigate = useNavigate()
-
-  const fullUrl = window.location.href
-  const queryPart = fullUrl.includes('?') ? fullUrl.split('?').slice(1).join('&') : ''
-  const normalizedSearch = queryPart.replace(/%3F/gi, '&').replace(/\?/g, '&')
-  const params = new URLSearchParams(normalizedSearch)
-
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
   const [invoiceData, setInvoiceData] = useState<InvoiceDetailData | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -35,12 +29,12 @@ export const PaymentResultPage = () => {
 
   useEffect(() => {
     const fetchResult = async () => {
-      const responseCode = params.get('vnp_ResponseCode')
-      const txnRef = params.get('vnp_TxnRef')
-      const isSuccess = params.get('isSuccess')
-      const invoiceIdParam = params.get('invoiceId')
-      const payosStatus = params.get('status')
-      const payosOrderCode = params.get('orderCode')
+      const responseCode = searchParams.get('vnp_ResponseCode')
+      const txnRef = searchParams.get('vnp_TxnRef')
+      const isSuccess = searchParams.get('isSuccess')
+      const invoiceIdParam = searchParams.get('invoiceId')
+      const payosStatus = searchParams.get('status')
+      const payosOrderCode = searchParams.get('orderCode')
 
       let invoiceId = ''
       let isActuallySuccess = false
@@ -60,7 +54,7 @@ export const PaymentResultPage = () => {
 
       if (!invoiceId) {
         setStatus('error')
-        setError('Không tìm thấy thông tin giao dịch.')
+        setError('Transaction information not found.')
         return
       }
 
@@ -71,7 +65,7 @@ export const PaymentResultPage = () => {
           if (isActuallySuccess) {
             setStatus('success')
             if (!hasHandledSuccess.current) {
-              toast.success('Thanh toán đơn hàng thành công!')
+              toast.success('Order payment successful!')
 
               // Remove only the purchased items from the cart
               const handleRemoveCheckedOutItems = async () => {
@@ -104,27 +98,27 @@ export const PaymentResultPage = () => {
           } else {
             setStatus('error')
             const errorMsg = responseCode
-              ? `Giao dịch không thành công hoặc đã bị hủy (Mã lỗi: ${responseCode})`
-              : 'Thanh toán không thành công.'
+              ? `Transaction failed or cancelled (Error code: ${responseCode})`
+              : 'Payment failed.'
             setError(errorMsg)
           }
         } else {
           setStatus('error')
-          setError('Không thể lấy thông tin đơn hàng.')
+          setError('Cannot get order information.')
         }
       } catch (err) {
         console.error('Error fetching invoice detail:', err)
         setStatus('error')
-        setError('Có lỗi xảy ra khi tải thông tin đơn hàng.')
+        setError('An error occurred while loading order information.')
       }
     }
 
     fetchResult()
     // params is derived from window.location.href which changes when navigation happens
-  }, [window.location.href])
+  }, [searchParams])
 
-  const amount = params.get('vnp_Amount')
-    ? Number(params.get('vnp_Amount')) / 100
+  const amount = searchParams.get('vnp_Amount')
+    ? Number(searchParams.get('vnp_Amount')) / 100
     : invoiceData?.invoice.totalPrice || 0
 
   return (
@@ -140,9 +134,9 @@ export const PaymentResultPage = () => {
                   <Loader2 className="w-12 h-12 text-primary-500 animate-spin" />
                 </div>
                 <div className="space-y-4">
-                  <h1 className="text-3xl font-bold">Đang xác nhận thanh toán...</h1>
+                  <h1 className="text-3xl font-bold">Confirming payment...</h1>
                   <p className="text-gray-500 text-lg">
-                    Vui lòng không đóng trình duyệt hoặc quay lại trang trước.
+                    Please do not close your browser or go back to the previous page.
                   </p>
                 </div>
               </div>
@@ -192,14 +186,14 @@ export const PaymentResultPage = () => {
                     onClick={() => navigate('/cart')}
                     className="h-14 rounded-2xl px-10 bg-primary-600 hover:bg-primary-700 text-white font-bold text-lg shadow-lg"
                   >
-                    Thử lại giỏ hàng
+                    Retry cart
                   </Button>
                   <Button
                     onClick={() => navigate('/account/orders')}
                     variant="outline"
                     className="h-14 rounded-2xl px-10 border-2 border-mint-200 text-mint-1100 font-bold text-lg hover:bg-mint-50"
                   >
-                    Lịch sử đơn hàng
+                    Order history
                   </Button>
                 </div>
               </div>

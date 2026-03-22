@@ -63,7 +63,7 @@ export const PaymentMethodSection = ({
                 : 'border-mint-200 text-gray-eyewear hover:border-mint-300'
             }`}
           >
-            Thanh toán khi nhận hàng (COD)
+            Cash on Delivery (COD)
           </button>
         )}
       </div>

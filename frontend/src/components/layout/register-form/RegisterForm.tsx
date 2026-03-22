@@ -75,10 +75,10 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
         password: formData.password
       })
       if (res.success) {
-        toast.success('Gửi yêu cầu merge thành công. Vui lòng kiểm tra email để lấy OTP.')
+        toast.success('Merge request sent successfully. Please check your email for the OTP.')
         setMergeState('otp')
       } else {
-        toast.error((res as any).message || 'Không thể yêu cầu merge')
+        toast.error((res as any).message || 'Unable to request merge')
       }
     } catch (e: any) {
       toast.error(e.response?.data?.message || 'Request merge error')
@@ -90,7 +90,7 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
   const handleVerifyOtp = async () => {
     const finalOtp = otpArr.join('')
     if (finalOtp.length < 4) {
-      toast.error('Vui lòng nhập đủ 4 số OTP')
+      toast.error('Please enter all 4 OTP digits')
       return
     }
     setIsMerging(true)
@@ -100,10 +100,10 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
         otp: finalOtp
       })
       if (res.success) {
-        toast.success('Ghép nối tài khoản thành công! Bạn có thể đăng nhập ngay.')
+        toast.success('Account merged successfully! You can log in now.')
         navigate('/login')
       } else {
-        toast.error((res as any).message || 'OTP không hợp lệ')
+        toast.error((res as any).message || 'Invalid OTP')
       }
     } catch (e: any) {
       toast.error(e.response?.data?.message || 'Verify OTP error')
@@ -147,12 +147,12 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
         </div>
         <h3 className="text-xl font-bold text-mint-1200">Account Already Exists</h3>
         <p className="text-gray-500 text-sm px-4">
-          Email <span className="font-bold text-black">{formData.email}</span> đã được liên kết với
-          một tài khoản Google. Bạn có muốn ghép nối mật khẩu này vào tài khoản đó không?
+          Email <span className="font-bold text-black">{formData.email}</span> is already linked to
+          a Google account. Do you want to merge this password into that account?
         </p>
         <div className="flex gap-4 pt-4">
           <Button variant="outline" className="flex-1" onClick={() => setMergeState('idle')}>
-            Hủy bỏ
+            Cancel
           </Button>
           <Button
             colorScheme="primary"
@@ -160,7 +160,7 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
             onClick={handleRequestMerge}
             disabled={isMerging}
           >
-            Đồng ý
+            Confirm
           </Button>
         </div>
       </div>
@@ -171,9 +171,9 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
     return (
       <div className="w-full text-center space-y-8 pt-8">
         <div className="space-y-2">
-          <h3 className="text-2xl font-bold text-mint-1200">Xác thực OTP</h3>
+          <h3 className="text-2xl font-bold text-mint-1200">OTP Verification</h3>
           <p className="text-gray-500 text-sm">
-            Nhập 4 số xác thực được gửi đến{' '}
+            Enter the 4-digit code sent to{' '}
             <span className="font-bold text-black">{formData.email}</span>
           </p>
         </div>
@@ -204,7 +204,7 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
             onClick={handleVerifyOtp}
             disabled={isMerging || otpArr.join('').length < 4}
           >
-            Xác nhận
+            Confirm
           </Button>
           <Button
             variant="ghost"
@@ -212,7 +212,7 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
             onClick={() => setMergeState('idle')}
             className="text-gray-500"
           >
-            Quay lại
+            Go back
           </Button>
         </div>
       </div>

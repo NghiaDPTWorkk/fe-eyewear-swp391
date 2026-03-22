@@ -41,7 +41,8 @@ export const PATHS = {
     ORDER_DETAIL: (orderId: string) => `/operation-staff/orders/${orderId}`,
     MANUFACTURING_PROCESS: (orderId: string) => `/operation-staff/orders/${orderId}/manufacturing`,
     PACKING_PROCESS: (orderId: string) => `/operation-staff/orders/${orderId}/process`,
-    PACKING_SUCCESS: (orderId: string) => `/operation-staff/orders/${orderId}/success`
+    PACKING_SUCCESS: (orderId: string) => `/operation-staff/orders/${orderId}/success`,
+    COMPLETE_ORDERS: '/operation-staff/packed-success'
   },
   MANAGER: {
     DASHBOARD: '/manager/dashboard',

@@ -4,13 +4,13 @@ import { IoPersonCircleOutline } from 'react-icons/io5'
 export interface StaffData {
   id: string
   name: string
-  email: string
-  role: string
-  status: 'Active' | 'Inactive'
-  lastActive: string
-  phone: string
   citizenId?: string
+  phone: string
+  email: string
   avatar?: string | null
+  role: string
+  createdAt?: string
+  lastLogin: string
 }
 
 interface StaffTableProps {
@@ -81,19 +81,17 @@ export const StaffTable: React.FC<StaffTableProps> = ({
                   {staff.role}
                 </span>
               </td>
-              <td className="px-6 py-6 text-sm font-medium text-neutral-600">
-                {staff.lastActive === 'N/A' ? '--' : staff.lastActive}
-              </td>
+              <td className="px-6 py-6 text-sm font-medium text-neutral-600">{staff.lastLogin}</td>
               <td className="px-6 py-6 text-center" onClick={(e) => e.stopPropagation()}>
                 <button
                   onClick={() => onToggleStatus(staff.id)}
-                  className={`w-10 h-5 rounded-full transition-all duration-300 relative ${
-                    staff.status === 'Active' ? 'bg-emerald-500' : 'bg-neutral-200'
+                  className={`w-10 h-5 rounded-full transition-all bg-emerald-500 duration-300 relative ${
+                    staff.createdAt
                   }`}
                 >
                   <div
                     className={`absolute top-1 w-3 h-3 rounded-full bg-white transition-all duration-300 ${
-                      staff.status === 'Active' ? 'left-6' : 'left-1'
+                      staff.lastLogin ? 'left-6' : 'left-1'
                     }`}
                   />
                 </button>

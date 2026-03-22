@@ -23,6 +23,7 @@ export interface Order {
   price?: number // Giá đơn hàng
   assignedStaff?: string // Staff được assign
   createdAt: string // For sorting
+  assignedAt?: string // For dashboard stats & sorting
 }
 
 // Định nghĩa cấu trúc 1 cột

@@ -12,6 +12,23 @@ interface ManagerInvoiceTableProps {
   onSelectInvoice: (id: string) => void
 }
 
+const formatDate = (value?: string) => {
+  if (!value) return '—'
+  const d = new Date(value)
+  return Number.isNaN(d.getTime()) ? '—' : d.toLocaleDateString()
+}
+
+const formatTime = (value?: string) => {
+  if (!value) return '—'
+  const d = new Date(value)
+  return Number.isNaN(d.getTime())
+    ? '—'
+    : d.toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+}
+
 export const ManagerInvoiceTable: React.FC<ManagerInvoiceTableProps> = ({
   invoices,
   isLoading,
@@ -98,20 +115,13 @@ export const ManagerInvoiceTable: React.FC<ManagerInvoiceTableProps> = ({
                 <td className="px-6 py-6 font-primary">
                   <div className="flex items-center gap-2 text-sm text-neutral-600">
                     <IoCalendarOutline className="text-neutral-300" />
-                    <span className="font-medium">
-                      {new Date(inv.createdAt).toLocaleDateString()}
-                    </span>
+                    <span className="font-medium">{formatDate(inv.createdAt)}</span>
                   </div>
                 </td>
                 <td className="px-6 py-6 font-primary">
                   <div className="flex items-center gap-2 text-sm text-neutral-600">
                     <IoTimeOutline className="text-neutral-300" />
-                    <span className="font-medium">
-                      {new Date(inv.createdAt).toLocaleTimeString([], {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </span>
+                    <span className="font-medium">{formatTime(inv.createdAt)}</span>
                   </div>
                 </td>
                 <td className="px-6 py-6 text-center" onClick={(e) => e.stopPropagation()}>

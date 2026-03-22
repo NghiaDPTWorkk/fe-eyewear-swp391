@@ -1,10 +1,9 @@
-import { useState } from 'react'
-import { Outlet } from 'react-router-dom'
+import { useState, useMemo } from 'react'
+import { Outlet, useNavigate } from 'react-router-dom'
 import { Container } from '@/shared/components/ui'
 import OperationPagination from '@/shared/components/ui/pagination/OperationPagination'
 import { PageHeader } from '@/features/sales/components/common'
 import { UserTable } from './components/users/UserTable'
-import { UserDetailDrawer } from './components/users/UserDetailDrawer'
 import { useAdminCustomers } from '@/shared/hooks/admin/useAdminCustomers'
 import { useDebounce } from '@/shared/hooks/useDebounce'
 import {
@@ -12,10 +11,12 @@ import {
   IoRefreshOutline,
   IoPeopleOutline,
   IoPersonOutline,
-  IoBanOutline,
   IoTrendingUpOutline,
-  IoTrendingDownOutline
+  IoTrendingDownOutline,
+  IoFlashOutline
 } from 'react-icons/io5'
+import { AdminUserDetail } from './components/AdminUserDetail'
+import toast from 'react-hot-toast'
 
 const SummaryCard: React.FC<{
   label: string
@@ -68,13 +69,16 @@ const SummaryCard: React.FC<{
         <h3 className="text-3xl font-bold text-gray-900 font-heading tracking-tight mb-4">
           {value}
         </h3>
-        <p className="text-[10px] font-medium text-neutral-400 capitalize">Updated just now</p>
+        <p className="text-[10px] font-medium text-neutral-400 capitalize whitespace-nowrap">
+          Updated just now
+        </p>
       </div>
     </div>
   )
 }
 
 export default function AdminUsersPage() {
+  const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
   const debouncedSearch = useDebounce(searchQuery, 500)
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
@@ -89,21 +93,30 @@ export default function AdminUsersPage() {
     status: statusFilter
   })
 
-  const customers = data?.data.customers ?? []
+  const customers = useMemo(() => data?.data.customers ?? [], [data])
   const pagination = data?.data.pagination ?? { page: 1, limit: 10, total: 0, totalPages: 1 }
 
-  const selectedUser = customers.find((u) => u._id === selectedUserId) ?? null
-
-  const statusTabs = [
-    { label: 'All Users', value: 'All' as const },
-    { label: 'Active', value: 'Active' as const },
-    { label: 'Inactive', value: 'Inactive' as const },
-    { label: 'Banned', value: 'Banned' as const }
-  ]
+  // Use useMemo with robust ID matching
+  const selectedUserRaw = useMemo(() => {
+    if (!selectedUserId) return null
+    return (
+      customers.find((u: any) => {
+        const uId = String(u._id || u.id || '')
+        return uId === String(selectedUserId)
+      }) ?? null
+    )
+  }, [customers, selectedUserId])
 
   const handleStatusChange = (status: 'All' | 'Active' | 'Inactive' | 'Banned') => {
     setStatusFilter(status)
-    setPage(1) // Reset to page 1 on filter change
+    setPage(1)
+  }
+
+  const handleSelectUser = (id: string) => {
+    setSelectedUserId(null) // Force reset
+    setTimeout(() => {
+      setSelectedUserId(id)
+    }, 10)
   }
 
   return (
@@ -135,35 +148,35 @@ export default function AdminUsersPage() {
           colorScheme="info"
         />
         <SummaryCard
-          label="Banned"
-          value="-"
-          percent="2.1%"
+          label="Current Page"
+          value={`${pagination.page}/${pagination.totalPages}`}
+          percent="--"
           isUp={false}
-          icon={<IoBanOutline size={20} />}
-          colorScheme="danger"
+          icon={<IoFlashOutline size={20} />}
+          colorScheme="warning"
         />
       </div>
 
       {/* Status Tabs */}
       <div className="px-4 overflow-x-auto">
         <div className="flex items-center gap-2 p-1.5 bg-neutral-100/50 rounded-2xl w-fit border border-neutral-100">
-          {statusTabs.map((tab) => (
+          {['All', 'Active', 'Inactive', 'Banned'].map((status) => (
             <button
-              key={tab.value}
-              onClick={() => handleStatusChange(tab.value)}
+              key={status}
+              onClick={() => handleStatusChange(status as any)}
               className={`px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${
-                statusFilter === tab.value
+                statusFilter === status
                   ? 'bg-mint-900 text-white shadow-md shadow-mint-100 border-none'
                   : 'text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100/50'
               }`}
             >
-              {tab.label}
+              {status}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Table */}
+      {/* Table Section */}
       <div className="bg-white rounded-3xl border border-neutral-100 shadow-sm overflow-hidden mx-4">
         <div className="p-6 border-b border-neutral-50 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-1">
@@ -209,7 +222,7 @@ export default function AdminUsersPage() {
           <UserTable
             users={customers}
             selectedUserId={selectedUserId}
-            onSelectUser={(id) => setSelectedUserId(id)}
+            onSelectUser={handleSelectUser}
           />
         )}
 
@@ -226,10 +239,16 @@ export default function AdminUsersPage() {
       </div>
 
       {/* User Detail Drawer */}
-      <UserDetailDrawer
+      <AdminUserDetail
         isOpen={!!selectedUserId}
         onClose={() => setSelectedUserId(null)}
-        user={selectedUser}
+        user={selectedUserRaw}
+        onEdit={(user) => {
+          navigate(`/admin/users/edit/${user._id || (user as any).id}`)
+        }}
+        onBan={(id) => {
+          toast.error(`Ban feature for user ${id} is not implemented yet.`)
+        }}
       />
 
       <div className="px-4">

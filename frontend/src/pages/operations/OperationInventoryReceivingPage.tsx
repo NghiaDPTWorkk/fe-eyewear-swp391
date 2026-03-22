@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Button, Container, FilterButtonList, MetricCard, OperationPagination } from '@/components'
 import { BreadcrumbPath } from '@/components/layout/staff/operation-staff/breadcrumb-path'
@@ -15,7 +15,6 @@ import {
 import { cn, formatDate } from '@/shared/utils'
 import STATUS_INVENTORY_PLANNING_CONFIG from '@/shared/utils/enums/inventoryplan.enum'
 import { InventoryTable } from '@/components/layout/staff/operation-staff/inventoryplantable/InventoryTable'
-
 import { createPortal } from 'react-dom'
 
 // ─── Detail Modal ────────────────────────────────────────────────
@@ -181,22 +180,44 @@ export default function OperationInventoryReceivingPage() {
 
   const [selectedDetailId, setSelectedDetailId] = useState<string | null>(null)
 
-  // Fetch Imports
-  const { data, isLoading, isError } = usePreOrderImports({
-    page: currentPage,
-    limit,
-    status: filter === 'all' ? ['PENDING', 'DONE'] : [filter]
-  })
-
-  // Fetch all for counts
-  const { data: allData, isLoading: isLoadingCounts } = usePreOrderImports({
+  // ═══════════════════════════════════════════════════
+  // DATA FLOW (khác các trang Order):
+  // 1. Trang này tự gọi API thông qua hook usePreOrderImports()
+  //    → fetch 1000 records cùng lúc để xử lý client-side.
+  // 2. allBatches = tất cả lô hàng trả về từ API (PENDING + DONE).
+  // 3. useMemo() filter theo status (URL param) → phân trang client-side
+  //    → truyền vào <InventoryTable> và <OperationPagination>.
+  // ═══════════════════════════════════════════════════
+  // Bước 1: Gọi API lấy toàn bộ lô hàng (bulk fetch 1000 records)
+  const {
+    data: allData,
+    isLoading: isLoadingData,
+    isError
+  } = usePreOrderImports({
     page: 1,
-    limit: 1000,
+    limit: 1000, // bulk fetch để filter client-side, tránh gọi API nhiều lần
     status: ['PENDING', 'DONE']
   })
-  const allBatches = allData?.data?.preOrderImports || []
-  const results = data?.data?.preOrderImports || []
-  const pagination = data?.data?.pagination
+
+  // allBatches = mảng dữ liệu thô từ API, chưa lọc
+  const allBatches = useMemo(() => allData?.data?.preOrderImports || [], [allData])
+
+  // ─── Bước 2: Filter client-side + phân trang ─────────
+  // Lọc allBatches theo filter URL, sau đó cắt trang
+  const { paginatedResults, total, typeFilteredByDate } = useMemo(() => {
+    const filtered = allBatches.filter((b) => {
+      if (filter === 'all') return b.status === 'PENDING' || b.status === 'DONE'
+      return b.status === filter
+    })
+
+    return {
+      typeFilteredByDate: filtered, // dùng để tính badge count trên filter buttons
+      paginatedResults: filtered.slice((currentPage - 1) * limit, currentPage * limit), // dành cho trang hiện tại
+      total: filtered.length
+    }
+  }, [allBatches, filter, currentPage, limit])
+
+  const totalPages = Math.max(1, Math.ceil(total / limit))
 
   const setFilter = (value: string) => {
     setCurrentPage(1)
@@ -205,15 +226,15 @@ export default function OperationInventoryReceivingPage() {
   }
 
   const filterButtons = [
-    { label: 'All', count: allBatches.length, value: 'all' },
+    { label: 'All', count: typeFilteredByDate.length, value: 'all' },
     {
       label: 'Pending',
-      count: allBatches.filter((b) => b.status === 'PENDING').length,
+      count: typeFilteredByDate.filter((b) => b.status === 'PENDING').length,
       value: 'PENDING'
     },
     {
       label: 'Completed',
-      count: allBatches.filter((b) => b.status === 'DONE').length,
+      count: typeFilteredByDate.filter((b) => b.status === 'DONE').length,
       value: 'DONE'
     }
   ]
@@ -235,21 +256,21 @@ export default function OperationInventoryReceivingPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
         <MetricCard
           label="TOTAL BATCHES"
-          value={isLoadingCounts ? '...' : allBatches.length}
+          value={isLoadingData ? '...' : allBatches.length}
           icon={<IoStatsChartOutline size={22} />}
           colorScheme="mint"
           subValue="All active and completed batches"
         />
         <MetricCard
           label="PENDING IMPORT"
-          value={isLoadingCounts ? '...' : allBatches.filter((b) => b.status === 'PENDING').length}
+          value={isLoadingData ? '...' : allBatches.filter((b) => b.status === 'PENDING').length}
           icon={<IoTimeOutline size={22} />}
           colorScheme="warning"
           subValue="Awaiting warehouse processing"
         />
         <MetricCard
           label="DONE / COMPLETED"
-          value={isLoadingCounts ? '...' : allBatches.filter((b) => b.status === 'DONE').length}
+          value={isLoadingData ? '...' : allBatches.filter((b) => b.status === 'DONE').length}
           icon={<IoCheckmarkCircleOutline size={22} />}
           colorScheme="success"
           subValue="Successfully received and stocked"
@@ -260,11 +281,11 @@ export default function OperationInventoryReceivingPage() {
         buttons={filterButtons}
         selectedValue={filter}
         onChange={setFilter}
-        className="mb-6"
+        className="mb-4"
       />
 
-      <div className="bg-white rounded-lg shadow-sm border border-neutral-100 overflow-hidden">
-        {isLoading ? (
+      <div className="bg-white rounded-lg shadow-sm border border-neutral-100 overflow-hidden mt-6">
+        {isLoadingData ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
             <div className="relative">
               <div className="w-14 h-14 rounded-full border-4 border-neutral-100" />
@@ -276,14 +297,14 @@ export default function OperationInventoryReceivingPage() {
           <div className="flex flex-col items-center justify-center py-20 gap-4 text-red-500 font-semibold">
             Failed to load data.
           </div>
-        ) : results.length === 0 ? (
+        ) : paginatedResults.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4 text-neutral-400">
             No receiving plans found.
           </div>
         ) : (
           <div className="overflow-x-auto">
             <InventoryTable
-              results={results}
+              results={paginatedResults}
               onViewDetail={setSelectedDetailId}
               onNext={(id) => navigate(`/operation-staff/inventory-receiving/${id}`)}
             />
@@ -291,13 +312,13 @@ export default function OperationInventoryReceivingPage() {
         )}
       </div>
 
-      {pagination && pagination.totalPages > 1 && (
+      {totalPages > 1 && (
         <OperationPagination
           page={currentPage}
-          totalPages={pagination.totalPages}
-          total={pagination.total}
+          totalPages={totalPages}
+          total={total}
           limit={limit}
-          itemsOnPage={results.length}
+          itemsOnPage={paginatedResults.length}
           onPageChange={setCurrentPage}
         />
       )}

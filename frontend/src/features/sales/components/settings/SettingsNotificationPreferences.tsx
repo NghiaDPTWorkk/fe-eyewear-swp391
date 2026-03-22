@@ -1,76 +1,79 @@
-import { Card, Button } from '@/components'
-import { IoSaveOutline } from 'react-icons/io5'
+import { Card } from '@/shared/components/ui-core'
+import {
+  IoNotificationsOutline,
+  IoMailOpenOutline,
+  IoAppsOutline,
+  IoCheckmark
+} from 'react-icons/io5'
+import { cn } from '@/lib/utils'
 
 const NOTIFICATION_PREFS = [
-  'New Order Received',
-  'Return Request Submitted',
-  'Priority Order Alert'
+  { label: 'New Order Received', email: true, app: true },
+  { label: 'Return Request Submitted', email: true, app: true },
+  { label: 'Priority Order Alert', email: true, app: false }
 ]
 
 export default function NotificationPreferences() {
   return (
-    <Card className="p-8 border-none shadow-sm shadow-neutral-200/50">
-      <div className="flex items-center justify-between mb-8">
+    <Card className="p-8 border-none shadow-sm shadow-neutral-200/50 bg-white">
+      <div className="flex items-center gap-3 mb-8">
+        <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-500 border border-orange-100/50">
+          <IoNotificationsOutline size={20} />
+        </div>
         <h3 className="text-xl font-semibold text-neutral-900">Notification Preferences</h3>
       </div>
 
-      <div className="space-y-8">
-        <div>
-          <h4 className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest mb-4 pl-1">
-            Email Notifications
-          </h4>
-          <div className="space-y-3">
-            {NOTIFICATION_PREFS.map((pref) => (
-              <label
-                key={pref}
-                className="flex justify-between items-center p-4 bg-neutral-50/50 rounded-xl border border-neutral-100 hover:border-primary-200 hover:bg-primary-50/20 transition-all cursor-pointer group"
-              >
-                <span className="text-sm font-semibold text-neutral-700 group-hover:text-neutral-900">
-                  {pref}
-                </span>
-                <input
-                  type="checkbox"
-                  defaultChecked
-                  className="w-5 h-5 rounded-lg border-neutral-300 text-primary-600 focus:ring-primary-500 transition-all cursor-pointer"
-                />
-              </label>
-            ))}
-          </div>
-        </div>
+      <div className="space-y-3">
+        {NOTIFICATION_PREFS.map((pref) => (
+          <div
+            key={pref.label}
+            className="flex items-center justify-between p-5 rounded-2xl hover:bg-neutral-50/50 transition-all border border-transparent hover:border-neutral-100 group"
+          >
+            <div className="flex-1 pr-8">
+              <h4 className="text-sm font-semibold text-neutral-800 mb-1 group-hover:text-primary-600 transition-colors">
+                {pref.label}
+              </h4>
+              <p className="text-[12px] text-neutral-400 font-medium leading-relaxed">
+                Receive alerts for this activity
+              </p>
+            </div>
+            <div className="flex items-center gap-10">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 text-neutral-500">
+                  <IoAppsOutline size={16} />
+                  <span className="text-[11px] font-bold uppercase tracking-wider">App</span>
+                </div>
+                <div
+                  className={cn(
+                    'w-5 h-5 rounded-lg flex items-center justify-center transition-all',
+                    pref.app
+                      ? 'bg-primary-500 text-white shadow-sm shadow-primary-200'
+                      : 'bg-neutral-100 border border-neutral-200 text-transparent'
+                  )}
+                >
+                  <IoCheckmark size={14} className="stroke-[3]" />
+                </div>
+              </div>
 
-        <div>
-          <h4 className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest mb-4 pl-1">
-            Push Notifications
-          </h4>
-          <div className="space-y-3">
-            {NOTIFICATION_PREFS.map((pref, i) => (
-              <label
-                key={pref}
-                className="flex justify-between items-center p-4 bg-neutral-50/50 rounded-xl border border-neutral-100 hover:border-primary-200 hover:bg-primary-50/20 transition-all cursor-pointer group"
-              >
-                <span className="text-sm font-semibold text-neutral-700 group-hover:text-neutral-900">
-                  {pref}
-                </span>
-                <input
-                  type="checkbox"
-                  defaultChecked={i !== 0}
-                  className="w-5 h-5 rounded-lg border-neutral-300 text-primary-600 focus:ring-primary-500 transition-all cursor-pointer"
-                />
-              </label>
-            ))}
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 text-neutral-500">
+                  <IoMailOpenOutline size={16} />
+                  <span className="text-[11px] font-bold uppercase tracking-wider">Email</span>
+                </div>
+                <div
+                  className={cn(
+                    'w-5 h-5 rounded-lg flex items-center justify-center transition-all',
+                    pref.email
+                      ? 'bg-primary-500 text-white shadow-sm shadow-primary-200'
+                      : 'bg-neutral-100 border border-neutral-200 text-transparent'
+                  )}
+                >
+                  <IoCheckmark size={14} className="stroke-[3]" />
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-
-      <div className="mt-8 flex justify-end">
-        <Button
-          variant="solid"
-          colorScheme="primary"
-          leftIcon={<IoSaveOutline size={18} />}
-          className="h-11 rounded-xl font-semibold px-8 bg-primary-500 hover:bg-primary-600 shadow-md shadow-primary-100 transition-all active:scale-95 border-none"
-        >
-          Save Preferences
-        </Button>
+        ))}
       </div>
     </Card>
   )

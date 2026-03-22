@@ -54,9 +54,9 @@ export const PopularProducts: React.FC = () => {
                         <img
                           src={product.defaultVariantImage}
                           alt={product.nameBase}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-contain p-2 transition-transform group-hover:scale-110"
                           onError={(e) => {
-                            ;(e.target as HTMLImageElement).src = 'fallback-image-url' // Optional: actual fallback URL if image fails
+                            ;(e.target as HTMLImageElement).src = 'fallback-image-url'
                           }}
                         />
                       ) : (

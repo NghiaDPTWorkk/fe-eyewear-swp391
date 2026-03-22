@@ -296,7 +296,7 @@ export default function ManagerProductsPage() {
                             <img
                               src={p.defaultVariantImage}
                               alt={p.nameBase}
-                              className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                              className="w-full h-full object-contain p-2 transition-transform group-hover:scale-110"
                               onError={(e) => {
                                 ;(e.target as HTMLImageElement).style.display = 'none'
                               }}

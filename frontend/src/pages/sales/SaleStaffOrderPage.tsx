@@ -67,8 +67,12 @@ export default function SaleStaffOrderPage() {
   const [drawerTicket, setDrawerTicket] = useState<ReturnTicketData | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
 
-  const returnHook = useReturnPageTickets(staffId || '')
-  const historyHook = useMyReturnHistory()
+  const isReturnsActive = statusFilter === 'RETURNS'
+  const isHistoryActive = statusFilter === 'REFUNDED_HISTORY'
+  const isInvoicesActive = !isReturnsActive && !isHistoryActive
+
+  const returnHook = useReturnPageTickets(staffId || '', isReturnsActive)
+  const historyHook = useMyReturnHistory(isHistoryActive)
 
   useEffect(() => {
     if (statusFilter === 'RETURNS') {
@@ -96,7 +100,7 @@ export default function SaleStaffOrderPage() {
     pagination,
     loading: isLoading,
     fetchInvoices: refetch
-  } = useSalesStaffInvoices(page, limit, statusFilter, searchQuery)
+  } = useSalesStaffInvoices(page, limit, statusFilter, searchQuery, isInvoicesActive)
 
   const selectedInvoice = useMemo(
     () => invoiceList.find((inv) => inv.id === selectedInvoiceId) ?? null,

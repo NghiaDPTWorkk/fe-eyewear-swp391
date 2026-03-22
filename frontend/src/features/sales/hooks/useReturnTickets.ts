@@ -31,7 +31,10 @@ const PAGE_SIZE = 8
 
 // ─── Hook: Return Page ──────────────────────────────────────────────────────
 // Fetches ALL tickets → filters to unassigned + mine → sorts mine first → paginates 8/page
-export function useReturnPageTickets(currentStaffId: string): UseReturnsReturn {
+export function useReturnPageTickets(
+  currentStaffId: string,
+  enabled: boolean = true
+): UseReturnsReturn {
   const [allTickets, setAllTickets] = useState<ReturnTicketData[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -59,8 +62,8 @@ export function useReturnPageTickets(currentStaffId: string): UseReturnsReturn {
   }, [refreshKey]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    fetchData()
-  }, [fetchData])
+    if (enabled) fetchData()
+  }, [fetchData, enabled])
 
   // Reset page when search changes
   useEffect(() => {
@@ -139,7 +142,7 @@ export function useReturnPageTickets(currentStaffId: string): UseReturnsReturn {
 }
 
 // ─── Hook: Returned Orders (RETURNED / APPROVED / REJECTED) ──────────────────
-export function useReturnedOrders(): UseReturnsReturn {
+export function useReturnedOrders(enabled: boolean = true): UseReturnsReturn {
   const [allTickets, setAllTickets] = useState<ReturnTicketData[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -166,8 +169,8 @@ export function useReturnedOrders(): UseReturnsReturn {
   }, [refreshKey]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    fetchData()
-  }, [fetchData])
+    if (enabled) fetchData()
+  }, [fetchData, enabled])
   useEffect(() => {
     setCurrentPage(1)
   }, [search])
@@ -226,7 +229,7 @@ export function useReturnedOrders(): UseReturnsReturn {
 }
 
 // ─── Hook: My Return History (Processed by ME) ───────────────────────────────
-export function useMyReturnHistory(): UseReturnsReturn {
+export function useMyReturnHistory(enabled: boolean = true): UseReturnsReturn {
   const [allTickets, setAllTickets] = useState<ReturnTicketData[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -253,8 +256,8 @@ export function useMyReturnHistory(): UseReturnsReturn {
   }, [refreshKey]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    fetchData()
-  }, [fetchData])
+    if (enabled) fetchData()
+  }, [fetchData, enabled])
   useEffect(() => {
     setCurrentPage(1)
   }, [search])

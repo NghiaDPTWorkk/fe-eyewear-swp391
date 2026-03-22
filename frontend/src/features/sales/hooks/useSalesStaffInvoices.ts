@@ -8,10 +8,12 @@ export function useSalesStaffInvoices(
   page: number = 1,
   limit: number = 10,
   status: string = 'All',
-  search?: string
+  search?: string,
+  enabled: boolean = true
 ) {
   const query = useQuery({
     queryKey: ['sales', 'invoices', { page, limit, status, search }],
+    enabled: !!enabled,
     queryFn: async () => {
       let apiStatus: string | undefined = undefined
       let apiStatuses: string | undefined = undefined

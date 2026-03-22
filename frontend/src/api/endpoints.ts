@@ -223,7 +223,8 @@ export const ENDPOINTS = {
   INVOICE: {
     CREATE: '/invoices',
     LIST: '/invoices',
-    DETAIL: (id: string) => `/invoices/${id}`
+    DETAIL: (id: string) => `/invoices/${id}`,
+    CANCEL: (id: string) => `/invoices/${id}/cancel`
   },
   // Wishlist
   WISHLIST: {

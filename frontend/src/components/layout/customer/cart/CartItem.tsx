@@ -8,9 +8,16 @@ import { Checkbox, Card } from '@/shared/components/ui'
 interface CartItemProps {
   item: CartItemType
   isReadOnly?: boolean
+  allowQuantityEditInReadOnly?: boolean
+  onReadOnlyQuantityChange?: (item: CartItemType, quantity: number) => void
 }
 
-export const CartItem = ({ item, isReadOnly = false }: CartItemProps) => {
+export const CartItem = ({
+  item,
+  isReadOnly = false,
+  allowQuantityEditInReadOnly = false,
+  onReadOnlyQuantityChange
+}: CartItemProps) => {
   const { updateQuantity, removeItem, toggleSelection } = useCartStore()
   const [isLensesOpen, setIsLensesOpen] = useState(false)
 
@@ -25,21 +32,6 @@ export const CartItem = ({ item, isReadOnly = false }: CartItemProps) => {
     // Only allow digits
     const val = e.target.value.replace(/\D/g, '')
     setLocalQty(val)
-  }
-
-  const handleQtyBlur = () => {
-    let newQty = parseInt(localQty)
-    if (isNaN(newQty) || newQty < 1) {
-      newQty = 1
-    } else if (newQty > 99) {
-      newQty = 99
-    }
-
-    if (newQty !== item.quantity) {
-      updateQuantity(item, newQty)
-    } else {
-      setLocalQty(item.quantity.toString())
-    }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -63,6 +55,37 @@ export const CartItem = ({ item, isReadOnly = false }: CartItemProps) => {
     : item.originalPrice && item.originalPrice > item.price
       ? `-${Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100)}%`
       : null
+
+  const canEditQuantity = !isReadOnly || allowQuantityEditInReadOnly
+
+  const changeQuantity = (newQty: number) => {
+    const clampedQty = Math.max(1, Math.min(99, newQty))
+    if (clampedQty === item.quantity) return
+
+    if (isReadOnly && allowQuantityEditInReadOnly && onReadOnlyQuantityChange) {
+      onReadOnlyQuantityChange(item, clampedQty)
+      return
+    }
+
+    if (!isReadOnly) {
+      updateQuantity(item, clampedQty)
+    }
+  }
+
+  const handleQtyBlur = () => {
+    let newQty = parseInt(localQty)
+    if (isNaN(newQty) || newQty < 1) {
+      newQty = 1
+    } else if (newQty > 99) {
+      newQty = 99
+    }
+
+    if (newQty !== item.quantity) {
+      changeQuantity(newQty)
+    } else {
+      setLocalQty(item.quantity.toString())
+    }
+  }
 
   return (
     <Card className="p-8 border-mint-300/50 relative group bg-white hover:shadow-md transition-shadow">
@@ -283,10 +306,10 @@ export const CartItem = ({ item, isReadOnly = false }: CartItemProps) => {
 
           {/* Item Subtotal Area */}
           <div className="flex justify-between items-center pt-6 border-t border-gray-100 mt-auto">
-            {!isReadOnly ? (
+            {canEditQuantity ? (
               <div className="flex items-center gap-3 bg-mint-50/50 p-1 rounded-xl border border-mint-100/50">
                 <button
-                  onClick={() => updateQuantity(item, Math.max(1, item.quantity - 1))}
+                  onClick={() => changeQuantity(item.quantity - 1)}
                   className="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm hover:text-primary-500 transition-colors disabled:opacity-50"
                   disabled={item.quantity <= 1}
                 >
@@ -301,7 +324,7 @@ export const CartItem = ({ item, isReadOnly = false }: CartItemProps) => {
                   className="text-sm font-bold text-mint-1200 w-10 text-center bg-transparent border-none focus:outline-none focus:ring-1 focus:ring-primary-400/30 rounded-md transition-all appearance-none"
                 />
                 <button
-                  onClick={() => updateQuantity(item, item.quantity + 1)}
+                  onClick={() => changeQuantity(item.quantity + 1)}
                   className="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm hover:text-primary-500 transition-colors"
                   disabled={item.quantity >= 99}
                 >

@@ -5,7 +5,7 @@ import { Container, Button } from '@/shared/components/ui'
 import { CartSummary, CartItem as CartItemComponent } from '@/components/layout/customer/cart'
 import { ArrowLeft } from 'lucide-react'
 import type { CartItem } from '@/shared/types/cart.types'
-import { useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useAuthStore } from '@/store'
 
 export const CheckoutPage = () => {
@@ -16,8 +16,17 @@ export const CheckoutPage = () => {
   // Expecting a single item or array of items in location state
   const directItem = location.state?.item as CartItem | undefined
   const directItems = location.state?.items as CartItem[] | undefined
+  const isDirectCheckout = !!directItem || !!directItems
 
-  const itemsToBuy = directItems || (directItem ? [directItem] : [])
+  const initialItemsToBuy = useMemo(
+    () => directItems || (directItem ? [directItem] : []),
+    [directItems, directItem]
+  )
+  const [itemsToBuy, setItemsToBuy] = useState<CartItem[]>(initialItemsToBuy)
+
+  useEffect(() => {
+    setItemsToBuy(initialItemsToBuy)
+  }, [initialItemsToBuy])
 
   useEffect(() => {
     // Check authentication
@@ -34,6 +43,18 @@ export const CheckoutPage = () => {
   }, [itemsToBuy, isAuthenticated, navigate, location])
 
   if (itemsToBuy.length === 0) return null
+
+  const handleDirectItemQuantityChange = (targetItem: CartItem, quantity: number) => {
+    setItemsToBuy((prev) =>
+      prev.map((item) => {
+        const sameById =
+          (item._id && targetItem._id && item._id === targetItem._id) ||
+          (item.product_id === targetItem.product_id && item.sku === targetItem.sku)
+
+        return sameById ? { ...item, quantity } : item
+      })
+    )
+  }
 
   const subtotal = itemsToBuy.reduce(
     (sum, item) => sum + (item.price + (item.lens?.price || 0)) * item.quantity,
@@ -70,7 +91,12 @@ export const CheckoutPage = () => {
                       key={index}
                       className="border-b border-mint-100 last:border-0 pb-6 last:pb-0"
                     >
-                      <CartItemComponent item={item} isReadOnly={true} />
+                      <CartItemComponent
+                        item={item}
+                        isReadOnly={true}
+                        allowQuantityEditInReadOnly={isDirectCheckout}
+                        onReadOnlyQuantityChange={handleDirectItemQuantityChange}
+                      />
                     </div>
                   ))}
                 </div>

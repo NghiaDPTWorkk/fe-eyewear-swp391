@@ -139,28 +139,54 @@ export const CustomerProductPage = () => {
     })
 
     // Add gender tags
+    const seenGenders = new Set<string>()
     selectedGenders.forEach((gender) => {
-      tags.push({ id: `gender-${gender}`, label: GENDER_MAP[gender] || gender, type: 'gender' })
+      const label = GENDER_MAP[gender] || gender
+      const lowerLabel = label.toLowerCase().trim()
+      if (!seenGenders.has(lowerLabel)) {
+        tags.push({ id: `gender-${gender}`, label, type: 'gender' })
+        seenGenders.add(lowerLabel)
+      }
     })
 
     // Add brand tags
+    const seenBrands = new Set<string>()
     selectedBrands.forEach((brand) => {
-      tags.push({ id: `brand-${brand}`, label: brand, type: 'brand' })
+      const lowerBrand = brand.toLowerCase().trim()
+      if (!seenBrands.has(lowerBrand)) {
+        tags.push({ id: `brand-${brand}`, label: brand, type: 'brand' })
+        seenBrands.add(lowerBrand)
+      }
     })
 
     // Add material tags
+    const seenMaterials = new Set<string>()
     selectedMaterials.forEach((material) => {
-      tags.push({ id: `material-${material}`, label: material, type: 'material' })
+      const lowerMaterial = material.toLowerCase().trim()
+      if (!seenMaterials.has(lowerMaterial)) {
+        tags.push({ id: `material-${material}`, label: material, type: 'material' })
+        seenMaterials.add(lowerMaterial)
+      }
     })
 
     // Add shape tags
+    const seenShapes = new Set<string>()
     selectedShapes.forEach((shape) => {
-      tags.push({ id: `shape-${shape}`, label: shape, type: 'shape' })
+      const lowerShape = shape.toLowerCase().trim()
+      if (!seenShapes.has(lowerShape)) {
+        tags.push({ id: `shape-${shape}`, label: shape, type: 'shape' })
+        seenShapes.add(lowerShape)
+      }
     })
 
     // Add style tags
+    const seenStyles = new Set<string>()
     selectedStyles.forEach((style) => {
-      tags.push({ id: `style-${style}`, label: style, type: 'style' })
+      const lowerStyle = style.toLowerCase().trim()
+      if (!seenStyles.has(lowerStyle)) {
+        tags.push({ id: `style-${style}`, label: style, type: 'style' })
+        seenStyles.add(lowerStyle)
+      }
     })
 
     // Add preset price range tags
@@ -206,33 +232,34 @@ export const CustomerProductPage = () => {
       )
     } else if (tagId.startsWith('gender-')) {
       const gender = tagId.replace('gender-', '')
+      const targetLabel = (GENDER_MAP[gender] || gender).toLowerCase().trim()
       handleFilterChange(
         setSelectedGenders,
-        selectedGenders.filter((g) => g !== gender)
+        selectedGenders.filter((g) => (GENDER_MAP[g] || g).toLowerCase().trim() !== targetLabel)
       )
     } else if (tagId.startsWith('brand-')) {
-      const brand = tagId.replace('brand-', '')
+      const brand = tagId.replace('brand-', '').toLowerCase().trim()
       handleFilterChange(
         setSelectedBrands,
-        selectedBrands.filter((b) => b !== brand)
+        selectedBrands.filter((b) => b.toLowerCase().trim() !== brand)
       )
     } else if (tagId.startsWith('material-')) {
-      const material = tagId.replace('material-', '')
+      const material = tagId.replace('material-', '').toLowerCase().trim()
       handleFilterChange(
         setSelectedMaterials,
-        selectedMaterials.filter((m) => m !== material)
+        selectedMaterials.filter((m) => m.toLowerCase().trim() !== material)
       )
     } else if (tagId.startsWith('shape-')) {
-      const shape = tagId.replace('shape-', '')
+      const shape = tagId.replace('shape-', '').toLowerCase().trim()
       handleFilterChange(
         setSelectedShapes,
-        selectedShapes.filter((s) => s !== shape)
+        selectedShapes.filter((s) => s.toLowerCase().trim() !== shape)
       )
     } else if (tagId.startsWith('style-')) {
-      const style = tagId.replace('style-', '')
+      const style = tagId.replace('style-', '').toLowerCase().trim()
       handleFilterChange(
         setSelectedStyles,
-        selectedStyles.filter((s) => s !== style)
+        selectedStyles.filter((s) => s.toLowerCase().trim() !== style)
       )
     } else if (tagId.startsWith('price-preset-')) {
       const rangeId = tagId.replace('price-preset-', '')

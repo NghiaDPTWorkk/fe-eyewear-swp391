@@ -29,9 +29,17 @@ export function StaffMainLayout({
   const location = useLocation()
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden">
+    <div className="flex h-screen bg-white overflow-hidden w-full">
       {/* Sidebar - fixed and handles its own transitions */}
       {sidebar}
+
+      {/* Placeholder to reserve space for the fixed sidebar on desktop */}
+      <div
+        className={cn(
+          'hidden lg:block transition-all duration-300 ease-in-out shrink-0',
+          sidebarCollapsed ? 'w-20' : 'w-64'
+        )}
+      />
 
       {/* Overlay for mobile */}
       {!sidebarCollapsed && (
@@ -42,12 +50,7 @@ export function StaffMainLayout({
       )}
 
       {/* Main Content Area */}
-      <div
-        className={cn(
-          'flex-1 flex flex-col min-h-screen transition-all duration-300 ease-in-out relative',
-          sidebarCollapsed ? 'lg:pl-20' : 'lg:pl-64'
-        )}
-      >
+      <div className="flex-1 flex flex-col min-h-screen transition-all duration-300 ease-in-out relative min-w-0">
         <StaffHeader
           containerWidth={headerContainerWidth}
           left={headerLeft}

@@ -343,30 +343,26 @@ export const CustomerProductPage = () => {
                 <div className="text-center text-gray-eyewear py-10">No products found.</div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {products.map((product, index) => {
-                    // Mock: Add sale to every 3rd product
-                    const hasSale = index % 3 === 0
+                  {products.map((product) => {
+                    const originalPrice = product.defaultVariantPrice || 0
+                    const finalPrice = product.defaultVariantFinalPrice || originalPrice
 
-                    // Extract price - handle type safety
-
-                    const productAny = product as any
-                    const originalPrice = productAny.defaultVariantPrice || 100
-                    const currentPrice = productAny.defaultVariantFinalPrice || originalPrice
-
-                    // Only set discount if there's actually a sale
-                    const discountPrice = hasSale ? currentPrice : undefined
-                    const salePercent = hasSale ? 20 : undefined
+                    // Determine if there is a sale based on price difference
+                    const hasActualSale = originalPrice > finalPrice && finalPrice > 0
+                    const salePercentValue = hasActualSale
+                      ? Math.round(((originalPrice - finalPrice) / originalPrice) * 100)
+                      : undefined
 
                     return (
                       <ProductCard
-                        key={productAny.id || `product-${index}`}
-                        id={productAny.id || `product-${index}`}
+                        key={product.id || product._id}
+                        id={product.id || product._id || ''}
                         name={product.nameBase}
                         brand={product.brand || undefined}
-                        image={productAny.defaultVariantImage || undefined}
+                        image={product.defaultVariantImage || undefined}
                         price={originalPrice}
-                        discountPrice={discountPrice}
-                        salePercent={salePercent}
+                        discountPrice={hasActualSale ? finalPrice : undefined}
+                        salePercent={salePercentValue}
                         onClick={(id) => navigate(`/products/${id}`)}
                       />
                     )

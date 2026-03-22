@@ -14,7 +14,6 @@ import { PageHeader } from '@/features/sales/components/common'
 import { useRevenueStats, useReturnedOrders } from '@/features/manager/hooks'
 import { formatPrice, formatDate } from '@/shared/utils'
 
-import { SalesTarget } from './components/dashboard/SalesTarget'
 import { StatCard } from './components/dashboard/StatCard'
 import { PromoBanner } from './components/dashboard/PromoBanner'
 import { CustomerGrowth } from './components/dashboard/CustomerGrowth'
@@ -80,37 +79,31 @@ export default function ManagerDashboardPage() {
         breadcrumbs={[{ label: 'Dashboard' }]}
       />
 
-      {/* Top Section: Sales Target & Dynamic Stats */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <div className="lg:col-span-3">
-          <SalesTarget />
-        </div>
-
-        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <StatCard
-            label="Total Revenue"
-            value={formatPrice(stats.totalRevenue)}
-            variant="mint"
-            icon={<IoTrendingUpOutline />}
-            trend={{ value: 'Real-time', isPositive: true }}
-          />
-          <StatCard
-            label="Total Invoices"
-            value={stats.totalInvoices.toString()}
-            icon={<IoSwapHorizontalOutline />}
-            trend={{ value: 'Updated', isPositive: true }}
-          />
-          <StatCard
-            label="Avg. Order"
-            value={formatPrice(stats.avgValue)}
-            icon={<IoBarChartOutline />}
-          />
-          <StatCard
-            label="Total Returns"
-            value={returnedData?.pagination.total.toString() || '0'}
-            icon={<IoRefreshOutline />}
-          />
-        </div>
+      {/* Top Section: Dynamic Stats Cards Dàn Ngang */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatCard
+          label="Total Revenue"
+          value={formatPrice(stats.totalRevenue)}
+          variant="mint"
+          icon={<IoTrendingUpOutline />}
+          trend={{ value: 'Real-time', isPositive: true }}
+        />
+        <StatCard
+          label="Total Invoices"
+          value={stats.totalInvoices.toString()}
+          icon={<IoSwapHorizontalOutline />}
+          trend={{ value: 'Updated', isPositive: true }}
+        />
+        <StatCard
+          label="Avg. Order"
+          value={formatPrice(stats.avgValue)}
+          icon={<IoBarChartOutline />}
+        />
+        <StatCard
+          label="Total Returns"
+          value={returnedData?.pagination.total.toString() || '0'}
+          icon={<IoRefreshOutline />}
+        />
       </div>
 
       {/* Main Content Section: Dynamic Sales Report Integration */}

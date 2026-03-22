@@ -245,7 +245,8 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
         id: product.id || productId,
         defaultVariantImage: product.defaultVariantImage || images[1],
         defaultVariantPrice: price,
-        defaultVariantFinalPrice: finalPrice
+        defaultVariantFinalPrice: finalPrice,
+        selectedOptions: selectedOptions
       }
       await toggleWishlist(productToSave)
       toast.success(isFavorite ? 'Removed from wishlist' : 'Added to wishlist')

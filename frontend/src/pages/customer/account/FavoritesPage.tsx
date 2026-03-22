@@ -131,8 +131,15 @@ export function FavoritesPage() {
                     ? `${Math.round((1 - item.defaultVariantFinalPrice / item.defaultVariantPrice) * 100)}%`
                     : undefined
                 }
-                frameSize="One Size" // Default for now
-                frameColor="Default" // Default for now
+                selectedOptions={
+                  item.selectedOptions ||
+                  Object.fromEntries(
+                    (item.variants?.find((v) => v.isDefault)?.options || []).map((o) => [
+                      o.attributeName,
+                      o.label
+                    ])
+                  )
+                }
                 onRemove={() => toggleWishlist(item)}
                 onAddToCart={() => handleAddToCart(item)}
               />

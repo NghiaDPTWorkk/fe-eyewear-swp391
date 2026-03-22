@@ -48,6 +48,7 @@ export interface StandardProduct {
   shortDescription?: string
   imageUrl?: string
   nameVariant?: string
+  selectedOptions?: Record<string, string>
 }
 
 /**

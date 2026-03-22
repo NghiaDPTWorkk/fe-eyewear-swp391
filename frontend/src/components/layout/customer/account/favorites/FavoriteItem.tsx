@@ -12,8 +12,7 @@ interface FavoriteItemProps {
   price: number
   originalPrice?: number
   discount?: string
-  frameSize: string
-  frameColor: string
+  selectedOptions?: Record<string, string>
   onRemove?: () => void
   onAddToCart?: () => void
 }
@@ -25,8 +24,7 @@ export function FavoriteItem({
   price,
   originalPrice,
   discount,
-  frameSize,
-  frameColor,
+  selectedOptions,
   onRemove,
   onAddToCart
 }: FavoriteItemProps) {
@@ -68,15 +66,34 @@ export function FavoriteItem({
               </button>
             </div>
 
-            <div className="space-y-2 mb-8 mt-6">
-              <div className="flex text-xs font-bold text-mint-1200">
-                <span className="w-24 text-gray-400 font-semibold">Frame size</span>
-                <span>{frameSize}</span>
-              </div>
-              <div className="flex text-xs font-bold text-mint-1200">
-                <span className="w-24 text-gray-400 font-semibold">Frame color</span>
-                <span>{frameColor}</span>
-              </div>
+            <div className="flex flex-wrap gap-2 mb-8 mt-6">
+              {selectedOptions && Object.entries(selectedOptions).length > 0 ? (
+                Object.entries(selectedOptions).map(([key, value]) => {
+                  // Normalize Vietnamese attribute names to English for consistency
+                  const normalizedKey =
+                    {
+                      'màu sắc': 'Color',
+                      color: 'Color',
+                      'kích thước': 'Size',
+                      size: 'Size',
+                      'chất liệu': 'Material',
+                      material: 'Material'
+                    }[key.toLowerCase()] || key
+
+                  return (
+                    <span
+                      key={key}
+                      className="text-[10px] font-bold text-primary-600 bg-primary-50 px-1.5 py-0.5 rounded uppercase border border-primary-100/50"
+                    >
+                      {normalizedKey}: {value}
+                    </span>
+                  )
+                })
+              ) : (
+                <span className="text-[10px] font-bold text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded uppercase border border-gray-100">
+                  Standard Configuration
+                </span>
+              )}
             </div>
           </div>
 

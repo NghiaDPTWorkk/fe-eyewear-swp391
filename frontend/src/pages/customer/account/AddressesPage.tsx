@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Plus, MapPin, Loader2 } from 'lucide-react'
+import { Plus, Loader2, MapPin } from 'lucide-react'
 import { Card, Button } from '@/shared/components/ui'
 import { AddressCard } from '@/components/layout/customer/account/addresses/AddressCard'
 import { useAddressStore } from '@/store/address.store'

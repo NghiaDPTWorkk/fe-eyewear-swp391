@@ -4,8 +4,6 @@ import {
   IoSwapHorizontalOutline,
   IoBarChartOutline,
   IoRefreshOutline,
-  IoCalendarOutline,
-  IoSearchOutline,
   IoArrowBackCircleOutline
 } from 'react-icons/io5'
 
@@ -21,19 +19,10 @@ import { PopularProducts } from './components/dashboard/PopularProducts'
 
 export default function ManagerDashboardPage() {
   const [period, setPeriod] = useState<string>('month')
-  const [searchQuery, setSearchQuery] = useState('')
 
-  const {
-    data: revenueData,
-    isLoading: isRevenueLoading,
-    refetch: refetchRevenue
-  } = useRevenueStats({ period })
+  const { data: revenueData, isLoading: isRevenueLoading } = useRevenueStats({ period })
 
-  const {
-    data: returnedData,
-    isLoading: isReturnedLoading,
-    refetch: refetchReturned
-  } = useReturnedOrders({ search: searchQuery })
+  const { data: returnedData, isLoading: isReturnedLoading } = useReturnedOrders({ search: '' })
 
   const stats = useMemo(() => {
     if (!revenueData?.rows) return { totalRevenue: 0, totalInvoices: 0, avgValue: 0 }
@@ -65,11 +54,6 @@ export default function ManagerDashboardPage() {
 
     return { path, area, points, maxHex: maxVal }
   }, [revenueData])
-
-  const handleRefresh = () => {
-    refetchRevenue()
-    refetchReturned()
-  }
 
   return (
     <Container className="max-w-none space-y-8">
@@ -278,97 +262,9 @@ export default function ManagerDashboardPage() {
         </div>
       </div>
 
-      {/* Bottom Section: Dynamic Returns Table & Popular Products */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-8 bg-white rounded-3xl border-none shadow-sm ring-1 ring-neutral-100/50 overflow-hidden">
-          <div className="p-6 border-b border-neutral-50 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div>
-              <p className="text-[12px] font-bold text-slate-400 tracking-wider uppercase leading-none">
-                Sales Performance Logs
-              </p>
-              <p className="text-[10px] font-bold text-neutral-300 uppercase mt-2 tracking-widest">
-                Latest 10 transactions and returns
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <IoSearchOutline
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
-                  size={14}
-                />
-                <input
-                  type="text"
-                  placeholder="Filter logs..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 pr-4 py-2 bg-neutral-50 border border-neutral-100 rounded-xl text-[11px] focus:outline-none focus:ring-2 focus:ring-mint-500/20 w-48 transition-all"
-                />
-              </div>
-              <button
-                onClick={handleRefresh}
-                className="p-2.5 bg-neutral-50 rounded-xl border border-neutral-100 text-neutral-400 hover:text-mint-600 transition-all hover:bg-neutral-100"
-              >
-                <IoRefreshOutline
-                  className={isRevenueLoading || isReturnedLoading ? 'animate-spin' : ''}
-                />
-              </button>
-            </div>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead className="bg-white text-[10px] text-neutral-400 font-bold tracking-widest uppercase border-b border-neutral-50/50">
-                <tr>
-                  <th className="px-6 py-4">Ref ID</th>
-                  <th className="px-6 py-4">Reason/Label</th>
-                  <th className="px-6 py-4">Value</th>
-                  <th className="px-6 py-4">Date</th>
-                  <th className="px-6 py-4 text-center">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-neutral-50">
-                {isReturnedLoading ? (
-                  <tr>
-                    <td colSpan={5} className="py-20 text-center">
-                      <div className="w-6 h-6 mx-auto border-2 border-mint-200 border-t-mint-600 rounded-full animate-spin" />
-                    </td>
-                  </tr>
-                ) : (
-                  returnedData?.returnedOrders.slice(0, 10).map((item, idx) => (
-                    <tr key={idx} className="group hover:bg-neutral-50 transition-colors">
-                      <td className="px-6 py-4">
-                        <span className="text-xs font-bold text-slate-900 uppercase">
-                          #RT-{item.returnTicket.id.slice(-6)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <p className="text-xs font-semibold text-slate-700">
-                          {item.returnTicket.reason}
-                        </p>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-xs font-bold text-slate-900">
-                          {formatPrice(item.returnTicket.money)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                          <IoCalendarOutline size={12} />
-                          {formatDate(item.returnTicket.createdAt)}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <span className="px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider bg-amber-50 text-amber-600 border border-amber-100">
-                          {item.returnTicket.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div className="lg:col-span-4">
+      {/* Bottom Section: Dynamic Popular Products Full Width */}
+      <div className="grid grid-cols-1 gap-6">
+        <div className="w-full">
           <PopularProducts />
         </div>
       </div>

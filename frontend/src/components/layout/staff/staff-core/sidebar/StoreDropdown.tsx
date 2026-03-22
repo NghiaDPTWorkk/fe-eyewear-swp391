@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import { IoChevronDown } from 'react-icons/io5'
 
 interface StoreDropdownProps {
   storeName: string
@@ -18,7 +17,6 @@ export function StoreDropdown({ storeName, icon, onSelect: _onSelect }: StoreDro
             <div className="text-sm font-medium text-gray-900">{storeName}</div>
           </div>
         </div>
-        <IoChevronDown className="text-gray-400" />
       </div>
     </button>
   )

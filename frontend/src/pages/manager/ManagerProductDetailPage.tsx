@@ -23,9 +23,11 @@ import { ENDPOINTS } from '@/api/endpoints'
 import { toast } from 'react-hot-toast'
 import { ConfirmationModal } from '@/shared/components/ui-core'
 
+const formatter = new Intl.NumberFormat('vi-VN')
+
 function formatPrice(price: number) {
   if (price >= 1_000_000) {
-    return new Intl.NumberFormat('vi-VN').format(price) + '₫'
+    return formatter.format(price) + '₫'
   }
   return '$' + price.toFixed(2)
 }
@@ -359,75 +361,15 @@ export default function ManagerProductDetailPage() {
 
               <div className="space-y-3">
                 {product.variants.map((v, idx) => (
-                  <button
+                  <VariantItem
                     key={v.sku}
+                    variant={v}
+                    isActive={selectedVariantIdx === idx}
                     onClick={() => {
                       setSelectedVariantIdx(idx)
                       setImgIdx(0)
                     }}
-                    className={`w-full text-left p-4 rounded-2xl border transition-all ${
-                      selectedVariantIdx === idx
-                        ? 'border-mint-300 bg-mint-50/30 ring-2 ring-mint-200 shadow-sm'
-                        : 'border-neutral-100 hover:border-neutral-200 hover:bg-neutral-50/50'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3 min-w-0">
-                        {v.options.some((o) => o.showType === 'color') ? (
-                          <div className="flex items-center gap-1.5">
-                            {v.options
-                              .filter((o) => o.showType === 'color')
-                              .map((o) => (
-                                <div
-                                  key={o.attributeId}
-                                  className="w-6 h-6 rounded-full border-2 border-white shadow-md"
-                                  style={{ backgroundColor: o.value }}
-                                  title={o.label}
-                                />
-                              ))}
-                          </div>
-                        ) : (
-                          <IoColorPaletteOutline className="text-slate-400" size={18} />
-                        )}
-
-                        <div className="min-w-0">
-                          <p className="text-xs font-semibold text-slate-700 truncate">
-                            {v.options.map((o) => o.label).join(' · ')}
-                          </p>
-                          <p className="text-[10px] text-slate-400 font-medium">{v.sku}</p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-4 shrink-0 ml-4">
-                        <div className="text-right">
-                          <p className="text-xs font-bold text-slate-800">
-                            {formatPrice(v.finalPrice)}
-                          </p>
-                          {v.price !== v.finalPrice && (
-                            <p className="text-[10px] text-slate-400 line-through">
-                              {formatPrice(v.price)}
-                            </p>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <IoPricetagOutline className="text-slate-400" size={12} />
-                          <span className="text-[11px] font-medium text-slate-500">
-                            Stock: {v.stock}
-                          </span>
-                        </div>
-                        {v.mode === 'AVAILABLE' ? (
-                          <IoCheckmarkCircle className="text-emerald-500" size={18} />
-                        ) : (
-                          <IoCloseCircle className="text-red-400" size={18} />
-                        )}
-                        {v.isDefault && (
-                          <span className="px-2 py-0.5 rounded-md bg-mint-100 text-mint-700 text-[9px] font-bold uppercase">
-                            Default
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </button>
+                  />
                 ))}
               </div>
             </div>
@@ -457,3 +399,79 @@ function SpecItem({ label, value }: { label: string; value: string }) {
     </div>
   )
 }
+
+const VariantItem = React.memo(
+  ({
+    variant,
+    isActive,
+    onClick
+  }: {
+    variant: AdminProductVariant
+    isActive: boolean
+    onClick: () => void
+  }) => {
+    return (
+      <button
+        onClick={onClick}
+        className={`w-full text-left p-4 rounded-2xl border transition-all ${
+          isActive
+            ? 'border-mint-300 bg-mint-50/30 ring-2 ring-mint-200 shadow-sm'
+            : 'border-neutral-100 hover:border-neutral-200 hover:bg-neutral-50/50'
+        }`}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3 min-w-0">
+            {variant.options.some((o) => o.showType === 'color') ? (
+              <div className="flex items-center gap-1.5">
+                {variant.options
+                  .filter((o) => o.showType === 'color')
+                  .map((o) => (
+                    <div
+                      key={o.attributeId}
+                      className="w-6 h-6 rounded-full border-2 border-white shadow-md"
+                      style={{ backgroundColor: o.value }}
+                      title={o.label}
+                    />
+                  ))}
+              </div>
+            ) : (
+              <IoColorPaletteOutline className="text-slate-400" size={18} />
+            )}
+
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-slate-700 truncate">
+                {variant.options.map((o) => o.label).join(' · ')}
+              </p>
+              <p className="text-[10px] text-slate-400 font-medium">{variant.sku}</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4 shrink-0 ml-4">
+            <div className="text-right">
+              <p className="text-xs font-bold text-slate-800">{formatPrice(variant.finalPrice)}</p>
+              {variant.price !== variant.finalPrice && (
+                <p className="text-[10px] text-slate-400 line-through">
+                  {formatPrice(variant.price)}
+                </p>
+              )}
+            </div>
+            <div className="flex items-center gap-1.5">
+              <IoPricetagOutline className="text-slate-400" size={12} />
+              <span className="text-[11px] font-medium text-slate-500">Stock: {variant.stock}</span>
+            </div>
+            {variant.mode === 'AVAILABLE' ? (
+              <IoCheckmarkCircle className="text-emerald-500" size={18} />
+            ) : (
+              <IoCloseCircle className="text-red-400" size={18} />
+            )}
+            {variant.isDefault && (
+              <span className="px-2 py-0.5 rounded-md bg-mint-100 text-mint-700 text-[9px] font-bold uppercase">
+                Default
+              </span>
+            )}
+          </div>
+        </div>
+      </button>
+    )
+  }
+)

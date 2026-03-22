@@ -77,11 +77,11 @@ export const returnTicketService = {
   },
 
   /**
-   * PATCH /api/v1/admin/return-tickets/:id/status/in-progress
+   * PATCH /api/v1/admin/return-tickets/:id/status/in_progress
    */
   startProcessing: async (id: string, note?: string) => {
     return httpClient.patch<{ success: boolean; message: string }>(
-      ENDPOINTS.RETURN_TICKETS.UPDATE_STATUS(id, 'in-progress'),
+      ENDPOINTS.RETURN_TICKETS.UPDATE_STATUS(id, 'in_progress'),
       { staffNote: note, note: note }
     )
   }

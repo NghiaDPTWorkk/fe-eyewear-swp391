@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from 'react'
-import { FiMail } from 'react-icons/fi'
 import { MdOutlineNotifications } from 'react-icons/md'
 import {
   IoPersonOutline,
@@ -88,14 +87,6 @@ export function NavActions({
       className={cn('flex justify-end items-center gap-4 relative w-full', className)}
     >
       <div className="flex items-center gap-4 text-neutral-500">
-        <button
-          className="relative p-1 hover:text-primary-500 transition-colors cursor-pointer"
-          title="View Messages"
-        >
-          <FiMail className="text-2xl" />
-          <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-danger-500 ring-2 ring-white"></span>
-        </button>
-
         <div className="relative">
           <button
             onClick={() =>

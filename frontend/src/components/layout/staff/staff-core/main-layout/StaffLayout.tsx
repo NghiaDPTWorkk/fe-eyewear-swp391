@@ -5,7 +5,6 @@ import {
   NavActions,
   NavSearch,
   SidebarStaff,
-  ThemeToggle,
   UserWidgetWithLogout
 } from '@/components/layout/staff/staff-core'
 import { useStaffLayoutProfile } from '@/features/staff/hooks/useStaffLayoutProfile'
@@ -46,7 +45,6 @@ export function StaffLayout({
       }
     >
       {sidebarContent}
-      <ThemeToggle />
     </SidebarStaff>
   )
 

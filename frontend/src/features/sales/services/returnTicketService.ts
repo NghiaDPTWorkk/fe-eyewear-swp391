@@ -79,10 +79,10 @@ export const returnTicketService = {
   /**
    * PATCH /api/v1/admin/return-tickets/:id/status/in-progress
    */
-  startProcessing: async (id: string) => {
+  startProcessing: async (id: string, note?: string) => {
     return httpClient.patch<{ success: boolean; message: string }>(
       ENDPOINTS.RETURN_TICKETS.UPDATE_STATUS(id, 'in-progress'),
-      {}
+      { staffNote: note, note: note }
     )
   }
 }

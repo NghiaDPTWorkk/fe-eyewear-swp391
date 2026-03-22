@@ -67,12 +67,12 @@ export function useReturnPageTickets(currentStaffId: string): UseReturnsReturn {
     setCurrentPage(1)
   }, [search])
 
-  // 1) Filter: only unassigned OR (assigned to me AND NOT completed)
-  // And status must be PENDING or IN_PROGRESS for the active list
+  // 1) Filter: only unassigned OR (assigned to me AND PENDING)
+  // Returns = Action Items (To-Do)
   const activeTickets = allTickets.filter((t) => {
     const isUnassigned = !t.staffVerify || t.staffVerify === ''
     const isMine = currentStaffId ? t.staffVerify === currentStaffId : false
-    const isActiveStatus = t.status === 'PENDING' || t.status === 'IN_PROGRESS'
+    const isActiveStatus = t.status === 'PENDING'
     return (isUnassigned || isMine) && isActiveStatus
   })
 
@@ -259,7 +259,9 @@ export function useMyReturnHistory(): UseReturnsReturn {
     setCurrentPage(1)
   }, [search])
 
-  const filtered = allTickets.filter((t: any) => t.status === 'APPROVED' || t.status === 'REJECTED')
+  const filtered = allTickets.filter((t: any) =>
+    ['IN_PROGRESS', 'APPROVED', 'REJECTED', 'DELIVERING', 'RETURNED'].includes(t.status)
+  )
 
   const afterSearch = search.trim()
     ? filtered.filter(

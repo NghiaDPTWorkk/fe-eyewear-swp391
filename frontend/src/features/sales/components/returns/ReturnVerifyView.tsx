@@ -139,9 +139,10 @@ export default function ReturnVerifyView({
 
     try {
       if (action === 'approve') {
+        const approvalNote = rejectNote || 'Verified and Approved'
         // ACTION 3: Sale approves ticket. Status should move to IN_PROGRESS (Progress)
         // We call startProcessing to move it to IN_PROGRESS according to backend logic
-        await returnTicketService.startProcessing(ticket.id)
+        await returnTicketService.startProcessing(ticket.id, approvalNote)
         showToast('success', 'Ticket verified and approved! Moved to IN PROGRESS.')
       } else {
         // ACTION 3: Sale rejects ticket. Status becomes REJECTED.
@@ -363,15 +364,21 @@ export default function ReturnVerifyView({
                     <IoPersonOutline size={20} />
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wide">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                       Customer
                     </p>
                     <div className="space-y-0.5">
-                      <p className="text-sm font-bold text-slate-900 leading-tight">
-                        {customerDetail?.fullName || customerDetail?.name || 'Customer'}
+                      <p className="text-[14px] font-semibold text-slate-800 leading-tight">
+                        {customerDetail?.fullName ||
+                          customerDetail?.name ||
+                          customerDetail?.username ||
+                          'Unknown Customer'}
                       </p>
-                      <p className="text-xs font-medium text-slate-500">
-                        {customerDetail?.phone || 'N/A'}
+                      <p className="text-[12px] font-medium text-slate-400">
+                        {customerDetail?.phone ||
+                          customerDetail?.phone_number ||
+                          customerDetail?.phoneNumber ||
+                          'Contact not provided'}
                       </p>
                     </div>
                   </div>
@@ -383,11 +390,11 @@ export default function ReturnVerifyView({
                     <IoCalendarOutline size={20} />
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wide">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                       Timeline
                     </p>
-                    <p className="text-sm font-bold text-slate-900 leading-tight">
-                      {ticket.createdAt || 'N/A'}
+                    <p className="text-[14px] font-semibold text-slate-800 leading-tight">
+                      {ticket.createdAt || 'Date Unknown'}
                     </p>
                   </div>
                 </div>
@@ -396,7 +403,7 @@ export default function ReturnVerifyView({
                 <div className="pt-6 border-t border-slate-100 space-y-4">
                   <div className="flex items-center gap-2">
                     <IoLayersOutline className="text-slate-300" size={16} />
-                    <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                       Items ({orderDetail?.products?.length || 0})
                     </h4>
                   </div>
@@ -405,18 +412,23 @@ export default function ReturnVerifyView({
                     {orderDetail?.products?.map((p: any, i: number) => (
                       <div
                         key={i}
-                        className="p-4 bg-[#fafbfd] rounded-2xl border border-[#f0f2f5] space-y-3"
+                        className="p-4 bg-[#fafbfd] rounded-2xl border border-[#f0f2f5] space-y-3 group/item transition-all hover:bg-white hover:shadow-md hover:shadow-slate-100 hover:border-slate-200"
                       >
                         <div className="flex items-start justify-between">
-                          <div className="space-y-0.5">
-                            <p className="text-xs font-bold text-slate-900 leading-tight uppercase">
-                              {p.product?.product_name || p.productName || 'Eyewear Item'}
+                          <div className="space-y-0.5 max-w-[70%]">
+                            <p className="text-[13px] font-semibold text-slate-800 leading-tight uppercase">
+                              {p.product?.product_name ||
+                                p.product?.name ||
+                                p.productName ||
+                                p.name ||
+                                p.product?.product_name_alias ||
+                                'Eyewear Item'}
                             </p>
-                            <p className="text-[9px] font-bold text-slate-300 uppercase tracking-tighter">
+                            <p className="text-[9px] font-bold text-slate-300 uppercase tracking-tight">
                               SKU: {p.product?.sku || p.sku || 'N/A'}
                             </p>
                           </div>
-                          <span className="text-xs font-bold text-slate-900">
+                          <span className="text-[14px] font-bold text-slate-900 whitespace-nowrap">
                             {(
                               (p.product?.pricePerUnit || p.price || 0) * (p.quantity || 1)
                             ).toLocaleString('vi-VN')}{' '}
@@ -424,26 +436,31 @@ export default function ReturnVerifyView({
                           </span>
                         </div>
 
-                        <div className="space-y-2 pt-2 border-t border-slate-100">
+                        <div className="space-y-2 pt-2 border-t border-dashed border-slate-100">
                           {p.lens && (
                             <div className="flex items-center gap-2">
                               <span className="text-[10px] font-bold text-slate-400 shrink-0">
                                 Lens:
                               </span>
-                              <span className="text-[10px] font-medium text-slate-400/80 truncate">
+                              <span className="text-[10px] font-medium text-slate-500 truncate">
                                 {p.lens?.lensName || p.lens?.name || 'Prescription Lens'}
                               </span>
                               {p.lens?.price && (
-                                <span className="text-[9px] text-slate-300 ml-auto">
+                                <span className="text-[9px] font-medium text-slate-400 ml-auto">
                                   {p.lens.price.toLocaleString('vi-VN')} đ
                                 </span>
                               )}
                             </div>
                           )}
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-[11px] font-bold text-[#62a0a2] tracking-tighter">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[11px] font-bold text-[#3ea6a0] bg-emerald-50 px-2 py-0.5 rounded-md">
                               Qty × {p.quantity}
                             </span>
+                            {p.product?.frame_color && (
+                              <span className="text-[9px] font-bold text-slate-300 uppercase">
+                                Color: {p.product.frame_color}
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -452,16 +469,16 @@ export default function ReturnVerifyView({
                 </div>
 
                 {/* Total Section */}
-                <div className="pt-6 border-t border-slate-100 flex items-center justify-between group/total mt-auto">
+                <div className="pt-6 border-t border-slate-100 flex items-center justify-between mt-auto">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-indigo-50/50 flex items-center justify-center text-slate-400">
+                    <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100/50">
                       <IoReceiptOutline size={16} />
                     </div>
-                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                       Total Value
                     </span>
                   </div>
-                  <span className="text-2xl font-bold text-[#3ea6a0]">
+                  <span className="text-2xl font-bold text-[#3ea6a0] tracking-tight">
                     {(orderDetail?.price || 0).toLocaleString('vi-VN')} đ
                   </span>
                 </div>
@@ -562,32 +579,32 @@ export default function ReturnVerifyView({
                   </div>
                 </div>
 
-                {/* Reason Section (Only if note exists) */}
-                {(ticket.staffNote || (isRejected && rejectNote)) && (
-                  <div className="bg-white p-6 rounded-[28px] border border-white/50 shadow-sm space-y-4">
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={cn(
-                          'w-1.5 h-1.5 rounded-full',
-                          isApproved ? 'bg-emerald-400' : 'bg-rose-400'
-                        )}
-                      />
-                      <span
+                {/* Verification Remarks Section */}
+                <div className="bg-white/40 p-6 rounded-[28px] border border-white/60 shadow-sm space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={cn(
+                        'w-8 h-8 rounded-lg flex items-center justify-center shrink-0',
+                        isApproved ? 'bg-emerald-50 text-emerald-500' : 'bg-rose-50 text-rose-500'
+                      )}
+                    >
+                      <IoReceiptOutline size={16} />
+                    </div>
+                    <div className="space-y-0.5">
+                      <p
                         className={cn(
                           'text-[10px] font-bold uppercase tracking-[0.1em]',
-                          isApproved ? 'text-emerald-500' : 'text-rose-500'
+                          isApproved ? 'text-emerald-400' : 'text-rose-400'
                         )}
                       >
-                        {isApproved ? 'APPROVAL REMARKS' : 'REJECTION REASON'}
-                      </span>
-                    </div>
-                    <div className="pl-6 border-l-2 border-slate-100 flex items-center min-h-[48px]">
-                      <p className="text-sm font-medium text-slate-600 italic leading-relaxed">
-                        "{ticket.staffNote || rejectNote}"
+                        {isApproved ? 'VERIFICATION REMARKS' : 'REJECTION REASON'}
+                      </p>
+                      <p className="text-[13px] font-medium text-slate-700 leading-relaxed italic">
+                        “{ticket.staffNote || rejectNote || 'No additional staff notes recorded.'}”
                       </p>
                     </div>
                   </div>
-                )}
+                </div>
               </div>
             ) : isMyTicket ? (
               <div className="space-y-6">

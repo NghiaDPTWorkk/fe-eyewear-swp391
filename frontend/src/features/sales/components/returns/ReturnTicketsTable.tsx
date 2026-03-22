@@ -101,107 +101,105 @@ export default function ReturnTicketsTable({
 
             {!isLoading &&
               !error &&
-              tickets
-                .filter((t) => !t.staffVerify || t.staffVerify === currentStaffId)
-                .map((ticket) => {
-                  const isUnassigned = !ticket.staffVerify
-                  const isMine = ticket.staffVerify === currentStaffId
-                  const isActionable = ticket.status === 'PENDING'
+              tickets.map((ticket) => {
+                const isUnassigned = !ticket.staffVerify
+                const isMine = ticket.staffVerify === currentStaffId
+                const isActionable = ticket.status === 'PENDING'
 
-                  const parts = (ticket.createdAt || '').split(' ')
-                  const timePart = parts[0] || '--:--'
-                  const datePart = parts[1] || 'N/A'
+                const parts = (ticket.createdAt || '').split(' ')
+                const timePart = parts[0] || '--:--'
+                const datePart = parts[1] || 'N/A'
 
-                  return (
-                    <tr
-                      key={ticket.id}
-                      onClick={() => onRowClick(ticket)}
-                      className="group transition-all duration-200 cursor-pointer border-b-[0.5px] border-neutral-50 hover:bg-slate-50/50"
-                    >
-                      <td className="px-6 py-5">
-                        <div className="flex items-center gap-4">
-                          <div className="w-11 h-11 rounded-full bg-mint-50 flex items-center justify-center text-mint-600 border border-mint-100 shadow-sm shrink-0 transition-transform group-hover:scale-105">
-                            <IoPersonCircleOutline size={24} />
-                          </div>
-                          <div className="min-w-0">
-                            <p className="text-[13px] font-semibold text-slate-700 leading-tight">
-                              {ticket.customerId || 'Customer'}
-                            </p>
-                            <p className="text-[10px] text-slate-400 mt-1 font-mono tracking-tight uppercase">
-                              TKT-{ticket.id.slice(-6)}
-                            </p>
-                          </div>
+                return (
+                  <tr
+                    key={ticket.id}
+                    onClick={() => onRowClick(ticket)}
+                    className="group transition-all duration-200 cursor-pointer border-b-[0.5px] border-neutral-50 hover:bg-slate-50/50"
+                  >
+                    <td className="px-6 py-5">
+                      <div className="flex items-center gap-4">
+                        <div className="w-11 h-11 rounded-full bg-mint-50 flex items-center justify-center text-mint-600 border border-mint-100 shadow-sm shrink-0 transition-transform group-hover:scale-105">
+                          <IoPersonCircleOutline size={24} />
                         </div>
-                      </td>
-
-                      <td className="px-6 py-5">
-                        <ReturnTicketStatusBadge status={ticket.status} />
-                      </td>
-
-                      <td className="px-6 py-5">
-                        <div className="flex items-center gap-2 text-[12px] text-slate-500">
-                          <IoCalendarOutline className="text-slate-300" size={14} />
-                          <span>{datePart}</span>
+                        <div className="min-w-0">
+                          <p className="text-[13px] font-semibold text-slate-700 leading-tight">
+                            {ticket.customerId || 'Customer'}
+                          </p>
+                          <p className="text-[10px] text-slate-400 mt-1 font-mono tracking-tight uppercase">
+                            TKT-{ticket.id.slice(-6)}
+                          </p>
                         </div>
-                      </td>
+                      </div>
+                    </td>
 
-                      <td className="px-6 py-5">
-                        <div className="flex items-center gap-2 text-[12px] text-slate-500">
-                          <IoTimeOutline className="text-slate-300" size={14} />
-                          <span>{timePart}</span>
-                        </div>
-                      </td>
+                    <td className="px-6 py-5">
+                      <ReturnTicketStatusBadge status={ticket.status} />
+                    </td>
 
-                      {showAction && (
-                        <td className="px-6 py-5 text-center" onClick={(e) => e.stopPropagation()}>
-                          <div className="flex items-center justify-center gap-2 w-fit mx-auto">
-                            <Button
-                              size="sm"
-                              className={cn(
-                                'rounded-xl font-bold text-[10px] uppercase tracking-widest px-4 h-9 transition-all active:scale-95 whitespace-nowrap border-none min-w-[140px] shadow-none',
-                                isActionable
-                                  ? isUnassigned
-                                    ? 'bg-blue-500/15 hover:bg-blue-500/25 text-blue-600'
-                                    : isMine
-                                      ? 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-700 border border-emerald-200/50'
-                                      : 'bg-amber-50 text-amber-500' // Should not happen with filter
-                                  : 'bg-mint-500/10 hover:bg-mint-500/20 text-mint-600'
-                              )}
-                              onClick={() => {
-                                if (isActionable && (isUnassigned || isMine)) {
-                                  onVerifyClick(ticket)
-                                } else {
-                                  onRowClick(ticket)
-                                }
-                              }}
-                              leftIcon={
-                                isActionable ? (
-                                  isUnassigned ? (
-                                    <IoShieldCheckmarkOutline size={14} />
-                                  ) : isMine ? (
-                                    <IoShieldCheckmarkOutline size={14} />
-                                  ) : (
-                                    <IoEyeOutline size={14} />
-                                  )
+                    <td className="px-6 py-5">
+                      <div className="flex items-center gap-2 text-[12px] text-slate-500">
+                        <IoCalendarOutline className="text-slate-300" size={14} />
+                        <span>{datePart}</span>
+                      </div>
+                    </td>
+
+                    <td className="px-6 py-5">
+                      <div className="flex items-center gap-2 text-[12px] text-slate-500">
+                        <IoTimeOutline className="text-slate-300" size={14} />
+                        <span>{timePart}</span>
+                      </div>
+                    </td>
+
+                    {showAction && (
+                      <td className="px-6 py-5 text-center" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center justify-center gap-2 w-fit mx-auto">
+                          <Button
+                            size="sm"
+                            className={cn(
+                              'rounded-xl font-bold text-[10px] uppercase tracking-widest px-4 h-9 transition-all active:scale-95 whitespace-nowrap border-none min-w-[140px] shadow-none',
+                              isActionable
+                                ? isUnassigned
+                                  ? 'bg-blue-500/15 hover:bg-blue-500/25 text-blue-600'
+                                  : isMine
+                                    ? 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-700 border border-emerald-200/50'
+                                    : 'bg-amber-50 text-amber-500' // Should not happen with filter
+                                : 'bg-mint-500/10 hover:bg-mint-500/20 text-mint-600'
+                            )}
+                            onClick={() => {
+                              if (isActionable && (isUnassigned || isMine)) {
+                                onVerifyClick(ticket)
+                              } else {
+                                onRowClick(ticket)
+                              }
+                            }}
+                            leftIcon={
+                              isActionable ? (
+                                isUnassigned ? (
+                                  <IoShieldCheckmarkOutline size={14} />
+                                ) : isMine ? (
+                                  <IoShieldCheckmarkOutline size={14} />
                                 ) : (
                                   <IoEyeOutline size={14} />
                                 )
-                              }
-                            >
-                              {isActionable
-                                ? isUnassigned
-                                  ? 'CLAIM'
-                                  : isMine
-                                    ? 'VERIFY'
-                                    : 'IN REVIEW'
-                                : 'DETAILS'}
-                            </Button>
-                          </div>
-                        </td>
-                      )}
-                    </tr>
-                  )
-                })}
+                              ) : (
+                                <IoEyeOutline size={14} />
+                              )
+                            }
+                          >
+                            {isActionable
+                              ? isUnassigned
+                                ? 'CLAIM'
+                                : isMine
+                                  ? 'VERIFY'
+                                  : 'IN REVIEW'
+                              : 'DETAILS'}
+                          </Button>
+                        </div>
+                      </td>
+                    )}
+                  </tr>
+                )
+              })}
           </tbody>
         </table>
       </div>

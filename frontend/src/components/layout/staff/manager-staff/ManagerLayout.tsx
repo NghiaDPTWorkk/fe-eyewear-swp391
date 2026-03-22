@@ -3,7 +3,6 @@ import {
   IoGrid,
   IoCube,
   IoReceipt,
-  IoBarChart,
   IoSettings,
   IoHelpCircle,
   IoPricetagOutline
@@ -40,12 +39,6 @@ export default function ManagerLayout() {
           label="Vouchers"
           to="/manager/vouchers"
           active={location.pathname === '/manager/vouchers'}
-        />
-        <SidebarStaff.MenuItem
-          icon={<IoBarChart />}
-          label="Sales Report"
-          to="/manager/reports"
-          active={location.pathname.startsWith('/manager/reports')}
         />
       </SidebarStaff.MenuSection>
 

@@ -9,10 +9,8 @@ import {
   IoRefreshOutline,
   IoCalendarOutline,
   IoCheckmark,
-  IoAlertCircleOutline,
   IoPersonOutline,
-  IoLayersOutline,
-  IoFlashOutline
+  IoAlertCircleOutline
 } from 'react-icons/io5'
 import { Card } from '@/components'
 import { returnTicketService } from '@/features/sales/services/returnTicketService'
@@ -233,60 +231,54 @@ export default function ReturnVerifyView({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* Main Content (Left 2/3) */}
-        <div className="xl:col-span-2 space-y-6">
-          {/* Assignment Banners */}
+      {/* Assignment Banners */}
+      {isOtherStaff && (
+        <div className="flex items-start gap-4 p-5 bg-amber-50 border border-amber-200 rounded-2xl shadow-sm animate-in zoom-in-95 duration-300">
+          <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+            <IoAlertCircleOutline className="text-amber-600" size={20} />
+          </div>
+          <div>
+            <p className="text-xs font-bold text-amber-900 uppercase tracking-widest">
+              Assigned to Another Colleague
+            </p>
+            <p className="text-sm text-amber-700 mt-1 font-medium leading-relaxed">
+              Member <span className="font-bold font-mono">#{ticket.staffVerify?.slice(-6)}</span>{' '}
+              is currently handling this ticket.
+            </p>
+          </div>
+        </div>
+      )}
 
-          {/* Assignment Banners */}
-          {isOtherStaff && (
-            <div className="flex items-start gap-4 p-5 bg-amber-50 border border-amber-200 rounded-2xl shadow-sm animate-in zoom-in-95 duration-300">
-              <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
-                <IoAlertCircleOutline className="text-amber-600" size={20} />
-              </div>
-              <div>
-                <p className="text-xs font-bold text-amber-900 uppercase tracking-widest">
-                  Assigned to Another Colleague
-                </p>
-                <p className="text-sm text-amber-700 mt-1 font-medium leading-relaxed">
-                  Member{' '}
-                  <span className="font-bold font-mono">#{ticket.staffVerify?.slice(-6)}</span> is
-                  currently handling this ticket.
-                </p>
-              </div>
+      {isUnassigned && !isOtherStaff && (
+        <div className="flex items-center justify-between p-6 bg-blue-50/50 border border-blue-100 rounded-2xl overflow-hidden relative group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100/30 rounded-full -translate-y-16 translate-x-16 pointer-events-none group-hover:scale-110 transition-transform duration-700" />
+          <div className="flex items-center gap-4 relative z-10">
+            <div className="w-12 h-12 rounded-2xl bg-blue-500 flex items-center justify-center shadow-lg shadow-blue-500/20 translate-y-[-2px]">
+              <IoShieldCheckmarkOutline className="text-white" size={24} />
             </div>
-          )}
-
-          {isUnassigned && !isOtherStaff && (
-            <div className="flex items-center justify-between p-6 bg-blue-50/50 border border-blue-100 rounded-2xl overflow-hidden relative group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100/30 rounded-full -translate-y-16 translate-x-16 pointer-events-none group-hover:scale-110 transition-transform duration-700" />
-              <div className="flex items-center gap-4 relative z-10">
-                <div className="w-12 h-12 rounded-2xl bg-blue-500 flex items-center justify-center shadow-lg shadow-blue-500/20 translate-y-[-2px]">
-                  <IoShieldCheckmarkOutline className="text-white" size={24} />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-blue-900 tracking-tight">
-                    Available Ticket
-                  </h3>
-                  <p className="text-sm text-blue-600/80 font-medium mt-0.5">
-                    This ticket is waiting for a staff member. Claim it to start verification.
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={handleClaim}
-                disabled={isClaiming}
-                className="relative z-10 px-8 h-12 text-xs font-bold text-white bg-blue-500 hover:bg-blue-600
-                    rounded-xl transition-all shadow-xl shadow-blue-500/30 active:scale-95 disabled:opacity-50 flex items-center gap-2"
-              >
-                {isClaiming ? <IoRefreshOutline className="animate-spin" /> : <IoCheckmarkCircle />}
-                {isClaiming ? 'Claiming…' : 'CLAIM THIS TICKET'}
-              </button>
+            <div>
+              <h3 className="text-lg font-bold text-blue-900 tracking-tight">Available Ticket</h3>
+              <p className="text-sm text-blue-600/80 font-medium mt-0.5">
+                This ticket is waiting for a staff member. Claim it to start verification.
+              </p>
             </div>
-          )}
+          </div>
+          <button
+            onClick={handleClaim}
+            disabled={isClaiming}
+            className="relative z-10 px-8 h-12 text-xs font-bold text-white bg-blue-500 hover:bg-blue-600
+                rounded-xl transition-all shadow-xl shadow-blue-500/30 active:scale-95 disabled:opacity-50 flex items-center gap-2"
+          >
+            {isClaiming ? <IoRefreshOutline className="animate-spin" /> : <IoCheckmarkCircle />}
+            {isClaiming ? 'Claiming…' : 'CLAIM THIS TICKET'}
+          </button>
+        </div>
+      )}
 
-          {/* Evidence Photos */}
-          <Card className="p-0 rounded-[32px] border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 overflow-hidden">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-stretch">
+        {/* ROW 1: Evidence Gallery + Order Details */}
+        <div className="xl:col-span-2">
+          <Card className="p-0 rounded-[32px] border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 overflow-hidden h-full">
             <div className="px-6 py-5 border-b border-slate-50 flex items-center justify-between bg-slate-50/30">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center border border-amber-100">
@@ -337,17 +329,99 @@ export default function ReturnVerifyView({
               )}
             </div>
           </Card>
+        </div>
 
+        <div className="xl:col-span-1">
+          <Card className="p-8 rounded-[24px] border-none shadow-xl shadow-slate-200/30 ring-1 ring-slate-100 bg-white relative overflow-hidden group h-full">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-lg font-bold text-slate-800">Order Details</h3>
+              <span className="text-[10px] font-extrabold text-slate-400 tracking-widest uppercase hover:text-indigo-500 cursor-pointer transition-colors">
+                Modify
+              </span>
+            </div>
+
+            {isLoadingContext ? (
+              <div className="space-y-8 animate-pulse">
+                <div className="flex gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-slate-50" />
+                  <div className="flex-1 space-y-2 py-1">
+                    <div className="h-4 bg-slate-50 rounded w-1/4" />
+                    <div className="h-4 bg-slate-50 rounded w-1/2" />
+                  </div>
+                </div>
+                <div className="h-32 bg-slate-50 rounded-3xl" />
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {/* Customer Section */}
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100/50">
+                    <IoPersonOutline size={20} />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wide">
+                      Customer
+                    </p>
+                    <div className="space-y-0.5">
+                      <p className="text-sm font-bold text-slate-900">
+                        {customerDetail?.fullName || customerDetail?.name || 'Customer'}
+                      </p>
+                      <p className="text-xs font-medium text-slate-500">
+                        {customerDetail?.phone || 'N/A'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Timeline Section */}
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100/50">
+                    <IoCalendarOutline size={20} />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wide">
+                      Timeline
+                    </p>
+                    <p className="text-sm font-bold text-slate-900">{ticket.createdAt || 'N/A'}</p>
+                  </div>
+                </div>
+
+                {/* Amount Brief */}
+                <div className="pt-6 border-t border-slate-100 flex items-center justify-between mt-auto">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-indigo-50/50 flex items-center justify-center text-slate-400">
+                      <IoReceiptOutline size={16} />
+                    </div>
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                      Total Value
+                    </span>
+                  </div>
+                  <span className="text-xl font-bold text-[#3ea6a0]">
+                    {orderDetail?.price?.toLocaleString('vi-VN')} đ
+                  </span>
+                </div>
+              </div>
+            )}
+          </Card>
+        </div>
+
+        {/* ROW 2: Statement & Decision + Guidelines */}
+        <div className="xl:col-span-2 space-y-6">
           {/* Statement Card */}
           <Card className="p-8 rounded-[32px] border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 bg-white relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-8 text-slate-50 pointer-events-none transition-transform duration-1000 group-hover:rotate-12">
               <IoReceiptOutline size={120} />
             </div>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-2 h-2 rounded-full bg-indigo-500" />
-              <h3 className="font-bold text-lg text-slate-900 italic tracking-tight font-heading">
-                Customer's Statement
-              </h3>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-indigo-500" />
+                <h3 className="font-bold text-lg text-slate-900 italic tracking-tight font-heading">
+                  Customer's Statement
+                </h3>
+              </div>
+              <span className="px-4 py-1.5 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-bold uppercase tracking-widest border border-indigo-100">
+                Reason: {resolveReasonLabel(ticket.reason)}
+              </span>
             </div>
             <div className="relative z-10 p-6 bg-slate-50/60 rounded-2xl border border-slate-100 text-slate-700 leading-relaxed font-medium italic text-sm">
               “{ticket.description || 'No detailed reasoning provided.'}”
@@ -458,16 +532,21 @@ export default function ReturnVerifyView({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <button
                     onClick={() => setAction('approve')}
-                    className={`flex items-center justify-between p-5 rounded-2xl border-2 transition-all transform active:scale-95
-                      ${
-                        action === 'approve'
-                          ? 'border-emerald-500 bg-emerald-50/80 text-emerald-700 ring-4 ring-emerald-500/10'
-                          : 'border-slate-100 bg-slate-50 text-slate-600 hover:bg-slate-100 shadow-sm'
-                      }`}
+                    className={cn(
+                      'flex items-center justify-between p-5 rounded-2xl border-2 transition-all transform active:scale-95',
+                      action === 'approve'
+                        ? 'border-emerald-500 bg-emerald-50/80 text-emerald-700 ring-4 ring-emerald-500/10'
+                        : 'border-slate-100 bg-slate-50 text-slate-600 hover:bg-slate-100 shadow-sm'
+                    )}
                   >
                     <div className="flex items-center gap-4">
                       <div
-                        className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm ${action === 'approve' ? 'bg-emerald-500 text-white' : 'bg-white text-slate-300'}`}
+                        className={cn(
+                          'w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm',
+                          action === 'approve'
+                            ? 'bg-emerald-500 text-white'
+                            : 'bg-white text-slate-300'
+                        )}
                       >
                         <IoCheckmarkCircle size={20} />
                       </div>
@@ -482,16 +561,19 @@ export default function ReturnVerifyView({
 
                   <button
                     onClick={() => setAction('reject')}
-                    className={`flex items-center justify-between p-5 rounded-2xl border-2 transition-all transform active:scale-95
-                      ${
-                        action === 'reject'
-                          ? 'border-rose-500 bg-rose-50/80 text-rose-700 ring-4 ring-rose-500/10'
-                          : 'border-slate-100 bg-slate-50 text-slate-600 hover:bg-slate-100 shadow-sm'
-                      }`}
+                    className={cn(
+                      'flex items-center justify-between p-5 rounded-2xl border-2 transition-all transform active:scale-95',
+                      action === 'reject'
+                        ? 'border-rose-500 bg-rose-50/80 text-rose-700 ring-4 ring-rose-500/10'
+                        : 'border-slate-100 bg-slate-50 text-slate-600 hover:bg-slate-100 shadow-sm'
+                    )}
                   >
                     <div className="flex items-center gap-4">
                       <div
-                        className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm ${action === 'reject' ? 'bg-rose-500 text-white' : 'bg-white text-slate-300'}`}
+                        className={cn(
+                          'w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm',
+                          action === 'reject' ? 'bg-rose-500 text-white' : 'bg-white text-slate-300'
+                        )}
                       >
                         <IoCloseCircleOutline size={20} />
                       </div>
@@ -546,13 +628,12 @@ export default function ReturnVerifyView({
                   <button
                     onClick={handleSubmit}
                     disabled={!action || isSubmitting}
-                    className={`min-w-[240px] h-14 rounded-2xl font-bold text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3
-                      transition-all active:scale-[0.96] disabled:opacity-30 disabled:grayscale shadow-xl
-                      ${
-                        action === 'reject'
-                          ? 'bg-slate-900 hover:bg-black text-white'
-                          : 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-emerald-200'
-                      }`}
+                    className={cn(
+                      'min-w-[240px] h-14 rounded-2xl font-bold text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all active:scale-[0.96] disabled:opacity-30 disabled:grayscale shadow-xl',
+                      action === 'reject'
+                        ? 'bg-slate-900 hover:bg-black text-white'
+                        : 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-emerald-200'
+                    )}
                   >
                     {isSubmitting ? (
                       <>
@@ -581,180 +662,7 @@ export default function ReturnVerifyView({
           </Card>
         </div>
 
-        {/* Sidebar (Right 1/3) */}
-        <div className="space-y-5">
-          {/* Current Count Label */}
-          <div className="flex justify-end pr-2">
-            <span className="text-[11px] font-bold text-amber-500 uppercase tracking-widest leading-none">
-              {ticket.status === 'PENDING' ? 'PENDING' : ticket.status}
-            </span>
-          </div>
-
-          {/* Unified Order Details Card (Match Screenshot) */}
-          <Card className="p-8 rounded-[24px] border-none shadow-xl shadow-slate-200/30 ring-1 ring-slate-100 bg-white relative overflow-hidden group">
-            <div className="flex items-center justify-between mb-8">
-              <h3 className="text-lg font-bold text-slate-800">Order Details</h3>
-              <span className="text-[10px] font-extrabold text-slate-400 tracking-widest uppercase hover:text-indigo-500 cursor-pointer transition-colors">
-                Modify
-              </span>
-            </div>
-
-            {isLoadingContext ? (
-              <div className="space-y-8 animate-pulse">
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-slate-50" />
-                  <div className="flex-1 space-y-2 py-1">
-                    <div className="h-4 bg-slate-50 rounded w-1/4" />
-                    <div className="h-4 bg-slate-50 rounded w-1/2" />
-                  </div>
-                </div>
-                <div className="h-32 bg-slate-50 rounded-3xl" />
-              </div>
-            ) : (
-              <div className="space-y-10">
-                {/* Customer & Timeline */}
-                <div className="space-y-6">
-                  {/* Customer Section */}
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100/50">
-                      <IoPersonOutline size={20} />
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wide">
-                        Customer
-                      </p>
-                      <div className="space-y-0.5">
-                        <p className="text-sm font-bold text-slate-900">
-                          {customerDetail?.fullName || customerDetail?.name || 'Customer'}
-                        </p>
-                        <p className="text-xs font-medium text-slate-500">
-                          {customerDetail?.phone || 'N/A'}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Timeline Section */}
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100/50">
-                      <IoCalendarOutline size={20} />
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wide">
-                        Timeline
-                      </p>
-                      <p className="text-sm font-bold text-slate-900">
-                        {ticket.createdAt || 'N/A'}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Items Section */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <IoLayersOutline className="text-slate-300" size={16} />
-                    <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                      Items ({orderDetail?.products?.length || 0})
-                    </h4>
-                  </div>
-
-                  <div className="space-y-3">
-                    {orderDetail?.products?.map((p: any, i: number) => (
-                      <div
-                        key={i}
-                        className="p-5 bg-[#fafbfd] rounded-3xl border border-[#f0f2f5] space-y-4"
-                      >
-                        <div className="flex items-start justify-between">
-                          <div className="space-y-1">
-                            <p className="text-sm font-bold text-slate-900 leading-tight uppercase">
-                              {p.product?.product_name || p.productName || 'Eyewear Item'}
-                            </p>
-                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">
-                              SKU: {p.product?.sku || p.sku || 'N/A'}
-                            </p>
-                          </div>
-                          <span className="text-sm font-bold text-slate-900">
-                            {(
-                              (p.product?.pricePerUnit || p.price || 0) * (p.quantity || 1)
-                            ).toLocaleString('vi-VN')}{' '}
-                            đ
-                          </span>
-                        </div>
-
-                        <div className="space-y-3 pt-3 border-t border-slate-100">
-                          {p.lens && (
-                            <div className="flex items-center gap-2">
-                              <span className="text-[10px] font-bold text-slate-400">Lens:</span>
-                              <span className="text-[10px] font-medium text-slate-500 uppercase truncate">
-                                {p.lens?.lensName || p.lens?.name || 'Prescription Lens'}
-                              </span>
-                              {p.lens?.price && (
-                                <span className="text-[9px] text-slate-300 ml-auto">
-                                  {p.lens.price.toLocaleString('vi-VN')} đ
-                                </span>
-                              )}
-                            </div>
-                          )}
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-[11px] font-bold text-[#62a0a2] tracking-tighter">
-                              Qty × {p.quantity} (
-                              {(p.product?.pricePerUnit || 0).toLocaleString('vi-VN')} đ/unit)
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                    {!orderDetail?.products && (
-                      <p className="text-xs text-slate-400 italic text-center py-4">
-                        No item breakdown available.
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Total Section */}
-                <div className="pt-6 border-t border-slate-100 flex items-center justify-between group/total">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-indigo-50/50 flex items-center justify-center text-slate-400 group-hover/total:text-indigo-500 transition-colors">
-                      <IoReceiptOutline size={16} />
-                    </div>
-                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                      Total Value
-                    </span>
-                  </div>
-                  <span className="text-xl font-bold text-[#3ea6a0]">
-                    {orderDetail?.price?.toLocaleString('vi-VN')} đ
-                  </span>
-                </div>
-              </div>
-            )}
-          </Card>
-
-          {/* Original Ticket Brief (Minimal) */}
-          <Card className="p-6 rounded-[24px] border-none shadow-lg shadow-slate-200/20 ring-1 ring-slate-100 bg-white space-y-4">
-            <div className="flex items-center gap-2">
-              <IoFlashOutline className="text-amber-500" size={14} />
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                Verification Priority
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <p className="text-[10px] font-bold text-slate-400 uppercase">Return Reason</p>
-                <p className="text-xs font-bold text-indigo-600 uppercase tracking-tight">
-                  {resolveReasonLabel(ticket.reason)}
-                </p>
-              </div>
-              <div className="text-right space-y-1">
-                <p className="text-[10px] font-bold text-slate-400 uppercase">Refund Due</p>
-                <p className="text-xs font-bold text-emerald-600">
-                  {ticket.money?.toLocaleString('vi-VN')} đ
-                </p>
-              </div>
-            </div>
-          </Card>
-
+        <div className="xl:col-span-1 space-y-6">
           {/* Guidelines sidebar card */}
           <Card className="p-8 rounded-[32px] border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 bg-white space-y-5 overflow-hidden group">
             <div className="flex items-center gap-2 text-indigo-500">

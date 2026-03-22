@@ -159,7 +159,7 @@ export default function ManagerProductDetailPage() {
                   <img
                     src={currentImg}
                     alt={selectedVariant.name}
-                    className="w-full h-full object-cover transition-opacity duration-300"
+                    className="w-full h-full object-contain p-4 transition-opacity duration-300"
                     onError={(e) => {
                       ;(e.target as HTMLImageElement).src = ''
                       ;(e.target as HTMLImageElement).style.display = 'none'
@@ -208,7 +208,7 @@ export default function ManagerProductDetailPage() {
                           : 'border-transparent opacity-60 hover:opacity-100'
                       }`}
                     >
-                      <img src={img} alt="" className="w-full h-full object-cover" />
+                      <img src={img} alt="" className="w-full h-full object-contain p-1" />
                     </button>
                   ))}
                 </div>

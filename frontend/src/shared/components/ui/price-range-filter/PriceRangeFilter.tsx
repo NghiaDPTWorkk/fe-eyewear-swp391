@@ -1,6 +1,5 @@
-import { useState } from 'react'
-import { Divider, Input } from '@/components'
 import { cn } from '@/lib/utils'
+import { Checkbox } from '../checkbox'
 
 export interface PriceRange {
   id: string
@@ -13,53 +12,39 @@ export interface PriceRangeFilterProps {
   ranges: PriceRange[]
   selectedRanges: string[]
   onRangeChange: (rangeIds: string[]) => void
-  onCustomRangeApply?: (min: number | null, max: number | null) => void
   className?: string
 }
 
-export function PriceRangeFilter({ onCustomRangeApply, className }: PriceRangeFilterProps) {
-  const [minPrice, setMinPrice] = useState<string>('')
-  const [maxPrice, setMaxPrice] = useState<string>('')
-
-  const handleApply = () => {
-    const min = minPrice ? parseFloat(minPrice) : null
-    const max = maxPrice ? parseFloat(maxPrice) : null
-
-    if (onCustomRangeApply) {
-      onCustomRangeApply(min, max)
-    }
+export function PriceRangeFilter({
+  ranges,
+  selectedRanges,
+  onRangeChange,
+  className
+}: PriceRangeFilterProps) {
+  const toggleRange = (rangeId: string) => {
+    const newSelected = selectedRanges.includes(rangeId)
+      ? selectedRanges.filter((id) => id !== rangeId)
+      : [...selectedRanges, rangeId]
+    onRangeChange(newSelected)
   }
 
   return (
-    <div className={cn('flex flex-col gap-3', className)}>
-      <h3 className="text-primary-1200 font-semibold text-lg">Price Range</h3>
+    <div className={cn('flex flex-col gap-4', className)}>
+      <h3 className="text-mint-1200 font-bold text-base uppercase tracking-wider">Price Range</h3>
 
-      <div className="flex gap-2">
-        <Input
-          type="number"
-          placeholder="Min"
-          value={minPrice}
-          onChange={(e) => setMinPrice(e.target.value)}
-          size="sm"
-          className="flex-1 w-[35%]"
-        />
-        <Divider text="to" className="w-[10%] mr-3"></Divider>
-        <Input
-          type="number"
-          placeholder="Max"
-          value={maxPrice}
-          onChange={(e) => setMaxPrice(e.target.value)}
-          size="sm"
-          className="flex-1 w-[35%]"
-        />
+      <div className="space-y-3">
+        {ranges.map((range) => (
+          <label key={range.id} className="flex items-center gap-3 cursor-pointer group">
+            <Checkbox
+              isChecked={selectedRanges.includes(range.id)}
+              onCheckedChange={() => toggleRange(range.id)}
+            />
+            <span className="text-sm text-mint-1100 group-hover:text-primary-500 transition-colors font-medium">
+              {range.label}
+            </span>
+          </label>
+        ))}
       </div>
-
-      <button
-        onClick={handleApply}
-        className="w-full bg-primary-500 hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-lg transition-colors"
-      >
-        Apply
-      </button>
     </div>
   )
 }

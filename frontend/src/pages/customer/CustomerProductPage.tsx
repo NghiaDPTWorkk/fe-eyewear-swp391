@@ -13,9 +13,11 @@ import { OperationPagination } from '@/shared/components/ui/pagination'
 
 // Static data for filters
 const priceRanges = [
-  { id: 'range1', label: '200.000đ - 500.000đ', min: 200000, max: 500000 },
+  { id: 'range1', label: 'Under 500.000đ', min: 0, max: 500000 },
   { id: 'range2', label: '500.000đ - 1.000.000đ', min: 500000, max: 1000000 },
-  { id: 'range3', label: '1.000.000đ - 12.000.000đ', min: 1000000, max: 12000000 }
+  { id: 'range3', label: '1.000.000đ - 2.000.000đ', min: 1000000, max: 2000000 },
+  { id: 'range4', label: '2.000.000đ - 5.000.000đ', min: 2000000, max: 5000000 },
+  { id: 'range5', label: 'Above 5.000.000đ', min: 5000000, max: 50000000 }
 ]
 
 // Gender mapping from API codes to labels

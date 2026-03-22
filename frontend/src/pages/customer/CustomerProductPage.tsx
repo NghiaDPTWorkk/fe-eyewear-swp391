@@ -376,9 +376,9 @@ export const CustomerProductPage = () => {
                     const originalPrice = product.defaultVariantPrice || 0
                     const finalPrice = product.defaultVariantFinalPrice || originalPrice
 
-                    // Determine if there is a sale based on price difference
-                    const hasActualSale = originalPrice > finalPrice && finalPrice > 0
-                    const salePercentValue = hasActualSale
+                    // Display sale info only if the final price is actually lower
+                    const isActualSale = originalPrice > finalPrice && finalPrice > 0
+                    const salePercentValue = isActualSale
                       ? Math.round(((originalPrice - finalPrice) / originalPrice) * 100)
                       : undefined
 
@@ -390,7 +390,7 @@ export const CustomerProductPage = () => {
                         brand={product.brand || undefined}
                         image={product.defaultVariantImage || undefined}
                         price={originalPrice}
-                        discountPrice={hasActualSale ? finalPrice : undefined}
+                        discountPrice={finalPrice !== originalPrice ? finalPrice : undefined}
                         salePercent={salePercentValue}
                         onClick={(id) => navigate(`/products/${id}`)}
                       />

@@ -46,6 +46,8 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
     images,
     isInStock,
     isPreOrder,
+    isPreOrderExpired,
+    preOrderPlan,
     isValidCombination,
     availableOptionsForAttribute
   } = variantState
@@ -126,7 +128,11 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
     }
 
     if (!isInStock) {
-      toast.error('This variant is currently out of stock')
+      toast.error(
+        isPreOrderExpired
+          ? 'The pre-order period for this item has ended.'
+          : 'This variant is currently out of stock'
+      )
       return
     }
 
@@ -314,15 +320,30 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
       {currentVariant && (
         <div className="mb-6">
           {isPreOrder ? (
-            <div className="flex flex-col gap-1">
-              <p className="text-sm text-blue-600 font-semibold flex items-center gap-2">
-                <span className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></span>
-                Pre-order Item
-              </p>
-              <p className="text-xs text-gray-500 italic">
-                This item is available for pre-order and will be shipped when in stock.
-              </p>
-            </div>
+            isPreOrderExpired ? (
+              <div className="flex flex-col gap-1">
+                <p className="text-sm text-red-600 font-semibold flex items-center gap-2">
+                  <span className="w-2 h-2 bg-red-600 rounded-full"></span>
+                  Pre-order Period Ended
+                </p>
+                <p className="text-xs text-gray-400 italic">
+                  This pre-order event has finished. Please wait for the next stock arrival.
+                </p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-1">
+                <p className="text-sm text-blue-600 font-semibold flex items-center gap-2">
+                  <span className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></span>
+                  Pre-order Item
+                </p>
+                <p className="text-xs text-gray-500 italic">
+                  Available until:{' '}
+                  {preOrderPlan?.endedDate
+                    ? new Date(preOrderPlan.endedDate).toLocaleDateString()
+                    : 'soon'}
+                </p>
+              </div>
+            )
           ) : isInStock ? (
             <p className="text-sm text-green-600 font-semibold flex items-center gap-2">
               <span className="w-2 h-2 bg-green-600 rounded-full"></span>
@@ -454,7 +475,9 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
             : !isValidCombination
               ? 'Select Options'
               : !isInStock
-                ? 'Out of Stock'
+                ? isPreOrderExpired
+                  ? 'Pre-order Ended'
+                  : 'Out of Stock'
                 : product.type === 'frame'
                   ? 'Select Lenses'
                   : isPreOrder

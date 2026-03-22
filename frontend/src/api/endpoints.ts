@@ -247,6 +247,10 @@ export const ENDPOINTS = {
       lastMessageAt ? `/ai-message?lastMessageAt=${lastMessageAt}` : '/ai-message',
     SEND_MESSAGE: '/ai-conversation/chat'
   },
+  // Pre-order
+  PRE_ORDER: {
+    IMPORT_BY_SKU: (sku: string) => `/pre-order-import/sku/${encodeURIComponent(sku)}`
+  },
 
   // Operation Staff
   OPERATION_STAFF: {

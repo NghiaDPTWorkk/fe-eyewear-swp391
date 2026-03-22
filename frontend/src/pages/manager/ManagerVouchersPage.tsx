@@ -43,7 +43,7 @@ export default function ManagerVouchersPage() {
   const navigate = useNavigate()
 
   const [page, setPage] = useState(1)
-  const LIMIT = 10
+  const LIMIT = 4
   const [statusFilter, setStatusFilter] = useState<FilterKey>('all')
   const [typeFilter, setTypeFilter] = useState<'all' | 'PERCENTAGE' | 'FIXED'>('all')
   const [isFilterOpen, setIsFilterOpen] = useState(false)
@@ -391,22 +391,29 @@ export default function ManagerVouchersPage() {
                 <IoChevronBackOutline />
               </button>
               <div className="flex gap-1">
-                {Array.from({ length: Math.min(pagination.totalPages, 5) }, (_, i) => {
-                  return i + 1
-                }).map((p) => (
-                  <button
-                    key={p}
-                    onClick={() => setPage(p)}
-                    disabled={isDataLoading}
-                    className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${
-                      page === p
-                        ? 'bg-mint-500 text-white shadow-lg shadow-mint-100'
-                        : 'bg-white text-neutral-400 hover:bg-neutral-50 hover:text-mint-600'
-                    } disabled:opacity-50`}
-                  >
-                    {p}
-                  </button>
-                ))}
+                {(() => {
+                  const totalPages = pagination.totalPages
+                  const startPage = Math.max(1, Math.min(page - 2, totalPages - 4))
+                  const visiblePages = Array.from(
+                    { length: Math.min(5, totalPages) },
+                    (_, i) => startPage + i
+                  )
+
+                  return visiblePages.map((p) => (
+                    <button
+                      key={p}
+                      onClick={() => setPage(p)}
+                      disabled={isDataLoading}
+                      className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${
+                        page === p
+                          ? 'bg-mint-500 text-white shadow-lg shadow-mint-100'
+                          : 'bg-white text-neutral-400 hover:bg-neutral-50 hover:text-mint-600'
+                      } disabled:opacity-50`}
+                    >
+                      {p}
+                    </button>
+                  ))
+                })()}
               </div>
               <button
                 disabled={page >= pagination.totalPages || isDataLoading}

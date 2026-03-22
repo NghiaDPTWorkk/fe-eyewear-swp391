@@ -6,7 +6,7 @@ import { salesService } from '@/features/sales/services/salesService'
 import type { Invoice, OrderDetail } from '../../types'
 import { Button, ConfirmationModal } from '@/shared/components/ui-core'
 import { OrderType } from '@/shared/utils/enums/order.enum'
-import { useSalesStaffAction } from '../../hooks/useSalesStaffAction'
+import { useSalesStaffAction, useSalesStaffInvoiceDetail } from '../../hooks'
 import { cn } from '@/lib/utils'
 
 interface InvoiceOrdersDrawerProps {
@@ -27,7 +27,11 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
   const [selectedOrderDetails, setSelectedOrderDetails] = useState<OrderDetail | null>(null)
   const [loadingDetails, setLoadingDetails] = useState(false)
 
+  const { data: detailData, isLoading: isDetailLoading } = useSalesStaffInvoiceDetail(
+    invoice?.id || null
+  )
   if (!isOpen || !invoice) return null
+  const currentInvoice = detailData || invoice
 
   const handleApproveOrder = async (e: React.MouseEvent, orderId: string) => {
     e.stopPropagation()
@@ -233,19 +237,53 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
                 Billing Information
               </h4>
               <div className="space-y-4">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-slate-500 font-normal uppercase tracking-wider text-[10px]">
-                    Final Price
-                  </span>
-                  <span className="font-semibold text-primary-700 text-lg font-heading">
-                    {invoice.finalPrice}
+                <div className="flex justify-between items-center text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+                  <span>Subtotal</span>
+                  <span className="text-slate-700 font-mono">
+                    {isDetailLoading ? (
+                      <span className="w-16 h-3 bg-slate-100 animate-pulse rounded block" />
+                    ) : (
+                      `${(currentInvoice.totalPrice || 0).toLocaleString()} ₫`
+                    )}
                   </span>
                 </div>
-                <div className="flex justify-between gap-6 text-sm">
+                <div className="flex justify-between items-center text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+                  <span>Shipping Fee</span>
+                  <span className="text-slate-700 font-mono">
+                    {isDetailLoading ? (
+                      <span className="w-16 h-3 bg-slate-100 animate-pulse rounded block" />
+                    ) : (
+                      `+ ${(currentInvoice.feeShip || 0).toLocaleString()} ₫`
+                    )}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+                  <span>Discount</span>
+                  <span className="text-rose-500 font-mono">
+                    {isDetailLoading ? (
+                      <span className="w-16 h-3 bg-slate-100 animate-pulse rounded block" />
+                    ) : (
+                      `- ${(currentInvoice.totalDiscount || 0).toLocaleString()} ₫`
+                    )}
+                  </span>
+                </div>
+                <div className="pt-4 border-t border-neutral-50 flex justify-between items-center">
+                  <span className="text-xs font-bold text-slate-900 uppercase tracking-widest">
+                    Total Amount
+                  </span>
+                  <span className="text-xl font-bold tracking-tight text-primary-700 font-heading">
+                    {isDetailLoading ? (
+                      <span className="w-24 h-6 bg-slate-100 animate-pulse rounded block" />
+                    ) : (
+                      `${((currentInvoice.totalPrice || 0) + (currentInvoice.feeShip || 0) - (currentInvoice.totalDiscount || 0)).toLocaleString()} ₫`
+                    )}
+                  </span>
+                </div>
+                <div className="flex justify-between gap-6 text-sm pt-2">
                   <span className="text-slate-500 font-normal whitespace-nowrap uppercase tracking-wider text-[10px]">
                     Shipping Address
                   </span>
-                  <span className="text-slate-700 font-medium text-right leading-relaxed">
+                  <span className="text-slate-700 font-medium text-right leading-relaxed text-xs">
                     {invoice.address}
                   </span>
                 </div>

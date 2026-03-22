@@ -14,6 +14,7 @@ import {
   useAssignOrderStaff,
   useAssignLabeling
 } from '@/features/manager/hooks'
+import { salesService } from '@/features/sales/services/salesService'
 import { isManufacturingOrder } from '@/shared/types/order.types'
 import ConfirmationModal from '@/shared/components/ui/ConfirmationModal'
 import { AxiosError } from 'axios'
@@ -21,7 +22,6 @@ import toast from 'react-hot-toast'
 import {
   IoPersonOutline,
   IoCallOutline,
-  IoBagOutline,
   IoCashOutline,
   IoLocationOutline,
   IoAlertCircleOutline,
@@ -174,7 +174,15 @@ export default function ManagerInvoiceCard({
     }))
   })
 
-  const hasAnyOrderLoading = orderQueries.some((q) => q.isLoading)
+  const { data: fullInvoiceResponse, isLoading: isInvoiceLoading } = useQuery({
+    queryKey: ['admin-invoice-detail-actual', invoice.id],
+    queryFn: () => salesService.getInvoiceById(invoice.id),
+    enabled: isExpanded,
+    staleTime: 30_000
+  })
+  const fullInvoiceDetail = fullInvoiceResponse?.data
+
+  const hasAnyOrderLoading = orderQueries.some((q) => q.isLoading) || isInvoiceLoading
   const hasAnyOrderError = orderQueries.some((q) => q.isError)
 
   const ordersData = orderQueries
@@ -356,30 +364,52 @@ export default function ManagerInvoiceCard({
 
           <div className="space-y-4">
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-neutral-50 flex items-center justify-center text-neutral-400 shrink-0 border border-neutral-100">
-                <IoBagOutline size={18} />
-              </div>
-              <div className="min-w-0">
-                <span className="text-[10px] font-semibold text-neutral-400 uppercase tracking-widest block mb-1">
-                  Total Items
-                </span>
-                <p className="text-sm font-semibold text-gray-900 font-primary truncate">
-                  {invoice.orders?.length ?? 0} Orders Linked
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-xl bg-mint-50 flex items-center justify-center text-mint-600 shrink-0 border border-mint-100">
                 <IoCashOutline size={18} />
               </div>
-              <div className="min-w-0">
-                <span className="text-[10px] font-semibold text-neutral-400 uppercase tracking-widest block mb-1">
-                  Total Price
+              <div className="min-w-0 flex-1">
+                <span className="text-[10px] font-semibold text-neutral-400 uppercase tracking-widest block mb-1 leading-none">
+                  Billing Summary
                 </span>
-                <p className="text-sm font-bold text-mint-600 font-primary truncate">
-                  {invoice.finalPrice} đ
-                </p>
+                {isExpanded && fullInvoiceDetail ? (
+                  <div className="space-y-1.5 mt-2">
+                    <div className="flex justify-between items-center text-[10px] font-bold text-neutral-500 uppercase tracking-widest leading-none">
+                      <span>Subtotal</span>
+                      <span className="text-gray-900 font-mono">
+                        {(fullInvoiceDetail.totalPrice || 0).toLocaleString()} đ
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center text-[10px] font-bold text-neutral-500 uppercase tracking-widest leading-none">
+                      <span>Shipping Fee</span>
+                      <span className="text-gray-900 font-mono">
+                        + {(fullInvoiceDetail.feeShip || 0).toLocaleString()} đ
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center text-[10px] font-bold text-rose-400 uppercase tracking-widest leading-none">
+                      <span>Discount</span>
+                      <span className="text-rose-500 font-mono">
+                        - {(fullInvoiceDetail.totalDiscount || 0).toLocaleString()} đ
+                      </span>
+                    </div>
+                    <div className="pt-2 mt-2 border-t border-neutral-100 flex justify-between items-center">
+                      <span className="text-[11px] font-bold text-gray-900 uppercase tracking-wider">
+                        Total Amount
+                      </span>
+                      <span className="text-base font-bold text-mint-600 font-primary">
+                        {(
+                          (fullInvoiceDetail.totalPrice || 0) +
+                          (fullInvoiceDetail.feeShip || 0) -
+                          (fullInvoiceDetail.totalDiscount || 0)
+                        ).toLocaleString()}{' '}
+                        đ
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-sm font-bold text-mint-600 font-primary truncate">
+                    {invoice.finalPrice} đ
+                  </p>
+                )}
               </div>
             </div>
           </div>

@@ -467,7 +467,7 @@ export function PrescriptionForm({
               <Info className="w-3 h-3 text-yellow-600 shrink-0" />
               <div className="flex flex-col">
                 <p className="text-[10px] text-yellow-700 font-medium">
-                  Số đo này dành cho trẻ em hay người lớn?
+                  Is this measurement for a child or an adult?
                 </p>
                 <div className="flex gap-2 mt-1">
                   <button
@@ -475,7 +475,7 @@ export function PrescriptionForm({
                     onClick={() => setPdConfirmed(true)}
                     className={`text-[9px] px-2 py-0.5 rounded ${pdConfirmed ? 'bg-yellow-200 text-yellow-800' : 'bg-white text-yellow-600 hover:bg-yellow-100'}`}
                   >
-                    Xác nhận chính xác
+                    Confirm accuracy
                   </button>
                 </div>
               </div>
@@ -488,7 +488,7 @@ export function PrescriptionForm({
         <div className="space-y-2 p-4 bg-orange-50 rounded-2xl border border-orange-100">
           <div className="flex items-center gap-2 text-orange-700 mb-1">
             <AlertCircle className="w-4 h-4" />
-            <span className="text-xs font-bold uppercase tracking-wider">Cảnh báo kiểm tra</span>
+            <span className="text-xs font-bold uppercase tracking-wider">Validation Warnings</span>
           </div>
           <ul className="space-y-1">
             {validationResults.warnings.map((warning, index) => (

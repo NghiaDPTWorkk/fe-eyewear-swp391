@@ -24,7 +24,7 @@ export const CustomerInfoSection = ({ customerInfo, onUpdate }: CustomerInfoSect
           <Input
             value={customerInfo.fullName}
             onChange={(e) => onUpdate({ ...customerInfo, fullName: e.target.value })}
-            placeholder="Minh Lâm"
+            placeholder="John Doe"
             className="rounded-xl border-mint-200 focus:border-primary-500"
           />
         </div>

@@ -84,31 +84,31 @@ export function PrescriptionForm({
       if (!val) return
       const num = parseFloat(val)
       if (num < rule.min || num > rule.max) {
-        errors[fieldName] = `Giá trị phải trong khoảng ${rule.min} và ${rule.max}`
+        errors[fieldName] = `Value must be between ${rule.min} and ${rule.max}`
       } else if (Math.abs((num * 100) % (rule.step * 100)) > 0.01) {
         // Using 100 to avoid floating point issues
-        warnings.push(`${fieldName} thường là bội số của ${rule.step}`)
+        warnings.push(`${fieldName} is usually a multiple of ${rule.step}`)
       }
     }
 
     // Individual field checks
     ;(['left', 'right'] as const).forEach((eye) => {
-      const eyeLabel = eye === 'left' ? 'Mắt trái' : 'Mắt phải'
-      checkRange(formData[eye].SPH, VALIDATION_RULES.SPH, `${eyeLabel} SPH`)
-      checkRange(formData[eye].CYL, VALIDATION_RULES.CYL, `${eyeLabel} CYL`)
-      checkRange(formData[eye].AXIS, VALIDATION_RULES.AXIS, `${eyeLabel} AXIS`)
-      checkRange(formData[eye].ADD, VALIDATION_RULES.ADD, `${eyeLabel} ADD`)
+      const eyeLabel = eye === 'left' ? 'Left Eye' : 'Right Eye'
+      checkRange(formData[eye].SPH, VALIDATION_RULES.SPH, `${eye}.SPH`)
+      checkRange(formData[eye].CYL, VALIDATION_RULES.CYL, `${eye}.CYL`)
+      checkRange(formData[eye].AXIS, VALIDATION_RULES.AXIS, `${eye}.AXIS`)
+      checkRange(formData[eye].ADD, VALIDATION_RULES.ADD, `${eye}.ADD`)
 
       // Step 3: CYL & AXIS dependency
       const cyl = parseFloat(formData[eye].CYL)
       if (cyl !== 0 && !formData[eye].AXIS) {
-        errors[`${eye}.AXIS`] = 'Bắt buộc nhập AXIS khi có độ loạn (CYL)'
+        errors[`${eye}.AXIS`] = 'AXIS is required when CYL is entered'
       }
 
       // Step 5: CYL Sign
       if (cyl > 0) {
         warnings.push(
-          `Phát hiện độ loạn dấu cộng (+) ở ${eyeLabel}. Thông thường độ loạn được quy đổi về dấu trừ (-).`
+          `Detected positive (+) CYL for ${eyeLabel}. Usually CYL is converted to negative (-).`
         )
       }
 
@@ -117,7 +117,7 @@ export function PrescriptionForm({
       const absCyl = Math.abs(cyl)
       if (sph > 10 || absCyl > 4) {
         warnings.push(
-          `Độ khúc xạ của ${eyeLabel} rất cao. Để đảm bảo thị lực tốt nhất, vui lòng liên hệ kỹ thuật viên để được tư vấn loại tròng kính chiết suất đặc biệt (1.74 hoặc tròng đặt riêng).`
+          `${eyeLabel} prescription is quite high. Consider high-index lenses (1.74) for better comfort.`
         )
       }
     })
@@ -126,7 +126,7 @@ export function PrescriptionForm({
     if (formData.PD) {
       const pd = parseFloat(formData.PD)
       if (pd < VALIDATION_RULES.PD.min || pd > VALIDATION_RULES.PD.max) {
-        errors.PD = `PD phải nằm trong khoảng ${VALIDATION_RULES.PD.min} - ${VALIDATION_RULES.PD.max}`
+        errors.PD = `PD must be between ${VALIDATION_RULES.PD.min} - ${VALIDATION_RULES.PD.max}`
       }
     }
 
@@ -135,7 +135,7 @@ export function PrescriptionForm({
     const addRight = formData.right.ADD
     if (addLeft && addRight && addLeft !== addRight) {
       warnings.push(
-        'Thông thường độ ADD ở hai mắt sẽ giống nhau, bạn vui lòng kiểm tra lại đơn thuốc.'
+        'Typically, ADD values for both eyes are identical. Please verify your prescription.'
       )
     }
 
@@ -144,7 +144,7 @@ export function PrescriptionForm({
     const addRightNum = parseFloat(formData.right.ADD)
     if (sphRight > 5 && addRightNum === 0) {
       warnings.push(
-        'Độ viễn thị nặng nhưng ADD = 0 có thể do nhầm lẫn dòng trên đơn thuốc. Vui lòng kiểm tra lại.'
+        'High positive SPH with ADD = 0 may be a mistake. Please check the rows on your prescription.'
       )
     }
 

@@ -67,7 +67,7 @@ export function StaffLayout({
         />
       }
       mainClassName={cn('bg-mint-200', mainClassName)}
-      headerContainerClassName="px-4 md:px-8 lg:pl-10 lg:pr-6"
+      headerContainerClassName={cn('px-4 md:px-8 lg:px-10 mx-auto', contentMaxWidth)}
       headerContainerWidth="none"
       contentMaxWidth={contentMaxWidth}
     />

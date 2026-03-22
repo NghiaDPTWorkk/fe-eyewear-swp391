@@ -11,12 +11,8 @@ const BADGE_MAP: Record<string, { label: string; cls: string }> = {
     cls: 'bg-amber-50 text-amber-600 border-amber-200'
   },
   IN_PROGRESS: {
-    label: 'In Progress',
-    cls: 'bg-blue-50 text-blue-600 border-blue-200'
-  },
-  IN_PROGRESS_ALIAS: {
-    label: 'In Progress',
-    cls: 'bg-blue-50 text-blue-600 border-blue-200'
+    label: 'Verified',
+    cls: 'bg-emerald-50 text-emerald-600 border-emerald-200'
   },
   APPROVED: {
     label: 'Approved',

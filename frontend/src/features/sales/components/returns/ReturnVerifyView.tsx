@@ -109,19 +109,13 @@ export default function ReturnVerifyView({
     try {
       const res = await returnTicketService.claimTicket(ticket.id)
       if (res.success) {
-        // According to documentation, we should also move it to in-progress
-        await returnTicketService.startProcessing(ticket.id).catch((err) => {
-          console.warn('Failed to move ticket to in-progress, but claim was successful', err)
-        })
-
+        // ACTION 2: Sale claims ticket. Status remains PENDING.
         showToast('success', 'Ticket claimed successfully! You can now verify this return.')
 
-        // Try to find current user name from various possible sources
         const currentUserName = (initialTicket as any).staffName || 'You'
-
         setTicket((prev) => ({
           ...prev,
-          status: 'IN_PROGRESS',
+          status: 'PENDING', // Keep PENDING
           staffVerify: currentStaffId,
           staffName: currentUserName
         }))
@@ -144,10 +138,12 @@ export default function ReturnVerifyView({
 
     try {
       if (action === 'approve') {
-        const approvalNote = 'Approved by staff'
-        await returnTicketService.approveTicket(ticket.id, approvalNote)
-        showToast('success', 'Ticket approved successfully!')
+        // ACTION 3: Sale approves ticket. Status should move to IN_PROGRESS (Progress)
+        // We call startProcessing to move it to IN_PROGRESS according to backend logic
+        await returnTicketService.startProcessing(ticket.id)
+        showToast('success', 'Ticket verified and approved! Moved to IN PROGRESS.')
       } else {
+        // ACTION 3: Sale rejects ticket. Status becomes REJECTED.
         await returnTicketService.rejectTicket(ticket.id, rejectNote)
         showToast('success', 'Ticket rejected.')
       }
@@ -161,9 +157,16 @@ export default function ReturnVerifyView({
     }
   }
 
-  const isApproved = ticket?.status === 'APPROVED' || ticket?.status === 'RETURNED'
+  // Refined Status Mapping based on actions:
+  // IN_PROGRESS = Already verified (Progress)
+  // RETURNED = Successfully returned
+  // DELIVERING = Being picked up by delivery
+  const isApproved =
+    ticket?.status === 'IN_PROGRESS' ||
+    ticket?.status === 'DELIVERING' ||
+    ticket?.status === 'RETURNED'
   const isRejected = ticket?.status === 'REJECTED'
-  const isPending = ticket?.status === 'PENDING' || ticket?.status === 'IN_PROGRESS'
+  const isPending = ticket?.status === 'PENDING'
 
   if (!ticket) return null
 
@@ -409,9 +412,6 @@ export default function ReturnVerifyView({
         <div className="xl:col-span-2 space-y-6">
           {/* Statement Card */}
           <Card className="p-8 rounded-[32px] border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 bg-white relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-8 text-slate-50 pointer-events-none transition-transform duration-1000 group-hover:rotate-12">
-              <IoReceiptOutline size={120} />
-            </div>
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full bg-indigo-500" />

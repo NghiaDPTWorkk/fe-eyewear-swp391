@@ -69,9 +69,15 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
     status: realOrder.status?.toUpperCase() || 'PENDING',
     priceVal: realOrder.price || 0,
     subtotal: `${(realOrder.price || 0).toLocaleString()} ₫`,
-    shipping: '0 ₫',
+    shipping: `${(realOrder.invoice?.feeShip || 0).toLocaleString()} ₫`,
     tax: '0 ₫',
-    total: `${(realOrder.price || 0).toLocaleString()} ₫`,
+    discount: `${(realOrder.invoice?.totalDiscount || 0).toLocaleString()} ₫`,
+    total: `${(
+      (realOrder.price || 0) +
+      (realOrder.invoice?.feeShip || 0) -
+      (realOrder.invoice?.totalDiscount || 0)
+    ).toLocaleString()} ₫`,
+
     customer: {
       name: realOrder.customerName || realOrder.invoice?.fullName || 'Guest Customer',
       email: realOrder.customerEmail || realOrder.invoice?.email || 'No email provided',
@@ -341,10 +347,15 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
                     <span>Shipping</span>
                     <span className="text-slate-700">{order.shipping}</span>
                   </div>
+                  <div className="flex justify-between items-center text-sm font-semibold text-rose-400 uppercase tracking-wider">
+                    <span>Discount</span>
+                    <span className="text-rose-500">{order.discount}</span>
+                  </div>
                   <div className="flex justify-between items-center text-sm font-semibold text-slate-400 uppercase tracking-wider pb-3">
                     <span>Tax</span>
                     <span className="text-slate-700">{order.tax}</span>
                   </div>
+
                   <div className="pt-2 flex justify-between items-center">
                     <span className="text-sm font-bold text-slate-900 uppercase tracking-widest">
                       {isPreOrder ? 'Deposit Amount' : 'Total Amount'}

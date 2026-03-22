@@ -16,6 +16,7 @@ export const ENDPOINTS = {
     CHANGE_PASSWORD: '/admin/auth/profile/change-password',
     ADDRESS_LIST: '/customer/profile/address',
     ADDRESS_ADD: '/customer/profile/address',
+    ADDRESS_UPDATE: (id: string) => `/customer/profile/address/${id}`,
     CHANGE_DEFAULT: (id: string) => `/customer/profile/address/change-default/${id}`,
     GOOGLE: '/auth/google',
     REQUEST_MERGE: '/auth/request-merge-account',

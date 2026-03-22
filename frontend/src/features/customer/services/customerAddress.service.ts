@@ -24,5 +24,12 @@ export const customerAddressService = {
    */
   setDefaultAddress: async (id: string, address: Address): Promise<void> => {
     await apiClient.patch(ENDPOINTS.AUTH.CHANGE_DEFAULT(id), address)
+  },
+
+  /**
+   * Update an existing address
+   */
+  updateAddress: async (id: string, address: Omit<Address, '_id'>): Promise<void> => {
+    await apiClient.patch(ENDPOINTS.AUTH.ADDRESS_UPDATE(id), address)
   }
 }

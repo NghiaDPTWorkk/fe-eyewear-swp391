@@ -3,14 +3,26 @@ import { Plus, MapPin, Loader2 } from 'lucide-react'
 import { AddressCard } from '@/components/layout/customer/account/addresses/AddressCard'
 import { useAddressStore } from '@/store/address.store'
 import { AddAddressModal } from '@/components/layout/customer/account/addresses/AddAddressModal'
+import type { Address } from '@/shared/types/address.types'
 
 export function AddressesPage() {
   const { addresses, fetchAddresses, setDefaultAddress, isLoading, error } = useAddressStore()
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [addressToEdit, setAddressToEdit] = useState<Address | null>(null)
 
   useEffect(() => {
     fetchAddresses()
   }, [fetchAddresses])
+
+  const handleEdit = (addr: Address) => {
+    setAddressToEdit(addr)
+    setIsModalOpen(true)
+  }
+
+  const handleClose = () => {
+    setIsModalOpen(false)
+    setAddressToEdit(null)
+  }
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -22,7 +34,10 @@ export function AddressesPage() {
           </p>
         </div>
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            setAddressToEdit(null)
+            setIsModalOpen(true)
+          }}
           className="flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-white px-6 py-4 rounded-2xl font-bold transition-all shadow-lg hover:shadow-xl uppercase tracking-widest text-xs"
         >
           <Plus size={18} strokeWidth={3} />
@@ -50,13 +65,17 @@ export function AddressesPage() {
               ward={addr.ward}
               city={addr.city}
               isDefault={addr.isDefault}
+              onEdit={() => handleEdit(addr)}
               onSetDefault={() => addr._id && setDefaultAddress(addr._id, addr)}
             />
           ))}
 
           {/* Add New Card */}
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => {
+              setAddressToEdit(null)
+              setIsModalOpen(true)
+            }}
             className="p-6 border-2 border-dashed border-mint-200 rounded-3xl flex flex-col items-center justify-center min-h-[200px] hover:border-primary-400 hover:bg-primary-50/5 transition-all group"
           >
             <div className="w-12 h-12 bg-mint-50 rounded-2xl flex items-center justify-center text-mint-300 mb-4 group-hover:bg-primary-100 group-hover:text-primary-500 transition-colors">
@@ -76,7 +95,10 @@ export function AddressesPage() {
           </div>
           <p className="text-mint-400 font-bold mb-2">No addresses saved yet</p>
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => {
+              setAddressToEdit(null)
+              setIsModalOpen(true)
+            }}
             className="text-primary-500 font-bold hover:underline"
           >
             Add your first address
@@ -93,7 +115,7 @@ export function AddressesPage() {
         </p>
       </div>
 
-      <AddAddressModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <AddAddressModal isOpen={isModalOpen} onClose={handleClose} addressToEdit={addressToEdit} />
     </div>
   )
 }

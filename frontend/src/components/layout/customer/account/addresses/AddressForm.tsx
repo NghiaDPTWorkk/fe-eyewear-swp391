@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react'
 import { addressService, type Province, type Ward } from '@/shared/services/addressService'
 import { FormField, Input, Select, Checkbox, Button } from '@/shared/components/ui'
+import { toast } from 'react-hot-toast'
+
+import type { Address } from '@/shared/types/address.types'
 
 interface AddressFormProps {
-  initialData?: {
-    street: string
-    ward: string
-    city: string
-    isDefault: boolean
-  }
+  initialData?: Address
   onSubmit: (data: {
     street: string
     ward: string
@@ -34,6 +32,18 @@ export function AddressForm({
     isDefault: initialData?.isDefault || false
   })
 
+  // Sync formData when initialData changes
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        street: initialData.street || '',
+        ward: initialData.ward || '',
+        city: initialData.city || '',
+        isDefault: !!initialData.isDefault
+      })
+    }
+  }, [initialData])
+
   const [provinces, setProvinces] = useState<Province[]>([])
   const [wards, setWards] = useState<Ward[]>([])
   const [isFetchingProvinces, setIsFetchingProvinces] = useState(false)
@@ -48,9 +58,18 @@ export function AddressForm({
         const data = await addressService.getProvinces()
         setProvinces(data)
 
-        // If editing, try to find the matching province code to load wards
+        // Robust matching for province/city
         if (initialData?.city) {
-          const match = data.find((p) => p.name === initialData.city)
+          const targetCity = initialData.city.toLowerCase().trim()
+          const match = data.find((p) => {
+            const provinceName = p.name.toLowerCase().trim()
+            return (
+              provinceName === targetCity ||
+              provinceName === `tỉnh ${targetCity}` ||
+              provinceName === `thành phố ${targetCity}` ||
+              targetCity === provinceName.replace(/^(tỉnh|thành phố)\s+/i, '').trim()
+            )
+          })
           if (match) setSelectedProvinceCode(match.code)
         }
       } catch (error) {
@@ -100,7 +119,32 @@ export function AddressForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    await onSubmit(formData)
+
+    const street = formData.street.trim()
+    const city = formData.city.trim()
+    const ward = formData.ward.trim()
+
+    if (!street) {
+      toast.error('Street address is required')
+      return
+    }
+
+    if (!city) {
+      toast.error('City / Province is required')
+      return
+    }
+
+    if (!ward) {
+      toast.error('Ward is required')
+      return
+    }
+
+    await onSubmit({
+      ...formData,
+      street,
+      city,
+      ward
+    })
   }
 
   return (

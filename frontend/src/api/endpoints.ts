@@ -310,6 +310,13 @@ export const ENDPOINTS = {
       })
       return `/admin/return-tickets?${q.toString()}`
     },
+    MY_HISTORY: (params: { page?: number; limit?: number; search?: string }) => {
+      const q = new URLSearchParams()
+      Object.entries(params).forEach(([k, v]) => {
+        if (v !== undefined && v !== '') q.append(k, String(v))
+      })
+      return `/admin/return-tickets/my-history?${q.toString()}`
+    },
     RETURNED_ORDERS: (page?: number, limit?: number, search?: string) => {
       const p = new URLSearchParams()
       if (page) p.append('page', String(page))

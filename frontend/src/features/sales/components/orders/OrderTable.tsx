@@ -49,7 +49,7 @@ export const OrderTable: React.FC<OrderTableProps> = ({
               Date
             </th>
             <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-              Created At
+              Time
             </th>
             <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">
               Actions
@@ -129,7 +129,7 @@ export const OrderTable: React.FC<OrderTableProps> = ({
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-2 text-[12px] text-slate-500">
                       <IoCalendarOutline className="text-slate-300" size={14} />
-                      <span>{inv.createdAt ? inv.createdAt.split(' ')[0] : 'N/A'}</span>
+                      <span>{inv.createdAt ? inv.createdAt.split(' ')[1] : 'N/A'}</span>
                     </div>
                   </td>
 
@@ -137,7 +137,7 @@ export const OrderTable: React.FC<OrderTableProps> = ({
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-2 text-[12px] text-slate-500">
                       <IoTimeOutline className="text-slate-300" size={14} />
-                      <span>{inv.createdAt ? inv.createdAt.split(' ')[1] : 'N/A'}</span>
+                      <span>{inv.createdAt ? inv.createdAt.split(' ')[0] : 'N/A'}</span>
                     </div>
                   </td>
 

@@ -1,9 +1,13 @@
 import { useMemo, useState, useEffect } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
-import { IoFlashOutline, IoCubeOutline, IoReceiptOutline, IoRepeatOutline } from 'react-icons/io5'
-
-import { salesService } from '@/features/sales/services/salesService'
+import {
+  IoFlashOutline,
+  IoCubeOutline,
+  IoReceiptOutline,
+  IoRepeatOutline,
+  IoChevronBackOutline,
+  IoLockClosedOutline
+} from 'react-icons/io5'
 import { InvoiceOrdersDrawer } from '@/features/sales/components/dashboard/InvoiceOrdersDrawer'
 import { OrderMetrics } from '@/features/sales/components/orders/OrderMetrics'
 import { OrderPagination } from '@/features/sales/components/orders/OrderPagination'
@@ -21,10 +25,19 @@ import {
 } from '@/features/sales/hooks'
 import { type Invoice } from '@/features/sales/types'
 
-import { ConfirmationModal } from '@/shared/components/ui-core'
+import { ConfirmationModal } from '@/shared/components/ui-core/confirm-modal'
+import { Button } from '@/shared/components/ui-core/button'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import { OrderType } from '@/shared/utils/enums/order.enum'
 import { useAuthStore } from '@/store/auth.store'
+
+import {
+  ReturnTicketsTable,
+  ReturnTicketDrawer,
+  ReturnVerifyView
+} from '@/features/sales/components/returns'
+import type { ReturnTicketData } from '@/shared/types/return-ticket.types'
+import { useReturnPageTickets, useMyReturnHistory } from '@/features/sales/hooks/useReturnTickets'
 
 export default function SaleStaffOrderPage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -49,6 +62,24 @@ export default function SaleStaffOrderPage() {
   const [invoiceToProcess, setInvoiceToProcess] = useState<string | null>(null)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const limit = 8
+
+  const [verifyTicket, setVerifyTicket] = useState<ReturnTicketData | null>(null)
+  const [drawerTicket, setDrawerTicket] = useState<ReturnTicketData | null>(null)
+  const [drawerOpen, setDrawerOpen] = useState(false)
+
+  const returnHook = useReturnPageTickets(staffId || '')
+  // We'll reuse the same hook structure or add another for history
+  const historyHook = useMyReturnHistory()
+
+  useEffect(() => {
+    if (statusFilter === 'RETURNS') {
+      returnHook.setSearch(searchQuery)
+      returnHook.setCurrentPage(page)
+    } else if (statusFilter === 'REFUNDED_HISTORY') {
+      historyHook.setSearch(searchQuery)
+      historyHook.setCurrentPage(page)
+    }
+  }, [statusFilter, searchQuery, page]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const setSearchQuery = (query: string) => {
     const next = new URLSearchParams(searchParams)
@@ -80,10 +111,6 @@ export default function SaleStaffOrderPage() {
       list = list.filter((inv: Invoice) => inv.orders?.some((o) => o.isPrescription))
     }
 
-    if (statusFilter === InvoiceStatus.DEPOSITED) {
-      list = list.filter((inv: Invoice) => inv.orders?.some((o) => o.isPrescription))
-    }
-
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase()
       list = list.filter(
@@ -96,9 +123,9 @@ export default function SaleStaffOrderPage() {
 
     if (orderTypeFilter !== 'All') {
       list = list.filter((inv: Invoice) =>
-        inv.orders?.some((order) => {
-          const types = Array.isArray(order.type) ? order.type : [order.type]
-          return types.some((t: OrderType | string) => String(t).includes(orderTypeFilter))
+        inv.orders?.some((o: any) => {
+          const types = Array.isArray(o.type) ? o.type : [o.type]
+          return types.some((t: any) => String(t).includes(orderTypeFilter))
         })
       )
     }
@@ -142,8 +169,14 @@ export default function SaleStaffOrderPage() {
         counts[OrderType.NORMAL]++
       }
     })
-    const totalOrders = Object.values(counts).reduce((a, b) => a + b, 0) || 1
-    const pct = (key: string) => Math.round((counts[key] / totalOrders) * 100)
+
+    // Override RETURN count with real data from returnHook
+    counts[OrderType.RETURN] = returnHook.pagination.total || 0
+
+    // Recalculate total with the updated return count
+    const totalWithReturns = Object.values(counts).reduce((a, b) => a + b, 0) || 1
+
+    const pct = (key: string) => Math.round((counts[key] / totalWithReturns) * 100)
     return [
       {
         type: OrderType.NORMAL,
@@ -178,7 +211,7 @@ export default function SaleStaffOrderPage() {
         trend: { label: 'of total', value: pct(OrderType.PRE_ORDER), isPositive: true }
       }
     ]
-  }, [invoiceList])
+  }, [invoiceList, returnHook.pagination.total])
 
   const handleStatusChange = (status: string) => {
     setSearchParams((prev) => {
@@ -203,55 +236,16 @@ export default function SaleStaffOrderPage() {
     setSearchParams(new URLSearchParams())
     setPage(1)
   }
-
-  const { data: statusCounts } = useQuery({
-    queryKey: ['sales', 'status-counts'],
-    queryFn: async () => {
-      const tabs = [InvoiceStatus.DEPOSITED, 'APPROVED_OR_REJECTED', InvoiceStatus.REFUNDED]
-      const counts: Record<string, number> = {}
-      await Promise.all(
-        tabs.map(async (tab) => {
-          let apiStatus: string | undefined = undefined
-          let apiStatuses: string | undefined = undefined
-
-          if (tab === 'APPROVED_OR_REJECTED') {
-            apiStatuses = [
-              InvoiceStatus.APPROVED,
-              InvoiceStatus.ONBOARD,
-              InvoiceStatus.READY_TO_SHIP,
-              InvoiceStatus.DELIVERING,
-              InvoiceStatus.DELIVERED,
-              InvoiceStatus.COMPLETED,
-              InvoiceStatus.REJECTED,
-              InvoiceStatus.CANCELED
-            ].join(',')
-          } else if (tab === InvoiceStatus.REFUNDED) {
-            apiStatus = InvoiceStatus.REFUNDED
-          } else {
-            apiStatus = tab as string
-          }
-
-          const res = await salesService.getDepositedInvoices(1, 1, apiStatus, apiStatuses)
-          counts[tab] = res.data.pagination.total
-        })
-      )
-      return counts
-    },
-    staleTime: 30000
-  })
-
   const statusTabs = useMemo(() => {
     const allTabs = [
       { label: 'All Invoices', value: 'All' },
       { label: 'Pending', value: InvoiceStatus.DEPOSITED },
       { label: 'Approved', value: 'APPROVED_OR_REJECTED' },
-      { label: 'Refunded', value: InvoiceStatus.REFUNDED }
+      { label: 'Returns', value: 'RETURNS' },
+      { label: 'History', value: 'REFUNDED_HISTORY' }
     ]
-    return allTabs.filter((tab) => {
-      if (tab.value === 'All') return true
-      return (statusCounts?.[tab.value] ?? 0) > 0
-    })
-  }, [statusCounts])
+    return allTabs
+  }, [])
 
   const getStatusBadgeProps = (invoice: Invoice) => {
     const s = invoice.status
@@ -303,6 +297,49 @@ export default function SaleStaffOrderPage() {
       return { label: 'Refunded', color: 'bg-purple-50 text-purple-600 border-purple-100' }
 
     return { label: String(s) || 'Unknown', color: 'bg-slate-50 text-slate-400 border-slate-100' }
+  }
+
+  // Early return for Verify View
+  if (verifyTicket) {
+    return (
+      <div className="space-y-6 animate-in fade-in duration-500">
+        <div className="flex items-center gap-4">
+          <Button
+            onClick={() => setVerifyTicket(null)}
+            className="p-2.5 bg-white hover:bg-emerald-50 rounded-xl transition-all text-gray-500 hover:text-emerald-600 border border-gray-200 hover:border-emerald-200 shadow-sm"
+          >
+            <IoChevronBackOutline size={20} />
+          </Button>
+          <PageHeader
+            title="Return Verification"
+            breadcrumbs={[
+              { label: 'Dashboard', path: '/sale-staff/dashboard' },
+              { label: 'Orders', path: '/sale-staff/orders' },
+              { label: 'Verification' }
+            ]}
+            noMargin
+          />
+        </div>
+
+        {/* Verifying Status Banner */}
+        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-mint-50 border border-mint-100 w-fit text-mint-700 shadow-sm animate-in slide-in-from-left-4 duration-300">
+          <IoLockClosedOutline size={14} className="text-mint-600" />
+          <span className="text-xs font-bold font-heading">
+            You are currently verifying this return
+          </span>
+        </div>
+
+        <ReturnVerifyView
+          ticket={verifyTicket}
+          onActionSuccess={() => {
+            setVerifyTicket(null)
+            returnHook.refresh()
+            refetch()
+          }}
+          currentStaffId={staffId || ''}
+        />
+      </div>
+    )
   }
 
   const handleApproveClick = (invoiceId: string) => {
@@ -373,31 +410,76 @@ export default function SaleStaffOrderPage() {
           onReset={handleResetFilters}
           orderTypeFilter={orderTypeFilter}
         />
-        <div className="bg-white border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 rounded-3xl overflow-hidden">
-          <OrderTable
-            invoices={paginatedInvoices}
-            selectedInvoiceId={selectedInvoiceId}
-            setSelectedInvoiceId={setSelectedInvoiceId}
-            getStatusBadgeProps={getStatusBadgeProps}
-            handleApproveClick={handleApproveClick}
-            processing={processing}
-            isLockedByOther={isLockedByOther}
-          />
-          {(serverTotal > 0 || filteredInvoices.length > 0) && (
-            <OrderPagination
-              page={page}
-              totalPages={adjustedTotalPages}
-              isLoading={isLoading}
+        <div className="bg-white border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 rounded-3xl overflow-hidden min-h-[200px]">
+          {statusFilter === 'RETURNS' ? (
+            <ReturnTicketsTable
+              tickets={returnHook.tickets}
+              isLoading={returnHook.isLoading}
+              error={returnHook.error}
+              currentStaffId={staffId || ''}
+              pagination={returnHook.pagination}
+              onRowClick={(t) => {
+                setDrawerTicket(t)
+                setDrawerOpen(true)
+              }}
+              onVerifyClick={(t) => setVerifyTicket(t)}
               onPageChange={setPage}
+              showAction={true}
             />
+          ) : statusFilter === 'REFUNDED_HISTORY' ? (
+            <ReturnTicketsTable
+              tickets={historyHook.tickets}
+              isLoading={historyHook.isLoading}
+              error={historyHook.error}
+              currentStaffId={staffId || ''}
+              pagination={historyHook.pagination}
+              onRowClick={(t) => {
+                setDrawerTicket(t)
+                setDrawerOpen(true)
+              }}
+              onVerifyClick={(t) => setVerifyTicket(t)}
+              onPageChange={setPage}
+              showAction={true}
+            />
+          ) : (
+            <>
+              <OrderTable
+                invoices={paginatedInvoices}
+                selectedInvoiceId={selectedInvoiceId}
+                setSelectedInvoiceId={setSelectedInvoiceId}
+                getStatusBadgeProps={getStatusBadgeProps}
+                handleApproveClick={handleApproveClick}
+                processing={processing}
+                isLockedByOther={isLockedByOther}
+              />
+              {(serverTotal > 0 || filteredInvoices.length > 0) && (
+                <OrderPagination
+                  page={page}
+                  totalPages={adjustedTotalPages}
+                  isLoading={isLoading}
+                  onPageChange={setPage}
+                />
+              )}
+            </>
           )}
         </div>
       </div>
 
       <InvoiceOrdersDrawer
-        isOpen={!!selectedInvoiceId}
+        isOpen={!!selectedInvoiceId && statusFilter !== InvoiceStatus.REFUNDED}
         onClose={() => setSelectedInvoiceId(null)}
         invoice={selectedInvoice}
+      />
+
+      <ReturnTicketDrawer
+        ticket={drawerTicket}
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        currentStaffId={staffId || ''}
+        onGoToVerify={(t) => {
+          setVerifyTicket(t)
+          setDrawerOpen(false)
+        }}
       />
       <ConfirmationModal
         isOpen={showConfirmModal}

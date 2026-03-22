@@ -1,28 +1,135 @@
-import { useState } from 'react'
-import { Button, Card } from '@/components'
-import ReturnDetails from '@/features/sales/components/returns/ReturnDetails'
+import { useState, useCallback, useRef } from 'react'
 import {
   IoSearchOutline,
   IoRefreshOutline,
+  IoTimerOutline,
+  IoCheckmarkDoneOutline,
+  IoCloseOutline,
   IoChevronBackOutline,
-  IoChevronForwardOutline,
-  IoChevronForward
+  IoLockClosedOutline
 } from 'react-icons/io5'
-
 import { PageHeader } from '@/features/sales/components/common'
+import ReturnTicketsTable from '@/features/sales/components/returns/ReturnTicketsTable'
+import ReturnTicketDrawer from '@/features/sales/components/returns/ReturnTicketDrawer'
+import ReturnVerifyView from '@/features/sales/components/returns/ReturnVerifyView'
+import { useReturnPageTickets, useReturnedOrders } from '@/features/sales/hooks/useReturnTickets'
+import { useAuthStore } from '@/store/auth.store'
+import type { AdminAccount } from '@/shared/types'
+import type { ReturnTicketData } from '@/shared/types/return-ticket.types'
+import { Button } from '@/shared/components/ui-core'
+
+type TabId = 'return' | 'returned'
+
+const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
+  {
+    id: 'return',
+    label: 'Return',
+    icon: <IoTimerOutline size={16} />
+  },
+  {
+    id: 'returned',
+    label: 'Returned',
+    icon: <IoCheckmarkDoneOutline size={16} />
+  }
+]
 
 export default function SaleStaffReturnsPage() {
-  const [selectedReturnId, setSelectedReturnId] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState<TabId>('return')
+  const [drawerTicket, setDrawerTicket] = useState<ReturnTicketData | null>(null)
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [verifyTicket, setVerifyTicket] = useState<ReturnTicketData | null>(null)
+  const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  if (selectedReturnId) {
-    return <ReturnDetails returnId={selectedReturnId} onBack={() => setSelectedReturnId(null)} />
+  // Get current staff's ID from auth store
+  const user = useAuthStore((s) => s.user) as AdminAccount | null
+  const currentStaffId = user?._id || ''
+
+  // Hooks for each tab — useReturnPageTickets needs currentStaffId to filter & sort
+  const returnHook = useReturnPageTickets(currentStaffId)
+  const returnedHook = useReturnedOrders()
+
+  const activeHook = activeTab === 'return' ? returnHook : returnedHook
+
+  // ── Drawer ────────────────────────────────────────────────────────────────
+  const openDrawer = useCallback((ticket: ReturnTicketData) => {
+    setDrawerTicket(ticket)
+    setDrawerOpen(true)
+  }, [])
+
+  const closeDrawer = useCallback(() => {
+    setDrawerOpen(false)
+    setTimeout(() => setDrawerTicket(null), 300)
+  }, [])
+
+  // ── Go to full-screen verify ───────────────────────────────────────────────
+  const openVerify = useCallback(
+    (ticket: ReturnTicketData) => {
+      closeDrawer()
+      setTimeout(() => setVerifyTicket(ticket), 320)
+    },
+    [closeDrawer]
+  )
+
+  // ── Search debounce ────────────────────────────────────────────────────────
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value
+    if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current)
+    searchDebounceRef.current = setTimeout(() => {
+      activeHook.setSearch(val)
+      activeHook.setCurrentPage(1)
+    }, 450)
   }
 
+  // ── Full-Screen: Verify View ───────────────────────────────────────────────
+  if (verifyTicket) {
+    return (
+      <div className="space-y-6 animate-in fade-in duration-500">
+        <div className="flex items-center gap-4">
+          <Button
+            onClick={() => setVerifyTicket(null)}
+            className="p-2.5 bg-white hover:bg-emerald-50 rounded-xl transition-all text-gray-500 hover:text-emerald-600 border border-gray-200 hover:border-emerald-200 shadow-sm"
+          >
+            <IoChevronBackOutline size={20} />
+          </Button>
+          <PageHeader
+            title="Return Verification"
+            breadcrumbs={[
+              { label: 'Dashboard', path: '/sale-staff/dashboard' },
+              { label: 'Orders', path: '/sale-staff/orders' },
+              { label: 'Returns', path: '/sale-staff/returns' },
+              { label: 'Verification' }
+            ]}
+            noMargin
+          />
+        </div>
+
+        {/* Verifying Status Banner */}
+        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-mint-50 border border-mint-100 w-fit text-mint-700 shadow-sm animate-in slide-in-from-left-4 duration-300">
+          <IoLockClosedOutline size={14} className="text-mint-600" />
+          <span className="text-xs font-bold font-heading">
+            You are currently verifying this return
+          </span>
+        </div>
+
+        <ReturnVerifyView
+          ticket={verifyTicket}
+          onActionSuccess={() => {
+            setVerifyTicket(null)
+            returnHook.refresh()
+            returnedHook.refresh()
+          }}
+          currentStaffId={currentStaffId}
+        />
+      </div>
+    )
+  }
+
+  // ── Main Page ──────────────────────────────────────────────────────────────
   return (
     <div className="space-y-8">
       <PageHeader
         title="Returns Management"
-        subtitle="Process customer returns and refunds."
+        subtitle="Manage customer return requests, verify tickets, and process refunds."
         breadcrumbs={[
           { label: 'Dashboard', path: '/sale-staff/dashboard' },
           { label: 'Orders', path: '/sale-staff/orders' },
@@ -30,170 +137,131 @@ export default function SaleStaffReturnsPage() {
         ]}
       />
 
-      <div className="space-y-6">
-        {}
-        <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
-          <div className="relative flex-1 max-w-md w-full">
-            <IoSearchOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
-            <input
-              type="text"
-              placeholder="Search Return ID, Order #..."
-              className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-mint-500/20 focus:border-mint-500 transition-all placeholder:text-gray-400"
-            />
-          </div>
-          <Button
-            variant="solid"
-            colorScheme="primary"
-            leftIcon={<IoRefreshOutline />}
-            className="rounded-xl font-semibold"
-          >
-            Process New Return
-          </Button>
+      {/* Tab + Search bar row */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+        {/* Tab pills */}
+        <div className="flex gap-1 p-1 bg-slate-100 rounded-2xl w-fit">
+          {TABS.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => {
+                setActiveTab(tab.id)
+                closeDrawer()
+                setVerifyTicket(null)
+              }}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all
+                ${
+                  activeTab === tab.id
+                    ? 'bg-white text-emerald-600 shadow-sm shadow-slate-200/80'
+                    : 'text-slate-500 hover:text-slate-700'
+                }`}
+            >
+              {tab.icon}
+              {tab.label}
+              {/* Count badge */}
+              {activeTab === tab.id && (
+                <span
+                  className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5
+                  bg-emerald-100 text-emerald-600 text-[10px] font-bold rounded-full"
+                >
+                  {activeHook.pagination.total}
+                </span>
+              )}
+            </button>
+          ))}
         </div>
 
-        <Card className="p-0 overflow-hidden border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 bg-white rounded-[32px]">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-white border-b border-neutral-100">
-                  <th className="pl-10 px-6 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest align-middle">
-                    Return ID
-                  </th>
-                  <th className="px-6 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest align-middle">
-                    Original Order
-                  </th>
-                  <th className="px-6 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest align-middle">
-                    Customer
-                  </th>
-                  <th className="px-6 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest align-middle">
-                    Reason
-                  </th>
-                  <th className="px-6 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center align-middle">
-                    Status
-                  </th>
-                  <th className="px-6 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest align-middle">
-                    Date
-                  </th>
-                  <th className="pr-10 px-6 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right align-middle">
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-neutral-50 bg-white">
-                <tr
-                  className="hover:bg-mint-50/20 cursor-pointer group transition-all"
-                  onClick={() => setSelectedReturnId('RET-8821')}
-                >
-                  <td className="pl-10 px-6 py-6 text-sm font-semibold text-slate-900 group-hover:text-mint-600 transition-colors align-middle">
-                    #RET-8821
-                  </td>
-                  <td className="px-6 py-6 text-sm font-medium text-blue-600/80 align-middle">
-                    #ORD-2023-098
-                  </td>
-                  <td className="px-6 py-6 align-middle">
-                    <div className="text-sm font-bold text-slate-700">Michael Scott</div>
-                    <div className="text-[11px] text-slate-400 font-medium">
-                      michael.s@example.com
-                    </div>
-                  </td>
-                  <td className="px-6 py-6 text-sm font-medium text-slate-500 align-middle">
-                    Defective Frame
-                  </td>
-                  <td className="px-6 py-6 align-middle">
-                    <div className="flex justify-center">
-                      <span className="px-4 py-1.5 rounded-xl text-[9px] font-bold uppercase tracking-widest bg-orange-50 text-orange-600 border border-orange-100 shadow-sm">
-                        Pending
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-6 align-middle">
-                    <div className="text-sm font-medium text-slate-600">Oct 23, 2023</div>
-                  </td>
-                  <td className="pr-10 px-6 py-6 text-right align-middle">
-                    <button
-                      className="text-slate-300 hover:text-mint-500 hover:bg-mint-50 transition-all p-2 rounded-xl"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setSelectedReturnId('RET-8821')
-                      }}
-                    >
-                      <IoChevronForward size={18} />
-                    </button>
-                  </td>
-                </tr>
-                <tr
-                  className="hover:bg-mint-50/20 cursor-pointer group transition-all"
-                  onClick={() => setSelectedReturnId('RET-8819')}
-                >
-                  <td className="pl-10 px-6 py-6 text-sm font-semibold text-slate-900 group-hover:text-mint-600 transition-colors align-middle">
-                    #RET-8819
-                  </td>
-                  <td className="px-6 py-6 text-sm font-medium text-blue-600/80 align-middle">
-                    #ORD-2023-012
-                  </td>
-                  <td className="px-6 py-6 align-middle">
-                    <div className="text-sm font-bold text-slate-700">Pam Beesly</div>
-                    <div className="text-[11px] text-slate-400 font-medium">pam.b@example.com</div>
-                  </td>
-                  <td className="px-6 py-6 text-sm font-medium text-slate-500 align-middle">
-                    Wrong Size
-                  </td>
-                  <td className="px-6 py-6 align-middle">
-                    <div className="flex justify-center">
-                      <span className="px-4 py-1.5 rounded-xl text-[9px] font-bold uppercase tracking-widest bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-sm">
-                        Approved
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-6 align-middle">
-                    <div className="text-sm font-medium text-slate-600">Oct 23, 2023</div>
-                  </td>
-                  <td className="pr-10 px-6 py-6 text-right align-middle">
-                    <button
-                      className="text-slate-300 hover:text-mint-500 hover:bg-mint-50 transition-all p-2 rounded-xl"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setSelectedReturnId('RET-8819')
-                      }}
-                    >
-                      <IoChevronForward size={18} />
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+        {/* Search + Refresh */}
+        <div className="flex items-center gap-2 flex-1 sm:justify-end">
+          <div className="relative max-w-xs w-full">
+            <IoSearchOutline
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              size={16}
+            />
+            <input
+              type="text"
+              placeholder="Search tickets…"
+              onChange={handleSearchChange}
+              className="w-full pl-9 pr-9 py-2.5 bg-white border border-slate-200 rounded-xl text-sm
+                focus:outline-none focus:ring-2 focus:ring-emerald-300/50 focus:border-emerald-400
+                transition-all placeholder:text-slate-400 text-slate-700"
+            />
+            {activeHook.search && (
+              <button
+                onClick={() => {
+                  activeHook.setSearch('')
+                  activeHook.setCurrentPage(1)
+                }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              >
+                <IoCloseOutline size={15} />
+              </button>
+            )}
           </div>
-          <div className="p-6 border-t border-slate-50 flex justify-between items-center text-sm text-slate-400 font-medium">
-            <span>Showing 1 to 2 of 15 returns</span>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                colorScheme="neutral"
-                size="sm"
-                className="px-2 border-slate-200 rounded-xl"
-              >
-                <IoChevronBackOutline />
-              </Button>
-              <Button
-                variant="solid"
-                colorScheme="primary"
-                size="sm"
-                className="min-w-[32px] px-2 font-bold rounded-xl bg-mint-500 text-white"
-              >
-                1
-              </Button>
-              <Button
-                variant="outline"
-                colorScheme="neutral"
-                size="sm"
-                className="px-2 border-slate-200 rounded-xl"
-              >
-                <IoChevronForwardOutline />
-              </Button>
-            </div>
-          </div>
-        </Card>
+          <button
+            onClick={activeHook.refresh}
+            disabled={activeHook.isLoading}
+            title="Refresh"
+            className="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl
+              hover:bg-emerald-50 hover:border-emerald-300 text-slate-400 hover:text-emerald-600
+              transition-all disabled:opacity-50"
+          >
+            <IoRefreshOutline size={17} className={activeHook.isLoading ? 'animate-spin' : ''} />
+          </button>
+        </div>
       </div>
+
+      {/* Tab description strip */}
+      {activeTab === 'return' && (
+        <div className="flex items-center gap-2 px-4 py-2.5 bg-amber-50 border border-amber-100 rounded-xl text-xs text-amber-700 font-medium">
+          <IoTimerOutline className="text-amber-500 shrink-0" size={15} />
+          Showing <strong>PENDING</strong> and <strong>IN-PROGRESS</strong> tickets. Click any row
+          to view details, or use the action button to start processing.
+        </div>
+      )}
+      {activeTab === 'returned' && (
+        <div className="flex items-center gap-2 px-4 py-2.5 bg-emerald-50 border border-emerald-100 rounded-xl text-xs text-emerald-700 font-medium">
+          <IoCheckmarkDoneOutline className="text-emerald-500 shrink-0" size={15} />
+          Showing completed tickets with statuses <strong>RETURNED</strong>,{' '}
+          <strong>APPROVED</strong>, and <strong>REJECTED</strong>. Read-only view.
+        </div>
+      )}
+
+      {/* Table */}
+      {activeTab === 'return' ? (
+        <ReturnTicketsTable
+          tickets={returnHook.tickets}
+          isLoading={returnHook.isLoading}
+          error={returnHook.error}
+          currentStaffId={currentStaffId}
+          pagination={returnHook.pagination}
+          onRowClick={openDrawer}
+          onVerifyClick={openVerify}
+          onPageChange={(p) => returnHook.setCurrentPage(p)}
+          showAction={true}
+        />
+      ) : (
+        <ReturnTicketsTable
+          tickets={returnedHook.tickets}
+          isLoading={returnedHook.isLoading}
+          error={returnedHook.error}
+          currentStaffId={currentStaffId}
+          pagination={returnedHook.pagination}
+          onRowClick={openDrawer}
+          onVerifyClick={openVerify}
+          onPageChange={(p) => returnedHook.setCurrentPage(p)}
+          showAction={false}
+        />
+      )}
+
+      {/* Drawer */}
+      <ReturnTicketDrawer
+        ticket={drawerTicket}
+        open={drawerOpen}
+        onClose={closeDrawer}
+        currentStaffId={currentStaffId}
+        onGoToVerify={openVerify}
+      />
     </div>
   )
 }

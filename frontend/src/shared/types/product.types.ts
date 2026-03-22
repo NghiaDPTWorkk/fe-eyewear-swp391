@@ -148,8 +148,6 @@ export interface ProductDetailApiResponse {
   data: ProductDetailData
 }
 
-
-
 export interface ProductInvoiceItemRequest {
   product: {
     product_id: string

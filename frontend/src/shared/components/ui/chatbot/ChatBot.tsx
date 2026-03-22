@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { MessageCircle, X, Send,  Bot, Loader2 } from 'lucide-react'
+import { MessageCircle, X, Send, Bot, Loader2 } from 'lucide-react'
 import { IconButton } from '@/shared/components/ui/icon-button'
 import { Input } from '@/shared/components/ui/input'
 import { useChatMessages } from '@/shared/hooks/chat/useChatMessages'

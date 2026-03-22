@@ -68,7 +68,6 @@ export default function SaleStaffOrderPage() {
   const [drawerOpen, setDrawerOpen] = useState(false)
 
   const returnHook = useReturnPageTickets(staffId || '')
-  // We'll reuse the same hook structure or add another for history
   const historyHook = useMyReturnHistory()
 
   useEffect(() => {
@@ -300,47 +299,6 @@ export default function SaleStaffOrderPage() {
   }
 
   // Early return for Verify View
-  if (verifyTicket) {
-    return (
-      <div className="space-y-6 animate-in fade-in duration-500">
-        <div className="flex items-center gap-4">
-          <Button
-            onClick={() => setVerifyTicket(null)}
-            className="p-2.5 bg-white hover:bg-emerald-50 rounded-xl transition-all text-gray-500 hover:text-emerald-600 border border-gray-200 hover:border-emerald-200 shadow-sm"
-          >
-            <IoChevronBackOutline size={20} />
-          </Button>
-          <PageHeader
-            title="Return Verification"
-            breadcrumbs={[
-              { label: 'Dashboard', path: '/sale-staff/dashboard' },
-              { label: 'Orders', path: '/sale-staff/orders' },
-              { label: 'Verification' }
-            ]}
-            noMargin
-          />
-        </div>
-
-        {/* Verifying Status Banner */}
-        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-mint-50 border border-mint-100 w-fit text-mint-700 shadow-sm animate-in slide-in-from-left-4 duration-300">
-          <IoLockClosedOutline size={14} className="text-mint-600" />
-          <span className="text-xs font-bold font-heading">
-            You are currently verifying this return
-          </span>
-        </div>
-
-        <ReturnVerifyView
-          ticket={verifyTicket}
-          onActionSuccess={() => {
-            setVerifyTicket(null)
-            returnHook.refresh()
-            refetch()
-          }}
-          currentStaffId={staffId || ''}
-        />
-      </div>
-    )
-  }
 
   const handleApproveClick = (invoiceId: string) => {
     if (isLockedByOther(invoiceId)) {
@@ -394,76 +352,116 @@ export default function SaleStaffOrderPage() {
           className="shrink-0 mt-1"
         />
       </div>
-      <div className="space-y-6">
-        <OrderMetrics
-          metrics={metrics}
-          orderTypeFilter={orderTypeFilter}
-          onOrderTypeChange={handleOrderTypeChange}
-        />
-        <StatusFilterBar
-          statusTabs={statusTabs}
-          statusFilter={statusFilter}
-          onStatusChange={handleStatusChange}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          onToggleFilter={() => setIsFilterOpen(!isFilterOpen)}
-          onReset={handleResetFilters}
-          orderTypeFilter={orderTypeFilter}
-        />
-        <div className="bg-white border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 rounded-3xl overflow-hidden min-h-[200px]">
-          {statusFilter === 'RETURNS' ? (
-            <ReturnTicketsTable
-              tickets={returnHook.tickets}
-              isLoading={returnHook.isLoading}
-              error={returnHook.error}
-              currentStaffId={staffId || ''}
-              pagination={returnHook.pagination}
-              onRowClick={(t) => {
-                setDrawerTicket(t)
-                setDrawerOpen(true)
-              }}
-              onVerifyClick={(t) => setVerifyTicket(t)}
-              onPageChange={setPage}
-              showAction={true}
+
+      {verifyTicket ? (
+        <div className="space-y-6 animate-in fade-in duration-500">
+          <div className="flex items-center gap-4">
+            <Button
+              onClick={() => setVerifyTicket(null)}
+              className="p-2.5 bg-white hover:bg-emerald-50 rounded-xl transition-all text-gray-500 hover:text-emerald-600 border border-gray-200 hover:border-emerald-200 shadow-sm"
+            >
+              <IoChevronBackOutline size={20} />
+            </Button>
+            <PageHeader
+              title="Return Verification"
+              breadcrumbs={[
+                { label: 'Dashboard', path: '/sale-staff/dashboard' },
+                { label: 'Orders', path: '/sale-staff/orders' },
+                { label: 'Verification' }
+              ]}
+              noMargin
             />
-          ) : statusFilter === 'REFUNDED_HISTORY' ? (
-            <ReturnTicketsTable
-              tickets={historyHook.tickets}
-              isLoading={historyHook.isLoading}
-              error={historyHook.error}
-              currentStaffId={staffId || ''}
-              pagination={historyHook.pagination}
-              onRowClick={(t) => {
-                setDrawerTicket(t)
-                setDrawerOpen(true)
-              }}
-              onVerifyClick={(t) => setVerifyTicket(t)}
-              onPageChange={setPage}
-              showAction={true}
-            />
-          ) : (
-            <>
-              <OrderTable
-                invoices={paginatedInvoices}
-                selectedInvoiceId={selectedInvoiceId}
-                setSelectedInvoiceId={setSelectedInvoiceId}
-                getStatusBadgeProps={getStatusBadgeProps}
-                handleApproveClick={handleApproveClick}
-                processing={processing}
-                isLockedByOther={isLockedByOther}
-              />
-              {(serverTotal > 0 || filteredInvoices.length > 0) && (
-                <OrderPagination
-                  page={page}
-                  totalPages={adjustedTotalPages}
-                  isLoading={isLoading}
-                  onPageChange={setPage}
-                />
-              )}
-            </>
-          )}
+          </div>
+
+          <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-mint-50 border border-mint-100 w-fit text-mint-700 shadow-sm animate-in slide-in-from-left-4 duration-300">
+            <IoLockClosedOutline size={14} className="text-mint-600" />
+            <span className="text-xs font-bold font-heading">
+              You are currently verifying this return
+            </span>
+          </div>
+
+          <ReturnVerifyView
+            ticket={verifyTicket}
+            onActionSuccess={() => {
+              setVerifyTicket(null)
+              returnHook.refresh()
+              refetch()
+            }}
+            currentStaffId={staffId || ''}
+          />
         </div>
-      </div>
+      ) : (
+        <div className="space-y-6">
+          <OrderMetrics
+            metrics={metrics}
+            orderTypeFilter={orderTypeFilter}
+            onOrderTypeChange={handleOrderTypeChange}
+          />
+          <StatusFilterBar
+            statusTabs={statusTabs}
+            statusFilter={statusFilter}
+            onStatusChange={handleStatusChange}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            onToggleFilter={() => setIsFilterOpen(!isFilterOpen)}
+            onReset={handleResetFilters}
+            orderTypeFilter={orderTypeFilter}
+          />
+          <div className="bg-white border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 rounded-3xl overflow-hidden min-h-[200px]">
+            {statusFilter === 'RETURNS' ? (
+              <ReturnTicketsTable
+                tickets={returnHook.tickets}
+                isLoading={returnHook.isLoading}
+                error={returnHook.error}
+                currentStaffId={staffId || ''}
+                pagination={returnHook.pagination}
+                onRowClick={(t) => {
+                  setDrawerTicket(t)
+                  setDrawerOpen(true)
+                }}
+                onVerifyClick={(t) => setVerifyTicket(t)}
+                onPageChange={setPage}
+                showAction={true}
+              />
+            ) : statusFilter === 'REFUNDED_HISTORY' ? (
+              <ReturnTicketsTable
+                tickets={historyHook.tickets}
+                isLoading={historyHook.isLoading}
+                error={historyHook.error}
+                currentStaffId={staffId || ''}
+                pagination={historyHook.pagination}
+                onRowClick={(t) => {
+                  setDrawerTicket(t)
+                  setDrawerOpen(true)
+                }}
+                onVerifyClick={(t) => setVerifyTicket(t)}
+                onPageChange={setPage}
+                showAction={true}
+              />
+            ) : (
+              <>
+                <OrderTable
+                  invoices={paginatedInvoices}
+                  selectedInvoiceId={selectedInvoiceId}
+                  setSelectedInvoiceId={setSelectedInvoiceId}
+                  getStatusBadgeProps={getStatusBadgeProps}
+                  handleApproveClick={handleApproveClick}
+                  processing={processing}
+                  isLockedByOther={isLockedByOther}
+                />
+                {(serverTotal > 0 || filteredInvoices.length > 0) && (
+                  <OrderPagination
+                    page={page}
+                    totalPages={adjustedTotalPages}
+                    isLoading={isLoading}
+                    onPageChange={setPage}
+                  />
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
       <InvoiceOrdersDrawer
         isOpen={!!selectedInvoiceId && statusFilter !== InvoiceStatus.REFUNDED}
@@ -481,6 +479,7 @@ export default function SaleStaffOrderPage() {
           setDrawerOpen(false)
         }}
       />
+
       <ConfirmationModal
         isOpen={showConfirmModal}
         onClose={() => {
@@ -605,7 +604,6 @@ export default function SaleStaffOrderPage() {
         isLoading={processing}
       />
 
-      {}
       <LockBlockedModal
         isOpen={showLockBlockedModal}
         invoiceId={lockedInvoiceId}

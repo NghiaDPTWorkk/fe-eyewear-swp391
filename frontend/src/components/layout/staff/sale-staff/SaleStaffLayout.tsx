@@ -1,12 +1,4 @@
-import {
-  IoGrid,
-  IoReceipt,
-  IoPeople,
-  IoFlask,
-  IoSettings,
-  IoHelpCircle,
-  IoReturnUpBack
-} from 'react-icons/io5'
+import { IoGrid, IoReceipt, IoPeople, IoFlask, IoSettings, IoHelpCircle } from 'react-icons/io5'
 import { useLocation } from 'react-router-dom'
 
 import { SidebarStaff, StaffLayout } from '@/components/layout/staff/staff-core'
@@ -28,16 +20,7 @@ export default function SaleStaffLayout() {
         icon={<IoReceipt />}
         label="Orders"
         to="/sale-staff/orders"
-        active={
-          location.pathname.startsWith('/sale-staff/orders') &&
-          !location.pathname.startsWith('/sale-staff/orders/returns')
-        }
-      />
-      <SidebarStaff.MenuItem
-        icon={<IoReturnUpBack />}
-        label="Returns"
-        to="/sale-staff/orders/returns"
-        active={location.pathname.startsWith('/sale-staff/orders/returns')}
+        active={location.pathname.startsWith('/sale-staff/orders')}
       />
 
       <SidebarStaff.MenuItem

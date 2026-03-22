@@ -338,21 +338,6 @@ export default function SaleStaffOrderPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between gap-4">
-        <PageHeader
-          title="Order Management"
-          breadcrumbs={[{ label: 'Dashboard', path: '/sale-staff/dashboard' }, { label: 'Orders' }]}
-          subtitle="Consolidated view of all sales orders, pre-orders, and returns."
-        />
-        <RealtimeStatusBar
-          isRefreshing={isRefreshing}
-          lastUpdatedLabel={getLastUpdatedLabel()}
-          lockedCount={lockedCount}
-          onRefresh={refresh}
-          className="shrink-0 mt-1"
-        />
-      </div>
-
       {verifyTicket ? (
         <div className="space-y-6 animate-in fade-in duration-500">
           <div className="flex items-center gap-4">
@@ -392,6 +377,23 @@ export default function SaleStaffOrderPage() {
         </div>
       ) : (
         <div className="space-y-6">
+          <div className="flex items-start justify-between gap-4">
+            <PageHeader
+              title="Order Management"
+              breadcrumbs={[
+                { label: 'Dashboard', path: '/sale-staff/dashboard' },
+                { label: 'Orders' }
+              ]}
+              subtitle="Consolidated view of all sales orders, pre-orders, and returns."
+            />
+            <RealtimeStatusBar
+              isRefreshing={isRefreshing}
+              lastUpdatedLabel={getLastUpdatedLabel()}
+              lockedCount={lockedCount}
+              onRefresh={refresh}
+              className="shrink-0 mt-1"
+            />
+          </div>
           <OrderMetrics
             metrics={metrics}
             orderTypeFilter={orderTypeFilter}

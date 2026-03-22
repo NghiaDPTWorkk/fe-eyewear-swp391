@@ -64,12 +64,14 @@ export function AddressCard({
           >
             <Edit2 size={16} />
           </button>
-          <button
-            onClick={onDelete}
-            className="p-2 text-gray-400 hover:text-danger-500 hover:bg-danger-50 rounded-lg transition-all"
-          >
-            <Trash2 size={16} />
-          </button>
+          {!isDefault && (
+            <button
+              onClick={onDelete}
+              className="p-2 text-gray-400 hover:text-danger-500 hover:bg-danger-50 rounded-lg transition-all"
+            >
+              <Trash2 size={16} />
+            </button>
+          )}
         </div>
 
         {!isDefault && (

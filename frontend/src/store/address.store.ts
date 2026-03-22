@@ -9,6 +9,7 @@ interface AddressState {
   fetchAddresses: () => Promise<void>
   addAddress: (address: Omit<Address, '_id'>) => Promise<void>
   updateAddress: (id: string, address: Omit<Address, '_id'>) => Promise<void>
+  deleteAddress: (id: string) => Promise<void>
   setDefaultAddress: (id: string, address: Address) => Promise<void>
   clearError: () => void
 }
@@ -72,6 +73,25 @@ export const useAddressStore = create<AddressState>((set) => ({
     } catch (error: any) {
       set({
         error: error.response?.data?.message || 'Failed to update address',
+        isLoading: false
+      })
+      throw error
+    }
+  },
+  deleteAddress: async (id) => {
+    set({ isLoading: true, error: null })
+    try {
+      await customerAddressService.deleteAddress(id)
+      const addresses = await customerAddressService.getAddresses()
+      const defaultAddr = addresses.find((a) => a.isDefault)
+      const others = addresses.filter((a) => !a.isDefault).reverse()
+      set({
+        addresses: defaultAddr ? [defaultAddr, ...others] : others,
+        isLoading: false
+      })
+    } catch (error: any) {
+      set({
+        error: error.response?.data?.message || 'Failed to delete address',
         isLoading: false
       })
       throw error

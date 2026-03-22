@@ -294,180 +294,184 @@ export default function SupportContent({
         onClose={() => setSelectedTicket(null)}
         accentColor={accentColor}
       />
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div className="lg:col-span-8 space-y-8">
-          <RiskGuidelines guidelines={guidelines} accentColor={accentColor} />
-          <ImportantContacts contacts={contacts} accentColor={accentColor} />
-        </div>
-        <div className="lg:col-span-4 space-y-8">
-          <Card className="p-8 border-none shadow-sm shadow-neutral-200/50 bg-white rounded-3xl">
-            <h2 className="text-xl font-semibold text-slate-900 mb-8 tracking-tight">
-              Report a Bug
-            </h2>
-            <form className="space-y-6" onSubmit={handleSubmit}>
-              <div className="space-y-2">
-                <label className="text-[10px] font-semibold text-slate-400 tracking-widest pl-1 uppercase">
-                  Bug Title *
-                </label>
-                <input
-                  type="text"
-                  placeholder="Brief description of the issue"
-                  value={formData.title}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
-                  className={`w-full px-5 py-3.5 bg-neutral-50 border border-neutral-100 rounded-2xl text-sm font-semibold text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-4 transition-all cursor-pointer ${accentColor === 'mint' ? 'focus:ring-mint-500/10 focus:border-mint-500' : 'focus:ring-primary-500/10 focus:border-primary-500'}`}
-                />
-              </div>
-
-              <PrioritySelect
-                value={formData.priorityLevel}
-                onChange={(val) => setFormData((prev) => ({ ...prev, priorityLevel: val }))}
-                accentColor={accentColor}
-              />
-
-              <div className="space-y-2">
-                <label className="text-[10px] font-semibold text-slate-400 tracking-widest pl-1 uppercase">
-                  Description *
-                </label>
-                <textarea
-                  rows={4}
-                  placeholder="Describe the bug in detail..."
-                  value={formData.description}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, description: e.target.value }))
-                  }
-                  className={`w-full px-5 py-3.5 bg-neutral-50 border border-neutral-100 rounded-2xl text-sm font-semibold text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-4 transition-all resize-none cursor-pointer ${accentColor === 'mint' ? 'focus:ring-mint-500/10 focus:border-mint-500' : 'focus:ring-primary-500/10 focus:border-primary-500'}`}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[10px] font-semibold text-slate-400 tracking-widest pl-1 uppercase">
-                  Screenshot
-                </label>
-                <div
-                  onClick={() => fileInputRef.current?.click()}
-                  className={`border-2 border-dashed border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 transition-all cursor-pointer group ${accentColor === 'mint' ? 'hover:border-mint-300 hover:bg-mint-50/20' : 'hover:border-primary-300 hover:bg-primary-50/20'}`}
-                >
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileUpload}
-                    className="hidden"
-                    accept="image/*"
-                  />
-                  {formData.imageUrl ? (
-                    <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-neutral-200">
-                      <img
-                        src={formData.imageUrl}
-                        alt="Bug description"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-slate-900/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <p className="text-white text-xs font-semibold">Change Image</p>
-                      </div>
-                    </div>
-                  ) : (
-                    <>
-                      <div
-                        className={`w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center transition-all ${accentColor === 'mint' ? 'group-hover:bg-mint-100 group-hover:text-mint-600' : 'group-hover:bg-primary-100 group-hover:text-primary-600'}`}
-                      >
-                        {isUploading ? (
-                          <div className="animate-spin rounded-full h-6 w-6 border-2 border-primary-500 border-t-transparent" />
-                        ) : (
-                          <IoCloudUploadOutline size={24} className="text-slate-400" />
-                        )}
-                      </div>
-                      <div className="text-center">
-                        <p
-                          className={`text-xs font-semibold text-slate-700 ${accentColor === 'mint' ? 'group-hover:text-mint-700' : 'group-hover:text-primary-700'}`}
-                        >
-                          {isUploading ? 'Uploading...' : 'Click to upload'}
-                        </p>
-                        <p className="text-[10px] text-slate-400 mt-1 font-semibold">
-                          PNG, JPG up to 5MB
-                        </p>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-
-              <Button
-                variant="solid"
-                type="submit"
-                isLoading={isSubmitting}
-                disabled={isUploading}
-                className={`w-full h-12 rounded-2xl font-semibold shadow-lg transition-all active:scale-95 text-sm tracking-wider text-white border-none ${buttonBgClass}`}
-              >
-                Submit Bug Report
-              </Button>
-            </form>
-
-            <div className="mt-12 space-y-6">
-              <h3 className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest pl-1">
-                Recent Reports
-              </h3>
-              <div className="space-y-4">
-                {isHistoryLoading ? (
-                  <div className="p-8 text-center bg-slate-50 rounded-2xl">
-                    <div className="animate-spin rounded-full h-8 w-8 border-4 border-primary-500 border-t-transparent mx-auto" />
-                  </div>
-                ) : historyList && historyList.length > 0 ? (
-                  historyList.slice(0, 4).map((report) => (
-                    <div
-                      key={report.id}
-                      onClick={() => setSelectedTicket(report)}
-                      className={`flex justify-between items-start p-5 bg-white border border-slate-100 rounded-[1.5rem] shadow-sm transition-all group hover:scale-[1.03] cursor-pointer ${accentColor === 'mint' ? 'hover:border-mint-200 hover:shadow-xl hover:shadow-mint-500/5' : 'hover:border-primary-200 hover:shadow-xl hover:shadow-primary-500/5'}`}
-                    >
-                      <div className="flex-1 pr-4 min-w-0">
-                        <h4
-                          className={`text-sm font-semibold text-slate-800 transition-colors truncate ${accentColor === 'mint' ? 'group-hover:text-mint-600' : 'group-hover:text-primary-600'}`}
-                        >
-                          {report.title}
-                        </h4>
-                        <div className="flex items-center gap-2 mt-1.5">
-                          <IoTimeOutline size={12} className="text-slate-400" />
-                          <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
-                            {report.createdAt.split(' ').pop()}
-                          </p>
-                        </div>
-                      </div>
-                      <span
-                        className={`px-3 py-1 rounded-xl text-[9px] font-semibold uppercase tracking-widest border shrink-0 ${statusClass(report.status)}`}
-                      >
-                        {report.status}
-                      </span>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center py-6 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
-                    <p className="text-xs text-slate-400 font-bold">No history available</p>
-                  </div>
-                )}
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  searchParams.set('tab', 'history')
-                  setSearchParams(searchParams)
-                }}
-                className={`w-full py-4 text-xs font-semibold flex items-center justify-center gap-2 transition-all rounded-2xl cursor-pointer active:scale-95 ${accentColor === 'mint' ? 'text-mint-600 hover:text-mint-700 hover:bg-mint-50' : 'text-primary-600 hover:text-primary-700 hover:bg-primary-50'}`}
-              >
-                View Full History <IoChevronForwardOutline />
-              </button>
-            </div>
-          </Card>
-        </div>
-        <div className="p-6 bg-rose-50 border border-rose-100 rounded-[24px] flex gap-5 animate-in fade-in slide-in-from-bottom-4 duration-500 col-span-full shadow-sm shadow-rose-100/30">
+      <div className="flex flex-col gap-8">
+        {}
+        <div className="p-6 bg-rose-50 border border-rose-100 rounded-[2rem] flex gap-5 animate-in fade-in slide-in-from-top-4 duration-500 shadow-sm shadow-rose-100/30">
           <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm border border-rose-100/50">
             <IoAlertCircleOutline className="text-rose-500" size={26} />
           </div>
-          <div>
+          <div className="flex-1 min-w-0">
             <h4 className="text-sm font-semibold text-rose-900 tracking-tight">
               Critical Reminder
             </h4>
             <p className="text-sm text-rose-800/80 mt-1 leading-relaxed font-semibold">
               {criticalReminder}
             </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-8 space-y-8">
+            <RiskGuidelines guidelines={guidelines} accentColor={accentColor} />
+            <ImportantContacts contacts={contacts} accentColor={accentColor} />
+          </div>
+          <div className="lg:col-span-4 space-y-8">
+            <Card className="p-8 border-none shadow-sm shadow-neutral-200/50 bg-white rounded-3xl">
+              <h2 className="text-xl font-semibold text-slate-900 mb-8 tracking-tight">
+                Report a Bug
+              </h2>
+              <form className="space-y-6" onSubmit={handleSubmit}>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-semibold text-slate-400 tracking-widest pl-1 uppercase">
+                    Bug Title *
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Brief description of the issue"
+                    value={formData.title}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
+                    className={`w-full px-5 py-3.5 bg-neutral-50 border border-neutral-100 rounded-2xl text-sm font-semibold text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-4 transition-all cursor-pointer ${accentColor === 'mint' ? 'focus:ring-mint-500/10 focus:border-mint-500' : 'focus:ring-primary-500/10 focus:border-primary-500'}`}
+                  />
+                </div>
+
+                <PrioritySelect
+                  value={formData.priorityLevel}
+                  onChange={(val) => setFormData((prev) => ({ ...prev, priorityLevel: val }))}
+                  accentColor={accentColor}
+                />
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-semibold text-slate-400 tracking-widest pl-1 uppercase">
+                    Description *
+                  </label>
+                  <textarea
+                    rows={4}
+                    placeholder="Describe the bug in detail..."
+                    value={formData.description}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, description: e.target.value }))
+                    }
+                    className={`w-full px-5 py-3.5 bg-neutral-50 border border-neutral-100 rounded-2xl text-sm font-semibold text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-4 transition-all resize-none cursor-pointer ${accentColor === 'mint' ? 'focus:ring-mint-500/10 focus:border-mint-500' : 'focus:ring-primary-500/10 focus:border-primary-500'}`}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-semibold text-slate-400 tracking-widest pl-1 uppercase">
+                    Screenshot
+                  </label>
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    className={`border-2 border-dashed border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 transition-all cursor-pointer group ${accentColor === 'mint' ? 'hover:border-mint-300 hover:bg-mint-50/20' : 'hover:border-primary-300 hover:bg-primary-50/20'}`}
+                  >
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileUpload}
+                      className="hidden"
+                      accept="image/*"
+                    />
+                    {formData.imageUrl ? (
+                      <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-neutral-200">
+                        <img
+                          src={formData.imageUrl}
+                          alt="Bug description"
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-slate-900/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                          <p className="text-white text-xs font-semibold">Change Image</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div
+                          className={`w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center transition-all ${accentColor === 'mint' ? 'group-hover:bg-mint-100 group-hover:text-mint-600' : 'group-hover:bg-primary-100 group-hover:text-primary-600'}`}
+                        >
+                          {isUploading ? (
+                            <div className="animate-spin rounded-full h-6 w-6 border-2 border-primary-500 border-t-transparent" />
+                          ) : (
+                            <IoCloudUploadOutline size={24} className="text-slate-400" />
+                          )}
+                        </div>
+                        <div className="text-center">
+                          <p
+                            className={`text-xs font-semibold text-slate-700 ${accentColor === 'mint' ? 'group-hover:text-mint-700' : 'group-hover:text-primary-700'}`}
+                          >
+                            {isUploading ? 'Uploading...' : 'Click to upload'}
+                          </p>
+                          <p className="text-[10px] text-slate-400 mt-1 font-semibold">
+                            PNG, JPG up to 5MB
+                          </p>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                <Button
+                  variant="solid"
+                  type="submit"
+                  isLoading={isSubmitting}
+                  disabled={isUploading}
+                  className={`w-full h-12 rounded-2xl font-semibold shadow-lg transition-all active:scale-95 text-sm tracking-wider text-white border-none ${buttonBgClass}`}
+                >
+                  Submit Bug Report
+                </Button>
+              </form>
+
+              <div className="mt-12 space-y-6">
+                <h3 className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest pl-1">
+                  Recent Reports
+                </h3>
+                <div className="space-y-4">
+                  {isHistoryLoading ? (
+                    <div className="p-8 text-center bg-slate-50 rounded-2xl">
+                      <div className="animate-spin rounded-full h-8 w-8 border-4 border-primary-500 border-t-transparent mx-auto" />
+                    </div>
+                  ) : historyList && historyList.length > 0 ? (
+                    historyList.slice(0, 4).map((report) => (
+                      <div
+                        key={report.id}
+                        onClick={() => setSelectedTicket(report)}
+                        className={`flex justify-between items-start p-5 bg-white border border-slate-100 rounded-[1.5rem] shadow-sm transition-all group hover:scale-[1.03] cursor-pointer ${accentColor === 'mint' ? 'hover:border-mint-200 hover:shadow-xl hover:shadow-mint-500/5' : 'hover:border-primary-200 hover:shadow-xl hover:shadow-primary-500/5'}`}
+                      >
+                        <div className="flex-1 pr-4 min-w-0">
+                          <h4
+                            className={`text-sm font-semibold text-slate-800 transition-colors truncate ${accentColor === 'mint' ? 'group-hover:text-mint-600' : 'group-hover:text-primary-600'}`}
+                          >
+                            {report.title}
+                          </h4>
+                          <div className="flex items-center gap-2 mt-1.5">
+                            <IoTimeOutline size={12} className="text-slate-400" />
+                            <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
+                              {report.createdAt.split(' ').pop()}
+                            </p>
+                          </div>
+                        </div>
+                        <span
+                          className={`px-3 py-1 rounded-xl text-[9px] font-semibold uppercase tracking-widest border shrink-0 ${statusClass(report.status)}`}
+                        >
+                          {report.status}
+                        </span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-6 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
+                      <p className="text-xs text-slate-400 font-bold">No history available</p>
+                    </div>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    searchParams.set('tab', 'history')
+                    setSearchParams(searchParams)
+                  }}
+                  className={`w-full py-4 text-xs font-semibold flex items-center justify-center gap-2 transition-all rounded-2xl cursor-pointer active:scale-95 ${accentColor === 'mint' ? 'text-mint-600 hover:text-mint-700 hover:bg-mint-50' : 'text-primary-600 hover:text-primary-700 hover:bg-primary-50'}`}
+                >
+                  View Full History <IoChevronForwardOutline />
+                </button>
+              </div>
+            </Card>
           </div>
         </div>
       </div>

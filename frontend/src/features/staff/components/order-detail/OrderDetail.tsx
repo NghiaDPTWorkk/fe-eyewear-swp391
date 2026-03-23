@@ -57,7 +57,6 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
     )
   }
 
-  // Transform data
   const order = {
     id: realOrder.orderCode || realOrder._id,
     date: realOrder.createdAt
@@ -233,7 +232,6 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-stretch">
         <div className="contents">
-          {/* Main Card */}
           <Card className="xl:col-span-8 order-1 h-full flex flex-col p-0 overflow-hidden border border-slate-100/50 shadow-xl shadow-slate-200/40 bg-white rounded-[32px]">
             <div className="px-8 py-6 border-b border-slate-50 bg-slate-50/20">
               <h2 className="text-lg font-semibold text-slate-800 tracking-tight">
@@ -370,7 +368,6 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
             </div>
           </Card>
 
-          {/* Activity Timeline */}
           <Card className="xl:col-span-8 order-3 h-full flex flex-col p-6 border border-slate-100/50 shadow-xl shadow-slate-200/40 bg-white rounded-[32px]">
             <h2 className="text-lg font-semibold text-slate-800 tracking-tight mb-8">
               Activity Flow
@@ -396,7 +393,6 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
             </div>
           </Card>
 
-          {/* Transactions */}
           <Card className="xl:col-span-8 order-6 h-full flex flex-col p-0 overflow-hidden border border-slate-100/50 shadow-xl shadow-slate-200/40 bg-white rounded-[32px]">
             <div className="px-8 py-6 border-b border-slate-50 flex items-center gap-3">
               <div className="p-2 bg-slate-50 rounded-xl text-slate-500">
@@ -437,9 +433,7 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
           </Card>
         </div>
 
-        {/* Sidebar */}
         <div className="contents">
-          {/* Customer Profile */}
           <Card className="xl:col-span-4 order-2 h-full flex flex-col p-6 border border-slate-100/50 shadow-xl shadow-slate-200/40 bg-white rounded-[32px] overflow-hidden relative group">
             <div className="absolute -right-4 -top-4 w-32 h-32 rounded-full opacity-50 bg-mint-50 group-hover:scale-110 transition-transform duration-500" />
             <h2 className="text-lg font-semibold text-slate-800 tracking-tight mb-6 relative z-10">
@@ -477,7 +471,6 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
             </div>
           </Card>
 
-          {/* Delivery Section */}
           <Card className="xl:col-span-4 order-4 h-full flex flex-col p-6 border border-slate-100/50 shadow-xl shadow-slate-200/40 bg-white rounded-[32px]">
             <h2 className="text-lg font-semibold text-slate-800 tracking-tight mb-6">
               Order Detail

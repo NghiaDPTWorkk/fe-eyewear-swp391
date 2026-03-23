@@ -3,6 +3,7 @@ import { IoPersonCircleOutline, IoCalendarOutline, IoTimeOutline } from 'react-i
 import { Button } from '@/shared/components/ui-core'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import type { EnrichedInvoice } from '@/features/manager/hooks'
+import { toTitleCase } from '@/shared/utils'
 
 interface ManagerInvoiceTableProps {
   invoices: EnrichedInvoice[]
@@ -97,7 +98,7 @@ export const ManagerInvoiceTable: React.FC<ManagerInvoiceTableProps> = ({
                 </td>
                 <td className="px-6 py-6">
                   <span
-                    className={`inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border font-primary ${
+                    className={`inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-bold tracking-wider border font-primary ${
                       inv.status === InvoiceStatus.COMPLETED
                         ? 'bg-mint-50 text-mint-600 border-mint-100'
                         : inv.status === InvoiceStatus.PENDING ||
@@ -109,7 +110,7 @@ export const ManagerInvoiceTable: React.FC<ManagerInvoiceTableProps> = ({
                             : 'bg-amber-50 text-amber-600 border-amber-100'
                     }`}
                   >
-                    {inv.status}
+                    {toTitleCase(inv.status)}
                   </span>
                 </td>
                 <td className="px-6 py-6 font-primary">

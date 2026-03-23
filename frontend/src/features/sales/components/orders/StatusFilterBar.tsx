@@ -53,7 +53,7 @@ export const StatusFilterBar: React.FC<StatusFilterBarProps> = ({
                 key={tab.value}
                 onClick={() => onStatusChange(tab.value)}
                 className={cn(
-                  'px-4 py-2 rounded-xl text-xs font-bold tracking-wider transition-all whitespace-nowrap outline-none',
+                  'px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap outline-none',
                   isActive
                     ? 'bg-white text-mint-600 shadow-sm border border-neutral-100'
                     : 'text-neutral-500 hover:text-neutral-700'

@@ -13,10 +13,10 @@ export function useDeleteVoucher() {
       httpClient.delete<VoucherMutateResponse>(ENDPOINTS.MANAGER.VOUCHER_DELETE(id)),
     onSuccess: (res) => {
       if (res.success) {
-        toast.success(res.message || 'Voucher deleted')
+        toast.success('Voucher deleted successfully')
         qc.invalidateQueries({ queryKey: [QK] })
       } else {
-        toast.error(res.message || 'Failed to delete voucher')
+        toast.error('Failed to delete voucher')
       }
     },
     onError: (err) => {

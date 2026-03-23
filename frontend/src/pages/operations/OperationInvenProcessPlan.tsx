@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { toast } from 'react-hot-toast'
 import { Container } from '@/shared/components/ui'
 import {
   IoArrowBack,
@@ -18,6 +20,7 @@ import { useQuery } from '@tanstack/react-query'
 import { productService } from '@/shared/services/products/productService'
 import { BreadcrumbPath, Button } from '@/components'
 import { cn } from '@/shared/utils'
+import ConfirmationModal from '@/shared/components/ui/ConfirmationModal'
 
 // ─── Helpers ──────────────────────────────────────────────────────
 function formatDate(iso: string) {
@@ -59,6 +62,7 @@ export default function OperationInvenProcessPlan() {
   const importProduct = useImportProduct()
 
   const detail = data?.data
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false)
 
   // Fetch product image based on SKU
   const { data: productSearchData, isLoading: isProductLoading } = useQuery({
@@ -69,19 +73,32 @@ export default function OperationInvenProcessPlan() {
 
   const variantInfo = productSearchData?.data?.variant
 
-  const handleConfirmDone = async () => {
+  const handleConfirmDone = () => {
+    setIsConfirmModalOpen(true)
+  }
+
+  const confirmFinish = () => {
     if (!receiptId || !detail) return
-    if (
-      window.confirm(
-        'Are you sure you want to mark this batch as DONE? This action will update the inventory status.'
-      )
-    ) {
-      await importProduct.mutateAsync({
+    importProduct.mutate(
+      {
         sku: detail.sku,
         quantity: detail.targetQuantity,
         preOrderImportId: receiptId
-      })
-    }
+      },
+      {
+        onSuccess: () => {
+          setIsConfirmModalOpen(false)
+          toast.success('Inventory plan status updated to DONE successfully')
+          setTimeout(() => {
+            navigate('/operation-staff/inventory-receiving')
+          }, 1500)
+        },
+        onError: (error: any) => {
+          setIsConfirmModalOpen(false)
+          toast.error(error.response?.data?.message || 'Failed to update inventory status')
+        }
+      }
+    )
   }
 
   if (isError) {
@@ -316,6 +333,17 @@ export default function OperationInvenProcessPlan() {
           </div>
         </div>
       )}
+      <ConfirmationModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={confirmFinish}
+        title="Confirm All Received"
+        message="Are you sure you want to mark this batch as DONE? This action will update the inventory status."
+        confirmText="Yes, Complete Plan"
+        cancelText="Cancel"
+        isLoading={importProduct.isPending}
+        type="info"
+      />
     </Container>
   )
 }

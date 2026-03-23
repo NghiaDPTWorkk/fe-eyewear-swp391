@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
-import { Newsletter, Footer } from '@/components/layout/customer/homepage/components'
+import { Footer } from '@/components/layout/customer/homepage/components'
 import { Container, Button } from '@/shared/components/ui'
 import { CartSummary, CartItem as CartItemComponent } from '@/components/layout/customer/cart'
 import { ArrowLeft } from 'lucide-react'
@@ -111,7 +111,6 @@ export const CheckoutPage = () => {
         </Container>
       </main>
 
-      <Newsletter />
       <Footer />
     </div>
   )

@@ -68,31 +68,33 @@ export default function VirtualTryOnModal({
   if (!isOpen) return null
 
   return (
-    <>
-      {step === 'CONSENT' && <TryOnConsentStep onAgree={handleAgree} onDisagree={handleClose} />}
-      {step === 'LOADING' && (
-        <TryOnLoadingStep
-          onReady={handleReady}
-          onError={handleLoadError}
-          initModel={faceLandmarker.initModel}
-        />
-      )}
-      {step === 'TRYON' && stream && (
-        <TryOnWebcamView
-          onClose={handleClose}
-          stream={stream}
-          productName={productName}
-          productImage={productImage}
-          productPrice={productPrice}
-          onAddToCart={onAddToCart}
-          onAddToWishlist={onAddToWishlist}
-          isFavorite={isFavorite}
-          startDetection={faceLandmarker.startDetection}
-          stopDetection={faceLandmarker.stopDetection}
-          landmarksRef={faceLandmarker.landmarksRef}
-          transformationMatricesRef={faceLandmarker.transformationMatricesRef}
-        />
-      )}
-    </>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-md p-4 transition-all duration-500">
+      <div className="w-full h-full flex items-center justify-center animate-fade-in-up">
+        {step === 'CONSENT' && <TryOnConsentStep onAgree={handleAgree} onDisagree={handleClose} />}
+        {step === 'LOADING' && (
+          <TryOnLoadingStep
+            onReady={handleReady}
+            onError={handleLoadError}
+            initModel={faceLandmarker.initModel}
+          />
+        )}
+        {step === 'TRYON' && stream && (
+          <TryOnWebcamView
+            onClose={handleClose}
+            stream={stream}
+            productName={productName}
+            productImage={productImage}
+            productPrice={productPrice}
+            startDetection={faceLandmarker.startDetection}
+            stopDetection={faceLandmarker.stopDetection}
+            landmarksRef={faceLandmarker.landmarksRef}
+            transformationMatricesRef={faceLandmarker.transformationMatricesRef}
+            onAddToCart={onAddToCart}
+            onAddToWishlist={onAddToWishlist}
+            isFavorite={isFavorite}
+          />
+        )}
+      </div>
+    </div>
   )
 }

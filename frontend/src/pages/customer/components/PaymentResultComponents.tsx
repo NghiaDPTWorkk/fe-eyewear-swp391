@@ -195,12 +195,18 @@ export const OrderInvoiceDetails = ({ invoiceData }: OrderInvoiceDetailsProps) =
       ) : null}
       <div className="flex justify-between text-mint-800/70 font-medium">
         <span>Shipping Fee</span>
-        <span className="text-success-600 font-bold">Free</span>
+        {(invoiceData?.invoice.feeShip || 0) > 0 ? (
+          <VNDPrice amount={invoiceData?.invoice.feeShip || 0} />
+        ) : (
+          <span className="text-success-600 font-bold">Free</span>
+        )}
       </div>
       <div className="flex justify-between text-2xl font-black text-mint-1200 pt-4">
         <span>Total</span>
         <div className="text-primary-600 tracking-tight">
-          <VNDPrice amount={invoiceData?.invoice.totalPrice || 0} />
+          <VNDPrice
+            amount={(invoiceData?.invoice.totalPrice || 0) + (invoiceData?.invoice.feeShip || 0)}
+          />
         </div>
       </div>
     </div>
@@ -258,7 +264,6 @@ export const PaymentFailureReasons = () => (
 
 export const PaymentFooter = () => (
   <div className="text-center space-y-3 pt-4 pb-8">
-    <p className="text-mint-800/60 font-medium">You will receive a confirmation email shortly.</p>
     <p className="text-sm">
       If you have any questions, please contact{' '}
       <Link to="/support" className="text-primary-600 font-bold hover:underline">

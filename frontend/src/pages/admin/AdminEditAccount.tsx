@@ -27,11 +27,18 @@ export interface CreateAdminAccountFormValues {
 
 export const adminAccountValidationSchema = (isEdit: boolean) =>
   Yup.object({
-    name: Yup.string().trim().min(1).max(255).required('Name is required'),
+    name: Yup.string()
+      .trim()
+      .min(1)
+      .max(255)
+      .required('Name is required')
+      .matches(/^[a-zA-ZÀ-Ỹà-ỹ\s]+$/, 'Name cannot contain special characters'),
     citizenId: Yup.string()
-      .matches(CITIZEN_ID_REGEX, 'Citizen ID must be exactly 12 digits')
+      .matches(/^\d+$/, 'Citizen ID must contain numbers only')
+      .length(12, 'Citizen ID must be exactly 12 digits')
       .required('Citizen ID is required'),
     phone: Yup.string()
+      .matches(/^[0-9]+$/, 'Phone must contain numbers only')
       .matches(VN_PHONE_REGEX, 'Invalid Vietnam phone number')
       .required('Phone is required'),
     email: Yup.string().email('Invalid email').required('Email is required'),
@@ -55,6 +62,19 @@ interface AdminEditAccountProps {
     helpers: FormikHelpers<CreateAdminAccountFormValues>
   ) => Promise<void>
   isSubmitting: boolean
+}
+
+const blockNonDigits = (e: React.KeyboardEvent) => {
+  if (
+    !/[0-9]/.test(e.key) &&
+    e.key !== 'Backspace' &&
+    e.key !== 'Tab' &&
+    e.key !== 'ArrowLeft' &&
+    e.key !== 'ArrowRight' &&
+    e.key !== 'Delete'
+  ) {
+    e.preventDefault()
+  }
 }
 
 const initialValues: CreateAdminAccountFormValues = {
@@ -105,7 +125,7 @@ export function AdminEditAccount({
 
   return ReactDOM.createPortal(
     <>
-      {/* Background Overlay - TOP LEVEL OVERLAY */}
+      {/* Background Overlay */}
       <div
         onClick={onClose}
         style={{
@@ -114,29 +134,32 @@ export function AdminEditAccount({
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.6)',
-          backdropFilter: 'blur(4px)',
+          backgroundColor: 'rgba(0,0,0,0.4)',
+          backdropFilter: 'blur(8px)',
           zIndex: 999998
         }}
         className="animate-in fade-in duration-300"
       />
 
-      {/* Right Drawer Container - TOP LEVEL DRAWER */}
+      {/* Centered Modal Container */}
       <div
         style={{
           position: 'fixed',
-          top: 0,
-          right: 0,
-          height: '100vh',
-          width: '100%',
-          maxWidth: '38rem',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          maxHeight: '90vh',
+          width: '95%',
+          maxWidth: '640px',
           backgroundColor: 'white',
-          boxShadow: '-10px 0 30px rgba(0,0,0,0.2)',
+          boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
           zIndex: 999999,
           display: 'flex',
-          flexDirection: 'column'
+          flexDirection: 'column',
+          borderRadius: '32px',
+          overflow: 'hidden'
         }}
-        className="animate-in slide-in-from-right duration-500"
+        className="animate-in zoom-in-95 fade-in duration-300"
       >
         <div className="p-6 border-b border-neutral-100 flex items-center justify-between bg-white sticky top-0 z-20">
           <div className="space-y-1">
@@ -201,9 +224,8 @@ export function AdminEditAccount({
                           <input
                             name="phone"
                             value={values.phone}
-                            onChange={(e) =>
-                              setFieldValue('phone', e.target.value.replace(/[^\d+]/g, ''))
-                            }
+                            onKeyDown={blockNonDigits}
+                            onChange={handleChange}
                             onBlur={handleBlur}
                             className={`w-full px-4 py-3.5 bg-neutral-50 border rounded-2xl text-sm font-semibold transition-all focus:outline-none focus:ring-4 focus:ring-mint-500/10 ${touched.phone && errors.phone ? 'border-red-500' : 'border-neutral-100 focus:border-mint-500'}`}
                             placeholder="09xxx..."
@@ -222,12 +244,8 @@ export function AdminEditAccount({
                             <input
                               name="citizenId"
                               value={values.citizenId}
-                              onChange={(e) =>
-                                setFieldValue(
-                                  'citizenId',
-                                  e.target.value.replace(/\D/g, '').slice(0, 12)
-                                )
-                              }
+                              onKeyDown={blockNonDigits}
+                              onChange={handleChange}
                               onBlur={handleBlur}
                               className={`w-full px-4 py-3.5 bg-neutral-50 border rounded-2xl text-sm font-semibold transition-all focus:outline-none focus:ring-4 focus:ring-mint-500/10 ${touched.citizenId && errors.citizenId ? 'border-red-500' : 'border-neutral-100 focus:border-mint-500'}`}
                               placeholder="12-digit number"

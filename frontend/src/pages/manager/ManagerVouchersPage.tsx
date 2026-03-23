@@ -51,7 +51,9 @@ export default function ManagerVouchersPage() {
   const { data, isLoading, isFetching, refetch } = useManagerVouchers(
     page,
     LIMIT,
-    statusFilter === 'all' ? undefined : statusFilter
+    statusFilter === 'all' ? undefined : statusFilter,
+    undefined,
+    typeFilter === 'all' ? undefined : typeFilter
   )
   const { stats, isLoading: isStatsLoading } = useVoucherStats()
 
@@ -297,8 +299,12 @@ export default function ManagerVouchersPage() {
                       }
                       size={16}
                     />
-                    <span className="capitalize">
-                      {typeFilter === 'all' ? 'All Types' : typeFilter.toLowerCase()}
+                    <span className="capitalize font-bold">
+                      {typeFilter === 'all'
+                        ? 'All Types'
+                        : typeFilter === 'PERCENTAGE'
+                          ? 'Percentage'
+                          : 'Fixed Amount'}
                     </span>
                   </div>
                   <IoChevronBackOutline

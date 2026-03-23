@@ -11,6 +11,11 @@ const StaffSettingsPage = lazy(() => import('@/pages/staff/StaffSettingsPage'))
 const StaffSupportPage = lazy(() => import('@/pages/staff/StaffSupportPage'))
 const StaffProfilePage = lazy(() => import('@/pages/staff/StaffProfilePage'))
 const AdminEditUser = lazy(() => import('@/pages/admin/AdminEditUser'))
+const AdminRequestUpdateProfilePage = lazy(
+  () => import('@/pages/admin/AdminRequestUpdateProfilePage')
+)
+const AdminRequestStaffDetail = lazy(() => import('@/pages/admin/AdminRequestStaffDetail'))
+const AdminSystemConfigPage = lazy(() => import('@/pages/admin/AdminSystemConfigPage'))
 
 export const adminRoutes = [
   {
@@ -80,6 +85,30 @@ export const adminRoutes = [
         element: (
           <LazyPage>
             <StaffProfilePage dashboardPath="/admin/dashboard" settingsPath="/admin/settings" />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'request-update-profile',
+        element: (
+          <LazyPage>
+            <AdminRequestUpdateProfilePage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'request-update-profile/:id',
+        element: (
+          <LazyPage>
+            <AdminRequestStaffDetail />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'config',
+        element: (
+          <LazyPage>
+            <AdminSystemConfigPage />
           </LazyPage>
         )
       }

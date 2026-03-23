@@ -14,6 +14,7 @@ const AdminEditUser = lazy(() => import('@/pages/admin/AdminEditUser'))
 const AdminRequestUpdateProfilePage = lazy(
   () => import('@/pages/admin/AdminRequestUpdateProfilePage')
 )
+const AdminRequestStaffDetail = lazy(() => import('@/pages/admin/AdminRequestStaffDetail'))
 
 export const adminRoutes = [
   {
@@ -91,6 +92,14 @@ export const adminRoutes = [
         element: (
           <LazyPage>
             <AdminRequestUpdateProfilePage />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'request-update-profile/:id',
+        element: (
+          <LazyPage>
+            <AdminRequestStaffDetail />
           </LazyPage>
         )
       }

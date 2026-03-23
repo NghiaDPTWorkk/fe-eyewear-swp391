@@ -78,6 +78,12 @@ export default function AdminLayout() {
           to="/admin/request-update-profile"
           active={location.pathname.startsWith('/admin/request-update-profile')}
         />
+        <SidebarStaff.MenuItem
+          icon={<IoShieldCheckmarkOutline />}
+          label="System Config"
+          to="/admin/config"
+          active={location.pathname.startsWith('/admin/config')}
+        />
       </SidebarStaff.MenuSection>
 
       <SidebarStaff.MenuSection label="SYSTEM & UTILS">

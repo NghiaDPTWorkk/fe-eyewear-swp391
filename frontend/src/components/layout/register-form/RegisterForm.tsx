@@ -7,6 +7,8 @@ import { useRegister } from '@/features/auth/hooks/useRegister'
 import { authService } from '@/features/auth/services/auth.service'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
 
 interface RegisterFormProps {
   onSubmit?: (data: RegisterRequest) => void
@@ -16,12 +18,21 @@ interface RegisterFormProps {
 export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
   const navigate = useNavigate()
   const registerMutation = useRegister()
-  const [formData, setFormData] = useState<RegisterRequest>({
-    name: '',
-    email: '',
-    password: '',
-    phone: '',
-    gender: Gender.MALE
+
+  const validationSchema = Yup.object().shape({
+    name: Yup.string()
+      .required('Full Name is required')
+      .min(2, 'Name must be at least 2 characters')
+      .matches(/^[a-zA-ZÀ-Ỹà-ỹ\s]+$/, 'Name cannot contain special characters'),
+    email: Yup.string().required('Email is required').email('Invalid email format'),
+    phone: Yup.string()
+      .required('Phone number is required')
+      .matches(/^[0-9]+$/, 'Phone must contain numbers only')
+      .matches(/^(0|84)\d{8,9}$/, 'Invalid phone number format (9-10 digits)'),
+    password: Yup.string()
+      .required('Password is required')
+      .min(8, 'Password must be at least 8 characters'),
+    gender: Yup.string().required('Gender is required')
   })
 
   // States for merge flow
@@ -29,29 +40,32 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
   const [otpArr, setOtpArr] = useState(['', '', '', ''])
   const otpRefs = useRef<(HTMLInputElement | null)[]>([])
   const [isMerging, setIsMerging] = useState(false)
-
   const [showPassword, setShowPassword] = useState(false)
 
-  const isValidEmail = formData.email.includes('@') && formData.email.includes('.')
-  const isValidPhone = /^[0-9]{10,11}$/.test(formData.phone)
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-
-    // Validate required fields
-    if (!formData.name || !formData.email || !formData.password || !formData.phone) {
-      return
+  const blockNonDigits = (e: React.KeyboardEvent) => {
+    if (
+      !/[0-9]/.test(e.key) &&
+      e.key !== 'Backspace' &&
+      e.key !== 'Tab' &&
+      e.key !== 'ArrowLeft' &&
+      e.key !== 'ArrowRight' &&
+      e.key !== 'Delete'
+    ) {
+      e.preventDefault()
     }
+  }
 
-    registerMutation.mutate(
-      {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        phone: formData.phone,
-        gender: formData.gender
-      },
-      {
+  const formik = useFormik<RegisterRequest>({
+    initialValues: {
+      name: '',
+      email: '',
+      password: '',
+      phone: '',
+      gender: Gender.MALE
+    },
+    validationSchema,
+    onSubmit: (values) => {
+      registerMutation.mutate(values, {
         onError: (err: any) => {
           if (err.response?.data?.code === 'EXIST_GOOGLE_OAUTH_ACCOUNT') {
             setMergeState('prompt')
@@ -59,20 +73,16 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
             toast.error(err.response?.data?.message || 'Registration failed')
           }
         }
-      }
-    )
-  }
-
-  const handleChange = (field: keyof RegisterRequest, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
+      })
+    }
+  })
 
   const handleRequestMerge = async () => {
     setIsMerging(true)
     try {
       const res = await authService.requestMergeAccount({
-        email: formData.email,
-        password: formData.password
+        email: formik.values.email,
+        password: formik.values.password
       })
       if (res.success) {
         toast.success('Merge request sent successfully. Please check your email for the OTP.')
@@ -96,7 +106,7 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
     setIsMerging(true)
     try {
       const res = await authService.verifyMergeOtp({
-        email: formData.email,
+        email: formik.values.email,
         otp: finalOtp
       })
       if (res.success) {
@@ -113,14 +123,10 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
   }
 
   const handleOtpChange = (index: number, val: string) => {
-    // Only allow numbers
     if (val && !/^\d$/.test(val)) return
-
     const newOtp = [...otpArr]
     newOtp[index] = val
     setOtpArr(newOtp)
-
-    // Focus next input if value exists
     if (val && index < 3) {
       otpRefs.current[index + 1]?.focus()
     }
@@ -147,8 +153,8 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
         </div>
         <h3 className="text-xl font-bold text-mint-1200">Account Already Exists</h3>
         <p className="text-gray-500 text-sm px-4">
-          Email <span className="font-bold text-black">{formData.email}</span> is already linked to
-          a Google account. Do you want to merge this password into that account?
+          Email <span className="font-bold text-black">{formik.values.email}</span> is already linked
+          to a Google account. Do you want to merge this password into that account?
         </p>
         <div className="flex gap-4 pt-4">
           <Button variant="outline" className="flex-1" onClick={() => setMergeState('idle')}>
@@ -174,7 +180,7 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
           <h3 className="text-2xl font-bold text-mint-1200">OTP Verification</h3>
           <p className="text-gray-500 text-sm">
             Enter the 4-digit code sent to{' '}
-            <span className="font-bold text-black">{formData.email}</span>
+            <span className="font-bold text-black">{formik.values.email}</span>
           </p>
         </div>
 
@@ -220,32 +226,33 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="w-full">
+    <form onSubmit={formik.handleSubmit} className="w-full">
       <Divider className="mb-4" />
 
       {/* Name Input */}
-      <FormField label="Full Name" className="mb-4">
+      <FormField label="Full Name" className="mb-6">
         <Input
           type="text"
           placeholder="Enter your full name"
-          value={formData.name}
-          onChange={(e) => handleChange('name', e.target.value)}
+          {...formik.getFieldProps('name')}
           size="lg"
-          required
+          className={formik.touched.name && formik.errors.name ? 'border-red-500' : ''}
         />
+        {formik.touched.name && formik.errors.name && (
+          <p className="text-[11px] text-red-500 font-bold mt-1 ml-1">{formik.errors.name}</p>
+        )}
       </FormField>
 
       {/* Email Input */}
-      <FormField label="Email" className="mb-4">
+      <FormField label="Email" className="mb-6">
         <Input
           type="email"
           placeholder="example@gmail.com"
-          value={formData.email}
-          onChange={(e) => handleChange('email', e.target.value)}
+          {...formik.getFieldProps('email')}
           size="lg"
-          required
+          className={formik.touched.email && formik.errors.email ? 'border-red-500' : ''}
           rightElement={
-            isValidEmail ? (
+            formik.values.email && !formik.errors.email ? (
               <svg className="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor">
                 <path
                   fillRule="evenodd"
@@ -256,19 +263,22 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
             ) : undefined
           }
         />
+        {formik.touched.email && formik.errors.email && (
+          <p className="text-[11px] text-red-500 font-bold mt-1 ml-1">{formik.errors.email}</p>
+        )}
       </FormField>
 
       {/* Phone Input */}
-      <FormField label="Phone Number" className="mb-4">
+      <FormField label="Phone Number" className="mb-6">
         <Input
           type="tel"
           placeholder="0123456789"
-          value={formData.phone}
-          onChange={(e) => handleChange('phone', e.target.value)}
+          {...formik.getFieldProps('phone')}
+          onKeyDown={blockNonDigits}
           size="lg"
-          required
+          className={formik.touched.phone && formik.errors.phone ? 'border-red-500' : ''}
           rightElement={
-            isValidPhone ? (
+            formik.values.phone && !formik.errors.phone ? (
               <svg className="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor">
                 <path
                   fillRule="evenodd"
@@ -279,17 +289,19 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
             ) : undefined
           }
         />
+        {formik.touched.phone && formik.errors.phone && (
+          <p className="text-[11px] text-red-500 font-bold mt-1 ml-1">{formik.errors.phone}</p>
+        )}
       </FormField>
 
       {/* Password Input */}
-      <FormField label="Password" className="mb-4">
+      <FormField label="Password" className="mb-6">
         <Input
           type={showPassword ? 'text' : 'password'}
           placeholder="Input password"
-          value={formData.password}
-          onChange={(e) => handleChange('password', e.target.value)}
+          {...formik.getFieldProps('password')}
           size="lg"
-          required
+          className={formik.touched.password && formik.errors.password ? 'border-red-500' : ''}
           rightElement={
             <button
               type="button"
@@ -300,18 +312,21 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
             </button>
           }
         />
+        {formik.touched.password && formik.errors.password && (
+          <p className="text-[11px] text-red-500 font-bold mt-1 ml-1">{formik.errors.password}</p>
+        )}
       </FormField>
 
       {/* Gender Selection */}
-      <FormField label="Gender" className="mb-4">
+      <FormField label="Gender" className="mb-6">
         <div className="flex gap-4">
           <label className="flex items-center cursor-pointer">
             <input
               type="radio"
               name="gender"
               value={Gender.MALE}
-              checked={formData.gender === Gender.MALE}
-              onChange={(e) => handleChange('gender', e.target.value)}
+              checked={formik.values.gender === Gender.MALE}
+              onChange={() => formik.setFieldValue('gender', Gender.MALE)}
               className="mr-2"
             />
             <span>Male</span>
@@ -321,8 +336,8 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
               type="radio"
               name="gender"
               value={Gender.FEMALE}
-              checked={formData.gender === Gender.FEMALE}
-              onChange={(e) => handleChange('gender', e.target.value)}
+              checked={formik.values.gender === Gender.FEMALE}
+              onChange={() => formik.setFieldValue('gender', Gender.FEMALE)}
               className="mr-2"
             />
             <span>Female</span>
@@ -332,8 +347,8 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
               type="radio"
               name="gender"
               value={Gender.NON_BINARY}
-              checked={formData.gender === Gender.NON_BINARY}
-              onChange={(e) => handleChange('gender', e.target.value)}
+              checked={formik.values.gender === Gender.NON_BINARY}
+              onChange={() => formik.setFieldValue('gender', Gender.NON_BINARY)}
               className="mr-2"
             />
             <span>Other</span>
@@ -348,8 +363,8 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
         colorScheme="primary"
         isFullWidth
         size="lg"
-        className="mb-4"
-        disabled={isPending || registerMutation.isPending}
+        className="mb-4 h-12 rounded-xl text-sm font-bold shadow-lg shadow-mint-100"
+        disabled={isPending || registerMutation.isPending || !formik.isValid}
       >
         Sign Up
       </Button>

@@ -80,17 +80,28 @@ export default function ManagerInvoicesPage() {
       [OrderType.RETURN]: 0,
       [OrderType.PRE_ORDER]: 0
     }
-    invoiceList.forEach((inv) => {
-      if (inv.orders?.length)
-        inv.orders.forEach((o) => {
-          const types = Array.isArray(o.type) ? o.type : [o.type]
-          Object.values(OrderType).forEach((type) => {
-            if (types.some((t) => String(t).includes(type))) counts[type]++
-          })
-        })
-      else counts[OrderType.NORMAL]++
-    })
+
+    const typeEntries = Object.values(OrderType)
+
+    for (const inv of invoiceList) {
+      if (!inv.orders || inv.orders.length === 0) {
+        counts[OrderType.NORMAL]++
+        continue
+      }
+
+      for (const o of inv.orders) {
+        const types = Array.isArray(o.type) ? o.type : [o.type]
+        const typeStrArr = types.map(String)
+        for (const typeKey of typeEntries) {
+          if (typeStrArr.some((t) => t.includes(typeKey))) {
+            counts[typeKey]++
+          }
+        }
+      }
+    }
+
     const total = Object.values(counts).reduce((a, b) => a + b, 0) || 1
+
     return [
       {
         type: OrderType.NORMAL,

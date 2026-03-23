@@ -13,12 +13,14 @@ interface InvoiceOrdersDrawerProps {
   isOpen: boolean
   onClose: () => void
   invoice: Invoice | null
+  showManageAllOrders?: boolean
 }
 
 export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
   isOpen,
   onClose,
-  invoice
+  invoice,
+  showManageAllOrders = true
 }) => {
   const navigate = useNavigate()
   const { approveOrder, processing } = useSalesStaffAction()
@@ -292,19 +294,21 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
           </div>
 
           {}
-          <div className="p-6 border-t border-neutral-100 bg-white">
-            <button
-              onClick={() =>
-                navigate(
-                  `/sale-staff/orders?status=${invoice.status}&search=${invoice.invoiceCode}`
-                )
-              }
-              className="w-full py-4 bg-primary-600 text-white rounded-2xl font-medium text-sm shadow-lg shadow-primary-100 hover:bg-primary-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3 tracking-tight group"
-            >
-              Manage All Orders in Invoice
-              <IoArrowForward className="group-hover:translate-x-1 transition-transform" />
-            </button>
-          </div>
+          {showManageAllOrders && (
+            <div className="p-6 border-t border-neutral-100 bg-white">
+              <button
+                onClick={() =>
+                  navigate(
+                    `/sale-staff/orders?status=${invoice.status}&search=${invoice.invoiceCode}`
+                  )
+                }
+                className="w-full py-4 bg-primary-600 text-white rounded-2xl font-medium text-sm shadow-lg shadow-primary-100 hover:bg-primary-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3 tracking-tight group"
+              >
+                Manage All Orders in Invoice
+                <IoArrowForward className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

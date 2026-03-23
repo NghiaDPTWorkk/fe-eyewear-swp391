@@ -193,6 +193,7 @@ export default function SaleStaffDashboardPage() {
         isOpen={isDrawerOpen}
         onClose={handleCloseDrawer}
         invoice={selectedInvoice}
+        showManageAllOrders={false}
       />
     </div>
   )

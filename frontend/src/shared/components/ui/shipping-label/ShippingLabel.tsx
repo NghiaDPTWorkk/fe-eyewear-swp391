@@ -9,7 +9,6 @@ interface ShippingLabelProps {
 }
 
 export default function ShippingLabel({ orderId }: ShippingLabelProps) {
-  // ── Step 1: Lấy order để lấy invoiceId ──────────────────────────────────
   const { data: orderApiResponse, isLoading: isOrderLoading } = useOrderDetail(orderId || '')
 
   const orderData = (orderApiResponse as OrderResponse)?.data?.order as any

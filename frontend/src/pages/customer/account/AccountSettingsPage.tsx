@@ -2,8 +2,8 @@ import { useEffect } from 'react'
 import { useAuthStore } from '@/store'
 import {
   PersonalInfoSection,
-  ChangePasswordSection,
-  ContactPreferencesSection
+  ChangePasswordSection
+  // ContactPreferencesSection
 } from '@/components/layout/customer/account/settings'
 import { LazyPage } from '@/pages/LazyPage'
 import type { User } from '@/shared/types'
@@ -31,7 +31,7 @@ export function AccountSettingsPage() {
 
       <ChangePasswordSection />
 
-      <ContactPreferencesSection />
+      {/* <ContactPreferencesSection /> */}
     </div>
   )
 }

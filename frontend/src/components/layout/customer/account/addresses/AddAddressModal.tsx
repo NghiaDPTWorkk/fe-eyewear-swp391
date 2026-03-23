@@ -37,7 +37,7 @@ export function AddAddressModal({ isOpen, onClose, addressToEdit }: AddAddressMo
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+      <div className="bg-white rounded-3xl w-full max-w-lg overflow-visible shadow-2xl animate-in zoom-in-95 duration-300 relative">
         <div className="flex justify-between items-center p-6 border-b border-gray-100">
           <h3 className="text-xl font-bold text-mint-1200">
             {isEditing ? 'Edit Address' : 'Add New Address'}

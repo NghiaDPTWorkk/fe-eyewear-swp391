@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { addressService, type Province, type Ward } from '@/shared/services/addressService'
-import { FormField, Input, Select, Checkbox, Button } from '@/shared/components/ui'
+import { FormField, Input, Checkbox, Button } from '@/shared/components/ui'
+import { SearchableSelect } from '@/shared/components/ui/searchable-select/SearchableSelect'
 import { toast } from 'react-hot-toast'
 
 import type { Address } from '@/shared/types/address.types'
@@ -101,20 +102,19 @@ export function AddressForm({
     fetchWards()
   }, [selectedProvinceCode])
 
-  const handleProvinceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const code = Number(e.target.value)
+  const handleProvinceChange = (code: number) => {
     const province = provinces.find((p) => p.code === code)
     if (province) {
       setSelectedProvinceCode(code)
-      setFormData({ ...formData, city: province.name, ward: '' }) // Reset ward when city changes
+      setFormData({ ...formData, city: province.name, ward: '' })
     } else {
       setSelectedProvinceCode(null)
       setFormData({ ...formData, city: '', ward: '' })
     }
   }
 
-  const handleWardChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFormData({ ...formData, ward: e.target.value })
+  const handleWardChange = (wardName: string) => {
+    setFormData({ ...formData, ward: wardName })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -158,38 +158,26 @@ export function AddressForm({
         />
       </FormField>
 
-      <div className="grid grid-cols-2 gap-4">
-        <FormField label="City / Province" isRequired>
-          <Select
-            value={selectedProvinceCode || ''}
-            onChange={handleProvinceChange}
-            isDisabled={isFetchingProvinces}
-            placeholder="Select City"
-            required
-          >
-            {provinces.map((p) => (
-              <option key={p.code} value={p.code}>
-                {p.name}
-              </option>
-            ))}
-          </Select>
-        </FormField>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <SearchableSelect
+          label="City / Province"
+          placeholder="Select City"
+          options={provinces.map((p) => ({ label: p.name, value: p.code }))}
+          value={selectedProvinceCode || ''}
+          onChange={handleProvinceChange}
+          isLoading={isFetchingProvinces}
+          isDisabled={isFetchingProvinces}
+        />
 
-        <FormField label="Ward" isRequired>
-          <Select
-            value={formData.ward}
-            onChange={handleWardChange}
-            isDisabled={!selectedProvinceCode || isFetchingWards}
-            placeholder="Select Ward"
-            required
-          >
-            {wards.map((w) => (
-              <option key={w.code} value={w.name}>
-                {w.name}
-              </option>
-            ))}
-          </Select>
-        </FormField>
+        <SearchableSelect
+          label="Ward"
+          placeholder="Select Ward"
+          options={wards.map((w) => ({ label: w.name, value: w.name }))}
+          value={formData.ward}
+          onChange={handleWardChange}
+          isLoading={isFetchingWards}
+          isDisabled={!selectedProvinceCode || isFetchingWards}
+        />
       </div>
 
       <Checkbox

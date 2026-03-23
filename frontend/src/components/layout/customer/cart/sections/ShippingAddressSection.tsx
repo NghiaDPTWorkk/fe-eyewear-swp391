@@ -1,5 +1,7 @@
-import { Home, MapPin, ChevronDown, Check, Plus } from 'lucide-react'
-import { Select, Input } from '@/shared/components/ui'
+import { Home, MapPin, ChevronDown, Check, Plus, Search } from 'lucide-react'
+import { useState, useMemo } from 'react'
+import { Input } from '@/shared/components/ui'
+import { SearchableSelect } from '@/shared/components/ui/searchable-select/SearchableSelect'
 import type { Address } from '@/shared/types'
 import type { Province, Ward } from '@/shared/services/addressService'
 
@@ -38,6 +40,18 @@ export const ShippingAddressSection = ({
   onProvinceChange,
   onAddressUpdate
 }: ShippingAddressSectionProps) => {
+  const [addressSearch, setAddressSearch] = useState('')
+
+  const filteredAddresses = useMemo(() => {
+    if (!addressSearch) return savedAddresses
+    const s = addressSearch.toLowerCase()
+    return savedAddresses.filter(
+      (addr) =>
+        addr.street.toLowerCase().includes(s) ||
+        addr.ward.toLowerCase().includes(s) ||
+        addr.city.toLowerCase().includes(s)
+    )
+  }, [savedAddresses, addressSearch])
   return (
     <div className="mb-6">
       <h2 className="text-xl font-bold text-mint-1200 mb-4 flex items-center justify-between">
@@ -93,47 +107,67 @@ export const ShippingAddressSection = ({
               <>
                 <div className="fixed inset-0 z-10" onClick={() => onDropdownToggle(false)} />
                 <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl border border-mint-200 shadow-xl z-20 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="p-3 border-b border-mint-100 bg-mint-50/10">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <input
+                        type="text"
+                        autoFocus
+                        placeholder="Search saved addresses..."
+                        value={addressSearch}
+                        onChange={(e) => setAddressSearch(e.target.value)}
+                        className="w-full bg-white border border-mint-200 rounded-xl pl-9 pr-4 py-2 text-xs focus:outline-none focus:border-primary-500 transition-colors"
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    </div>
+                  </div>
                   <div className="max-h-64 overflow-y-auto custom-scrollbar">
-                    {savedAddresses.map((addr) => (
-                      <button
-                        key={addr._id}
-                        type="button"
-                        onClick={() => {
-                          onSavedAddressChange(addr._id || '')
-                          onDropdownToggle(false)
-                        }}
-                        className={`w-full flex items-start gap-3 p-4 hover:bg-mint-50/50 transition-colors text-left border-b border-mint-100 last:border-0 ${
-                          selectedAddressId === addr._id ? 'bg-primary-50/30' : ''
-                        }`}
-                      >
-                        <div
-                          className={`mt-0.5 p-1.5 rounded-lg ${selectedAddressId === addr._id ? 'bg-primary-500 text-white' : 'bg-mint-100/50 text-gray-eyewear'}`}
+                    {filteredAddresses.length > 0 ? (
+                      filteredAddresses.map((addr) => (
+                        <button
+                          key={addr._id}
+                          type="button"
+                          onClick={() => {
+                            onSavedAddressChange(addr._id || '')
+                            onDropdownToggle(false)
+                          }}
+                          className={`w-full flex items-start gap-3 p-4 hover:bg-mint-50/50 transition-colors text-left border-b border-mint-100 last:border-0 ${
+                            selectedAddressId === addr._id ? 'bg-primary-50/30' : ''
+                          }`}
                         >
-                          {selectedAddressId === addr._id ? (
-                            <Check className="w-3 h-3" />
-                          ) : (
-                            <MapPin className="w-3 h-3" />
-                          )}
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-0.5">
-                            <span
-                              className={`font-bold text-sm ${selectedAddressId === addr._id ? 'text-primary-600' : 'text-mint-1200'}`}
-                            >
-                              {addr.street}
-                            </span>
-                            {addr.isDefault && (
-                              <span className="px-1.5 py-0.5 rounded text-[10px] bg-mint-200/50 text-mint-700 font-bold uppercase tracking-wider">
-                                Default
-                              </span>
+                          <div
+                            className={`mt-0.5 p-1.5 rounded-lg ${selectedAddressId === addr._id ? 'bg-primary-500 text-white' : 'bg-mint-100/50 text-gray-eyewear'}`}
+                          >
+                            {selectedAddressId === addr._id ? (
+                              <Check className="w-3 h-3" />
+                            ) : (
+                              <MapPin className="w-3 h-3" />
                             )}
                           </div>
-                          <p className="text-xs text-gray-eyewear">
-                            {addr.ward}, {addr.city}
-                          </p>
-                        </div>
-                      </button>
-                    ))}
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-0.5">
+                              <span
+                                className={`font-bold text-sm ${selectedAddressId === addr._id ? 'text-primary-600' : 'text-mint-1200'}`}
+                              >
+                                {addr.street}
+                              </span>
+                              {addr.isDefault && (
+                                <span className="px-1.5 py-0.5 rounded text-[10px] bg-mint-200/50 text-mint-700 font-bold uppercase tracking-wider">
+                                  Default
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs text-gray-eyewear">
+                              {addr.ward}, {addr.city}
+                            </p>
+                          </div>
+                        </button>
+                      ))
+                    ) : (
+                      <div className="p-8 text-center text-sm text-gray-400 italic">
+                        No addresses found
+                      </div>
+                    )}
                   </div>
 
                   <button
@@ -161,43 +195,25 @@ export const ShippingAddressSection = ({
         </div>
       ) : (
         <div className="space-y-4">
-          <div>
-            <label className="text-xs font-bold text-gray-eyewear uppercase mb-1 block">
-              City / Province
-            </label>
-            <Select
-              value={selectedProvinceCode || ''}
-              onChange={(e) => {
-                const code = Number(e.target.value)
-                const province = provinces.find((p) => p.code === code)
-                if (province) onProvinceChange(code, province.name)
-              }}
-              placeholder="Select Province"
-              className="rounded-xl border-mint-200 focus-within:border-primary-500"
-            >
-              {provinces.map((p) => (
-                <option key={p.code} value={p.code}>
-                  {p.name}
-                </option>
-              ))}
-            </Select>
-          </div>
-          <div>
-            <label className="text-xs font-bold text-gray-eyewear uppercase mb-1 block">Ward</label>
-            <Select
-              value={address.ward}
-              onChange={(e) => onAddressUpdate({ ward: e.target.value })}
-              placeholder="Select Ward"
-              isDisabled={!selectedProvinceCode}
-              className="rounded-xl border-mint-200 focus-within:border-primary-500"
-            >
-              {(wards || []).map((w) => (
-                <option key={w.code} value={w.name}>
-                  {w.name}
-                </option>
-              ))}
-            </Select>
-          </div>
+          <SearchableSelect
+            label="City / Province"
+            placeholder="Select City"
+            options={provinces.map((p) => ({ label: p.name, value: p.code }))}
+            value={selectedProvinceCode || ''}
+            onChange={(code) => {
+              const province = provinces.find((p) => p.code === code)
+              if (province) onProvinceChange(Number(code), province.name)
+            }}
+          />
+
+          <SearchableSelect
+            label="Ward"
+            placeholder="Select Ward"
+            options={(wards || []).map((w) => ({ label: w.name, value: w.name }))}
+            value={address.ward}
+            onChange={(wardName) => onAddressUpdate({ ward: String(wardName) })}
+            isDisabled={!selectedProvinceCode}
+          />
           <div>
             <label className="text-xs font-bold text-gray-eyewear uppercase mb-1 block">
               Street

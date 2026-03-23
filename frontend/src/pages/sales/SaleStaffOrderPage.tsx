@@ -413,6 +413,9 @@ export default function SaleStaffOrderPage() {
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             onToggleFilter={() => setIsFilterOpen(!isFilterOpen)}
+            isFilterOpen={isFilterOpen}
+            setIsFilterOpen={setIsFilterOpen}
+            onOrderTypeChange={handleOrderTypeChange}
             onReset={handleResetFilters}
             orderTypeFilter={orderTypeFilter}
           />

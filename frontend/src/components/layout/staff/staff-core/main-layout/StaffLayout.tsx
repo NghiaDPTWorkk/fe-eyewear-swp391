@@ -18,6 +18,7 @@ interface StaffLayoutProps {
   searchPlaceholder?: string
   mainClassName?: string
   contentMaxWidth?: string
+  styleVariant?: 'default' | 'operation' | 'manager'
 }
 
 export function StaffLayout({
@@ -26,7 +27,8 @@ export function StaffLayout({
   storeIcon = <IoStorefront />,
   searchPlaceholder = 'Search...',
   mainClassName,
-  contentMaxWidth
+  contentMaxWidth,
+  styleVariant = 'operation'
 }: StaffLayoutProps) {
   const { userName, userEmail, userRole, userInitials } = useStaffLayoutProfile()
 
@@ -53,7 +55,7 @@ export function StaffLayout({
       sidebar={sidebar}
       headerLeft={
         <NavSearch
-          styleVariant="operation"
+          styleVariant={styleVariant}
           placeholder={searchPlaceholder}
           inputContainerClassName="lg:pl-0"
         />

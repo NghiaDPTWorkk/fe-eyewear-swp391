@@ -64,6 +64,7 @@ export default function ManagerLayout() {
       storeName="Downtown Vision"
       searchPlaceholder="Search products, orders..."
       sidebarContent={sidebarContent}
+      styleVariant="manager"
       mainClassName="px-4 md:px-8 lg:px-10 py-8"
       contentMaxWidth="max-w-[1600px]"
     />

@@ -24,8 +24,16 @@ export default function ManagerInvoicesPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const statusFilter = searchParams.get('status') ?? 'All'
   const orderTypeFilter = searchParams.get('orderType') ?? 'All'
-  const [searchQuery, setSearchQuery] = useState('')
+  const searchQuery = searchParams.get('search') ?? ''
   const [page, setPage] = useState(1)
+
+  const setSearchQuery = (query: string) => {
+    const next = new URLSearchParams(searchParams)
+    if (query) next.set('search', query)
+    else next.delete('search')
+    setSearchParams(next)
+  }
+
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<string | null>(null)
   const limit = 10
 

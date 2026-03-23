@@ -2,8 +2,13 @@ import { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { STORAGE_KEYS } from '@/shared/constants/storage'
 import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layout/StaffMainLayout'
-import { SidebarStaff, UserWidgetWithLogout, ThemeToggle, NavActions } from '@/components/staff'
-import OperationNavSearch from '@/components/layout/staff/operation-staff/OperationNavSearch'
+import {
+  SidebarStaff,
+  UserWidgetWithLogout,
+  ThemeToggle,
+  NavActions,
+  NavSearch
+} from '@/components/layout/staff/staff-core'
 import {
   IoGridOutline,
   IoReceipt,
@@ -200,7 +205,7 @@ export default function OperationLayout() {
   return (
     <StaffMainLayout
       sidebar={sidebar}
-      headerLeft={<OperationNavSearch />}
+      headerLeft={<NavSearch styleVariant="operation" />}
       headerRight={
         <NavActions
           userName={userName}

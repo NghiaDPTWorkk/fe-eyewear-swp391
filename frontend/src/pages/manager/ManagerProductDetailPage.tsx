@@ -45,6 +45,11 @@ function genderLabel(g: string) {
   }
 }
 
+function capitalize(str: string) {
+  if (!str) return '—'
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
+}
+
 export default function ManagerProductDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -117,7 +122,7 @@ export default function ManagerProductDetailPage() {
       <Container className="max-w-none space-y-8">
         <PageHeader
           title={product.nameBase || 'Unnamed Product'}
-          subtitle={`SKU: ${product.skuBase} · ${product.brand || 'No Brand'} · ${product.type}`}
+          subtitle={`SKU: ${product.skuBase} · ${product.brand || 'No Brand'} · ${capitalize(product.type)}`}
           breadcrumbs={[
             { label: 'Dashboard', path: '/manager/dashboard' },
             { label: 'Products', path: '/manager/products' },
@@ -239,8 +244,8 @@ export default function ManagerProductDetailPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="inline-flex px-3 py-1.5 rounded-xl text-xs font-semibold bg-mint-50 text-mint-700 ring-1 ring-mint-100 capitalize">
-                    {product.type}
+                  <span className="inline-flex px-3 py-1.5 rounded-xl text-xs font-semibold bg-mint-50 text-mint-700 ring-1 ring-mint-100">
+                    {capitalize(product.type)}
                   </span>
                   <span className="inline-flex px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-50 text-purple-600 ring-1 ring-purple-100">
                     {product.brand || 'No Brand'}
@@ -326,7 +331,7 @@ export default function ManagerProductDetailPage() {
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                       <SpecItem label="Origin" value={spec.origin || '—'} />
                       <SpecItem label="Brand" value={product.brand || 'No Brand'} />
-                      <SpecItem label="Type" value={product.type} />
+                      <SpecItem label="Type" value={capitalize(product.type)} />
                     </div>
                   </div>
                 ) : (

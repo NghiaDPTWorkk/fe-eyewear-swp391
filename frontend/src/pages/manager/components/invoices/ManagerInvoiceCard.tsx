@@ -28,6 +28,7 @@ import {
   IoShieldCheckmarkOutline,
   IoListOutline
 } from 'react-icons/io5'
+import { formatPrice, toTitleCase } from '@/shared/utils'
 
 function getInvoiceStatusBadgeClass(status: string) {
   switch (status) {
@@ -285,9 +286,9 @@ export default function ManagerInvoiceCard({
                 {invoice.invoiceCode}
               </h2>
               <span
-                className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] uppercase font-semibold tracking-widest border ${getInvoiceStatusBadgeClass(invoice.status)}`}
+                className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-semibold tracking-widest border ${getInvoiceStatusBadgeClass(invoice.status)}`}
               >
-                {invoice.status}
+                {toTitleCase(invoice.status)}
               </span>
             </div>
             <p className="text-xs font-semibold text-neutral-400 uppercase tracking-widest leading-none">
@@ -373,22 +374,22 @@ export default function ManagerInvoiceCard({
                 </span>
                 {isExpanded && fullInvoiceDetail ? (
                   <div className="space-y-1.5 mt-2">
-                    <div className="flex justify-between items-center text-[10px] font-bold text-neutral-500 uppercase tracking-widest leading-none">
+                    <div className="flex justify-between items-center text-[10px] font-bold text-neutral-500 tracking-widest leading-none">
                       <span>Subtotal</span>
                       <span className="text-gray-900 font-mono">
-                        {(fullInvoiceDetail.totalPrice || 0).toLocaleString()} đ
+                        {formatPrice(fullInvoiceDetail.totalPrice || 0)}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center text-[10px] font-bold text-neutral-500 uppercase tracking-widest leading-none">
+                    <div className="flex justify-between items-center text-[10px] font-bold text-neutral-500 tracking-widest leading-none">
                       <span>Shipping Fee</span>
                       <span className="text-gray-900 font-mono">
-                        + {(fullInvoiceDetail.feeShip || 0).toLocaleString()} đ
+                        + {formatPrice(fullInvoiceDetail.feeShip || 0)}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center text-[10px] font-bold text-rose-400 uppercase tracking-widest leading-none">
+                    <div className="flex justify-between items-center text-[10px] font-bold text-rose-400 tracking-widest leading-none">
                       <span>Discount</span>
                       <span className="text-rose-500 font-mono">
-                        - {(fullInvoiceDetail.totalDiscount || 0).toLocaleString()} đ
+                        - {formatPrice(fullInvoiceDetail.totalDiscount || 0)}
                       </span>
                     </div>
                     <div className="pt-2 mt-2 border-t border-neutral-100 flex justify-between items-center">
@@ -407,7 +408,7 @@ export default function ManagerInvoiceCard({
                   </div>
                 ) : (
                   <p className="text-sm font-bold text-mint-600 font-primary truncate">
-                    {invoice.finalPrice} đ
+                    {formatPrice(Number(invoice.finalPrice))}
                   </p>
                 )}
               </div>
@@ -578,13 +579,13 @@ export default function ManagerInvoiceCard({
                   </div>
                   <div className="flex items-center gap-2">
                     <span
-                      className={`inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-semibold border uppercase tracking-wider ${
+                      className={`inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-semibold border tracking-wider ${
                         order.status === OrderStatus.COMPLETED
                           ? 'bg-mint-50 text-mint-700 border-mint-100'
                           : 'bg-amber-50 text-amber-700 border-amber-100'
                       }`}
                     >
-                      {order.status}
+                      {toTitleCase(order.status)}
                     </span>
                   </div>
                 </div>
@@ -657,8 +658,8 @@ export default function ManagerInvoiceCard({
                     <span className="text-[10px] font-semibold text-neutral-400 uppercase tracking-widest block mb-1 leading-none">
                       Order Type
                     </span>
-                    <p className="text-xs font-semibold text-gray-700 uppercase font-primary truncate">
-                      {(order.type ?? []).join(', ')}
+                    <p className="text-xs font-semibold text-gray-700 font-primary truncate">
+                      {(order.type ?? []).map((t) => toTitleCase(t)).join(', ')}
                     </p>
                   </div>
                   <div className="min-w-0">
@@ -666,7 +667,7 @@ export default function ManagerInvoiceCard({
                       Price
                     </span>
                     <p className="text-xs font-semibold text-gray-700 font-primary truncate">
-                      {order.price} đ
+                      {formatPrice(order.price)}
                     </p>
                   </div>
                   <div className="min-w-0">
@@ -721,7 +722,7 @@ export default function ManagerInvoiceCard({
                                 UID: {line.product.product_id}
                               </p>
                               <p className="text-[11px] font-bold text-gray-700 mt-1">
-                                {line.product.pricePerUnit} đ / unit
+                                {formatPrice(line.product.pricePerUnit)} / unit
                               </p>
                             </div>
                           ) : null}
@@ -740,7 +741,7 @@ export default function ManagerInvoiceCard({
                                 ID: {line.lens.lens_id}
                               </p>
                               <p className="text-[11px] font-bold text-gray-700 mt-1">
-                                {line.lens.pricePerUnit} đ / unit
+                                {formatPrice(line.lens.pricePerUnit)} / unit
                               </p>
                               <div className="mt-2 pt-2 border-t border-neutral-50 text-[10px] font-semibold text-neutral-500 leading-normal">
                                 PD: {line.lens.parameters.PD} <br />

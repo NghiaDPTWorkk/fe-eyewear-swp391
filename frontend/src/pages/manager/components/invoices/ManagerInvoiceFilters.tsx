@@ -8,6 +8,7 @@ import {
 import { Button } from '@/shared/components/ui-core'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import { OrderType } from '@/shared/utils/enums/order.enum'
+import { toTitleCase } from '@/shared/utils'
 
 interface ManagerInvoiceFiltersProps {
   statusFilter: string
@@ -50,13 +51,13 @@ export const ManagerInvoiceFilters: React.FC<ManagerInvoiceFiltersProps> = ({
             <button
               key={val}
               onClick={() => onStatusChange(val)}
-              className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold tracking-wider transition-all whitespace-nowrap ${
                 statusFilter === val
                   ? 'bg-white text-mint-600 shadow-sm border border-neutral-100'
                   : 'text-neutral-500 hover:text-neutral-700'
               }`}
             >
-              {val === 'All' ? 'All Invoices' : val}
+              {val === 'All' ? 'All Invoices' : toTitleCase(val)}
             </button>
           ))}
         </div>
@@ -92,7 +93,9 @@ export const ManagerInvoiceFilters: React.FC<ManagerInvoiceFiltersProps> = ({
                   <IoFilterOutline
                     className={isFilterOpen ? 'text-mint-600' : 'text-neutral-400'}
                   />
-                  <span>{orderTypeFilter === 'All' ? 'All Types' : orderTypeFilter}</span>
+                  <span>
+                    {orderTypeFilter === 'All' ? 'All Types' : toTitleCase(orderTypeFilter)}
+                  </span>
                 </div>
                 <IoChevronBackOutline
                   className={`transition-transform duration-200 ${isFilterOpen ? 'rotate-90' : '-rotate-90'}`}
@@ -120,7 +123,7 @@ export const ManagerInvoiceFilters: React.FC<ManagerInvoiceFiltersProps> = ({
                           }`}
                           onClick={() => onOrderTypeChange(val)}
                         >
-                          {val}
+                          {val === 'All' ? 'All Types' : toTitleCase(val)}
                         </button>
                       ))}
                     </div>

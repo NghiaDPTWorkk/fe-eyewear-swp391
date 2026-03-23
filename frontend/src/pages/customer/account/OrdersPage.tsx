@@ -428,9 +428,6 @@ export function OrdersPage() {
             </p>
           </div>
         </div>
-        <button className="text-primary-600 font-bold text-sm border-b-2 border-primary-200 hover:border-primary-500 transition-all">
-          Open Support Ticket
-        </button>
       </div>
     </div>
   )

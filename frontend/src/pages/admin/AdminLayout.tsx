@@ -11,7 +11,8 @@ import {
   IoGridOutline,
   IoPeopleOutline,
   IoPersonAddOutline,
-  IoSettingsOutline
+  IoSettingsOutline,
+  IoShieldCheckmarkOutline
 } from 'react-icons/io5'
 
 import { useStaffLayoutProfile } from '@/features/staff/hooks/useStaffLayoutProfile'
@@ -70,6 +71,12 @@ export default function AdminLayout() {
           label="Staff Accounts"
           to="/admin/staff"
           active={location.pathname.startsWith('/admin/staff')}
+        />
+        <SidebarStaff.MenuItem
+          icon={<IoShieldCheckmarkOutline />}
+          label="Request Profiles"
+          to="/admin/request-update-profile"
+          active={location.pathname.startsWith('/admin/request-update-profile')}
         />
       </SidebarStaff.MenuSection>
 

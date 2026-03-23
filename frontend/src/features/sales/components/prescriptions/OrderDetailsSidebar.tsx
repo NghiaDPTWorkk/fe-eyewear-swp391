@@ -29,7 +29,7 @@ export const OrderDetailsSidebar: React.FC<OrderDetailsSidebarProps> = ({ order 
         </Button>
       </div>
       <div className="space-y-4">
-        {/* Customer */}
+        {}
         <div className="flex gap-3">
           <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
             <IoPersonOutline className="text-gray-500" />
@@ -45,7 +45,7 @@ export const OrderDetailsSidebar: React.FC<OrderDetailsSidebarProps> = ({ order 
           </div>
         </div>
 
-        {/* Timeline */}
+        {}
         <div className="flex gap-3">
           <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
             <IoCalendarOutline className="text-gray-500" />
@@ -58,7 +58,7 @@ export const OrderDetailsSidebar: React.FC<OrderDetailsSidebarProps> = ({ order 
           </div>
         </div>
 
-        {/* Products & Prices */}
+        {}
         {products.length > 0 && (
           <div className="pt-3 border-t border-gray-100">
             <p className="text-xs text-gray-500 flex items-center gap-1.5 mb-3">
@@ -85,7 +85,7 @@ export const OrderDetailsSidebar: React.FC<OrderDetailsSidebarProps> = ({ order 
                     </span>
                   </div>
 
-                  {/* Lens info if prescription */}
+                  {}
                   {p.lens && (
                     <div className="mt-2 pt-2 border-t border-gray-200/60 grid grid-cols-2 gap-1">
                       <div className="text-[10px] text-gray-400">
@@ -105,7 +105,7 @@ export const OrderDetailsSidebar: React.FC<OrderDetailsSidebarProps> = ({ order 
               ))}
             </div>
 
-            {/* Total */}
+            {}
             <div className="mt-3 pt-3 border-t border-gray-200 flex items-center justify-between">
               <span className="text-xs font-semibold text-gray-500 flex items-center gap-1.5">
                 <IoWalletOutline size={14} /> Total Value

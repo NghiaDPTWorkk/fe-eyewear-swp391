@@ -40,7 +40,7 @@ export const Controls: React.FC<ControlsProps> = ({
       </div>
 
       <div className="flex gap-3 w-full md:w-auto relative flex-wrap md:flex-nowrap">
-        {/* Type Filter */}
+        {}
         <div className="relative">
           <button
             onClick={() => setIsTypeFilterOpen(!isTypeFilterOpen)}

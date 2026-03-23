@@ -16,6 +16,7 @@ import toast from 'react-hot-toast'
 import { useQueryClient } from '@tanstack/react-query'
 import { useOperationInvoiceDetail } from '@/features/operations/hooks/useOperationInvoiceDetail'
 import { getOrderProgressStep } from '@/shared/utils/order-status.utils'
+import { PATHS } from '@/routes/paths'
 
 export default function OperationOrderPackingProcess() {
   const { orderId } = useParams<{ orderId: string }>()
@@ -28,7 +29,7 @@ export default function OperationOrderPackingProcess() {
   const location = useLocation()
   const queryClient = useQueryClient()
 
-  // Lấy data từ trang trước
+  // Get data from previous page
   const { status, products } = useMemo(() => {
     const state = location.state as { status?: string; products?: OrderProductItem[] } | null
     return state || { status: 'PACKAGING', products: [] }
@@ -46,7 +47,7 @@ export default function OperationOrderPackingProcess() {
       { id: 'documents', label: 'Documents & Invoices', required: true }
     ]
 
-    // Thêm dynamic items dựa trên products
+    // Add dynamic items based on products
     if (products && products.length > 0) {
       products.forEach((p) => {
         const sku = p.product?.sku || ''
@@ -76,7 +77,7 @@ export default function OperationOrderPackingProcess() {
     return items
   }, [products])
 
-  // State lưu trạng thái checked của từng item (theo ID)
+  // State to store checked status for each item (by ID)
   const [checkedState, setCheckedState] = useState<Record<string, boolean>>(() => {
     if (status === 'COMPLETED') {
       const allCheckedState: Record<string, boolean> = {}
@@ -88,7 +89,7 @@ export default function OperationOrderPackingProcess() {
     return {}
   })
 
-  // Kiểm tra tất cả đã check chưa
+  // Check if all items are checked
   const allChecked = checklistItems.every((item) => checkedState[item.id])
 
   const handleCheck = (id: string) => {
@@ -115,6 +116,11 @@ export default function OperationOrderPackingProcess() {
           queryClient.invalidateQueries({ queryKey: ['orders'] })
           queryClient.invalidateQueries({ queryKey: ['order', orderId] })
           setIsModalOpen(false)
+
+          // Navigate to completed orders page after a short delay
+          setTimeout(() => {
+            navigate(PATHS.OPERATIONSTAFF.COMPLETE_ORDERS)
+          }, 1500)
         },
         onError: () => {
           toast.error('Failed to update order status')
@@ -163,7 +169,8 @@ export default function OperationOrderPackingProcess() {
           </button>
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-2 md:gap-3">
-              <IoCubeOutline className="text-primary-500 shrink-0" /> <span className="truncate">Packing Station</span>
+              <IoCubeOutline className="text-primary-500 shrink-0" />{' '}
+              <span className="truncate">Packing Station</span>
             </h1>
             <p className="text-[10px] text-neutral-500 mt-1 font-medium tracking-widest uppercase opacity-80 italic">
               CHECKLIST & PACKAGING WORKFLOW
@@ -189,7 +196,7 @@ export default function OperationOrderPackingProcess() {
 
         return <ProcessTracker title="Invoice Progress" activeStep={activeStep} />
       })()}
-      {/* : Trạng thái từ API + Loại đơn hàng = Vị trí nút xanh trên thanh. */}
+      {/* Order progress step calculation based on API status + Order Type */}
       <div className="grid grid-cols-12 gap-6">
         {/* Left Column */}
         <div className="col-span-12 lg:col-span-7 space-y-6">

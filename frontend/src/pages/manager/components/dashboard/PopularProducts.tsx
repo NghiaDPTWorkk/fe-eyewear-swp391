@@ -1,90 +1,79 @@
-import React from 'react'
-
-const products = [
-  {
-    id: '021231',
-    name: 'Kanky Kitadakate (Green)',
-    price: '20.00',
-    sales: 3000,
-    status: 'Success'
-  },
-  {
-    id: '021231',
-    name: 'Kanky Kitadakate (Green)',
-    price: '20.00',
-    sales: 2311,
-    status: 'Success'
-  },
-  {
-    id: '021231',
-    name: 'Kanky Kitadakate (Green)',
-    price: '20.00',
-    sales: 2111,
-    status: 'Success'
-  },
-  {
-    id: '021231',
-    name: 'Kanky Kitadakate (Green)',
-    price: '20.00',
-    sales: 1661,
-    status: 'Success'
-  }
-]
+import React, { useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAdminProducts } from '@/features/manager/hooks'
+import { formatPrice, toTitleCase } from '@/shared/utils'
+import { IoCubeOutline } from 'react-icons/io5'
 
 export const PopularProducts: React.FC = () => {
+  const navigate = useNavigate()
+  const { data: productsData, isLoading } = useAdminProducts(1, 5)
+
+  const productList = useMemo(() => {
+    return productsData?.data.productList || []
+  }, [productsData])
+
+  if (isLoading) {
+    return (
+      <div className="bg-white rounded-3xl p-6 shadow-sm ring-1 ring-slate-100 flex items-center justify-center min-h-[400px]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-4 border-mint-200 border-t-mint-600 rounded-full animate-spin" />
+          <p className="text-sm font-medium text-slate-400">Loading products...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="p-8 bg-white rounded-3xl border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)] transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-      <div className="flex justify-between items-center mb-8">
-        <h3 className="text-base font-semibold text-gray-900 font-heading tracking-tight">
-          Product Popular
-        </h3>
-        <button className="text-[12px] font-bold text-gray-400 hover:text-mint-600 transition-colors flex items-center gap-1 uppercase tracking-widest">
-          Show All <span className="text-xs">↗</span>
+    <div className="bg-white rounded-3xl p-6 shadow-sm ring-1 ring-slate-100 h-full overflow-hidden">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h3 className="text-lg font-bold text-slate-900 tracking-tight">Popular Products</h3>
+          <p className="text-sm text-slate-500 font-medium mt-0.5">Top performing items</p>
+        </div>
+        <button
+          onClick={() => navigate('/manager/products')}
+          className="text-xs font-bold text-mint-600 hover:text-mint-700 bg-mint-50 px-4 py-2 rounded-xl transition-all"
+        >
+          View All
         </button>
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full">
+        <table className="w-full text-left">
           <thead>
-            <tr className="text-left border-b border-gray-50/10">
-              <th className="pb-4 text-[10px] font-semibold text-gray-400 uppercase tracking-[0.1em]">
-                Product
-              </th>
-              <th className="pb-4 text-[10px] font-semibold text-gray-400 uppercase tracking-[0.1em]">
-                Price
-              </th>
-              <th className="pb-4 text-[10px] font-semibold text-gray-400 uppercase tracking-[0.1em] text-center">
-                Sales
-              </th>
-              <th className="pb-4 text-[10px] font-semibold text-gray-400 uppercase tracking-[0.1em] text-right">
-                Status
-              </th>
+            <tr className="text-[11px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50">
+              <th className="pb-4 font-bold">Product</th>
+              <th className="pb-4 font-bold">Price</th>
+              <th className="pb-4 font-bold text-center">Type</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50/50">
-            {products.map((product, idx) => (
-              <tr key={idx} className="group hover:bg-neutral-50/50 transition-colors">
+            {productList.map((product, idx) => (
+              <tr
+                key={idx}
+                onClick={() => navigate(`/manager/products/${product.id}`)}
+                className="group hover:bg-neutral-50/50 transition-colors cursor-pointer"
+              >
                 <td className="py-4">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-gray-50 rounded-xl overflow-hidden flex items-center justify-center border border-neutral-100 group-hover:bg-white transition-colors">
-                      <div className="w-8 h-8 bg-gray-200 rounded-sm transform rotate-12 opacity-50" />
+                      <IoCubeOutline size={20} className="text-gray-400" />
                     </div>
-                    <div>
-                      <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-0.5">
-                        {product.id}
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold text-slate-800 truncate leading-snug">
+                        {product.nameBase}
                       </p>
-                      <p className="text-sm font-semibold text-gray-900">{product.name}</p>
+                      <p className="text-[11px] font-semibold text-slate-400 mt-0.5 uppercase tracking-tighter">
+                        SKU: {product.skuBase}
+                      </p>
                     </div>
                   </div>
                 </td>
-                <td className="py-4 text-sm font-medium text-gray-500">{product.price}</td>
-                <td className="py-4 text-sm font-semibold text-gray-900 text-center">
-                  {product.sales.toLocaleString()}
+                <td className="py-4 text-sm font-semibold text-slate-800">
+                  {formatPrice(product.defaultVariantFinalPrice)}
                 </td>
-                <td className="py-4 text-right">
-                  <span className="inline-flex items-center px-3 py-1 bg-mint-50 text-mint-600 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-mint-100/50">
-                    {product.status}
-                  </span>
+                <td className="py-4 text-xs font-bold text-gray-400 tracking-widest text-center">
+                  {toTitleCase(product.type)}
                 </td>
               </tr>
             ))}

@@ -6,19 +6,21 @@ import { salesService } from '@/features/sales/services/salesService'
 import type { Invoice, OrderDetail } from '../../types'
 import { Button, ConfirmationModal } from '@/shared/components/ui-core'
 import { OrderType } from '@/shared/utils/enums/order.enum'
-import { useSalesStaffAction } from '../../hooks/useSalesStaffAction'
+import { useSalesStaffAction, useSalesStaffInvoiceDetail } from '../../hooks'
 import { cn } from '@/lib/utils'
 
 interface InvoiceOrdersDrawerProps {
   isOpen: boolean
   onClose: () => void
   invoice: Invoice | null
+  showManageAllOrders?: boolean
 }
 
 export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
   isOpen,
   onClose,
-  invoice
+  invoice,
+  showManageAllOrders = true
 }) => {
   const navigate = useNavigate()
   const { approveOrder, processing } = useSalesStaffAction()
@@ -27,7 +29,11 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
   const [selectedOrderDetails, setSelectedOrderDetails] = useState<OrderDetail | null>(null)
   const [loadingDetails, setLoadingDetails] = useState(false)
 
+  const { data: detailData, isLoading: isDetailLoading } = useSalesStaffInvoiceDetail(
+    invoice?.id || null
+  )
   if (!isOpen || !invoice) return null
+  const currentInvoice = detailData || invoice
 
   const handleApproveOrder = async (e: React.MouseEvent, orderId: string) => {
     e.stopPropagation()
@@ -61,7 +67,7 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
           onClick={onClose}
         />
         <div className="relative w-full max-w-lg h-full bg-white shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
-          {/* Header */}
+          {}
           <div className="px-6 py-6 border-b border-neutral-100 flex items-center justify-between">
             <div className="space-y-1">
               <div className="flex items-center gap-3">
@@ -88,7 +94,7 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
             </Button>
           </div>
 
-          {/* Content */}
+          {}
           <div className="flex-1 overflow-y-auto p-6 space-y-8 bg-neutral-50/30">
             <div>
               <div className="flex items-center justify-between mb-5">
@@ -102,7 +108,6 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
 
               <div className="space-y-4">
                 {invoice.orders?.map((order, idx) => {
-                  // Safely handle order.type which can be array, string, or undefined
                   const orderTypes = Array.isArray(order.type)
                     ? order.type
                     : order.type
@@ -118,7 +123,20 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
 
                   const getSimplifiedStatus = (order: { status: string }) => {
                     const status = (order.status || 'PENDING').toUpperCase()
-                    const isRejected = ['REJECT', 'REJECTED', 'CANCELED'].includes(status)
+
+                    if (
+                      status === 'CANCELED' ||
+                      status === 'CANCEL' ||
+                      invoice.status === 'CANCELED' ||
+                      invoice.status === 'CANCEL'
+                    ) {
+                      return {
+                        label: 'CANCELED',
+                        className: 'bg-rose-50 text-rose-600 border-rose-100'
+                      }
+                    }
+
+                    const isRejected = ['REJECT', 'REJECTED'].includes(status)
 
                     if (isRejected) {
                       return {
@@ -127,7 +145,6 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
                       }
                     }
 
-                    // All orders must be in one of the approved/verified states
                     const isAccepted = [
                       'VERIFIED',
                       'APPROVE',
@@ -235,19 +252,53 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
                 Billing Information
               </h4>
               <div className="space-y-4">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-slate-500 font-normal uppercase tracking-wider text-[10px]">
-                    Final Price
-                  </span>
-                  <span className="font-semibold text-primary-700 text-lg font-heading">
-                    {invoice.finalPrice}
+                <div className="flex justify-between items-center text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+                  <span>Subtotal</span>
+                  <span className="text-slate-700 font-mono">
+                    {isDetailLoading ? (
+                      <span className="w-16 h-3 bg-slate-100 animate-pulse rounded block" />
+                    ) : (
+                      `${(currentInvoice.totalPrice || 0).toLocaleString()} ₫`
+                    )}
                   </span>
                 </div>
-                <div className="flex justify-between gap-6 text-sm">
+                <div className="flex justify-between items-center text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+                  <span>Shipping Fee</span>
+                  <span className="text-slate-700 font-mono">
+                    {isDetailLoading ? (
+                      <span className="w-16 h-3 bg-slate-100 animate-pulse rounded block" />
+                    ) : (
+                      `+ ${(currentInvoice.feeShip || 0).toLocaleString()} ₫`
+                    )}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+                  <span>Discount</span>
+                  <span className="text-rose-500 font-mono">
+                    {isDetailLoading ? (
+                      <span className="w-16 h-3 bg-slate-100 animate-pulse rounded block" />
+                    ) : (
+                      `- ${(currentInvoice.totalDiscount || 0).toLocaleString()} ₫`
+                    )}
+                  </span>
+                </div>
+                <div className="pt-4 border-t border-neutral-50 flex justify-between items-center">
+                  <span className="text-xs font-bold text-slate-900 uppercase tracking-widest">
+                    Total Amount
+                  </span>
+                  <span className="text-xl font-bold tracking-tight text-primary-700 font-heading">
+                    {isDetailLoading ? (
+                      <span className="w-24 h-6 bg-slate-100 animate-pulse rounded block" />
+                    ) : (
+                      `${((currentInvoice.totalPrice || 0) + (currentInvoice.feeShip || 0) - (currentInvoice.totalDiscount || 0)).toLocaleString()} ₫`
+                    )}
+                  </span>
+                </div>
+                <div className="flex justify-between gap-6 text-sm pt-2">
                   <span className="text-slate-500 font-normal whitespace-nowrap uppercase tracking-wider text-[10px]">
                     Shipping Address
                   </span>
-                  <span className="text-slate-700 font-medium text-right leading-relaxed">
+                  <span className="text-slate-700 font-medium text-right leading-relaxed text-xs">
                     {invoice.address}
                   </span>
                 </div>
@@ -255,20 +306,22 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
             </div>
           </div>
 
-          {/* Footer */}
-          <div className="p-6 border-t border-neutral-100 bg-white">
-            <button
-              onClick={() =>
-                navigate(
-                  `/sale-staff/orders?status=${invoice.status}&search=${invoice.invoiceCode}`
-                )
-              }
-              className="w-full py-4 bg-primary-600 text-white rounded-2xl font-medium text-sm shadow-lg shadow-primary-100 hover:bg-primary-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3 tracking-tight group"
-            >
-              Manage All Orders in Invoice
-              <IoArrowForward className="group-hover:translate-x-1 transition-transform" />
-            </button>
-          </div>
+          {}
+          {showManageAllOrders && (
+            <div className="p-6 border-t border-neutral-100 bg-white">
+              <button
+                onClick={() =>
+                  navigate(
+                    `/sale-staff/orders?status=${invoice.status}&search=${invoice.invoiceCode}`
+                  )
+                }
+                className="w-full py-4 bg-primary-600 text-white rounded-2xl font-medium text-sm shadow-lg shadow-primary-100 hover:bg-primary-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3 tracking-tight group"
+              >
+                Manage All Orders in Invoice
+                <IoArrowForward className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -291,7 +344,7 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
             </div>
           ) : selectedOrderDetails ? (
             <div className="space-y-4">
-              {/* Order Basic Info Card */}
+              {}
               <div className="bg-slate-50/50 rounded-2xl p-4 border border-slate-100/50 space-y-3">
                 <div className="flex justify-between items-center text-[11px] font-bold uppercase tracking-wider">
                   <span className="text-slate-400">Order Information</span>
@@ -311,7 +364,7 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
                 </div>
               </div>
 
-              {/* Prescription Details Section */}
+              {}
               {selectedOrderDetails.products?.[0]?.lens?.parameters && (
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 px-1">

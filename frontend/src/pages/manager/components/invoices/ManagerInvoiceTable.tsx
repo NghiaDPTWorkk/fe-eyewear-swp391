@@ -2,7 +2,8 @@ import React from 'react'
 import { IoPersonCircleOutline, IoCalendarOutline, IoTimeOutline } from 'react-icons/io5'
 import { Button } from '@/shared/components/ui-core'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
-import type { EnrichedInvoice } from '@/features/manager/hooks/useAdminInvoices'
+import type { EnrichedInvoice } from '@/features/manager/hooks'
+import { toTitleCase } from '@/shared/utils'
 
 interface ManagerInvoiceTableProps {
   invoices: EnrichedInvoice[]
@@ -10,6 +11,23 @@ interface ManagerInvoiceTableProps {
   errorMessage: string | null
   selectedInvoiceId: string | null
   onSelectInvoice: (id: string) => void
+}
+
+const formatDate = (value?: string) => {
+  if (!value) return '—'
+  const d = new Date(value)
+  return Number.isNaN(d.getTime()) ? '—' : d.toLocaleDateString()
+}
+
+const formatTime = (value?: string) => {
+  if (!value) return '—'
+  const d = new Date(value)
+  return Number.isNaN(d.getTime())
+    ? '—'
+    : d.toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit'
+      })
 }
 
 export const ManagerInvoiceTable: React.FC<ManagerInvoiceTableProps> = ({
@@ -80,7 +98,7 @@ export const ManagerInvoiceTable: React.FC<ManagerInvoiceTableProps> = ({
                 </td>
                 <td className="px-6 py-6">
                   <span
-                    className={`inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border font-primary ${
+                    className={`inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-bold tracking-wider border font-primary ${
                       inv.status === InvoiceStatus.COMPLETED
                         ? 'bg-mint-50 text-mint-600 border-mint-100'
                         : inv.status === InvoiceStatus.PENDING ||
@@ -92,26 +110,19 @@ export const ManagerInvoiceTable: React.FC<ManagerInvoiceTableProps> = ({
                             : 'bg-amber-50 text-amber-600 border-amber-100'
                     }`}
                   >
-                    {inv.status}
+                    {toTitleCase(inv.status)}
                   </span>
                 </td>
                 <td className="px-6 py-6 font-primary">
                   <div className="flex items-center gap-2 text-sm text-neutral-600">
                     <IoCalendarOutline className="text-neutral-300" />
-                    <span className="font-medium">
-                      {new Date(inv.createdAt).toLocaleDateString()}
-                    </span>
+                    <span className="font-medium">{formatDate(inv.createdAt)}</span>
                   </div>
                 </td>
                 <td className="px-6 py-6 font-primary">
                   <div className="flex items-center gap-2 text-sm text-neutral-600">
                     <IoTimeOutline className="text-neutral-300" />
-                    <span className="font-medium">
-                      {new Date(inv.createdAt).toLocaleTimeString([], {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </span>
+                    <span className="font-medium">{formatTime(inv.createdAt)}</span>
                   </div>
                 </td>
                 <td className="px-6 py-6 text-center" onClick={(e) => e.stopPropagation()}>

@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/react-query'
 
 import { salesService } from '../services/salesService'
 import { showError, showSuccess } from '../utils/errorHandler'
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/shared/constants'
 
 const DEFAULT_PARAMETERS = {
   left: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
@@ -28,11 +29,11 @@ export const useSalesStaffAction = () => {
       setError(null)
       try {
         await salesService.approveInvoice(id)
-        showSuccess('Invoice approved successfully')
+        showSuccess(SUCCESS_MESSAGES.SALES.INVOICE_APPROVED)
         invalidateSalesData()
         return true
       } catch (err: unknown) {
-        setError('Failed to approve invoice')
+        setError(ERROR_MESSAGES.SALES.APPROVE_INVOICE_FAILED)
         showError(err)
         return false
       } finally {
@@ -48,11 +49,11 @@ export const useSalesStaffAction = () => {
       setError(null)
       try {
         await salesService.rejectInvoice(id, note)
-        showSuccess('Invoice rejected successfully')
+        showSuccess(SUCCESS_MESSAGES.SALES.INVOICE_REJECTED)
         invalidateSalesData()
         return true
       } catch (err: unknown) {
-        setError('Failed to reject invoice')
+        setError(ERROR_MESSAGES.SALES.REJECT_INVOICE_FAILED)
         showError(err)
         return false
       } finally {
@@ -69,8 +70,6 @@ export const useSalesStaffAction = () => {
       try {
         let finalData = data
 
-        // If caller does not provide parameters (e.g. quick approve button),
-        // fetch current order details and send existing parameters unchanged.
         if (!finalData || !finalData.parameters) {
           const detailRes = await salesService.getOrderById(id)
           const order = detailRes?.data?.order
@@ -88,11 +87,11 @@ export const useSalesStaffAction = () => {
           ...finalData,
           note: finalData?.note !== undefined ? finalData.note : DEFAULT_APPROVE_NOTE
         })
-        showSuccess('Order verified successfully')
+        showSuccess(SUCCESS_MESSAGES.SALES.ORDER_VERIFIED)
         invalidateSalesData()
         return true
       } catch (err: unknown) {
-        setError('Failed to verify order')
+        setError(ERROR_MESSAGES.SALES.VERIFY_ORDER_FAILED)
         showError(err)
         return false
       } finally {
@@ -108,15 +107,15 @@ export const useSalesStaffAction = () => {
       setError(null)
       try {
         if (!invoiceId) {
-          throw new Error('Associated invoice ID not found')
+          throw new Error(ERROR_MESSAGES.SALES.INVOICE_ID_NOT_FOUND)
         }
 
         await salesService.rejectInvoice(invoiceId, note)
-        showSuccess('Invoice and all associated orders rejected')
+        showSuccess(SUCCESS_MESSAGES.SALES.BATCH_REJECTED)
         invalidateSalesData()
         return true
       } catch (err: unknown) {
-        setError('Failed to reject order')
+        setError(ERROR_MESSAGES.SALES.REJECT_ORDER_FAILED)
         showError(err)
         return false
       } finally {

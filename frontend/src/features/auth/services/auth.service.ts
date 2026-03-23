@@ -45,8 +45,16 @@ export const authService = {
     return response.data
   },
 
-  changePasswordCustomer: async (payload: { oldPassword: string; newPassword: string }) => {
+  changePasswordCustomer: async (payload: { oldPassword?: string; newPassword: string }) => {
     const response = await authApi.changePasswordCustomer(payload)
     return response
+  },
+
+  requestMergeAccount: async (payload: { email: string; password?: string }) => {
+    return await authApi.requestMergeAccount(payload)
+  },
+
+  verifyMergeOtp: async (payload: { email: string; otp: string }) => {
+    return await authApi.verifyMergeOtp(payload)
   }
 }

@@ -14,7 +14,6 @@ export default function SaleStaffPreOrderDetailPage() {
   const [searchParams] = useSearchParams()
   const { data: order } = useSalesStaffOrderDetail(orderId as string)
 
-  // Tracking progress state
   const [progress, setProgress] = useState(62)
 
   useEffect(() => {
@@ -43,7 +42,7 @@ export default function SaleStaffPreOrderDetailPage() {
 
   return (
     <div className="space-y-10 pb-12">
-      {/* Breadcrumb — consistent with other pages */}
+      {}
       <nav className="flex items-center gap-1 text-sm font-medium mb-4 ml-1">
         <Link
           to="/sale-staff/dashboard"
@@ -62,10 +61,10 @@ export default function SaleStaffPreOrderDetailPage() {
         <span className="text-mint-700 font-bold tracking-tight">Pre-order Details</span>
       </nav>
 
-      {/* Main content - Order details */}
+      {}
       <div className="relative z-20">
         <OrderDetail orderId={orderId} onBack={handleBack} isPreOrder={true}>
-          {/* Live Map Tracking Section */}
+          {}
           <div
             onClick={() =>
               window.open(
@@ -77,7 +76,7 @@ export default function SaleStaffPreOrderDetailPage() {
           >
             <MapBackground />
 
-            {/* Title for Map Section */}
+            {}
             <div className="relative z-10 px-8 py-6 pointer-events-none flex justify-between items-start">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur-md rounded-2xl shadow-sm border border-white">
                 <div className="w-2 h-2 rounded-full bg-mint-500 animate-pulse"></div>
@@ -90,7 +89,7 @@ export default function SaleStaffPreOrderDetailPage() {
               </div>
             </div>
 
-            {/* Cards container at the bottom */}
+            {}
             <div className="relative z-10 p-6 mt-auto pointer-events-none">
               <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 pointer-events-auto">
                 <div className="lg:col-span-2 h-full flex flex-col">

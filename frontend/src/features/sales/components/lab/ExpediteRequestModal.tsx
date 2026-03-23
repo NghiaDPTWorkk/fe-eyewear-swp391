@@ -21,7 +21,6 @@ export function ExpediteRequestModal({ isOpen, onClose, order }: ExpediteRequest
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1500))
 
     toast.success(`Expedite request sent for ${order.orderCode}!`, {
@@ -41,15 +40,15 @@ export function ExpediteRequestModal({ isOpen, onClose, order }: ExpediteRequest
 
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-      {/* Backdrop */}
+      {}
       <div
         className="fixed inset-0 bg-slate-900/40 backdrop-blur-md transition-all duration-300 animate-in fade-in"
         onClick={onClose}
       />
 
-      {/* Modal Panel */}
+      {}
       <div className="relative w-full max-w-md max-h-[90vh] flex flex-col bg-white rounded-3xl shadow-[0_32px_128px_-16px_rgba(0,0,0,0.3)] border border-neutral-100/50 overflow-hidden animate-in zoom-in-95 duration-300">
-        {/* Header - Fixed */}
+        {}
         <div className="flex items-center justify-between p-6 border-b border-neutral-50 bg-neutral-50/50 shrink-0">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 bg-mint-50 text-mint-600 rounded-xl flex items-center justify-center shadow-sm border border-mint-100/50">
@@ -73,9 +72,9 @@ export function ExpediteRequestModal({ isOpen, onClose, order }: ExpediteRequest
         </div>
 
         <form onSubmit={handleSubmit} className="flex-1 overflow-hidden flex flex-col">
-          {/* Content - Scrollable */}
+          {}
           <div className="flex-1 overflow-y-auto p-6 pt-4 space-y-5 custom-scrollbar">
-            {/* Order Info Summary */}
+            {}
             <div className="p-4 bg-slate-50/50 rounded-2xl border border-slate-100 space-y-4">
               <div className="flex justify-between items-center">
                 <div>
@@ -143,7 +142,7 @@ export function ExpediteRequestModal({ isOpen, onClose, order }: ExpediteRequest
             </div>
           </div>
 
-          {/* Footer - Fixed */}
+          {}
           <div className="p-6 pt-0 flex flex-col gap-2 shrink-0">
             <Button
               type="submit"

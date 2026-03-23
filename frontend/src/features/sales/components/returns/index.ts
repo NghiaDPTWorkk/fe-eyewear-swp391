@@ -1,2 +1,6 @@
 export { default as ReturnsTable } from './ReturnsTable'
 export { default as ReturnDetails } from './ReturnDetails'
+export { default as ReturnTicketsTable } from './ReturnTicketsTable'
+export { default as ReturnTicketDrawer } from './ReturnTicketDrawer'
+export { default as ReturnTicketStatusBadge } from './ReturnTicketStatusBadge'
+export { default as ReturnVerifyView } from './ReturnVerifyView'

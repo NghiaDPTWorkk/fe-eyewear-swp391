@@ -1,4 +1,4 @@
-import { useSalesStaffOrderDetail } from '@/features/sales/hooks/useSalesStaffInvoices'
+import { useSalesStaffOrderDetail } from '@/features/sales/hooks'
 
 import {
   IoMailOutline,
@@ -17,6 +17,7 @@ import {
 } from 'react-icons/io5'
 import { Card } from '@/shared/components/ui-core'
 import { cn } from '@/lib/utils'
+import { formatPrice, toTitleCase } from '@/shared/utils'
 
 interface OrderDetailProps {
   orderId: string
@@ -56,7 +57,6 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
     )
   }
 
-  // Transform data
   const order = {
     id: realOrder.orderCode || realOrder._id,
     date: realOrder.createdAt
@@ -66,12 +66,21 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
           year: 'numeric'
         })
       : 'N/A',
-    status: realOrder.status?.toUpperCase() || 'PENDING',
+    status:
+      realOrder.invoice?.status === 'CANCELED' || realOrder.invoice?.status === 'CANCEL'
+        ? 'CANCELED'
+        : realOrder.status?.toUpperCase() || 'PENDING',
     priceVal: realOrder.price || 0,
-    subtotal: `${(realOrder.price || 0).toLocaleString()} ₫`,
-    shipping: '0 ₫',
-    tax: '0 ₫',
-    total: `${(realOrder.price || 0).toLocaleString()} ₫`,
+    subtotal: formatPrice(realOrder.price || 0),
+    shipping: formatPrice(realOrder.invoice?.feeShip || 0),
+    tax: formatPrice(0),
+    discount: formatPrice(realOrder.invoice?.totalDiscount || 0),
+    total: formatPrice(
+      (realOrder.price || 0) +
+        (realOrder.invoice?.feeShip || 0) -
+        (realOrder.invoice?.totalDiscount || 0)
+    ),
+
     customer: {
       name: realOrder.customerName || realOrder.invoice?.fullName || 'Guest Customer',
       email: realOrder.customerEmail || realOrder.invoice?.email || 'No email provided',
@@ -96,9 +105,15 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
       name: p.product?.product_name || p.product?.sku || 'Eyewear Product',
       sku: p.product?.sku || 'N/A',
       brand: 'PREMIUM COLLECTION',
-      price: `${(p.product?.pricePerUnit || 0).toLocaleString()} ₫`,
+      price: formatPrice(p.product?.pricePerUnit || 0),
       quantity: p.quantity,
-      lens: p.lens
+      lens: p.lens,
+      image:
+        p.product?.image ||
+        p.product?.thumbnail ||
+        p.product?.imageUrl ||
+        p.product?.defaultVariantImage ||
+        p.product?.product_image
     })),
     timeline: isPreOrder
       ? [
@@ -141,7 +156,7 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
           {
             title: 'Current Stage',
             time: 'ACTIVE',
-            desc: `Order is currently in ${realOrder.status?.toLowerCase().replace(/_/g, ' ') || 'pending'} stage`,
+            desc: `Order is currently in ${toTitleCase(realOrder.status || 'pending')} stage`,
             icon: IoTimeOutline
           }
         ],
@@ -150,7 +165,7 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
         id: `TRX-${(realOrder.orderCode || '').slice(-6)}`,
         date: realOrder.createdAt ? new Date(realOrder.createdAt).toLocaleDateString() : 'N/A',
         method: isPreOrder ? 'DEPOSIT PAYMENT' : 'BANK TRANSFER',
-        amount: `${(realOrder.price || 0).toLocaleString()} ₫`,
+        amount: formatPrice(realOrder.price || 0),
         status: 'SUCCESS'
       }
     ]
@@ -189,13 +204,13 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
               </h1>
               <span
                 className={cn(
-                  'px-3 py-1 text-[10px] font-semibold uppercase tracking-widest rounded-lg border',
+                  'px-3 py-1 text-[10px] font-semibold tracking-widest rounded-lg border',
                   isPreOrder
                     ? 'bg-mint-50 text-mint-600 border-mint-100'
                     : getStatusColor(order.status)
                 )}
               >
-                {isPreOrder ? 'PRE-ORDER' : order.status}
+                {isPreOrder ? 'Pre-order' : toTitleCase(order.status)}
               </span>
               {isPreOrder && (
                 <span className="px-3 py-1 bg-rose-50 text-rose-600 border border-rose-100 text-[10px] font-bold uppercase tracking-widest rounded-lg">
@@ -226,7 +241,6 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-stretch">
         <div className="contents">
-          {/* Main Card */}
           <Card className="xl:col-span-8 order-1 h-full flex flex-col p-0 overflow-hidden border border-slate-100/50 shadow-xl shadow-slate-200/40 bg-white rounded-[32px]">
             <div className="px-8 py-6 border-b border-slate-50 bg-slate-50/20">
               <h2 className="text-lg font-semibold text-slate-800 tracking-tight">
@@ -241,8 +255,16 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
                   className="p-6 rounded-[24px] hover:bg-slate-50/40 transition-all duration-300 group"
                 >
                   <div className="flex items-start gap-6">
-                    <div className="w-28 h-28 bg-white border border-slate-100 rounded-2xl flex items-center justify-center text-slate-200 shadow-sm transition-all group-hover:shadow-md group-hover:scale-[1.02]">
-                      <IoGlassesOutline size={48} />
+                    <div className="w-28 h-28 bg-white border border-slate-100 rounded-2xl flex items-center justify-center text-slate-200 shadow-sm transition-all group-hover:shadow-md group-hover:scale-[1.02] overflow-hidden">
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <IoGlassesOutline size={48} />
+                      )}
                     </div>
                     <div className="flex-1 space-y-3">
                       <div className="flex justify-between items-start">
@@ -341,10 +363,15 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
                     <span>Shipping</span>
                     <span className="text-slate-700">{order.shipping}</span>
                   </div>
+                  <div className="flex justify-between items-center text-sm font-semibold text-rose-400 uppercase tracking-wider">
+                    <span>Discount</span>
+                    <span className="text-rose-500">{order.discount}</span>
+                  </div>
                   <div className="flex justify-between items-center text-sm font-semibold text-slate-400 uppercase tracking-wider pb-3">
                     <span>Tax</span>
                     <span className="text-slate-700">{order.tax}</span>
                   </div>
+
                   <div className="pt-2 flex justify-between items-center">
                     <span className="text-sm font-bold text-slate-900 uppercase tracking-widest">
                       {isPreOrder ? 'Deposit Amount' : 'Total Amount'}
@@ -358,7 +385,6 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
             </div>
           </Card>
 
-          {/* Activity Timeline */}
           <Card className="xl:col-span-8 order-3 h-full flex flex-col p-6 border border-slate-100/50 shadow-xl shadow-slate-200/40 bg-white rounded-[32px]">
             <h2 className="text-lg font-semibold text-slate-800 tracking-tight mb-8">
               Activity Flow
@@ -384,7 +410,6 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
             </div>
           </Card>
 
-          {/* Transactions */}
           <Card className="xl:col-span-8 order-6 h-full flex flex-col p-0 overflow-hidden border border-slate-100/50 shadow-xl shadow-slate-200/40 bg-white rounded-[32px]">
             <div className="px-8 py-6 border-b border-slate-50 flex items-center gap-3">
               <div className="p-2 bg-slate-50 rounded-xl text-slate-500">
@@ -425,9 +450,7 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
           </Card>
         </div>
 
-        {/* Sidebar */}
         <div className="contents">
-          {/* Customer Profile */}
           <Card className="xl:col-span-4 order-2 h-full flex flex-col p-6 border border-slate-100/50 shadow-xl shadow-slate-200/40 bg-white rounded-[32px] overflow-hidden relative group">
             <div className="absolute -right-4 -top-4 w-32 h-32 rounded-full opacity-50 bg-mint-50 group-hover:scale-110 transition-transform duration-500" />
             <h2 className="text-lg font-semibold text-slate-800 tracking-tight mb-6 relative z-10">
@@ -465,7 +488,6 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
             </div>
           </Card>
 
-          {/* Delivery Section */}
           <Card className="xl:col-span-4 order-4 h-full flex flex-col p-6 border border-slate-100/50 shadow-xl shadow-slate-200/40 bg-white rounded-[32px]">
             <h2 className="text-lg font-semibold text-slate-800 tracking-tight mb-6">
               Order Detail

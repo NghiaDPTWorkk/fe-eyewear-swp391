@@ -1,5 +1,6 @@
 import { Card } from '@/shared/components/ui/card'
 import { PriceTag } from '@/shared/components/ui/price-tag'
+import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 
 interface OrderSummaryProps {
   feeShip: number
@@ -16,7 +17,7 @@ export function OrderSummary({ totalPrice, totalDiscount, feeShip }: OrderSummar
       <div className="space-y-4">
         <div className="flex justify-between text-xs font-semibold items-center">
           <span className="text-gray-400 uppercase tracking-wide ">Subtotal</span>
-          <PriceTag price={totalPrice + totalDiscount - feeShip} className="text-mint-1200" />
+          <PriceTag price={totalPrice} className="text-mint-1200" />
         </div>
         <div className="flex justify-between text-xs font-semibold items-center">
           <span className="text-gray-400 uppercase tracking-wide">Shipping</span>
@@ -27,7 +28,9 @@ export function OrderSummary({ totalPrice, totalDiscount, feeShip }: OrderSummar
         {totalDiscount > 0 && (
           <div className="flex justify-between text-xs font-semibold">
             <span className="text-gray-400 uppercase tracking-wide">Discount</span>
-            <span className="text-danger-500">-${totalDiscount}</span>
+            <span className="text-danger-500">
+              -<VNDPrice amount={totalDiscount} />
+            </span>
           </div>
         )}
         <div className="pt-5 border-t border-mint-50/50 flex justify-between items-end">
@@ -35,7 +38,7 @@ export function OrderSummary({ totalPrice, totalDiscount, feeShip }: OrderSummar
             Total Price
           </span>
           <PriceTag
-            price={totalPrice}
+            price={totalPrice + feeShip - totalDiscount}
             className="text-2xl font-bold text-mint-1200 tracking-tight"
           />
         </div>

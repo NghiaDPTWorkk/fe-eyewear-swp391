@@ -1,40 +1,46 @@
 import { useCallback } from 'react'
+import { OrderStatus } from '@/shared/utils/enums/order.enum'
 
 export interface SimpleStatus {
-  label: 'REJECTED' | 'ACCEPTED' | 'NEED VERIFY'
+  label: 'REJECTED' | 'ACCEPTED' | 'NEED VERIFY' | 'CANCELED'
   className: string
 }
 
 export const useOrderStatus = () => {
   const getSimplifiedStatus = useCallback((statusStr: string): SimpleStatus => {
-    const status = (statusStr || 'PENDING').toUpperCase()
+    const status = (statusStr || OrderStatus.PENDING).toUpperCase()
 
-    // List of rejected states
-    const isRejected = ['REJECT', 'REJECTED', 'CANCELED'].includes(status)
-
-    if (isRejected) {
+    if (status === OrderStatus.CANCELED || status === 'CANCEL') {
       return {
-        label: 'REJECTED',
+        label: 'CANCELED',
         className: 'bg-rose-50 text-rose-600 border-rose-100'
       }
     }
 
-    // List of accepted/verified states
+    const isRejected = [OrderStatus.REJECT, OrderStatus.REJECTED].includes(status as OrderStatus)
+
+    if (isRejected) {
+      return {
+        label: 'REJECTED',
+        className: 'bg-rose-100/50 text-rose-700 border-rose-200'
+      }
+    }
+
     const isAccepted = [
-      'VERIFIED',
-      'APPROVE',
-      'APPROVED',
-      'WAITING_ASSIGN',
-      'ASSIGNED',
-      'MAKING',
-      'PACKAGING',
-      'COMPLETED',
-      'ONBOARD',
-      'DELIVERED',
-      'DELIVERING',
-      'SHIPPED',
-      'PROCESSING'
-    ].includes(status)
+      OrderStatus.VERIFIED,
+      OrderStatus.APPROVE,
+      OrderStatus.APPROVED,
+      OrderStatus.WAITING_ASSIGN,
+      OrderStatus.ASSIGNED,
+      OrderStatus.MAKING,
+      OrderStatus.PACKAGING,
+      OrderStatus.COMPLETED,
+      OrderStatus.ONBOARD,
+      OrderStatus.DELIVERED,
+      OrderStatus.DELIVERING,
+      OrderStatus.SHIPPED,
+      OrderStatus.PROCESSING
+    ].includes(status as OrderStatus)
 
     if (isAccepted) {
       return {
@@ -43,7 +49,6 @@ export const useOrderStatus = () => {
       }
     }
 
-    // Default: Needs manual verification
     return {
       label: 'NEED VERIFY',
       className: 'bg-amber-50 text-amber-600 border-amber-100'

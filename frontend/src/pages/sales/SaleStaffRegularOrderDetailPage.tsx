@@ -28,7 +28,7 @@ export default function SaleStaffRegularOrderDetailPage() {
 
   return (
     <div className="space-y-12 pb-12">
-      {/* Breadcrumb */}
+      {}
       <nav className="flex items-center gap-1 text-sm font-medium mb-6 ml-1">
         <Link
           to="/sale-staff/dashboard"
@@ -47,7 +47,7 @@ export default function SaleStaffRegularOrderDetailPage() {
         <span className="text-mint-700 font-bold tracking-tight">Order Details</span>
       </nav>
 
-      {/* Main content */}
+      {}
       <OrderDetail orderId={orderId} onBack={handleBack} />
     </div>
   )

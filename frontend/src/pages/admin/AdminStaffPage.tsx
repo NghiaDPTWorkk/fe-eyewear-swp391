@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Outlet } from 'react-router-dom'
-import { Form, Formik, type FormikHelpers } from 'formik'
-import * as Yup from 'yup'
+import { type FormikHelpers } from 'formik'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { Container, Button } from '@/shared/components/ui'
@@ -11,7 +10,9 @@ import { useDebounce } from '@/shared/hooks/useDebounce'
 import { adminAccountService } from '@/shared/services/admin/adminAccountService'
 import type { AdminAccount, CreateAdminAccountRequest } from '@/shared/types'
 import { StaffTable, type StaffData } from './components/staff/StaffTable'
-import { StaffDetailDrawer } from './components/staff/StaffDetailDrawer'
+import { AdminAccountDetail } from './components/AdminAccountDetail'
+import { AdminEditAccount, type CreateAdminAccountFormValues } from './AdminEditAccount'
+import ConfirmationModal from '@/shared/components/ui/ConfirmationModal'
 import {
   IoSearchOutline,
   IoRefreshOutline,
@@ -20,40 +21,10 @@ import {
   IoShieldCheckmarkOutline,
   IoFlashOutline,
   IoTrendingUpOutline,
-  IoTrendingDownOutline,
-  IoCloseOutline
+  IoTrendingDownOutline
 } from 'react-icons/io5'
 
-const VN_PHONE_REGEX = /^(0|\+84)(3|5|7|8|9)\d{8}$/
-const CITIZEN_ID_REGEX = /^\d{12}$/
-
-interface CreateAdminAccountFormValues {
-  name: string
-  citizenId: string
-  phone: string
-  email: string
-  password: string
-  role: string
-  avatar: string
-}
-
-const createAdminAccountValidationSchema = Yup.object({
-  name: Yup.string().trim().min(1).max(255).required('Name is required'),
-  citizenId: Yup.string()
-    .matches(CITIZEN_ID_REGEX, 'Citizen ID must be exactly 12 digits')
-    .required('Citizen ID is required'),
-  phone: Yup.string()
-    .matches(VN_PHONE_REGEX, 'Invalid Vietnam phone number')
-    .required('Phone is required'),
-  email: Yup.string().email('Invalid email').required('Email is required'),
-  password: Yup.string()
-    .min(8, 'Password must be at least 8 characters')
-    .required('Password is required'),
-  role: Yup.string()
-    .oneOf(['SALE_STAFF', 'OPERATION_STAFF', 'MANAGER', 'SYSTEM_ADMIN'])
-    .required('Role is required'),
-  avatar: Yup.string().trim().nullable().defined()
-})
+// ─── Helpers ────────────────────────────────────────────────────────────────
 
 const formatRoleLabel = (role: string): string => {
   const normalized = role.toUpperCase()
@@ -64,10 +35,10 @@ const formatRoleLabel = (role: string): string => {
   return role
 }
 
-const formatLastActive = (isoDate?: string | null): string => {
-  if (!isoDate) return 'N/A'
+const formatDate = (isoDate?: string | null): string => {
+  if (!isoDate) return '--'
   const date = new Date(isoDate)
-  if (Number.isNaN(date.getTime())) return 'N/A'
+  if (Number.isNaN(date.getTime())) return '--'
   return date.toLocaleString('vi-VN')
 }
 
@@ -76,12 +47,14 @@ const mapToStaffData = (item: AdminAccount): StaffData => ({
   name: item.name,
   email: item.email,
   role: formatRoleLabel(item.role),
-  status: item.deletedAt ? 'Inactive' : 'Active',
-  lastActive: formatLastActive(item.lastLogin ?? item.updatedAt),
+  lastLogin: formatDate(item.lastLogin),
+  createdAt: formatDate(item.createdAt),
   phone: item.phone,
   citizenId: item.citizenId,
   avatar: item.avatar
 })
+
+// ─── SummaryCard ─────────────────────────────────────────────────────────────
 
 const SummaryCard: React.FC<{
   label: string
@@ -131,7 +104,9 @@ const SummaryCard: React.FC<{
         </div>
       </div>
       <div className="mt-4">
-        <h3 className="text-3xl font-bold text-gray-900 font-heading tracking-tight mb-4">{value}</h3>
+        <h3 className="text-3xl font-bold text-gray-900 font-heading tracking-tight mb-4">
+          {value}
+        </h3>
         <p className="text-[10px] font-medium text-neutral-400 capitalize whitespace-nowrap">
           Updated just now
         </p>
@@ -140,214 +115,7 @@ const SummaryCard: React.FC<{
   )
 }
 
-interface CreateStaffModalProps {
-  open: boolean
-  onClose: () => void
-  onSubmit: (
-    values: CreateAdminAccountFormValues,
-    helpers: FormikHelpers<CreateAdminAccountFormValues>
-  ) => Promise<void>
-  isSubmitting: boolean
-}
-
-function CreateStaffModal({ open, onClose, onSubmit, isSubmitting }: CreateStaffModalProps) {
-  useEffect(() => {
-    if (!open) return
-    const originalOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.body.style.overflow = originalOverflow
-    }
-  }, [open])
-
-  if (!open) return null
-
-  const initialValues: CreateAdminAccountFormValues = {
-    name: '',
-    citizenId: '',
-    phone: '',
-    email: '',
-    password: '',
-    role: 'SALE_STAFF',
-    avatar: ''
-  }
-
-  return (
-    <>
-      <div className="fixed inset-0 bg-black/40 z-[100]" onClick={onClose} />
-      <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
-        <div className="w-full max-w-2xl max-h-[90vh] bg-white rounded-3xl border border-neutral-100 shadow-2xl overflow-y-auto">
-          <div className="p-6 border-b border-neutral-100 flex items-center justify-between sticky top-0 bg-white z-10">
-            <h3 className="text-xl font-bold text-gray-900">Create Staff Account</h3>
-            <button
-              onClick={onClose}
-              className="w-10 h-10 rounded-xl bg-neutral-50 flex items-center justify-center text-neutral-400 hover:text-gray-900"
-            >
-              <IoCloseOutline size={22} />
-            </button>
-          </div>
-
-          <Formik<CreateAdminAccountFormValues>
-            initialValues={initialValues}
-            validationSchema={createAdminAccountValidationSchema}
-            onSubmit={onSubmit}
-          >
-            {({ values, errors, touched, handleChange, handleBlur, setFieldValue }) => (
-              <Form className="p-6 space-y-5">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                      Name
-                    </label>
-                    <input
-                      name="name"
-                      value={values.name}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      autoComplete="name"
-                      maxLength={255}
-                      className="w-full px-4 py-3 border border-neutral-200 rounded-xl"
-                    />
-                    {touched.name && errors.name && (
-                      <p className="mt-1 text-xs text-red-500">{errors.name}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                      Citizen ID
-                    </label>
-                    <input
-                      name="citizenId"
-                      value={values.citizenId}
-                      onChange={(e) =>
-                        setFieldValue('citizenId', e.target.value.replace(/\D/g, '').slice(0, 12))
-                      }
-                      onBlur={handleBlur}
-                      autoComplete="off"
-                      inputMode="numeric"
-                      maxLength={12}
-                      className="w-full px-4 py-3 border border-neutral-200 rounded-xl"
-                    />
-                    {touched.citizenId && errors.citizenId && (
-                      <p className="mt-1 text-xs text-red-500">{errors.citizenId}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                      Phone
-                    </label>
-                    <input
-                      name="phone"
-                      value={values.phone}
-                      onChange={(e) =>
-                        setFieldValue('phone', e.target.value.replace(/[^\d+]/g, '').slice(0, 12))
-                      }
-                      onBlur={handleBlur}
-                      autoComplete="tel"
-                      inputMode="tel"
-                      className="w-full px-4 py-3 border border-neutral-200 rounded-xl"
-                    />
-                    {touched.phone && errors.phone && (
-                      <p className="mt-1 text-xs text-red-500">{errors.phone}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                      Email
-                    </label>
-                    <input
-                      name="email"
-                      type="email"
-                      value={values.email}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      autoComplete="email"
-                      className="w-full px-4 py-3 border border-neutral-200 rounded-xl"
-                    />
-                    {touched.email && errors.email && (
-                      <p className="mt-1 text-xs text-red-500">{errors.email}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                      Password
-                    </label>
-                    <input
-                      name="password"
-                      type="password"
-                      value={values.password}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      autoComplete="new-password"
-                      className="w-full px-4 py-3 border border-neutral-200 rounded-xl"
-                    />
-                    {touched.password && errors.password && (
-                      <p className="mt-1 text-xs text-red-500">{errors.password}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                      Role
-                    </label>
-                    <select
-                      name="role"
-                      value={values.role}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      className="w-full px-4 py-3 border border-neutral-200 rounded-xl"
-                    >
-                      <option value="SALE_STAFF">SALE_STAFF</option>
-                      <option value="OPERATION_STAFF">OPERATION_STAFF</option>
-                      <option value="MANAGER">MANAGER</option>
-                      <option value="SYSTEM_ADMIN">SYSTEM_ADMIN</option>
-                    </select>
-                    {touched.role && errors.role && (
-                      <p className="mt-1 text-xs text-red-500">{errors.role}</p>
-                    )}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                    Avatar URL (optional)
-                  </label>
-                  <input
-                    name="avatar"
-                    value={values.avatar}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    className="w-full px-4 py-3 border border-neutral-200 rounded-xl"
-                    placeholder="https://..."
-                  />
-                </div>
-
-                <div className="flex justify-end gap-3 pt-4 sticky bottom-0 bg-white pb-2">
-                  <Button type="button" variant="outline" onClick={onClose} className="px-6">
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    variant="solid"
-                    colorScheme="primary"
-                    disabled={isSubmitting}
-                    className="px-6"
-                  >
-                    {isSubmitting ? 'Creating...' : 'Create Account'}
-                  </Button>
-                </div>
-              </Form>
-            )}
-          </Formik>
-        </div>
-      </div>
-    </>
-  )
-}
+// ─── Page ────────────────────────────────────────────────────────────────────
 
 export default function AdminStaffPage() {
   const queryClient = useQueryClient()
@@ -356,7 +124,9 @@ export default function AdminStaffPage() {
   const [selectedStaffId, setSelectedStaffId] = useState<string | null>(null)
   const [roleFilter, setRoleFilter] = useState<string>('All')
   const [currentPage, setCurrentPage] = useState<number>(1)
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [editingStaff, setEditingStaff] = useState<StaffData | null>(null)
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
 
   const debouncedSearch = useDebounce(searchQuery, 400)
   const listLimit = 10
@@ -392,11 +162,26 @@ export default function AdminStaffPage() {
       adminAccountService.createAdminAccount(payload),
     onSuccess: () => {
       toast.success('Create admin account success')
-      setIsCreateModalOpen(false)
+      setIsEditModalOpen(false)
       queryClient.invalidateQueries({ queryKey: ['admin-staff-accounts'] })
     },
     onError: () => {
       toast.error('Create admin account failed')
+    }
+  })
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: any }) =>
+      adminAccountService.updateAdminAccount(id, payload),
+    onSuccess: () => {
+      toast.success('Update admin account success')
+      setIsEditModalOpen(false)
+      setEditingStaff(null)
+      queryClient.invalidateQueries({ queryKey: ['admin-staff-accounts'] })
+      queryClient.invalidateQueries({ queryKey: ['admin-staff-account-detail'] })
+    },
+    onError: () => {
+      toast.error('Update admin account failed')
     }
   })
 
@@ -431,20 +216,42 @@ export default function AdminStaffPage() {
     { label: 'Admin', value: 'Admin' }
   ]
 
-  const handleSubmitCreate = async (
+  const handleSubmitStaff = async (
     values: CreateAdminAccountFormValues,
     helpers: FormikHelpers<CreateAdminAccountFormValues>
   ) => {
     try {
-      await createMutation.mutateAsync({
-        name: values.name.trim(),
-        citizenId: values.citizenId.trim(),
-        phone: values.phone.trim(),
-        email: values.email.trim(),
-        password: values.password,
-        role: values.role,
-        avatar: values.avatar?.trim() ? values.avatar.trim() : null
-      })
+      if (editingStaff) {
+        // Update mode
+        const payload: any = {
+          name: values.name.trim(),
+          citizenId: values.citizenId.trim(),
+          phone: values.phone.trim(),
+          email: values.email.trim(),
+          role: values.role,
+          avatar: values.avatar?.trim() ? values.avatar.trim() : null
+        }
+        // Only include password if it's not empty
+        if (values.password.trim()) {
+          payload.password = values.password
+        }
+
+        await updateMutation.mutateAsync({
+          id: editingStaff.id,
+          payload
+        })
+      } else {
+        // Create mode
+        await createMutation.mutateAsync({
+          name: values.name.trim(),
+          citizenId: values.citizenId.trim(),
+          phone: values.phone.trim(),
+          email: values.email.trim(),
+          password: values.password,
+          role: values.role,
+          avatar: values.avatar?.trim() ? values.avatar.trim() : null
+        })
+      }
       helpers.resetForm()
     } finally {
       helpers.setSubmitting(false)
@@ -460,7 +267,18 @@ export default function AdminStaffPage() {
       return
     }
 
-    deleteMutation.mutate(id)
+    // Mở confirm modal thay vì xóa trực tiếp
+    setPendingDeleteId(id)
+  }
+
+  const handleConfirmDelete = () => {
+    if (!pendingDeleteId) return
+    deleteMutation.mutate(pendingDeleteId, {
+      onSuccess: () => {
+        setPendingDeleteId(null)
+        setSelectedStaffId(null)
+      }
+    })
   }
 
   const total = pagination?.total ?? 0
@@ -479,7 +297,7 @@ export default function AdminStaffPage() {
           ]}
         />
       </div>
-
+      {/* summary card */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 px-4">
         <SummaryCard
           label="Total Staff"
@@ -506,7 +324,7 @@ export default function AdminStaffPage() {
           colorScheme="warning"
         />
       </div>
-
+      {/* FILTER ROLE */}
       <div className="px-4 overflow-x-auto">
         <div className="flex items-center gap-2 p-1.5 bg-neutral-100/50 rounded-2xl w-fit border border-neutral-100">
           {roleTabs.map((tab) => (
@@ -527,7 +345,7 @@ export default function AdminStaffPage() {
           ))}
         </div>
       </div>
-
+      {/* STAFF LIST */}
       <div className="bg-white rounded-3xl border border-neutral-100 shadow-sm overflow-hidden mx-4">
         <div className="p-6 border-b border-neutral-50 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-1">
@@ -564,7 +382,10 @@ export default function AdminStaffPage() {
               <IoRefreshOutline size={20} className={isFetching ? 'animate-spin' : ''} />
             </button>
             <Button
-              onClick={() => setIsCreateModalOpen(true)}
+              onClick={() => {
+                setEditingStaff(null)
+                setIsEditModalOpen(true)
+              }}
               variant="solid"
               colorScheme="primary"
               className="hidden md:flex items-center gap-2 px-6 py-3 h-12 rounded-2xl text-sm font-bold shadow-xl shadow-mint-100/50 active:scale-95"
@@ -597,17 +418,41 @@ export default function AdminStaffPage() {
         </div>
       </div>
 
-      <StaffDetailDrawer
+      {/* Staff Detail Drawer */}
+      <AdminAccountDetail
         isOpen={!!selectedStaffId}
         onClose={() => setSelectedStaffId(null)}
         staff={selectedStaff}
+        onEditStaff={(staff) => {
+          setEditingStaff(staff)
+          setIsEditModalOpen(true)
+        }}
+        onDeactivate={(id) => toggleStaffStatus(id)}
       />
 
-      <CreateStaffModal
-        open={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onSubmit={handleSubmitCreate}
-        isSubmitting={createMutation.isPending}
+      {/* Staff Editor Modal (Create/Edit) */}
+      <AdminEditAccount
+        open={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false)
+          setEditingStaff(null)
+        }}
+        initialData={editingStaff}
+        onSubmit={handleSubmitStaff}
+        isSubmitting={createMutation.isPending || updateMutation.isPending}
+      />
+
+      {/* Confirm Delete Modal */}
+      <ConfirmationModal
+        isOpen={!!pendingDeleteId}
+        onClose={() => setPendingDeleteId(null)}
+        onConfirm={handleConfirmDelete}
+        title="Deactivate Account"
+        message={`Are you sure you want to deactivate this staff account? This action cannot be undone.`}
+        confirmText="Yes, Deactivate"
+        cancelText="Cancel"
+        isLoading={deleteMutation.isPending}
+        type="danger"
       />
 
       <div className="px-4">

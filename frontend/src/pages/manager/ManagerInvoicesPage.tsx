@@ -1,19 +1,5 @@
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-
-import { Container, Button } from '@/shared/components/ui-core'
-import { OrderType } from '@/shared/utils/enums/order.enum'
-import { PageHeader } from '@/features/sales/components/common'
-
-import { useAdminInvoices } from '@/features/manager/hooks/useAdminInvoices'
-import { useComplete } from '@/features/manager/hooks/useComplete'
-import { useOnboard } from '@/features/manager/hooks/useOnboard'
-
-import ManagerOrderDrawer from './components/invoices/ManagerOrderDrawer'
-import { ManagerMetricCard } from './components/invoices/ManagerMetricCard'
-import { ManagerInvoiceTable } from './components/invoices/ManagerInvoiceTable'
-import { ManagerInvoiceFilters } from './components/invoices/ManagerInvoiceFilters'
-
 import {
   IoChevronBackOutline,
   IoChevronForwardOutline,
@@ -23,12 +9,31 @@ import {
   IoRepeatOutline
 } from 'react-icons/io5'
 
+import { Container, Button } from '@/shared/components/ui-core'
+import { OrderType } from '@/shared/utils/enums/order.enum'
+import { PageHeader } from '@/features/sales/components/common'
+
+import { useAdminInvoices, useComplete, useOnboard } from '@/features/manager/hooks'
+
+import ManagerOrderDrawer from './components/invoices/ManagerOrderDrawer'
+import { ManagerMetricCard } from './components/invoices/ManagerMetricCard'
+import { ManagerInvoiceTable } from './components/invoices/ManagerInvoiceTable'
+import { ManagerInvoiceFilters } from './components/invoices/ManagerInvoiceFilters'
+
 export default function ManagerInvoicesPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const statusFilter = searchParams.get('status') ?? 'All'
   const orderTypeFilter = searchParams.get('orderType') ?? 'All'
-  const [searchQuery, setSearchQuery] = useState('')
+  const searchQuery = searchParams.get('search') ?? ''
   const [page, setPage] = useState(1)
+
+  const setSearchQuery = (query: string) => {
+    const next = new URLSearchParams(searchParams)
+    if (query) next.set('search', query)
+    else next.delete('search')
+    setSearchParams(next)
+  }
+
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<string | null>(null)
   const limit = 10
 
@@ -75,17 +80,28 @@ export default function ManagerInvoicesPage() {
       [OrderType.RETURN]: 0,
       [OrderType.PRE_ORDER]: 0
     }
-    invoiceList.forEach((inv) => {
-      if (inv.orders?.length)
-        inv.orders.forEach((o) => {
-          const types = Array.isArray(o.type) ? o.type : [o.type]
-          Object.values(OrderType).forEach((type) => {
-            if (types.some((t) => String(t).includes(type))) counts[type]++
-          })
-        })
-      else counts[OrderType.NORMAL]++
-    })
+
+    const typeEntries = Object.values(OrderType)
+
+    for (const inv of invoiceList) {
+      if (!inv.orders || inv.orders.length === 0) {
+        counts[OrderType.NORMAL]++
+        continue
+      }
+
+      for (const o of inv.orders) {
+        const types = Array.isArray(o.type) ? o.type : [o.type]
+        const typeStrArr = types.map(String)
+        for (const typeKey of typeEntries) {
+          if (typeStrArr.some((t) => t.includes(typeKey))) {
+            counts[typeKey]++
+          }
+        }
+      }
+    }
+
     const total = Object.values(counts).reduce((a, b) => a + b, 0) || 1
+
     return [
       {
         type: OrderType.NORMAL,

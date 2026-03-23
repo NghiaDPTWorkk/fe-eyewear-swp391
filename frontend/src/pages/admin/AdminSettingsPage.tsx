@@ -51,8 +51,8 @@ export default function AdminSettingsPage() {
         <div className="flex-1">
           <h4 className="text-base font-bold text-mint-900 tracking-tight">Super Admin Access</h4>
           <p className="text-sm text-mint-800/80 mt-1 leading-relaxed font-medium">
-            You have <span className="font-bold text-mint-900">full system access</span>.
-            Changes made here will take effect immediately. Please be cautious when modifying system
+            You have <span className="font-bold text-mint-900">full system access</span>. Changes
+            made here will take effect immediately. Please be cautious when modifying system
             settings.
           </p>
         </div>

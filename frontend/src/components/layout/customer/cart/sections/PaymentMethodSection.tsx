@@ -4,11 +4,13 @@ import { CreditCard } from 'lucide-react'
 interface PaymentMethodSectionProps {
   paymentMethod: PaymentMethodType
   onPaymentMethodChange: (method: PaymentMethodType) => void
+  hideCOD?: boolean
 }
 
 export const PaymentMethodSection = ({
   paymentMethod,
-  onPaymentMethodChange
+  onPaymentMethodChange,
+  hideCOD
 }: PaymentMethodSectionProps) => {
   return (
     <div className="mb-6">
@@ -52,16 +54,18 @@ export const PaymentMethodSection = ({
         </div>
 
         {/* COD Row */}
-        <button
-          onClick={() => onPaymentMethodChange(PaymentMethodType.COD)}
-          className={`w-full py-3 px-4 rounded-xl border-2 transition-all font-bold text-sm ${
-            paymentMethod === PaymentMethodType.COD
-              ? 'border-primary-500 bg-primary-50 text-primary-600'
-              : 'border-mint-200 text-gray-eyewear hover:border-mint-300'
-          }`}
-        >
-          Thanh toán khi nhận hàng (COD)
-        </button>
+        {!hideCOD && (
+          <button
+            onClick={() => onPaymentMethodChange(PaymentMethodType.COD)}
+            className={`w-full py-3 px-4 rounded-xl border-2 transition-all font-bold text-sm ${
+              paymentMethod === PaymentMethodType.COD
+                ? 'border-primary-500 bg-primary-50 text-primary-600'
+                : 'border-mint-200 text-gray-eyewear hover:border-mint-300'
+            }`}
+          >
+            Cash on Delivery (COD)
+          </button>
+        )}
       </div>
     </div>
   )

@@ -1,18 +1,3 @@
-/**
- * RxImageComparator Component
- * ─────────────────────────────────────────────────────────────────────────────
- * Main side-by-side comparison UI for Rx verification.
- *
- * Layout:
- * - Left Panel: Uploaded prescription image (RxImageViewer)
- * - Right Panel: User-entered data (RxDataPanel)
- * - Bottom: Approve / Reject action buttons
- *
- * Business Logic:
- * - Approve → Sends order to Lab/Packaging
- * - Reject → Requires reason → Notifies customer
- * ─────────────────────────────────────────────────────────────────────────────
- */
 import { useState } from 'react'
 import { Button, Input } from '@/components'
 import { IoArrowBack, IoCheckmark, IoClose } from 'react-icons/io5'
@@ -60,7 +45,7 @@ export default function RxImageComparator({
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
-      {/* Header */}
+      {}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button
@@ -79,14 +64,14 @@ export default function RxImageComparator({
         </span>
       </div>
 
-      {/* Side-by-Side Comparison Layout */}
+      {}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        {/* LEFT: Image Viewer */}
+        {}
         <RxImageViewer imageUrl={imageUrl} />
 
-        {/* RIGHT: User Data + Action Buttons */}
+        {}
         <RxDataPanel odData={odData} osData={osData}>
-          {/* Reject reason input (shown when rejecting) */}
+          {}
           {showRejectInput && (
             <div className="px-6 pb-4">
               <label className="text-xs font-semibold text-red-600 block mb-2">
@@ -101,7 +86,7 @@ export default function RxImageComparator({
             </div>
           )}
 
-          {/* Action Buttons */}
+          {}
           <div className="bg-neutral-50/80 p-6 flex gap-4 border-t border-neutral-100">
             <Button
               isFullWidth

@@ -1,15 +1,62 @@
 import { useState, useEffect, useMemo } from 'react'
 import type { Prescription } from '@/shared/types/prescription.types'
 import { Button } from '@/shared/components/ui/button'
-import { Check, Copy, AlertCircle, Info } from 'lucide-react'
+import { Copy, AlertCircle, Info } from 'lucide-react'
 import { toast } from 'react-hot-toast'
+import { Checkbox } from '@/shared/components/ui/checkbox/Checkbox'
 
 const VALIDATION_RULES = {
   SPH: { min: -20.0, max: 20.0, step: 0.25 },
   CYL: { min: -6.0, max: 0.0, step: 0.25 },
   AXIS: { min: 1, max: 180, step: 1 },
   ADD: { min: 0.75, max: 3.5, step: 0.25 },
-  PD: { min: 35, max: 65, step: 0.5 }
+  PD: { min: 35, max: 80, step: 0.5 }
+}
+
+interface PrescriptionInputProps {
+  label: string
+  value: string
+  onChange: (val: string) => void
+  step: number
+  min: number
+  max: number
+  placeholder?: string
+  disabled?: boolean
+  error?: string
+}
+
+const PrescriptionInput = ({
+  label,
+  value,
+  onChange,
+  step,
+  min,
+  max,
+  placeholder,
+  disabled,
+  error
+}: PrescriptionInputProps) => {
+  return (
+    <div className="space-y-1.5 flex flex-col">
+      <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">
+        {label}
+      </label>
+      <input
+        type="number"
+        step={step}
+        min={min}
+        max={max}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        disabled={disabled}
+        className={`w-full bg-white border ${
+          error ? 'border-red-500' : 'border-gray-100 shadow-sm'
+        } rounded-xl px-4 h-11 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center disabled:bg-gray-50 disabled:text-gray-400`}
+        placeholder={placeholder}
+      />
+      {error && <p className="text-[10px] text-red-500 font-medium">{error}</p>}
+    </div>
+  )
 }
 
 interface PrescriptionFormState {
@@ -84,31 +131,31 @@ export function PrescriptionForm({
       if (!val) return
       const num = parseFloat(val)
       if (num < rule.min || num > rule.max) {
-        errors[fieldName] = `Giá trị phải trong khoảng ${rule.min} và ${rule.max}`
+        errors[fieldName] = `Value must be between ${rule.min} and ${rule.max}`
       } else if (Math.abs((num * 100) % (rule.step * 100)) > 0.01) {
         // Using 100 to avoid floating point issues
-        warnings.push(`${fieldName} thường là bội số của ${rule.step}`)
+        warnings.push(`${fieldName} is usually a multiple of ${rule.step}`)
       }
     }
 
     // Individual field checks
     ;(['left', 'right'] as const).forEach((eye) => {
-      const eyeLabel = eye === 'left' ? 'Mắt trái' : 'Mắt phải'
-      checkRange(formData[eye].SPH, VALIDATION_RULES.SPH, `${eyeLabel} SPH`)
-      checkRange(formData[eye].CYL, VALIDATION_RULES.CYL, `${eyeLabel} CYL`)
-      checkRange(formData[eye].AXIS, VALIDATION_RULES.AXIS, `${eyeLabel} AXIS`)
-      checkRange(formData[eye].ADD, VALIDATION_RULES.ADD, `${eyeLabel} ADD`)
+      const eyeLabel = eye === 'left' ? 'Left Eye' : 'Right Eye'
+      checkRange(formData[eye].SPH, VALIDATION_RULES.SPH, `${eye}.SPH`)
+      checkRange(formData[eye].CYL, VALIDATION_RULES.CYL, `${eye}.CYL`)
+      checkRange(formData[eye].AXIS, VALIDATION_RULES.AXIS, `${eye}.AXIS`)
+      checkRange(formData[eye].ADD, VALIDATION_RULES.ADD, `${eye}.ADD`)
 
       // Step 3: CYL & AXIS dependency
       const cyl = parseFloat(formData[eye].CYL)
       if (cyl !== 0 && !formData[eye].AXIS) {
-        errors[`${eye}.AXIS`] = 'Bắt buộc nhập AXIS khi có độ loạn (CYL)'
+        errors[`${eye}.AXIS`] = 'AXIS is required when CYL is entered'
       }
 
       // Step 5: CYL Sign
       if (cyl > 0) {
         warnings.push(
-          `Phát hiện độ loạn dấu cộng (+) ở ${eyeLabel}. Thông thường độ loạn được quy đổi về dấu trừ (-).`
+          `Detected positive (+) CYL for ${eyeLabel}. Usually CYL is converted to negative (-).`
         )
       }
 
@@ -117,7 +164,7 @@ export function PrescriptionForm({
       const absCyl = Math.abs(cyl)
       if (sph > 10 || absCyl > 4) {
         warnings.push(
-          `Độ khúc xạ của ${eyeLabel} rất cao. Để đảm bảo thị lực tốt nhất, vui lòng liên hệ kỹ thuật viên để được tư vấn loại tròng kính chiết suất đặc biệt (1.74 hoặc tròng đặt riêng).`
+          `${eyeLabel} prescription is quite high. Consider high-index lenses (1.74) for better comfort.`
         )
       }
     })
@@ -126,7 +173,7 @@ export function PrescriptionForm({
     if (formData.PD) {
       const pd = parseFloat(formData.PD)
       if (pd < VALIDATION_RULES.PD.min || pd > VALIDATION_RULES.PD.max) {
-        errors.PD = `PD phải nằm trong khoảng ${VALIDATION_RULES.PD.min} - ${VALIDATION_RULES.PD.max}`
+        errors.PD = `PD must be between ${VALIDATION_RULES.PD.min} - ${VALIDATION_RULES.PD.max}`
       }
     }
 
@@ -135,7 +182,7 @@ export function PrescriptionForm({
     const addRight = formData.right.ADD
     if (addLeft && addRight && addLeft !== addRight) {
       warnings.push(
-        'Thông thường độ ADD ở hai mắt sẽ giống nhau, bạn vui lòng kiểm tra lại đơn thuốc.'
+        'Typically, ADD values for both eyes are identical. Please verify your prescription.'
       )
     }
 
@@ -144,7 +191,7 @@ export function PrescriptionForm({
     const addRightNum = parseFloat(formData.right.ADD)
     if (sphRight > 5 && addRightNum === 0) {
       warnings.push(
-        'Độ viễn thị nặng nhưng ADD = 0 có thể do nhầm lẫn dòng trên đơn thuốc. Vui lòng kiểm tra lại.'
+        'High positive SPH with ADD = 0 may be a mistake. Please check the rows on your prescription.'
       )
     }
 
@@ -173,7 +220,8 @@ export function PrescriptionForm({
 
     const hasErrors = Object.keys(validationResults.errors).length > 0
     const pdNum = parseFloat(formData.PD)
-    const pdRequirementMet = (pdNum >= 50 && pdNum <= 65) || (pdNum >= 35 && pdConfirmed)
+    const pdRequirementMet =
+      (pdNum >= 55 && pdNum < 75) || (pdNum >= 35 && pdNum <= 80 && pdConfirmed)
 
     return allMandatoryFilled && rightAxisOk && leftAxisOk && !hasErrors && pdRequirementMet
   }
@@ -271,79 +319,47 @@ export function PrescriptionForm({
             </h4>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">
-                SPH (Sphere)
-              </label>
-              <input
-                type="number"
-                step="0.25"
-                value={formData.right.SPH}
-                onChange={(e) => handleEyeChange('right', 'SPH', e.target.value)}
-                className={`w-full bg-white border ${validationResults.errors['right.SPH'] ? 'border-red-500' : 'border-gray-100'} rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center`}
-                placeholder="0"
-              />
-              {validationResults.errors['right.SPH'] && (
-                <p className="text-[10px] text-red-500 font-medium">
-                  {validationResults.errors['right.SPH']}
-                </p>
-              )}
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">
-                CYL (Cylinder)
-              </label>
-              <input
-                type="number"
-                step="0.25"
-                value={formData.right.CYL}
-                onChange={(e) => handleEyeChange('right', 'CYL', e.target.value)}
-                className={`w-full bg-white border ${validationResults.errors['right.CYL'] ? 'border-red-500' : 'border-gray-100'} rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center`}
-                placeholder="0"
-              />
-              {validationResults.errors['right.CYL'] && (
-                <p className="text-[10px] text-red-500 font-medium">
-                  {validationResults.errors['right.CYL']}
-                </p>
-              )}
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">
-                AXIS (degrees)
-              </label>
-              <input
-                type="number"
-                step="1"
-                value={formData.right.AXIS}
-                onChange={(e) => handleEyeChange('right', 'AXIS', e.target.value)}
-                className={`w-full bg-white border ${validationResults.errors['right.AXIS'] ? 'border-red-500' : 'border-gray-100'} rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center`}
-                placeholder={parseFloat(formData.right.CYL) === 0 ? '—' : '0'}
-                disabled={parseFloat(formData.right.CYL) === 0}
-              />
-              {validationResults.errors['right.AXIS'] && (
-                <p className="text-[10px] text-red-500 font-medium">
-                  {validationResults.errors['right.AXIS']}
-                </p>
-              )}
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">
-                ADD (Addition)
-              </label>
-              <input
-                type="number"
-                step="0.25"
-                value={formData.right.ADD}
-                onChange={(e) => handleEyeChange('right', 'ADD', e.target.value)}
-                className={`w-full bg-white border ${validationResults.errors['right.ADD'] ? 'border-red-500' : 'border-gray-100'} rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center`}
-                placeholder="0"
-              />
-              {validationResults.errors['right.ADD'] && (
-                <p className="text-[10px] text-red-500 font-medium">
-                  {validationResults.errors['right.ADD']}
-                </p>
-              )}
-            </div>
+            <PrescriptionInput
+              label="SPH (Sphere)"
+              value={formData.right.SPH}
+              onChange={(val) => handleEyeChange('right', 'SPH', val)}
+              step={VALIDATION_RULES.SPH.step}
+              min={VALIDATION_RULES.SPH.min}
+              max={VALIDATION_RULES.SPH.max}
+              placeholder="0"
+              error={validationResults.errors['right.SPH']}
+            />
+            <PrescriptionInput
+              label="CYL (Cylinder)"
+              value={formData.right.CYL}
+              onChange={(val) => handleEyeChange('right', 'CYL', val)}
+              step={VALIDATION_RULES.CYL.step}
+              min={VALIDATION_RULES.CYL.min}
+              max={VALIDATION_RULES.CYL.max}
+              placeholder="0"
+              error={validationResults.errors['right.CYL']}
+            />
+            <PrescriptionInput
+              label="AXIS (degrees)"
+              value={formData.right.AXIS}
+              onChange={(val) => handleEyeChange('right', 'AXIS', val)}
+              step={VALIDATION_RULES.AXIS.step}
+              min={VALIDATION_RULES.AXIS.min}
+              max={VALIDATION_RULES.AXIS.max}
+              placeholder={parseFloat(formData.right.CYL) === 0 ? '—' : '0'}
+              disabled={parseFloat(formData.right.CYL) === 0}
+              error={validationResults.errors['right.AXIS']}
+            />
+            <PrescriptionInput
+              label="ADD (Addition)"
+              value={formData.right.ADD}
+              onChange={(val) => handleEyeChange('right', 'ADD', val)}
+              step={VALIDATION_RULES.ADD.step}
+              min={VALIDATION_RULES.ADD.min}
+              max={VALIDATION_RULES.ADD.max}
+              placeholder="0"
+              error={validationResults.errors['right.ADD']}
+            />
           </div>
           <Button
             type="button"
@@ -369,118 +385,96 @@ export function PrescriptionForm({
             <div className="h-8 hidden md:block" aria-hidden="true" />
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">
-                SPH (Sphere)
-              </label>
-              <input
-                type="number"
-                step="0.25"
-                value={formData.left.SPH}
-                onChange={(e) => handleEyeChange('left', 'SPH', e.target.value)}
-                className={`w-full bg-white border ${validationResults.errors['left.SPH'] ? 'border-red-500' : 'border-gray-100'} rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center`}
-                placeholder="0"
-              />
-              {validationResults.errors['left.SPH'] && (
-                <p className="text-[10px] text-red-500 font-medium">
-                  {validationResults.errors['left.SPH']}
-                </p>
-              )}
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">
-                CYL (Cylinder)
-              </label>
-              <input
-                type="number"
-                step="0.25"
-                value={formData.left.CYL}
-                onChange={(e) => handleEyeChange('left', 'CYL', e.target.value)}
-                className={`w-full bg-white border ${validationResults.errors['left.CYL'] ? 'border-red-500' : 'border-gray-100'} rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center`}
-                placeholder="0"
-              />
-              {validationResults.errors['left.CYL'] && (
-                <p className="text-[10px] text-red-500 font-medium">
-                  {validationResults.errors['left.CYL']}
-                </p>
-              )}
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">
-                AXIS (degrees)
-              </label>
-              <input
-                type="number"
-                step="1"
-                value={formData.left.AXIS}
-                onChange={(e) => handleEyeChange('left', 'AXIS', e.target.value)}
-                className={`w-full bg-white border ${validationResults.errors['left.AXIS'] ? 'border-red-500' : 'border-gray-100'} rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center`}
-                placeholder={parseFloat(formData.left.CYL) === 0 ? '—' : '0'}
-                disabled={parseFloat(formData.left.CYL) === 0}
-              />
-              {validationResults.errors['left.AXIS'] && (
-                <p className="text-[10px] text-red-500 font-medium">
-                  {validationResults.errors['left.AXIS']}
-                </p>
-              )}
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">
-                ADD (Addition)
-              </label>
-              <input
-                type="number"
-                step="0.25"
-                value={formData.left.ADD}
-                onChange={(e) => handleEyeChange('left', 'ADD', e.target.value)}
-                className={`w-full bg-white border ${validationResults.errors['left.ADD'] ? 'border-red-500' : 'border-gray-100'} rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center`}
-                placeholder="0"
-              />
-              {validationResults.errors['left.ADD'] && (
-                <p className="text-[10px] text-red-500 font-medium">
-                  {validationResults.errors['left.ADD']}
-                </p>
-              )}
-            </div>
+            <PrescriptionInput
+              label="SPH (Sphere)"
+              value={formData.left.SPH}
+              onChange={(val) => handleEyeChange('left', 'SPH', val)}
+              step={VALIDATION_RULES.SPH.step}
+              min={VALIDATION_RULES.SPH.min}
+              max={VALIDATION_RULES.SPH.max}
+              placeholder="0"
+              error={validationResults.errors['left.SPH']}
+            />
+            <PrescriptionInput
+              label="CYL (Cylinder)"
+              value={formData.left.CYL}
+              onChange={(val) => handleEyeChange('left', 'CYL', val)}
+              step={VALIDATION_RULES.CYL.step}
+              min={VALIDATION_RULES.CYL.min}
+              max={VALIDATION_RULES.CYL.max}
+              placeholder="0"
+              error={validationResults.errors['left.CYL']}
+            />
+            <PrescriptionInput
+              label="AXIS (degrees)"
+              value={formData.left.AXIS}
+              onChange={(val) => handleEyeChange('left', 'AXIS', val)}
+              step={VALIDATION_RULES.AXIS.step}
+              min={VALIDATION_RULES.AXIS.min}
+              max={VALIDATION_RULES.AXIS.max}
+              placeholder={parseFloat(formData.left.CYL) === 0 ? '—' : '0'}
+              disabled={parseFloat(formData.left.CYL) === 0}
+              error={validationResults.errors['left.AXIS']}
+            />
+            <PrescriptionInput
+              label="ADD (Addition)"
+              value={formData.left.ADD}
+              onChange={(val) => handleEyeChange('left', 'ADD', val)}
+              step={VALIDATION_RULES.ADD.step}
+              min={VALIDATION_RULES.ADD.min}
+              max={VALIDATION_RULES.ADD.max}
+              placeholder="0"
+              error={validationResults.errors['left.ADD']}
+            />
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
-        <div className="space-y-1.5">
-          <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">
-            Pupillary Distance (PD)
-          </label>
-          <input
-            type="number"
-            step="0.5"
+      <div className="flex flex-col gap-4 items-start">
+        <div className="w-full">
+          <PrescriptionInput
+            label="Pupillary Distance (PD)"
             value={formData.PD}
-            onChange={(e) => handlePDChange(e.target.value)}
-            className={`w-full bg-white border ${validationResults.errors.PD ? 'border-red-500' : 'border-gray-100'} rounded-xl px-2 py-3 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center`}
+            onChange={handlePDChange}
+            step={VALIDATION_RULES.PD.step}
+            min={VALIDATION_RULES.PD.min}
+            max={VALIDATION_RULES.PD.max}
             placeholder="0 (e.g. 63)"
+            error={validationResults.errors.PD}
           />
-          {validationResults.errors.PD && (
-            <p className="text-[10px] text-red-500 font-medium">{validationResults.errors.PD}</p>
-          )}
-          {parseFloat(formData.PD) > 0 && parseFloat(formData.PD) < 50 && (
-            <div className="flex items-center gap-2 mt-2 p-2 bg-yellow-50 rounded-lg border border-yellow-100">
-              <Info className="w-3 h-3 text-yellow-600 shrink-0" />
-              <div className="flex flex-col">
-                <p className="text-[10px] text-yellow-700 font-medium">
-                  Số đo này dành cho trẻ em hay người lớn?
-                </p>
-                <div className="flex gap-2 mt-1">
-                  <button
-                    type="button"
-                    onClick={() => setPdConfirmed(true)}
-                    className={`text-[9px] px-2 py-0.5 rounded ${pdConfirmed ? 'bg-yellow-200 text-yellow-800' : 'bg-white text-yellow-600 hover:bg-yellow-100'}`}
-                  >
-                    Xác nhận chính xác
-                  </button>
+        </div>
+
+        <div className="w-full">
+          {(parseFloat(formData.PD) > 0 && parseFloat(formData.PD) < 55) ||
+          parseFloat(formData.PD) >= 75 ? (
+            <div className="p-4 bg-yellow-50/50 rounded-2xl border border-yellow-200/50">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-xl bg-yellow-100 flex items-center justify-center shrink-0">
+                  <Info className="w-4 h-4 text-yellow-600" />
+                </div>
+                <div className="flex-1 space-y-3">
+                  <div className="space-y-1">
+                    <p className="text-[11px] font-bold text-yellow-800 uppercase tracking-wider">
+                      PD Measurement Note
+                    </p>
+                    <p className="text-xs text-yellow-700 leading-relaxed">
+                      Your PD index seems to be outside the normal range for adults (55-75mm).
+                      Please check again if this measurement is for a child (approx. 35-54mm).
+                    </p>
+                  </div>
+
+                  <Checkbox
+                    isChecked={pdConfirmed}
+                    onCheckedChange={setPdConfirmed}
+                    variant="yellow"
+                    label="I confirm this measurement is accurate"
+                    labelClassName="text-yellow-800"
+                    size="sm"
+                  />
                 </div>
               </div>
             </div>
-          )}
+          ) : null}
         </div>
       </div>
 
@@ -488,7 +482,7 @@ export function PrescriptionForm({
         <div className="space-y-2 p-4 bg-orange-50 rounded-2xl border border-orange-100">
           <div className="flex items-center gap-2 text-orange-700 mb-1">
             <AlertCircle className="w-4 h-4" />
-            <span className="text-xs font-bold uppercase tracking-wider">Cảnh báo kiểm tra</span>
+            <span className="text-xs font-bold uppercase tracking-wider">Validation Warnings</span>
           </div>
           <ul className="space-y-1">
             {validationResults.warnings.map((warning, index) => (
@@ -502,35 +496,26 @@ export function PrescriptionForm({
       )}
 
       {showDefaultCheckbox && (
-        <div className="flex items-center gap-3 py-3">
-          <input
-            type="checkbox"
+        <div className="py-3">
+          <Checkbox
             id="isDefault"
-            checked={formData.isDefault}
-            onChange={(e) => setFormData((prev) => ({ ...prev, isDefault: e.target.checked }))}
-            className="w-5 h-5 rounded-lg border-gray-200 text-primary-500 focus:ring-primary-500"
+            isChecked={formData.isDefault}
+            onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, isDefault: checked }))}
+            label="Set as default prescription"
+            labelClassName="text-mint-1200"
           />
-          <label htmlFor="isDefault" className="text-sm font-bold text-mint-1200 cursor-pointer">
-            Set as default prescription
-          </label>
         </div>
       )}
 
       {showConfirmCheckbox && (
-        <label className="flex items-start cursor-pointer mt-4">
-          <input
-            type="checkbox"
-            className="sr-only peer"
-            checked={isConfirmed}
-            onChange={(e) => setIsConfirmed(e.target.checked)}
+        <div className="mt-4">
+          <Checkbox
+            isChecked={isConfirmed}
+            onCheckedChange={setIsConfirmed}
+            label={confirmText}
+            labelClassName="text-gray-eyewear normal-case font-medium leading-relaxed"
           />
-          <div className="mt-0.5 w-5 h-5 border-2 border-mint-300 rounded peer-checked:bg-primary-500 peer-checked:border-primary-500 transition-all flex items-center justify-center shrink-0">
-            <Check
-              className={`w-3.5 h-3.5 text-white ${isConfirmed ? 'opacity-100' : 'opacity-0'} transition-opacity`}
-            />
-          </div>
-          <span className="ml-3 text-sm text-gray-eyewear leading-relaxed">{confirmText}</span>
-        </label>
+        </div>
       )}
 
       <div className="flex gap-4 pt-4">

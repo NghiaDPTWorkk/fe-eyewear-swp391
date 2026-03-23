@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 const CHANNEL_NAME = 'sale_staff_invoice_locks'
-const LOCK_TTL_MS = 30_000 // 30s – lock tự expire nếu tab bị đóng đột ngột
+const LOCK_TTL_MS = 30_000
 
 type LockEntry = {
   sessionId: string
@@ -15,20 +15,17 @@ type LockMessage =
   | { type: 'UNLOCK'; payload: { sessionId: string; invoiceId: string } }
   | { type: 'HEARTBEAT'; payload: { sessionId: string; invoiceId: string; lockedAt: number } }
 
-/** Tạo sessionId duy nhất cho mỗi tab (in-memory, không persist) */
 const SESSION_ID = `ss_${Math.random().toString(36).slice(2)}_${Date.now()}`
 
 export function useInvoiceLock(currentStaffId?: string) {
-  /** Map invoiceId → LockEntry của các tab KHÁC */
   const [lockedInvoices, setLockedInvoices] = useState<Map<string, LockEntry>>(new Map())
-  /** Set các invoiceId mà TAB NÀY đang lock */
+
   const myLocksRef = useRef<Set<string>>(new Set())
   const channelRef = useRef<BroadcastChannel | null>(null)
   const heartbeatRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  // ── Khởi tạo BroadcastChannel ──────────────────────────────────────────────
   useEffect(() => {
-    if (typeof BroadcastChannel === 'undefined') return // SSR / old browser guard
+    if (typeof BroadcastChannel === 'undefined') return
 
     const ch = new BroadcastChannel(CHANNEL_NAME)
     channelRef.current = ch
@@ -42,7 +39,7 @@ export function useInvoiceLock(currentStaffId?: string) {
 
         if (msg.type === 'LOCK') {
           const { sessionId, invoiceId } = msg.payload
-          // Bỏ qua message từ chính session này
+
           if (sessionId === SESSION_ID) return prev
           next.set(invoiceId, msg.payload)
         }
@@ -69,7 +66,6 @@ export function useInvoiceLock(currentStaffId?: string) {
       })
     }
 
-    // Xóa expired locks định kỳ (mỗi 5s)
     const cleanupInterval = setInterval(() => {
       const now = Date.now()
       setLockedInvoices((prev) => {
@@ -85,12 +81,9 @@ export function useInvoiceLock(currentStaffId?: string) {
       })
     }, 5_000)
 
-    // Snapshot the Set reference before cleanup – satisfies the ref-in-cleanup lint rule.
     const myLocksSnapshot = myLocksRef.current
 
     return () => {
-      // myLocksSnapshot is captured from the enclosing effect scope (not inside cleanup),
-      // so it remains stable even if the ref is reassigned later.
       for (const invoiceId of myLocksSnapshot) {
         ch.postMessage({
           type: 'UNLOCK',
@@ -104,7 +97,6 @@ export function useInvoiceLock(currentStaffId?: string) {
     }
   }, [])
 
-  // ── Heartbeat để refresh lockedAt, tránh false-expire ──────────────────────
   useEffect(() => {
     heartbeatRef.current = setInterval(() => {
       if (!channelRef.current) return
@@ -121,14 +113,8 @@ export function useInvoiceLock(currentStaffId?: string) {
     }
   }, [])
 
-  // ── Public API ─────────────────────────────────────────────────────────────
-
-  /**
-   * Cố gắng lock invoice. Trả về true nếu thành công, false nếu đang bị lock bởi tab khác.
-   */
   const acquireLock = useCallback(
     (invoiceId: string): boolean => {
-      // Kiểm tra xem invoice đã bị lock bởi session khác không
       const existing = lockedInvoices.get(invoiceId)
       if (existing && existing.sessionId !== SESSION_ID) {
         const isExpired = Date.now() - existing.lockedAt > LOCK_TTL_MS
@@ -149,9 +135,6 @@ export function useInvoiceLock(currentStaffId?: string) {
     [lockedInvoices, currentStaffId]
   )
 
-  /**
-   * Giải phóng lock cho invoice.
-   */
   const releaseLock = useCallback((invoiceId: string) => {
     myLocksRef.current.delete(invoiceId)
     channelRef.current?.postMessage({
@@ -160,9 +143,6 @@ export function useInvoiceLock(currentStaffId?: string) {
     } satisfies LockMessage)
   }, [])
 
-  /**
-   * Kiểm tra xem invoice có đang bị LOCK BỞI TAB KHÁC không.
-   */
   const isLockedByOther = useCallback(
     (invoiceId: string): boolean => {
       const entry = lockedInvoices.get(invoiceId)
@@ -174,9 +154,6 @@ export function useInvoiceLock(currentStaffId?: string) {
     [lockedInvoices]
   )
 
-  /**
-   * Lấy thông tin lock của 1 invoice (nếu có).
-   */
   const getLockInfo = useCallback(
     (invoiceId: string): LockEntry | undefined => {
       const entry = lockedInvoices.get(invoiceId)
@@ -193,7 +170,7 @@ export function useInvoiceLock(currentStaffId?: string) {
     releaseLock,
     isLockedByOther,
     getLockInfo,
-    /** Số lượng invoices đang bị lock bởi các tab khác */
+
     lockedCount: lockedInvoices.size
   }
 }

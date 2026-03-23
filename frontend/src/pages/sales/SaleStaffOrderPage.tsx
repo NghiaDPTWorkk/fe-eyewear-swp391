@@ -1,9 +1,13 @@
 import { useMemo, useState, useEffect } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { IoFlashOutline, IoCubeOutline, IoReceiptOutline, IoRepeatOutline } from 'react-icons/io5'
 import { useSearchParams } from 'react-router-dom'
-import { salesService } from '@/features/sales/services/salesService'
-
+import {
+  IoFlashOutline,
+  IoCubeOutline,
+  IoReceiptOutline,
+  IoRepeatOutline,
+  IoChevronBackOutline,
+  IoLockClosedOutline
+} from 'react-icons/io5'
 import { InvoiceOrdersDrawer } from '@/features/sales/components/dashboard/InvoiceOrdersDrawer'
 import { OrderMetrics } from '@/features/sales/components/orders/OrderMetrics'
 import { OrderPagination } from '@/features/sales/components/orders/OrderPagination'
@@ -12,15 +16,28 @@ import { StatusFilterBar } from '@/features/sales/components/orders/StatusFilter
 import { RealtimeStatusBar } from '@/features/sales/components/orders/RealtimeStatusBar'
 import { LockBlockedModal } from '@/features/sales/components/orders/InvoiceLockBadge'
 import { PageHeader, RejectionModal } from '@/features/sales/components/common'
-import { useSalesStaffAction } from '@/features/sales/hooks/useSalesStaffAction'
-import { useSalesStaffInvoices } from '@/features/sales/hooks/useSalesStaffInvoices'
-import { useInvoiceLock } from '@/features/sales/hooks/useInvoiceLock'
-import { useSalesStaffRealtime } from '@/features/sales/hooks/useSalesStaffRealtime'
+
+import {
+  useSalesStaffAction,
+  useSalesStaffInvoices,
+  useInvoiceLock,
+  useSalesStaffRealtime
+} from '@/features/sales/hooks'
 import { type Invoice } from '@/features/sales/types'
-import { ConfirmationModal } from '@/shared/components/ui-core'
+
+import { ConfirmationModal } from '@/shared/components/ui-core/confirm-modal'
+import { Button } from '@/shared/components/ui-core/button'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import { OrderType } from '@/shared/utils/enums/order.enum'
 import { useAuthStore } from '@/store/auth.store'
+
+import {
+  ReturnTicketsTable,
+  ReturnTicketDrawer,
+  ReturnVerifyView
+} from '@/features/sales/components/returns'
+import type { ReturnTicketData } from '@/shared/types/return-ticket.types'
+import { useReturnPageTickets, useMyReturnHistory } from '@/features/sales/hooks/useReturnTickets'
 
 export default function SaleStaffOrderPage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -28,16 +45,13 @@ export default function SaleStaffOrderPage() {
   const orderTypeFilter = searchParams.get('orderType') ?? 'All'
   const searchQuery = searchParams.get('search') ?? ''
 
-  // ── Auth: lấy staffId để truyền vào lock ────────────────────────────────
   const currentUser = useAuthStore((s) => s.user)
   const staffId = (currentUser as any)?._id || (currentUser as any)?.id || undefined
 
-  // ── Invoice locking ──────────────────────────────────────────────────────
   const { acquireLock, releaseLock, isLockedByOther, lockedCount } = useInvoiceLock(staffId)
   const [showLockBlockedModal, setShowLockBlockedModal] = useState(false)
   const [lockedInvoiceId, setLockedInvoiceId] = useState<string | null>(null)
 
-  // ── Real-time polling ────────────────────────────────────────────────────
   const { isRefreshing, refresh, getLastUpdatedLabel } = useSalesStaffRealtime()
 
   const { approveInvoice, rejectInvoice, processing } = useSalesStaffAction()
@@ -49,6 +63,27 @@ export default function SaleStaffOrderPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const limit = 8
 
+  const [verifyTicket, setVerifyTicket] = useState<ReturnTicketData | null>(null)
+  const [drawerTicket, setDrawerTicket] = useState<ReturnTicketData | null>(null)
+  const [drawerOpen, setDrawerOpen] = useState(false)
+
+  const isReturnsActive = statusFilter === 'RETURNS'
+  const isHistoryActive = statusFilter === 'REFUNDED_HISTORY'
+  const isInvoicesActive = !isReturnsActive && !isHistoryActive
+
+  const returnHook = useReturnPageTickets(staffId || '', isReturnsActive)
+  const historyHook = useMyReturnHistory(isHistoryActive)
+
+  useEffect(() => {
+    if (statusFilter === 'RETURNS') {
+      returnHook.setSearch(searchQuery)
+      returnHook.setCurrentPage(page)
+    } else if (statusFilter === 'REFUNDED_HISTORY') {
+      historyHook.setSearch(searchQuery)
+      historyHook.setCurrentPage(page)
+    }
+  }, [statusFilter, searchQuery, page]) // eslint-disable-line react-hooks/exhaustive-deps
+
   const setSearchQuery = (query: string) => {
     const next = new URLSearchParams(searchParams)
     if (query) next.set('search', query)
@@ -56,7 +91,6 @@ export default function SaleStaffOrderPage() {
     setSearchParams(next)
   }
 
-  // Reset page to 1 whenever filters change to avoid "empty page" issues
   useEffect(() => {
     setPage(1)
   }, [statusFilter, orderTypeFilter, searchQuery])
@@ -66,7 +100,7 @@ export default function SaleStaffOrderPage() {
     pagination,
     loading: isLoading,
     fetchInvoices: refetch
-  } = useSalesStaffInvoices(page, limit, statusFilter, searchQuery)
+  } = useSalesStaffInvoices(page, limit, statusFilter, searchQuery, isInvoicesActive)
 
   const selectedInvoice = useMemo(
     () => invoiceList.find((inv) => inv.id === selectedInvoiceId) ?? null,
@@ -76,18 +110,10 @@ export default function SaleStaffOrderPage() {
   const filteredInvoices = useMemo(() => {
     let list = invoiceList
 
-    // 1. Pending tab: only show invoices with manufacturing/prescription orders
     if (statusFilter === InvoiceStatus.DEPOSITED) {
       list = list.filter((inv: Invoice) => inv.orders?.some((o) => o.isPrescription))
     }
 
-    // 3. Approved/Refunded tabs: No client filter needed as server handles it.
-    // We only keep the Pending (DEPOSITED) specific prescription filter if server can't do it.
-    if (statusFilter === InvoiceStatus.DEPOSITED) {
-      list = list.filter((inv: Invoice) => inv.orders?.some((o) => o.isPrescription))
-    }
-
-    // 4. Search filtering
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase()
       list = list.filter(
@@ -98,17 +124,15 @@ export default function SaleStaffOrderPage() {
       )
     }
 
-    // 5. Order type filter
     if (orderTypeFilter !== 'All') {
       list = list.filter((inv: Invoice) =>
-        inv.orders?.some((order) => {
-          const types = Array.isArray(order.type) ? order.type : [order.type]
-          return types.some((t: OrderType | string) => String(t).includes(orderTypeFilter))
+        inv.orders?.some((o: any) => {
+          const types = Array.isArray(o.type) ? o.type : [o.type]
+          return types.some((t: any) => String(t).includes(orderTypeFilter))
         })
       )
     }
 
-    // 6. Sort by newest first
     list = list.sort((a: Invoice, b: Invoice) => {
       const dateA = new Date(a.createdAt).getTime()
       const dateB = new Date(b.createdAt).getTime()
@@ -118,7 +142,6 @@ export default function SaleStaffOrderPage() {
     return list
   }, [invoiceList, searchQuery, orderTypeFilter, statusFilter])
 
-  // Total pages sanity check: if list is empty on page 1, force total to 1
   const serverTotal = pagination?.total || 0
   const adjustedTotalPages =
     filteredInvoices.length === 0 && page === 1 ? 1 : pagination?.totalPages || 1
@@ -149,8 +172,14 @@ export default function SaleStaffOrderPage() {
         counts[OrderType.NORMAL]++
       }
     })
-    const totalOrders = Object.values(counts).reduce((a, b) => a + b, 0) || 1
-    const pct = (key: string) => Math.round((counts[key] / totalOrders) * 100)
+
+    // Override RETURN count with real data from returnHook
+    counts[OrderType.RETURN] = returnHook.pagination.total || 0
+
+    // Recalculate total with the updated return count
+    const totalWithReturns = Object.values(counts).reduce((a, b) => a + b, 0) || 1
+
+    const pct = (key: string) => Math.round((counts[key] / totalWithReturns) * 100)
     return [
       {
         type: OrderType.NORMAL,
@@ -185,7 +214,7 @@ export default function SaleStaffOrderPage() {
         trend: { label: 'of total', value: pct(OrderType.PRE_ORDER), isPositive: true }
       }
     ]
-  }, [invoiceList])
+  }, [invoiceList, returnHook.pagination.total])
 
   const handleStatusChange = (status: string) => {
     setSearchParams((prev) => {
@@ -210,56 +239,16 @@ export default function SaleStaffOrderPage() {
     setSearchParams(new URLSearchParams())
     setPage(1)
   }
-
-  const { data: statusCounts } = useQuery({
-    queryKey: ['sales', 'status-counts'],
-    queryFn: async () => {
-      const tabs = [InvoiceStatus.DEPOSITED, 'APPROVED_OR_REJECTED', InvoiceStatus.REFUNDED]
-      const counts: Record<string, number> = {}
-      await Promise.all(
-        tabs.map(async (tab) => {
-          let apiStatus: string | undefined = undefined
-          let apiStatuses: string | undefined = undefined
-
-          if (tab === 'APPROVED_OR_REJECTED') {
-            apiStatuses = [
-              InvoiceStatus.APPROVED,
-              InvoiceStatus.ONBOARD,
-              InvoiceStatus.READY_TO_SHIP,
-              InvoiceStatus.DELIVERING,
-              InvoiceStatus.DELIVERED,
-              InvoiceStatus.COMPLETED,
-              InvoiceStatus.REJECTED,
-              InvoiceStatus.CANCELED
-            ].join(',')
-          } else if (tab === InvoiceStatus.REFUNDED) {
-            // If backend doesn't support REFUNDED yet, pass an empty list or specific status
-            apiStatus = InvoiceStatus.REFUNDED
-          } else {
-            apiStatus = tab as string
-          }
-
-          const res = await salesService.getDepositedInvoices(1, 1, apiStatus, apiStatuses)
-          counts[tab] = res.data.pagination.total
-        })
-      )
-      return counts
-    },
-    staleTime: 30000
-  })
-
   const statusTabs = useMemo(() => {
     const allTabs = [
       { label: 'All Invoices', value: 'All' },
       { label: 'Pending', value: InvoiceStatus.DEPOSITED },
       { label: 'Approved', value: 'APPROVED_OR_REJECTED' },
-      { label: 'Refunded', value: InvoiceStatus.REFUNDED }
+      { label: 'Returns', value: 'RETURNS' },
+      { label: 'History', value: 'REFUNDED_HISTORY' }
     ]
-    return allTabs.filter((tab) => {
-      if (tab.value === 'All') return true
-      return (statusCounts?.[tab.value] ?? 0) > 0
-    })
-  }, [statusCounts])
+    return allTabs
+  }, [])
 
   const getStatusBadgeProps = (invoice: Invoice) => {
     const s = invoice.status
@@ -270,8 +259,11 @@ export default function SaleStaffOrderPage() {
     )
 
     if (statusFilter === 'APPROVED_OR_REJECTED') {
-      if (s === InvoiceStatus.REJECTED || s === 'REJECTED' || s === InvoiceStatus.CANCELED) {
-        return { label: 'Rejected', color: 'bg-rose-50 text-rose-600 border-rose-100' }
+      if (s === InvoiceStatus.REJECTED || s === 'REJECTED') {
+        return { label: 'REJECTED', color: 'bg-rose-50 text-rose-600 border-rose-100' }
+      }
+      if (s === InvoiceStatus.CANCELED || s === 'CANCELED' || s === InvoiceStatus.CANCEL) {
+        return { label: 'CANCELED', color: 'bg-rose-50 text-rose-600 border-rose-100' }
       }
       if (
         [
@@ -283,7 +275,7 @@ export default function SaleStaffOrderPage() {
           InvoiceStatus.COMPLETED
         ].includes(s as InvoiceStatus)
       ) {
-        return { label: 'Accepted', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' }
+        return { label: 'ACCEPTED', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' }
       }
     }
 
@@ -294,24 +286,31 @@ export default function SaleStaffOrderPage() {
         invoice.approvedOrdersCount === invoice.totalOrdersCount
       ) {
         return {
-          label: 'Ready to Approve Final',
+          label: 'READY TO APPROVE',
           color: 'bg-mint-50 text-mint-600 border-mint-200'
         }
       }
       return hasMfg
-        ? { label: 'Wait Verify', color: 'bg-indigo-50 text-indigo-600 border-indigo-100' }
-        : { label: 'Pending', color: 'bg-slate-50 text-slate-500 border-slate-200' }
+        ? { label: 'PENDING', color: 'bg-amber-50 text-amber-600 border-amber-100' }
+        : { label: 'WAITING ASSIGN', color: 'bg-blue-50 text-blue-600 border-blue-100' }
     }
 
     if (s === InvoiceStatus.APPROVED || s === 'APPROVED')
-      return { label: 'Approved', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' }
+      return { label: 'APPROVED', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' }
     if (s === InvoiceStatus.REJECTED || s === 'REJECTED')
-      return { label: 'Rejected', color: 'bg-rose-50 text-rose-600 border-rose-100' }
+      return { label: 'REJECTED', color: 'bg-rose-50 text-rose-600 border-rose-100' }
+    if (s === InvoiceStatus.CANCELED || s === 'CANCELED' || s === InvoiceStatus.CANCEL)
+      return { label: 'CANCELED', color: 'bg-rose-50 text-rose-600 border-rose-100' }
     if (s === InvoiceStatus.REFUNDED || s === 'REFUNDED')
-      return { label: 'Refunded', color: 'bg-purple-50 text-purple-600 border-purple-100' }
+      return { label: 'REFUNDED', color: 'bg-purple-50 text-purple-600 border-purple-100' }
 
-    return { label: String(s) || 'Unknown', color: 'bg-slate-50 text-slate-400 border-slate-100' }
+    return {
+      label: String(s).toUpperCase() || 'UNKNOWN',
+      color: 'bg-slate-50 text-slate-400 border-slate-100'
+    }
   }
+
+  // Early return for Verify View
 
   const handleApproveClick = (invoiceId: string) => {
     if (isLockedByOther(invoiceId)) {
@@ -351,66 +350,159 @@ export default function SaleStaffOrderPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between gap-4">
-        <PageHeader
-          title="Order Management"
-          breadcrumbs={[{ label: 'Dashboard', path: '/sale-staff/dashboard' }, { label: 'Orders' }]}
-          subtitle="Consolidated view of all sales orders, pre-orders, and returns."
-        />
-        <RealtimeStatusBar
-          isRefreshing={isRefreshing}
-          lastUpdatedLabel={getLastUpdatedLabel()}
-          lockedCount={lockedCount}
-          onRefresh={refresh}
-          className="shrink-0 mt-1"
-        />
-      </div>
-      <div className="space-y-6">
-        <OrderMetrics
-          metrics={metrics}
-          orderTypeFilter={orderTypeFilter}
-          onOrderTypeChange={handleOrderTypeChange}
-        />
-        <StatusFilterBar
-          statusTabs={statusTabs}
-          statusFilter={statusFilter}
-          onStatusChange={handleStatusChange}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          onToggleFilter={() => setIsFilterOpen(!isFilterOpen)}
-          onReset={handleResetFilters}
-          orderTypeFilter={orderTypeFilter}
-        />
-        <div className="bg-white border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 rounded-3xl overflow-hidden">
-          <OrderTable
-            invoices={paginatedInvoices}
-            selectedInvoiceId={selectedInvoiceId}
-            setSelectedInvoiceId={setSelectedInvoiceId}
-            getStatusBadgeProps={getStatusBadgeProps}
-            handleApproveClick={handleApproveClick}
-            processing={processing}
-            isLockedByOther={isLockedByOther}
-          />
-          {(serverTotal > 0 || filteredInvoices.length > 0) && (
-            <OrderPagination
-              page={page}
-              totalPages={adjustedTotalPages}
-              isLoading={isLoading}
-              onPageChange={setPage}
+      {verifyTicket ? (
+        <div className="space-y-6 animate-in fade-in duration-500">
+          <div className="flex items-center gap-4">
+            <Button
+              onClick={() => setVerifyTicket(null)}
+              className="p-2.5 bg-white hover:bg-emerald-50 rounded-xl transition-all text-gray-500 hover:text-emerald-600 border border-gray-200 hover:border-emerald-200 shadow-sm"
+            >
+              <IoChevronBackOutline size={20} />
+            </Button>
+            <PageHeader
+              title="Return Verification"
+              breadcrumbs={[
+                { label: 'Dashboard', path: '/sale-staff/dashboard' },
+                { label: 'Orders', path: '/sale-staff/orders' },
+                { label: 'Verification' }
+              ]}
+              noMargin
             />
+          </div>
+
+          {verifyTicket.staffVerify === staffId && (
+            <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-mint-50 border border-mint-100 w-fit text-mint-700 shadow-sm animate-in slide-in-from-left-4 duration-300">
+              <IoLockClosedOutline size={14} className="text-mint-600" />
+              <span className="text-xs font-bold font-heading">
+                You are currently verifying this return
+              </span>
+            </div>
           )}
+
+          <ReturnVerifyView
+            ticket={verifyTicket}
+            onActionSuccess={() => {
+              setVerifyTicket(null)
+              returnHook.refresh()
+              refetch()
+              handleStatusChange('REFUNDED_HISTORY')
+            }}
+            currentStaffId={staffId || ''}
+          />
         </div>
-      </div>
+      ) : (
+        <div className="space-y-6">
+          <div className="flex items-start justify-between gap-4">
+            <PageHeader
+              title="Order Management"
+              breadcrumbs={[
+                { label: 'Dashboard', path: '/sale-staff/dashboard' },
+                { label: 'Orders' }
+              ]}
+              subtitle="Consolidated view of all sales orders, pre-orders, and returns."
+            />
+            <RealtimeStatusBar
+              isRefreshing={isRefreshing}
+              lastUpdatedLabel={getLastUpdatedLabel()}
+              lockedCount={lockedCount}
+              onRefresh={refresh}
+              className="shrink-0 mt-1"
+            />
+          </div>
+          <OrderMetrics
+            metrics={metrics}
+            orderTypeFilter={orderTypeFilter}
+            onOrderTypeChange={handleOrderTypeChange}
+          />
+          <StatusFilterBar
+            statusTabs={statusTabs}
+            statusFilter={statusFilter}
+            onStatusChange={handleStatusChange}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            onToggleFilter={() => setIsFilterOpen(!isFilterOpen)}
+            isFilterOpen={isFilterOpen}
+            setIsFilterOpen={setIsFilterOpen}
+            onOrderTypeChange={handleOrderTypeChange}
+            onReset={handleResetFilters}
+            orderTypeFilter={orderTypeFilter}
+          />
+          <div className="bg-white border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 rounded-3xl overflow-hidden min-h-[200px]">
+            {statusFilter === 'RETURNS' ? (
+              <ReturnTicketsTable
+                tickets={returnHook.tickets}
+                isLoading={returnHook.isLoading}
+                error={returnHook.error}
+                currentStaffId={staffId || ''}
+                pagination={returnHook.pagination}
+                onRowClick={(t) => {
+                  setDrawerTicket(t)
+                  setDrawerOpen(true)
+                }}
+                onVerifyClick={(t) => setVerifyTicket(t)}
+                onPageChange={setPage}
+                showAction={true}
+              />
+            ) : statusFilter === 'REFUNDED_HISTORY' ? (
+              <ReturnTicketsTable
+                tickets={historyHook.tickets}
+                isLoading={historyHook.isLoading}
+                error={historyHook.error}
+                currentStaffId={staffId || ''}
+                pagination={historyHook.pagination}
+                onRowClick={(t) => {
+                  setDrawerTicket(t)
+                  setDrawerOpen(true)
+                }}
+                onVerifyClick={(t) => setVerifyTicket(t)}
+                onPageChange={setPage}
+                showAction={true}
+              />
+            ) : (
+              <>
+                <OrderTable
+                  invoices={paginatedInvoices}
+                  selectedInvoiceId={selectedInvoiceId}
+                  setSelectedInvoiceId={setSelectedInvoiceId}
+                  getStatusBadgeProps={getStatusBadgeProps}
+                  handleApproveClick={handleApproveClick}
+                  processing={processing}
+                  isLockedByOther={isLockedByOther}
+                />
+                {(serverTotal > 0 || filteredInvoices.length > 0) && (
+                  <OrderPagination
+                    page={page}
+                    totalPages={adjustedTotalPages}
+                    isLoading={isLoading}
+                    onPageChange={setPage}
+                  />
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
       <InvoiceOrdersDrawer
-        isOpen={!!selectedInvoiceId}
+        isOpen={!!selectedInvoiceId && statusFilter !== InvoiceStatus.REFUNDED}
         onClose={() => setSelectedInvoiceId(null)}
         invoice={selectedInvoice}
       />
+
+      <ReturnTicketDrawer
+        ticket={drawerTicket}
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        currentStaffId={staffId || ''}
+        onGoToVerify={(t) => {
+          setVerifyTicket(t)
+          setDrawerOpen(false)
+        }}
+      />
+
       <ConfirmationModal
         isOpen={showConfirmModal}
         onClose={() => {
-          // Release lock khi user hủy thao tác approve
           if (invoiceToProcess) releaseLock(invoiceToProcess)
           setShowConfirmModal(false)
           setInvoiceToProcess(null)
@@ -524,7 +616,6 @@ export default function SaleStaffOrderPage() {
       <RejectionModal
         isOpen={showRejectModal}
         onClose={() => {
-          // Release lock khi close rejection modal mà không confirm
           if (invoiceToProcess) releaseLock(invoiceToProcess)
           setShowRejectModal(false)
           setInvoiceToProcess(null)
@@ -533,7 +624,6 @@ export default function SaleStaffOrderPage() {
         isLoading={processing}
       />
 
-      {/* Lock blocked notification - hiện khi user cố xử lý invoice đang bị lock */}
       <LockBlockedModal
         isOpen={showLockBlockedModal}
         invoiceId={lockedInvoiceId}

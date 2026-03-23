@@ -298,6 +298,21 @@ export default function SupportContent({
         <div className="lg:col-span-8 space-y-8">
           <RiskGuidelines guidelines={guidelines} accentColor={accentColor} />
           <ImportantContacts contacts={contacts} accentColor={accentColor} />
+
+          {}
+          <div className="p-6 bg-rose-50 border border-rose-100 rounded-[2rem] flex gap-5 animate-in fade-in slide-in-from-bottom-4 duration-500 shadow-sm shadow-rose-100/30">
+            <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm border border-rose-100/50">
+              <IoAlertCircleOutline className="text-rose-500" size={26} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h4 className="text-sm font-semibold text-rose-900 tracking-tight">
+                Critical Reminder
+              </h4>
+              <p className="text-sm text-rose-800/80 mt-1 leading-relaxed font-semibold">
+                {criticalReminder}
+              </p>
+            </div>
+          </div>
         </div>
         <div className="lg:col-span-4 space-y-8">
           <Card className="p-8 border-none shadow-sm shadow-neutral-200/50 bg-white rounded-3xl">
@@ -456,19 +471,6 @@ export default function SupportContent({
               </button>
             </div>
           </Card>
-        </div>
-        <div className="p-6 bg-rose-50 border border-rose-100 rounded-[24px] flex gap-5 animate-in fade-in slide-in-from-bottom-4 duration-500 col-span-full shadow-sm shadow-rose-100/30">
-          <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-sm border border-rose-100/50">
-            <IoAlertCircleOutline className="text-rose-500" size={26} />
-          </div>
-          <div>
-            <h4 className="text-sm font-semibold text-rose-900 tracking-tight">
-              Critical Reminder
-            </h4>
-            <p className="text-sm text-rose-800/80 mt-1 leading-relaxed font-semibold">
-              {criticalReminder}
-            </p>
-          </div>
         </div>
       </div>
     </>

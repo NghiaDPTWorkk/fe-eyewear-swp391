@@ -48,6 +48,7 @@ export interface StandardProduct {
   shortDescription?: string
   imageUrl?: string
   nameVariant?: string
+  selectedOptions?: Record<string, string>
 }
 
 /**
@@ -147,30 +148,6 @@ export interface ProductDetailApiResponse {
   message: string
   data: ProductDetailData
 }
-
-/**
- * {
-    "products": [
-        {
-            "product": {
-                "product_id": "6965c4bc979f1a2fb5e32963",
-                "sku": "LENS-007-01"
-            },
-            "quantity": 1
-        }
-    ],
-    "address": {
-        "street": "Le van viet",
-        "ward": "Phuong Thu Duc",
-        "city": "Thanh pho Ho Chi Minh"
-    },
-    "fullName": "Minh Lâm",
-    "phone": "0812345678",
-    "voucher": [],
-    "paymentMethod": "COD",
-    "note": "Giao ngoài giờ hành chánh dùm"
-}
- */
 
 export interface ProductInvoiceItemRequest {
   product: {

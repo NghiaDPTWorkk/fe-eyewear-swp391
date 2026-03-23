@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import toast from 'react-hot-toast'
 import { Card } from '@/shared/components/ui/card'
 import { OrderCard } from '@/components/layout/customer/account/orders/OrderCard'
 import { cn } from '@/lib/utils'
@@ -11,6 +12,7 @@ import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import { returnService } from '@/features/customer/services/return.service'
 import type { ReturnTicketData } from '@/shared/types/return-ticket.types'
 import { PriceTag } from '@/shared/components/ui/price-tag'
+import type { PaymentMethodType } from '@/shared/utils/enums/payment.enum'
 
 const TABS = [
   { id: 'all', label: 'All Orders' },
@@ -32,6 +34,7 @@ export function OrdersPage() {
   const [returnTickets, setReturnTickets] = useState<ReturnTicketData[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [cancellingInvoiceId, setCancellingInvoiceId] = useState<string | null>(null)
 
   const [returnPagination, setReturnPagination] = useState({
     total: 0,
@@ -79,8 +82,11 @@ export function OrdersPage() {
               const detailRes = detailedResults[index]
               return {
                 ...inv,
-                productList: detailRes.success ? detailRes.data.productList : []
-              }
+                productList: detailRes.success ? detailRes.data.productList : [],
+                paymentId: detailRes.success ? detailRes.data.payment?._id : undefined,
+                paymentMethod: detailRes.success ? detailRes.data.invoice.paymentMethod : undefined,
+                paymentUrl: inv.paymentUrl
+              } as any
             })
             setInvoices(mergedInvoices)
           } else {
@@ -131,6 +137,40 @@ export function OrdersPage() {
 
   const paginatedInvoices =
     activeView === 'returns' ? [] : filteredInvoices.slice((currentPage - 1) * 3, currentPage * 3)
+
+  const canCancelInvoice = (status: InvoiceStatus) => {
+    return [InvoiceStatus.PENDING, InvoiceStatus.DEPOSITED, InvoiceStatus.APPROVED].includes(status)
+  }
+
+  const handleCancelInvoice = async (invoiceId: string) => {
+    if (!invoiceId || cancellingInvoiceId) return
+
+    try {
+      setCancellingInvoiceId(invoiceId)
+      const response = await invoiceService.cancelInvoice(invoiceId)
+
+      if (response.success) {
+        toast.success(response.message || 'Invoice cancelled successfully')
+
+        setInvoices((prev) =>
+          prev.map((inv) =>
+            inv._id === invoiceId
+              ? {
+                  ...inv,
+                  status: InvoiceStatus.CANCELED
+                }
+              : inv
+          )
+        )
+      } else {
+        toast.error(response.message || 'Unable to cancel this invoice')
+      }
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Failed to cancel invoice')
+    } finally {
+      setCancellingInvoiceId(null)
+    }
+  }
 
   const getReturnStatusStyle = (status: string) => {
     switch (status.toUpperCase()) {
@@ -340,8 +380,14 @@ export function OrdersPage() {
                         name={firstProduct?.name || 'Optical Order'}
                         date={new Date(inv.createdAt).toLocaleDateString()}
                         itemCount={itemCount}
-                        price={inv.totalPrice}
+                        price={inv.totalPrice + inv.feeShip - inv.totalDiscount}
                         status={inv.status as InvoiceStatus}
+                        canCancel={canCancelInvoice(inv.status as InvoiceStatus)}
+                        isCancelling={cancellingInvoiceId === inv._id}
+                        onCancel={handleCancelInvoice}
+                        paymentId={inv.paymentId}
+                        paymentMethod={inv.paymentMethod as PaymentMethodType}
+                        paymentUrl={inv.paymentUrl}
                         image={
                           firstProduct?.imgs?.[0] ||
                           'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&q=80&w=200'
@@ -389,9 +435,6 @@ export function OrdersPage() {
             </p>
           </div>
         </div>
-        <button className="text-primary-600 font-bold text-sm border-b-2 border-primary-200 hover:border-primary-500 transition-all">
-          Open Support Ticket
-        </button>
       </div>
     </div>
   )

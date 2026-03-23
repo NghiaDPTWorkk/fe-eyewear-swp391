@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { MessageCircle, X, Send, Glasses, Bot, Loader2 } from 'lucide-react'
+import { MessageCircle, X, Send, Bot, Loader2 } from 'lucide-react'
 import { IconButton } from '@/shared/components/ui/icon-button'
 import { Input } from '@/shared/components/ui/input'
 import { useChatMessages } from '@/shared/hooks/chat/useChatMessages'
@@ -7,6 +7,7 @@ import { useAuthStore, useChatStore } from '@/store'
 import { Link } from 'react-router-dom'
 import { ProductChatTag } from './ProductChatTag'
 import { useShallow } from 'zustand/react/shallow'
+import LogoEyewearIcon from '../logoeyewear/LogoEyewearIcon'
 
 interface MessageContentProps {
   text: string
@@ -220,7 +221,7 @@ export const ChatBot = () => {
         {/* Header */}
         <div className="flex items-center gap-3 px-5 py-4 bg-gradient-to-r from-primary-500 to-primary-700 text-white shrink-0">
           <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
-            <Glasses className="w-5 h-5" />
+            <LogoEyewearIcon className="w-10 h-10" />
           </div>
           <div className="flex-1 min-w-0">
             <h3 className="font-heading font-semibold text-base leading-tight">Eyewear Support</h3>

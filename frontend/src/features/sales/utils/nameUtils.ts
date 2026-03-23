@@ -1,6 +1,3 @@
-/**
- * Removes Vietnamese accents/diacritics from a string.
- */
 export const removeAccents = (str: string): string => {
   return str
     .normalize('NFD')
@@ -9,10 +6,6 @@ export const removeAccents = (str: string): string => {
     .replace(/Đ/g, 'D')
 }
 
-/**
- * Gets initials from a full name (e.g., "Đào Thị Út Trinh" -> "DT").
- * Removes accents and takes the first character of the first two words.
- */
 export const getInitials = (name: string): string => {
   if (!name) return ''
   const cleanName = removeAccents(name)

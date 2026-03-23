@@ -1,7 +1,3 @@
-/**
- * CourierInfoCard Component
- * Displays courier information and contact options
- */
 import { Card, Button } from '@/components'
 import { IoCall, IoChatbubble, IoInformationCircle, IoAirplaneOutline } from 'react-icons/io5'
 

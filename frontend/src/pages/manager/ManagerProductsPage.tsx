@@ -1,8 +1,5 @@
 import React, { useState } from 'react'
-import { Container } from '@/components'
-import { PageHeader } from '@/features/sales/components/common'
 import { useNavigate } from 'react-router-dom'
-import { useAdminProducts } from '@/features/manager/hooks/useAdminProducts'
 import {
   IoSearchOutline,
   IoRefreshOutline,
@@ -15,6 +12,10 @@ import {
   IoChevronForwardOutline,
   IoFilterOutline
 } from 'react-icons/io5'
+
+import { Container } from '@/components'
+import { PageHeader } from '@/features/sales/components/common'
+import { useAdminProducts } from '@/features/manager/hooks'
 
 const SummaryCard: React.FC<{
   label: string
@@ -55,8 +56,6 @@ const SummaryCard: React.FC<{
     </div>
   </div>
 )
-
-// ─── Format price ───
 function formatPrice(price: number) {
   if (price >= 1_000_000) {
     return new Intl.NumberFormat('vi-VN').format(price) + '₫'
@@ -83,7 +82,6 @@ export default function ManagerProductsPage() {
   const products = data?.data?.productList ?? []
   const pagination = data?.data?.pagination
 
-  // Fetch totals for summary cards explicitly (limit=1 is fast on backend)
   const { data: allData } = useAdminProducts(1, 1, undefined)
   const { data: frameData } = useAdminProducts(1, 1, 'frame')
   const { data: sunglassData } = useAdminProducts(1, 1, 'sunglass')
@@ -109,7 +107,7 @@ export default function ManagerProductsPage() {
         breadcrumbs={[{ label: 'Dashboard', path: '/manager/dashboard' }, { label: 'Products' }]}
       />
 
-      {/* Summary Cards */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         <SummaryCard
           label="Total Products"
@@ -165,7 +163,7 @@ export default function ManagerProductsPage() {
         />
       </div>
 
-      {/* Filters & Search */}
+      {}
       <div className="space-y-6">
         <div className="bg-white rounded-3xl border border-neutral-50/50 shadow-sm relative">
           <div className="p-6 border-b border-neutral-50/30 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
@@ -260,7 +258,7 @@ export default function ManagerProductsPage() {
         </div>
       </div>
 
-      {/* Product List Table */}
+      {}
       <div className="bg-white rounded-[32px] border-none shadow-sm ring-1 ring-neutral-100/50 overflow-hidden">
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
@@ -298,7 +296,7 @@ export default function ManagerProductsPage() {
                             <img
                               src={p.defaultVariantImage}
                               alt={p.nameBase}
-                              className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                              className="w-full h-full object-contain p-2 transition-transform group-hover:scale-110"
                               onError={(e) => {
                                 ;(e.target as HTMLImageElement).style.display = 'none'
                               }}
@@ -362,7 +360,7 @@ export default function ManagerProductsPage() {
           </div>
         )}
 
-        {/* Pagination */}
+        {}
         {pagination && pagination.totalPages > 1 && (
           <div className="p-6 border-t border-neutral-50 flex items-center justify-between">
             <p className="text-xs font-medium text-slate-400">

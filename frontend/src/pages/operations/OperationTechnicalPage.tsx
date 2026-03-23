@@ -1,12 +1,12 @@
-import { useState, useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { BreadcrumbPath, Container } from '@/components'
 import { OrderTable, FilterButtonList } from '@/components/staff'
-import { useOrders } from '@/features/staff/hooks/orders/useOrders'
-import { OperationPagination } from '@/shared/components/ui/pagination'
-import { OrderType, OrderStatus } from '@/shared/utils/enums/order.enum'
+import { OrderType } from '@/shared/utils/enums/order.enum'
 import { useOrderCountStore } from '@/store'
-import { transformApiOrderToTableOrder } from '@/features/staff/components/order-table/orderTransformers'
+import { OperationPagination } from '@/shared/components/ui/pagination'
+import DateRangeTool from '@/components/layout/staff/operation-staff/daterangetool/DateRangeTool'
+import toast from 'react-hot-toast'
 
 const PAGE_LIMIT = 10
 
@@ -14,6 +14,13 @@ export default function OperationTechnicalPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const typeFilter = searchParams.get('type') ?? 'all'
   const [currentPage, setCurrentPage] = useState(1)
+
+  // Date filter state
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
+  const [appliedDateRange, setAppliedDateRange] = useState<{ start: string; end: string } | null>(
+    null
+  )
 
   const setTypeFilter = (value: string) => {
     setCurrentPage(1)
@@ -24,28 +31,87 @@ export default function OperationTechnicalPage() {
     }
   }
 
-  // Fetch orders với status MAKING và typeFilter từ API — có phân trang
-  const { data, isLoading, isError } = useOrders(
-    currentPage,
-    PAGE_LIMIT,
-    OrderStatus.MAKING,
-    typeFilter === 'all' ? undefined : typeFilter
-  )
+  const handleSearch = () => {
+    setCurrentPage(1)
+    if (!startDate && !endDate) {
+      setAppliedDateRange(null)
+      return
+    }
+    if (startDate && endDate && startDate > endDate) {
+      toast.error('Start date cannot be later than end date')
+      return
+    }
+    setAppliedDateRange({ start: startDate, end: endDate })
+  }
 
-  // Lấy dữ liệu từ store để tính counts cho badges
-  const { orders: allOrdersForCounts } = useOrderCountStore()
+  const handleClearDates = () => {
+    setStartDate('')
+    setEndDate('')
+    setAppliedDateRange(null)
+    setCurrentPage(1)
+  }
 
-  // Lọc lấy danh sách đơn đang ở trạng thái MAKING
-  const technicalOrdersInStore = useMemo(() => {
-    return allOrdersForCounts.filter((o) => o.currentStatus === OrderStatus.MAKING)
-  }, [allOrdersForCounts])
+  // ═══════════════════════════════════════════════════
+  // DATA FLOW:
+  // 1. Khi app khởi động, OperationDashboardPage gọi API lấy toàn bộ orders
+  //    rồi lưu vào Zustand store (useOrderCountStore) qua setOrders().
+  // 2. Trang này đọc thẳng từ store → không cần gọi API riêng.
+  // 3. useMemo() filter client-side → truyền vào <OrderTable> và <OperationPagination>.
+  // ═══════════════════════════════════════════════════
+  const { orders: allOrders, isLoading, isError } = useOrderCountStore()
+
+  // ─── Bước 1: Filter client-side ───────────────────
+  // Lọc từ allOrders (Zustand) theo status + date range + type
+  // Không gọi API → tức thời, không giật lag
+  const { filteredOrders, total } = useMemo(() => {
+    let ordersForStation = allOrders.filter((o) => o.currentStatus === 'MAKING')
+
+    // Lọc theo khoảng ngày assignedAt (ngày được giao việc)
+    if (appliedDateRange) {
+      ordersForStation = ordersForStation.filter((o) => {
+        if (!o.assignedAt) return false
+        const assignedDate = o.assignedAt.split('T')[0]
+        const isAfterStart = !appliedDateRange.start || assignedDate >= appliedDateRange.start
+        const isBeforeEnd = !appliedDateRange.end || assignedDate <= appliedDateRange.end
+        return isAfterStart && isBeforeEnd
+      })
+    }
+
+    // Lọc theo loại đơn hàng (type)
+    if (typeFilter !== 'all') {
+      ordersForStation = ordersForStation.filter((o) => o.orderType === typeFilter)
+    }
+
+    // Bước 2: Phân trang client-side (cắt mảng theo page)
+    return {
+      filteredOrders: ordersForStation.slice(
+        (currentPage - 1) * PAGE_LIMIT,
+        currentPage * PAGE_LIMIT
+      ),
+      total: ordersForStation.length
+    }
+  }, [allOrders, typeFilter, appliedDateRange, currentPage])
+
+  // Badge counts trên các nút filter (All / Pre-order / Manufacturing)
+  // Cũng tính lại khi date range thay đổi để số hiển thị luôn chính xác
+  const typeFilteredByDate = useMemo(() => {
+    const ordersByDate = allOrders.filter((o) => o.currentStatus === 'MAKING')
+    if (!appliedDateRange) return ordersByDate
+    return ordersByDate.filter((o) => {
+      if (!o.assignedAt) return false
+      const assignedDate = o.assignedAt.split('T')[0]
+      const isAfterStart = !appliedDateRange.start || assignedDate >= appliedDateRange.start
+      const isBeforeEnd = !appliedDateRange.end || assignedDate <= appliedDateRange.end
+      return isAfterStart && isBeforeEnd
+    })
+  }, [allOrders, appliedDateRange])
 
   // Badge counts cho filter buttons
+  // Badge counts
   const counts = {
-    all: technicalOrdersInStore.length,
-    preOrder: technicalOrdersInStore.filter((o) => o.orderType === OrderType.PRE_ORDER).length,
-    manufacturing: technicalOrdersInStore.filter((o) => o.orderType === OrderType.MANUFACTURING)
-      .length
+    all: typeFilteredByDate.length,
+    preOrder: typeFilteredByDate.filter((o) => o.orderType === OrderType.PRE_ORDER).length,
+    manufacturing: typeFilteredByDate.filter((o) => o.orderType === OrderType.MANUFACTURING).length
   }
 
   const filterButtons = [
@@ -54,14 +120,7 @@ export default function OperationTechnicalPage() {
     { label: 'Manufacturing', count: counts.manufacturing, value: OrderType.MANUFACTURING }
   ]
 
-  // Pagination meta từ BE
-  const paginationMeta = data?.data?.orders
-
-  // Transform data từ API sang format của OrderTable
-  const orders = useMemo(() => {
-    if (!paginationMeta?.data) return []
-    return paginationMeta.data.map(transformApiOrderToTableOrder)
-  }, [paginationMeta])
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_LIMIT))
 
   return (
     <Container>
@@ -80,24 +139,36 @@ export default function OperationTechnicalPage() {
         className="mb-4"
       />
 
+      <DateRangeTool
+        startDate={startDate}
+        endDate={endDate}
+        onStartDateChange={setStartDate}
+        onEndDateChange={setEndDate}
+        onSearch={handleSearch}
+        onClear={handleClearDates}
+        isFiltered={!!appliedDateRange}
+      />
+
+      <div className="mt-[10px]" />
+
+      {/* Bước 3: Truyền dữ liệu đã lọc vào OrderTable */}
       <OrderTable
-        orders={orders}
+        orders={filteredOrders}
         isLoading={isLoading}
         isError={isError}
         hiddenColumns={['CUSTOMER']}
         role="operation"
       />
 
-      {paginationMeta && orders.length > 0 && (
-        <OperationPagination
-          page={paginationMeta.page}
-          totalPages={paginationMeta.totalPages}
-          total={paginationMeta.total}
-          limit={paginationMeta.limit}
-          itemsOnPage={orders.length}
-          onPageChange={setCurrentPage}
-        />
-      )}
+      {/* Bước 4: Truyền thông tin phân trang vào OperationPagination */}
+      <OperationPagination
+        page={currentPage}
+        totalPages={totalPages}
+        total={total}
+        limit={PAGE_LIMIT}
+        itemsOnPage={filteredOrders.length}
+        onPageChange={setCurrentPage}
+      />
     </Container>
   )
 }

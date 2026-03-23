@@ -11,7 +11,9 @@ interface VNDPriceProps {
  * Result: 1.500.000 ₫
  */
 export function VNDPrice({ amount, className }: VNDPriceProps) {
-  const formatted = amount.toLocaleString('vi-VN')
+  const safeAmount = typeof amount === 'number' && !isNaN(amount) ? amount : 0
+
+  const formatted = safeAmount.toLocaleString('vi-VN')
   return (
     <span className={className}>
       {formatted}

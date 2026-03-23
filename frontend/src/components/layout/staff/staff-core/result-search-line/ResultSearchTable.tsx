@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { type ReactNode, useState } from 'react'
 import { FiSearch } from 'react-icons/fi'
 import { MdHistory } from 'react-icons/md'
 import { IoChevronDown } from 'react-icons/io5'
@@ -9,6 +9,8 @@ const PAGE_SIZE = 8 // Hiện 8 dòng mỗi lần
 interface SearchResultItem {
   id: string
   searchCode: string
+  type: 'order' | 'product'
+  icon?: ReactNode
 }
 
 interface ResultSearchTableProps {
@@ -81,6 +83,7 @@ export default function ResultSearchTable({
                   <ResultSearchLine
                     key={item.id}
                     searchCode={item.searchCode}
+                    icon={item.icon}
                     onClick={() => onSelect(item)}
                   />
                 ))}

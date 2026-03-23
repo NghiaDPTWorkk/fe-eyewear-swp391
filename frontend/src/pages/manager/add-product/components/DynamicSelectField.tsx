@@ -33,7 +33,6 @@ export function DynamicSelectField({
   const [customValue, setCustomValue] = useState('')
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // Determine display name for the current value
   const selectedOption = options.find((opt) => opt.id === value || opt.name === value)
   const displayName = selectedOption ? selectedOption.name : value
 

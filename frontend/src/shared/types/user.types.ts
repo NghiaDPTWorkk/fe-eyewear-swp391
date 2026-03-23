@@ -11,6 +11,7 @@ export interface User {
   hobbies?: string[]
   isVerified?: boolean
   linkedAccounts?: any
+  providers?: string[] // local, google, etc.
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string

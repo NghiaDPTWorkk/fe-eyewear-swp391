@@ -10,6 +10,9 @@ import { OrderItemList } from '@/components/layout/customer/account/orders/detai
 import { OrderSummary } from '@/components/layout/customer/account/orders/detail/OrderSummary'
 import { OrderCustomerDetails } from '@/components/layout/customer/account/orders/detail/OrderCustomerDetails'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
+import { paymentService } from '@/features/customer/services/payment.service'
+import { PaymentMethodType } from '@/shared/utils/enums/payment.enum'
+import toast from 'react-hot-toast'
 
 export function CustomerOrderDetailPage() {
   const { invoiceId } = useParams<{ invoiceId: string }>()
@@ -17,6 +20,7 @@ export function CustomerOrderDetailPage() {
   const [data, setData] = useState<InvoiceDetailData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isPaying, setIsPaying] = useState(false)
 
   useEffect(() => {
     const fetchDetail = async () => {
@@ -39,6 +43,42 @@ export function CustomerOrderDetailPage() {
 
     fetchDetail()
   }, [invoiceId])
+
+  const handlePayNow = async () => {
+    if (invoice.paymentUrl) {
+      window.location.href = invoice.paymentUrl
+      return
+    }
+
+    if (!data?.payment?._id || !data?.invoice?.paymentMethod) {
+      toast.error('Payment information is missing')
+      return
+    }
+
+    try {
+      setIsPaying(true)
+      let response
+      const paymentMethod = data.invoice.paymentMethod as PaymentMethodType
+      const paymentId = data.payment._id
+
+      if (paymentMethod === PaymentMethodType.VNPAY) {
+        response = await paymentService.getVNPayUrl(invoiceId!, paymentId)
+      } else if (paymentMethod === PaymentMethodType.PAYOS) {
+        response = await paymentService.getPayOSUrl(invoiceId!, paymentId)
+      }
+
+      if (response?.success && response.data.url) {
+        window.location.href = response.data.url
+      } else {
+        toast.error('Failed to create payment link')
+      }
+    } catch (error) {
+      console.error('Payment error:', error)
+      toast.error('An error occurred while creating payment link')
+    } finally {
+      setIsPaying(false)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -84,6 +124,16 @@ export function CustomerOrderDetailPage() {
             Placed on {new Date(invoice.createdAt).toLocaleString()}
           </p>
         </div>
+
+        {invoice.status === InvoiceStatus.PENDING && invoice.paymentUrl && (
+          <Button
+            onClick={handlePayNow}
+            disabled={isPaying}
+            className="rounded-2xl bg-primary-500 text-white hover:bg-primary-600 font-bold px-6 h-12 shadow-sm"
+          >
+            {isPaying ? 'Redirecting...' : 'Pay Now'}
+          </Button>
+        )}
 
         {invoice.status === InvoiceStatus.DELIVERED && (
           <Button

@@ -8,6 +8,7 @@ import { IoTimeOutline, IoChevronForward, IoEyeOutline } from 'react-icons/io5'
 import { PATHS } from '@/routes/paths'
 import { useOrderCountStore } from '@/store'
 import { OrderType, OrderStatus } from '@/shared/utils/enums/order.enum'
+import { toTitleCase } from '@/shared/utils'
 
 export interface Order {
   id: string
@@ -23,6 +24,7 @@ export interface Order {
   price?: number // Giá đơn hàng
   assignedStaff?: string // Staff được assign
   createdAt: string // For sorting
+  assignedAt?: string // For dashboard stats & sorting
 }
 
 // Định nghĩa cấu trúc 1 cột
@@ -135,14 +137,14 @@ export default function OrderTable({
       render: (order) => (
         <span
           className={cn(
-            'whitespace-nowrap font-bold uppercase tracking-wider',
+            'whitespace-nowrap font-bold tracking-wider',
             isSales
               ? 'px-3 py-1 rounded-full text-[10px]'
               : 'px-3 py-1 rounded-md text-xs font-medium',
             getOrderTypeStyles(order.orderType, role)
           )}
         >
-          {order.orderType}
+          {toTitleCase(order.orderType)}
         </span>
       ),
       headerClassName: isSales ? 'text-center' : '',

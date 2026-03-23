@@ -53,5 +53,9 @@ export const salesService = {
 
   getCustomerById: async (id: string) => {
     return httpClient.get<any>(`/admin/customers/${id}`)
+  },
+
+  getStaffById: async (id: string) => {
+    return httpClient.get<{ success: boolean; data: any }>(`/admin/admin-accounts/${id}`)
   }
 }

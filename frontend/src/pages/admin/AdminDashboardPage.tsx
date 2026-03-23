@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query'
 import { Container, MetricCard, Button } from '@/shared/components/ui'
 import { SystemOverview } from './components/dashboard/SystemOverview'
 import { RecentActivities } from './components/dashboard/RecentActivities'
@@ -5,14 +6,30 @@ import { StaffDistribution } from './components/dashboard/StaffDistribution'
 import { IoPeopleOutline, IoPersonOutline } from 'react-icons/io5'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { BreadcrumbPath } from '@/components/layout/staff/operation-staff/breadcrumb-path'
+import { adminAccountService } from '@/shared/services/admin/adminAccountService'
+import { customerService } from '@/shared/services/admin/customerService'
 
 export default function AdminDashboardPage() {
   const navigate = useNavigate()
 
+  // Fetch totals for MetricCards
+  const { data: staffData, isLoading: isStaffLoading } = useQuery({
+    queryKey: ['admin-accounts-stats'],
+    queryFn: () => adminAccountService.getAdminAccounts({ limit: 1 })
+  })
+
+  const { data: customerData, isLoading: isCustomerLoading } = useQuery({
+    queryKey: ['admin-customers-stats'],
+    queryFn: () => customerService.getCustomers({ limit: 1 })
+  })
+
+  const totalStaff = staffData?.data?.pagination?.total ?? 0
+  const totalUsers = customerData?.data?.pagination?.total ?? 0
+
   return (
     <Container>
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-8 font-primary">
         <BreadcrumbPath paths={['Dashboard', 'System Overview']} />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2">
           <div>
@@ -46,14 +63,14 @@ export default function AdminDashboardPage() {
         <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
           <MetricCard
             label="TOTAL USERS"
-            value="40"
+            value={isCustomerLoading ? '...' : String(totalUsers)}
             colorScheme="mint"
             trend={{ value: 12.5, label: 'vs last month', isPositive: true }}
             icon={<IoPeopleOutline size={22} />}
           />
           <MetricCard
             label="TOTAL STAFF"
-            value="30"
+            value={isStaffLoading ? '...' : String(totalStaff)}
             colorScheme="info"
             trend={{ value: 3.2, label: 'vs last month', isPositive: true }}
             icon={<IoPersonOutline size={22} />}

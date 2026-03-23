@@ -31,9 +31,9 @@ export const PaymentStatusHeader = ({ status, error }: PaymentStatusHeaderProps)
           </div>
         </div>
         <div className="space-y-2">
-          <h1 className="text-4xl font-black tracking-tight">Thanh toán thành công!</h1>
+          <h1 className="text-4xl font-black tracking-tight">Payment successful!</h1>
           <p className="text-lg text-mint-800/70 font-medium">
-            Đơn hàng của bạn đã được xác nhận và đang được xử lý
+            Your order has been confirmed and is being processed
           </p>
         </div>
       </div>
@@ -46,9 +46,9 @@ export const PaymentStatusHeader = ({ status, error }: PaymentStatusHeaderProps)
         <XCircle className="w-16 h-16" />
       </div>
       <div className="space-y-2">
-        <h1 className="text-4xl font-black text-danger-600">Thanh toán thất bại</h1>
+        <h1 className="text-4xl font-black text-danger-600">Payment failed</h1>
         <p className="text-lg text-mint-800/70 font-medium">
-          {error || 'Giao dịch không thành công hoặc đã bị hủy.'}
+          {error || 'Transaction failed or has been cancelled.'}
         </p>
       </div>
     </div>
@@ -63,7 +63,7 @@ export const PaymentAmountCard = ({ amount }: PaymentAmountCardProps) => (
   <Card className="p-8 border-none shadow-xl rounded-3xl bg-white text-center border-t-4 border-success-500 relative overflow-hidden group">
     <div className="space-y-3 relative z-10">
       <p className="text-mint-800/60 font-semibold uppercase tracking-wider text-sm">
-        Tổng số tiền đã thanh toán
+        Total amount paid
       </p>
       <div className="text-5xl font-black text-success-600 tracking-tight group-hover:scale-105 transition-transform duration-500">
         <VNDPrice amount={amount} />
@@ -84,12 +84,12 @@ export const TransactionDetails = ({ transactionNo, formattedDate }: Transaction
       <div className="bg-mint-100 p-2 rounded-xl text-mint-700">
         <Receipt className="w-6 h-6" />
       </div>
-      <h2 className="text-xl font-bold">Thông tin giao dịch</h2>
+      <h2 className="text-xl font-bold">Transaction Information</h2>
     </div>
     <div className="grid gap-5 text-base">
       <div className="flex justify-between items-center group">
         <div className="flex items-center gap-3 text-mint-800/60 font-medium">
-          <Hash className="w-4 h-4" /> Mã giao dịch
+          <Hash className="w-4 h-4" /> Transaction ID
         </div>
         <span className="font-bold text-mint-1100 bg-mint-50 px-3 py-1 rounded-lg">
           TXN-{transactionNo || 'N/A'}
@@ -97,15 +97,15 @@ export const TransactionDetails = ({ transactionNo, formattedDate }: Transaction
       </div>
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3 text-mint-800/60 font-medium">
-          <Calendar className="w-4 h-4" /> Ngày thanh toán
+          <Calendar className="w-4 h-4" /> Payment Date
         </div>
         <span className="font-semibold text-mint-1000">{formattedDate}</span>
       </div>
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3 text-mint-800/60 font-medium">
-          <CreditCard className="w-4 h-4" /> Phương thức thanh toán
+          <CreditCard className="w-4 h-4" /> Payment Method
         </div>
-        <span className="font-semibold text-mint-1000">Thẻ ATM / Tài khoản ngân hàng</span>
+        <span className="font-semibold text-mint-1000">ATM Card / Bank Account</span>
       </div>
     </div>
   </Card>
@@ -121,7 +121,7 @@ export const OrderInvoiceDetails = ({ invoiceData }: OrderInvoiceDetailsProps) =
       <div className="bg-mint-100 p-2 rounded-xl text-mint-700">
         <ShoppingBag className="w-6 h-6" />
       </div>
-      <h2 className="text-xl font-bold">Chi tiết đơn hàng</h2>
+      <h2 className="text-xl font-bold">Order Details</h2>
     </div>
 
     <div className="space-y-6">
@@ -152,11 +152,11 @@ export const OrderInvoiceDetails = ({ invoiceData }: OrderInvoiceDetailsProps) =
                   </p>
                   {product && lens && (
                     <p className="text-[10px] text-primary-500 font-bold uppercase tracking-wider">
-                      + Kèm tròng kính
+                      + Includes Lenses
                     </p>
                   )}
                   <p className="text-xs text-mint-800/60 font-medium">
-                    Số lượng: <span className="text-mint-1000 font-bold">x{quantity}</span>
+                    Quantity: <span className="text-mint-1000 font-bold">x{quantity}</span>
                   </p>
                 </div>
                 <div className="text-right">
@@ -165,7 +165,7 @@ export const OrderInvoiceDetails = ({ invoiceData }: OrderInvoiceDetailsProps) =
                   </div>
                   {quantity > 1 && (
                     <p className="text-[10px] text-mint-800/40 font-medium">
-                      <VNDPrice amount={itemTotal / quantity} /> / sp
+                      <VNDPrice amount={itemTotal / quantity} /> / item
                     </p>
                   )}
                 </div>
@@ -178,7 +178,7 @@ export const OrderInvoiceDetails = ({ invoiceData }: OrderInvoiceDetailsProps) =
 
     <div className="pt-8 border-t border-dashed border-mint-200 space-y-4">
       <div className="flex justify-between text-mint-800/70 font-medium">
-        <span>Tạm tính</span>
+        <span>Subtotal</span>
         <VNDPrice
           amount={
             (invoiceData?.invoice.totalPrice || 0) + (invoiceData?.invoice.totalDiscount || 0)
@@ -187,18 +187,18 @@ export const OrderInvoiceDetails = ({ invoiceData }: OrderInvoiceDetailsProps) =
       </div>
       {invoiceData?.invoice.totalDiscount && invoiceData.invoice.totalDiscount > 0 ? (
         <div className="flex justify-between text-mint-800/70 font-medium">
-          <span>Giảm giá</span>
+          <span>Discount</span>
           <span className="text-danger-500 font-bold">
             -<VNDPrice amount={invoiceData.invoice.totalDiscount} />
           </span>
         </div>
       ) : null}
       <div className="flex justify-between text-mint-800/70 font-medium">
-        <span>Phí vận chuyển</span>
-        <span className="text-success-600 font-bold">Miễn phí</span>
+        <span>Shipping Fee</span>
+        <span className="text-success-600 font-bold">Free</span>
       </div>
       <div className="flex justify-between text-2xl font-black text-mint-1200 pt-4">
-        <span>Tổng cộng</span>
+        <span>Total</span>
         <div className="text-primary-600 tracking-tight">
           <VNDPrice amount={invoiceData?.invoice.totalPrice || 0} />
         </div>
@@ -219,21 +219,22 @@ export const PaymentResultActions = ({
 }: PaymentResultActionsProps) => (
   <div className="grid grid-cols-1 sm:gri`d-cols-3 gap-4 pt-4">
     <Button className="h-14 rounded-2xl bg-success-600 hover:bg-success-700 text-white font-bold text-lg shadow-lg shadow-success-100 flex items-center justify-center gap-2 group">
-      <Download className="w-5 h-5 group-hover:-translate-y-1 transition-transform" /> Tải hóa đơn
+      <Download className="w-5 h-5 group-hover:-translate-y-1 transition-transform" /> Download
+      Invoice
     </Button>
     <Button
       onClick={onViewOrder}
       variant="outline"
       className="h-14 rounded-2xl border-2 border-mint-200 bg-white text-mint-1100 hover:bg-mint-50 font-bold text-lg group"
     >
-      <Receipt className="w-5 h-5 mr-2 opacity-60 group-hover:opacity-100" /> Chi tiết đơn hàng
+      <Receipt className="w-5 h-5 mr-2 opacity-60 group-hover:opacity-100" /> Order Details
     </Button>
     <Button
       onClick={onNavigateHome}
       variant="outline"
       className="h-14 rounded-2xl border-2 border-mint-200 bg-white text-mint-1100 hover:bg-mint-50 font-bold text-lg group"
     >
-      <Home className="w-5 h-5 mr-2 opacity-60 group-hover:opacity-100" /> Về trang chủ
+      <Home className="w-5 h-5 mr-2 opacity-60 group-hover:opacity-100" /> Back to Home
     </Button>
   </div>
 )
@@ -243,12 +244,12 @@ export const PaymentFailureReasons = () => (
     <div className="bg-mint-50 p-6 rounded-2xl flex items-start gap-4 text-left">
       <AlertCircle className="w-6 h-6 text-danger-500 mt-1 flex-shrink-0" />
       <div className="space-y-2 text-mint-900">
-        <p className="font-bold">Lý do có thể:</p>
+        <p className="font-bold">Possible reasons:</p>
         <ul className="list-disc list-inside space-y-1 text-sm text-mint-700/80">
-          <li>Tài khoản không đủ số dư</li>
-          <li>Hết thời gian chờ thanh toán</li>
-          <li>Lỗi hệ thống từ ngân hàng</li>
-          <li>Người dùng hủy giao dịch</li>
+          <li>Insufficient account balance</li>
+          <li>Payment timeout</li>
+          <li>Bank system error</li>
+          <li>User cancelled transaction</li>
         </ul>
       </div>
     </div>
@@ -257,13 +258,11 @@ export const PaymentFailureReasons = () => (
 
 export const PaymentFooter = () => (
   <div className="text-center space-y-3 pt-4 pb-8">
-    <p className="text-mint-800/60 font-medium">
-      Bạn sẽ nhận được email xác nhận trong vài phút tới.
-    </p>
+    <p className="text-mint-800/60 font-medium">You will receive a confirmation email shortly.</p>
     <p className="text-sm">
-      Nếu có thắc mắc, vui lòng liên hệ{' '}
+      If you have any questions, please contact{' '}
       <Link to="/support" className="text-primary-600 font-bold hover:underline">
-        hỗ trợ khách hàng
+        customer support
       </Link>
       .
     </p>

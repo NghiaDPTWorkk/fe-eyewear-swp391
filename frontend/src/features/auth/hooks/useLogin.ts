@@ -117,11 +117,23 @@ export const useLogin = () => {
       }
     },
     onError: (error: any) => {
+      let errorMessage =
+        error?.response?.data?.message || error?.message || 'Login failed. Please try again.'
+
+      // Translate 401 or similar errors to a friendlier message
+      if (
+        error?.response?.status === 401 ||
+        error?.response?.status === 400 ||
+        errorMessage.includes('401')
+      ) {
+        errorMessage = 'Email or password is wrong.'
+      }
+
       // Use Sales Staff error handler for staff login, regular toast for customer login
       if (isStaffLogin()) {
-        showError(error, 'Login failed. Please check your credentials and try again.')
+        showError(error, errorMessage)
       } else {
-        toast.error(error.message || 'Login failed. Please try again.')
+        toast.error(errorMessage)
       }
       console.error('Login failed', error)
     }

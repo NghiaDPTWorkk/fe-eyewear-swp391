@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Container } from '@/components'
 import { PageHeader } from '@/features/sales/components/common'
-import { usePreOrderImports } from '@/features/manager/hooks/usePreOrderImports'
+import { usePreOrderImports } from '@/features/manager/hooks'
 import {
   IoCubeOutline,
   IoRefreshOutline,
@@ -216,7 +216,7 @@ export default function ManagerImportPage() {
           </div>
         )}
 
-        {/* Pagination Controls */}
+        {}
         {pagination && pagination.totalPages > 1 && (
           <div className="p-8 border-t border-slate-50 flex items-center justify-between bg-slate-50/20">
             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">

@@ -16,7 +16,7 @@ import {
   IoCubeOutline
 } from 'react-icons/io5'
 import { Card, Button, Input } from '@/components'
-import { useSalesStaffOrderDetail } from '@/features/sales/hooks/useSalesStaffInvoices'
+import { useSalesStaffOrderDetail } from '@/features/sales/hooks'
 import { OrderType } from '@/shared/utils/enums/order.enum'
 
 interface PrescriptionVerificationProps {
@@ -351,10 +351,19 @@ export default function PrescriptionVerification({
                   <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">
                     Customer
                   </p>
-                  <p className="text-sm font-semibold text-gray-900">
+                  <p className="text-sm font-semibold text-gray-900 leading-tight">
                     {order?.customerName || 'N/A'}
                   </p>
-                  <p className="text-xs text-gray-500 font-medium">{order?.customerEmail}</p>
+                  <div className="flex flex-col gap-0.5 mt-1">
+                    <p className="text-xs text-gray-500 font-medium truncate">
+                      {order?.customerEmail}
+                    </p>
+                    {order?.customerPhone && (
+                      <p className="text-xs text-mint-600 font-bold tracking-tight">
+                        {order.customerPhone}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -409,14 +418,37 @@ export default function PrescriptionVerification({
                 ))}
               </div>
 
-              <div className="mt-6 p-4 bg-gray-900 rounded-2xl text-white shadow-xl shadow-slate-200">
-                <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                    <IoWalletOutline /> Total Value
+              <div className="mt-8 space-y-3 pt-6 border-t border-gray-100">
+                <div className="flex justify-between items-center text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">
+                  <span>Subtotal</span>
+                  <span className="text-gray-900 font-mono">{formatPrice(order?.price || 0)}</span>
+                </div>
+                <div className="flex justify-between items-center text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">
+                  <span>Shipping Fee</span>
+                  <span className="text-gray-900 font-mono">
+                    + {formatPrice(order?.invoice?.feeShip || 0)}
                   </span>
-                  <span className="text-lg font-bold text-mint-400 tracking-tight">
-                    {formatPrice(order?.price || 0)}
+                </div>
+                <div className="flex justify-between items-center text-[11px] font-bold text-rose-400 uppercase tracking-widest pl-1">
+                  <span>Discount</span>
+                  <span className="text-rose-500 font-mono">
+                    - {formatPrice(order?.invoice?.totalDiscount || 0)}
                   </span>
+                </div>
+
+                <div className="mt-4 p-4 bg-gray-900 rounded-3xl text-white shadow-xl shadow-slate-200 ring-4 ring-gray-900/5">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                      <IoWalletOutline size={14} className="text-mint-400" /> Final Total
+                    </span>
+                    <span className="text-xl font-bold text-mint-400 tracking-tight font-heading">
+                      {formatPrice(
+                        (order?.price || 0) +
+                          (order?.invoice?.feeShip || 0) -
+                          (order?.invoice?.totalDiscount || 0)
+                      )}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>

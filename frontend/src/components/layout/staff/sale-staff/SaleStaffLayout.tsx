@@ -1,4 +1,4 @@
-import { IoGrid, IoReceipt, IoPeople, IoFlask, IoSettings, IoHelpCircle } from 'react-icons/io5'
+import { IoGrid, IoReceipt, IoPeople, IoSettings, IoHelpCircle } from 'react-icons/io5'
 import { useLocation } from 'react-router-dom'
 
 import { SidebarStaff, StaffLayout } from '@/components/layout/staff/staff-core'
@@ -29,12 +29,12 @@ export default function SaleStaffLayout() {
         to="/sale-staff/customers"
         active={location.pathname === '/sale-staff/customers'}
       />
-      <SidebarStaff.MenuItem
+      {/* <SidebarStaff.MenuItem
         icon={<IoFlask />}
         label="Lab Status"
         to="/sale-staff/lab-status"
         active={location.pathname === '/sale-staff/lab-status'}
-      />
+      /> */}
     </SidebarStaff.MenuSection>
   )
 

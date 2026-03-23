@@ -55,7 +55,7 @@ export const authApi = {
     return httpClient.patch<ApiResponse<User>>(ENDPOINTS.AUTH.UPDATE_PROFILE, payload)
   },
 
-  changePasswordCustomer: (payload: { oldPassword: string; newPassword: string }) => {
+  changePasswordCustomer: (payload: { oldPassword?: string; newPassword: string }) => {
     return httpClient.patch<ApiResponse<any>>(ENDPOINTS.AUTH.CHANGE_PASSWORD_CUSTOMER, payload)
   },
 
@@ -66,9 +66,30 @@ export const authApi = {
   },
 
   /**
+   * Yêu cầu nhập account phụ thuộc vào email đã tồn tại do Google Login
+   */
+  requestMergeAccount: (payload: { email: string; password?: string }) => {
+    return httpClient.post<ApiResponse<any>>(ENDPOINTS.AUTH.REQUEST_MERGE, payload)
+  },
+
+  /**
+   * Xác thực OTP quy trình merge account
+   */
+  verifyMergeOtp: (payload: { email: string; otp: string }) => {
+    return httpClient.post<ApiResponse<any>>(ENDPOINTS.AUTH.VERIFY_MERGE_OTP, payload)
+  },
+
+  /**
    * Đăng xuất khỏi hệ thống
    */
   logout: () => {
     return httpClient.post(ENDPOINTS.AUTH.LOGOUT)
+  },
+
+  /**
+   * Đăng xuất cho nhân viên
+   */
+  logoutStaff: () => {
+    return httpClient.post(ENDPOINTS.AUTH.LOGOUT_STAFF)
   }
 }

@@ -15,9 +15,6 @@ const ManagerDashboardPage = lazy(() =>
 const ManagerInvoicesPage = lazy(() =>
   import('@/pages/manager/ManagerInvoicesPage').then((m) => ({ default: m.default }))
 )
-const ManagerReportsPage = lazy(() =>
-  import('@/pages/manager/ManagerReportsPage').then((m) => ({ default: m.default }))
-)
 const ManagerTransactionsPage = lazy(() =>
   import('@/pages/manager/ManagerTransactionsPage').then((m) => ({ default: m.default }))
 )
@@ -96,14 +93,6 @@ export const managerRoutes = [
         element: (
           <LazyPage>
             <StaffSupportPage dashboardPath="/manager/dashboard" />
-          </LazyPage>
-        )
-      },
-      {
-        path: 'reports',
-        element: (
-          <LazyPage>
-            <ManagerReportsPage />
           </LazyPage>
         )
       },

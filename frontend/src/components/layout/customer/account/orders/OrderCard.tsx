@@ -4,6 +4,10 @@ import { PriceTag } from '@/shared/components/ui/price-tag'
 import { Button } from '@/shared/components/ui/button'
 import { cn } from '@/lib/utils'
 import { CUSTOMER_STATUS, InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
+import { paymentService } from '@/features/customer/services/payment.service'
+import { PaymentMethodType } from '@/shared/utils/enums/payment.enum'
+import toast from 'react-hot-toast'
+import { useState } from 'react'
 
 interface OrderCardProps {
   id: string
@@ -16,6 +20,12 @@ interface OrderCardProps {
   image: string
   expDate?: string
   receivedDate?: string
+  canCancel?: boolean
+  isCancelling?: boolean
+  onCancel?: (invoiceId: string) => void
+  paymentId?: string
+  paymentMethod?: PaymentMethodType
+  paymentUrl?: string | null
 }
 
 export function OrderCard({
@@ -28,9 +38,50 @@ export function OrderCard({
   status,
   image,
   expDate,
-  receivedDate
+  receivedDate,
+  canCancel = false,
+  isCancelling = false,
+  onCancel,
+  paymentId,
+  paymentMethod,
+  paymentUrl
 }: OrderCardProps) {
   const navigate = useNavigate()
+  const [isPaying, setIsPaying] = useState(false)
+
+  const handlePayNow = async () => {
+    if (paymentUrl) {
+      window.location.href = paymentUrl
+      return
+    }
+
+    if (!realId || !paymentId || !paymentMethod) {
+      toast.error('Payment information is missing')
+      return
+    }
+
+    try {
+      setIsPaying(true)
+      let response
+      if (paymentMethod === PaymentMethodType.VNPAY) {
+        response = await paymentService.getVNPayUrl(realId, paymentId)
+      } else if (paymentMethod === PaymentMethodType.PAYOS) {
+        response = await paymentService.getPayOSUrl(realId, paymentId)
+      }
+
+      if (response?.success && response.data.url) {
+        window.location.href = response.data.url
+      } else {
+        toast.error('Failed to create payment link')
+      }
+    } catch (error) {
+      console.error('Payment error:', error)
+      toast.error('An error occurred while creating payment link')
+    } finally {
+      setIsPaying(false)
+    }
+  }
+
   const statusConfig: Record<
     InvoiceStatus,
     { label: string; bgColor: string; textColor: string; description: string }
@@ -210,23 +261,38 @@ export function OrderCard({
               Details
             </Button>
 
-            {(status === InvoiceStatus.DELIVERING ||
-              status === InvoiceStatus.DELIVERED ||
-              status === InvoiceStatus.COMPLETED) && (
+            {canCancel && onCancel && (
               <Button
-                onClick={() =>
-                  status === InvoiceStatus.DELIVERING
-                    ? navigate(`/account/orders/${realId}/tracking`)
-                    : navigate(`/account/orders/${realId}/return`)
-                }
+                onClick={() => onCancel(realId)}
+                disabled={isCancelling}
+                className="flex-1 lg:flex-none h-10 rounded-xl px-6 font-bold text-[10px] uppercase tracking-[0.15em] transition-all shadow-sm bg-white border border-danger-100 text-danger-600 hover:bg-danger-50 disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {isCancelling ? 'Cancelling...' : 'Cancel'}
+              </Button>
+            )}
+
+            {status === InvoiceStatus.PENDING && paymentUrl && (
+              <Button
+                onClick={handlePayNow}
+                isLoading={isPaying}
+                disabled={isPaying}
+                className="flex-1 lg:flex-none h-10 rounded-xl px-6 font-bold text-[10px] uppercase tracking-[0.15em] transition-all shadow-sm bg-primary-500 text-white hover:bg-primary-600"
+              >
+                Pay Now
+              </Button>
+            )}
+
+            {(status === InvoiceStatus.DELIVERED || status === InvoiceStatus.COMPLETED) && (
+              <Button
                 className={cn(
                   'flex-1 lg:flex-none h-10 rounded-xl px-6 font-bold text-[10px] uppercase tracking-[0.15em] transition-all shadow-sm flex items-center justify-center gap-2',
-                  status === InvoiceStatus.DELIVERING
+                  status === InvoiceStatus.DELIVERED
                     ? 'bg-primary-500 text-white hover:bg-primary-600'
                     : 'bg-white border-mint-100 text-mint-1200 hover:bg-danger-50 hover:text-danger-600 hover:border-danger-100 shadow-sm'
                 )}
+                onClick={() => navigate(`/account/orders/${realId}/return`)}
               >
-                {status === InvoiceStatus.DELIVERING ? 'Track' : 'Return'}
+                Return
               </Button>
             )}
           </div>

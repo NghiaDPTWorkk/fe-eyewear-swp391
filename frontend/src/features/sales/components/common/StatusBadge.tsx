@@ -1,7 +1,3 @@
-/**
- * StatusBadge Component
- * Consistent status indicator for orders across all SaleStaff pages.
- */
 import { cn } from '@/lib/utils'
 import { COLORS, STYLES } from '../../constants/saleStaffDesignSystem'
 
@@ -35,7 +31,9 @@ const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
   REJECTED: { label: 'Rejected', className: COLORS.status.rejected },
   DELAYED: { label: 'Delayed', className: COLORS.status.delayed },
   ARRIVED: { label: 'Arrived', className: COLORS.status.arrived },
-  UNVERIFIED: { label: 'Unverified', className: COLORS.status.rejected }
+  UNVERIFIED: { label: 'Unverified', className: COLORS.status.rejected },
+  CANCELED: { label: 'Canceled', className: COLORS.status.rejected },
+  CANCEL: { label: 'Canceled', className: COLORS.status.rejected }
 }
 
 export default function StatusBadge({ status, label, className }: StatusBadgeProps) {

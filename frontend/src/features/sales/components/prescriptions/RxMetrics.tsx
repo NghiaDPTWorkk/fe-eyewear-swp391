@@ -1,7 +1,3 @@
-/**
- * PrescriptionMetrics Component
- * Displays prescription-related KPI metrics
- */
 import { Card } from '@/components'
 import {
   IoFlaskOutline,

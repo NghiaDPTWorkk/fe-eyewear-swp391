@@ -1,7 +1,3 @@
-/**
- * ShipmentStatusCard Component
- * Displays shipment status with progress and timeline
- */
 import { Card } from '@/components'
 import { IoCube } from 'react-icons/io5'
 
@@ -22,7 +18,7 @@ export default function LiveMapShipmentStatusCard({ progress }: ShipmentStatusCa
         <IoCube className="text-mint-100 text-4xl" />
       </div>
 
-      {/* Progress Bar */}
+      {}
       <div className="mb-8">
         <div className="flex justify-between text-xs font-semibold text-gray-500 mb-2">
           <span>Milan (Start)</span>
@@ -38,7 +34,7 @@ export default function LiveMapShipmentStatusCard({ progress }: ShipmentStatusCa
         </div>
       </div>
 
-      {/* Timeline Stepper */}
+      {}
       <div className="grid grid-cols-4 gap-2">
         <div className="flex flex-col gap-2">
           <div className="h-1 w-full bg-mint-500 rounded-full"></div>

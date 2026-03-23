@@ -10,7 +10,6 @@ import {
   IoGlobeOutline,
   IoTrashOutline
 } from 'react-icons/io5'
-import { CustomSelect } from '@/shared/components/ui-core/select/CustomSelect'
 
 export default function AccountInfoSidebar() {
   const { data: profileData, isLoading } = useProfile()
@@ -160,50 +159,49 @@ export default function AccountInfoSidebar() {
         </div>
       </Card>
 
-      {/* System Settings */}
-      <Card className="p-8 border-none shadow-sm shadow-neutral-200/50">
-        <h3 className="text-[11px] font-medium text-neutral-500 uppercase tracking-widest mb-8">
+      <Card className="p-8 border-none shadow-sm shadow-neutral-200/50 bg-white">
+        <h3 className="text-[11px] font-bold text-neutral-900 uppercase tracking-widest mb-5">
           System
         </h3>
-        <div className="space-y-6">
-          <CustomSelect
-            label="Language"
-            icon={<IoGlobeOutline size={18} />}
-            value="English"
-            options={[
-              { value: 'English', label: 'English', icon: <span className="text-[10px]">EN</span> },
-              {
-                value: 'Vietnamese',
-                label: 'Vietnamese (Tiếng Việt)',
-                icon: <span className="text-[10px]">VN</span>
-              }
-            ]}
-            onChange={() => {}}
-          />
+        <div className="space-y-5">
+          <div className="flex items-center gap-3.5 group">
+            <div className="w-9 h-9 rounded-xl bg-neutral-50 flex items-center justify-center shrink-0 border border-neutral-100 transition-colors group-hover:bg-primary-50">
+              <IoGlobeOutline className="text-neutral-500 group-hover:text-primary-600" size={16} />
+            </div>
+            <div>
+              <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-widest mb-0.5">
+                Language
+              </p>
+              <p className="text-sm font-semibold text-neutral-700">English</p>
+            </div>
+          </div>
 
-          <CustomSelect
-            label="Timezone"
-            icon={<IoTimeOutline size={18} />}
-            value="UTC-5"
-            options={[
-              { value: 'UTC-5', label: 'UTC-5 (EST)' },
-              { value: 'UTC+7', label: 'UTC+7 (ICT) - Saigon' },
-              { value: 'UTC+0', label: 'UTC+0 (GMT)' }
-            ]}
-            onChange={() => {}}
-          />
+          <div className="flex items-center gap-3.5 group">
+            <div className="w-9 h-9 rounded-xl bg-neutral-50 flex items-center justify-center shrink-0 border border-neutral-100 transition-colors group-hover:bg-primary-50">
+              <IoTimeOutline className="text-neutral-500 group-hover:text-primary-600" size={16} />
+            </div>
+            <div>
+              <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-widest mb-0.5">
+                Timezone
+              </p>
+              <p className="text-sm font-semibold text-neutral-700">UTC-5 (EST)</p>
+            </div>
+          </div>
 
-          <CustomSelect
-            label="Date Format"
-            icon={<IoCalendarOutline size={18} />}
-            value="MM/DD/YYYY"
-            options={[
-              { value: 'MM/DD/YYYY', label: 'MM/DD/YYYY' },
-              { value: 'DD/MM/YYYY', label: 'DD/MM/YYYY' },
-              { value: 'YYYY-MM-DD', label: 'YYYY-MM-DD' }
-            ]}
-            onChange={() => {}}
-          />
+          <div className="flex items-center gap-3.5 group">
+            <div className="w-9 h-9 rounded-xl bg-neutral-50 flex items-center justify-center shrink-0 border border-neutral-100 transition-colors group-hover:bg-primary-50">
+              <IoCalendarOutline
+                className="text-neutral-500 group-hover:text-primary-600"
+                size={16}
+              />
+            </div>
+            <div>
+              <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-widest mb-0.5">
+                Date Format
+              </p>
+              <p className="text-sm font-semibold text-neutral-700">MM/DD/YYYY</p>
+            </div>
+          </div>
         </div>
       </Card>
 

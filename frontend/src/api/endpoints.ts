@@ -7,6 +7,7 @@ export const ENDPOINTS = {
     LOGIN_STAFF: '/admin/auth/login',
     REGISTER: '/auth/register',
     LOGOUT: '/auth/logout',
+    LOGOUT_STAFF: '/admin/auth/logout',
     REFRESH_TOKEN: '/auth/refresh-token',
     PROFILE: '/customer',
     UPDATE_PROFILE: '/customer/profile',
@@ -15,8 +16,12 @@ export const ENDPOINTS = {
     CHANGE_PASSWORD: '/admin/auth/profile/change-password',
     ADDRESS_LIST: '/customer/profile/address',
     ADDRESS_ADD: '/customer/profile/address',
+    ADDRESS_UPDATE: (id: string) => `/customer/profile/address/${id}`,
+    ADDRESS_DELETE: (id: string) => `/customer/profile/address/${id}`,
     CHANGE_DEFAULT: (id: string) => `/customer/profile/address/change-default/${id}`,
-    GOOGLE: '/auth/google'
+    GOOGLE: '/auth/google',
+    REQUEST_MERGE: '/auth/request-merge-account',
+    VERIFY_MERGE_OTP: '/auth/request-merge-account/verify-otp'
   },
 
   // Products
@@ -163,6 +168,8 @@ export const ENDPOINTS = {
       const qs = params.toString()
       return qs ? `/admin/customers?${qs}` : '/admin/customers'
     },
+    CUSTOMER_DETAIL: (id: string) => `/admin/customers/${id}`,
+    CUSTOMER_UPDATE: (id: string) => `/admin/customers/${id}`,
     PRODUCTS_LIST: (
       page?: number,
       limit?: number,
@@ -217,7 +224,8 @@ export const ENDPOINTS = {
   INVOICE: {
     CREATE: '/invoices',
     LIST: '/invoices',
-    DETAIL: (id: string) => `/invoices/${id}`
+    DETAIL: (id: string) => `/invoices/${id}`,
+    CANCEL: (id: string) => `/invoices/${id}/cancel`
   },
   // Wishlist
   WISHLIST: {
@@ -240,6 +248,10 @@ export const ENDPOINTS = {
     GET_MESSAGES: (lastMessageAt?: number) =>
       lastMessageAt ? `/ai-message?lastMessageAt=${lastMessageAt}` : '/ai-message',
     SEND_MESSAGE: '/ai-conversation/chat'
+  },
+  // Pre-order
+  PRE_ORDER: {
+    IMPORT_BY_SKU: (sku: string) => `/pre-order-import/sku/${encodeURIComponent(sku)}`
   },
 
   // Operation Staff
@@ -308,6 +320,13 @@ export const ENDPOINTS = {
       })
       return `/admin/return-tickets?${q.toString()}`
     },
+    MY_HISTORY: (params: { page?: number; limit?: number; search?: string }) => {
+      const q = new URLSearchParams()
+      Object.entries(params).forEach(([k, v]) => {
+        if (v !== undefined && v !== '') q.append(k, String(v))
+      })
+      return `/admin/return-tickets/my-history?${q.toString()}`
+    },
     RETURNED_ORDERS: (page?: number, limit?: number, search?: string) => {
       const p = new URLSearchParams()
       if (page) p.append('page', String(page))
@@ -324,7 +343,8 @@ export const ENDPOINTS = {
       const p = new URLSearchParams({ page: String(page), limit: String(limit) })
       if (status) p.append('status', status)
       return `/return-tickets?${p.toString()}`
-    }
+    },
+    MONTHLY_REPORT: '/admin/return-tickets/monthly-report'
   },
   UPLOAD: {
     SINGLE: '/upload/single',

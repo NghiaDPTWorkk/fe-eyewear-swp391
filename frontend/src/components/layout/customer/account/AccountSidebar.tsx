@@ -114,21 +114,6 @@ export function AccountSidebar() {
         ))}
       </div>
 
-      {/* Vision Exam Card from screenshot */}
-      <div className="bg-[#3D6376] p-6 rounded-[24px] text-white overflow-hidden relative mb-8">
-        <div className="relative z-10">
-          <p className="text-[10px] font-bold uppercase tracking-widest opacity-60 mb-2">
-            Next Vision Exam
-          </p>
-          <h4 className="text-lg font-bold mb-4">Nov 24, 2024</h4>
-          <button className="w-full py-3 bg-[#54D5B1] hover:bg-[#48c4a1] text-[#1E3A47] font-bold rounded-xl text-xs transition-all">
-            Reschedule
-          </button>
-        </div>
-        {/* Decorative circle */}
-        <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/5 rounded-full" />
-      </div>
-
       <button
         onClick={handleLogout}
         className="w-full flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-danger-50 group transition-all mt-auto mb-10 border border-transparent hover:border-danger-100"

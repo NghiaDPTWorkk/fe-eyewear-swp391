@@ -44,15 +44,15 @@ export function RejectionModal({
 
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-      {/* Backdrop */}
+      {}
       <div
         className="fixed inset-0 bg-slate-900/60 backdrop-blur-md transition-all duration-500 animate-in fade-in"
         onClick={onClose}
       />
 
-      {/* Modal Panel */}
+      {}
       <div className="relative w-full max-w-md max-h-[90vh] flex flex-col transform overflow-hidden rounded-[2.5rem] bg-white text-left align-middle shadow-[0_32px_128px_-16px_rgba(0,0,0,0.3)] transition-all border border-neutral-100/50 animate-in zoom-in-95 duration-300">
-        {/* Header - Fixed */}
+        {}
         <div className="flex justify-between items-start p-6 pb-0 mb-4 shrink-0">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-rose-50 flex items-center justify-center text-rose-500 border border-rose-100 shadow-sm shadow-rose-100/50">
@@ -75,7 +75,7 @@ export function RejectionModal({
           </button>
         </div>
 
-        {/* Content - Scrollable */}
+        {}
         <div className="flex-1 overflow-y-auto px-6 py-2 space-y-4 custom-scrollbar">
           <div className="bg-neutral-50 p-5 rounded-[1.5rem] border border-neutral-100/50">
             <p className="text-[13.5px] font-normal text-black leading-relaxed">{message}</p>
@@ -119,7 +119,7 @@ export function RejectionModal({
           </div>
         </div>
 
-        {/* Footer - Fixed */}
+        {}
         <div className="p-6 pt-4 flex flex-col gap-2 shrink-0">
           <Button
             onClick={handleConfirm}

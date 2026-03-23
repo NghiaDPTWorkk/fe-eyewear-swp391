@@ -128,7 +128,9 @@ export default function OperationInvenProcessPlan() {
             <IoArrowBack size={20} />
           </button>
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-            <h1 className="text-xl md:text-2xl font-black text-slate-900 leading-tight">Process Inventory</h1>
+            <h1 className="text-xl md:text-2xl font-black text-slate-900 leading-tight">
+              Process Inventory
+            </h1>
             {detail && (
               <div
                 className={cn(

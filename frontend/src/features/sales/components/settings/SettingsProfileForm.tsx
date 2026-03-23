@@ -1,7 +1,3 @@
-/**
- * ProfileForm Component
- * Profile information form with submit for approval
- */
 import { Card, Button } from '@/components'
 import { IoSaveOutline } from 'react-icons/io5'
 

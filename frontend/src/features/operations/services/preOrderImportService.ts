@@ -79,5 +79,8 @@ export const preOrderImportService = {
 
   importProduct(data: { sku: string; quantity: number; preOrderImportId: string }) {
     return httpClient.post<ApiResponse<any>>(ENDPOINTS.ADMIN.IMPORT_PRODUCTS, data)
+  },
+  getPreOrderImportBySku(sku: string) {
+    return httpClient.get<ApiResponse<PreOrderImport>>(ENDPOINTS.PRE_ORDER.IMPORT_BY_SKU(sku))
   }
 }

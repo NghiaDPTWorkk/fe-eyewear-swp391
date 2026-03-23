@@ -8,6 +8,9 @@ export interface Invoice {
   phone: string
   email?: string
   finalPrice: string
+  totalPrice?: number
+  totalDiscount?: number
+  feeShip?: number
   status: InvoiceStatus | string
   address: string
   createdAt: string

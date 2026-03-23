@@ -1,7 +1,13 @@
 import { useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Container } from '@/components'
-import { IoArrowBack, IoSettingsOutline, IoCheckmarkCircle, IoReload } from 'react-icons/io5'
+import {
+  IoArrowBack,
+  IoSettingsOutline,
+  IoCheckmarkCircle,
+  IoReload,
+  IoBarcodeOutline
+} from 'react-icons/io5'
 import { ProcessTracker } from '@/components/layout/staff/staff-core/process-tracker'
 import { BreadcrumbPath } from '@/components/layout/staff/operation-staff/breadcrumb-path'
 import { Button } from '@/shared/components/ui/button'
@@ -17,31 +23,18 @@ export default function OperationManufacturingProcess() {
   const location = useLocation()
   const queryClient = useQueryClient()
 
-  // Lấy data từ trang trước
+  // Fetch data from previous page
   const state = location.state as { status?: string; products?: any[]; orderType?: string } | null
   const products = state?.products || []
   // const orderType = state?.orderType || 'MANUFACTURING'
 
-  const [selectedMachine, setSelectedMachine] = useState('')
   const [isCompleted, setIsCompleted] = useState(false)
   const updateStatus = useUpdateStatusToPackaging()
 
-  // Extract lens parameters from products
+  // Get lens parameters from products
   const lensParameters = products[0]?.lens?.parameters
 
-  // Machine options
-  const machines = [
-    { id: 'essilor', name: 'Essilor Kappa CTD', status: 'Available' },
-    { id: 'nidek', name: 'Nidek LE-9000', status: 'Available' },
-    { id: 'huvitz', name: 'Huvitz HLM-7000', status: 'In Use' }
-  ]
-
   const handleCompleteStage = () => {
-    if (!selectedMachine) {
-      toast.error('Please select a grinding machine')
-      return
-    }
-
     if (orderId) {
       updateStatus.mutate(orderId, {
         onSuccess: () => {
@@ -87,7 +80,7 @@ export default function OperationManufacturingProcess() {
           </button>
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-2 md:gap-3">
-              <IoSettingsOutline className="text-indigo-500 shrink-0" /> <span className="truncate">Lens Grinding & Mounting</span>
+              <span className="truncate">Lens Grinding & Mounting</span>
             </h1>
             <p className="text-[10px] text-neutral-500 mt-1 font-medium tracking-widest uppercase opacity-80 italic">
               MANUFACTURING WORKFLOW
@@ -96,13 +89,13 @@ export default function OperationManufacturingProcess() {
         </div>
         <div className="sm:ml-auto">
           <span className="inline-block px-6 py-2 bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-full text-xs font-bold uppercase tracking-widest text-center">
-            {isCompleted ? 'COMPLETED' : 'MAKING'}
+            MAKING
           </span>
         </div>
       </div>
 
       {/* Progress Tracker */}
-      <ProcessTracker activeStep={getOrderProgressStep(isCompleted ? 'PACKAGING' : 'MAKING')} />
+      <ProcessTracker activeStep={getOrderProgressStep('MAKING')} />
 
       <div className="grid grid-cols-12 gap-6 mt-6">
         {/* Left Column - Lens Prescription */}
@@ -170,46 +163,87 @@ export default function OperationManufacturingProcess() {
               <p className="text-gray-500 text-center py-8">No lens prescription data available</p>
             )}
           </div>
+
+          {/* Frame Information Section */}
+          <div className="bg-white rounded-lg shadow-sm border border-mint-100 p-6">
+            <h2 className="text-lg font-semibold text-mint-900 mb-4 flex items-center gap-2">
+              <span className="w-2 h-2 bg-mint-900 rounded-full"></span>
+              Frame Information
+            </h2>
+
+            <div className="flex items-center gap-6 p-4 bg-gray-50 rounded-xl border border-mint-100">
+              <div className="p-4 bg-white rounded-lg shadow-sm">
+                <IoBarcodeOutline size={32} className="text-mint-600" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-mint-400 uppercase tracking-widest mb-1">
+                  Frame SKU
+                </p>
+                <p className="text-2xl font-black text-mint-900 tracking-tight">
+                  {products[0]?.product?.sku || 'N/A'}
+                </p>
+              </div>
+            </div>
+            <p className="mt-4 text-sm text-gray-500 italic">
+              * Please ensure that you have the correct frame before beginning the manufacturing
+              process.
+            </p>
+          </div>
         </div>
 
-        {/* Right Column - Machine Selection */}
+        {/* Right Column - Process Status */}
         <div className="col-span-12 lg:col-span-5 space-y-6">
-          {/* Machine Selection */}
           <div className="bg-white rounded-lg shadow-sm border border-neutral-100 p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <span className="w-2 h-2 bg-mint-500 rounded-full"></span>
-              Select Grinding Machine
+              Process Status
             </h2>
 
-            <div className="space-y-3">
-              {machines.map((machine) => (
-                <button
-                  key={machine.id}
-                  onClick={() => setSelectedMachine(machine.id)}
-                  disabled={machine.status === 'In Use' || isCompleted}
-                  className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
-                    selectedMachine === machine.id
-                      ? 'border-mint-500 bg-mint-50'
-                      : machine.status === 'In Use'
-                        ? 'border-gray-200 bg-gray-50 cursor-not-allowed opacity-50'
-                        : 'border-gray-200 hover:border-mint-300 hover:bg-mint-50/50'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-semibold text-gray-900">{machine.name}</p>
-                      <p
-                        className={`text-xs mt-1 ${machine.status === 'Available' ? 'text-mint-600' : 'text-gray-500'}`}
-                      >
-                        {machine.status}
-                      </p>
-                    </div>
-                    {selectedMachine === machine.id && (
-                      <IoCheckmarkCircle className="text-mint-500" size={24} />
+            <div className="space-y-4">
+              <div
+                className={`p-6 rounded-xl border-2 transition-all ${
+                  isCompleted ? 'border-mint-500 bg-mint-50/50' : 'border-amber-500 bg-amber-50/30'
+                }`}
+              >
+                <div className="flex flex-col items-center text-center space-y-4">
+                  <div
+                    className={`p-4 rounded-full ${
+                      isCompleted ? 'bg-mint-100 text-mint-600' : 'bg-amber-100 text-amber-600'
+                    }`}
+                  >
+                    {isCompleted ? (
+                      <IoCheckmarkCircle size={40} />
+                    ) : (
+                      <IoSettingsOutline className="animate-spin-slow" size={40} />
                     )}
                   </div>
-                </button>
-              ))}
+
+                  <div>
+                    <h3 className="font-bold text-gray-900 text-lg">
+                      {isCompleted ? 'Grinding Completed' : 'MAKING'}
+                    </h3>
+                    <p className="text-sm text-gray-500 mt-1">
+                      {isCompleted
+                        ? 'Lens grinding and assembly have been completed.'
+                        : 'The manufacturing process is active. Please check quality after completion.'}
+                    </p>
+                  </div>
+
+                  {!isCompleted && (
+                    <div className="flex items-center gap-2 text-amber-600 bg-amber-50 px-4 py-2 rounded-full text-xs font-bold animate-pulse">
+                      <span className="w-2 h-2 bg-amber-600 rounded-full"></span>
+                      PROCESS ACTIVE
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="bg-amber-50 border border-amber-100 rounded-lg p-4">
+                <p className="text-xs text-amber-700 leading-relaxed font-medium">
+                  <strong>Note:</strong> Ensure lens parameters match requirements before starting
+                  grinding. The system will record the start time.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -219,24 +253,17 @@ export default function OperationManufacturingProcess() {
       <div className="flex justify-end items-center mt-8 pt-4 border-t border-gray-200">
         <Button
           onClick={handleCompleteStage}
-          disabled={!selectedMachine || isCompleted || updateStatus.isPending}
+          disabled={isCompleted || updateStatus.isPending}
           className={`px-8 py-3 rounded-lg font-medium transition-all shadow-lg flex items-center gap-2 border-2 ${
             isCompleted
-              ? 'bg-white text-mint-600 border-mint-200 cursor-default'
-              : selectedMachine
-                ? 'bg-mint-900 text-white border-mint-900 hover:bg-mint-700 hover:border-mint-700 transform hover:-translate-y-1 shadow-mint-200'
-                : 'bg-gray-200 text-gray-400 border-gray-200 cursor-not-allowed'
+              ? 'bg-mint-900 text-white border-mint-900 cursor-default opacity-80'
+              : 'bg-mint-900 text-white border-mint-900 hover:bg-mint-700 hover:border-mint-700 transform hover:-translate-y-1 shadow-mint-200'
           }`}
         >
-          {updateStatus.isPending ? (
+          {updateStatus.isPending || isCompleted ? (
             <>
               <IoReload className="animate-spin text-white" size={20} />
               Processing...
-            </>
-          ) : isCompleted ? (
-            <>
-              <IoCheckmarkCircle size={22} />
-              STAGE COMPLETED
             </>
           ) : (
             'Complete Stage'

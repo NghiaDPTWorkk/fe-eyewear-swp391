@@ -1,7 +1,3 @@
-/**
- * LabOrdersTable Component
- * Displays active lab orders with progress tracking
- */
 import { Card } from '@/components'
 import { IoChevronForward } from 'react-icons/io5'
 

@@ -1,7 +1,3 @@
-/**
- * Custom hook for SaleStaff Dashboard page
- * Handles state and logic for dashboard metrics, charts, and order management
- */
 import { useState, useCallback } from 'react'
 
 interface UseDashboardReturn {

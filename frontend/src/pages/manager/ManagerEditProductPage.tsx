@@ -14,7 +14,7 @@ import type { ProductCreateFormState } from './add-product/types/product-create.
 import type { ProductEditFormState } from './edit-product/types/product-edit.types'
 import { mapProductToFormState, buildUpdatePayload } from './edit-product/utils/product-edit.utils'
 
-import { useAdminProductDetail } from '@/features/manager/hooks/useAdminProducts'
+import { useAdminProductDetail } from '@/features/manager/hooks'
 import { httpClient } from '@/api/apiClients'
 import { ENDPOINTS } from '@/api/endpoints'
 import { toast } from 'react-hot-toast'
@@ -62,7 +62,6 @@ export default function ManagerEditProductPage() {
     optionsConfig: []
   })
 
-  // Pre-fill form when product data arrives
   useEffect(() => {
     const product = data?.data?.product
     if (product && !isInitialized) {
@@ -70,8 +69,6 @@ export default function ManagerEditProductPage() {
       setIsInitialized(true)
     }
   }, [data, isInitialized])
-
-  // ─── Handlers (compatible with existing add-product components) ───
 
   const handleBaseChange = (patch: Record<string, any>) => {
     setState((prev) => ({ ...prev, ...patch }))
@@ -86,7 +83,6 @@ export default function ManagerEditProductPage() {
   }
 
   const handleVariantsChange = (variants: any[]) => {
-    // Merge with existing mode values when variants change from the shared VariantsEditor
     setState((prev) => ({
       ...prev,
       variants: variants.map((v, i) => ({
@@ -124,8 +120,6 @@ export default function ManagerEditProductPage() {
     }
   }
 
-  // ─── Loading / Error states ───
-
   if (isLoading) {
     return (
       <Container className="max-w-none">
@@ -152,10 +146,6 @@ export default function ManagerEditProductPage() {
     )
   }
 
-  // ─── Cast state for reusable components (they expect ProductCreateFormState) ───
-
-  // Cast state for reusable components (they expect ProductCreateFormState)
-  // The 'sunglass' type needs special handling since ProductCreateFormType only has 'frame' | 'lens'
   const createCompatibleState = {
     ...state,
     type: (state.type === 'sunglass' ? 'frame' : state.type) as ProductCreateFormState['type'],
@@ -192,23 +182,23 @@ export default function ManagerEditProductPage() {
             handleSubmit()
           }}
         >
-          {/* 1. Base Fields */}
+          {}
           <ProductBaseFields state={createCompatibleState} onChange={handleBaseChange} />
 
-          {/* 2. Spec Fields based on type */}
+          {}
           {state.type === 'frame' || state.type === 'sunglass' ? (
             <FrameSpecFields specFrame={state.specFrame} onChange={handleSpecFrameChange} />
           ) : (
             <LensSpecFields specLens={state.specLens} onChange={handleSpecLensChange} />
           )}
 
-          {/* 3. Options Configuration */}
+          {}
           <OptionsConfigEditor
             optionsConfig={state.optionsConfig}
             onChange={(optionsConfig) => setState((prev) => ({ ...prev, optionsConfig }))}
           />
 
-          {/* 4. Variants Editor (reuse existing component) */}
+          {}
           <VariantsEditor
             variants={state.variants}
             optionsConfig={state.optionsConfig}
@@ -216,7 +206,7 @@ export default function ManagerEditProductPage() {
             onChange={handleVariantsChange}
           />
 
-          {/* 4. Variant Mode Selector (additional UI for edit page) */}
+          {}
           <div className="space-y-4 pt-4 border-t border-neutral-100">
             <h3 className="text-sm font-extrabold text-gray-900 tracking-wide">
               Variant Availability Mode
@@ -251,7 +241,7 @@ export default function ManagerEditProductPage() {
             </div>
           </div>
 
-          {/* 5. Action Buttons */}
+          {}
           <div className="pt-6 flex gap-4 border-t border-neutral-50">
             <button
               type="button"

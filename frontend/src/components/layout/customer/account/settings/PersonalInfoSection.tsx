@@ -30,14 +30,36 @@ export const PersonalInfoSection = ({ user }: PersonalInfoSectionProps) => {
   }, [user])
 
   const handleUpdate = async () => {
-    if (!formData.name.trim()) {
-      toast.error('Name cannot be empty')
+    // Basic validations
+    const name = formData.name.trim()
+    const phone = formData.phone.trim()
+
+    if (!name) {
+      toast.error('Full name cannot be empty')
       return
+    }
+
+    if (name.length < 2) {
+      toast.error('Full name must be at least 2 characters long')
+      return
+    }
+
+    if (phone) {
+      // Vietnamese phone number regex: starts with 0 or 84, followed by 9 digits
+      const phoneRegex = /^(0|84)(3|5|7|8|9)([0-9]{8})$/
+      if (!phoneRegex.test(phone)) {
+        toast.error('Invalid phone number format (e.g. 0912345678)')
+        return
+      }
     }
 
     setIsUpdating(true)
     try {
-      await updateProfile(formData)
+      await updateProfile({
+        ...formData,
+        name,
+        phone
+      })
       toast.success('Profile updated successfully!')
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to update profile')
@@ -89,7 +111,7 @@ export const PersonalInfoSection = ({ user }: PersonalInfoSectionProps) => {
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-mint-1100 ml-1">Phone number</label>
           <Input
-            value={formData.phone}
+            value={formData.phone || ''}
             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
             placeholder="Enter your phone number"
             className="bg-white border-mint-200 focus:border-primary-500 rounded-xl h-14"

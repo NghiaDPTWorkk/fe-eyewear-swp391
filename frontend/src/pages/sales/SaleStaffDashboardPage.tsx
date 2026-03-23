@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import {
   IoAdd,
   IoClipboardOutline,
@@ -6,22 +7,22 @@ import {
   IoTicketOutline,
   IoWalletOutline
 } from 'react-icons/io5'
-import { useSearchParams } from 'react-router-dom'
 
 import { PageHeader, SalesMetricCard } from '@/features/sales/components/common'
 import { Charts } from '@/features/sales/components/dashboard/Charts'
 import { InvoiceOrdersDrawer } from '@/features/sales/components/dashboard/InvoiceOrdersDrawer'
 import { Table } from '@/features/sales/components/dashboard/Table'
-import { useRevenueStats } from '@/features/manager/hooks/useManagerReports'
+import { useDashboard, useSalesStaffInvoices } from '@/features/sales/hooks'
+import { useRevenueStats } from '@/features/manager/hooks'
+
+import { Card } from '@/shared/components/ui-core'
 import { formatPrice } from '@/shared/utils'
 
 import type { Invoice } from '@/features/sales/types'
-import { Card } from '@/shared/components/ui-core'
-import { useDashboard, useSalesStaffInvoices } from '@/features/sales/hooks'
 
 export default function SaleStaffDashboardPage() {
   const [searchParams, setSearchParams] = useSearchParams()
-  // Limit to 8 most recent DEPOSITED invoices for the dashboard to focus on actions
+
   const {
     invoices: pendingInvoices,
     loading,
@@ -29,15 +30,13 @@ export default function SaleStaffDashboardPage() {
     pagination
   } = useSalesStaffInvoices(1, 8, 'DEPOSITED')
 
-  // Use a different set of invoices for calculating quality (processed ones)
   const { invoices: processedInvoices } = useSalesStaffInvoices(1, 20, 'APPROVED_OR_REJECTED')
 
   const { selectedOrderId, isDrawerOpen, openDrawer, closeDrawer } = useDashboard()
 
   useEffect(() => {
     const invoiceId = searchParams.get('invoiceId')
-    // Only open if we have an invoiceId in URL AND the drawer is not already open
-    // AND we're not currently tracking this ID (to prevent double-opening/lag)
+
     if (invoiceId && !isDrawerOpen && pendingInvoices.length > 0 && selectedOrderId !== invoiceId) {
       openDrawer(invoiceId)
     }
@@ -45,7 +44,7 @@ export default function SaleStaffDashboardPage() {
 
   const handleCloseDrawer = () => {
     closeDrawer()
-    // Clear search params when closing
+
     if (searchParams.has('invoiceId')) {
       const newParams = new URLSearchParams(searchParams)
       newParams.delete('invoiceId')
@@ -60,7 +59,6 @@ export default function SaleStaffDashboardPage() {
   useEffect(() => {
     fetchInvoices()
 
-    // Listen for order updates from other pages
     const handleOrderUpdate = () => {
       fetchInvoices()
     }
@@ -71,11 +69,9 @@ export default function SaleStaffDashboardPage() {
     }
   }, [fetchInvoices])
 
-  // Show global revenue stats for the "Overview" to avoid constant 0s for new/staff users
   const { data: revenueData } = useRevenueStats({ period: 'month' })
 
   const metrics = useMemo(() => {
-    // Total revenue and invoice count from stats (usually more accurate than local slice)
     const statsRevenue =
       revenueData?.rows?.reduce(
         (acc: number, r: { totalRevenue: number }) => acc + r.totalRevenue,
@@ -87,8 +83,6 @@ export default function SaleStaffDashboardPage() {
         0
       ) || 0
 
-    // Calculate completion rate from processed invoices (Approved vs Rejected)
-    // instead of from the "To-Do" list
     const totalProcessedOrders = processedInvoices.reduce(
       (sum: number, inv: Invoice) => sum + (inv.totalOrdersCount || 0),
       0
@@ -98,7 +92,6 @@ export default function SaleStaffDashboardPage() {
       0
     )
 
-    // Pending count from pagination is good for "Deposited" status
     const pendingCount = pagination?.total || pendingInvoices.length
 
     return [
@@ -200,6 +193,7 @@ export default function SaleStaffDashboardPage() {
         isOpen={isDrawerOpen}
         onClose={handleCloseDrawer}
         invoice={selectedInvoice}
+        showManageAllOrders={false}
       />
     </div>
   )

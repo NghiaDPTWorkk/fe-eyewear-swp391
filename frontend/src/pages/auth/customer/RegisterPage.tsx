@@ -21,7 +21,8 @@ export const RegisterPage = () => {
           <div>
             <h1 className="mb-2 text-3xl font-bold text-primary-950">Sign Up</h1>
             <p className="mb-6 text-sm text-gray-eyewear">
-              Lorem ipsum dolor sit amet consectetur. Leo eget mauris dui in posuere nulla
+              Create an account to manage your orders, prescriptions, and enjoy a personalized
+              shopping experience.
             </p>
 
             <RegisterForm />

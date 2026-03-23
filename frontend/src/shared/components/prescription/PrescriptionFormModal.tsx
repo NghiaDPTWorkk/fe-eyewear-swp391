@@ -36,7 +36,7 @@ export function PrescriptionFormModal({
 
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="bg-white rounded-[32px] w-full max-w-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+      <div className="bg-white rounded-[32px] w-full max-w-2xl overflow-visible shadow-2xl animate-in zoom-in-95 duration-300 relative">
         <div className="flex justify-between items-center p-8 border-b border-gray-100">
           <div>
             <h3 className="text-2xl font-bold text-mint-1200">

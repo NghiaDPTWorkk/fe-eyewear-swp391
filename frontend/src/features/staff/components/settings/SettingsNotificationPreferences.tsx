@@ -1,9 +1,11 @@
-/**
- * NotificationPreferences Component
- * User preferences for app and email notifications
- */
 import { Card } from '@/shared/components'
-import { IoNotificationsOutline, IoMailOpenOutline, IoAppsOutline } from 'react-icons/io5'
+import {
+  IoNotificationsOutline,
+  IoMailOpenOutline,
+  IoAppsOutline,
+  IoCheckmark
+} from 'react-icons/io5'
+import { cn } from '@/lib/utils'
 
 export default function NotificationPreferences() {
   const preferences = [
@@ -57,33 +59,39 @@ export default function NotificationPreferences() {
               </p>
             </div>
             <div className="flex items-center gap-10">
-              <label className="flex items-center gap-3 cursor-pointer group/label">
-                <div className="flex items-center gap-2 text-neutral-500 group-hover/label:text-primary-600 transition-colors">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 text-neutral-500">
                   <IoAppsOutline size={16} />
                   <span className="text-[11px] font-bold uppercase tracking-wider">App</span>
                 </div>
-                <div className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    defaultChecked={pref.app}
-                    className="w-5 h-5 rounded-lg border-neutral-200 text-primary-500 focus:ring-primary-500/20 transition-all cursor-pointer"
-                  />
+                <div
+                  className={cn(
+                    'w-5 h-5 rounded-lg flex items-center justify-center transition-all',
+                    pref.app
+                      ? 'bg-primary-500 text-white shadow-sm shadow-primary-200'
+                      : 'bg-neutral-100 border border-neutral-200 text-transparent'
+                  )}
+                >
+                  <IoCheckmark size={14} className="stroke-[3]" />
                 </div>
-              </label>
+              </div>
 
-              <label className="flex items-center gap-3 cursor-pointer group/label">
-                <div className="flex items-center gap-2 text-neutral-500 group-hover/label:text-primary-600 transition-colors">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 text-neutral-500">
                   <IoMailOpenOutline size={16} />
                   <span className="text-[11px] font-bold uppercase tracking-wider">Email</span>
                 </div>
-                <div className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    defaultChecked={pref.email}
-                    className="w-5 h-5 rounded-lg border-neutral-200 text-primary-500 focus:ring-primary-500/20 transition-all cursor-pointer"
-                  />
+                <div
+                  className={cn(
+                    'w-5 h-5 rounded-lg flex items-center justify-center transition-all',
+                    pref.email
+                      ? 'bg-primary-500 text-white shadow-sm shadow-primary-200'
+                      : 'bg-neutral-100 border border-neutral-200 text-transparent'
+                  )}
+                >
+                  <IoCheckmark size={14} className="stroke-[3]" />
                 </div>
-              </label>
+              </div>
             </div>
           </div>
         ))}

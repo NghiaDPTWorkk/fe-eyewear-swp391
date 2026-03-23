@@ -1,7 +1,3 @@
-/**
- * CustomerMetrics Component
- * Displays customer-related KPI metrics
- */
 import { Card } from '@/components'
 import {
   IoCalendarOutline,

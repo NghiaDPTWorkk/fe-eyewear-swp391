@@ -1,7 +1,3 @@
-/**
- * AccountInfoSidebar Component
- * Account info with status and session security
- */
 import { Card, Button } from '@/components'
 import {
   IoStorefrontOutline,
@@ -14,7 +10,7 @@ import {
 export default function AccountInfoSidebar() {
   return (
     <div className="space-y-8">
-      {/* Account Info */}
+      {}
       <Card className="p-8 border-none shadow-sm shadow-neutral-200/50 bg-white">
         <h3 className="text-[11px] font-medium text-neutral-500 uppercase tracking-widest mb-8">
           Account Info
@@ -96,61 +92,54 @@ export default function AccountInfoSidebar() {
         </div>
       </Card>
 
-      {/* System Settings */}
-      <Card className="p-8 border-none shadow-sm shadow-neutral-200/50">
-        <h3 className="text-[11px] font-medium text-neutral-500 uppercase tracking-widest mb-8">
+      {}
+      <Card className="p-8 border-none shadow-sm shadow-neutral-200/50 bg-white">
+        <h3 className="text-[11px] font-bold text-neutral-900 uppercase tracking-widest mb-5">
           System
         </h3>
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-[11px] font-medium text-neutral-500 uppercase tracking-widest pl-1">
-              Language
-            </label>
-            <div className="relative">
-              <select className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium text-neutral-700 appearance-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all cursor-pointer">
-                <option>English</option>
-                <option>Vietnamese</option>
-              </select>
-              <IoGlobeOutline
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500"
-                size={18}
-              />
+        <div className="space-y-5">
+          <div className="flex items-center gap-3.5 group">
+            <div className="w-9 h-9 rounded-xl bg-neutral-50 flex items-center justify-center shrink-0 border border-neutral-100 transition-colors group-hover:bg-primary-50">
+              <IoGlobeOutline className="text-neutral-500 group-hover:text-primary-600" size={16} />
+            </div>
+            <div>
+              <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-widest mb-0.5">
+                Language
+              </p>
+              <p className="text-sm font-semibold text-neutral-700">English</p>
             </div>
           </div>
-          <div className="space-y-2">
-            <label className="text-[11px] font-medium text-neutral-500 uppercase tracking-widest pl-1">
-              Timezone
-            </label>
-            <div className="relative">
-              <select className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium text-neutral-700 appearance-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all cursor-pointer">
-                <option>UTC-5 (EST)</option>
-                <option>UTC+7 (ICT)</option>
-              </select>
-              <IoTimeOutline
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500"
-                size={18}
-              />
+
+          <div className="flex items-center gap-3.5 group">
+            <div className="w-9 h-9 rounded-xl bg-neutral-50 flex items-center justify-center shrink-0 border border-neutral-100 transition-colors group-hover:bg-primary-50">
+              <IoTimeOutline className="text-neutral-500 group-hover:text-primary-600" size={16} />
+            </div>
+            <div>
+              <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-widest mb-0.5">
+                Timezone
+              </p>
+              <p className="text-sm font-semibold text-neutral-700">UTC-5 (EST)</p>
             </div>
           </div>
-          <div className="space-y-2">
-            <label className="text-[11px] font-medium text-neutral-500 uppercase tracking-widest pl-1">
-              Date Format
-            </label>
-            <div className="relative">
-              <select className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-sm font-medium text-neutral-700 appearance-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all cursor-pointer">
-                <option>MM/DD/YYYY</option>
-                <option>DD/MM/YYYY</option>
-              </select>
+
+          <div className="flex items-center gap-3.5 group">
+            <div className="w-9 h-9 rounded-xl bg-neutral-50 flex items-center justify-center shrink-0 border border-neutral-100 transition-colors group-hover:bg-primary-50">
               <IoCalendarOutline
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500"
-                size={18}
+                className="text-neutral-500 group-hover:text-primary-600"
+                size={16}
               />
+            </div>
+            <div>
+              <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-widest mb-0.5">
+                Date Format
+              </p>
+              <p className="text-sm font-semibold text-neutral-700">MM/DD/YYYY</p>
             </div>
           </div>
         </div>
       </Card>
 
-      {/* Danger Zone */}
+      {}
       <Card className="p-8 border border-red-100 shadow-sm shadow-red-50 bg-red-50/10 rounded-2xl">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center shrink-0">

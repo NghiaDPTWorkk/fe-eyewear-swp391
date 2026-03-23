@@ -39,7 +39,7 @@ export const OrderSummarySection = ({
         <div className="flex justify-between text-mint-1200">
           <span className="font-medium">Shipping</span>
           <span className="font-bold">
-            {shipping === 0 ? 'Miễn phí' : <VNDPrice amount={shipping} />}
+            {shipping === 0 ? 'Free' : <VNDPrice amount={shipping} />}
           </span>
         </div>
         <div className="flex justify-between items-baseline pt-4 border-t border-mint-100">

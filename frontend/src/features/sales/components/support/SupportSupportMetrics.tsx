@@ -1,7 +1,3 @@
-/**
- * SupportMetrics Component
- * Displays support ticket metrics
- */
 import { Card } from '@/components'
 import {
   IoTicketOutline,

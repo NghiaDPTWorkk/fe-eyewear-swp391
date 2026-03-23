@@ -1,7 +1,3 @@
-/**
- * SupportTicketsTable Component
- * Displays support tickets with status and actions
- */
 import { Card, Button } from '@/components'
 import {
   IoChevronForward,

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useQueries } from '@tanstack/react-query'
+import { useQueries, useQuery } from '@tanstack/react-query'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import { OrderStatus } from '@/shared/utils/enums/order.enum'
 import type { AdminInvoiceListItem } from '@/shared/types'
@@ -9,9 +9,12 @@ import type {
 } from '@/shared/types/admin-order.types'
 import type { AdminAccount } from '@/shared/types/admin-account.types'
 import { orderAdminService } from '@/shared/services/admin/orderService'
-import { useGetAdminsByRole } from '@/features/manager/hooks/useGetAdminsByRole'
-import { useAssignOrderStaff } from '@/features/manager/hooks/useAssignOrderStaff'
-import { useAssignLabeling } from '@/features/manager/hooks/useAssignLabeling'
+import {
+  useGetAdminsByRole,
+  useAssignOrderStaff,
+  useAssignLabeling
+} from '@/features/manager/hooks'
+import { salesService } from '@/features/sales/services/salesService'
 import { isManufacturingOrder } from '@/shared/types/order.types'
 import ConfirmationModal from '@/shared/components/ui/ConfirmationModal'
 import { AxiosError } from 'axios'
@@ -19,12 +22,13 @@ import toast from 'react-hot-toast'
 import {
   IoPersonOutline,
   IoCallOutline,
-  IoBagOutline,
   IoCashOutline,
   IoLocationOutline,
   IoAlertCircleOutline,
-  IoShieldCheckmarkOutline
+  IoShieldCheckmarkOutline,
+  IoListOutline
 } from 'react-icons/io5'
+import { formatPrice, toTitleCase } from '@/shared/utils'
 
 function getInvoiceStatusBadgeClass(status: string) {
   switch (status) {
@@ -52,13 +56,15 @@ function StaffSelect({
   value,
   onChange,
   disabled,
-  className
+  className,
+  staffOrderStats
 }: {
   staffList: AdminAccount[]
   value: string
   onChange: (v: string) => void
   disabled?: boolean
   className?: string
+  staffOrderStats?: Record<string, { total: number; assigned: number }>
 }) {
   const [isOpen, setIsOpen] = useState(false)
   const selectedStaff = staffList.find((s) => s._id === value)
@@ -118,6 +124,13 @@ function StaffSelect({
                   >
                     {s.email}
                   </span>
+                  <span
+                    className={`text-[10px] mt-0.5 ${value === s._id ? 'text-mint-600' : 'text-neutral-500'}`}
+                  >
+                    <IoListOutline className="inline-block mr-1" />
+                    {staffOrderStats?.[s._id]?.assigned ?? 0} assigned /{' '}
+                    {staffOrderStats?.[s._id]?.total ?? 0} total orders
+                  </span>
                 </button>
               ))
             )}
@@ -162,7 +175,15 @@ export default function ManagerInvoiceCard({
     }))
   })
 
-  const hasAnyOrderLoading = orderQueries.some((q) => q.isLoading)
+  const { data: fullInvoiceResponse, isLoading: isInvoiceLoading } = useQuery({
+    queryKey: ['admin-invoice-detail-actual', invoice.id],
+    queryFn: () => salesService.getInvoiceById(invoice.id),
+    enabled: isExpanded,
+    staleTime: 30_000
+  })
+  const fullInvoiceDetail = fullInvoiceResponse?.data
+
+  const hasAnyOrderLoading = orderQueries.some((q) => q.isLoading) || isInvoiceLoading
   const hasAnyOrderError = orderQueries.some((q) => q.isError)
 
   const ordersData = orderQueries
@@ -172,10 +193,38 @@ export default function ManagerInvoiceCard({
   const { data: staffData, isLoading: isStaffLoading } = useGetAdminsByRole(
     isExpanded ? 'OPERATION_STAFF' : undefined
   )
-  const staffList = staffData?.data?.admins ?? []
+  const staffList = useMemo(() => staffData?.data?.admins ?? [], [staffData])
 
   const assignMutation = useAssignOrderStaff()
   const assignLabelingMutation = useAssignLabeling()
+  const { data: allOrdersData } = useQuery({
+    queryKey: ['admin-all-orders-for-assignment'],
+    queryFn: () => orderAdminService.getAllOrders(1, 1000),
+    enabled: isExpanded,
+    staleTime: 30_000
+  })
+
+  const staffOrderStats = useMemo(() => {
+    const stats: Record<string, { total: number; assigned: number }> = {}
+    const allOrders = allOrdersData?.data?.orders?.data ?? []
+
+    for (const s of staffList) {
+      stats[s._id] = { total: 0, assigned: 0 }
+    }
+
+    for (const order of allOrders) {
+      if (!order.assignedStaff) continue
+      if (!stats[order.assignedStaff]) {
+        stats[order.assignedStaff] = { total: 0, assigned: 0 }
+      }
+      stats[order.assignedStaff].total += 1
+      if (order.status === OrderStatus.ASSIGNED) {
+        stats[order.assignedStaff].assigned += 1
+      }
+    }
+
+    return stats
+  }, [allOrdersData, staffList])
   const [selectedStaffByOrderId, setSelectedStaffByOrderId] = useState<Record<string, string>>({})
   const [selectedLabelingStaff, setSelectedLabelingStaff] = useState('')
   const [responseModal, setResponseModal] = useState<{
@@ -228,7 +277,6 @@ export default function ManagerInvoiceCard({
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Invoice Main Summary Card */}
       <div className="rounded-3xl border border-neutral-100 bg-white shadow-sm p-6">
         <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-8">
           <div>
@@ -237,9 +285,9 @@ export default function ManagerInvoiceCard({
                 {invoice.invoiceCode}
               </h2>
               <span
-                className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] uppercase font-semibold tracking-widest border ${getInvoiceStatusBadgeClass(invoice.status)}`}
+                className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-semibold tracking-widest border ${getInvoiceStatusBadgeClass(invoice.status)}`}
               >
-                {invoice.status}
+                {toTitleCase(invoice.status)}
               </span>
             </div>
             <p className="text-xs font-semibold text-neutral-400 uppercase tracking-widest leading-none">
@@ -316,30 +364,52 @@ export default function ManagerInvoiceCard({
 
           <div className="space-y-4">
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-neutral-50 flex items-center justify-center text-neutral-400 shrink-0 border border-neutral-100">
-                <IoBagOutline size={18} />
-              </div>
-              <div className="min-w-0">
-                <span className="text-[10px] font-semibold text-neutral-400 uppercase tracking-widest block mb-1">
-                  Total Items
-                </span>
-                <p className="text-sm font-semibold text-gray-900 font-primary truncate">
-                  {invoice.orders?.length ?? 0} Orders Linked
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-xl bg-mint-50 flex items-center justify-center text-mint-600 shrink-0 border border-mint-100">
                 <IoCashOutline size={18} />
               </div>
-              <div className="min-w-0">
-                <span className="text-[10px] font-semibold text-neutral-400 uppercase tracking-widest block mb-1">
-                  Total Price
+              <div className="min-w-0 flex-1">
+                <span className="text-[10px] font-semibold text-neutral-400 uppercase tracking-widest block mb-1 leading-none">
+                  Billing Summary
                 </span>
-                <p className="text-sm font-bold text-mint-600 font-primary truncate">
-                  {invoice.finalPrice} đ
-                </p>
+                {isExpanded && fullInvoiceDetail ? (
+                  <div className="space-y-1.5 mt-2">
+                    <div className="flex justify-between items-center text-[10px] font-bold text-neutral-500 tracking-widest leading-none">
+                      <span>Subtotal</span>
+                      <span className="text-gray-900 font-mono">
+                        {formatPrice(fullInvoiceDetail.totalPrice || 0)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center text-[10px] font-bold text-neutral-500 tracking-widest leading-none">
+                      <span>Shipping Fee</span>
+                      <span className="text-gray-900 font-mono">
+                        + {formatPrice(fullInvoiceDetail.feeShip || 0)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center text-[10px] font-bold text-rose-400 tracking-widest leading-none">
+                      <span>Discount</span>
+                      <span className="text-rose-500 font-mono">
+                        - {formatPrice(fullInvoiceDetail.totalDiscount || 0)}
+                      </span>
+                    </div>
+                    <div className="pt-2 mt-2 border-t border-neutral-100 flex justify-between items-center">
+                      <span className="text-[11px] font-bold text-gray-900 uppercase tracking-wider">
+                        Total Amount
+                      </span>
+                      <span className="text-base font-bold text-mint-600 font-primary">
+                        {(
+                          (fullInvoiceDetail.totalPrice || 0) +
+                          (fullInvoiceDetail.feeShip || 0) -
+                          (fullInvoiceDetail.totalDiscount || 0)
+                        ).toLocaleString()}{' '}
+                        đ
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-sm font-bold text-mint-600 font-primary truncate">
+                    {formatPrice(Number(invoice.finalPrice))}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -424,6 +494,7 @@ export default function ManagerInvoiceCard({
                           onChange={(v) => setSelectedLabelingStaff(v)}
                           disabled={assignLabelingMutation.isLoading || isStaffLoading}
                           className="w-full"
+                          staffOrderStats={staffOrderStats}
                         />
                       </div>
                       <button
@@ -442,7 +513,7 @@ export default function ManagerInvoiceCard({
                                 res.message || 'The labeling worker has been successfully assigned.'
                               )
                               onRefetch?.()
-                              // Clear staff after success
+
                               setSelectedLabelingStaff('')
                             })
                             .catch((err) => handleError(err, 'Assign Labeling Worker'))
@@ -465,7 +536,6 @@ export default function ManagerInvoiceCard({
         </div>
       </div>
 
-      {/* Linked Orders Section */}
       <div className="space-y-4">
         <h3 className="px-2 text-xs font-bold text-neutral-400 uppercase tracking-widest">
           Linked Orders Detail
@@ -507,13 +577,17 @@ export default function ManagerInvoiceCard({
                   </div>
                   <div className="flex items-center gap-2">
                     <span
-                      className={`inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-semibold border uppercase tracking-wider ${
+                      className={`inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-semibold border tracking-wider ${
                         order.status === OrderStatus.COMPLETED
                           ? 'bg-mint-50 text-mint-700 border-mint-100'
                           : 'bg-amber-50 text-amber-700 border-amber-100'
                       }`}
                     >
-                      {order.status}
+                      {toTitleCase(
+                        invoice.status === InvoiceStatus.CANCELED || invoice.status === 'CANCEL'
+                          ? 'CANCELED'
+                          : order.status
+                      )}
                     </span>
                   </div>
                 </div>
@@ -552,6 +626,7 @@ export default function ManagerInvoiceCard({
                           setSelectedStaffByOrderId((cur) => ({ ...cur, [order._id]: v }))
                         }
                         disabled={assignMutation.isPending || isStaffLoading}
+                        staffOrderStats={staffOrderStats}
                       />
                       <button
                         type="button"
@@ -585,8 +660,8 @@ export default function ManagerInvoiceCard({
                     <span className="text-[10px] font-semibold text-neutral-400 uppercase tracking-widest block mb-1 leading-none">
                       Order Type
                     </span>
-                    <p className="text-xs font-semibold text-gray-700 uppercase font-primary truncate">
-                      {(order.type ?? []).join(', ')}
+                    <p className="text-xs font-semibold text-gray-700 font-primary truncate">
+                      {(order.type ?? []).map((t) => toTitleCase(t)).join(', ')}
                     </p>
                   </div>
                   <div className="min-w-0">
@@ -594,7 +669,7 @@ export default function ManagerInvoiceCard({
                       Price
                     </span>
                     <p className="text-xs font-semibold text-gray-700 font-primary truncate">
-                      {order.price} đ
+                      {formatPrice(order.price)}
                     </p>
                   </div>
                   <div className="min-w-0">
@@ -649,7 +724,7 @@ export default function ManagerInvoiceCard({
                                 UID: {line.product.product_id}
                               </p>
                               <p className="text-[11px] font-bold text-gray-700 mt-1">
-                                {line.product.pricePerUnit} đ / unit
+                                {formatPrice(line.product.pricePerUnit)} / unit
                               </p>
                             </div>
                           ) : null}
@@ -668,7 +743,7 @@ export default function ManagerInvoiceCard({
                                 ID: {line.lens.lens_id}
                               </p>
                               <p className="text-[11px] font-bold text-gray-700 mt-1">
-                                {line.lens.pricePerUnit} đ / unit
+                                {formatPrice(line.lens.pricePerUnit)} / unit
                               </p>
                               <div className="mt-2 pt-2 border-t border-neutral-50 text-[10px] font-semibold text-neutral-500 leading-normal">
                                 PD: {line.lens.parameters.PD} <br />

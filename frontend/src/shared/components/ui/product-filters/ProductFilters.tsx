@@ -62,7 +62,6 @@ export function ProductFilters({
   priceRanges,
   selectedPriceRanges,
   onPriceRangeChange,
-  onCustomPriceApply,
   priceResetKey,
   className
 }: ProductFiltersProps) {
@@ -75,6 +74,41 @@ export function ProductFilters({
       ? selected.filter((v) => v !== value)
       : [...selected, value]
     onChange(newSelected)
+  }
+
+  // Helper to group and deduplicate specs by label (case-insensitive)
+  const getUniqueSpecs = (rawValues: string[], labelMap?: Record<string, string>) => {
+    const groups: Record<string, { label: string; values: string[] }> = {}
+
+    rawValues.forEach((val) => {
+      const label = labelMap ? labelMap[val] || val : val
+      const normalizedLabel = label.toLowerCase().trim()
+
+      if (!groups[normalizedLabel]) {
+        groups[normalizedLabel] = {
+          label: label.charAt(0).toUpperCase() + label.slice(1).toLowerCase(), // Consistent casing for display
+          values: []
+        }
+      }
+      groups[normalizedLabel].values.push(val)
+    })
+
+    return Object.values(groups).sort((a, b) => a.label.localeCompare(b.label))
+  }
+
+  const toggleGroupSelection = (
+    groupValues: string[],
+    selected: string[],
+    onChange: (values: string[]) => void
+  ) => {
+    const isAnySelected = groupValues.some((v) => selected.includes(v))
+    if (isAnySelected) {
+      // Remove all values from this group
+      onChange(selected.filter((v) => !groupValues.includes(v)))
+    } else {
+      // Add all values from this group
+      onChange([...selected, ...groupValues])
+    }
   }
 
   return (
@@ -116,16 +150,16 @@ export function ProductFilters({
           <FilterSection title="Gender" defaultExpanded>
             <div className="space-y-2">
               {genders.length > 0 ? (
-                genders.map((gender) => (
-                  <label key={gender} className="flex items-center gap-2 cursor-pointer group">
+                getUniqueSpecs(genders, GENDER_MAP).map((group) => (
+                  <label key={group.label} className="flex items-center gap-2 cursor-pointer group">
                     <Checkbox
-                      isChecked={selectedGenders.includes(gender)}
+                      isChecked={group.values.some((v) => selectedGenders.includes(v))}
                       onCheckedChange={() =>
-                        toggleSelection(gender, selectedGenders, onGenderChange)
+                        toggleGroupSelection(group.values, selectedGenders, onGenderChange)
                       }
                     />
                     <span className="text-sm text-mint-1200 group-hover:text-primary-500 transition-colors">
-                      {GENDER_MAP[gender] || gender}
+                      {group.label}
                     </span>
                   </label>
                 ))
@@ -137,16 +171,18 @@ export function ProductFilters({
 
           {/* Brand */}
           <FilterSection title="Brand" defaultExpanded>
-            <div className="space-y-2 max-h-40 overflow-y-auto">
+            <div className="space-y-2 max-h-40 overflow-y-auto custom-scrollbar">
               {brands.length > 0 ? (
-                brands.map((brand) => (
-                  <label key={brand} className="flex items-center gap-2 cursor-pointer group">
+                getUniqueSpecs(brands).map((group) => (
+                  <label key={group.label} className="flex items-center gap-2 cursor-pointer group">
                     <Checkbox
-                      isChecked={selectedBrands.includes(brand)}
-                      onCheckedChange={() => toggleSelection(brand, selectedBrands, onBrandChange)}
+                      isChecked={group.values.some((v) => selectedBrands.includes(v))}
+                      onCheckedChange={() =>
+                        toggleGroupSelection(group.values, selectedBrands, onBrandChange)
+                      }
                     />
                     <span className="text-sm text-mint-1200 group-hover:text-primary-500 transition-colors">
-                      {brand}
+                      {group.label}
                     </span>
                   </label>
                 ))
@@ -158,18 +194,18 @@ export function ProductFilters({
 
           {/* Material */}
           <FilterSection title="Material">
-            <div className="space-y-2 max-h-40 overflow-y-auto">
+            <div className="space-y-2 max-h-40 overflow-y-auto custom-scrollbar">
               {materials.length > 0 ? (
-                materials.map((material) => (
-                  <label key={material} className="flex items-center gap-2 cursor-pointer group">
+                getUniqueSpecs(materials).map((group) => (
+                  <label key={group.label} className="flex items-center gap-2 cursor-pointer group">
                     <Checkbox
-                      isChecked={selectedMaterials.includes(material)}
+                      isChecked={group.values.some((v) => selectedMaterials.includes(v))}
                       onCheckedChange={() =>
-                        toggleSelection(material, selectedMaterials, onMaterialChange)
+                        toggleGroupSelection(group.values, selectedMaterials, onMaterialChange)
                       }
                     />
                     <span className="text-sm text-mint-1200 group-hover:text-primary-500 transition-colors">
-                      {material}
+                      {group.label}
                     </span>
                   </label>
                 ))
@@ -181,16 +217,18 @@ export function ProductFilters({
 
           {/* Shape */}
           <FilterSection title="Shape">
-            <div className="space-y-2 max-h-40 overflow-y-auto">
+            <div className="space-y-2 max-h-40 overflow-y-auto custom-scrollbar">
               {shapes.length > 0 ? (
-                shapes.map((shape) => (
-                  <label key={shape} className="flex items-center gap-2 cursor-pointer group">
+                getUniqueSpecs(shapes).map((group) => (
+                  <label key={group.label} className="flex items-center gap-2 cursor-pointer group">
                     <Checkbox
-                      isChecked={selectedShapes.includes(shape)}
-                      onCheckedChange={() => toggleSelection(shape, selectedShapes, onShapeChange)}
+                      isChecked={group.values.some((v) => selectedShapes.includes(v))}
+                      onCheckedChange={() =>
+                        toggleGroupSelection(group.values, selectedShapes, onShapeChange)
+                      }
                     />
                     <span className="text-sm text-mint-1200 group-hover:text-primary-500 transition-colors">
-                      {shape}
+                      {group.label}
                     </span>
                   </label>
                 ))
@@ -204,14 +242,16 @@ export function ProductFilters({
           <FilterSection title="Style">
             <div className="space-y-2">
               {styles.length > 0 ? (
-                styles.map((style) => (
-                  <label key={style} className="flex items-center gap-2 cursor-pointer group">
+                getUniqueSpecs(styles).map((group) => (
+                  <label key={group.label} className="flex items-center gap-2 cursor-pointer group">
                     <Checkbox
-                      isChecked={selectedStyles.includes(style)}
-                      onCheckedChange={() => toggleSelection(style, selectedStyles, onStyleChange)}
+                      isChecked={group.values.some((v) => selectedStyles.includes(v))}
+                      onCheckedChange={() =>
+                        toggleGroupSelection(group.values, selectedStyles, onStyleChange)
+                      }
                     />
                     <span className="text-sm text-mint-1200 group-hover:text-primary-500 transition-colors">
-                      {style}
+                      {group.label}
                     </span>
                   </label>
                 ))
@@ -230,7 +270,6 @@ export function ProductFilters({
           ranges={priceRanges}
           selectedRanges={selectedPriceRanges}
           onRangeChange={onPriceRangeChange}
-          onCustomRangeApply={onCustomPriceApply}
         />
       </div>
     </div>

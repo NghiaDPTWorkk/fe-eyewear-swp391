@@ -1,4 +1,3 @@
-// Sales Staff Pages
 export { default as SaleStaffDashboardPage } from './SaleStaffDashboardPage'
 export { default as SaleStaffOrderPage } from './SaleStaffOrderPage'
 export { default as SaleStaffCustomerPage } from './SaleStaffCustomerPage'

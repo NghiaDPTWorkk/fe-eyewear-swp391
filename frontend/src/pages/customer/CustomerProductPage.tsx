@@ -13,9 +13,11 @@ import { OperationPagination } from '@/shared/components/ui/pagination'
 
 // Static data for filters
 const priceRanges = [
-  { id: 'range1', label: '200.000đ - 500.000đ', min: 200000, max: 500000 },
+  { id: 'range1', label: 'Under 500.000đ', min: 0, max: 500000 },
   { id: 'range2', label: '500.000đ - 1.000.000đ', min: 500000, max: 1000000 },
-  { id: 'range3', label: '1.000.000đ - 12.000.000đ', min: 1000000, max: 12000000 }
+  { id: 'range3', label: '1.000.000đ - 2.000.000đ', min: 1000000, max: 2000000 },
+  { id: 'range4', label: '2.000.000đ - 5.000.000đ', min: 2000000, max: 5000000 },
+  { id: 'range5', label: 'Above 5.000.000đ', min: 5000000, max: 50000000 }
 ]
 
 // Gender mapping from API codes to labels
@@ -137,28 +139,54 @@ export const CustomerProductPage = () => {
     })
 
     // Add gender tags
+    const seenGenders = new Set<string>()
     selectedGenders.forEach((gender) => {
-      tags.push({ id: `gender-${gender}`, label: GENDER_MAP[gender] || gender, type: 'gender' })
+      const label = GENDER_MAP[gender] || gender
+      const lowerLabel = label.toLowerCase().trim()
+      if (!seenGenders.has(lowerLabel)) {
+        tags.push({ id: `gender-${gender}`, label, type: 'gender' })
+        seenGenders.add(lowerLabel)
+      }
     })
 
     // Add brand tags
+    const seenBrands = new Set<string>()
     selectedBrands.forEach((brand) => {
-      tags.push({ id: `brand-${brand}`, label: brand, type: 'brand' })
+      const lowerBrand = brand.toLowerCase().trim()
+      if (!seenBrands.has(lowerBrand)) {
+        tags.push({ id: `brand-${brand}`, label: brand, type: 'brand' })
+        seenBrands.add(lowerBrand)
+      }
     })
 
     // Add material tags
+    const seenMaterials = new Set<string>()
     selectedMaterials.forEach((material) => {
-      tags.push({ id: `material-${material}`, label: material, type: 'material' })
+      const lowerMaterial = material.toLowerCase().trim()
+      if (!seenMaterials.has(lowerMaterial)) {
+        tags.push({ id: `material-${material}`, label: material, type: 'material' })
+        seenMaterials.add(lowerMaterial)
+      }
     })
 
     // Add shape tags
+    const seenShapes = new Set<string>()
     selectedShapes.forEach((shape) => {
-      tags.push({ id: `shape-${shape}`, label: shape, type: 'shape' })
+      const lowerShape = shape.toLowerCase().trim()
+      if (!seenShapes.has(lowerShape)) {
+        tags.push({ id: `shape-${shape}`, label: shape, type: 'shape' })
+        seenShapes.add(lowerShape)
+      }
     })
 
     // Add style tags
+    const seenStyles = new Set<string>()
     selectedStyles.forEach((style) => {
-      tags.push({ id: `style-${style}`, label: style, type: 'style' })
+      const lowerStyle = style.toLowerCase().trim()
+      if (!seenStyles.has(lowerStyle)) {
+        tags.push({ id: `style-${style}`, label: style, type: 'style' })
+        seenStyles.add(lowerStyle)
+      }
     })
 
     // Add preset price range tags
@@ -172,13 +200,9 @@ export const CustomerProductPage = () => {
     // Add custom price range tag
     if (customPriceRange.min !== null || customPriceRange.max !== null) {
       const minLabel =
-        customPriceRange.min !== null
-          ? customPriceRange.min.toLocaleString('vi-VN') + 'đ'
-          : 'Bất kỳ'
+        customPriceRange.min !== null ? customPriceRange.min.toLocaleString('vi-VN') + 'đ' : 'Any'
       const maxLabel =
-        customPriceRange.max !== null
-          ? customPriceRange.max.toLocaleString('vi-VN') + 'đ'
-          : 'Bất kỳ'
+        customPriceRange.max !== null ? customPriceRange.max.toLocaleString('vi-VN') + 'đ' : 'Any'
       tags.push({
         id: 'price-custom',
         label: `${minLabel} - ${maxLabel}`,
@@ -208,33 +232,34 @@ export const CustomerProductPage = () => {
       )
     } else if (tagId.startsWith('gender-')) {
       const gender = tagId.replace('gender-', '')
+      const targetLabel = (GENDER_MAP[gender] || gender).toLowerCase().trim()
       handleFilterChange(
         setSelectedGenders,
-        selectedGenders.filter((g) => g !== gender)
+        selectedGenders.filter((g) => (GENDER_MAP[g] || g).toLowerCase().trim() !== targetLabel)
       )
     } else if (tagId.startsWith('brand-')) {
-      const brand = tagId.replace('brand-', '')
+      const brand = tagId.replace('brand-', '').toLowerCase().trim()
       handleFilterChange(
         setSelectedBrands,
-        selectedBrands.filter((b) => b !== brand)
+        selectedBrands.filter((b) => b.toLowerCase().trim() !== brand)
       )
     } else if (tagId.startsWith('material-')) {
-      const material = tagId.replace('material-', '')
+      const material = tagId.replace('material-', '').toLowerCase().trim()
       handleFilterChange(
         setSelectedMaterials,
-        selectedMaterials.filter((m) => m !== material)
+        selectedMaterials.filter((m) => m.toLowerCase().trim() !== material)
       )
     } else if (tagId.startsWith('shape-')) {
-      const shape = tagId.replace('shape-', '')
+      const shape = tagId.replace('shape-', '').toLowerCase().trim()
       handleFilterChange(
         setSelectedShapes,
-        selectedShapes.filter((s) => s !== shape)
+        selectedShapes.filter((s) => s.toLowerCase().trim() !== shape)
       )
     } else if (tagId.startsWith('style-')) {
-      const style = tagId.replace('style-', '')
+      const style = tagId.replace('style-', '').toLowerCase().trim()
       handleFilterChange(
         setSelectedStyles,
-        selectedStyles.filter((s) => s !== style)
+        selectedStyles.filter((s) => s.toLowerCase().trim() !== style)
       )
     } else if (tagId.startsWith('price-preset-')) {
       const rangeId = tagId.replace('price-preset-', '')
@@ -347,30 +372,26 @@ export const CustomerProductPage = () => {
                 <div className="text-center text-gray-eyewear py-10">No products found.</div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {products.map((product, index) => {
-                    // Mock: Add sale to every 3rd product
-                    const hasSale = index % 3 === 0
+                  {products.map((product) => {
+                    const originalPrice = product.defaultVariantPrice || 0
+                    const finalPrice = product.defaultVariantFinalPrice || originalPrice
 
-                    // Extract price - handle type safety
-
-                    const productAny = product as any
-                    const originalPrice = productAny.defaultVariantPrice || 100
-                    const currentPrice = productAny.defaultVariantFinalPrice || originalPrice
-
-                    // Only set discount if there's actually a sale
-                    const discountPrice = hasSale ? currentPrice : undefined
-                    const salePercent = hasSale ? 20 : undefined
+                    // Display sale info only if the final price is actually lower
+                    const isActualSale = originalPrice > finalPrice && finalPrice > 0
+                    const salePercentValue = isActualSale
+                      ? Math.round(((originalPrice - finalPrice) / originalPrice) * 100)
+                      : undefined
 
                     return (
                       <ProductCard
-                        key={productAny.id || `product-${index}`}
-                        id={productAny.id || `product-${index}`}
+                        key={product.id || product._id}
+                        id={product.id || product._id || ''}
                         name={product.nameBase}
                         brand={product.brand || undefined}
-                        image={productAny.defaultVariantImage || undefined}
+                        image={product.defaultVariantImage || undefined}
                         price={originalPrice}
-                        discountPrice={discountPrice}
-                        salePercent={salePercent}
+                        discountPrice={finalPrice !== originalPrice ? finalPrice : undefined}
+                        salePercent={salePercentValue}
                         onClick={(id) => navigate(`/products/${id}`)}
                       />
                     )

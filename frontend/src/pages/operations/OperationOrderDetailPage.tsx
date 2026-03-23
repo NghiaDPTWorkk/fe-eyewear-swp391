@@ -10,7 +10,7 @@ import {
 import toast from 'react-hot-toast'
 import { useQueryClient, useQuery } from '@tanstack/react-query'
 import { productsService } from '@/features/staff/services/products.service'
-import type { OrderResponse, OrderProductItem, LensParameters } from '@/shared/types'
+import type { OrderResponse, OrderProductItem, LensParameters, ProductType } from '@/shared/types'
 import LensNormalOrder from '@/components/layout/staff/staff-core/technical-detail/LensNormalOrder'
 import LensSpecifications from '@/components/layout/staff/staff-core/technical-detail/LensSpecifications'
 import FrameSpecifications from '@/components/layout/staff/staff-core/technical-detail/FrameSpecifications'
@@ -24,7 +24,7 @@ export default function OperationOrderDetailPage() {
   const { orderId } = useParams<{ orderId: string }>()
   const navigate = useNavigate()
 
-  // Gọi API để xem chi tiết đơn hàng nè he — GET /orders/:id
+  // Fetch order details – GET /orders/:id
   const { data: orderDetailApiResponse, isLoading, isError } = useOrderDetail(orderId!)
 
   if (isLoading) {
@@ -51,7 +51,7 @@ export default function OperationOrderDetailPage() {
     )
   }
 
-  // Extract order object từ response của API
+  // Extract order object from API response
   const orderDetailData = (orderDetailApiResponse as OrderResponse)?.data?.order
 
   if (!orderDetailData) {
@@ -67,7 +67,7 @@ export default function OperationOrderDetailPage() {
     )
   }
 
-  // Lấy orderCode từ order — ưu tiên orderCode của BE
+  // Get orderCode from order – prefer backend's orderCode
   const orderCode =
     (orderDetailData as any).orderCode ?? (orderDetailData as any).code ?? orderDetailData._id
 
@@ -80,7 +80,7 @@ export default function OperationOrderDetailPage() {
   )
 }
 
-// Component xử lý transform data và render UI
+// Component to handle data transformation and UI rendering
 interface OrderDetailContentProps {
   orderDetailData: any
   navigate: any
@@ -94,14 +94,14 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
   const queryClient = useQueryClient()
 
   const handleStartProcessing = () => {
-    // BE có thể trả về type là mảng ['PRE-ORDER', 'MANUFACTURING'] hoặc chuỗi 'MANUFACTURING'
+    // BE can return type as an array ['PRE-ORDER', 'MANUFACTURING'] or string 'MANUFACTURING'
     const orderTypes = Array.isArray(orderDetailData?.type)
       ? (orderDetailData.type as string[])
       : [orderDetailData?.type as string]
 
     const isManufacturingStyle = orderTypes.includes('MANUFACTURING')
 
-    // Bước 1: Nếu đơn đang PACKAGING → navigate thẳng vào trang packing, KHÔNG gọi API
+    // Step 1: If order is PACKAGING → navigate directly to packing page, DON'T call API
     if (orderDetailData.status === 'PACKAGING') {
       navigate(PATHS.OPERATIONSTAFF.PACKING_PROCESS(orderDetailData._id), {
         state: {
@@ -112,7 +112,7 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
       return
     }
 
-    // Bước 2: Nếu đơn đang MAKING → navigate thẳng vào trang manufacturing, KHÔNG gọi API
+    // Step 2: If order is MAKING → navigate directly to manufacturing page, DON'T call API
     if (orderDetailData.status === 'MAKING') {
       navigate(PATHS.OPERATIONSTAFF.MANUFACTURING_PROCESS(orderDetailData._id), {
         state: {
@@ -124,8 +124,8 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
       return
     }
 
-    // Đơn MANUFACTURING style (bao gồm PRE-ORDER + MANUFACTURING) status ASSIGNED
-    // gọi API PATCH /status/making để đổi sang MAKING, sau đó navigate
+    // MANUFACTURING style order (including PRE-ORDER + MANUFACTURING) status ASSIGNED
+    // call PATCH /status/making API to change to MAKING, then navigate
     if (isManufacturingStyle) {
       updateMaking.mutate(orderDetailData._id, {
         onSuccess: () => {
@@ -148,8 +148,8 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
       return
     }
 
-    // NORMAL style (bao gồm PRE-ORDER + NORMAL hoặc NORMAL)
-    // → gọi API PATCH /status/packaging để đổi sang PACKAGING, sau đó navigate vào packing
+    // NORMAL style (including PRE-ORDER + NORMAL or NORMAL)
+    // → call PATCH /status/packaging API to change to PACKAGING, then navigate to packing
     updatePackaging.mutate(orderDetailData._id, {
       onSuccess: () => {
         toast.success('Order status updated to PACKAGING')
@@ -169,17 +169,17 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
     })
   }
 
-  // List sản phẩm lấy từ orderDetailData (từ API GET /orders/:id)
+  // Product list from orderDetailData (from GET /orders/:id API)
   const orderProductItems: OrderProductItem[] = orderDetailData?.products || []
   const orderTypes = Array.isArray(orderDetailData?.type)
     ? (orderDetailData.type as string[])
     : [orderDetailData?.type as string]
 
-  // Xác định style của đơn hàng để hiển thị UI
+  // Determine order style for UI display
   const isManufacturingStyle = orderTypes.includes('MANUFACTURING')
   const isNormalStyle = !isManufacturingStyle
 
-  // ── Xử lý MANUFACTURING style (bao gồm PRE-ORDER + MANUFACTURING) ────────────────
+  // ── Handle MANUFACTURING style (includes PRE-ORDER + MANUFACTURING) ────────────────
   let manufacturingOrderFrameItem: {
     product_id: string
     sku: string
@@ -214,7 +214,7 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
     }
   }
 
-  // Chọn item để gọi API variant (ưu tiên frame/sản phẩm chính)
+  // Select item for variant API call (prefer frame/main product)
   let variantApiProductId: string | undefined
   let variantApiProductSku: string | undefined
 
@@ -226,13 +226,13 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
     variantApiProductSku = manufacturingOrderFrameItem.sku
   }
 
-  // Gọi API: GET /products/:id/variants/:sku
+  // Call API: GET /products/:id/variants/:sku
   const { data: productVariantApiResponse, isLoading: isProductVariantApiLoading } = useQuery({
     queryKey: ['productVariant', variantApiProductId, variantApiProductSku],
     queryFn: () =>
       productsService.getProductVariant(
         variantApiProductId!,
-        encodeURIComponent(variantApiProductSku!)
+        variantApiProductSku! //encodeURIComponent(variantApiProductSku!)
       ),
     enabled: !!variantApiProductId && !!variantApiProductSku
   })
@@ -248,19 +248,16 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
     )
   }
 
-  // Lấy data từ response
-  const productType = (productVariantApiResponse as any)?.data?.productDetail?.type as
-    | 'frame'
-    | 'sunglass'
-    | 'lens'
-    | undefined
+  // Get data from response
+  const productType = (productVariantApiResponse as any)?.data?.productDetail?.type as ProductType
   const variantOptions = (productVariantApiResponse as any)?.data?.variantDetail?.options || []
-  const variantImg = (productVariantApiResponse as any)?.data?.variantDetail?.imgs?.[0]
+  const variantImgs = (productVariantApiResponse as any)?.data?.variantDetail?.imgs || []
+  const variantImg = variantImgs[0]
 
   let renderedLensComponent: React.ReactNode = null
   let renderedFrameComponent: React.ReactNode = null
 
-  // UI cho NORMAL style (hoặc PRE-ORDER không lens)
+  // UI for NORMAL style (or PRE-ORDER without lens)
   if (isNormalStyle && orderProductItems[0]) {
     const totalQty = orderProductItems.reduce((sum, item) => sum + (item.quantity || 1), 0)
     const mappedOptions = variantOptions.map((attr: any) => ({
@@ -282,6 +279,11 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
         <FrameSpecifications
           data={mappedOptions}
           imageSrc={variantImg}
+          imageSrcHover={
+            ['frame', 'sunglass'].includes(productType) && variantImgs.length > 1
+              ? variantImgs[1]
+              : undefined
+          }
           quantity={totalQty}
           sku={orderProductItems[0].product.sku}
         />
@@ -289,9 +291,9 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
     }
   }
 
-  // UI cho MANUFACTURING style (hoặc PRE-ORDER có lens)
+  // UI for MANUFACTURING style (or PRE-ORDER with lens)
   if (isManufacturingStyle) {
-    // 1. Render Lens Specifications (nếu có thông số)
+    // 1. Render Lens Specifications (if parameters exist)
     if (manufacturingOrderLensParams) {
       const { parameters } = manufacturingOrderLensParams
       const lensComponentProps = {
@@ -325,7 +327,9 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
     // 2. Render Frame Specifications
     if (manufacturingOrderFrameItem) {
       const frameOptions = productVariantApiResponse?.data?.variantDetail?.options || []
-      const frameImg = productVariantApiResponse?.data?.variantDetail?.imgs?.[0]
+      const frameImgs = productVariantApiResponse?.data?.variantDetail?.imgs || []
+      const frameImg = frameImgs[0]
+      const frameImgHover = frameImgs[1]
       renderedFrameComponent = (
         <FrameSpecifications
           data={frameOptions.map((attr: any) => ({
@@ -333,6 +337,7 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
             value: attr.label
           }))}
           imageSrc={frameImg}
+          imageSrcHover={frameImgHover}
           sku={manufacturingOrderFrameItem.sku}
           quantity={manufacturingOrderFrameItem.quantity}
         />
@@ -355,7 +360,9 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
             <IoArrowBack size={20} className="text-gray-600" />
           </button>
           <div className="min-w-0">
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight truncate">Order #{orderCode}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight truncate">
+              Order #{orderCode}
+            </h1>
             <p className="text-[10px] text-neutral-500 mt-1 font-medium tracking-widest uppercase opacity-80 italic">
               DETAILED ORDER INFORMATION
             </p>

@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Container } from '@/components'
 import { PageHeader } from '@/features/sales/components/common'
-import { useAdminProductDetail } from '@/features/manager/hooks/useAdminProducts'
+import { useAdminProductDetail } from '@/features/manager/hooks'
 import {
   IoArrowBackOutline,
   IoCubeOutline,
@@ -23,15 +23,15 @@ import { ENDPOINTS } from '@/api/endpoints'
 import { toast } from 'react-hot-toast'
 import { ConfirmationModal } from '@/shared/components/ui-core'
 
-// ─── Format price ───
+const formatter = new Intl.NumberFormat('vi-VN')
+
 function formatPrice(price: number) {
   if (price >= 1_000_000) {
-    return new Intl.NumberFormat('vi-VN').format(price) + '₫'
+    return formatter.format(price) + '₫'
   }
   return '$' + price.toFixed(2)
 }
 
-// ─── Gender display ───
 function genderLabel(g: string) {
   switch (g) {
     case 'M':
@@ -43,6 +43,11 @@ function genderLabel(g: string) {
     default:
       return g
   }
+}
+
+function capitalize(str: string) {
+  if (!str) return '—'
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
 }
 
 export default function ManagerProductDetailPage() {
@@ -116,16 +121,16 @@ export default function ManagerProductDetailPage() {
     <>
       <Container className="max-w-none space-y-8">
         <PageHeader
-          title={product.nameBase}
-          subtitle={`SKU: ${product.skuBase} · ${product.brand} · ${product.type}`}
+          title={product.nameBase || 'Unnamed Product'}
+          subtitle={`SKU: ${product.skuBase} · ${product.brand || 'No Brand'} · ${capitalize(product.type)}`}
           breadcrumbs={[
             { label: 'Dashboard', path: '/manager/dashboard' },
             { label: 'Products', path: '/manager/products' },
-            { label: product.nameBase }
+            { label: product.nameBase || 'Unnamed Product' }
           ]}
         />
 
-        {/* Action buttons */}
+        {}
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/manager/products')}
@@ -152,16 +157,16 @@ export default function ManagerProductDetailPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* ─── LEFT: Image Gallery ─── */}
+          {}
           <div className="lg:col-span-5">
             <div className="bg-white rounded-3xl ring-1 ring-neutral-100/50 shadow-sm overflow-hidden">
-              {/* Main Image */}
+              {}
               <div className="relative aspect-square bg-neutral-50 flex items-center justify-center overflow-hidden">
                 {currentImg ? (
                   <img
                     src={currentImg}
                     alt={selectedVariant.name}
-                    className="w-full h-full object-cover transition-opacity duration-300"
+                    className="w-full h-full object-contain p-4 transition-opacity duration-300"
                     onError={(e) => {
                       ;(e.target as HTMLImageElement).src = ''
                       ;(e.target as HTMLImageElement).style.display = 'none'
@@ -171,7 +176,7 @@ export default function ManagerProductDetailPage() {
                   <IoCubeOutline size={80} className="text-neutral-200" />
                 )}
 
-                {/* Image nav arrows */}
+                {}
                 {images.length > 1 && (
                   <>
                     <button
@@ -189,7 +194,7 @@ export default function ManagerProductDetailPage() {
                   </>
                 )}
 
-                {/* Image counter */}
+                {}
                 {images.length > 1 && (
                   <div className="absolute bottom-3 right-3 px-2.5 py-1 bg-black/50 backdrop-blur-sm rounded-lg text-[10px] font-semibold text-white">
                     {imgIdx + 1} / {images.length}
@@ -197,7 +202,7 @@ export default function ManagerProductDetailPage() {
                 )}
               </div>
 
-              {/* Thumbnail strip */}
+              {}
               {images.length > 1 && (
                 <div className="flex gap-2 p-4">
                   {images.map((img, idx) => (
@@ -210,7 +215,7 @@ export default function ManagerProductDetailPage() {
                           : 'border-transparent opacity-60 hover:opacity-100'
                       }`}
                     >
-                      <img src={img} alt="" className="w-full h-full object-cover" />
+                      <img src={img} alt="" className="w-full h-full object-contain p-1" />
                     </button>
                   ))}
                 </div>
@@ -218,9 +223,9 @@ export default function ManagerProductDetailPage() {
             </div>
           </div>
 
-          {/* ─── RIGHT: Product Info ─── */}
+          {}
           <div className="lg:col-span-7 space-y-6">
-            {/* Price Card */}
+            {}
             <div className="bg-white rounded-3xl ring-1 ring-neutral-100/50 shadow-sm p-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
@@ -239,16 +244,16 @@ export default function ManagerProductDetailPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="inline-flex px-3 py-1.5 rounded-xl text-xs font-semibold bg-mint-50 text-mint-700 ring-1 ring-mint-100 capitalize">
-                    {product.type}
+                  <span className="inline-flex px-3 py-1.5 rounded-xl text-xs font-semibold bg-mint-50 text-mint-700 ring-1 ring-mint-100">
+                    {capitalize(product.type)}
                   </span>
                   <span className="inline-flex px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-50 text-purple-600 ring-1 ring-purple-100">
-                    {product.brand}
+                    {product.brand || 'No Brand'}
                   </span>
                 </div>
               </div>
 
-              {/* Quick info */}
+              {}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-neutral-50">
                 <div>
                   <p className="text-[11px] font-medium text-slate-400">Total Variants</p>
@@ -296,7 +301,7 @@ export default function ManagerProductDetailPage() {
               </div>
             </div>
 
-            {/* Specifications Card */}
+            {}
             {spec && (
               <div className="bg-white rounded-3xl ring-1 ring-neutral-100/50 shadow-sm p-6">
                 <div className="flex items-center gap-2 mb-5">
@@ -325,8 +330,8 @@ export default function ManagerProductDetailPage() {
                     )}
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                       <SpecItem label="Origin" value={spec.origin || '—'} />
-                      <SpecItem label="Brand" value={product.brand} />
-                      <SpecItem label="Type" value={product.type} />
+                      <SpecItem label="Brand" value={product.brand || 'No Brand'} />
+                      <SpecItem label="Type" value={capitalize(product.type)} />
                     </div>
                   </div>
                 ) : (
@@ -348,7 +353,7 @@ export default function ManagerProductDetailPage() {
               </div>
             )}
 
-            {/* Variants Card */}
+            {}
             <div className="bg-white rounded-3xl ring-1 ring-neutral-100/50 shadow-sm p-6">
               <div className="flex items-center gap-2 mb-5">
                 <div className="p-2 rounded-xl bg-purple-50 text-purple-600">
@@ -361,75 +366,15 @@ export default function ManagerProductDetailPage() {
 
               <div className="space-y-3">
                 {product.variants.map((v, idx) => (
-                  <button
+                  <VariantItem
                     key={v.sku}
+                    variant={v}
+                    isActive={selectedVariantIdx === idx}
                     onClick={() => {
                       setSelectedVariantIdx(idx)
                       setImgIdx(0)
                     }}
-                    className={`w-full text-left p-4 rounded-2xl border transition-all ${
-                      selectedVariantIdx === idx
-                        ? 'border-mint-300 bg-mint-50/30 ring-2 ring-mint-200 shadow-sm'
-                        : 'border-neutral-100 hover:border-neutral-200 hover:bg-neutral-50/50'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3 min-w-0">
-                        {v.options.some((o) => o.showType === 'color') ? (
-                          <div className="flex items-center gap-1.5">
-                            {v.options
-                              .filter((o) => o.showType === 'color')
-                              .map((o) => (
-                                <div
-                                  key={o.attributeId}
-                                  className="w-6 h-6 rounded-full border-2 border-white shadow-md"
-                                  style={{ backgroundColor: o.value }}
-                                  title={o.label}
-                                />
-                              ))}
-                          </div>
-                        ) : (
-                          <IoColorPaletteOutline className="text-slate-400" size={18} />
-                        )}
-
-                        <div className="min-w-0">
-                          <p className="text-xs font-semibold text-slate-700 truncate">
-                            {v.options.map((o) => o.label).join(' · ')}
-                          </p>
-                          <p className="text-[10px] text-slate-400 font-medium">{v.sku}</p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-4 shrink-0 ml-4">
-                        <div className="text-right">
-                          <p className="text-xs font-bold text-slate-800">
-                            {formatPrice(v.finalPrice)}
-                          </p>
-                          {v.price !== v.finalPrice && (
-                            <p className="text-[10px] text-slate-400 line-through">
-                              {formatPrice(v.price)}
-                            </p>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <IoPricetagOutline className="text-slate-400" size={12} />
-                          <span className="text-[11px] font-medium text-slate-500">
-                            Stock: {v.stock}
-                          </span>
-                        </div>
-                        {v.mode === 'AVAILABLE' ? (
-                          <IoCheckmarkCircle className="text-emerald-500" size={18} />
-                        ) : (
-                          <IoCloseCircle className="text-red-400" size={18} />
-                        )}
-                        {v.isDefault && (
-                          <span className="px-2 py-0.5 rounded-md bg-mint-100 text-mint-700 text-[9px] font-bold uppercase">
-                            Default
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </button>
+                  />
                 ))}
               </div>
             </div>
@@ -442,7 +387,7 @@ export default function ManagerProductDetailPage() {
         onClose={() => setIsConfirmOpen(false)}
         onConfirm={handleDeleteConfirm}
         title="Delete Product"
-        message={`Are you sure you want to delete "${product.nameBase}"? This action cannot be undone.`}
+        message={`Are you sure you want to delete "${product.nameBase || 'this product'}"? This action cannot be undone.`}
         confirmText="Delete"
         cancelText="Cancel"
         type="danger"
@@ -451,7 +396,6 @@ export default function ManagerProductDetailPage() {
   )
 }
 
-// ─── Spec Item Component ───
 function SpecItem({ label, value }: { label: string; value: string }) {
   return (
     <div className="p-3 rounded-xl bg-neutral-50 border border-neutral-100">
@@ -460,3 +404,79 @@ function SpecItem({ label, value }: { label: string; value: string }) {
     </div>
   )
 }
+
+const VariantItem = React.memo(
+  ({
+    variant,
+    isActive,
+    onClick
+  }: {
+    variant: AdminProductVariant
+    isActive: boolean
+    onClick: () => void
+  }) => {
+    return (
+      <button
+        onClick={onClick}
+        className={`w-full text-left p-4 rounded-2xl border transition-all ${
+          isActive
+            ? 'border-mint-300 bg-mint-50/30 ring-2 ring-mint-200 shadow-sm'
+            : 'border-neutral-100 hover:border-neutral-200 hover:bg-neutral-50/50'
+        }`}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3 min-w-0">
+            {variant.options.some((o) => o.showType === 'color') ? (
+              <div className="flex items-center gap-1.5">
+                {variant.options
+                  .filter((o) => o.showType === 'color')
+                  .map((o) => (
+                    <div
+                      key={o.attributeId}
+                      className="w-6 h-6 rounded-full border-2 border-white shadow-md"
+                      style={{ backgroundColor: o.value }}
+                      title={o.label}
+                    />
+                  ))}
+              </div>
+            ) : (
+              <IoColorPaletteOutline className="text-slate-400" size={18} />
+            )}
+
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-slate-700 truncate">
+                {variant.options.map((o) => o.label).join(' · ')}
+              </p>
+              <p className="text-[10px] text-slate-400 font-medium">{variant.sku}</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4 shrink-0 ml-4">
+            <div className="text-right">
+              <p className="text-xs font-bold text-slate-800">{formatPrice(variant.finalPrice)}</p>
+              {variant.price !== variant.finalPrice && (
+                <p className="text-[10px] text-slate-400 line-through">
+                  {formatPrice(variant.price)}
+                </p>
+              )}
+            </div>
+            <div className="flex items-center gap-1.5">
+              <IoPricetagOutline className="text-slate-400" size={12} />
+              <span className="text-[11px] font-medium text-slate-500">Stock: {variant.stock}</span>
+            </div>
+            {variant.mode === 'AVAILABLE' ? (
+              <IoCheckmarkCircle className="text-emerald-500" size={18} />
+            ) : (
+              <IoCloseCircle className="text-red-400" size={18} />
+            )}
+            {variant.isDefault && (
+              <span className="px-2 py-0.5 rounded-md bg-mint-100 text-mint-700 text-[9px] font-bold uppercase">
+                Default
+              </span>
+            )}
+          </div>
+        </div>
+      </button>
+    )
+  }
+)

@@ -10,3 +10,18 @@ export const getInitials = (name: string): string => {
   if (words.length === 1) return words[0].substring(0, 2).toUpperCase()
   return (words[0][0] + words[words.length - 1][0]).toUpperCase()
 }
+
+/**
+ * Convert string to title case (e.g. "PRE_ORDER" -> "Pre-order")
+ * Handles underscores and common cases like "PRE-ORDER"
+ */
+export const toTitleCase = (str: string): string => {
+  if (!str) return ''
+  const s = str.replace(/_/g, ' ')
+  if (s.toUpperCase() === 'PRE ORDER' || s.toUpperCase() === 'PRE-ORDER') return 'Pre-order'
+  return s
+    .toLowerCase()
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+}

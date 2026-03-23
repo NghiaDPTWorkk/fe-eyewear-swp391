@@ -3,7 +3,6 @@ import {
   IoGrid,
   IoCube,
   IoReceipt,
-  IoBarChart,
   IoSettings,
   IoHelpCircle,
   IoPricetagOutline
@@ -41,12 +40,6 @@ export default function ManagerLayout() {
           to="/manager/vouchers"
           active={location.pathname === '/manager/vouchers'}
         />
-        <SidebarStaff.MenuItem
-          icon={<IoBarChart />}
-          label="Sales Report"
-          to="/manager/reports"
-          active={location.pathname.startsWith('/manager/reports')}
-        />
       </SidebarStaff.MenuSection>
 
       <SidebarStaff.MenuSection label="TOOLS">
@@ -68,9 +61,10 @@ export default function ManagerLayout() {
 
   return (
     <StaffLayout
-      storeName="Kanky Store"
+      storeName="Downtown Vision"
       searchPlaceholder="Search products, orders..."
       sidebarContent={sidebarContent}
+      styleVariant="manager"
       mainClassName="px-4 md:px-8 lg:px-10 py-8"
       contentMaxWidth="max-w-[1600px]"
     />

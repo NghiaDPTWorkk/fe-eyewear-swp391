@@ -8,6 +8,7 @@ import {
 import { Button } from '@/shared/components/ui-core'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import { OrderType } from '@/shared/utils/enums/order.enum'
+import { toTitleCase } from '@/shared/utils'
 
 interface ManagerInvoiceFiltersProps {
   statusFilter: string
@@ -92,7 +93,9 @@ export const ManagerInvoiceFilters: React.FC<ManagerInvoiceFiltersProps> = ({
                   <IoFilterOutline
                     className={isFilterOpen ? 'text-mint-600' : 'text-neutral-400'}
                   />
-                  <span>{orderTypeFilter === 'All' ? 'All Types' : orderTypeFilter}</span>
+                  <span>
+                    {orderTypeFilter === 'All' ? 'All Types' : toTitleCase(orderTypeFilter)}
+                  </span>
                 </div>
                 <IoChevronBackOutline
                   className={`transition-transform duration-200 ${isFilterOpen ? 'rotate-90' : '-rotate-90'}`}
@@ -120,7 +123,7 @@ export const ManagerInvoiceFilters: React.FC<ManagerInvoiceFiltersProps> = ({
                           }`}
                           onClick={() => onOrderTypeChange(val)}
                         >
-                          {val}
+                          {val === 'All' ? 'All Types' : toTitleCase(val)}
                         </button>
                       ))}
                     </div>

@@ -5,11 +5,11 @@ import {
   NavActions,
   NavSearch,
   SidebarStaff,
-  ThemeToggle,
   UserWidgetWithLogout
 } from '@/components/layout/staff/staff-core'
 import { useStaffLayoutProfile } from '@/features/staff/hooks/useStaffLayoutProfile'
 import { cn } from '@/lib/utils'
+import LogoEyewearIcon from '@/shared/components/ui/logoeyewear/LogoEyewearIcon'
 
 interface StaffLayoutProps {
   sidebarContent: ReactNode
@@ -18,6 +18,7 @@ interface StaffLayoutProps {
   searchPlaceholder?: string
   mainClassName?: string
   contentMaxWidth?: string
+  styleVariant?: 'default' | 'operation' | 'manager'
 }
 
 export function StaffLayout({
@@ -26,7 +27,8 @@ export function StaffLayout({
   storeIcon = <IoStorefront />,
   searchPlaceholder = 'Search...',
   mainClassName,
-  contentMaxWidth
+  contentMaxWidth,
+  styleVariant = 'operation'
 }: StaffLayoutProps) {
   const { userName, userEmail, userRole, userInitials } = useStaffLayoutProfile()
 
@@ -34,9 +36,7 @@ export function StaffLayout({
     <SidebarStaff
       logo={
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-mint-500 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-lg">O</span>
-          </div>
+          <LogoEyewearIcon className="w-8 h-8" />
           <span className="font-semibold text-gray-900">OpticView</span>
         </div>
       }
@@ -47,7 +47,6 @@ export function StaffLayout({
       }
     >
       {sidebarContent}
-      <ThemeToggle />
     </SidebarStaff>
   )
 
@@ -56,7 +55,7 @@ export function StaffLayout({
       sidebar={sidebar}
       headerLeft={
         <NavSearch
-          styleVariant="operation"
+          styleVariant={styleVariant}
           placeholder={searchPlaceholder}
           inputContainerClassName="lg:pl-0"
         />
@@ -70,7 +69,7 @@ export function StaffLayout({
         />
       }
       mainClassName={cn('bg-mint-200', mainClassName)}
-      headerContainerClassName="px-4 md:px-8 lg:pl-10 lg:pr-6"
+      headerContainerClassName={cn('px-4 md:px-8 lg:px-10 mx-auto', contentMaxWidth)}
       headerContainerWidth="none"
       contentMaxWidth={contentMaxWidth}
     />

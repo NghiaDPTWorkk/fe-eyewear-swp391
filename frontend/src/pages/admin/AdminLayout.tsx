@@ -36,7 +36,7 @@ export default function AdminLayout() {
     <SidebarStaff
       logo={
         <div className="flex items-center gap-2">
-          <LogoEyewearIcon className='w-8 h-8'/>
+          <LogoEyewearIcon className="w-8 h-8" />
           <span className="font-semibold text-gray-900">OpticView</span>
         </div>
       }
@@ -74,7 +74,6 @@ export default function AdminLayout() {
       </SidebarStaff.MenuSection>
 
       <SidebarStaff.MenuSection label="SYSTEM & UTILS">
-
         <SidebarStaff.MenuItem
           icon={<IoSettingsOutline />}
           label="Settings"

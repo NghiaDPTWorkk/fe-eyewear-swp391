@@ -21,7 +21,7 @@ interface OrderTableProps {
   getStatusBadgeProps: (invoice: Invoice) => { label: string; color: string }
   handleApproveClick: (invoiceId: string) => void
   processing: boolean
-  /** Callback kiểm tra invoice có đang bị lock bởi session khác không */
+
   isLockedByOther?: (invoiceId: string) => boolean
 }
 
@@ -49,7 +49,7 @@ export const OrderTable: React.FC<OrderTableProps> = ({
               Date
             </th>
             <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-              Created At
+              Time
             </th>
             <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">
               Actions
@@ -90,7 +90,7 @@ export const OrderTable: React.FC<OrderTableProps> = ({
                   )}
                   onClick={() => setSelectedInvoiceId(inv.id)}
                 >
-                  {/* Customer */}
+                  {}
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-4">
                       <div className="w-11 h-11 rounded-full bg-mint-50 flex items-center justify-center text-mint-600 border border-mint-100 shadow-sm shrink-0 transition-transform group-hover:scale-105">
@@ -107,7 +107,7 @@ export const OrderTable: React.FC<OrderTableProps> = ({
                     </div>
                   </td>
 
-                  {/* Status */}
+                  {}
                   <td className="px-6 py-5">
                     <div className="flex flex-col gap-1.5 items-start">
                       <span
@@ -125,26 +125,26 @@ export const OrderTable: React.FC<OrderTableProps> = ({
                     </div>
                   </td>
 
-                  {/* Date */}
+                  {}
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-2 text-[12px] text-slate-500">
                       <IoCalendarOutline className="text-slate-300" size={14} />
-                      <span>{inv.createdAt ? inv.createdAt.split(' ')[0] : 'N/A'}</span>
-                    </div>
-                  </td>
-
-                  {/* Created At */}
-                  <td className="px-6 py-5">
-                    <div className="flex items-center gap-2 text-[12px] text-slate-500">
-                      <IoTimeOutline className="text-slate-300" size={14} />
                       <span>{inv.createdAt ? inv.createdAt.split(' ')[1] : 'N/A'}</span>
                     </div>
                   </td>
 
-                  {/* Actions */}
+                  {}
+                  <td className="px-6 py-5">
+                    <div className="flex items-center gap-2 text-[12px] text-slate-500">
+                      <IoTimeOutline className="text-slate-300" size={14} />
+                      <span>{inv.createdAt ? inv.createdAt.split(' ')[0] : 'N/A'}</span>
+                    </div>
+                  </td>
+
+                  {}
                   <td className="px-6 py-5 text-center" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center justify-center gap-2 w-fit mx-auto">
-                      {/* Main action button - changes based on state */}
+                      {}
                       <Button
                         size="sm"
                         className={cn(

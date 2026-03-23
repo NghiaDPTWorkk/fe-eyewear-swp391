@@ -25,7 +25,6 @@ interface TranscriptionFormProps {
   rejectionNote?: string
 }
 
-// Validates note: at least 10 chars, cannot be all digits/spaces
 const validateNote = (value: string): string | null => {
   if (!value || value.trim().length === 0) return 'Note is required'
   if (value.trim().length < 10) return 'Note must be at least 10 characters'
@@ -58,10 +57,8 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
   const handleChange = (eye: 'left' | 'right' | 'common', field: string, value: string) => {
     if (!onParametersChange) return
 
-    // Allow comma as decimal separator internally
     const normalizedValue = value.replace(',', '.')
 
-    // Allow typing numbers, one decimal point, and a leading minus sign
     if (
       normalizedValue !== '' &&
       normalizedValue !== '-' &&
@@ -72,7 +69,6 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
       return
     }
 
-    // Clear error when user starts typing a valid value
     const errorKey = `${eye}_${field}`
     if (numericErrors[errorKey]) {
       setNumericErrors((prev) => {
@@ -134,7 +130,7 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
       </div>
 
       <div className="p-5 bg-white space-y-5">
-        {/* Right Eye (OD) */}
+        {}
         <div className="bg-slate-50/40 p-5 rounded-xl border border-slate-100/60">
           <h4 className="font-semibold text-xs text-mint-600 mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
             <IoEyeOutline size={16} className="text-mint-500" /> RIGHT EYE (OD)
@@ -205,7 +201,7 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
           </div>
         </div>
 
-        {/* Left Eye (OS) */}
+        {}
         <div className="bg-slate-50/40 p-5 rounded-xl border border-slate-100/60">
           <h4 className="font-semibold text-xs text-mint-600 mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
             <IoEyeOutline size={16} className="text-mint-500" /> LEFT EYE (OS)
@@ -274,9 +270,9 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
           </div>
         </div>
 
-        {/* PD & Notes Grid */}
+        {}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start pt-2">
-          {/* PD Section */}
+          {}
           <div className="space-y-3">
             <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.15em] block">
               PUPILLARY DISTANCE (PD)
@@ -307,7 +303,7 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
             </div>
           </div>
 
-          {/* Notes Section */}
+          {}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.15em] block">

@@ -1,7 +1,3 @@
-/**
- * CreatePreOrderModal Component
- * Modal for creating an order request from a pre-order.
- */
 import { useState } from 'react'
 import { Button } from '@/components'
 import { IoClose, IoCheckmarkCircle } from 'react-icons/io5'
@@ -25,7 +21,7 @@ export default function CreatePreOrderModal({
 
   const handleConfirm = async () => {
     setIsSubmitting(true)
-    // Simulate API call
+
     await new Promise((resolve) => setTimeout(resolve, 500))
     onConfirm(preOrderId)
     setIsSubmitting(false)
@@ -33,12 +29,12 @@ export default function CreatePreOrderModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
+      {}
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 
-      {/* Modal Content */}
+      {}
       <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 animate-in fade-in zoom-in-95 duration-200">
-        {/* Header */}
+        {}
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
           <h2 className="text-lg font-semibold text-gray-900">Create Order Request</h2>
           <button
@@ -49,7 +45,7 @@ export default function CreatePreOrderModal({
           </button>
         </div>
 
-        {/* Body */}
+        {}
         <div className="p-6">
           <div className="flex items-center gap-4 p-4 bg-emerald-50 rounded-xl border border-emerald-100 mb-4">
             <IoCheckmarkCircle className="text-emerald-500 text-2xl shrink-0" />
@@ -69,7 +65,7 @@ export default function CreatePreOrderModal({
           </div>
         </div>
 
-        {/* Footer */}
+        {}
         <div className="flex gap-3 p-6 border-t border-gray-100 bg-gray-50/50 rounded-b-2xl">
           <Button
             variant="outline"

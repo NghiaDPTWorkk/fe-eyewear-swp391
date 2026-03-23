@@ -1,8 +1,12 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Button, Divider, FormField, Input } from '@/components'
+import { Eye, EyeOff } from 'lucide-react'
 import type { RegisterRequest } from '@/shared/types'
 import { Gender } from '@/shared/utils/enums/gender.enum'
 import { useRegister } from '@/features/auth/hooks/useRegister'
+import { authService } from '@/features/auth/services/auth.service'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-hot-toast'
 
 interface RegisterFormProps {
   onSubmit?: (data: RegisterRequest) => void
@@ -10,6 +14,7 @@ interface RegisterFormProps {
 }
 
 export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
+  const navigate = useNavigate()
   const registerMutation = useRegister()
   const [formData, setFormData] = useState<RegisterRequest>({
     name: '',
@@ -19,7 +24,13 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
     gender: Gender.MALE
   })
 
-  const showPassword = useState(false)
+  // States for merge flow
+  const [mergeState, setMergeState] = useState<'idle' | 'prompt' | 'otp'>('idle')
+  const [otpArr, setOtpArr] = useState(['', '', '', ''])
+  const otpRefs = useRef<(HTMLInputElement | null)[]>([])
+  const [isMerging, setIsMerging] = useState(false)
+
+  const [showPassword, setShowPassword] = useState(false)
 
   const isValidEmail = formData.email.includes('@') && formData.email.includes('.')
   const isValidPhone = /^[0-9]{10,11}$/.test(formData.phone)
@@ -32,17 +43,180 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
       return
     }
 
-    registerMutation.mutate({
-      name: formData.name,
-      email: formData.email,
-      password: formData.password,
-      phone: formData.phone,
-      gender: formData.gender
-    })
+    registerMutation.mutate(
+      {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        phone: formData.phone,
+        gender: formData.gender
+      },
+      {
+        onError: (err: any) => {
+          if (err.response?.data?.code === 'EXIST_GOOGLE_OAUTH_ACCOUNT') {
+            setMergeState('prompt')
+          } else {
+            toast.error(err.response?.data?.message || 'Registration failed')
+          }
+        }
+      }
+    )
   }
 
   const handleChange = (field: keyof RegisterRequest, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const handleRequestMerge = async () => {
+    setIsMerging(true)
+    try {
+      const res = await authService.requestMergeAccount({
+        email: formData.email,
+        password: formData.password
+      })
+      if (res.success) {
+        toast.success('Merge request sent successfully. Please check your email for the OTP.')
+        setMergeState('otp')
+      } else {
+        toast.error((res as any).message || 'Unable to request merge')
+      }
+    } catch (e: any) {
+      toast.error(e.response?.data?.message || 'Request merge error')
+    } finally {
+      setIsMerging(false)
+    }
+  }
+
+  const handleVerifyOtp = async () => {
+    const finalOtp = otpArr.join('')
+    if (finalOtp.length < 4) {
+      toast.error('Please enter all 4 OTP digits')
+      return
+    }
+    setIsMerging(true)
+    try {
+      const res = await authService.verifyMergeOtp({
+        email: formData.email,
+        otp: finalOtp
+      })
+      if (res.success) {
+        toast.success('Account merged successfully! You can log in now.')
+        navigate('/login')
+      } else {
+        toast.error((res as any).message || 'Invalid OTP')
+      }
+    } catch (e: any) {
+      toast.error(e.response?.data?.message || 'Verify OTP error')
+    } finally {
+      setIsMerging(false)
+    }
+  }
+
+  const handleOtpChange = (index: number, val: string) => {
+    // Only allow numbers
+    if (val && !/^\d$/.test(val)) return
+
+    const newOtp = [...otpArr]
+    newOtp[index] = val
+    setOtpArr(newOtp)
+
+    // Focus next input if value exists
+    if (val && index < 3) {
+      otpRefs.current[index + 1]?.focus()
+    }
+  }
+
+  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace' && !otpArr[index] && index > 0) {
+      otpRefs.current[index - 1]?.focus()
+    }
+  }
+
+  if (mergeState === 'prompt') {
+    return (
+      <div className="w-full text-center space-y-6 pt-6">
+        <div className="mx-auto w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-4">
+          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+            />
+          </svg>
+        </div>
+        <h3 className="text-xl font-bold text-mint-1200">Account Already Exists</h3>
+        <p className="text-gray-500 text-sm px-4">
+          Email <span className="font-bold text-black">{formData.email}</span> is already linked to
+          a Google account. Do you want to merge this password into that account?
+        </p>
+        <div className="flex gap-4 pt-4">
+          <Button variant="outline" className="flex-1" onClick={() => setMergeState('idle')}>
+            Cancel
+          </Button>
+          <Button
+            colorScheme="primary"
+            className="flex-1"
+            onClick={handleRequestMerge}
+            disabled={isMerging}
+          >
+            Confirm
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  if (mergeState === 'otp') {
+    return (
+      <div className="w-full text-center space-y-8 pt-8">
+        <div className="space-y-2">
+          <h3 className="text-2xl font-bold text-mint-1200">OTP Verification</h3>
+          <p className="text-gray-500 text-sm">
+            Enter the 4-digit code sent to{' '}
+            <span className="font-bold text-black">{formData.email}</span>
+          </p>
+        </div>
+
+        <div className="flex justify-center gap-4 py-4">
+          {otpArr.map((digit, index) => (
+            <input
+              key={index}
+              ref={(el) => {
+                otpRefs.current[index] = el
+              }}
+              type="text"
+              inputMode="numeric"
+              maxLength={1}
+              value={digit}
+              onChange={(e) => handleOtpChange(index, e.target.value)}
+              onKeyDown={(e) => handleOtpKeyDown(index, e)}
+              className="w-16 h-16 text-center text-3xl font-bold border-2 border-mint-300 rounded-xl focus:border-primary-500 focus:outline-none transition-colors"
+            />
+          ))}
+        </div>
+
+        <div className="space-y-4 pt-4">
+          <Button
+            colorScheme="primary"
+            size="lg"
+            isFullWidth
+            onClick={handleVerifyOtp}
+            disabled={isMerging || otpArr.join('').length < 4}
+          >
+            Confirm
+          </Button>
+          <Button
+            variant="ghost"
+            isFullWidth
+            onClick={() => setMergeState('idle')}
+            className="text-gray-500"
+          >
+            Go back
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -116,6 +290,15 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
           onChange={(e) => handleChange('password', e.target.value)}
           size="lg"
           required
+          rightElement={
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="text-gray-400 hover:text-gray-600 focus:outline-none"
+            >
+              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+            </button>
+          }
         />
       </FormField>
 
@@ -166,7 +349,7 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
         isFullWidth
         size="lg"
         className="mb-4"
-        disabled={isPending}
+        disabled={isPending || registerMutation.isPending}
       >
         Sign Up
       </Button>

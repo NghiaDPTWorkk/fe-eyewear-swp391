@@ -33,6 +33,8 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
   // Use propItems if provided, otherwise filter selected items from store
   const items = propItems || storeItems.filter((item) => item.selected)
 
+  const hideCOD = !!propItems && items.some((item) => !!item.lens || item.mode === 'PRE_ORDER')
+
   const [customerInfo, setCustomerInfo] = useState({
     fullName: (user as any)?.fullName || user?.name || '',
     phone: (user as any)?.phone || ''
@@ -44,7 +46,9 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
     city: ''
   })
   const [note, setNote] = useState('')
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>(PaymentMethodType.COD)
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>(
+    hideCOD ? PaymentMethodType.VNPAY : PaymentMethodType.COD
+  )
   const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
 
@@ -161,18 +165,18 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
 
   const handleCheckout = async () => {
     if (!customerInfo.fullName || !customerInfo.phone) {
-      toast.error('Vui lòng nhập đầy đủ thông tin khách hàng')
+      toast.error('Please enter full customer information')
       return
     }
 
     if (!address.city || !address.ward || !address.street) {
-      toast.error('Vui lòng nhập đầy đủ địa chỉ giao hàng')
+      toast.error('Please enter full delivery address')
       return
     }
 
     const checkoutItems = items
     if (checkoutItems.length === 0) {
-      toast.error('Giỏ hàng chưa chọn sản phẩm nào')
+      toast.error('No items selected in cart')
       return
     }
 
@@ -233,17 +237,26 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
 
       const response = await invoiceService.createInvoice(payload)
       if (response.success) {
-        toast.success(response.message || 'Đặt hàng thành công!')
+        const isOnlinePayment =
+          paymentMethod === PaymentMethodType.VNPAY || paymentMethod === PaymentMethodType.PAYOS
         const checkoutItemsCopy = checkoutItems.map((item) => ({ ...item }))
-        const { clearCart, removeItems, items: currentItems } = useCartStore.getState()
 
-        // Only clear/remove from cart if we are NOT in direct checkout mode (propItems is undefined)
-        if (!propItems) {
-          if (checkoutItemsCopy.length === currentItems.length) {
-            await clearCart()
-          } else {
-            await removeItems(checkoutItemsCopy)
+        if (!isOnlinePayment) {
+          toast.success(response.message || 'Order placed successfully!')
+          const { clearCart, removeItems, items: currentItems } = useCartStore.getState()
+
+          // Only clear/remove from cart if we are NOT in direct checkout mode (propItems is undefined)
+          if (!propItems) {
+            if (checkoutItemsCopy.length === currentItems.length) {
+              await clearCart()
+            } else {
+              await removeItems(checkoutItemsCopy)
+            }
           }
+        } else {
+          // Lưu tạm vào sessionStorage để xóa khi callback thành công ở PaymentResultPage
+          sessionStorage.setItem('pendingCheckoutItems', JSON.stringify(checkoutItemsCopy))
+          sessionStorage.setItem('pendingCheckoutIsDirect', propItems ? 'true' : 'false')
         }
 
         if (paymentMethod === PaymentMethodType.VNPAY) {
@@ -256,9 +269,7 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
             }
           } catch (error) {
             console.error('Failed to get VNPay URL:', error)
-            toast.error(
-              'Không thể tạo liên kết thanh toán VNPay. Vui lòng thử lại trong Lịch sử đơn hàng.'
-            )
+            toast.error('Could not create VNPay payment link. Please try again in Order History.')
           }
         }
 
@@ -272,18 +283,18 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
             }
           } catch (error) {
             console.error('Failed to get PayOS URL:', error)
-            toast.error(
-              'Không thể tạo liên kết thanh toán PayOS. Vui lòng thử lại trong Lịch sử đơn hàng.'
-            )
+            toast.error('Could not create PayOS payment link. Please try again in Order History.')
           }
         }
 
-        navigate('/account/orders')
+        if (!isOnlinePayment) {
+          navigate('/account/orders')
+        }
       } else {
-        toast.error(response.message || 'Tạo đơn hàng thất bại')
+        toast.error(response.message || 'Failed to place order')
       }
     } catch (error: any) {
-      const errorMsg = error.response?.data?.message || 'Có lỗi xảy ra khi đặt hàng'
+      const errorMsg = error.response?.data?.message || 'An error occurred while placing the order'
       toast.error(errorMsg)
     } finally {
       setIsProcessing(false)
@@ -340,6 +351,7 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
       <PaymentMethodSection
         paymentMethod={paymentMethod}
         onPaymentMethodChange={setPaymentMethod}
+        hideCOD={hideCOD}
       />
 
       <VoucherSection

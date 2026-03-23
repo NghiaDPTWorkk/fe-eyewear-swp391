@@ -23,10 +23,6 @@ interface ExtendedProfile {
   gender?: string
 }
 
-/**
- * ManagerProfileSettings Component
- * Displays and allows management of manager profile information with premium glassmorphism design.
- */
 export default function ManagerProfileSettings() {
   const { data: profileData, isLoading, refetch } = useProfile()
   const profile = profileData?.data
@@ -41,7 +37,6 @@ export default function ManagerProfileSettings() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Initialize form data when profile is loaded
   useEffect(() => {
     if (profile) {
       const extendedProfile = profile as unknown as ExtendedProfile
@@ -49,7 +44,7 @@ export default function ManagerProfileSettings() {
         name: profile.name || '',
         email: profile.email || '',
         phone: profile.phone || '',
-        // These fields might not be in the current API, using defaults or placeholders
+
         birthday: extendedProfile.birthday || '1990-01-01',
         gender: extendedProfile.gender || 'Not Specified',
         role: profile.role || ''
@@ -66,7 +61,6 @@ export default function ManagerProfileSettings() {
     e.preventDefault()
     setIsSubmitting(true)
     try {
-      // Note: birthday and gender might need backend support
       const response = await profileService.requestProfileUpdate({
         name: formData.name,
         email: formData.email,
@@ -115,7 +109,7 @@ export default function ManagerProfileSettings() {
         'max-w-5xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700'
       )}
     >
-      {/* Header Section with Profile Picture */}
+      {}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-mint-500 to-mint-700 p-8 shadow-2xl shadow-mint-200/50">
         <div className="absolute top-0 right-0 -mt-12 -mr-12 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
         <div className="absolute bottom-0 left-0 -mb-12 -ml-12 h-48 w-48 rounded-full bg-mint-900/10 blur-2xl" />
@@ -157,7 +151,7 @@ export default function ManagerProfileSettings() {
         </div>
       </div>
 
-      {/* Main Form Section - Glassmorphism */}
+      {}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <div className="bg-white/70 backdrop-blur-xl border border-white/20 rounded-[32px] p-8 shadow-xl shadow-neutral-200/40">
@@ -177,7 +171,7 @@ export default function ManagerProfileSettings() {
 
             <form onSubmit={handleSubmit} className="space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10">
-                {/* Full Name */}
+                {}
                 <div className="space-y-2 group">
                   <label className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest ml-1 flex items-center gap-1.5 px-1">
                     Full Name <span className="text-danger-500">*</span>
@@ -201,7 +195,7 @@ export default function ManagerProfileSettings() {
                   </div>
                 </div>
 
-                {/* Email */}
+                {}
                 <div className="space-y-2 group">
                   <label className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest ml-1 flex items-center gap-1.5 px-1">
                     Email Address <span className="text-danger-500">*</span>
@@ -225,7 +219,7 @@ export default function ManagerProfileSettings() {
                   </div>
                 </div>
 
-                {/* Phone */}
+                {}
                 <div className="space-y-2 group">
                   <label className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest ml-1 flex items-center gap-1.5 px-1">
                     Phone Number
@@ -248,7 +242,7 @@ export default function ManagerProfileSettings() {
                   </div>
                 </div>
 
-                {/* Role */}
+                {}
                 <div className="space-y-2 group">
                   <label className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest ml-1 flex items-center gap-1.5 px-1">
                     Account Role
@@ -269,7 +263,7 @@ export default function ManagerProfileSettings() {
                   </div>
                 </div>
 
-                {/* Birthday */}
+                {}
                 <div className="space-y-2 group">
                   <label className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest ml-1 flex items-center gap-1.5 px-1">
                     Birthday
@@ -291,7 +285,7 @@ export default function ManagerProfileSettings() {
                   </div>
                 </div>
 
-                {/* Gender */}
+                {}
                 <div className="space-y-2 group">
                   <label className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest ml-1 flex items-center gap-1.5 px-1">
                     Gender
@@ -340,7 +334,7 @@ export default function ManagerProfileSettings() {
           </div>
         </div>
 
-        {/* Sidebar Info */}
+        {}
         <div className="space-y-8">
           <div className="bg-white/70 backdrop-blur-xl border border-white/20 rounded-[32px] p-8 shadow-xl shadow-neutral-200/40">
             <h3 className="text-lg font-bold text-neutral-900 mb-6 font-heading">

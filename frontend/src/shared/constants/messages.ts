@@ -52,6 +52,19 @@ export const ERROR_MESSAGES = {
     NETWORK_ERROR: 'Connection error. Please check your network.',
     SERVER_ERROR: 'System error. Please try again later.',
     UNKNOWN_ERROR: 'An error occurred. Please try again.'
+  },
+  SALES: {
+    APPROVE_INVOICE_FAILED: 'Failed to approve invoice',
+    REJECT_INVOICE_FAILED: 'Failed to reject invoice',
+    VERIFY_ORDER_FAILED: 'Failed to verify order',
+    REJECT_ORDER_FAILED: 'Failed to reject order',
+    INVOICE_ID_NOT_FOUND: 'Associated invoice ID not found'
+  },
+  MANAGER: {
+    ASSIGN_STAFF_FAILED: 'Failed to assign staff',
+    IMPORT_FAILED: 'Failed to import product',
+    ONBOARD_FAILED: 'Failed to start onboarding',
+    COMPLETE_FAILED: 'Failed to mark as completed'
   }
 } as const
 
@@ -68,5 +81,17 @@ export const SUCCESS_MESSAGES = {
   },
   CHECKOUT: {
     ORDER_SUCCESS: 'Order placed successfully'
+  },
+  SALES: {
+    INVOICE_APPROVED: 'Invoice approved successfully',
+    INVOICE_REJECTED: 'Invoice rejected successfully',
+    ORDER_VERIFIED: 'Order verified successfully',
+    BATCH_REJECTED: 'Invoice and all associated orders rejected'
+  },
+  MANAGER: {
+    STAFF_ASSIGNED: 'Staff assigned successfully',
+    PRODUCT_IMPORTED: 'Product imported successfully',
+    ONBOARD_STARTED: 'Onboarding started successfully',
+    COMPLETED: 'Marked as completed successfully'
   }
 } as const

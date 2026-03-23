@@ -50,7 +50,9 @@ export function AuthGuard({ children, allowedRoles, requireAuth = true }: AuthGu
   }
 
   // If authenticated, check if role is allowed or if it's a staff role trying to access public pages
-  const isStaffRole = ['SALE_STAFF', 'OPERATION_STAFF', 'MANAGER'].includes(role || '')
+  const isStaffRole = ['SALE_STAFF', 'OPERATION_STAFF', 'MANAGER', 'SYSTEM_ADMIN'].includes(
+    role || ''
+  )
   const isPublicPath = !allowedRoles || allowedRoles.length === 0
 
   if (isStaffRole && (isPublicPath || (allowedRoles && !allowedRoles.includes(role || '')))) {
@@ -63,6 +65,9 @@ export function AuthGuard({ children, allowedRoles, requireAuth = true }: AuthGu
     }
     if (role === 'MANAGER' && !location.pathname.startsWith('/manager')) {
       return <Navigate to="/manager/dashboard" replace />
+    }
+    if (role === 'SYSTEM_ADMIN' && !location.pathname.startsWith('/admin')) {
+      return <Navigate to="/admin/dashboard" replace />
     }
   }
 

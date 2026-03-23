@@ -239,24 +239,6 @@ export function ReturnRequestPage() {
           </div>
         )}
       </div>
-
-      {/* Help Footer */}
-      <div className="mt-16 p-8 bg-black rounded-[32px] text-white flex flex-col md:flex-row items-center justify-between gap-8 border border-white/10 shadow-2xl">
-        <div className="flex items-center gap-6">
-          <div className="w-14 h-14 bg-primary-500 rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-primary-500/20">
-            ?
-          </div>
-          <div>
-            <h4 className="font-bold text-lg mb-1">Need help with your return?</h4>
-            <p className="text-gray-400 text-sm font-medium tracking-wide">
-              Contact our premium support for white-glove assistance with order issues.
-            </p>
-          </div>
-        </div>
-        <button className="bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all border border-white/5">
-          Chat With Expert
-        </button>
-      </div>
     </div>
   )
 }

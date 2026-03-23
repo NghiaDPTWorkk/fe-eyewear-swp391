@@ -11,6 +11,7 @@ import {
 import { Button } from '@/components'
 import { cn } from '@/lib/utils'
 import { httpClient } from '@/api/apiClients'
+import { formatPrice, toTitleCase } from '@/shared/utils'
 
 interface OrderDetailsDrawerProps {
   isOpen: boolean
@@ -264,8 +265,8 @@ export default function OrderDetailsDrawer({
                 >
                   {orderType} Order
                 </span>
-                <span className="inline-block px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-bold uppercase tracking-widest rounded-full border border-emerald-100 shadow-sm">
-                  {orderData.status}
+                <span className="inline-block px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-bold tracking-widest rounded-full border border-emerald-100 shadow-sm">
+                  {toTitleCase(orderData.status)}
                 </span>
               </div>
               <h2 className="text-2xl font-semibold text-[#0f172a] tracking-tight">
@@ -402,7 +403,7 @@ export default function OrderDetailsDrawer({
                   </p>
                 </div>
                 <span className="font-semibold text-gray-900">
-                  ${orderData.item.price.toFixed(2)}
+                  {formatPrice(orderData.item.price)}
                 </span>
               </div>
             </div>

@@ -376,7 +376,7 @@ export function OrdersPage() {
                         name={firstProduct?.name || 'Optical Order'}
                         date={new Date(inv.createdAt).toLocaleDateString()}
                         itemCount={itemCount}
-                        price={inv.totalPrice}
+                        price={inv.totalPrice + inv.feeShip - inv.totalDiscount}
                         status={inv.status as InvoiceStatus}
                         canCancel={canCancelInvoice(inv.status as InvoiceStatus)}
                         isCancelling={cancellingInvoiceId === inv._id}

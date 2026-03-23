@@ -226,23 +226,17 @@ export function OrderCard({
               </Button>
             )}
 
-            {(status === InvoiceStatus.DELIVERING ||
-              status === InvoiceStatus.DELIVERED ||
-              status === InvoiceStatus.COMPLETED) && (
+            {(status === InvoiceStatus.DELIVERED || status === InvoiceStatus.COMPLETED) && (
               <Button
-                onClick={() =>
-                  status === InvoiceStatus.DELIVERING
-                    ? navigate(`/account/orders/${realId}/tracking`)
-                    : navigate(`/account/orders/${realId}/return`)
-                }
                 className={cn(
                   'flex-1 lg:flex-none h-10 rounded-xl px-6 font-bold text-[10px] uppercase tracking-[0.15em] transition-all shadow-sm flex items-center justify-center gap-2',
-                  status === InvoiceStatus.DELIVERING
+                  status === InvoiceStatus.DELIVERED
                     ? 'bg-primary-500 text-white hover:bg-primary-600'
                     : 'bg-white border-mint-100 text-mint-1200 hover:bg-danger-50 hover:text-danger-600 hover:border-danger-100 shadow-sm'
                 )}
+                onClick={() => navigate(`/account/orders/${realId}/return`)}
               >
-                {status === InvoiceStatus.DELIVERING ? 'Track' : 'Return'}
+                Return
               </Button>
             )}
           </div>

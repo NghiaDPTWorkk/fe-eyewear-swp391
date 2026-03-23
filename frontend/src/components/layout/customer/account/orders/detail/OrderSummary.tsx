@@ -1,5 +1,6 @@
 import { Card } from '@/shared/components/ui/card'
 import { PriceTag } from '@/shared/components/ui/price-tag'
+import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 
 interface OrderSummaryProps {
   feeShip: number
@@ -27,7 +28,9 @@ export function OrderSummary({ totalPrice, totalDiscount, feeShip }: OrderSummar
         {totalDiscount > 0 && (
           <div className="flex justify-between text-xs font-semibold">
             <span className="text-gray-400 uppercase tracking-wide">Discount</span>
-            <span className="text-danger-500">-${totalDiscount}</span>
+            <span className="text-danger-500">
+              -<VNDPrice amount={totalDiscount} />
+            </span>
           </div>
         )}
         <div className="pt-5 border-t border-mint-50/50 flex justify-between items-end">

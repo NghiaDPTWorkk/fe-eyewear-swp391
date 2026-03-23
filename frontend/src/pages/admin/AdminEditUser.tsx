@@ -18,9 +18,15 @@ import { Gender } from '@/shared/utils/enums/gender.enum'
 const VN_PHONE_REGEX = /^(0|\+84)(3|5|7|8|9)\d{8}$/
 
 const validationSchema = Yup.object({
-  name: Yup.string().required('Name is required').min(2, 'Name too short'),
+  name: Yup.string()
+    .required('Name is required')
+    .min(2, 'Name too short')
+    .matches(/^[a-zA-ZÀ-Ỹà-ỹ\s]+$/, 'Name cannot contain special characters'),
   email: Yup.string().email('Invalid email').required('Email is required'),
-  phone: Yup.string().matches(VN_PHONE_REGEX, 'Invalid Vietnam phone number'),
+  phone: Yup.string()
+    .required('Phone is required')
+    .matches(/^[0-9]+$/, 'Phone must contain numbers only')
+    .matches(/^(0|84)\d{8,9}$/, 'Invalid Vietnam phone number format (9-10 digits)'),
   gender: Yup.string()
     .oneOf([Gender.MALE, Gender.FEMALE, Gender.NON_BINARY])
     .required('Gender is required'),

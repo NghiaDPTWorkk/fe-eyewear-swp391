@@ -22,11 +22,13 @@ export default function ProfileForm() {
   const validationSchema = Yup.object().shape({
     name: Yup.string()
       .required('Full Name is required')
-      .min(2, 'Name must be at least 2 characters'),
+      .min(2, 'Name must be at least 2 characters')
+      .matches(/^[a-zA-ZÀ-Ỹà-ỹ\s]+$/, 'Name cannot contain special characters'),
     email: Yup.string().required('Email is required').email('Invalid email format'),
     phone: Yup.string()
       .required('Phone number is required')
-      .matches(/^(0|84)\d{9,10}$/, 'Invalid phone number (should be 10-11 digits)')
+      .matches(/^[0-9]+$/, 'Phone must contain numbers only')
+      .matches(/^(0|84)\d{8,9}$/, 'Invalid phone number format (9-10 digits)')
   })
 
   // Formik configuration

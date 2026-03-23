@@ -13,10 +13,10 @@ export function useCreateVoucher() {
       httpClient.post<VoucherMutateResponse>(ENDPOINTS.MANAGER.VOUCHER_CREATE, payload),
     onSuccess: (res) => {
       if (res.success) {
-        toast.success(res.message || 'Voucher created successfully')
+        toast.success('Voucher created successfully')
         qc.invalidateQueries({ queryKey: [QK] })
       } else {
-        toast.error(res.message || 'Failed to create voucher')
+        toast.error('Failed to create voucher')
       }
     },
     onError: (err) => {

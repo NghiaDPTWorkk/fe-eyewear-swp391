@@ -13,9 +13,10 @@ import { useRevenueStats, useReturnedOrders } from '@/features/manager/hooks'
 import { formatPrice, formatDate } from '@/shared/utils'
 
 import { StatCard } from './components/dashboard/StatCard'
-import { PromoBanner } from './components/dashboard/PromoBanner'
 import { CustomerGrowth } from './components/dashboard/CustomerGrowth'
 import { PopularProducts } from './components/dashboard/PopularProducts'
+
+import { useReturnMonthlyReport } from '@/features/manager/hooks/useReturnTickets'
 
 export default function ManagerDashboardPage() {
   const [period, setPeriod] = useState<string>('month')
@@ -23,6 +24,7 @@ export default function ManagerDashboardPage() {
   const { data: revenueData, isLoading: isRevenueLoading } = useRevenueStats({ period })
 
   const { data: returnedData, isLoading: isReturnedLoading } = useReturnedOrders({ search: '' })
+  const { data: monthlyReportData, isLoading: isMonthlyReportLoading } = useReturnMonthlyReport()
 
   const stats = useMemo(() => {
     if (!revenueData?.rows) return { totalRevenue: 0, totalInvoices: 0, avgValue: 0 }
@@ -253,12 +255,9 @@ export default function ManagerDashboardPage() {
       </div>
 
       {/* Middle Section: Original Dashboard Components */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <div className="lg:col-span-2">
-          <PromoBanner />
-        </div>
-        <div className="lg:col-span-3">
-          <CustomerGrowth />
+      <div className="grid grid-cols-1 gap-6">
+        <div className="w-full">
+          <CustomerGrowth reportData={monthlyReportData} isLoading={isMonthlyReportLoading} />
         </div>
       </div>
 

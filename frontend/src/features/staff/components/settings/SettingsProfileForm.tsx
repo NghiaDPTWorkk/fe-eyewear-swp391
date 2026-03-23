@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { toast } from 'react-hot-toast'
 import { IoShieldCheckmarkOutline, IoInformationCircleOutline } from 'react-icons/io5'
 import { useFormik } from 'formik'
@@ -33,11 +32,12 @@ export default function ProfileForm() {
   // Formik configuration
   const formik = useFormik({
     initialValues: {
-      name: '',
-      email: '',
-      phone: ''
+      name: profile?.name || '',
+      email: profile?.email || '',
+      phone: profile?.phone || ''
     },
     validationSchema,
+    enableReinitialize: true,
     onSubmit: async (values) => {
       if (!isStaffRole) return
 
@@ -65,17 +65,6 @@ export default function ProfileForm() {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ')
   }
-
-  // Initialize form data when profile is loaded or changed
-  useEffect(() => {
-    if (profile) {
-      formik.setValues({
-        name: profile.name || '',
-        email: profile.email || '',
-        phone: profile.phone || ''
-      })
-    }
-  }, [profile]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (isLoading) {
     return (
@@ -125,7 +114,6 @@ export default function ProfileForm() {
             </label>
             <input
               type="text"
-              name="name"
               {...formik.getFieldProps('name')}
               readOnly={!isStaffRole}
               className={cn(
@@ -165,13 +153,12 @@ export default function ProfileForm() {
             </label>
             <input
               type="email"
-              name="email"
               {...formik.getFieldProps('email')}
               readOnly={!isStaffRole}
               className={cn(
                 'w-full px-4 py-3 border rounded-xl text-sm font-semibold transition-all focus:outline-none',
                 isStaffRole
-                  ? 'bg-white border-slate-200 text-slate-700 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5 cursor-pointer'
+                  ? 'bg-white border-slate-200 text-slate-700 focus:border-mint-500 focus:ring-4 focus:ring-mint-500/5 cursor-pointer'
                   : 'bg-slate-50 border-slate-100 text-slate-400 cursor-not-allowed',
                 formik.touched.email &&
                   formik.errors.email &&
@@ -192,13 +179,12 @@ export default function ProfileForm() {
             </label>
             <input
               type="text"
-              name="phone"
               {...formik.getFieldProps('phone')}
               readOnly={!isStaffRole}
               className={cn(
                 'w-full px-4 py-3 border rounded-xl text-sm font-semibold transition-all focus:outline-none',
                 isStaffRole
-                  ? 'bg-white border-slate-200 text-slate-700 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5 cursor-pointer'
+                  ? 'bg-white border-slate-200 text-slate-700 focus:border-mint-500 focus:ring-4 focus:ring-mint-500/5 cursor-pointer'
                   : 'bg-slate-50 border-slate-100 text-slate-400 cursor-not-allowed',
                 formik.touched.phone &&
                   formik.errors.phone &&
@@ -218,7 +204,7 @@ export default function ProfileForm() {
             <Button
               type="submit"
               isLoading={formik.isSubmitting}
-              disabled={!formik.isValid || !formik.dirty}
+              isDisabled={!formik.isValid || !formik.dirty}
               className="h-11 rounded-xl font-semibold px-6 bg-mint-500 hover:bg-mint-600 shadow-md shadow-mint-100 transition-all active:scale-95 border-none disabled:bg-slate-100 disabled:text-slate-400 disabled:shadow-none"
               leftIcon={<IoShieldCheckmarkOutline size={18} />}
             >

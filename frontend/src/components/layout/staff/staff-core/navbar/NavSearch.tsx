@@ -5,9 +5,11 @@ import { HiMenuAlt2 } from 'react-icons/hi'
 import { cn } from '@/lib/utils'
 import { useLayoutStore } from '@/store/layout.store'
 import { useSearchOrders } from '@/features/staff/hooks/orders/useOrders'
+import { useAdminProducts } from '@/features/manager/hooks/useAdminProducts'
 import { PATHS } from '@/routes/paths'
 import ResultSearchTable from '@/components/layout/staff/staff-core/result-search-line/ResultSearchTable'
 import { Button } from '@/shared/components/ui-core'
+import { BsBoxSeam, BsReceipt } from 'react-icons/bs'
 
 // MAX_HISTORY constants
 const MAX_HISTORY = 20
@@ -71,8 +73,20 @@ export function NavSearch({
   // Debounce input 300ms trước khi truyền vào hook
   const debouncedQuery = useDebounce(inputValue, 300)
 
-  // Gọi API search
-  const { data, isFetching } = useSearchOrders(debouncedQuery)
+  // Gọi API search orders
+  const { data: orderData, isFetching: isFetchingOrders } = useSearchOrders(debouncedQuery)
+
+  // Gọi API search products (chỉ khi là manager)
+  const isManager = styleVariant === 'manager'
+  const { data: productData, isFetching: isFetchingProducts } = useAdminProducts(
+    1,
+    10,
+    undefined,
+    undefined,
+    isManager && debouncedQuery.trim().length >= 2 ? debouncedQuery : undefined
+  )
+
+  const isFetching = isFetchingOrders || isFetchingProducts
 
   // Explicitly clear value on mount to defeat browser autofill
   useEffect(() => {
@@ -81,11 +95,21 @@ export function NavSearch({
     }
   }, [])
 
-  // Lấy danh sách orders từ response — map sang { id, orderCode }
-  const searchResults = (data?.data?.orders?.data || []).map((o: any) => ({
-    id: o._id,
-    searchCode: o.orderCode
-  }))
+  // Combine results
+  const searchResults = [
+    ...(orderData?.data?.orders?.data || []).map((o: any) => ({
+      id: o._id,
+      searchCode: o.orderCode,
+      type: 'order' as const,
+      icon: <BsReceipt className="text-blue-500" />
+    })),
+    ...(productData?.data?.adminProducts || []).map((p: any) => ({
+      id: p._id,
+      searchCode: p.name,
+      type: 'product' as const,
+      icon: <BsBoxSeam className="text-orange-500" />
+    }))
+  ]
 
   // Đóng dropdown và reset input khi click bên ngoài
   useEffect(() => {
@@ -107,7 +131,7 @@ export function NavSearch({
 
   // Xử lý khi chọn 1 kết quả search
   const handleSelect = useCallback(
-    (item: { id: string; searchCode: string }) => {
+    (item: { id: string; searchCode: string; type?: 'order' | 'product' }) => {
       saveToHistory(historyKey, item.searchCode)
       setIsOpen(false)
       setInputValue('')
@@ -116,7 +140,11 @@ export function NavSearch({
       if (path.startsWith('/operation-staff')) {
         navigate(PATHS.OPERATIONSTAFF.ORDER_DETAIL(item.id))
       } else if (path.startsWith('/manager')) {
-        navigate(`/manager/orders?search=${item.searchCode}`)
+        if (item.type === 'product') {
+          navigate(`/manager/products/${item.id}`)
+        } else {
+          navigate(`/manager/orders?search=${item.searchCode}`)
+        }
       } else if (path.startsWith('/sale-staff')) {
         navigate(`/sale-staff/orders?search=${item.searchCode}`)
       }
@@ -179,7 +207,9 @@ export function NavSearch({
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onFocus={handleFocus}
-            placeholder={placeholder || 'Search orders...'}
+            placeholder={
+              placeholder || (isManager ? 'Search products, orders...' : 'Search orders...')
+            }
             autoComplete="one-time-code"
             data-lpignore="true"
             className={cn(

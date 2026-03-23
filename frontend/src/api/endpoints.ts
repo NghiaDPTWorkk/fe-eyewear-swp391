@@ -343,7 +343,8 @@ export const ENDPOINTS = {
       const p = new URLSearchParams({ page: String(page), limit: String(limit) })
       if (status) p.append('status', status)
       return `/return-tickets?${p.toString()}`
-    }
+    },
+    MONTHLY_REPORT: '/admin/return-tickets/monthly-report'
   },
   UPLOAD: {
     SINGLE: '/upload/single',

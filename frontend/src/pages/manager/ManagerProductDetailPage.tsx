@@ -116,12 +116,12 @@ export default function ManagerProductDetailPage() {
     <>
       <Container className="max-w-none space-y-8">
         <PageHeader
-          title={product.nameBase}
-          subtitle={`SKU: ${product.skuBase} · ${product.brand} · ${product.type}`}
+          title={product.nameBase || 'Unnamed Product'}
+          subtitle={`SKU: ${product.skuBase} · ${product.brand || 'No Brand'} · ${product.type}`}
           breadcrumbs={[
             { label: 'Dashboard', path: '/manager/dashboard' },
             { label: 'Products', path: '/manager/products' },
-            { label: product.nameBase }
+            { label: product.nameBase || 'Unnamed Product' }
           ]}
         />
 
@@ -243,7 +243,7 @@ export default function ManagerProductDetailPage() {
                     {product.type}
                   </span>
                   <span className="inline-flex px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-50 text-purple-600 ring-1 ring-purple-100">
-                    {product.brand}
+                    {product.brand || 'No Brand'}
                   </span>
                 </div>
               </div>
@@ -325,7 +325,7 @@ export default function ManagerProductDetailPage() {
                     )}
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                       <SpecItem label="Origin" value={spec.origin || '—'} />
-                      <SpecItem label="Brand" value={product.brand} />
+                      <SpecItem label="Brand" value={product.brand || 'No Brand'} />
                       <SpecItem label="Type" value={product.type} />
                     </div>
                   </div>
@@ -382,7 +382,7 @@ export default function ManagerProductDetailPage() {
         onClose={() => setIsConfirmOpen(false)}
         onConfirm={handleDeleteConfirm}
         title="Delete Product"
-        message={`Are you sure you want to delete "${product.nameBase}"? This action cannot be undone.`}
+        message={`Are you sure you want to delete "${product.nameBase || 'this product'}"? This action cannot be undone.`}
         confirmText="Delete"
         cancelText="Cancel"
         type="danger"

@@ -7,6 +7,7 @@ import {
 } from 'react-icons/io5'
 import { cn } from '@/lib/utils'
 import { OrderType } from '@/shared/utils/enums/order.enum'
+import { toTitleCase } from '@/shared/utils'
 
 interface StatusTab {
   label: string
@@ -52,7 +53,7 @@ export const StatusFilterBar: React.FC<StatusFilterBarProps> = ({
                 key={tab.value}
                 onClick={() => onStatusChange(tab.value)}
                 className={cn(
-                  'px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap outline-none',
+                  'px-4 py-2 rounded-xl text-xs font-bold tracking-wider transition-all whitespace-nowrap outline-none',
                   isActive
                     ? 'bg-white text-mint-600 shadow-sm border border-neutral-100'
                     : 'text-neutral-500 hover:text-neutral-700'
@@ -99,9 +100,7 @@ export const StatusFilterBar: React.FC<StatusFilterBarProps> = ({
                   className={isFilterOpen ? 'text-mint-600' : 'text-neutral-400'}
                   size={16}
                 />
-                <span className="capitalize">
-                  {orderTypeFilter.toLowerCase().replace(/_/g, ' ')}
-                </span>
+                <span className="capitalize">{toTitleCase(orderTypeFilter)}</span>
               </div>
               <IoChevronDownOutline
                 className={cn('transition-transform duration-200', isFilterOpen && 'rotate-180')}
@@ -126,7 +125,7 @@ export const StatusFilterBar: React.FC<StatusFilterBarProps> = ({
                           )}
                           onClick={() => onOrderTypeChange(val)}
                         >
-                          {val === 'All' ? 'All Types' : val.replace(/_/g, ' ')}
+                          {val === 'All' ? 'All Types' : toTitleCase(val)}
                         </button>
                       )
                     )}

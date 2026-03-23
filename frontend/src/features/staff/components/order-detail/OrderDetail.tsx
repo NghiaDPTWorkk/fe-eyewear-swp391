@@ -17,6 +17,7 @@ import {
 } from 'react-icons/io5'
 import { Card } from '@/shared/components/ui-core'
 import { cn } from '@/lib/utils'
+import { formatPrice, toTitleCase } from '@/shared/utils'
 
 interface OrderDetailProps {
   orderId: string
@@ -68,15 +69,15 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
       : 'N/A',
     status: realOrder.status?.toUpperCase() || 'PENDING',
     priceVal: realOrder.price || 0,
-    subtotal: `${(realOrder.price || 0).toLocaleString()} ₫`,
-    shipping: `${(realOrder.invoice?.feeShip || 0).toLocaleString()} ₫`,
-    tax: '0 ₫',
-    discount: `${(realOrder.invoice?.totalDiscount || 0).toLocaleString()} ₫`,
-    total: `${(
+    subtotal: formatPrice(realOrder.price || 0),
+    shipping: formatPrice(realOrder.invoice?.feeShip || 0),
+    tax: formatPrice(0),
+    discount: formatPrice(realOrder.invoice?.totalDiscount || 0),
+    total: formatPrice(
       (realOrder.price || 0) +
-      (realOrder.invoice?.feeShip || 0) -
-      (realOrder.invoice?.totalDiscount || 0)
-    ).toLocaleString()} ₫`,
+        (realOrder.invoice?.feeShip || 0) -
+        (realOrder.invoice?.totalDiscount || 0)
+    ),
 
     customer: {
       name: realOrder.customerName || realOrder.invoice?.fullName || 'Guest Customer',
@@ -102,7 +103,7 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
       name: p.product?.product_name || p.product?.sku || 'Eyewear Product',
       sku: p.product?.sku || 'N/A',
       brand: 'PREMIUM COLLECTION',
-      price: `${(p.product?.pricePerUnit || 0).toLocaleString()} ₫`,
+      price: formatPrice(p.product?.pricePerUnit || 0),
       quantity: p.quantity,
       lens: p.lens
     })),
@@ -147,7 +148,7 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
           {
             title: 'Current Stage',
             time: 'ACTIVE',
-            desc: `Order is currently in ${realOrder.status?.toLowerCase().replace(/_/g, ' ') || 'pending'} stage`,
+            desc: `Order is currently in ${toTitleCase(realOrder.status || 'pending')} stage`,
             icon: IoTimeOutline
           }
         ],
@@ -156,7 +157,7 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
         id: `TRX-${(realOrder.orderCode || '').slice(-6)}`,
         date: realOrder.createdAt ? new Date(realOrder.createdAt).toLocaleDateString() : 'N/A',
         method: isPreOrder ? 'DEPOSIT PAYMENT' : 'BANK TRANSFER',
-        amount: `${(realOrder.price || 0).toLocaleString()} ₫`,
+        amount: formatPrice(realOrder.price || 0),
         status: 'SUCCESS'
       }
     ]
@@ -195,13 +196,13 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
               </h1>
               <span
                 className={cn(
-                  'px-3 py-1 text-[10px] font-semibold uppercase tracking-widest rounded-lg border',
+                  'px-3 py-1 text-[10px] font-semibold tracking-widest rounded-lg border',
                   isPreOrder
                     ? 'bg-mint-50 text-mint-600 border-mint-100'
                     : getStatusColor(order.status)
                 )}
               >
-                {isPreOrder ? 'PRE-ORDER' : order.status}
+                {isPreOrder ? 'Pre-order' : toTitleCase(order.status)}
               </span>
               {isPreOrder && (
                 <span className="px-3 py-1 bg-rose-50 text-rose-600 border border-rose-100 text-[10px] font-bold uppercase tracking-widest rounded-lg">

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAdminProducts } from '@/features/manager/hooks'
-import { formatPrice } from '@/shared/utils'
+import { formatPrice, toTitleCase } from '@/shared/utils'
 import { IoCubeOutline } from 'react-icons/io5'
 
 export const PopularProducts: React.FC = () => {
@@ -14,36 +14,37 @@ export const PopularProducts: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="p-8 bg-white rounded-3xl border border-neutral-100 shadow-sm flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-4 border-mint-200 border-t-mint-600 rounded-full animate-spin" />
+      <div className="bg-white rounded-3xl p-6 shadow-sm ring-1 ring-slate-100 flex items-center justify-center min-h-[400px]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-4 border-mint-200 border-t-mint-600 rounded-full animate-spin" />
+          <p className="text-sm font-medium text-slate-400">Loading products...</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="p-8 bg-white rounded-3xl border border-neutral-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)] transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-      <div className="flex justify-between items-center mb-8">
-        <h3 className="text-base font-semibold text-gray-900 font-heading tracking-tight">
-          Product Popular
-        </h3>
+    <div className="bg-white rounded-3xl p-6 shadow-sm ring-1 ring-slate-100 h-full overflow-hidden">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h3 className="text-lg font-bold text-slate-900 tracking-tight">Popular Products</h3>
+          <p className="text-sm text-slate-500 font-medium mt-0.5">Top performing items</p>
+        </div>
+        <button
+          onClick={() => navigate('/manager/products')}
+          className="text-xs font-bold text-mint-600 hover:text-mint-700 bg-mint-50 px-4 py-2 rounded-xl transition-all"
+        >
+          View All
+        </button>
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full">
+        <table className="w-full text-left">
           <thead>
-            <tr className="text-left border-b border-gray-50/10">
-              <th className="pb-4 text-[10px] font-semibold text-gray-400 uppercase tracking-[0.1em]">
-                Product
-              </th>
-              <th className="pb-4 text-[10px] font-semibold text-gray-400 uppercase tracking-[0.1em]">
-                Price
-              </th>
-              <th className="pb-4 text-[10px] font-semibold text-gray-400 uppercase tracking-[0.1em] text-center">
-                Type
-              </th>
-              <th className="pb-4 text-[10px] font-semibold text-gray-400 uppercase tracking-[0.1em] text-right">
-                Status
-              </th>
+            <tr className="text-[11px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50">
+              <th className="pb-4 font-bold">Product</th>
+              <th className="pb-4 font-bold">Price</th>
+              <th className="pb-4 font-bold text-center">Type</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50/50">
@@ -56,27 +57,14 @@ export const PopularProducts: React.FC = () => {
                 <td className="py-4">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-gray-50 rounded-xl overflow-hidden flex items-center justify-center border border-neutral-100 group-hover:bg-white transition-colors">
-                      {product.defaultVariantImage ? (
-                        <img
-                          src={product.defaultVariantImage}
-                          alt={product.nameBase}
-                          className="w-full h-full object-contain p-2 transition-transform group-hover:scale-110"
-                          onError={(e) => {
-                            ;(e.target as HTMLImageElement).src = 'fallback-image-url'
-                          }}
-                        />
-                      ) : (
-                        <div className="w-8 h-8 flex items-center justify-center text-neutral-300">
-                          <IoCubeOutline size={24} />
-                        </div>
-                      )}
+                      <IoCubeOutline size={20} className="text-gray-400" />
                     </div>
-                    <div>
-                      <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-0.5">
-                        {product.skuBase}
-                      </p>
-                      <p className="text-sm font-semibold text-gray-900 line-clamp-1">
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold text-slate-800 truncate leading-snug">
                         {product.nameBase}
+                      </p>
+                      <p className="text-[11px] font-semibold text-slate-400 mt-0.5 uppercase tracking-tighter">
+                        SKU: {product.skuBase}
                       </p>
                     </div>
                   </div>
@@ -84,13 +72,8 @@ export const PopularProducts: React.FC = () => {
                 <td className="py-4 text-sm font-semibold text-slate-800">
                   {formatPrice(product.defaultVariantFinalPrice)}
                 </td>
-                <td className="py-4 text-xs font-bold text-gray-400 uppercase tracking-widest text-center">
-                  {product.type}
-                </td>
-                <td className="py-4 text-right">
-                  <span className="inline-flex items-center px-3 py-1 bg-mint-50 text-mint-600 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-mint-100/50">
-                    In Stock
-                  </span>
+                <td className="py-4 text-xs font-bold text-gray-400 tracking-widest text-center">
+                  {toTitleCase(product.type)}
                 </td>
               </tr>
             ))}

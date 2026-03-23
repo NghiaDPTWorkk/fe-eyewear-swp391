@@ -1,14 +1,17 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { toast } from 'react-hot-toast'
 import { IoShieldCheckmarkOutline, IoInformationCircleOutline } from 'react-icons/io5'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
 
 import { useProfile } from '@/features/staff/hooks/useProfile'
 import { profileService } from '@/features/staff/services/profile.service'
 import { Card, Button } from '@/shared/components/ui-core'
+import { cn } from '@/lib/utils'
 
 /**
  * ProfileForm Component
- * Displays profile information and allows SALE_STAFF to request an update
+ * Displays profile information and allows staff to request an update
  */
 export default function ProfileForm() {
   const { data: profileData, isLoading, refetch } = useProfile()
@@ -16,12 +19,42 @@ export default function ProfileForm() {
   const staffRoles = ['SALE_STAFF', 'OPERATION_STAFF', 'MANAGER', 'ADMIN', 'SYSTEM_ADMIN']
   const isStaffRole = !!profile?.role && staffRoles.includes(profile.role)
 
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: ''
+  // Validation Schema with Yup
+  const validationSchema = Yup.object().shape({
+    name: Yup.string()
+      .required('Full Name is required')
+      .min(2, 'Name must be at least 2 characters'),
+    email: Yup.string().required('Email is required').email('Invalid email format'),
+    phone: Yup.string()
+      .required('Phone number is required')
+      .matches(/^(0|84)\d{9,10}$/, 'Invalid phone number (should be 10-11 digits)')
   })
-  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Formik configuration
+  const formik = useFormik({
+    initialValues: {
+      name: '',
+      email: '',
+      phone: ''
+    },
+    validationSchema,
+    onSubmit: async (values) => {
+      if (!isStaffRole) return
+
+      try {
+        const response = await profileService.requestProfileUpdate(values)
+        if (response.success) {
+          toast.success(response.message || 'Profile update request submitted for approval')
+          refetch()
+        } else {
+          toast.error(response.message || 'Failed to submit request')
+        }
+      } catch (err: unknown) {
+        const error = err as { response?: { data?: { message?: string } }; message?: string }
+        toast.error(error.response?.data?.message || error.message || 'Something went wrong')
+      }
+    }
+  })
 
   // Helper to format role names (e.g., OPERATION_STAFF -> Operation Staff)
   const formatRole = (roleName?: string) => {
@@ -36,57 +69,13 @@ export default function ProfileForm() {
   // Initialize form data when profile is loaded or changed
   useEffect(() => {
     if (profile) {
-      setFormData({
+      formik.setValues({
         name: profile.name || '',
         email: profile.email || '',
         phone: profile.phone || ''
       })
     }
-  }, [profile])
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!isStaffRole) return
-
-    // Validation
-    if (!formData.name.trim()) {
-      toast.error('Name cannot be empty')
-      return
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(formData.email)) {
-      toast.error('Invalid email format')
-      return
-    }
-
-    const phoneRegex = /^(0|84)\d{9,10}$/
-    if (formData.phone && !phoneRegex.test(formData.phone)) {
-      toast.error('Invalid phone number (should be 10-11 digits)')
-      return
-    }
-
-    setIsSubmitting(true)
-    try {
-      const response = await profileService.requestProfileUpdate(formData)
-      if (response.success) {
-        toast.success(response.message || 'Profile update request submitted for approval')
-        refetch()
-      } else {
-        toast.error(response.message || 'Failed to submit request')
-      }
-    } catch (err: unknown) {
-      const error = err as { response?: { data?: { message?: string } }; message?: string }
-      toast.error(error.response?.data?.message || error.message || 'Something went wrong')
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
+  }, [profile]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (isLoading) {
     return (
@@ -124,11 +113,12 @@ export default function ProfileForm() {
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={formik.handleSubmit} className="space-y-6">
         {/* Anti-autofill dummy fields */}
         <input type="text" style={{ display: 'none' }} aria-hidden="true" />
         <input type="email" style={{ display: 'none' }} aria-hidden="true" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Full Name */}
           <div className="space-y-2">
             <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest pl-1">
               Full Name
@@ -136,16 +126,26 @@ export default function ProfileForm() {
             <input
               type="text"
               name="name"
-              value={formData.name}
-              onChange={handleInputChange}
+              {...formik.getFieldProps('name')}
               readOnly={!isStaffRole}
-              className={`w-full px-4 py-3 border rounded-xl text-sm font-semibold transition-all focus:outline-none ${
+              className={cn(
+                'w-full px-4 py-3 border rounded-xl text-sm font-semibold transition-all focus:outline-none',
                 isStaffRole
                   ? 'bg-white border-slate-200 text-slate-700 focus:border-mint-500 focus:ring-4 focus:ring-mint-500/5 cursor-pointer'
-                  : 'bg-slate-50 border-slate-100 text-slate-400 cursor-not-allowed'
-              }`}
+                  : 'bg-slate-50 border-slate-100 text-slate-400 cursor-not-allowed',
+                formik.touched.name &&
+                  formik.errors.name &&
+                  'border-rose-500 focus:border-rose-500 focus:ring-rose-500/5'
+              )}
             />
+            {formik.touched.name && formik.errors.name && (
+              <p className="text-[10px] text-rose-500 font-bold uppercase tracking-wide pl-1 animate-in fade-in slide-in-from-top-1 duration-200">
+                {formik.errors.name}
+              </p>
+            )}
           </div>
+
+          {/* Role (Read-only) */}
           <div className="space-y-2">
             <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest pl-1">
               Role
@@ -157,6 +157,8 @@ export default function ProfileForm() {
               className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-semibold text-slate-400 cursor-not-allowed focus:outline-none"
             />
           </div>
+
+          {/* Email */}
           <div className="space-y-2">
             <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest pl-1">
               Email
@@ -164,16 +166,26 @@ export default function ProfileForm() {
             <input
               type="email"
               name="email"
-              value={formData.email}
-              onChange={handleInputChange}
+              {...formik.getFieldProps('email')}
               readOnly={!isStaffRole}
-              className={`w-full px-4 py-3 border rounded-xl text-sm font-semibold transition-all focus:outline-none ${
+              className={cn(
+                'w-full px-4 py-3 border rounded-xl text-sm font-semibold transition-all focus:outline-none',
                 isStaffRole
                   ? 'bg-white border-slate-200 text-slate-700 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5 cursor-pointer'
-                  : 'bg-slate-50 border-slate-100 text-slate-400 cursor-not-allowed'
-              }`}
+                  : 'bg-slate-50 border-slate-100 text-slate-400 cursor-not-allowed',
+                formik.touched.email &&
+                  formik.errors.email &&
+                  'border-rose-500 focus:border-rose-500 focus:ring-rose-500/5'
+              )}
             />
+            {formik.touched.email && formik.errors.email && (
+              <p className="text-[10px] text-rose-500 font-bold uppercase tracking-wide pl-1 animate-in fade-in slide-in-from-top-1 duration-200">
+                {formik.errors.email}
+              </p>
+            )}
           </div>
+
+          {/* Phone */}
           <div className="space-y-2">
             <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest pl-1">
               Phone
@@ -181,15 +193,23 @@ export default function ProfileForm() {
             <input
               type="text"
               name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
+              {...formik.getFieldProps('phone')}
               readOnly={!isStaffRole}
-              className={`w-full px-4 py-3 border rounded-xl text-sm font-semibold transition-all focus:outline-none ${
+              className={cn(
+                'w-full px-4 py-3 border rounded-xl text-sm font-semibold transition-all focus:outline-none',
                 isStaffRole
                   ? 'bg-white border-slate-200 text-slate-700 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5 cursor-pointer'
-                  : 'bg-slate-50 border-slate-100 text-slate-400 cursor-not-allowed'
-              }`}
+                  : 'bg-slate-50 border-slate-100 text-slate-400 cursor-not-allowed',
+                formik.touched.phone &&
+                  formik.errors.phone &&
+                  'border-rose-500 focus:border-rose-500 focus:ring-rose-500/5'
+              )}
             />
+            {formik.touched.phone && formik.errors.phone && (
+              <p className="text-[10px] text-rose-500 font-bold uppercase tracking-wide pl-1 animate-in fade-in slide-in-from-top-1 duration-200">
+                {formik.errors.phone}
+              </p>
+            )}
           </div>
         </div>
 
@@ -197,8 +217,9 @@ export default function ProfileForm() {
           <div className="flex justify-end pt-4">
             <Button
               type="submit"
-              isLoading={isSubmitting}
-              className="h-11 rounded-xl font-semibold px-6 bg-mint-500 hover:bg-mint-600 shadow-md shadow-mint-100 transition-all active:scale-95 border-none"
+              isLoading={formik.isSubmitting}
+              disabled={!formik.isValid || !formik.dirty}
+              className="h-11 rounded-xl font-semibold px-6 bg-mint-500 hover:bg-mint-600 shadow-md shadow-mint-100 transition-all active:scale-95 border-none disabled:bg-slate-100 disabled:text-slate-400 disabled:shadow-none"
               leftIcon={<IoShieldCheckmarkOutline size={18} />}
             >
               Submit Update Request

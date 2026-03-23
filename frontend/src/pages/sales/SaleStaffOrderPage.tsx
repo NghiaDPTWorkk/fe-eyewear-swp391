@@ -260,10 +260,10 @@ export default function SaleStaffOrderPage() {
 
     if (statusFilter === 'APPROVED_OR_REJECTED') {
       if (s === InvoiceStatus.REJECTED || s === 'REJECTED') {
-        return { label: 'Rejected', color: 'bg-rose-50 text-rose-600 border-rose-100' }
+        return { label: 'REJECTED', color: 'bg-rose-50 text-rose-600 border-rose-100' }
       }
       if (s === InvoiceStatus.CANCELED || s === 'CANCELED' || s === InvoiceStatus.CANCEL) {
-        return { label: 'Canceled', color: 'bg-rose-50 text-rose-600 border-rose-100' }
+        return { label: 'CANCELED', color: 'bg-rose-50 text-rose-600 border-rose-100' }
       }
       if (
         [
@@ -275,7 +275,7 @@ export default function SaleStaffOrderPage() {
           InvoiceStatus.COMPLETED
         ].includes(s as InvoiceStatus)
       ) {
-        return { label: 'Accepted', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' }
+        return { label: 'ACCEPTED', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' }
       }
     }
 
@@ -286,25 +286,28 @@ export default function SaleStaffOrderPage() {
         invoice.approvedOrdersCount === invoice.totalOrdersCount
       ) {
         return {
-          label: 'Ready to Approve Final',
+          label: 'READY TO APPROVE',
           color: 'bg-mint-50 text-mint-600 border-mint-200'
         }
       }
       return hasMfg
-        ? { label: 'Wait Verify', color: 'bg-indigo-50 text-indigo-600 border-indigo-100' }
-        : { label: 'Pending', color: 'bg-slate-50 text-slate-500 border-slate-200' }
+        ? { label: 'PENDING', color: 'bg-indigo-50 text-indigo-600 border-indigo-100' }
+        : { label: 'WAITING ASSIGN', color: 'bg-slate-50 text-slate-500 border-slate-200' }
     }
 
     if (s === InvoiceStatus.APPROVED || s === 'APPROVED')
-      return { label: 'Approved', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' }
+      return { label: 'APPROVED', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' }
     if (s === InvoiceStatus.REJECTED || s === 'REJECTED')
-      return { label: 'Rejected', color: 'bg-rose-50 text-rose-600 border-rose-100' }
+      return { label: 'REJECTED', color: 'bg-rose-50 text-rose-600 border-rose-100' }
     if (s === InvoiceStatus.CANCELED || s === 'CANCELED' || s === InvoiceStatus.CANCEL)
-      return { label: 'Canceled', color: 'bg-rose-50 text-rose-600 border-rose-100' }
+      return { label: 'CANCELED', color: 'bg-rose-50 text-rose-600 border-rose-100' }
     if (s === InvoiceStatus.REFUNDED || s === 'REFUNDED')
-      return { label: 'Refunded', color: 'bg-purple-50 text-purple-600 border-purple-100' }
+      return { label: 'REFUNDED', color: 'bg-purple-50 text-purple-600 border-purple-100' }
 
-    return { label: String(s) || 'Unknown', color: 'bg-slate-50 text-slate-400 border-slate-100' }
+    return {
+      label: String(s).toUpperCase() || 'UNKNOWN',
+      color: 'bg-slate-50 text-slate-400 border-slate-100'
+    }
   }
 
   // Early return for Verify View

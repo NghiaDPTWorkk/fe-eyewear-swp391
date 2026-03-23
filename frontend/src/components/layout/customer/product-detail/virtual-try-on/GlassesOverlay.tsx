@@ -46,7 +46,7 @@ const NOSE_BRIDGE = 6
 
 // ─── GLB model ──────────────────────────────────────────────────────────────────
 
-const GLB_MODEL_PATH = '/models/model1.glb'
+const GLB_MODEL_PATH = '/models/going.glb'
 
 // ─── Tuning knobs ───────────────────────────────────────────────────────────────
 

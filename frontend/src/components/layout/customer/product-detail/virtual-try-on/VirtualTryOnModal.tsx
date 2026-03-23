@@ -62,7 +62,7 @@ export default function VirtualTryOnModal({
   if (!isOpen) return null
 
   return (
-    <>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-md p-4 transition-all duration-500">
       {step === 'CONSENT' && <TryOnConsentStep onAgree={handleAgree} onDisagree={handleClose} />}
       {step === 'LOADING' && (
         <TryOnLoadingStep
@@ -84,6 +84,6 @@ export default function VirtualTryOnModal({
           transformationMatricesRef={faceLandmarker.transformationMatricesRef}
         />
       )}
-    </>
+    </div>
   )
 }

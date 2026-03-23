@@ -76,7 +76,7 @@ export default function AdminRequestStaffDetail() {
           <IoArrowBackOutline size={20} />
         </button>
         <PageHeader
-          title="Request Details"
+          title="Request Update Profile Details"
           subtitle={`Reviewing profile update for #${requestInfo.id}`}
           breadcrumbs={[
             { label: 'Dashboard', path: PATHS.ADMIN.DASHBOARD },
@@ -100,7 +100,7 @@ export default function AdminRequestStaffDetail() {
             </div>
             <h3 className="text-xl font-bold text-gray-900">{requestInfo.userName}</h3>
             <p className="text-sm font-medium text-neutral-400 mb-6">{requestInfo.userEmail}</p>
-            
+
             <div className="pt-6 border-t border-neutral-50 flex flex-col gap-3">
               <div className="flex justify-between items-center text-xs">
                 <span className="font-bold text-neutral-400 uppercase tracking-widest">Role</span>

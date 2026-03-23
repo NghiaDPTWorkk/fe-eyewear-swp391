@@ -15,6 +15,7 @@ const AdminRequestUpdateProfilePage = lazy(
   () => import('@/pages/admin/AdminRequestUpdateProfilePage')
 )
 const AdminRequestStaffDetail = lazy(() => import('@/pages/admin/AdminRequestStaffDetail'))
+const AdminSystemConfigPage = lazy(() => import('@/pages/admin/AdminSystemConfigPage'))
 
 export const adminRoutes = [
   {
@@ -100,6 +101,14 @@ export const adminRoutes = [
         element: (
           <LazyPage>
             <AdminRequestStaffDetail />
+          </LazyPage>
+        )
+      },
+      {
+        path: 'config',
+        element: (
+          <LazyPage>
+            <AdminSystemConfigPage />
           </LazyPage>
         )
       }

@@ -1,22 +1,20 @@
 /**
- * GlassesOverlay — Professional-grade 3D virtual try-on overlay.
+ * glassesoverlay - lớp phủ thử kính 3d chuyên nghiệp.
  *
- * ── Architecture ──────────────────────────────────────────────────────
- * Uses a HYBRID approach for maximum reliability:
+ * kiến trúc:
+ * sử dụng phương pháp lai để đạt độ tin cậy cao nhất:
  *
- *  • Position:  Landmark-based (weighted blend of eye corners + nose bridge)
- *  • Rotation:  Extracted from MediaPipe's Facial Transformation Matrix (4×4)
- *               with coord-system conversion.  Falls back to landmark-derived
- *               rotation if the matrix is unavailable.
- *  • Scale:     IPD-based auto-scale from live inter-pupillary distance.
- *  • Smoothing: One Euro Filter on position (3ch), rotation (4ch quaternion),
- *               and scale (1ch) — zero jitter at rest, zero latency in motion.
+ *  - vị trí: dựa trên các điểm mốc (kết hợp góc mắt và sống mũi)
+ *  - xoay: lấy từ ma trận biến đổi khuôn mặt của mediapipe (4x4)
+ *          có chuyển đổi hệ tọa độ. dùng xoay từ điểm mốc nếu không có ma trận.
+ *  - tỉ lệ: tự động điều chỉnh theo khoảng cách đồng tử thực tế.
+ *  - làm mượt: bộ lọc one euro cho vị trí, xoay và tỉ lệ.
  *
- * ── Pro features ──────────────────────────────────────────────────────
- *  1. Head Occluder mesh for depth-based temple occlusion
- *  2. PBR materials + HDR environment reflections on lenses
- *  3. Contact shadows on nose bridge
- *  4. Proper WebGL cleanup on unmount
+ * các tính năng nâng cao:
+ *  1. vật cản đầu (occluder) để che phần càng kính phía sau head
+ *  2. chất liệu pbr + phản chiếu môi trường hdr trên tròng kính
+ *  3. đổ bóng tiếp xúc trên sống mũi
+ *  4. dọn dẹp webgl khi hủy component
  */
 
 import { useRef, useMemo, useEffect } from 'react'
@@ -29,8 +27,7 @@ import { normalizeGlassesModel, TARGET_GLASSES_WIDTH } from './glassesModelNorma
 import { OneEuroFilter } from './OneEuroFilter'
 import { createHeadOccluder } from './headOccluderGeometry'
 
-// ─── Props ──────────────────────────────────────────────────────────────────────
-
+// props đầu vào
 interface GlassesOverlayProps {
   videoRef: React.RefObject<HTMLVideoElement | null>
   landmarksRef: React.RefObject<NormalizedLandmark[][]>
@@ -38,45 +35,40 @@ interface GlassesOverlayProps {
   glassesImageUrl: string
 }
 
-// ─── Landmark indices ───────────────────────────────────────────────────────────
-
+// chỉ số các điểm mốc trên khuôn mặt
 const LEFT_EYE_OUTER = 33
 const RIGHT_EYE_OUTER = 263
 const NOSE_BRIDGE = 6
 
-// ─── GLB model ──────────────────────────────────────────────────────────────────
-
+//  model
 const GLB_MODEL_PATH = '/models/going.glb'
 
-// ─── Tuning knobs ───────────────────────────────────────────────────────────────
-
-/** How much wider the glasses should be relative to the eye-to-eye distance */
+// các thông số điều chỉnh
+/** tỉ lệ chiều rộng kính so với khoảng cách hai mắt */
 const FACE_TO_GLASSES_RATIO = 1.7
 
-/** Weighted anchor for position (must sum to 1.0) */
+/** trọng số các điểm neo cho vị trí (tổng phải bằng 1.0) */
 const ANCHOR_W_LEFT = 0.45
 const ANCHOR_W_RIGHT = 0.45
 const ANCHOR_W_NOSE = 0.1
 
-/** Fine-tune position offsets */
+/** điều chỉnh độ lệch vị trí */
 const MODEL_OFFSET_X = 0.0
 const MODEL_OFFSET_Y = 0
 const MODEL_OFFSET_Z = -0.2
 
-/** Pitch offset (radians) — tilts the temples UP toward the ears.
- *  Positive = temples go UP, Negative = temples go DOWN.
- *  Try values between -0.3 and 0.3 */
+/* độ lệch góc nghiêng (radian) - nâng hoặc hạ càng kính.
+ dương = càng kính lên, âm = càng kính xuống.
+ thử các giá trị từ -0.3 đến 0.3 */
 const MODEL_PITCH_OFFSET = -0.07
 
-/** Render FOV — must match the Canvas camera fov */
+/* trường nhìn (fov) - phải khớp với camera của canvas */
 const CAMERA_FOV = 50
 
-// ─── One Euro Filter config ─────────────────────────────────────────────────────
-
+// cấu hình bộ lọc one euro
 const OEF_CONFIG = { minCutoff: 1.7, beta: 0.01, dCutoff: 1.0 }
 
-// ─── Root component ─────────────────────────────────────────────────────────────
-
+// component gốc
 export default function GlassesOverlay({
   videoRef,
   landmarksRef,
@@ -96,15 +88,15 @@ export default function GlassesOverlay({
         camera={{ position: [0, 0, 5], fov: CAMERA_FOV, near: 0.01, far: 100 }}
         style={{ background: 'transparent' }}
       >
-        {/* PBR lighting */}
+        {/* ánh sáng pbr */}
         <ambientLight intensity={0.6} />
         <directionalLight position={[3, 4, 5]} intensity={1.4} />
         <directionalLight position={[-2, -1, 3]} intensity={0.4} />
 
-        {/* HDR environment for lens reflections */}
+        {/* môi trường hdr để phản chiếu trên tròng kính */}
         <Environment preset="studio" />
 
-        {/* Soft contact shadow on nose bridge */}
+        {/* đổ bóng tiếp xúc nhẹ trên sống mũi */}
         <ContactShadows position={[0, -0.35, 0]} opacity={0.2} scale={2} blur={2.5} far={1} />
 
         <GlassesScene
@@ -117,11 +109,10 @@ export default function GlassesOverlay({
   )
 }
 
-// Pre-load the model
+// tải trước model
 useGLTF.preload(GLB_MODEL_PATH)
 
-// ─── Inner scene ────────────────────────────────────────────────────────────────
-
+// scene bên trong
 function GlassesScene({
   videoRef,
   landmarksRef,
@@ -135,7 +126,7 @@ function GlassesScene({
   const { scene } = useGLTF(GLB_MODEL_PATH)
   const { gl } = useThree()
 
-  // ── One Euro Filters (per-component) ──────────────────────────────────────
+  // bộ lọc one euro cho từng thành phần
   const filters = useRef({
     px: new OneEuroFilter(OEF_CONFIG),
     py: new OneEuroFilter(OEF_CONFIG),
@@ -150,7 +141,7 @@ function GlassesScene({
   })
   const isInitialized = useRef(false)
 
-  // ── Prepare the normalised + PBR clone ────────────────────────────────────
+  // chuẩn bị bản sao model đã được chuẩn hóa và áp dụng pbr
   const clonedScene = useMemo(() => {
     const wrapper = new THREE.Group()
     wrapper.name = 'GlassesNormalizerWrapper'
@@ -159,7 +150,7 @@ function GlassesScene({
 
     normalizeGlassesModel(clone, { envMap: null })
 
-    // Set render order so glasses render AFTER the occluder
+    // đặt thứ tự hiển thị để kính vẽ sau mặt nạ che đầu
     wrapper.traverse((child: THREE.Object3D) => {
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh
@@ -175,13 +166,13 @@ function GlassesScene({
     return wrapper
   }, [scene])
 
-  // ── Head occluder ─────────────────────────────────────────────────────────
+  // mặt nạ che đầu
   const occluderMesh = useMemo(() => createHeadOccluder(), [])
 
-  // ── Patch environment map once available ──────────────────────────────────
+  // cập nhật bản đồ môi trường khi có sẵn
   const envPatched = useRef(false)
 
-  // ── Cleanup on unmount ────────────────────────────────────────────────────
+  // dọn dẹp khi đóng component
   useEffect(() => {
     return () => {
       clonedScene.traverse((child: THREE.Object3D) => {
@@ -197,7 +188,7 @@ function GlassesScene({
     }
   }, [clonedScene, occluderMesh])
 
-  // ── Helper: normalised landmark → world coords ────────────────────────────
+  // chuyển đổi điểm mốc chuẩn hóa sang tọa độ thế giới 3d
   const toWorld = (
     lm: NormalizedLandmark,
     visibleX0: number,
@@ -216,7 +207,7 @@ function GlassesScene({
     }
   }
 
-  // ── Animation loop ────────────────────────────────────────────────────────
+  // vòng lặp hoạt ảnh
   useFrame(({ viewport }) => {
     const group = groupRef.current
     const video = videoRef.current
@@ -225,7 +216,7 @@ function GlassesScene({
 
     if (!group) return
 
-    // Lazily patch environment map
+    // áp bản đồ môi trường muộn
     if (!envPatched.current && gl) {
       const envMap = (gl as any).__r3f?.scene?.environment as THREE.Texture | undefined
       if (envMap) {
@@ -246,7 +237,7 @@ function GlassesScene({
       }
     }
 
-    // ── No face → hide ──────────────────────────────────────────────────────
+    // nếu không thấy mặt -> ẩn kính
     if (!faces || faces.length === 0 || !video) {
       group.visible = false
       return
@@ -264,7 +255,7 @@ function GlassesScene({
 
     group.visible = true
 
-    // ── Video ↔ viewport geometry ───────────────────────────────────────────
+    // hình học video và viewport
     const vw = video.videoWidth
     const vh = video.videoHeight
     const cw = video.clientWidth
@@ -288,7 +279,7 @@ function GlassesScene({
     const vpW = viewport.width
     const vpH = viewport.height
 
-    // ── Target values to be filtered ────────────────────────────────────────
+    // giá trị mục tiêu để lọc
     let targetX = 0,
       targetY = 0,
       targetZ = 0
@@ -297,7 +288,7 @@ function GlassesScene({
       targetSZ = 1
     const targetQuat = new THREE.Quaternion()
 
-    // ── 1. Scale from Landmarks (Inter-pupillary distance) ──────────────────
+    // 1. tỉ lệ từ điểm mốc (khoảng cách giữa hai mắt)
     const le = toWorld(leftEye, visibleX0, visibleY0, visibleW, visibleH, vpW, vpH)
     const re = toWorld(rightEye, visibleX0, visibleY0, visibleW, visibleH, vpW, vpH)
     const nose = toWorld(noseBridge, visibleX0, visibleY0, visibleW, visibleH, vpW, vpH)
@@ -306,11 +297,11 @@ function GlassesScene({
     const s = (eyeDist / TARGET_GLASSES_WIDTH) * FACE_TO_GLASSES_RATIO
     targetSX = targetSY = targetSZ = s
 
-    // ── 2. Rotation (Matrix or Fallback) ────────────────────────────────────
+    // 2. xoay (ma trận hoặc dự phòng)
     if (matrices && matrices.length > 0 && matrices[0] && matrices[0].length >= 16) {
       const raw = matrices[0]
       const mpMatrix = new THREE.Matrix4()
-      // Use fromArray (column-major) instead of .set (row-major) to avoid transposition
+      // dùng fromarray (column-major) để tránh bị chuyển vị
       mpMatrix.fromArray(raw)
 
       const _pos = new THREE.Vector3()
@@ -318,21 +309,18 @@ function GlassesScene({
       const _scale = new THREE.Vector3()
       mpMatrix.decompose(_pos, _quat, _scale)
 
-      // MediaPipe's Facial Transformation Matrix is already canonical (Y-up, Z-towards),
-      // so we can use the decomposed quaternion directly without negations now
-      // that we've fixed the matrix loading (use fromArray instead of .set).
+      // ma trận biến đổi của mediapipe đã chuẩn (y-up, z-towards),
+      // nên có thể dùng trực tiếp mà không cần phủ định các trục.
       targetQuat.copy(_quat).normalize()
     } else {
-      // Fallback Rotation (Improved with Pitch)
+      // xoay dự phòng (cải tiến thêm trục nghiêng)
       const dx = re.x - le.x
       const dy = re.y - le.y
       const dz = re.z - le.z
       const rotZ = Math.atan2(dy, dx)
       const rotY = Math.atan2(-dz, Math.sqrt(dx * dx + dy * dy)) * 0.7
 
-      // Basic pitch approximation:
-      // Head UP => nose.z increases, eyes.z decreases => eye.z - nose.z is negative.
-      // We want a positive X rotation for tilting UP in Three.js.
+      // xấp xỉ góc nghiêng: so sánh khoảng cách dọc giữa mũi và mắt
       const eyeCenterY = (le.y + re.y) / 2
       const eyeCenterZ = (le.z + re.z) / 2
       const rotX = -Math.atan2(eyeCenterZ - nose.z, eyeCenterY - nose.y) * 0.6
@@ -340,14 +328,13 @@ function GlassesScene({
       targetQuat.setFromEuler(new THREE.Euler(rotX, rotY, rotZ, 'YZX'))
     }
 
-    // ── 3. Apply pitch offset (User tunable) ────────────────────────────────
+    // 3. áp dụng độ lệch góc nghiêng (người dùng tùy chỉnh)
     const pitchQuat = new THREE.Quaternion()
     pitchQuat.setFromAxisAngle(new THREE.Vector3(1, 0, 0), MODEL_PITCH_OFFSET)
     targetQuat.multiply(pitchQuat).normalize()
 
-    // ── 4. Position with LOCAL Offset Application ───────────────────────────
-    // This is the CRITICAL fix: applying MODEL_OFFSET in local space
-    // ensures it follows the face's normal as the head tilts.
+    // 4. vị trí với ứng dụng độ lệch cục bộ
+    // áp dụng độ lệch trong không gian cục bộ giúp kính di chuyển theo hướng mặt khi cúi/ngước.
     const anchorX = le.x * ANCHOR_W_LEFT + re.x * ANCHOR_W_RIGHT + nose.x * ANCHOR_W_NOSE
     const anchorY = le.y * ANCHOR_W_LEFT + re.y * ANCHOR_W_RIGHT + nose.y * ANCHOR_W_NOSE
     const anchorZ = le.z * ANCHOR_W_LEFT + re.z * ANCHOR_W_RIGHT + nose.z * ANCHOR_W_NOSE
@@ -359,7 +346,7 @@ function GlassesScene({
     targetY = anchorY + localOffset.y
     targetZ = anchorZ + localOffset.z
 
-    // ── Apply One Euro Filter ───────────────────────────────────────────────
+    // áp dụng bộ lọc one euro
     const t = performance.now() / 1000
     const f = filters.current
 
@@ -407,7 +394,7 @@ function GlassesScene({
       smoothQW = sq.w
     }
 
-    // ── Apply to Three.js objects ──────────────────────────────────────────
+    // áp dụng vào các đối tượng three.js
     group.position.set(smoothPX, smoothPY, smoothPZ)
     group.scale.set(smoothSX, smoothSY, smoothSZ)
     group.quaternion.set(smoothQX, smoothQY, smoothQZ, smoothQW)
@@ -417,10 +404,10 @@ function GlassesScene({
 
   return (
     <group ref={groupRef} visible={false}>
-      {/* Head occluder — child of group, rendered first (renderOrder 0) */}
+      {/* mặt nạ che đầu - vẽ trước */}
       <primitive object={occluderMesh} />
 
-      {/* Glasses — rendered second (renderOrder 1) */}
+      {/* kính - vẽ sau */}
       <primitive object={clonedScene} />
     </group>
   )

@@ -6,9 +6,8 @@ const MODEL_CDN =
   'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task'
 
 /**
- * Target detection framerate.
- * We throttle the rAF loop to ~30 fps so we don't saturate the GPU with
- * inference while Three.js is running its own render loop.
+ * tốc độ lấy mẫu mục tiêu.
+ * giới hạn ở ~30 fps để không làm quá tải gpu khi three.js đang chạy vòng lặp render.
  */
 const TARGET_FPS = 30
 const FRAME_INTERVAL_MS = 1000 / TARGET_FPS
@@ -38,13 +37,13 @@ export function useFaceLandmarker() {
         runningMode: 'VIDEO',
         numFaces: 1,
         outputFaceBlendshapes: false,
-        // Enable the 4×4 facial transformation matrix output
+        // bật trích xuất ma trận biến đổi khuôn mặt 4x4
         outputFacialTransformationMatrixes: true
       })
       landmarkerRef.current = faceLandmarker
       setIsModelReady(true)
     } catch (err) {
-      console.error('Failed to init FaceLandmarker:', err)
+      console.error('lỗi khởi tạo facelandmarker:', err)
       throw err
     } finally {
       setIsModelLoading(false)
@@ -61,9 +60,9 @@ export function useFaceLandmarker() {
     const detect = () => {
       const now = performance.now()
 
-      // Throttle to TARGET_FPS to avoid GPU saturation
+      // giới hạn fps để tránh quá tải gpu
       if (now - lastDetectTime >= FRAME_INTERVAL_MS && video.readyState >= 2) {
-        // Avoid calling with the same timestamp
+        // tránh gọi lại với cùng mốc thời gian
         if (now !== lastTime) {
           try {
             const result = landmarker.detectForVideo(video, now)
@@ -73,16 +72,14 @@ export function useFaceLandmarker() {
             if (result.faceLandmarks && result.faceLandmarks.length > 0) {
               landmarksRef.current = result.faceLandmarks
 
-              // Extract transformation matrices (Float32Array[])
+              // trích xuất ma trận biến đổi (float32array[])
               const rawMatrices = result.facialTransformationMatrixes
               if (rawMatrices && rawMatrices.length > 0) {
-                // Each matrix is a { rows, columns, packedData } object.
-                // packedData is a Float32Array with 16 elements (4×4 row-major).
                 transformationMatricesRef.current = rawMatrices.map((m: any) => {
                   if (m instanceof Float32Array) return m
                   if (m?.data) return new Float32Array(m.data)
                   if (m?.packedData) return new Float32Array(m.packedData)
-                  // Fallback: try to interpret the object as array-like
+                  // dự phòng: thử diễn giải đối tượng như một mảng
                   return new Float32Array(Array.from(m as Iterable<number>))
                 })
               } else {
@@ -93,8 +90,8 @@ export function useFaceLandmarker() {
               transformationMatricesRef.current = []
             }
           } catch (e) {
-            // detectForVideo can throw if video is not ready
-            console.warn('Face detection frame skipped:', e)
+            // detectforvideo có thể lỗi nếu video chưa sẵn sàng
+            console.warn('bỏ qua khung hình nhận diện khuôn mặt:', e)
           }
         }
       }
@@ -115,7 +112,7 @@ export function useFaceLandmarker() {
   const cleanup = useCallback(() => {
     stopDetection()
 
-    // Clear refs
+    // xóa các tham chiếu
     landmarksRef.current = []
     transformationMatricesRef.current = []
 

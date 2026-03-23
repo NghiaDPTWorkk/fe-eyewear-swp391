@@ -1,23 +1,17 @@
 /**
- * One Euro Filter — Adaptive low-pass filter.
+ * bộ lọc one euro - bộ lọc thông thấp thích ứng.
  *
- * Property: near-zero jitter when the signal is stable,
- *           near-zero latency when the signal changes fast.
- *
- * Paper: "1€ Filter: A Simple Speed-based Low-pass Filter for Noisy Input in
- *         Interactive Systems" — Casiez, Roussel, Vogel (2012)
- *
- * This implementation works on individual scalar values.  Composite types
- * (Vector3, Quaternion, Matrix4) should instantiate one filter per channel.
+ * đặc tính: lọc nhiễu tốt khi tín hiệu ổn định,
+ *           độ trễ thấp khi tín hiệu thay đổi nhanh.
  */
 
-// ─── Low-pass filter primitive ─────────────────────────────────────────────────
+// bộ lọc thông thấp cơ bản
 
 class LowPassFilter {
   private y: number | null = null
   private s: number | null = null
 
-  /** Return filtered value */
+  /** trả về giá trị đã lọc */
   filter(value: number, alpha: number): number {
     if (this.y === null || this.s === null) {
       this.y = value
@@ -39,14 +33,14 @@ class LowPassFilter {
   }
 }
 
-// ─── 1€ filter ─────────────────────────────────────────────────────────────────
+// bộ lọc 1€
 
 export interface OneEuroFilterConfig {
-  /** Cut-off frequency (Hz) when the signal is stable — lower = smoother */
+  /** tần số cắt (hz) khi tín hiệu ổn định - càng thấp càng mượt */
   minCutoff?: number
-  /** Speed coefficient — higher = less latency when moving fast */
+  /** hệ số tốc độ - càng cao càng ít trễ khi di chuyển nhanh */
   beta?: number
-  /** Cut-off frequency for the derivative estimator (Hz) */
+  /** tần số cắt cho bộ ước tính đạo hàm (hz) */
   dCutoff?: number
 }
 
@@ -77,9 +71,9 @@ export class OneEuroFilter {
   }
 
   /**
-   * Feed a new raw value.
-   * @param value     New sample
-   * @param timestamp Monotonic timestamp in **seconds**
+   * nạp giá trị thô mới.
+   * @param value     mẫu mới
+   * @param timestamp mốc thời gian tính bằng giây
    */
   filter(value: number, timestamp: number): number {
     if (this.lastTimestamp === null) {
@@ -88,15 +82,15 @@ export class OneEuroFilter {
     }
 
     const dt = timestamp - this.lastTimestamp
-    // Guard against duplicate / out-of-order timestamps
+    // phòng ngừa lỗi mốc thời gian trùng hoặc sai thứ tự
     const te = dt > 0 ? dt : 1 / 120
     this.lastTimestamp = timestamp
 
-    // Estimate derivative
+    // ước tính đạo hàm
     const dx = (value - this.xFilter.lastValue()) / te
     const edx = this.dxFilter.filter(dx, smoothingFactor(te, this.dCutoff))
 
-    // Adaptive cut-off
+    // tần số cắt thích ứng
     const cutoff = this.minCutoff + this.beta * Math.abs(edx)
     return this.xFilter.filter(value, smoothingFactor(te, cutoff))
   }
@@ -108,7 +102,7 @@ export class OneEuroFilter {
   }
 }
 
-// ─── Matrix-level filter (16 elements) ─────────────────────────────────────────
+// bộ lọc cấp ma trận (16 phần tử)
 
 export class OneEuroMatrixFilter {
   private filters: OneEuroFilter[]
@@ -117,7 +111,7 @@ export class OneEuroMatrixFilter {
     this.filters = Array.from({ length: 16 }, () => new OneEuroFilter(config))
   }
 
-  /** Filter a 16-element column-major matrix array in-place and return it. */
+  /** lọc toàn bộ mảng ma trận 16 phần tử và trả về bản sao đã lọc */
   filter(matrix: number[], timestamp: number): number[] {
     const out = new Array(16)
     for (let i = 0; i < 16; i++) {

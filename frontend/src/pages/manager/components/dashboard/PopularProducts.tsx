@@ -1,9 +1,11 @@
 import React, { useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAdminProducts } from '@/features/manager/hooks'
 import { formatPrice } from '@/shared/utils'
 import { IoCubeOutline } from 'react-icons/io5'
 
 export const PopularProducts: React.FC = () => {
+  const navigate = useNavigate()
   const { data: productsData, isLoading } = useAdminProducts(1, 5)
 
   const productList = useMemo(() => {
@@ -46,7 +48,11 @@ export const PopularProducts: React.FC = () => {
           </thead>
           <tbody className="divide-y divide-gray-50/50">
             {productList.map((product, idx) => (
-              <tr key={idx} className="group hover:bg-neutral-50/50 transition-colors">
+              <tr
+                key={idx}
+                onClick={() => navigate(`/manager/products/${product.id}`)}
+                className="group hover:bg-neutral-50/50 transition-colors cursor-pointer"
+              >
                 <td className="py-4">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-gray-50 rounded-xl overflow-hidden flex items-center justify-center border border-neutral-100 group-hover:bg-white transition-colors">

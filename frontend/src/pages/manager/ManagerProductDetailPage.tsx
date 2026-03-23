@@ -13,15 +13,9 @@ import {
   IoCheckmarkCircle,
   IoCloseCircle,
   IoChevronForwardOutline,
-  IoChevronBackOutline,
-  IoPencilOutline,
-  IoTrashOutline
+  IoChevronBackOutline
 } from 'react-icons/io5'
 import type { AdminProductVariant } from '@/shared/types'
-import { httpClient } from '@/api/apiClients'
-import { ENDPOINTS } from '@/api/endpoints'
-import { toast } from 'react-hot-toast'
-import { ConfirmationModal } from '@/shared/components/ui-core'
 
 const formatter = new Intl.NumberFormat('vi-VN')
 
@@ -58,29 +52,6 @@ export default function ManagerProductDetailPage() {
   const product = data?.data?.product
   const [selectedVariantIdx, setSelectedVariantIdx] = useState(0)
   const [imgIdx, setImgIdx] = useState(0)
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false)
-
-  const handleDeleteClick = () => {
-    setIsConfirmOpen(true)
-  }
-
-  const handleDeleteConfirm = async () => {
-    if (!id) return
-    setIsConfirmOpen(false)
-    setIsDeleting(true)
-    try {
-      await httpClient.delete(ENDPOINTS.ADMIN.PRODUCT_DETAIL(id))
-      toast.success('Product deleted successfully!')
-      navigate('/manager/products')
-    } catch (error: unknown) {
-      console.error('Delete product failed:', error)
-      const message = error instanceof Error ? error.message : 'Failed to delete product'
-      toast.error(message)
-    } finally {
-      setIsDeleting(false)
-    }
-  }
 
   if (isLoading) {
     return (
@@ -119,7 +90,7 @@ export default function ManagerProductDetailPage() {
 
   return (
     <>
-      <Container className="max-w-none space-y-8">
+      <Container className="max-w-6xl mx-auto space-y-6">
         <PageHeader
           title={product.nameBase || 'Unnamed Product'}
           subtitle={`SKU: ${product.skuBase} · ${product.brand || 'No Brand'} · ${capitalize(product.type)}`}
@@ -139,24 +110,9 @@ export default function ManagerProductDetailPage() {
             <IoArrowBackOutline size={16} />
             Back to Products
           </button>
-          <button
-            onClick={() => navigate(`/manager/products/${id}/edit`)}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-mint-600 text-white rounded-xl text-sm font-semibold shadow-lg shadow-mint-100/50 hover:bg-mint-700 transition-all active:scale-95"
-          >
-            <IoPencilOutline size={16} />
-            Edit Product
-          </button>
-          <button
-            onClick={handleDeleteClick}
-            disabled={isDeleting}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-red-50 text-red-600 rounded-xl text-sm font-semibold ring-1 ring-red-100 hover:bg-red-100 transition-all active:scale-95 disabled:opacity-50"
-          >
-            <IoTrashOutline size={16} />
-            {isDeleting ? 'Deleting...' : 'Delete'}
-          </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {}
           <div className="lg:col-span-5">
             <div className="bg-white rounded-3xl ring-1 ring-neutral-100/50 shadow-sm overflow-hidden">
@@ -224,9 +180,9 @@ export default function ManagerProductDetailPage() {
           </div>
 
           {}
-          <div className="lg:col-span-7 space-y-6">
+          <div className="lg:col-span-7 space-y-5">
             {}
-            <div className="bg-white rounded-3xl ring-1 ring-neutral-100/50 shadow-sm p-6">
+            <div className="bg-white rounded-2xl ring-1 ring-neutral-100/50 shadow-sm p-5">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <p className="text-[12px] font-bold text-slate-400 tracking-wider uppercase">
@@ -303,7 +259,7 @@ export default function ManagerProductDetailPage() {
 
             {}
             {spec && (
-              <div className="bg-white rounded-3xl ring-1 ring-neutral-100/50 shadow-sm p-6">
+              <div className="bg-white rounded-2xl ring-1 ring-neutral-100/50 shadow-sm p-5">
                 <div className="flex items-center gap-2 mb-5">
                   <div className="p-2 rounded-xl bg-sky-50 text-sky-600">
                     <IoResizeOutline size={18} />
@@ -354,7 +310,7 @@ export default function ManagerProductDetailPage() {
             )}
 
             {}
-            <div className="bg-white rounded-3xl ring-1 ring-neutral-100/50 shadow-sm p-6">
+            <div className="bg-white rounded-2xl ring-1 ring-neutral-100/50 shadow-sm p-5">
               <div className="flex items-center gap-2 mb-5">
                 <div className="p-2 rounded-xl bg-purple-50 text-purple-600">
                   <IoLayersOutline size={18} />
@@ -381,17 +337,6 @@ export default function ManagerProductDetailPage() {
           </div>
         </div>
       </Container>
-
-      <ConfirmationModal
-        isOpen={isConfirmOpen}
-        onClose={() => setIsConfirmOpen(false)}
-        onConfirm={handleDeleteConfirm}
-        title="Delete Product"
-        message={`Are you sure you want to delete "${product.nameBase || 'this product'}"? This action cannot be undone.`}
-        confirmText="Delete"
-        cancelText="Cancel"
-        type="danger"
-      />
     </>
   )
 }

@@ -6,6 +6,11 @@ import type {
   InvoiceDetailApiResponse
 } from '@/shared/types/invoice.types'
 
+interface CancelInvoiceApiResponse {
+  success: boolean
+  message: string
+}
+
 /**
  * Invoice Service - Business logic layer for invoice operations
  */
@@ -54,6 +59,19 @@ export const invoiceService = {
       return response
     } catch (error: any) {
       console.error('Failed to get invoice detail:', error)
+      throw error
+    }
+  },
+
+  cancelInvoice: async (id: string): Promise<CancelInvoiceApiResponse> => {
+    try {
+      const response = await httpClient.patch<CancelInvoiceApiResponse>(
+        ENDPOINTS.INVOICE.CANCEL(id),
+        {}
+      )
+      return response
+    } catch (error: any) {
+      console.error('Failed to cancel invoice:', error)
       throw error
     }
   }

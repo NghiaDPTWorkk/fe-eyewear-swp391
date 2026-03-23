@@ -16,6 +16,9 @@ interface OrderCardProps {
   image: string
   expDate?: string
   receivedDate?: string
+  canCancel?: boolean
+  isCancelling?: boolean
+  onCancel?: (invoiceId: string) => void
 }
 
 export function OrderCard({
@@ -28,7 +31,10 @@ export function OrderCard({
   status,
   image,
   expDate,
-  receivedDate
+  receivedDate,
+  canCancel = false,
+  isCancelling = false,
+  onCancel
 }: OrderCardProps) {
   const navigate = useNavigate()
   const statusConfig: Record<
@@ -209,6 +215,16 @@ export function OrderCard({
             >
               Details
             </Button>
+
+            {canCancel && onCancel && (
+              <Button
+                onClick={() => onCancel(realId)}
+                disabled={isCancelling}
+                className="flex-1 lg:flex-none h-10 rounded-xl px-6 font-bold text-[10px] uppercase tracking-[0.15em] transition-all shadow-sm bg-white border border-danger-100 text-danger-600 hover:bg-danger-50 disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {isCancelling ? 'Cancelling...' : 'Cancel'}
+              </Button>
+            )}
 
             {(status === InvoiceStatus.DELIVERING ||
               status === InvoiceStatus.DELIVERED ||

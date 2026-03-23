@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import toast from 'react-hot-toast'
 import { Card } from '@/shared/components/ui/card'
 import { OrderCard } from '@/components/layout/customer/account/orders/OrderCard'
 import { cn } from '@/lib/utils'
@@ -32,6 +33,7 @@ export function OrdersPage() {
   const [returnTickets, setReturnTickets] = useState<ReturnTicketData[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [cancellingInvoiceId, setCancellingInvoiceId] = useState<string | null>(null)
 
   const [returnPagination, setReturnPagination] = useState({
     total: 0,
@@ -131,6 +133,40 @@ export function OrdersPage() {
 
   const paginatedInvoices =
     activeView === 'returns' ? [] : filteredInvoices.slice((currentPage - 1) * 3, currentPage * 3)
+
+  const canCancelInvoice = (status: InvoiceStatus) => {
+    return [InvoiceStatus.PENDING, InvoiceStatus.DEPOSITED, InvoiceStatus.APPROVED].includes(status)
+  }
+
+  const handleCancelInvoice = async (invoiceId: string) => {
+    if (!invoiceId || cancellingInvoiceId) return
+
+    try {
+      setCancellingInvoiceId(invoiceId)
+      const response = await invoiceService.cancelInvoice(invoiceId)
+
+      if (response.success) {
+        toast.success(response.message || 'Invoice cancelled successfully')
+
+        setInvoices((prev) =>
+          prev.map((inv) =>
+            inv._id === invoiceId
+              ? {
+                  ...inv,
+                  status: InvoiceStatus.CANCELED
+                }
+              : inv
+          )
+        )
+      } else {
+        toast.error(response.message || 'Unable to cancel this invoice')
+      }
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Failed to cancel invoice')
+    } finally {
+      setCancellingInvoiceId(null)
+    }
+  }
 
   const getReturnStatusStyle = (status: string) => {
     switch (status.toUpperCase()) {
@@ -342,6 +378,9 @@ export function OrdersPage() {
                         itemCount={itemCount}
                         price={inv.totalPrice}
                         status={inv.status as InvoiceStatus}
+                        canCancel={canCancelInvoice(inv.status as InvoiceStatus)}
+                        isCancelling={cancellingInvoiceId === inv._id}
+                        onCancel={handleCancelInvoice}
                         image={
                           firstProduct?.imgs?.[0] ||
                           'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&q=80&w=200'

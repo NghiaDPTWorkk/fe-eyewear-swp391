@@ -104,7 +104,13 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
       brand: 'PREMIUM COLLECTION',
       price: formatPrice(p.product?.pricePerUnit || 0),
       quantity: p.quantity,
-      lens: p.lens
+      lens: p.lens,
+      image:
+        p.product?.image ||
+        p.product?.thumbnail ||
+        p.product?.imageUrl ||
+        p.product?.defaultVariantImage ||
+        p.product?.product_image
     })),
     timeline: isPreOrder
       ? [
@@ -246,8 +252,16 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
                   className="p-6 rounded-[24px] hover:bg-slate-50/40 transition-all duration-300 group"
                 >
                   <div className="flex items-start gap-6">
-                    <div className="w-28 h-28 bg-white border border-slate-100 rounded-2xl flex items-center justify-center text-slate-200 shadow-sm transition-all group-hover:shadow-md group-hover:scale-[1.02]">
-                      <IoGlassesOutline size={48} />
+                    <div className="w-28 h-28 bg-white border border-slate-100 rounded-2xl flex items-center justify-center text-slate-200 shadow-sm transition-all group-hover:shadow-md group-hover:scale-[1.02] overflow-hidden">
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <IoGlassesOutline size={48} />
+                      )}
                     </div>
                     <div className="flex-1 space-y-3">
                       <div className="flex justify-between items-start">

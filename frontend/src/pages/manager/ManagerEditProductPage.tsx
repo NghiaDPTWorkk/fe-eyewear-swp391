@@ -99,11 +99,34 @@ export default function ManagerEditProductPage() {
     }))
   }
 
-  const handleSubmit = async () => {
-    if (!state.nameBase) {
-      toast.error('Name is required')
-      return
+  const validateForm = () => {
+    if (!state.nameBase.trim()) {
+      toast.error('Product name is required')
+      return false
     }
+    if (!state.brand) {
+      toast.error('Brand is required')
+      return false
+    }
+    if (!state.categoriesText || state.categoriesText.trim() === '') {
+      toast.error('At least one category is required')
+      return false
+    }
+    if (state.variants.length === 0) {
+      toast.error('At least one variant is required')
+      return false
+    }
+    for (const v of state.variants) {
+      if (!v.sku.trim()) {
+        toast.error('All variants must have a SKU')
+        return false
+      }
+    }
+    return true
+  }
+
+  const handleSubmit = async () => {
+    if (!validateForm()) return
 
     setIsSubmitting(true)
     try {
@@ -154,17 +177,18 @@ export default function ManagerEditProductPage() {
   } as ProductCreateFormState
 
   return (
-    <div className="space-y-8 max-w-[1600px] mx-auto">
-      <div className="flex items-center gap-4">
+    <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+      {}
+      <div className="lg:col-span-12 flex items-center gap-4">
         <button
           onClick={() => navigate(-1)}
-          className="p-2 hover:bg-neutral-100 rounded-xl transition-colors shrink-0"
+          className="p-2.5 hover:bg-neutral-100 rounded-2xl transition-colors shrink-0"
         >
           <IoChevronBackOutline size={24} />
         </button>
         <PageHeader
           title="Edit Product"
-          subtitle={`Editing: ${data.data.product.nameBase}`}
+          subtitle={`Modified details for: ${data.data.product.nameBase}`}
           breadcrumbs={[
             { label: 'Dashboard', path: '/manager/dashboard' },
             { label: 'Products', path: '/manager/products' },
@@ -174,94 +198,140 @@ export default function ManagerEditProductPage() {
         />
       </div>
 
-      <div className="bg-white rounded-[32px] border border-neutral-100 shadow-sm overflow-hidden p-6 md:p-8 lg:p-10">
-        <form
-          className="space-y-10"
-          onSubmit={(e) => {
-            e.preventDefault()
-            handleSubmit()
-          }}
-        >
-          {}
-          <ProductBaseFields state={createCompatibleState} onChange={handleBaseChange} />
+      <form
+        className="lg:col-span-12 grid grid-cols-1 lg:grid-cols-2 gap-6"
+        onSubmit={(e) => {
+          e.preventDefault()
+          handleSubmit()
+        }}
+      >
+        {}
+        <div className="space-y-5">
+          <section className="bg-white rounded-2xl border border-neutral-100/50 shadow-sm p-4 space-y-4">
+            <div className="flex items-center gap-2.5 border-b border-neutral-50 pb-3">
+              <div className="w-8 h-8 rounded-lg bg-mint-50 flex items-center justify-center text-mint-600">
+                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-none stroke-current stroke-2">
+                  <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                  <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>
+              </div>
+              <h3 className="text-sm font-bold text-slate-700">General Information</h3>
+            </div>
+            <ProductBaseFields state={createCompatibleState} onChange={handleBaseChange} />
+          </section>
 
-          {}
-          {state.type === 'frame' || state.type === 'sunglass' ? (
-            <FrameSpecFields specFrame={state.specFrame} onChange={handleSpecFrameChange} />
-          ) : (
-            <LensSpecFields specLens={state.specLens} onChange={handleSpecLensChange} />
-          )}
+          <section className="bg-white rounded-2xl border border-neutral-100/50 shadow-sm p-4 space-y-4">
+            <div className="flex items-center gap-2.5 border-b border-neutral-50 pb-3">
+              <div className="w-8 h-8 rounded-lg bg-mint-50 flex items-center justify-center text-mint-600">
+                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-none stroke-current stroke-2">
+                  <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
+                </svg>
+              </div>
+              <h3 className="text-sm font-bold text-slate-700">Specifications</h3>
+            </div>
+            {state.type === 'frame' || state.type === 'sunglass' ? (
+              <FrameSpecFields specFrame={state.specFrame} onChange={handleSpecFrameChange} />
+            ) : (
+              <LensSpecFields specLens={state.specLens} onChange={handleSpecLensChange} />
+            )}
+          </section>
+        </div>
 
-          {}
-          <OptionsConfigEditor
-            optionsConfig={state.optionsConfig}
-            onChange={(optionsConfig) => setState((prev) => ({ ...prev, optionsConfig }))}
-          />
+        {}
+        <div className="space-y-5">
+          <section className="bg-white rounded-2xl border border-neutral-100/50 shadow-sm p-4 space-y-4">
+            <div className="flex items-center gap-2.5 border-b border-neutral-50 pb-3">
+              <div className="w-8 h-8 rounded-lg bg-mint-50 flex items-center justify-center text-mint-600">
+                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-none stroke-current stroke-2">
+                  <path d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+              </div>
+              <h3 className="text-sm font-bold text-slate-700">Options & Configurations</h3>
+            </div>
+            <OptionsConfigEditor
+              optionsConfig={state.optionsConfig}
+              onChange={(optionsConfig) => setState((prev) => ({ ...prev, optionsConfig }))}
+            />
+          </section>
 
-          {}
-          <VariantsEditor
-            variants={state.variants}
-            optionsConfig={state.optionsConfig}
-            nameBase={state.nameBase}
-            onChange={handleVariantsChange}
-          />
+          <section className="bg-white rounded-2xl border border-neutral-100/50 shadow-sm p-4 space-y-4">
+            <div className="flex items-center gap-2.5 border-b border-neutral-50 pb-3">
+              <div className="w-8 h-8 rounded-lg bg-mint-50 flex items-center justify-center text-mint-600">
+                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-none stroke-current stroke-2">
+                  <rect x="3" y="3" width="7" height="7" />
+                  <rect x="14" y="3" width="7" height="7" />
+                  <rect x="14" y="14" width="7" height="7" />
+                  <rect x="3" y="14" width="7" height="7" />
+                </svg>
+              </div>
+              <h3 className="text-sm font-bold text-slate-700">Product Variants</h3>
+            </div>
+            <VariantsEditor
+              variants={state.variants}
+              optionsConfig={state.optionsConfig}
+              nameBase={state.nameBase}
+              onChange={handleVariantsChange}
+            />
+          </section>
 
-          {}
-          <div className="space-y-4 pt-4 border-t border-neutral-100">
-            <h3 className="text-sm font-extrabold text-gray-900 tracking-wide">
-              Variant Availability Mode
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {state.variants.map((v, idx) => {
-                const variantLabel =
-                  v.options.map((o) => o.label).join(' · ') || `Variant #${idx + 1}`
-                return (
-                  <div
-                    key={idx}
-                    className={`p-4 rounded-2xl border transition-all ${
-                      v.mode === 'PRE_ORDER'
-                        ? 'border-amber-200 bg-amber-50/30'
-                        : 'border-emerald-200 bg-emerald-50/30'
-                    }`}
-                  >
-                    <p className="text-xs font-bold text-slate-700 mb-2 truncate">{variantLabel}</p>
-                    <select
-                      value={v.mode}
-                      onChange={(e) =>
-                        handleVariantModeChange(idx, e.target.value as 'AVAILABLE' | 'PRE_ORDER')
-                      }
-                      className="w-full px-3 py-2 bg-white border border-neutral-100 rounded-xl text-xs font-semibold focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all"
+          <div className="bg-neutral-50/50 rounded-2xl p-4 space-y-4 border border-neutral-100/50 shadow-sm">
+            <div className="space-y-4">
+              <h3 className="text-xs font-bold text-slate-700 tracking-wide">
+                Variant Availability Mode
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {state.variants.map((v, idx) => {
+                  const variantLabel =
+                    v.options.map((o) => o.label).join(' · ') || `Variant #${idx + 1}`
+                  return (
+                    <div
+                      key={idx}
+                      className={`p-3 rounded-xl border transition-all ${
+                        v.mode === 'PRE_ORDER'
+                          ? 'border-amber-200 bg-amber-50/30'
+                          : 'border-emerald-200 bg-emerald-50/30'
+                      }`}
                     >
-                      <option value="AVAILABLE">✅ Available (Có sẵn)</option>
-                      <option value="PRE_ORDER">📦 Pre-order (Đặt trước)</option>
-                    </select>
-                  </div>
-                )
-              })}
+                      <p className="text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-wider truncate">
+                        {variantLabel}
+                      </p>
+                      <select
+                        value={v.mode}
+                        onChange={(e) =>
+                          handleVariantModeChange(idx, e.target.value as 'AVAILABLE' | 'PRE_ORDER')
+                        }
+                        className="w-full px-2 py-1.5 bg-white border border-neutral-100 rounded-lg text-[11px] font-semibold focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all cursor-pointer"
+                      >
+                        <option value="AVAILABLE">✅ Available</option>
+                        <option value="PRE_ORDER">📦 Pre-order</option>
+                      </select>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+
+            <div className="pt-4 flex gap-3 border-t border-neutral-200/50">
+              <button
+                type="button"
+                onClick={() => navigate(-1)}
+                disabled={isSubmitting}
+                className="px-6 py-3 border border-neutral-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-white hover:shadow-sm transition-all active:scale-95 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="flex-1 px-8 py-3 bg-mint-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-mint-100/50 hover:bg-mint-700 hover:shadow-mint-200/50 transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                <IoSaveOutline size={18} />
+                {isSubmitting ? 'Updating...' : 'Update Product'}
+              </button>
             </div>
           </div>
-
-          {}
-          <div className="pt-6 flex gap-4 border-t border-neutral-50">
-            <button
-              type="button"
-              onClick={() => navigate(-1)}
-              disabled={isSubmitting}
-              className="px-8 py-4 border border-neutral-200 text-gray-700 rounded-2xl text-sm font-bold hover:bg-neutral-50 transition-all active:scale-95 disabled:opacity-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="flex-1 px-8 py-4 bg-mint-600 text-white rounded-2xl text-sm font-bold shadow-xl shadow-mint-100/30 hover:bg-mint-700 transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50"
-            >
-              <IoSaveOutline size={20} />
-              {isSubmitting ? 'Updating...' : 'Update Product'}
-            </button>
-          </div>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   )
 }

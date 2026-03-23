@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { IoSaveOutline } from 'react-icons/io5'
 import { PageHeader } from '@/features/staff/components/common'
@@ -81,11 +81,63 @@ export default function ManagerAddProductPage() {
     setState((prev) => ({ ...prev, variants }))
   }
 
-  const handleSubmit = async () => {
-    if (!state.nameBase) {
-      toast.error('Name is required')
-      return
+  const validateForm = () => {
+    if (!state.nameBase.trim()) {
+      toast.error('Product name is required')
+      return false
     }
+    if (!state.brand) {
+      toast.error('Brand is required')
+      return false
+    }
+    if (!state.categoriesText || state.categoriesText.trim() === '') {
+      toast.error('At least one category is required')
+      return false
+    }
+
+    if (state.type === 'frame') {
+      if (!state.specFrame.shape) {
+        toast.error('Frame shape is required')
+        return false
+      }
+    }
+
+    // Check variants
+    if (state.variants.length === 0) {
+      toast.error('At least one variant is required')
+      return false
+    }
+
+    for (const v of state.variants) {
+      if (!v.sku.trim()) {
+        toast.error('All variants must have a SKU')
+        return false
+      }
+      if (!v.priceText || isNaN(Number(v.priceText))) {
+        toast.error(`Variant ${v.sku || ''} must have a valid price`)
+        return false
+      }
+    }
+
+    if (state.isPreOrder) {
+      if (!state.preOrderConfig?.targetDate) {
+        toast.error('Pre-order target date is required')
+        return false
+      }
+      if (
+        !state.preOrderConfig?.targetQuantity ||
+        Number(state.preOrderConfig.targetQuantity) <= 0
+      ) {
+        toast.error('Pre-order target quantity must be greater than 0')
+        return false
+      }
+    }
+
+    return true
+  }
+
+  const handleSubmit = async () => {
+    if (!validateForm()) return
 
     setIsSubmitting(true)
     try {
@@ -227,75 +279,76 @@ export default function ManagerAddProductPage() {
   }
 
   return (
-    <div className="space-y-8 max-w-[1600px] mx-auto">
-      <PageHeader
-        title="Add Product"
-        subtitle="Configure base fields, specifications, and variants."
-        breadcrumbs={[
-          { label: 'Dashboard', path: '/manager/dashboard' },
-          { label: 'Products', path: '/manager/products' },
-          { label: 'Add Product' }
-        ]}
-      />
+    <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+      {}
+      <div className="lg:col-span-12">
+        <PageHeader
+          title="Create New Product"
+          subtitle="Fill in the details below to add a new product to your inventory."
+          breadcrumbs={[
+            { label: 'Dashboard', path: '/manager/dashboard' },
+            { label: 'Products', path: '/manager/products' },
+            { label: 'Add Product' }
+          ]}
+        />
+      </div>
 
-      <div className="bg-white rounded-[32px] border border-neutral-100 shadow-sm overflow-hidden p-6 md:p-8 lg:p-10">
-        <form
-          className="space-y-10"
-          onSubmit={(e) => {
-            e.preventDefault()
-            handleSubmit()
-          }}
-        >
-          {}
-          <ProductBaseFields state={state} onChange={handleBaseChange} />
-
-          {}
-          {state.type === 'frame' ? (
-            <FrameSpecFields specFrame={state.specFrame} onChange={handleSpecFrameChange} />
-          ) : (
-            <LensSpecFields specLens={state.specLens} onChange={handleSpecLensChange} />
-          )}
-
-          {}
-          <OptionsConfigEditor
-            optionsConfig={state.optionsConfig}
-            onChange={(optionsConfig) => setState((prev) => ({ ...prev, optionsConfig }))}
-          />
-
-          {}
-          <VariantsEditor
-            variants={state.variants}
-            optionsConfig={state.optionsConfig}
-            nameBase={state.nameBase}
-            onChange={handleVariantsChange}
-          />
-
-          {}
-          <div className="border-t border-neutral-100 pt-10 space-y-6">
-            <label className="flex items-center gap-3 cursor-pointer group">
-              <div className="relative inline-flex items-center">
-                <input
-                  type="checkbox"
-                  className="sr-only peer"
-                  checked={state.isPreOrder}
-                  onChange={(e) => handleBaseChange({ isPreOrder: e.target.checked })}
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-mint-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-mint-600 group-hover:opacity-90 transition-opacity"></div>
+      <form
+        className="lg:col-span-12 grid grid-cols-1 lg:grid-cols-2 gap-6"
+        onSubmit={(e) => {
+          e.preventDefault()
+          handleSubmit()
+        }}
+      >
+        {}
+        <div className="space-y-5">
+          <section className="bg-white rounded-2xl border border-neutral-100/50 shadow-sm p-4 space-y-4">
+            <div className="flex items-center gap-2.5 border-b border-neutral-50 pb-3">
+              <div className="w-8 h-8 rounded-lg bg-mint-50 flex items-center justify-center text-mint-600">
+                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-none stroke-current stroke-2">
+                  <path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z" />
+                  <path d="M13 2v7h7" />
+                </svg>
               </div>
-              <div>
-                <h3 className="text-sm font-extrabold text-gray-900 group-hover:text-mint-700 transition-colors">
-                  Create as Pre-order
-                </h3>
-                <p className="text-xs text-neutral-500">
-                  Enable this if you want to allow pre-ordering for this product.
-                </p>
-              </div>
-            </label>
+              <h3 className="text-sm font-bold text-slate-700">General Information</h3>
+            </div>
+            <ProductBaseFields state={state} onChange={handleBaseChange} />
+          </section>
 
-            {state.isPreOrder && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-mint-50/30 rounded-[24px] border border-mint-100/50 animate-in fade-in slide-in-from-top-2 duration-300">
+          <section className="bg-white rounded-2xl border border-neutral-100/50 shadow-sm p-4 space-y-4">
+            <div className="flex items-center gap-2.5 border-b border-neutral-50 pb-3">
+              <div className="w-8 h-8 rounded-lg bg-mint-50 flex items-center justify-center text-mint-600">
+                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-none stroke-current stroke-2">
+                  <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </div>
+              <h3 className="text-sm font-bold text-slate-700">Specifications</h3>
+            </div>
+            {state.type === 'frame' ? (
+              <FrameSpecFields specFrame={state.specFrame} onChange={handleSpecFrameChange} />
+            ) : (
+              <LensSpecFields specLens={state.specLens} onChange={handleSpecLensChange} />
+            )}
+          </section>
+
+          {state.isPreOrder && (
+            <section className="bg-white rounded-2xl border border-amber-100/50 shadow-sm p-4 space-y-4">
+              <div className="flex items-center gap-2.5 border-b border-neutral-50 pb-3">
+                <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600">
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="w-3.5 h-3.5 fill-none stroke-current stroke-2"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 6v6l4 2" />
+                  </svg>
+                </div>
+                <h3 className="text-sm font-bold text-slate-700">Pre-order Configuration</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2 space-y-2">
-                  <label className="text-xs font-bold text-gray-700 ml-1">
+                  <label className="text-xs font-semibold text-slate-600 ml-1">
                     Pre-order Description
                   </label>
                   <textarea
@@ -306,24 +359,29 @@ export default function ManagerAddProductPage() {
                         preOrderConfig: { ...prev.preOrderConfig!, description: e.target.value }
                       }))
                     }
-                    placeholder="e.g. Pre-order 100 units for summer collection"
-                    className="w-full px-4 py-3 bg-white border border-neutral-100 rounded-2xl text-[14px] focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all min-h-[100px]"
+                    placeholder="e.g. Pre-order 100 units..."
+                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-[13px] focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all min-h-[80px]"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-gray-700 ml-1">Target Quantity</label>
+                  <label className="text-xs font-semibold text-slate-600 ml-1">
+                    Target Quantity
+                  </label>
                   <input
                     type="number"
                     value={state.preOrderConfig?.targetQuantity}
                     onChange={(e) =>
                       setState((prev) => ({
                         ...prev,
-                        preOrderConfig: { ...prev.preOrderConfig!, targetQuantity: e.target.value }
+                        preOrderConfig: {
+                          ...prev.preOrderConfig!,
+                          targetQuantity: e.target.value
+                        }
                       }))
                     }
                     placeholder="100"
-                    className="w-full px-4 py-3 bg-white border border-neutral-100 rounded-2xl text-[14px] focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all"
+                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-100 rounded-xl text-[13px] focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all"
                   />
                 </div>
 
@@ -336,57 +394,91 @@ export default function ManagerAddProductPage() {
                       preOrderConfig: { ...prev.preOrderConfig!, targetDate: val }
                     }))
                   }
-                  helperText="Speak: 'Ngày 20 tháng 3'"
-                />
-
-                <VoiceDatePicker
-                  label="Start Date"
-                  value={state.preOrderConfig?.startedDate || ''}
-                  onChange={(val) =>
-                    setState((prev) => ({
-                      ...prev,
-                      preOrderConfig: { ...prev.preOrderConfig!, startedDate: val }
-                    }))
-                  }
-                  helperText="Speak: 'Hôm nay'"
-                />
-
-                <VoiceDatePicker
-                  label="End Date"
-                  value={state.preOrderConfig?.endedDate || ''}
-                  onChange={(val) =>
-                    setState((prev) => ({
-                      ...prev,
-                      preOrderConfig: { ...prev.preOrderConfig!, endedDate: val }
-                    }))
-                  }
-                  helperText="Speak: 'Ngày mai'"
                 />
               </div>
-            )}
-          </div>
+            </section>
+          )}
+        </div>
 
-          {}
-          <div className="pt-6 flex gap-4 border-t border-neutral-50">
-            <button
-              type="button"
-              onClick={() => navigate(-1)}
-              disabled={isSubmitting}
-              className="px-8 py-4 border border-neutral-200 text-gray-700 rounded-2xl text-sm font-bold hover:bg-neutral-50 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="flex-1 px-8 py-4 bg-mint-600 text-white rounded-2xl text-sm font-bold shadow-xl shadow-mint-100/30 hover:bg-mint-700 transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
-            >
-              <IoSaveOutline size={20} />
-              {isSubmitting ? 'Saving...' : 'Save Product'}
-            </button>
+        {}
+        <div className="space-y-5">
+          <section className="bg-white rounded-2xl border border-neutral-100/50 shadow-sm p-4 space-y-4">
+            <div className="flex items-center gap-2.5 border-b border-neutral-50 pb-3">
+              <div className="w-8 h-8 rounded-lg bg-mint-50 flex items-center justify-center text-mint-600">
+                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-none stroke-current stroke-2">
+                  <path d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+              </div>
+              <h3 className="text-sm font-bold text-slate-700">Options & Configurations</h3>
+            </div>
+            <OptionsConfigEditor
+              optionsConfig={state.optionsConfig}
+              onChange={(optionsConfig) => setState((prev) => ({ ...prev, optionsConfig }))}
+            />
+          </section>
+
+          <section className="bg-white rounded-2xl border border-neutral-100/50 shadow-sm p-4 space-y-4">
+            <div className="flex items-center gap-2.5 border-b border-neutral-50 pb-3">
+              <div className="w-8 h-8 rounded-lg bg-mint-50 flex items-center justify-center text-mint-600">
+                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-none stroke-current stroke-2">
+                  <rect x="3" y="3" width="7" height="7" />
+                  <rect x="14" y="3" width="7" height="7" />
+                  <rect x="14" y="14" width="7" height="7" />
+                  <rect x="3" y="14" width="7" height="7" />
+                </svg>
+              </div>
+              <h3 className="text-sm font-bold text-slate-700">Product Variants</h3>
+            </div>
+            <VariantsEditor
+              variants={state.variants}
+              optionsConfig={state.optionsConfig}
+              nameBase={state.nameBase}
+              onChange={handleVariantsChange}
+            />
+          </section>
+
+          <div className="bg-neutral-50/50 rounded-2xl p-4 space-y-4 border border-neutral-100/50 shadow-sm">
+            <label className="flex items-center gap-3 cursor-pointer group">
+              <div className="relative inline-flex items-center">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  checked={state.isPreOrder}
+                  onChange={(e) => handleBaseChange({ isPreOrder: e.target.checked })}
+                />
+                <div className="w-10 h-5.5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-mint-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4.5 after:w-4.5 after:transition-all peer-checked:bg-mint-600 group-hover:opacity-90 transition-opacity"></div>
+              </div>
+              <div>
+                <h3 className="text-xs font-bold text-slate-700 group-hover:text-mint-700 transition-colors">
+                  Enable Pre-order
+                </h3>
+                <p className="text-[10px] text-slate-400">
+                  Allow customers to order before official release.
+                </p>
+              </div>
+            </label>
+
+            <div className="pt-4 flex gap-3 border-t border-neutral-200/50">
+              <button
+                type="button"
+                onClick={() => navigate(-1)}
+                disabled={isSubmitting}
+                className="px-6 py-3 border border-neutral-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-white hover:shadow-sm transition-all active:scale-95 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="flex-1 px-8 py-3 bg-mint-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-mint-100/50 hover:bg-mint-700 hover:shadow-mint-200/50 transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                <IoSaveOutline size={18} />
+                {isSubmitting ? 'Saving...' : 'Create Product'}
+              </button>
+            </div>
           </div>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   )
 }

@@ -1,8 +1,9 @@
 import { useState, useEffect, useMemo } from 'react'
 import type { Prescription } from '@/shared/types/prescription.types'
 import { Button } from '@/shared/components/ui/button'
-import { Check, Copy, AlertCircle, Info } from 'lucide-react'
+import { Copy, AlertCircle, Info } from 'lucide-react'
 import { toast } from 'react-hot-toast'
+import { Checkbox } from '@/shared/components/ui/checkbox/Checkbox'
 
 const VALIDATION_RULES = {
   SPH: { min: -20.0, max: 20.0, step: 0.25 },
@@ -462,28 +463,14 @@ export function PrescriptionForm({
                     </p>
                   </div>
 
-                  <label className="flex items-center gap-3 cursor-pointer group">
-                    <div className="relative">
-                      <input
-                        type="checkbox"
-                        checked={pdConfirmed}
-                        onChange={(e) => setPdConfirmed(e.target.checked)}
-                        className="sr-only"
-                      />
-                      <div
-                        className={`w-5 h-5 rounded-md border-2 transition-all flex items-center justify-center ${
-                          pdConfirmed
-                            ? 'bg-yellow-500 border-yellow-500 shadow-sm'
-                            : 'border-yellow-300 bg-white group-hover:border-yellow-400'
-                        }`}
-                      >
-                        {pdConfirmed && <Check className="w-3.5 h-3.5 text-white" />}
-                      </div>
-                    </div>
-                    <span className="text-xs font-bold text-yellow-800 select-none">
-                      Tôi xác nhận số đo này là chính xác
-                    </span>
-                  </label>
+                  <Checkbox
+                    isChecked={pdConfirmed}
+                    onCheckedChange={setPdConfirmed}
+                    variant="yellow"
+                    label="Tôi xác nhận số đo này là chính xác"
+                    labelClassName="text-yellow-800"
+                    size="sm"
+                  />
                 </div>
               </div>
             </div>
@@ -509,35 +496,26 @@ export function PrescriptionForm({
       )}
 
       {showDefaultCheckbox && (
-        <div className="flex items-center gap-3 py-3">
-          <input
-            type="checkbox"
+        <div className="py-3">
+          <Checkbox
             id="isDefault"
-            checked={formData.isDefault}
-            onChange={(e) => setFormData((prev) => ({ ...prev, isDefault: e.target.checked }))}
-            className="w-5 h-5 rounded-lg border-gray-200 text-primary-500 focus:ring-primary-500"
+            isChecked={formData.isDefault}
+            onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, isDefault: checked }))}
+            label="Set as default prescription"
+            labelClassName="text-mint-1200"
           />
-          <label htmlFor="isDefault" className="text-sm font-bold text-mint-1200 cursor-pointer">
-            Set as default prescription
-          </label>
         </div>
       )}
 
       {showConfirmCheckbox && (
-        <label className="flex items-start cursor-pointer mt-4">
-          <input
-            type="checkbox"
-            className="sr-only peer"
-            checked={isConfirmed}
-            onChange={(e) => setIsConfirmed(e.target.checked)}
+        <div className="mt-4">
+          <Checkbox
+            isChecked={isConfirmed}
+            onCheckedChange={setIsConfirmed}
+            label={confirmText}
+            labelClassName="text-gray-eyewear normal-case font-medium leading-relaxed"
           />
-          <div className="mt-0.5 w-5 h-5 border-2 border-mint-300 rounded peer-checked:bg-primary-500 peer-checked:border-primary-500 transition-all flex items-center justify-center shrink-0">
-            <Check
-              className={`w-3.5 h-3.5 text-white ${isConfirmed ? 'opacity-100' : 'opacity-0'} transition-opacity`}
-            />
-          </div>
-          <span className="ml-3 text-sm text-gray-eyewear leading-relaxed">{confirmText}</span>
-        </label>
+        </div>
       )}
 
       <div className="flex gap-4 pt-4">

@@ -64,6 +64,28 @@ const ReturnRequestPage = lazy(() =>
   }))
 )
 
+// Policy Pages
+const PrivacyPolicyPage = lazy(() =>
+  import('@/pages/customer/policies/PrivacyPolicyPage').then((m) => ({
+    default: m.PrivacyPolicyPage
+  }))
+)
+const OrderPaymentPolicyPage = lazy(() =>
+  import('@/pages/customer/policies/OrderPaymentPolicyPage').then((m) => ({
+    default: m.OrderPaymentPolicyPage
+  }))
+)
+const ShippingPolicyPage = lazy(() =>
+  import('@/pages/customer/policies/ShippingPolicyPage').then((m) => ({
+    default: m.ShippingPolicyPage
+  }))
+)
+const ReturnWarrantyPolicyPage = lazy(() =>
+  import('@/pages/customer/policies/ReturnWarrantyPolicyPage').then((m) => ({
+    default: m.ReturnWarrantyPolicyPage
+  }))
+)
+
 export const customerRoutes = [
   {
     element: (
@@ -103,6 +125,38 @@ export const customerRoutes = [
         element: (
           <LazyPage>
             <PaymentResultPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: '/policies/privacy',
+        element: (
+          <LazyPage>
+            <PrivacyPolicyPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: '/policies/order-payment',
+        element: (
+          <LazyPage>
+            <OrderPaymentPolicyPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: '/policies/shipping',
+        element: (
+          <LazyPage>
+            <ShippingPolicyPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: '/policies/return-warranty',
+        element: (
+          <LazyPage>
+            <ReturnWarrantyPolicyPage />
           </LazyPage>
         )
       },

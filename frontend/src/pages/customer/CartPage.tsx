@@ -1,6 +1,6 @@
 // import { Info, Plus } from 'lucide-react'
 import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
-import { Newsletter, Footer } from '@/components/layout/customer/homepage/components'
+import { Footer } from '@/components/layout/customer/homepage/components'
 import { useCart } from '@/features/customer/cart/hooks/useCart'
 import { Container, Checkbox } from '@/shared/components/ui'
 import { EmptyCart, CartItem, CartSummary, PromoSection } from '@/components/layout/customer/cart'
@@ -87,7 +87,6 @@ export const CartPage = () => {
         </Container>
       </main>
 
-      <Newsletter />
       <Footer />
     </div>
   )

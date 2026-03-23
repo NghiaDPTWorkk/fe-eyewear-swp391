@@ -264,7 +264,6 @@ export const PaymentFailureReasons = () => (
 
 export const PaymentFooter = () => (
   <div className="text-center space-y-3 pt-4 pb-8">
-    <p className="text-mint-800/60 font-medium">You will receive a confirmation email shortly.</p>
     <p className="text-sm">
       If you have any questions, please contact{' '}
       <Link to="/support" className="text-primary-600 font-bold hover:underline">

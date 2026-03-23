@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom'
 import { useGetProductDetail } from '@/shared/hooks/products/useGetProductDetail'
 import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
 import { ImageGallery, ProductInfo } from '@/components/layout/customer/product-detail'
-import { Newsletter, Footer } from '@/components/layout/customer/homepage/components'
+import { Footer } from '@/components/layout/customer/homepage/components'
 import { useProductVariants } from '@/shared/hooks/products/useProductVariants'
 
 export const ProductDetailPage = () => {
@@ -75,7 +75,6 @@ const ProductDetailContent = ({ product, productId }: ProductDetailContentProps)
         </div>
       </main>
 
-      <Newsletter />
       <Footer />
     </div>
   )

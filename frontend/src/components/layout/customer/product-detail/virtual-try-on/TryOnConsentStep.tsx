@@ -8,7 +8,7 @@ interface TryOnConsentStepProps {
 
 export default function TryOnConsentStep({ onAgree, onDisagree }: TryOnConsentStepProps) {
   return (
-    <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden animate-fade-in-up">
+    <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden">
       {/* Header with close */}
       <div className="flex justify-end p-4 pb-0">
         <button

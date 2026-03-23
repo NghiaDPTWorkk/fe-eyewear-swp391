@@ -61,12 +61,12 @@ const ANCHOR_W_NOSE = 0.1
 /** Fine-tune position offsets */
 const MODEL_OFFSET_X = 0.0
 const MODEL_OFFSET_Y = 0
-const MODEL_OFFSET_Z = -0.3
+const MODEL_OFFSET_Z = -0.2
 
 /** Pitch offset (radians) — tilts the temples UP toward the ears.
  *  Positive = temples go UP, Negative = temples go DOWN.
  *  Try values between -0.3 and 0.3 */
-const MODEL_PITCH_OFFSET = 0.15
+const MODEL_PITCH_OFFSET = -0.07
 
 /** Render FOV — must match the Canvas camera fov */
 const CAMERA_FOV = 50
@@ -288,84 +288,76 @@ function GlassesScene({
     const vpW = viewport.width
     const vpH = viewport.height
 
-    // ── Convert landmarks to world coords ───────────────────────────────────
+    // ── Target values to be filtered ────────────────────────────────────────
+    let targetX = 0,
+      targetY = 0,
+      targetZ = 0
+    let targetSX = 1,
+      targetSY = 1,
+      targetSZ = 1
+    const targetQuat = new THREE.Quaternion()
+
+    // ── 1. Scale from Landmarks (Inter-pupillary distance) ──────────────────
     const le = toWorld(leftEye, visibleX0, visibleY0, visibleW, visibleH, vpW, vpH)
     const re = toWorld(rightEye, visibleX0, visibleY0, visibleW, visibleH, vpW, vpH)
     const nose = toWorld(noseBridge, visibleX0, visibleY0, visibleW, visibleH, vpW, vpH)
 
-    // ── Position: weighted anchor ───────────────────────────────────────────
-    const targetX =
-      le.x * ANCHOR_W_LEFT + re.x * ANCHOR_W_RIGHT + nose.x * ANCHOR_W_NOSE + MODEL_OFFSET_X
-    const targetY =
-      le.y * ANCHOR_W_LEFT + re.y * ANCHOR_W_RIGHT + nose.y * ANCHOR_W_NOSE + MODEL_OFFSET_Y
-    const targetZ =
-      le.z * ANCHOR_W_LEFT + re.z * ANCHOR_W_RIGHT + nose.z * ANCHOR_W_NOSE + MODEL_OFFSET_Z
+    const eyeDist = Math.sqrt((re.x - le.x) ** 2 + (re.y - le.y) ** 2 + (re.z - le.z) ** 2)
+    const s = (eyeDist / TARGET_GLASSES_WIDTH) * FACE_TO_GLASSES_RATIO
+    targetSX = targetSY = targetSZ = s
 
-    // ── Scale: IPD auto-fit ─────────────────────────────────────────────────
-    const faceWidth = Math.sqrt((re.x - le.x) ** 2 + (re.y - le.y) ** 2 + (re.z - le.z) ** 2)
-    const s = (faceWidth / TARGET_GLASSES_WIDTH) * FACE_TO_GLASSES_RATIO
-    const targetSX = s
-    const targetSY = s
-    const targetSZ = s
-
-    // ── Rotation: use transformation matrix if available, else landmarks ────
-    const targetQuat = new THREE.Quaternion()
-
+    // ── 2. Rotation (Matrix or Fallback) ────────────────────────────────────
     if (matrices && matrices.length > 0 && matrices[0] && matrices[0].length >= 16) {
-      // Extract rotation from MediaPipe's 4×4 matrix
       const raw = matrices[0]
-      const mp = new THREE.Matrix4()
+      const mpMatrix = new THREE.Matrix4()
+      // Use fromArray (column-major) instead of .set (row-major) to avoid transposition
+      mpMatrix.fromArray(raw)
 
-      // MediaPipe packedData is row-major. THREE.Matrix4.set() takes row-major args
-      // and stores column-major internally — no transpose needed.
-      mp.set(
-        raw[0],
-        raw[1],
-        raw[2],
-        raw[3],
-        raw[4],
-        raw[5],
-        raw[6],
-        raw[7],
-        raw[8],
-        raw[9],
-        raw[10],
-        raw[11],
-        raw[12],
-        raw[13],
-        raw[14],
-        raw[15]
-      )
-
-      // Extract rotation only (ignore position/scale from the matrix)
       const _pos = new THREE.Vector3()
+      const _quat = new THREE.Quaternion()
       const _scale = new THREE.Vector3()
-      mp.decompose(_pos, targetQuat, _scale)
+      mpMatrix.decompose(_pos, _quat, _scale)
 
-      // Coord-system conversion: MediaPipe (Y↓, Z→away) → Three.js (Y↑, Z→camera)
-      // Position is already handled by landmarks.  For rotation we just flip
-      // the Y and Z quaternion components (negating them reverses the rotation
-      // direction around those axes, matching the axis flip).
-      targetQuat.y = -targetQuat.y
-      targetQuat.z = -targetQuat.z
-      targetQuat.normalize()
+      // MediaPipe's Facial Transformation Matrix is already canonical (Y-up, Z-towards),
+      // so we can use the decomposed quaternion directly without negations now
+      // that we've fixed the matrix loading (use fromArray instead of .set).
+      targetQuat.copy(_quat).normalize()
     } else {
-      // Fallback: derive rotation from landmark positions
+      // Fallback Rotation (Improved with Pitch)
       const dx = re.x - le.x
       const dy = re.y - le.y
       const dz = re.z - le.z
       const rotZ = Math.atan2(dy, dx)
       const rotY = Math.atan2(-dz, Math.sqrt(dx * dx + dy * dy)) * 0.7
 
-      const euler = new THREE.Euler(0, rotY, rotZ, 'YZX')
-      targetQuat.setFromEuler(euler)
+      // Basic pitch approximation:
+      // Head UP => nose.z increases, eyes.z decreases => eye.z - nose.z is negative.
+      // We want a positive X rotation for tilting UP in Three.js.
+      const eyeCenterY = (le.y + re.y) / 2
+      const eyeCenterZ = (le.z + re.z) / 2
+      const rotX = -Math.atan2(eyeCenterZ - nose.z, eyeCenterY - nose.y) * 0.6
+
+      targetQuat.setFromEuler(new THREE.Euler(rotX, rotY, rotZ, 'YZX'))
     }
 
-    // ── Apply pitch offset to tilt temples toward ears ────────────────────
+    // ── 3. Apply pitch offset (User tunable) ────────────────────────────────
     const pitchQuat = new THREE.Quaternion()
     pitchQuat.setFromAxisAngle(new THREE.Vector3(1, 0, 0), MODEL_PITCH_OFFSET)
-    targetQuat.multiply(pitchQuat)
-    targetQuat.normalize()
+    targetQuat.multiply(pitchQuat).normalize()
+
+    // ── 4. Position with LOCAL Offset Application ───────────────────────────
+    // This is the CRITICAL fix: applying MODEL_OFFSET in local space
+    // ensures it follows the face's normal as the head tilts.
+    const anchorX = le.x * ANCHOR_W_LEFT + re.x * ANCHOR_W_RIGHT + nose.x * ANCHOR_W_NOSE
+    const anchorY = le.y * ANCHOR_W_LEFT + re.y * ANCHOR_W_RIGHT + nose.y * ANCHOR_W_NOSE
+    const anchorZ = le.z * ANCHOR_W_LEFT + re.z * ANCHOR_W_RIGHT + nose.z * ANCHOR_W_NOSE
+
+    const localOffset = new THREE.Vector3(MODEL_OFFSET_X, MODEL_OFFSET_Y, MODEL_OFFSET_Z)
+    localOffset.applyQuaternion(targetQuat)
+
+    targetX = anchorX + localOffset.x
+    targetY = anchorY + localOffset.y
+    targetZ = anchorZ + localOffset.z
 
     // ── Apply One Euro Filter ───────────────────────────────────────────────
     const t = performance.now() / 1000
@@ -376,7 +368,6 @@ function GlassesScene({
     let smoothQX: number, smoothQY: number, smoothQZ: number, smoothQW: number
 
     if (!isInitialized.current) {
-      // First frame: skip filtering to avoid initial lag
       smoothPX = targetX
       smoothPY = targetY
       smoothPZ = targetZ
@@ -387,7 +378,6 @@ function GlassesScene({
       smoothQY = targetQuat.y
       smoothQZ = targetQuat.z
       smoothQW = targetQuat.w
-      // Prime the filters
       f.px.filter(targetX, t)
       f.py.filter(targetY, t)
       f.pz.filter(targetZ, t)
@@ -406,18 +396,21 @@ function GlassesScene({
       smoothSX = f.sx.filter(targetSX, t)
       smoothSY = f.sy.filter(targetSY, t)
       smoothSZ = f.sz.filter(targetSZ, t)
-      smoothQX = f.qx.filter(targetQuat.x, t)
-      smoothQY = f.qy.filter(targetQuat.y, t)
-      smoothQZ = f.qz.filter(targetQuat.z, t)
-      smoothQW = f.qw.filter(targetQuat.w, t)
+      const fx = f.qx.filter(targetQuat.x, t)
+      const fy = f.qy.filter(targetQuat.y, t)
+      const fz = f.qz.filter(targetQuat.z, t)
+      const fw = f.qw.filter(targetQuat.w, t)
+      const sq = new THREE.Quaternion(fx, fy, fz, fw).normalize()
+      smoothQX = sq.x
+      smoothQY = sq.y
+      smoothQZ = sq.z
+      smoothQW = sq.w
     }
 
-    // ── Apply to group ──────────────────────────────────────────────────────
+    // ── Apply to Three.js objects ──────────────────────────────────────────
     group.position.set(smoothPX, smoothPY, smoothPZ)
     group.scale.set(smoothSX, smoothSY, smoothSZ)
-
-    const smoothQuat = new THREE.Quaternion(smoothQX, smoothQY, smoothQZ, smoothQW).normalize()
-    group.quaternion.copy(smoothQuat)
+    group.quaternion.set(smoothQX, smoothQY, smoothQZ, smoothQW)
   })
 
   if (!clonedScene) return null

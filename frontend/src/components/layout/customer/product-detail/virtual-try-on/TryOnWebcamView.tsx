@@ -62,7 +62,7 @@ export default function TryOnWebcamView({
 
   return (
     <div
-      className="relative w-full max-w-md bg-black rounded-3xl overflow-hidden shadow-2xl animate-fade-in-up flex flex-col"
+      className="relative w-full max-w-md bg-black rounded-3xl overflow-hidden shadow-2xl flex flex-col"
       style={{ maxHeight: '85vh' }}
     >
       {/* Top overlay buttons */}

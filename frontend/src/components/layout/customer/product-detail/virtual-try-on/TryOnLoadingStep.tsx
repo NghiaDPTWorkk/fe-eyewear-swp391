@@ -41,7 +41,7 @@ export default function TryOnLoadingStep({ onReady, onError, initModel }: TryOnL
   }, [onReady, onError, initModel])
 
   return (
-    <div className="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden animate-fade-in-up">
+    <div className="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden">
       <div className="px-8 py-10 flex flex-col items-center text-center">
         {/* Camera icon with spinning ring */}
         <div className="relative mb-8">

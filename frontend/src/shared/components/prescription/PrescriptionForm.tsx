@@ -455,11 +455,11 @@ export function PrescriptionForm({
                 <div className="flex-1 space-y-3">
                   <div className="space-y-1">
                     <p className="text-[11px] font-bold text-yellow-800 uppercase tracking-wider">
-                      Lưu ý về chỉ số PD
+                      PD Measurement Note
                     </p>
                     <p className="text-xs text-yellow-700 leading-relaxed">
-                      Chỉ số PD của bạn có vẻ không nằm trong dải thông thường cho người lớn
-                      (55-75mm). Vui lòng kiểm tra lại nếu đây là số đo cho trẻ em (khoảng 35-54mm).
+                      Your PD index seems to be outside the normal range for adults (55-75mm).
+                      Please check again if this measurement is for a child (approx. 35-54mm).
                     </p>
                   </div>
 
@@ -467,7 +467,7 @@ export function PrescriptionForm({
                     isChecked={pdConfirmed}
                     onCheckedChange={setPdConfirmed}
                     variant="yellow"
-                    label="Tôi xác nhận số đo này là chính xác"
+                    label="I confirm this measurement is accurate"
                     labelClassName="text-yellow-800"
                     size="sm"
                   />

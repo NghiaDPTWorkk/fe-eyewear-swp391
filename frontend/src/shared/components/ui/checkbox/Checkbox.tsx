@@ -85,7 +85,7 @@ export function Checkbox({
         checked={isChecked}
         onChange={handleChange}
         disabled={isDisabled}
-        className="peer sr-only"
+        className="absolute w-0 h-0 opacity-0 pointer-events-none"
       />
 
       <span

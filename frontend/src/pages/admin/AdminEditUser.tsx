@@ -18,9 +18,15 @@ import { Gender } from '@/shared/utils/enums/gender.enum'
 const VN_PHONE_REGEX = /^(0|\+84)(3|5|7|8|9)\d{8}$/
 
 const validationSchema = Yup.object({
-  name: Yup.string().required('Name is required').min(2, 'Name too short'),
+  name: Yup.string()
+    .required('Name is required')
+    .min(2, 'Name too short')
+    .matches(/^[a-zA-ZÀ-Ỹà-ỹ\s]+$/, 'Name cannot contain special characters'),
   email: Yup.string().email('Invalid email').required('Email is required'),
-  phone: Yup.string().matches(VN_PHONE_REGEX, 'Invalid Vietnam phone number'),
+  phone: Yup.string()
+    .required('Phone is required')
+    .matches(/^[0-9]+$/, 'Phone must contain numbers only')
+    .matches(/^(0|84)\d{8,9}$/, 'Invalid Vietnam phone number format (9-10 digits)'),
   gender: Yup.string()
     .oneOf([Gender.MALE, Gender.FEMALE, Gender.NON_BINARY])
     .required('Gender is required'),
@@ -54,6 +60,19 @@ export default function AdminEditUser() {
       toast.error(error?.response?.data?.message || 'Failed to update user')
     }
   })
+
+  const blockNonDigits = (e: React.KeyboardEvent) => {
+    if (
+      !/[0-9]/.test(e.key) &&
+      e.key !== 'Backspace' &&
+      e.key !== 'Tab' &&
+      e.key !== 'ArrowLeft' &&
+      e.key !== 'ArrowRight' &&
+      e.key !== 'Delete'
+    ) {
+      e.preventDefault()
+    }
+  }
 
   if (isLoading) {
     return (
@@ -179,6 +198,7 @@ export default function AdminEditUser() {
                     </label>
                     <Field
                       name="phone"
+                      onKeyDown={blockNonDigits}
                       className={`w-full px-4 py-3.5 bg-neutral-50 border rounded-2xl text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-mint-500/10 transition-all ${touched.phone && errors.phone ? 'border-red-500' : 'border-neutral-100 focus:border-mint-500'}`}
                     />
                     <ErrorMessage

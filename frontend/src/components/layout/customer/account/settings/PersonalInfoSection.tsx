@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react'
 import { Card, Input, Button } from '@/shared/components/ui'
 import { User as UserIcon, Check, Mail, Phone } from 'lucide-react'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
 import type { User } from '@/shared/types'
 import { useAuthStore } from '@/store'
 import { toast } from 'react-hot-toast'
+import { cn } from '@/shared/utils'
 
 interface PersonalInfoSectionProps {
   user: User | null
@@ -11,60 +13,47 @@ interface PersonalInfoSectionProps {
 
 export const PersonalInfoSection = ({ user }: PersonalInfoSectionProps) => {
   const { updateProfile } = useAuthStore()
-  const [isUpdating, setIsUpdating] = useState(false)
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    gender: 'N'
+
+  const validationSchema = Yup.object().shape({
+    name: Yup.string()
+      .required('Full name is required')
+      .min(2, 'Full name must be at least 2 characters long')
+      .matches(/^[a-zA-ZÀ-Ỹà-ỹ\s]+$/, 'Name cannot contain special characters'),
+    phone: Yup.string()
+      .required('Phone number is required')
+      .matches(/^[0-9]+$/, 'Phone must contain numbers only')
+      .matches(/^(0|84)\d{8,9}$/, 'Invalid phone number format (9-10 digits)'),
+    gender: Yup.string().required('Gender is required')
   })
 
-  // Sync state with user data
-  useEffect(() => {
-    if (user) {
-      setFormData({
-        name: user.name || '',
-        phone: user.phone || '',
-        gender: (user.gender as any) || 'N'
-      })
-    }
-  }, [user])
-
-  const handleUpdate = async () => {
-    // Basic validations
-    const name = formData.name.trim()
-    const phone = formData.phone.trim()
-
-    if (!name) {
-      toast.error('Full name cannot be empty')
-      return
-    }
-
-    if (name.length < 2) {
-      toast.error('Full name must be at least 2 characters long')
-      return
-    }
-
-    if (phone) {
-      // Vietnamese phone number regex: starts with 0 or 84, followed by 9 digits
-      const phoneRegex = /^(0|84)(3|5|7|8|9)([0-9]{8})$/
-      if (!phoneRegex.test(phone)) {
-        toast.error('Invalid phone number format (e.g. 0912345678)')
-        return
+  const formik = useFormik({
+    initialValues: {
+      name: user?.name || '',
+      phone: user?.phone || '',
+      gender: (user?.gender as any) || 'N'
+    },
+    validationSchema,
+    enableReinitialize: true,
+    onSubmit: async (values) => {
+      try {
+        await updateProfile(values)
+        toast.success('Profile updated successfully!')
+      } catch (error: any) {
+        toast.error(error.response?.data?.message || 'Failed to update profile')
       }
     }
+  })
 
-    setIsUpdating(true)
-    try {
-      await updateProfile({
-        ...formData,
-        name,
-        phone
-      })
-      toast.success('Profile updated successfully!')
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to update profile')
-    } finally {
-      setIsUpdating(false)
+  const blockNonDigits = (e: React.KeyboardEvent) => {
+    if (
+      !/[0-9]/.test(e.key) &&
+      e.key !== 'Backspace' &&
+      e.key !== 'Tab' &&
+      e.key !== 'ArrowLeft' &&
+      e.key !== 'ArrowRight' &&
+      e.key !== 'Delete'
+    ) {
+      e.preventDefault()
     }
   }
 
@@ -82,14 +71,20 @@ export const PersonalInfoSection = ({ user }: PersonalInfoSectionProps) => {
         <div className="flex flex-col gap-2 md:col-span-2">
           <label className="text-sm font-semibold text-mint-1100 ml-1">Full name *</label>
           <Input
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            {...formik.getFieldProps('name')}
             placeholder="Enter your full name"
-            className="bg-white border-mint-200 focus:border-primary-500 rounded-xl h-14"
+            className={cn(
+              'bg-white border-mint-200 focus:border-primary-500 rounded-xl h-14',
+              formik.touched.name && formik.errors.name && 'border-red-500'
+            )}
             rightElement={
-              formData.name && <Check className="w-5 h-5 text-primary-500 animate-in fade-in" />
+              formik.values.name &&
+              !formik.errors.name && <Check className="w-5 h-5 text-primary-500 animate-in fade-in" />
             }
           />
+          {formik.touched.name && formik.errors.name && (
+            <p className="text-[11px] text-red-500 font-bold ml-1">{formik.errors.name}</p>
+          )}
         </div>
 
         {/* Email - Read Only */}
@@ -111,13 +106,21 @@ export const PersonalInfoSection = ({ user }: PersonalInfoSectionProps) => {
         <div className="flex flex-col gap-2">
           <label className="text-sm font-semibold text-mint-1100 ml-1">Phone number</label>
           <Input
-            value={formData.phone || ''}
-            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+            {...formik.getFieldProps('phone')}
+            onKeyDown={blockNonDigits}
             placeholder="Enter your phone number"
-            className="bg-white border-mint-200 focus:border-primary-500 rounded-xl h-14"
+            className={cn(
+              'bg-white border-mint-200 focus:border-primary-500 rounded-xl h-14',
+              formik.touched.phone && formik.errors.phone && 'border-red-500'
+            )}
             leftElement={<Phone size={18} className="text-mint-400" />}
-            rightElement={formData.phone && <Check className="w-5 h-5 text-primary-500" />}
+            rightElement={
+              formik.values.phone && !formik.errors.phone && <Check className="w-5 h-5 text-primary-500" />
+            }
           />
+          {formik.touched.phone && formik.errors.phone && (
+            <p className="text-[11px] text-red-500 font-bold ml-1">{formik.errors.phone}</p>
+          )}
         </div>
 
         {/* Gender Selection */}
@@ -132,7 +135,7 @@ export const PersonalInfoSection = ({ user }: PersonalInfoSectionProps) => {
               <label
                 key={option.id}
                 className={`flex-1 min-w-[100px] flex items-center justify-center gap-2 p-4 rounded-xl border-2 transition-all cursor-pointer ${
-                  formData.gender === option.id
+                  formik.values.gender === option.id
                     ? 'border-primary-500 bg-primary-50 text-primary-700'
                     : 'border-mint-100 bg-white text-mint-900 hover:border-mint-200'
                 }`}
@@ -141,12 +144,12 @@ export const PersonalInfoSection = ({ user }: PersonalInfoSectionProps) => {
                   type="radio"
                   name="gender"
                   value={option.id}
-                  checked={formData.gender === option.id}
-                  onChange={() => setFormData({ ...formData, gender: option.id })}
+                  checked={formik.values.gender === option.id}
+                  onChange={() => formik.setFieldValue('gender', option.id)}
                   className="hidden"
                 />
                 <span className="font-bold text-sm tracking-wide">{option.label}</span>
-                {formData.gender === option.id && <Check size={16} className="text-primary-500" />}
+                {formik.values.gender === option.id && <Check size={16} className="text-primary-500" />}
               </label>
             ))}
           </div>
@@ -155,9 +158,10 @@ export const PersonalInfoSection = ({ user }: PersonalInfoSectionProps) => {
 
       <div className="mt-10 pt-6 border-t border-mint-50">
         <Button
-          onClick={handleUpdate}
-          isLoading={isUpdating}
-          className="bg-primary-500 hover:bg-primary-600 text-white px-10 h-14 rounded-xl font-bold uppercase tracking-widest text-sm shadow-xl shadow-primary-500/20 active:scale-[0.98] transition-all"
+          onClick={() => formik.handleSubmit()}
+          isLoading={formik.isSubmitting}
+          isDisabled={!formik.isValid || !formik.dirty}
+          className="bg-primary-500 hover:bg-primary-600 text-white px-10 h-14 rounded-xl font-bold uppercase tracking-widest text-sm shadow-xl shadow-primary-500/20 active:scale-[0.98] transition-all disabled:opacity-50"
         >
           Save Changes
         </Button>

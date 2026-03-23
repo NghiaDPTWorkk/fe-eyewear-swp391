@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
 import {
   IoTicketOutline,
   IoInfiniteOutline,
-  IoAlertCircleOutline,
+  /* IoAlertCircleOutline, */
   IoCalendarOutline,
   IoCloseOutline,
   IoCheckmarkOutline,
@@ -95,11 +97,63 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
   editingVoucher,
   isSaving = false
 }) => {
-  const [form, setForm] = useState<FormState>(EMPTY_FORM)
+  const validationSchema = Yup.object().shape({
+    name: Yup.string().required('Campaign name is required'),
+    code: Yup.string().required('Voucher code is required'),
+    typeDiscount: Yup.string().required(),
+    value: Yup.number()
+      .required('Required')
+      .min(0.01, 'Value must be greater than 0')
+      .when('typeDiscount', {
+        is: DiscountType.PERCENTAGE,
+        then: (schema) => schema.max(100, 'Percentage cannot exceed 100%'),
+        otherwise: (schema) =>
+          schema.test(
+            'fixed-value-less-than-min',
+            'Discount value must be less than or equal to min order value',
+            function (val) {
+              const { minOrderValue } = this.parent
+              return (val || 0) <= (minOrderValue || 0)
+            }
+          )
+      }),
+    usageLimit: Yup.number().required('Required').min(1, 'Limit must be at least 1'),
+    startedDate: Yup.date().required('Start date is required'),
+    endedDate: Yup.date()
+      .required('End date is required')
+      .min(Yup.ref('startedDate'), 'End date cannot be before start date'),
+    minOrderValue: Yup.number()
+      .min(0, 'Min order value cannot be negative')
+      .test('min-less-than-max', 'Min order value must be less than max discount cap', function (value) {
+        const { maxDiscountValue, typeDiscount } = this.parent
+        if (typeDiscount === DiscountType.PERCENTAGE && maxDiscountValue > 0) {
+          return (value || 0) < maxDiscountValue
+        }
+        return true
+      }),
+    maxDiscountValue: Yup.number().min(0, 'Max discount cap cannot be negative'),
+    applyScope: Yup.string().required(),
+    status: Yup.string().required()
+  })
+
+  const formik = useFormik<FormState>({
+    initialValues: EMPTY_FORM,
+    validationSchema,
+    onSubmit: (values) => {
+      const finalForm = {
+        ...values,
+        value: Number(values.value) || 0,
+        usageLimit: Number(values.usageLimit) || 0,
+        minOrderValue: Number(values.minOrderValue) || 0,
+        maxDiscountValue: Number(values.maxDiscountValue) || 0
+      }
+      onSave(finalForm)
+    }
+  })
 
   useEffect(() => {
-    if (editingVoucher) {
-      setForm({
+    if (editingVoucher && isOpen) {
+      formik.setValues({
         _id: editingVoucher._id,
         name: editingVoucher.name ?? '',
         description: editingVoucher.description ?? '',
@@ -107,7 +161,6 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
         typeDiscount: editingVoucher.typeDiscount ?? DiscountType.PERCENTAGE,
         value: editingVoucher.value ?? 0,
         usageLimit: editingVoucher.usageLimit ?? 100,
-
         startedDate: isoToDateInput(editingVoucher.startedDate),
         endedDate: isoToDateInput(editingVoucher.endedDate),
         minOrderValue: editingVoucher.minOrderValue ?? 0,
@@ -115,28 +168,33 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
         applyScope: editingVoucher.applyScope ?? ApplyScope.ALL,
         status: editingVoucher.status ?? Status.DRAFT
       })
-    } else {
-      setForm(EMPTY_FORM)
+    } else if (isOpen) {
+      formik.resetForm()
     }
   }, [editingVoucher, isOpen])
 
   if (!isOpen) return null
 
-  const handleSave = () => {
-    const finalForm = {
-      ...form,
-      value: Number(form.value) || 0,
-      usageLimit: Number(form.usageLimit) || 0,
-      minOrderValue: Number(form.minOrderValue) || 0,
-      maxDiscountValue: Number(form.maxDiscountValue) || 0
-    }
-    onSave(finalForm)
-  }
-
+  const isPerc = formik.values.typeDiscount === DiscountType.PERCENTAGE
   const inputCls =
     'w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-mint-300/50 focus:border-mint-400 transition bg-white placeholder:text-slate-300'
 
-  const isPerc = form.typeDiscount === DiscountType.PERCENTAGE
+  const blockNonDigits = (e: React.KeyboardEvent) => {
+    const isControlKey = [
+      'Backspace',
+      'Tab',
+      'ArrowLeft',
+      'ArrowRight',
+      'Delete',
+      'Enter',
+      'Escape'
+    ].includes(e.key)
+    const isDigit = /[0-9]/.test(e.key)
+
+    if (!isDigit && !isControlKey) {
+      e.preventDefault()
+    }
+  }
 
   return (
     <ModalOverlay onClose={onClose}>
@@ -172,28 +230,34 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
               <div className="col-span-2">
                 <FormRow label="Code *">
                   <input
-                    value={form.code}
-                    onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })}
-                    className={`${inputCls} font-mono font-bold tracking-wider`}
+                    name="code"
+                    value={formik.values.code}
+                    onChange={(e) => formik.setFieldValue('code', e.target.value.toUpperCase())}
+                    onBlur={formik.handleBlur}
+                    className={`${inputCls} font-mono font-bold tracking-wider ${formik.touched.code && formik.errors.code ? 'border-red-500' : ''}`}
                     placeholder="SUMMER25"
                   />
+                  {formik.touched.code && formik.errors.code && (
+                    <p className="text-[10px] text-red-500 font-bold">{formik.errors.code}</p>
+                  )}
                 </FormRow>
               </div>
               <div className="col-span-3">
                 <FormRow label="Campaign Name *">
                   <input
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className={inputCls}
+                    {...formik.getFieldProps('name')}
+                    className={`${inputCls} ${formik.touched.name && formik.errors.name ? 'border-red-500' : ''}`}
                     placeholder="e.g. Summer Mega Sale 2026"
                   />
+                  {formik.touched.name && formik.errors.name && (
+                    <p className="text-[10px] text-red-500 font-bold">{formik.errors.name}</p>
+                  )}
                 </FormRow>
               </div>
             </div>
             <FormRow label="Description">
               <textarea
-                value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                {...formik.getFieldProps('description')}
                 className={`${inputCls} min-h-[72px] resize-none`}
                 placeholder="Internal note about this voucher…"
               />
@@ -207,14 +271,14 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
                 <div className="flex p-1 bg-slate-100 rounded-xl border border-slate-200/60 text-[10px] font-black uppercase tracking-tighter">
                   <button
                     type="button"
-                    onClick={() => setForm({ ...form, typeDiscount: DiscountType.PERCENTAGE })}
+                    onClick={() => formik.setFieldValue('typeDiscount', DiscountType.PERCENTAGE)}
                     className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg transition-all ${isPerc ? 'bg-white text-mint-600 shadow-sm border border-mint-100' : 'text-slate-400 hover:text-slate-500'}`}
                   >
                     <span className="text-base">%</span> Percent
                   </button>
                   <button
                     type="button"
-                    onClick={() => setForm({ ...form, typeDiscount: DiscountType.FIXED })}
+                    onClick={() => formik.setFieldValue('typeDiscount', DiscountType.FIXED)}
                     className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg transition-all ${!isPerc ? 'bg-white text-mint-600 shadow-sm border border-mint-100' : 'text-slate-400 hover:text-slate-500'}`}
                   >
                     <IoCashOutline size={14} /> Fixed ₫
@@ -223,40 +287,42 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
               </FormRow>
               <FormRow label={isPerc ? 'Value (%)' : 'Value (₫)'}>
                 <input
-                  type="number"
-                  min={0}
-                  max={isPerc ? 100 : undefined}
-                  value={form.value}
-                  onFocus={() => setForm({ ...form, value: '' })}
-                  onChange={(e) => setForm({ ...form, value: e.target.value })}
-                  className={`${inputCls} font-black text-mint-600`}
+                  {...formik.getFieldProps('value')}
+                  type="text"
+                  onKeyDown={blockNonDigits}
+                  className={`${inputCls} font-black text-mint-600 ${formik.touched.value && formik.errors.value ? 'border-red-500' : ''}`}
                   placeholder={isPerc ? '25' : '100000'}
                 />
+                {formik.touched.value && formik.errors.value && (
+                  <p className="text-[10px] text-red-500 font-bold">{formik.errors.value}</p>
+                )}
               </FormRow>
             </div>
             <div className="grid grid-cols-2 gap-3 mt-1">
               <FormRow label="Min Order Value (₫)">
                 <input
-                  type="number"
-                  min={0}
-                  value={form.minOrderValue}
-                  onFocus={() => setForm({ ...form, minOrderValue: '' })}
-                  onChange={(e) => setForm({ ...form, minOrderValue: e.target.value })}
-                  className={inputCls}
+                  {...formik.getFieldProps('minOrderValue')}
+                  type="text"
+                  onKeyDown={blockNonDigits}
+                  className={`${inputCls} ${formik.touched.minOrderValue && formik.errors.minOrderValue ? 'border-red-500' : ''}`}
                   placeholder="0 = no minimum"
                 />
+                {formik.touched.minOrderValue && formik.errors.minOrderValue && (
+                  <p className="text-[10px] text-red-500 font-bold">{formik.errors.minOrderValue}</p>
+                )}
               </FormRow>
               {isPerc && (
                 <FormRow label="Max Discount Cap (₫)">
                   <input
-                    type="number"
-                    min={0}
-                    value={form.maxDiscountValue}
-                    onFocus={() => setForm({ ...form, maxDiscountValue: '' })}
-                    onChange={(e) => setForm({ ...form, maxDiscountValue: e.target.value })}
-                    className={inputCls}
+                    {...formik.getFieldProps('maxDiscountValue')}
+                    type="text"
+                    onKeyDown={blockNonDigits}
+                    className={`${inputCls} ${formik.touched.maxDiscountValue && formik.errors.maxDiscountValue ? 'border-red-500' : ''}`}
                     placeholder="0 = unlimited"
                   />
+                  {formik.touched.maxDiscountValue && formik.errors.maxDiscountValue && (
+                    <p className="text-[10px] text-red-500 font-bold">{formik.errors.maxDiscountValue}</p>
+                  )}
                 </FormRow>
               )}
             </div>
@@ -267,13 +333,9 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
             <div className="grid grid-cols-2 gap-3">
               <FormRow label="Apply Scope">
                 <select
-                  value={form.applyScope}
-                  onChange={(e) =>
-                    setForm({ ...form, applyScope: e.target.value as VoucherApplyScope })
-                  }
+                  {...formik.getFieldProps('applyScope')}
                   className={inputCls}
                 >
-                  {}
                   {Object.values(ApplyScope).map((scopeVal) => (
                     <option key={scopeVal} value={scopeVal}>
                       {APPLY_SCOPE_LABELS[scopeVal] ?? scopeVal}
@@ -288,14 +350,15 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
                     size={17}
                   />
                   <input
-                    type="number"
-                    min={1}
-                    value={form.usageLimit}
-                    onFocus={() => setForm({ ...form, usageLimit: '' })}
-                    onChange={(e) => setForm({ ...form, usageLimit: e.target.value })}
-                    className={`${inputCls} pl-9`}
+                    {...formik.getFieldProps('usageLimit')}
+                    type="text"
+                    onKeyDown={blockNonDigits}
+                    className={`${inputCls} pl-9 ${formik.touched.usageLimit && formik.errors.usageLimit ? 'border-red-500' : ''}`}
                   />
                 </div>
+                {formik.touched.usageLimit && formik.errors.usageLimit && (
+                  <p className="text-[10px] text-red-500 font-bold">{formik.errors.usageLimit}</p>
+                )}
               </FormRow>
             </div>
           </Section>
@@ -311,11 +374,13 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
                   />
                   <input
                     type="date"
-                    value={form.startedDate}
-                    onChange={(e) => setForm({ ...form, startedDate: e.target.value })}
-                    className={`${inputCls} pl-9`}
+                    {...formik.getFieldProps('startedDate')}
+                    className={`${inputCls} pl-9 ${formik.touched.startedDate && formik.errors.startedDate ? 'border-red-500' : ''}`}
                   />
                 </div>
+                {formik.touched.startedDate && formik.errors.startedDate && (
+                  <p className="text-[10px] text-red-500 font-bold">{formik.errors.startedDate as string}</p>
+                )}
               </FormRow>
               <FormRow label="Valid Until">
                 <div className="relative">
@@ -325,21 +390,15 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
                   />
                   <input
                     type="date"
-                    value={form.endedDate}
-                    onChange={(e) => setForm({ ...form, endedDate: e.target.value })}
-                    className={`${inputCls} pl-9`}
+                    {...formik.getFieldProps('endedDate')}
+                    className={`${inputCls} pl-9 ${formik.touched.endedDate && formik.errors.endedDate ? 'border-red-500' : ''}`}
                   />
                 </div>
+                {formik.touched.endedDate && formik.errors.endedDate && (
+                  <p className="text-[10px] text-red-500 font-bold">{formik.errors.endedDate as string}</p>
+                )}
               </FormRow>
             </div>
-            {(!form.startedDate || !form.endedDate) && (
-              <div className="mt-2 p-3 bg-amber-50 border border-amber-100 rounded-xl flex items-center gap-2.5">
-                <IoAlertCircleOutline className="text-amber-500 shrink-0" size={16} />
-                <p className="text-[11px] font-bold text-amber-700">
-                  Please set both start and end dates.
-                </p>
-              </div>
-            )}
           </Section>
 
           {}
@@ -348,12 +407,12 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
               {Object.values(Status).map((s) => {
                 const c = STATUS_CFG[s]
                 if (!c) return null
-                const sel = form.status === s
+                const sel = formik.values.status === s
                 return (
                   <button
                     key={s}
                     type="button"
-                    onClick={() => setForm({ ...form, status: s })}
+                    onClick={() => formik.setFieldValue('status', s)}
                     className={`py-2.5 rounded-xl border-2 text-xs font-black uppercase tracking-wider transition-all ${sel ? c.active : `bg-white ${c.idle} hover:border-slate-300`}`}
                   >
                     {c.label}
@@ -376,10 +435,8 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
           </button>
           <button
             type="button"
-            onClick={handleSave}
-            disabled={
-              !form.code?.trim() || !form.name?.trim() || Number(form.value) <= 0 || isSaving
-            }
+            onClick={() => formik.handleSubmit()}
+            disabled={!formik.isValid || !formik.dirty || isSaving}
             className="px-8 py-2.5 rounded-xl bg-gradient-to-r from-mint-500 to-mint-600 text-white text-sm font-black hover:from-mint-600 hover:to-mint-700 transition shadow-lg shadow-mint-200/50 disabled:opacity-40 disabled:shadow-none flex items-center gap-2"
           >
             {isSaving ? (

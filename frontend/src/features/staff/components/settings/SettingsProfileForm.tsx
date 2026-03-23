@@ -22,11 +22,13 @@ export default function ProfileForm() {
   const validationSchema = Yup.object().shape({
     name: Yup.string()
       .required('Full Name is required')
-      .min(2, 'Name must be at least 2 characters'),
+      .min(2, 'Name must be at least 2 characters')
+      .matches(/^[a-zA-ZÀ-Ỹà-ỹ\s]+$/, 'Name cannot contain special characters'),
     email: Yup.string().required('Email is required').email('Invalid email format'),
     phone: Yup.string()
       .required('Phone number is required')
-      .matches(/^(0|84)\d{9,10}$/, 'Invalid phone number (should be 10-11 digits)')
+      .matches(/^[0-9]+$/, 'Phone must contain numbers only')
+      .matches(/^(0|84)\d{8,9}$/, 'Invalid phone number format (9-10 digits)')
   })
 
   // Formik configuration
@@ -55,6 +57,11 @@ export default function ProfileForm() {
       }
     }
   })
+  const blockNonDigits = (e: React.KeyboardEvent) => {
+    if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
+      e.preventDefault()
+    }
+  }
 
   // Helper to format role names (e.g., OPERATION_STAFF -> Operation Staff)
   const formatRole = (roleName?: string) => {
@@ -180,6 +187,7 @@ export default function ProfileForm() {
             <input
               type="text"
               {...formik.getFieldProps('phone')}
+              onKeyDown={blockNonDigits}
               readOnly={!isStaffRole}
               className={cn(
                 'w-full px-4 py-3 border rounded-xl text-sm font-semibold transition-all focus:outline-none',

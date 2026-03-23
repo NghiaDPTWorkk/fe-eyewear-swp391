@@ -3,7 +3,6 @@ import {
   preOrderImportService,
   type PreOrderImportsResponse
 } from '../services/preOrderImportService'
-import toast from 'react-hot-toast'
 
 export function usePreOrderImports(
   params: {
@@ -48,11 +47,8 @@ export function useUpdatePreOrderImportStatus() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pre-order-imports'] })
       queryClient.invalidateQueries({ queryKey: ['pre-order-import-detail'] })
-      toast.success('Status updated successfully')
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to update status')
-    }
+    onError: () => {}
   })
 }
 
@@ -64,10 +60,7 @@ export function useImportProduct() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pre-order-imports'] })
       queryClient.invalidateQueries({ queryKey: ['pre-order-import-detail'] })
-      toast.success('Inventory imported successfully')
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to import inventory')
-    }
+    onError: () => {}
   })
 }

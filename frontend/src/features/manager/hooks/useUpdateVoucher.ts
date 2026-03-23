@@ -17,10 +17,10 @@ export function useUpdateVoucher() {
       httpClient.patch<VoucherMutateResponse>(ENDPOINTS.MANAGER.VOUCHER_UPDATE(id), payload),
     onSuccess: (res) => {
       if (res.success) {
-        toast.success(res.message || 'Voucher updated successfully')
+        toast.success('Voucher updated successfully')
         qc.invalidateQueries({ queryKey: [QK] })
       } else {
-        toast.error(res.message || 'Failed to update voucher')
+        toast.error('Failed to update voucher')
       }
     },
     onError: (err) => {

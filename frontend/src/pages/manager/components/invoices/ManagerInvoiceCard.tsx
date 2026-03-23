@@ -277,7 +277,6 @@ export default function ManagerInvoiceCard({
 
   return (
     <div className="flex flex-col gap-6">
-      {}
       <div className="rounded-3xl border border-neutral-100 bg-white shadow-sm p-6">
         <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-8">
           <div>
@@ -537,7 +536,6 @@ export default function ManagerInvoiceCard({
         </div>
       </div>
 
-      {}
       <div className="space-y-4">
         <h3 className="px-2 text-xs font-bold text-neutral-400 uppercase tracking-widest">
           Linked Orders Detail

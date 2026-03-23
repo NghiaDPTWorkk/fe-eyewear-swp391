@@ -430,8 +430,8 @@ export function PrescriptionForm({
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-6 items-start">
-        <div className="w-full md:w-64 shrink-0">
+      <div className="flex flex-col gap-4 items-start">
+        <div className="w-full">
           <PrescriptionInput
             label="Pupillary Distance (PD)"
             value={formData.PD}
@@ -444,7 +444,7 @@ export function PrescriptionForm({
           />
         </div>
 
-        <div className="flex-1 w-full pt-4">
+        <div className="w-full">
           {(parseFloat(formData.PD) > 0 && parseFloat(formData.PD) < 55) ||
           parseFloat(formData.PD) >= 75 ? (
             <div className="p-4 bg-yellow-50/50 rounded-2xl border border-yellow-200/50">

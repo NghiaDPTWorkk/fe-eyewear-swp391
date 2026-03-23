@@ -498,17 +498,19 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
           {/* Shine effect */}
           <div className="absolute inset-0 -translate-x-[150%] skew-x-12 bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:translate-x-[150%] transition-transform duration-1000 ease-in-out" />
         </Button>
-        <Button
-          variant="outline"
-          size="lg"
-          isFullWidth
-          colorScheme="neutral"
-          className="h-16 rounded-2xl border-mint-300 hover:bg-mint-50 px-0"
-          leftIcon={<Video className="w-6 h-6 text-primary-500" />}
-          onClick={() => setIsTryOnOpen(true)}
-        >
-          Virtual Try-On
-        </Button>
+        {product.type !== 'lens' && (
+          <Button
+            variant="outline"
+            size="lg"
+            isFullWidth
+            colorScheme="neutral"
+            className="h-16 rounded-2xl border-mint-300 hover:bg-mint-50 px-0"
+            leftIcon={<Video className="w-6 h-6 text-primary-500" />}
+            onClick={() => setIsTryOnOpen(true)}
+          >
+            Virtual Try-On
+          </Button>
+        )}
       </div>
 
       <button

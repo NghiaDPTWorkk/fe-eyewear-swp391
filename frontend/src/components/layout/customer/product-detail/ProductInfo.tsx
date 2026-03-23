@@ -559,6 +559,12 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
         productName={product.nameBase}
         productImage={currentVariant?.imgs?.[1] || images[1] || ''}
         productPrice={finalPrice}
+        onAddToCart={() => {
+          setIsTryOnOpen(false)
+          handleAddToCart()
+        }}
+        onAddToWishlist={handleToggleWishlist}
+        isFavorite={isFavorite}
       />
     </div>
   )

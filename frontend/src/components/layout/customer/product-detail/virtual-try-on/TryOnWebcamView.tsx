@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { X, Heart, Camera, ShoppingCart } from 'lucide-react'
 import { Button } from '@/shared/components/ui'
 import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
+import { cn } from '@/lib/utils'
 import type { NormalizedLandmark } from '@mediapipe/tasks-vision'
 import GlassesOverlay from './GlassesOverlay'
 
@@ -15,6 +16,9 @@ interface TryOnWebcamViewProps {
   stopDetection: () => void
   landmarksRef: React.RefObject<NormalizedLandmark[][]>
   transformationMatricesRef: React.RefObject<Float32Array[]>
+  onAddToCart: () => void
+  onAddToWishlist: () => void
+  isFavorite: boolean
 }
 
 export default function TryOnWebcamView({
@@ -26,7 +30,10 @@ export default function TryOnWebcamView({
   startDetection,
   stopDetection,
   landmarksRef,
-  transformationMatricesRef
+  transformationMatricesRef,
+  onAddToCart,
+  onAddToWishlist,
+  isFavorite
 }: TryOnWebcamViewProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
 
@@ -77,8 +84,16 @@ export default function TryOnWebcamView({
             >
               <X className="w-4 h-4 text-white group-hover:scale-110 transition-transform" />
             </button>
-            <button className="w-9 h-9 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors group">
-              <Heart className="w-4 h-4 text-white group-hover:scale-110 transition-transform" />
+            <button
+              onClick={onAddToWishlist}
+              className="w-9 h-9 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors group"
+            >
+              <Heart
+                className={cn(
+                  'w-4 h-4 transition-all group-hover:scale-110',
+                  isFavorite ? 'text-primary-500 fill-primary-500' : 'text-white'
+                )}
+              />
             </button>
           </div>
         </div>
@@ -131,6 +146,7 @@ export default function TryOnWebcamView({
 
           <Button
             size="sm"
+            onClick={onAddToCart}
             className="rounded-xl shadow-md flex-shrink-0 px-4"
             leftIcon={<ShoppingCart className="w-3.5 h-3.5" />}
           >

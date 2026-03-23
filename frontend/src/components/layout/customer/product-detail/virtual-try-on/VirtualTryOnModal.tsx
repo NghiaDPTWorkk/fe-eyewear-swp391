@@ -10,6 +10,9 @@ interface VirtualTryOnModalProps {
   productName: string
   productImage: string
   productPrice: number
+  onAddToCart: () => void
+  onAddToWishlist: () => void
+  isFavorite: boolean
 }
 
 type TryOnStep = 'CONSENT' | 'LOADING' | 'TRYON'
@@ -19,7 +22,10 @@ export default function VirtualTryOnModal({
   onClose,
   productName,
   productImage,
-  productPrice
+  productPrice,
+  onAddToCart,
+  onAddToWishlist,
+  isFavorite
 }: VirtualTryOnModalProps) {
   const [step, setStep] = useState<TryOnStep>('CONSENT')
   const [stream, setStream] = useState<MediaStream | null>(null)
@@ -78,6 +84,9 @@ export default function VirtualTryOnModal({
           productName={productName}
           productImage={productImage}
           productPrice={productPrice}
+          onAddToCart={onAddToCart}
+          onAddToWishlist={onAddToWishlist}
+          isFavorite={isFavorite}
           startDetection={faceLandmarker.startDetection}
           stopDetection={faceLandmarker.stopDetection}
           landmarksRef={faceLandmarker.landmarksRef}

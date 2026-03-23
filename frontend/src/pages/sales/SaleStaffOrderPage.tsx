@@ -259,8 +259,11 @@ export default function SaleStaffOrderPage() {
     )
 
     if (statusFilter === 'APPROVED_OR_REJECTED') {
-      if (s === InvoiceStatus.REJECTED || s === 'REJECTED' || s === InvoiceStatus.CANCELED) {
+      if (s === InvoiceStatus.REJECTED || s === 'REJECTED') {
         return { label: 'Rejected', color: 'bg-rose-50 text-rose-600 border-rose-100' }
+      }
+      if (s === InvoiceStatus.CANCELED || s === 'CANCELED' || s === InvoiceStatus.CANCEL) {
+        return { label: 'Canceled', color: 'bg-rose-50 text-rose-600 border-rose-100' }
       }
       if (
         [
@@ -296,6 +299,8 @@ export default function SaleStaffOrderPage() {
       return { label: 'Approved', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' }
     if (s === InvoiceStatus.REJECTED || s === 'REJECTED')
       return { label: 'Rejected', color: 'bg-rose-50 text-rose-600 border-rose-100' }
+    if (s === InvoiceStatus.CANCELED || s === 'CANCELED' || s === InvoiceStatus.CANCEL)
+      return { label: 'Canceled', color: 'bg-rose-50 text-rose-600 border-rose-100' }
     if (s === InvoiceStatus.REFUNDED || s === 'REFUNDED')
       return { label: 'Refunded', color: 'bg-purple-50 text-purple-600 border-purple-100' }
 

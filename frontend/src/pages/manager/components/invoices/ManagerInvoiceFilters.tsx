@@ -51,13 +51,13 @@ export const ManagerInvoiceFilters: React.FC<ManagerInvoiceFiltersProps> = ({
             <button
               key={val}
               onClick={() => onStatusChange(val)}
-              className={`px-4 py-2 rounded-xl text-xs font-bold tracking-wider transition-all whitespace-nowrap ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${
                 statusFilter === val
                   ? 'bg-white text-mint-600 shadow-sm border border-neutral-100'
                   : 'text-neutral-500 hover:text-neutral-700'
               }`}
             >
-              {val === 'All' ? 'All Invoices' : toTitleCase(val)}
+              {val === 'All' ? 'All Invoices' : val}
             </button>
           ))}
         </div>

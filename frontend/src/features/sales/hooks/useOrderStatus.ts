@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 import { OrderStatus } from '@/shared/utils/enums/order.enum'
 
 export interface SimpleStatus {
-  label: 'REJECTED' | 'ACCEPTED' | 'NEED VERIFY'
+  label: 'REJECTED' | 'ACCEPTED' | 'NEED VERIFY' | 'CANCELED'
   className: string
 }
 
@@ -10,14 +10,19 @@ export const useOrderStatus = () => {
   const getSimplifiedStatus = useCallback((statusStr: string): SimpleStatus => {
     const status = (statusStr || OrderStatus.PENDING).toUpperCase()
 
-    const isRejected = [OrderStatus.REJECT, OrderStatus.REJECTED, OrderStatus.CANCELED].includes(
-      status as OrderStatus
-    )
+    if (status === OrderStatus.CANCELED || status === 'CANCEL') {
+      return {
+        label: 'CANCELED',
+        className: 'bg-rose-50 text-rose-600 border-rose-100'
+      }
+    }
+
+    const isRejected = [OrderStatus.REJECT, OrderStatus.REJECTED].includes(status as OrderStatus)
 
     if (isRejected) {
       return {
         label: 'REJECTED',
-        className: 'bg-rose-50 text-rose-600 border-rose-100'
+        className: 'bg-rose-100/50 text-rose-700 border-rose-200'
       }
     }
 

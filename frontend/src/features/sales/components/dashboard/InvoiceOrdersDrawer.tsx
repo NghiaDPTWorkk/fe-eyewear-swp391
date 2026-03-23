@@ -123,7 +123,20 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
 
                   const getSimplifiedStatus = (order: { status: string }) => {
                     const status = (order.status || 'PENDING').toUpperCase()
-                    const isRejected = ['REJECT', 'REJECTED', 'CANCELED'].includes(status)
+
+                    if (
+                      status === 'CANCELED' ||
+                      status === 'CANCEL' ||
+                      invoice.status === 'CANCELED' ||
+                      invoice.status === 'CANCEL'
+                    ) {
+                      return {
+                        label: 'CANCELED',
+                        className: 'bg-rose-50 text-rose-600 border-rose-100'
+                      }
+                    }
+
+                    const isRejected = ['REJECT', 'REJECTED'].includes(status)
 
                     if (isRejected) {
                       return {

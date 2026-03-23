@@ -583,7 +583,11 @@ export default function ManagerInvoiceCard({
                           : 'bg-amber-50 text-amber-700 border-amber-100'
                       }`}
                     >
-                      {toTitleCase(order.status)}
+                      {toTitleCase(
+                        invoice.status === InvoiceStatus.CANCELED || invoice.status === 'CANCEL'
+                          ? 'CANCELED'
+                          : order.status
+                      )}
                     </span>
                   </div>
                 </div>

@@ -66,7 +66,10 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
           year: 'numeric'
         })
       : 'N/A',
-    status: realOrder.status?.toUpperCase() || 'PENDING',
+    status:
+      realOrder.invoice?.status === 'CANCELED' || realOrder.invoice?.status === 'CANCEL'
+        ? 'CANCELED'
+        : realOrder.status?.toUpperCase() || 'PENDING',
     priceVal: realOrder.price || 0,
     subtotal: formatPrice(realOrder.price || 0),
     shipping: formatPrice(realOrder.invoice?.feeShip || 0),

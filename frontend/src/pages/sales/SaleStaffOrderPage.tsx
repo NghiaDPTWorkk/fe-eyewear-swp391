@@ -291,8 +291,8 @@ export default function SaleStaffOrderPage() {
         }
       }
       return hasMfg
-        ? { label: 'PENDING', color: 'bg-indigo-50 text-indigo-600 border-indigo-100' }
-        : { label: 'WAITING ASSIGN', color: 'bg-slate-50 text-slate-500 border-slate-200' }
+        ? { label: 'PENDING', color: 'bg-amber-50 text-amber-600 border-amber-100' }
+        : { label: 'WAITING ASSIGN', color: 'bg-blue-50 text-blue-600 border-blue-100' }
     }
 
     if (s === InvoiceStatus.APPROVED || s === 'APPROVED')

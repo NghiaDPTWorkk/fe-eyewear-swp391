@@ -12,6 +12,7 @@ import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import { returnService } from '@/features/customer/services/return.service'
 import type { ReturnTicketData } from '@/shared/types/return-ticket.types'
 import { PriceTag } from '@/shared/components/ui/price-tag'
+import type { PaymentMethodType } from '@/shared/utils/enums/payment.enum'
 
 const TABS = [
   { id: 'all', label: 'All Orders' },
@@ -81,8 +82,11 @@ export function OrdersPage() {
               const detailRes = detailedResults[index]
               return {
                 ...inv,
-                productList: detailRes.success ? detailRes.data.productList : []
-              }
+                productList: detailRes.success ? detailRes.data.productList : [],
+                paymentId: detailRes.success ? detailRes.data.payment?._id : undefined,
+                paymentMethod: detailRes.success ? detailRes.data.invoice.paymentMethod : undefined,
+                paymentUrl: inv.paymentUrl
+              } as any
             })
             setInvoices(mergedInvoices)
           } else {
@@ -381,6 +385,9 @@ export function OrdersPage() {
                         canCancel={canCancelInvoice(inv.status as InvoiceStatus)}
                         isCancelling={cancellingInvoiceId === inv._id}
                         onCancel={handleCancelInvoice}
+                        paymentId={inv.paymentId}
+                        paymentMethod={inv.paymentMethod as PaymentMethodType}
+                        paymentUrl={inv.paymentUrl}
                         image={
                           firstProduct?.imgs?.[0] ||
                           'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&q=80&w=200'

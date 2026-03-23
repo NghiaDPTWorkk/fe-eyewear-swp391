@@ -35,6 +35,9 @@ export interface Invoice {
   deletedAt: string | null
   __v?: number
   productList?: InvoiceItem[]
+  paymentMethod?: string
+  paymentId?: string
+  paymentUrl?: string | null
 }
 
 export interface InvoiceResponse {
@@ -99,6 +102,7 @@ export interface InvoiceDetailData {
   invoiceStatus: string
   invoice: Invoice
   productList: InvoiceItem[]
+  payment?: Payment
 }
 
 export interface InvoiceDetailApiResponse {

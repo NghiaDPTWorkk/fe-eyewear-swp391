@@ -1,20 +1,35 @@
-import { useRef, useMemo } from 'react'
-import { Canvas, useFrame, type ThreeElements, type RootState } from '@react-three/fiber'
-import { useGLTF } from '@react-three/drei'
+/**
+ * GlassesOverlay — Professional-grade 3D virtual try-on overlay.
+ *
+ * ── Architecture ──────────────────────────────────────────────────────
+ * Uses a HYBRID approach for maximum reliability:
+ *
+ *  • Position:  Landmark-based (weighted blend of eye corners + nose bridge)
+ *  • Rotation:  Extracted from MediaPipe's Facial Transformation Matrix (4×4)
+ *               with coord-system conversion.  Falls back to landmark-derived
+ *               rotation if the matrix is unavailable.
+ *  • Scale:     IPD-based auto-scale from live inter-pupillary distance.
+ *  • Smoothing: One Euro Filter on position (3ch), rotation (4ch quaternion),
+ *               and scale (1ch) — zero jitter at rest, zero latency in motion.
+ *
+ * ── Pro features ──────────────────────────────────────────────────────
+ *  1. Head Occluder mesh for depth-based temple occlusion
+ *  2. PBR materials + HDR environment reflections on lenses
+ *  3. Contact shadows on nose bridge
+ *  4. Proper WebGL cleanup on unmount
+ */
+
+import { useRef, useMemo, useEffect } from 'react'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { useGLTF, Environment, ContactShadows } from '@react-three/drei'
 import type { NormalizedLandmark } from '@mediapipe/tasks-vision'
 import * as THREE from 'three'
-import { normalizeGlassesModel, TARGET_GLASSES_WIDTH } from './glassesModelNormalizer'
 
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace React {
-    // eslint-disable-next-line @typescript-eslint/no-namespace
-    namespace JSX {
-      // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-      interface IntrinsicElements extends ThreeElements {}
-    }
-  }
-}
+import { normalizeGlassesModel, TARGET_GLASSES_WIDTH } from './glassesModelNormalizer'
+import { OneEuroFilter } from './OneEuroFilter'
+import { createHeadOccluder } from './headOccluderGeometry'
+
+// ─── Props ──────────────────────────────────────────────────────────────────────
 
 interface GlassesOverlayProps {
   videoRef: React.RefObject<HTMLVideoElement | null>
@@ -23,39 +38,44 @@ interface GlassesOverlayProps {
   glassesImageUrl: string
 }
 
-// Key landmark indices
+// ─── Landmark indices ───────────────────────────────────────────────────────────
+
 const LEFT_EYE_OUTER = 33
 const RIGHT_EYE_OUTER = 263
 const NOSE_BRIDGE = 6
 
-// GLB model path (served from /public)
-const GLB_MODEL_PATH = '/models/sunglass.glb'
+// ─── GLB model ──────────────────────────────────────────────────────────────────
 
-// ---- Adjust these offsets to fine-tune model placement ----
-//
-// ── Auto-fit scale ───────────────────────────────────────────────────────────
-// groupScale = (faceWidth / TARGET_GLASSES_WIDTH) * FACE_TO_GLASSES_RATIO
-//   faceWidth            – live outer-eye distance in Three.js world units
-//   TARGET_GLASSES_WIDTH – canonical model width from normalizeGlassesModel (0.14)
-//   FACE_TO_GLASSES_RATIO – single size trim knob (raise → wider, lower → narrower)
-const FACE_TO_GLASSES_RATIO = 2.5
-const MODEL_DEPTH_SCALE = 2.3 // Z-axis stretch so temples reach the ears
+const GLB_MODEL_PATH = '/models/model1.glb'
 
-// ── Nose-bridge anchor weights ───────────────────────────────────────────────
-// The group pivot is a weighted blend of the three tracking landmarks.
-// Adding a small nose weight pulls the glasses onto the nose bridge so that
-// models with off-centre pivots sit naturally rather than floating mid-face.
-// Weights must sum to 1.0.
-const ANCHOR_W_LEFT = 0.45 // weight for left-eye outer corner
-const ANCHOR_W_RIGHT = 0.45 // weight for right-eye outer corner
-const ANCHOR_W_NOSE = 0.1 // weight for nose-bridge  (bias toward nose bridge)
+// ─── Tuning knobs ───────────────────────────────────────────────────────────────
 
-// ── Fine-tune offsets (applied after the weighted anchor) ────────────────────
-const MODEL_OFFSET_X = 0.05 // nudge left/right if the model is asymmetric
-const MODEL_OFFSET_Y = -0.3 // nudge up/down  (negative = down toward nose)
-const MODEL_OFFSET_Z = -5 // Chỉnh lại (Z) để kính nằm ngay sống mũi (trước đó là -6)
-const SMOOTHING_ALPHA = 0.2 // lerp factor – smaller = smoother but laggier
-const YAW_THRESHOLD = 0.1 // radians – sensitivity for hiding side temples
+/** How much wider the glasses should be relative to the eye-to-eye distance */
+const FACE_TO_GLASSES_RATIO = 1.7
+
+/** Weighted anchor for position (must sum to 1.0) */
+const ANCHOR_W_LEFT = 0.45
+const ANCHOR_W_RIGHT = 0.45
+const ANCHOR_W_NOSE = 0.1
+
+/** Fine-tune position offsets */
+const MODEL_OFFSET_X = 0.0
+const MODEL_OFFSET_Y = 0
+const MODEL_OFFSET_Z = -0.3
+
+/** Pitch offset (radians) — tilts the temples UP toward the ears.
+ *  Positive = temples go UP, Negative = temples go DOWN.
+ *  Try values between -0.3 and 0.3 */
+const MODEL_PITCH_OFFSET = 0.15
+
+/** Render FOV — must match the Canvas camera fov */
+const CAMERA_FOV = 50
+
+// ─── One Euro Filter config ─────────────────────────────────────────────────────
+
+const OEF_CONFIG = { minCutoff: 1.7, beta: 0.01, dCutoff: 1.0 }
+
+// ─── Root component ─────────────────────────────────────────────────────────────
 
 export default function GlassesOverlay({
   videoRef,
@@ -66,14 +86,28 @@ export default function GlassesOverlay({
   return (
     <div className="absolute inset-0 pointer-events-none" style={{ transform: 'scaleX(-1)' }}>
       <Canvas
-        gl={{ alpha: true, antialias: true }}
-        camera={{ position: [0, 0, 5], fov: 50 }}
+        gl={{
+          alpha: true,
+          antialias: true,
+          toneMapping: THREE.ACESFilmicToneMapping,
+          toneMappingExposure: 1.0,
+          outputColorSpace: THREE.SRGBColorSpace
+        }}
+        camera={{ position: [0, 0, 5], fov: CAMERA_FOV, near: 0.01, far: 100 }}
         style={{ background: 'transparent' }}
       >
-        <ambientLight intensity={0.8} />
-        <directionalLight position={[2, 2, 5]} intensity={1.2} />
+        {/* PBR lighting */}
+        <ambientLight intensity={0.6} />
+        <directionalLight position={[3, 4, 5]} intensity={1.4} />
         <directionalLight position={[-2, -1, 3]} intensity={0.4} />
-        <GlassesModel
+
+        {/* HDR environment for lens reflections */}
+        <Environment preset="studio" />
+
+        {/* Soft contact shadow on nose bridge */}
+        <ContactShadows position={[0, -0.35, 0]} opacity={0.2} scale={2} blur={2.5} far={1} />
+
+        <GlassesScene
           videoRef={videoRef}
           landmarksRef={landmarksRef}
           transformationMatricesRef={transformationMatricesRef}
@@ -83,38 +117,49 @@ export default function GlassesOverlay({
   )
 }
 
+// Pre-load the model
 useGLTF.preload(GLB_MODEL_PATH)
 
-function GlassesModel({
+// ─── Inner scene ────────────────────────────────────────────────────────────────
+
+function GlassesScene({
   videoRef,
   landmarksRef,
   transformationMatricesRef
 }: {
   videoRef: React.RefObject<HTMLVideoElement | null>
   landmarksRef: React.RefObject<NormalizedLandmark[][]>
-  transformationMatricesRef: React.RefObject<any[]>
+  transformationMatricesRef: React.RefObject<Float32Array[]>
 }) {
   const groupRef = useRef<THREE.Group>(null)
   const { scene } = useGLTF(GLB_MODEL_PATH)
+  const { gl } = useThree()
 
-  const smoothPos = useRef(new THREE.Vector3())
-  const smoothScale = useRef(new THREE.Vector3(1, 1, 1))
-  const smoothRotZ = useRef(0)
-  const smoothRotY = useRef(0)
+  // ── One Euro Filters (per-component) ──────────────────────────────────────
+  const filters = useRef({
+    px: new OneEuroFilter(OEF_CONFIG),
+    py: new OneEuroFilter(OEF_CONFIG),
+    pz: new OneEuroFilter(OEF_CONFIG),
+    sx: new OneEuroFilter(OEF_CONFIG),
+    sy: new OneEuroFilter(OEF_CONFIG),
+    sz: new OneEuroFilter(OEF_CONFIG),
+    qx: new OneEuroFilter(OEF_CONFIG),
+    qy: new OneEuroFilter(OEF_CONFIG),
+    qz: new OneEuroFilter(OEF_CONFIG),
+    qw: new OneEuroFilter(OEF_CONFIG)
+  })
   const isInitialized = useRef(false)
 
+  // ── Prepare the normalised + PBR clone ────────────────────────────────────
   const clonedScene = useMemo(() => {
-    // Tạo một group cha để bao bọc scene gốc
-    // Điều này giúp cô lập logic "recentre" và "orient" của normalizer
     const wrapper = new THREE.Group()
     wrapper.name = 'GlassesNormalizerWrapper'
     const clone = scene.clone(true)
     wrapper.add(clone)
 
-    // Chuẩn hóa pivot, orientation và scale cho model bên trong wrapper
-    // Hàm này sẽ tự động phát hiện trục dài nhất để làm chiều rộng (X)
-    normalizeGlassesModel(clone)
+    normalizeGlassesModel(clone, { envMap: null })
 
+    // Set render order so glasses render AFTER the occluder
     wrapper.traverse((child: THREE.Object3D) => {
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh
@@ -127,16 +172,83 @@ function GlassesModel({
       }
     })
 
-    return wrapper // Trả về Wrapper đã chứa model đã chuẩn hóa
+    return wrapper
   }, [scene])
 
-  useFrame(({ viewport }: RootState) => {
-    const group = groupRef.current
-    const faces = landmarksRef.current
-    const video = videoRef.current
+  // ── Head occluder ─────────────────────────────────────────────────────────
+  const occluderMesh = useMemo(() => createHeadOccluder(), [])
 
-    if (!group || !faces || faces.length === 0 || !video) {
-      if (group) group.visible = false
+  // ── Patch environment map once available ──────────────────────────────────
+  const envPatched = useRef(false)
+
+  // ── Cleanup on unmount ────────────────────────────────────────────────────
+  useEffect(() => {
+    return () => {
+      clonedScene.traverse((child: THREE.Object3D) => {
+        if ((child as THREE.Mesh).isMesh) {
+          const mesh = child as THREE.Mesh
+          mesh.geometry?.dispose()
+          const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
+          mats.forEach((m) => m?.dispose())
+        }
+      })
+      occluderMesh.geometry?.dispose()
+      ;(occluderMesh.material as THREE.Material)?.dispose()
+    }
+  }, [clonedScene, occluderMesh])
+
+  // ── Helper: normalised landmark → world coords ────────────────────────────
+  const toWorld = (
+    lm: NormalizedLandmark,
+    visibleX0: number,
+    visibleY0: number,
+    visibleW: number,
+    visibleH: number,
+    vpW: number,
+    vpH: number
+  ) => {
+    const sx = (lm.x - visibleX0) / visibleW
+    const sy = (lm.y - visibleY0) / visibleH
+    return {
+      x: (sx - 0.5) * vpW,
+      y: -(sy - 0.5) * vpH,
+      z: -lm.z * vpW * 1.0
+    }
+  }
+
+  // ── Animation loop ────────────────────────────────────────────────────────
+  useFrame(({ viewport }) => {
+    const group = groupRef.current
+    const video = videoRef.current
+    const faces = landmarksRef.current
+    const matrices = transformationMatricesRef.current
+
+    if (!group) return
+
+    // Lazily patch environment map
+    if (!envPatched.current && gl) {
+      const envMap = (gl as any).__r3f?.scene?.environment as THREE.Texture | undefined
+      if (envMap) {
+        clonedScene.traverse((child: THREE.Object3D) => {
+          if ((child as THREE.Mesh).isMesh) {
+            const mesh = child as THREE.Mesh
+            const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
+            mats.forEach((m) => {
+              if (m instanceof THREE.MeshStandardMaterial) {
+                m.envMap = envMap
+                m.envMapIntensity = m.name.toLowerCase().includes('lens') ? 1.2 : 0.6
+                m.needsUpdate = true
+              }
+            })
+          }
+        })
+        envPatched.current = true
+      }
+    }
+
+    // ── No face → hide ──────────────────────────────────────────────────────
+    if (!faces || faces.length === 0 || !video) {
+      group.visible = false
       return
     }
 
@@ -152,11 +264,11 @@ function GlassesModel({
 
     group.visible = true
 
+    // ── Video ↔ viewport geometry ───────────────────────────────────────────
     const vw = video.videoWidth
     const vh = video.videoHeight
     const cw = video.clientWidth
     const ch = video.clientHeight
-
     if (!vw || !vh || !cw || !ch) return
 
     const videoAspect = vw / vh
@@ -165,7 +277,6 @@ function GlassesModel({
       visibleY0 = 0,
       visibleW = 1,
       visibleH = 1
-
     if (videoAspect > containerAspect) {
       visibleW = containerAspect / videoAspect
       visibleX0 = (1 - visibleW) / 2
@@ -174,97 +285,150 @@ function GlassesModel({
       visibleY0 = (1 - visibleH) / 2
     }
 
-    const w = viewport.width
-    const h = viewport.height
+    const vpW = viewport.width
+    const vpH = viewport.height
 
-    const toWorld = (lm: NormalizedLandmark) => {
-      const screenX = (lm.x - visibleX0) / visibleW
-      const screenY = (lm.y - visibleY0) / visibleH
-      return {
-        x: (screenX - 0.5) * w,
-        y: -(screenY - 0.5) * h,
-        z: -lm.z * w * 1.0
-      }
-    }
+    // ── Convert landmarks to world coords ───────────────────────────────────
+    const le = toWorld(leftEye, visibleX0, visibleY0, visibleW, visibleH, vpW, vpH)
+    const re = toWorld(rightEye, visibleX0, visibleY0, visibleW, visibleH, vpW, vpH)
+    const nose = toWorld(noseBridge, visibleX0, visibleY0, visibleW, visibleH, vpW, vpH)
 
-    const nose = toWorld(noseBridge)
-    const le = toWorld(leftEye)
-    const re = toWorld(rightEye)
+    // ── Position: weighted anchor ───────────────────────────────────────────
+    const targetX =
+      le.x * ANCHOR_W_LEFT + re.x * ANCHOR_W_RIGHT + nose.x * ANCHOR_W_NOSE + MODEL_OFFSET_X
+    const targetY =
+      le.y * ANCHOR_W_LEFT + re.y * ANCHOR_W_RIGHT + nose.y * ANCHOR_W_NOSE + MODEL_OFFSET_Y
+    const targetZ =
+      le.z * ANCHOR_W_LEFT + re.z * ANCHOR_W_RIGHT + nose.z * ANCHOR_W_NOSE + MODEL_OFFSET_Z
 
-    // ── Weighted anchor: blend left-eye, right-eye, and nose-bridge ─────────
-    // Using a small nose weight (ANCHOR_W_NOSE = 0.10) biases the pivot toward
-    // the nose so the glasses sit naturally on the face even when a model's
-    // internal pivot is off-centre.  Adjust the weights at the top of the file
-    // if you want more or less nose-bridge bias.
-    const anchorX = le.x * ANCHOR_W_LEFT + re.x * ANCHOR_W_RIGHT + nose.x * ANCHOR_W_NOSE
-    const anchorY = le.y * ANCHOR_W_LEFT + re.y * ANCHOR_W_RIGHT + nose.y * ANCHOR_W_NOSE
-    const anchorZ = le.z * ANCHOR_W_LEFT + re.z * ANCHOR_W_RIGHT + nose.z * ANCHOR_W_NOSE
-
-    const targetPos = new THREE.Vector3(
-      anchorX + MODEL_OFFSET_X,
-      anchorY + MODEL_OFFSET_Y,
-      anchorZ + MODEL_OFFSET_Z
-    )
-
-    // ── Auto-fit: map the live face width onto the normalised model width ──────
-    // Every model has been normalised to TARGET_GLASSES_WIDTH by normalizeGlassesModel.
-    // Scaling the group by (faceWidth / TARGET_GLASSES_WIDTH) makes the glasses
-    // span exactly the user's inter-eye distance, regardless of the GLB source.
+    // ── Scale: IPD auto-fit ─────────────────────────────────────────────────
     const faceWidth = Math.sqrt((re.x - le.x) ** 2 + (re.y - le.y) ** 2 + (re.z - le.z) ** 2)
     const s = (faceWidth / TARGET_GLASSES_WIDTH) * FACE_TO_GLASSES_RATIO
-    const targetScale = new THREE.Vector3(s, s, s * MODEL_DEPTH_SCALE)
+    const targetSX = s
+    const targetSY = s
+    const targetSZ = s
 
-    const dx = re.x - le.x
-    const dy = re.y - le.y
-    const dz = re.z - le.z
-    const targetRotZ = Math.atan2(dy, dx)
-    const targetRotY = Math.atan2(-dz, Math.sqrt(dx * dx + dy * dy)) * 0.7
+    // ── Rotation: use transformation matrix if available, else landmarks ────
+    const targetQuat = new THREE.Quaternion()
 
-    const alpha = SMOOTHING_ALPHA
+    if (matrices && matrices.length > 0 && matrices[0] && matrices[0].length >= 16) {
+      // Extract rotation from MediaPipe's 4×4 matrix
+      const raw = matrices[0]
+      const mp = new THREE.Matrix4()
+
+      // MediaPipe packedData is row-major. THREE.Matrix4.set() takes row-major args
+      // and stores column-major internally — no transpose needed.
+      mp.set(
+        raw[0],
+        raw[1],
+        raw[2],
+        raw[3],
+        raw[4],
+        raw[5],
+        raw[6],
+        raw[7],
+        raw[8],
+        raw[9],
+        raw[10],
+        raw[11],
+        raw[12],
+        raw[13],
+        raw[14],
+        raw[15]
+      )
+
+      // Extract rotation only (ignore position/scale from the matrix)
+      const _pos = new THREE.Vector3()
+      const _scale = new THREE.Vector3()
+      mp.decompose(_pos, targetQuat, _scale)
+
+      // Coord-system conversion: MediaPipe (Y↓, Z→away) → Three.js (Y↑, Z→camera)
+      // Position is already handled by landmarks.  For rotation we just flip
+      // the Y and Z quaternion components (negating them reverses the rotation
+      // direction around those axes, matching the axis flip).
+      targetQuat.y = -targetQuat.y
+      targetQuat.z = -targetQuat.z
+      targetQuat.normalize()
+    } else {
+      // Fallback: derive rotation from landmark positions
+      const dx = re.x - le.x
+      const dy = re.y - le.y
+      const dz = re.z - le.z
+      const rotZ = Math.atan2(dy, dx)
+      const rotY = Math.atan2(-dz, Math.sqrt(dx * dx + dy * dy)) * 0.7
+
+      const euler = new THREE.Euler(0, rotY, rotZ, 'YZX')
+      targetQuat.setFromEuler(euler)
+    }
+
+    // ── Apply pitch offset to tilt temples toward ears ────────────────────
+    const pitchQuat = new THREE.Quaternion()
+    pitchQuat.setFromAxisAngle(new THREE.Vector3(1, 0, 0), MODEL_PITCH_OFFSET)
+    targetQuat.multiply(pitchQuat)
+    targetQuat.normalize()
+
+    // ── Apply One Euro Filter ───────────────────────────────────────────────
+    const t = performance.now() / 1000
+    const f = filters.current
+
+    let smoothPX: number, smoothPY: number, smoothPZ: number
+    let smoothSX: number, smoothSY: number, smoothSZ: number
+    let smoothQX: number, smoothQY: number, smoothQZ: number, smoothQW: number
+
     if (!isInitialized.current) {
-      smoothPos.current.copy(targetPos)
-      smoothScale.current.copy(targetScale)
-      smoothRotZ.current = targetRotZ
-      smoothRotY.current = targetRotY
+      // First frame: skip filtering to avoid initial lag
+      smoothPX = targetX
+      smoothPY = targetY
+      smoothPZ = targetZ
+      smoothSX = targetSX
+      smoothSY = targetSY
+      smoothSZ = targetSZ
+      smoothQX = targetQuat.x
+      smoothQY = targetQuat.y
+      smoothQZ = targetQuat.z
+      smoothQW = targetQuat.w
+      // Prime the filters
+      f.px.filter(targetX, t)
+      f.py.filter(targetY, t)
+      f.pz.filter(targetZ, t)
+      f.sx.filter(targetSX, t)
+      f.sy.filter(targetSY, t)
+      f.sz.filter(targetSZ, t)
+      f.qx.filter(targetQuat.x, t)
+      f.qy.filter(targetQuat.y, t)
+      f.qz.filter(targetQuat.z, t)
+      f.qw.filter(targetQuat.w, t)
       isInitialized.current = true
     } else {
-      smoothPos.current.lerp(targetPos, alpha)
-      smoothScale.current.lerp(targetScale, alpha)
-      smoothRotZ.current += (targetRotZ - smoothRotZ.current) * alpha
-      smoothRotY.current += (targetRotY - smoothRotY.current) * alpha
+      smoothPX = f.px.filter(targetX, t)
+      smoothPY = f.py.filter(targetY, t)
+      smoothPZ = f.pz.filter(targetZ, t)
+      smoothSX = f.sx.filter(targetSX, t)
+      smoothSY = f.sy.filter(targetSY, t)
+      smoothSZ = f.sz.filter(targetSZ, t)
+      smoothQX = f.qx.filter(targetQuat.x, t)
+      smoothQY = f.qy.filter(targetQuat.y, t)
+      smoothQZ = f.qz.filter(targetQuat.z, t)
+      smoothQW = f.qw.filter(targetQuat.w, t)
     }
 
-    group.position.copy(smoothPos.current)
-    group.scale.copy(smoothScale.current)
-    group.rotation.z = smoothRotZ.current
-    group.rotation.y = smoothRotY.current
+    // ── Apply to group ──────────────────────────────────────────────────────
+    group.position.set(smoothPX, smoothPY, smoothPZ)
+    group.scale.set(smoothSX, smoothSY, smoothSZ)
 
-    // ── Temple Visibility: Hide far-side temples to simulate occlusion ──────
-    // When the head turns, the "far" temple is naturally hidden by the face.
-    // Logic:
-    //  • if yaw > threshold   → hide left temple
-    //  • if yaw < -threshold  → hide right temple
-    group.traverse((child: THREE.Object3D) => {
-      if (child.name === 'TempleLeft') {
-        child.visible = smoothRotY.current < YAW_THRESHOLD
-      } else if (child.name === 'TempleRight') {
-        child.visible = smoothRotY.current > -YAW_THRESHOLD
-      } else if (child.name === 'FrontFrame') {
-        child.visible = true // Always visible
-      }
-    })
-
-    // Suppress warning
-    if (transformationMatricesRef.current.length > 0) {
-      /* placeholder */
-    }
+    const smoothQuat = new THREE.Quaternion(smoothQX, smoothQY, smoothQZ, smoothQW).normalize()
+    group.quaternion.copy(smoothQuat)
   })
 
   if (!clonedScene) return null
 
   return (
-    <group ref={groupRef} visible={false} renderOrder={1}>
-      <primitive object={clonedScene} scale={[1, 1, 1]} rotation={[0.05, 0, 0]} />
+    <group ref={groupRef} visible={false}>
+      {/* Head occluder — child of group, rendered first (renderOrder 0) */}
+      <primitive object={occluderMesh} />
+
+      {/* Glasses — rendered second (renderOrder 1) */}
+      <primitive object={clonedScene} />
     </group>
   )
 }

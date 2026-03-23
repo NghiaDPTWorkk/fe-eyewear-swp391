@@ -48,8 +48,15 @@ export default function TryOnWebcamView({
       })
 
     return () => {
+      // Stop detection loop
       stopDetection()
+
+      // Detach the media stream from the video element
       video.srcObject = null
+
+      // NOTE: Do NOT stop stream tracks here — React strict mode re-runs
+      // effects in dev, which would kill the stream on first mount.
+      // The parent VirtualTryOnModal handles stream cleanup via handleClose.
     }
   }, [stream, startDetection, stopDetection])
 

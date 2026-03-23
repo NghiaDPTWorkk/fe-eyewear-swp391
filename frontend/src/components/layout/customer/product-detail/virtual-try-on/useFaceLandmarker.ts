@@ -5,10 +5,13 @@ const WASM_CDN = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wa
 const MODEL_CDN =
   'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task'
 
-export interface FaceLandmarks {
-  landmarks: NormalizedLandmark[][]
-  transformationMatrices?: any[]
-}
+/**
+ * Target detection framerate.
+ * We throttle the rAF loop to ~30 fps so we don't saturate the GPU with
+ * inference while Three.js is running its own render loop.
+ */
+const TARGET_FPS = 30
+const FRAME_INTERVAL_MS = 1000 / TARGET_FPS
 
 export function useFaceLandmarker() {
   const [isModelLoading, setIsModelLoading] = useState(false)
@@ -16,7 +19,7 @@ export function useFaceLandmarker() {
   const landmarkerRef = useRef<FaceLandmarker | null>(null)
   const animFrameRef = useRef<number>(0)
   const landmarksRef = useRef<NormalizedLandmark[][]>([])
-  const transformationMatricesRef = useRef<any[]>([])
+  const transformationMatricesRef = useRef<Float32Array[]>([])
 
   const initModel = useCallback(async () => {
     if (landmarkerRef.current) {
@@ -35,6 +38,7 @@ export function useFaceLandmarker() {
         runningMode: 'VIDEO',
         numFaces: 1,
         outputFaceBlendshapes: false,
+        // Enable the 4×4 facial transformation matrix output
         outputFacialTransformationMatrixes: true
       })
       landmarkerRef.current = faceLandmarker
@@ -52,24 +56,49 @@ export function useFaceLandmarker() {
     if (!landmarker) return
 
     let lastTime = -1
+    let lastDetectTime = 0
 
     const detect = () => {
-      if (video.readyState >= 2) {
-        const now = performance.now()
+      const now = performance.now()
+
+      // Throttle to TARGET_FPS to avoid GPU saturation
+      if (now - lastDetectTime >= FRAME_INTERVAL_MS && video.readyState >= 2) {
         // Avoid calling with the same timestamp
         if (now !== lastTime) {
-          const result = landmarker.detectForVideo(video, now)
-          lastTime = now
+          try {
+            const result = landmarker.detectForVideo(video, now)
+            lastTime = now
+            lastDetectTime = now
 
-          if (result.faceLandmarks && result.faceLandmarks.length > 0) {
-            landmarksRef.current = result.faceLandmarks
-            transformationMatricesRef.current = result.facialTransformationMatrixes || []
-          } else {
-            landmarksRef.current = []
-            transformationMatricesRef.current = []
+            if (result.faceLandmarks && result.faceLandmarks.length > 0) {
+              landmarksRef.current = result.faceLandmarks
+
+              // Extract transformation matrices (Float32Array[])
+              const rawMatrices = result.facialTransformationMatrixes
+              if (rawMatrices && rawMatrices.length > 0) {
+                // Each matrix is a { rows, columns, packedData } object.
+                // packedData is a Float32Array with 16 elements (4×4 row-major).
+                transformationMatricesRef.current = rawMatrices.map((m: any) => {
+                  if (m instanceof Float32Array) return m
+                  if (m?.data) return new Float32Array(m.data)
+                  if (m?.packedData) return new Float32Array(m.packedData)
+                  // Fallback: try to interpret the object as array-like
+                  return new Float32Array(Array.from(m as Iterable<number>))
+                })
+              } else {
+                transformationMatricesRef.current = []
+              }
+            } else {
+              landmarksRef.current = []
+              transformationMatricesRef.current = []
+            }
+          } catch (e) {
+            // detectForVideo can throw if video is not ready
+            console.warn('Face detection frame skipped:', e)
           }
         }
       }
+
       animFrameRef.current = requestAnimationFrame(detect)
     }
 
@@ -85,6 +114,11 @@ export function useFaceLandmarker() {
 
   const cleanup = useCallback(() => {
     stopDetection()
+
+    // Clear refs
+    landmarksRef.current = []
+    transformationMatricesRef.current = []
+
     if (landmarkerRef.current) {
       landmarkerRef.current.close()
       landmarkerRef.current = null

@@ -61,6 +61,19 @@ export default function AdminEditUser() {
     }
   })
 
+  const blockNonDigits = (e: React.KeyboardEvent) => {
+    if (
+      !/[0-9]/.test(e.key) &&
+      e.key !== 'Backspace' &&
+      e.key !== 'Tab' &&
+      e.key !== 'ArrowLeft' &&
+      e.key !== 'ArrowRight' &&
+      e.key !== 'Delete'
+    ) {
+      e.preventDefault()
+    }
+  }
+
   if (isLoading) {
     return (
       <Container className="py-10 text-center">
@@ -185,6 +198,7 @@ export default function AdminEditUser() {
                     </label>
                     <Field
                       name="phone"
+                      onKeyDown={blockNonDigits}
                       className={`w-full px-4 py-3.5 bg-neutral-50 border rounded-2xl text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-mint-500/10 transition-all ${touched.phone && errors.phone ? 'border-red-500' : 'border-neutral-100 focus:border-mint-500'}`}
                     />
                     <ErrorMessage

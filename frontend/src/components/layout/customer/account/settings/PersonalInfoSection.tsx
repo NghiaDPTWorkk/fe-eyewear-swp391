@@ -44,6 +44,19 @@ export const PersonalInfoSection = ({ user }: PersonalInfoSectionProps) => {
     }
   })
 
+  const blockNonDigits = (e: React.KeyboardEvent) => {
+    if (
+      !/[0-9]/.test(e.key) &&
+      e.key !== 'Backspace' &&
+      e.key !== 'Tab' &&
+      e.key !== 'ArrowLeft' &&
+      e.key !== 'ArrowRight' &&
+      e.key !== 'Delete'
+    ) {
+      e.preventDefault()
+    }
+  }
+
   return (
     <Card className="p-10 !rounded-[24px] shadow-sm border-mint-100">
       <div className="flex items-center gap-3 mb-8">
@@ -94,6 +107,7 @@ export const PersonalInfoSection = ({ user }: PersonalInfoSectionProps) => {
           <label className="text-sm font-semibold text-mint-1100 ml-1">Phone number</label>
           <Input
             {...formik.getFieldProps('phone')}
+            onKeyDown={blockNonDigits}
             placeholder="Enter your phone number"
             className={cn(
               'bg-white border-mint-200 focus:border-primary-500 rounded-xl h-14',

@@ -103,7 +103,7 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
     typeDiscount: Yup.string().required(),
     value: Yup.number()
       .required('Required')
-      .min(1, 'Value must be greater than 0')
+      .min(0.01, 'Value must be greater than 0')
       .when('typeDiscount', {
         is: DiscountType.PERCENTAGE,
         then: (schema) => schema.max(100, 'Percentage cannot exceed 100%'),
@@ -123,7 +123,7 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
       .required('End date is required')
       .min(Yup.ref('startedDate'), 'End date cannot be before start date'),
     minOrderValue: Yup.number()
-      .min(0, 'Must be positive')
+      .min(0, 'Min order value cannot be negative')
       .test('min-less-than-max', 'Min order value must be less than max discount cap', function (value) {
         const { maxDiscountValue, typeDiscount } = this.parent
         if (typeDiscount === DiscountType.PERCENTAGE && maxDiscountValue > 0) {
@@ -131,7 +131,7 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
         }
         return true
       }),
-    maxDiscountValue: Yup.number().min(0, 'Must be positive'),
+    maxDiscountValue: Yup.number().min(0, 'Max discount cap cannot be negative'),
     applyScope: Yup.string().required(),
     status: Yup.string().required()
   })
@@ -178,6 +178,23 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
   const isPerc = formik.values.typeDiscount === DiscountType.PERCENTAGE
   const inputCls =
     'w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-mint-300/50 focus:border-mint-400 transition bg-white placeholder:text-slate-300'
+
+  const blockNonDigits = (e: React.KeyboardEvent) => {
+    const isControlKey = [
+      'Backspace',
+      'Tab',
+      'ArrowLeft',
+      'ArrowRight',
+      'Delete',
+      'Enter',
+      'Escape'
+    ].includes(e.key)
+    const isDigit = /[0-9]/.test(e.key)
+
+    if (!isDigit && !isControlKey) {
+      e.preventDefault()
+    }
+  }
 
   return (
     <ModalOverlay onClose={onClose}>
@@ -270,8 +287,9 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
               </FormRow>
               <FormRow label={isPerc ? 'Value (%)' : 'Value (₫)'}>
                 <input
-                  type="number"
                   {...formik.getFieldProps('value')}
+                  type="text"
+                  onKeyDown={blockNonDigits}
                   className={`${inputCls} font-black text-mint-600 ${formik.touched.value && formik.errors.value ? 'border-red-500' : ''}`}
                   placeholder={isPerc ? '25' : '100000'}
                 />
@@ -283,8 +301,9 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
             <div className="grid grid-cols-2 gap-3 mt-1">
               <FormRow label="Min Order Value (₫)">
                 <input
-                  type="number"
                   {...formik.getFieldProps('minOrderValue')}
+                  type="text"
+                  onKeyDown={blockNonDigits}
                   className={`${inputCls} ${formik.touched.minOrderValue && formik.errors.minOrderValue ? 'border-red-500' : ''}`}
                   placeholder="0 = no minimum"
                 />
@@ -295,8 +314,9 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
               {isPerc && (
                 <FormRow label="Max Discount Cap (₫)">
                   <input
-                    type="number"
                     {...formik.getFieldProps('maxDiscountValue')}
+                    type="text"
+                    onKeyDown={blockNonDigits}
                     className={`${inputCls} ${formik.touched.maxDiscountValue && formik.errors.maxDiscountValue ? 'border-red-500' : ''}`}
                     placeholder="0 = unlimited"
                   />
@@ -330,8 +350,9 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
                     size={17}
                   />
                   <input
-                    type="number"
                     {...formik.getFieldProps('usageLimit')}
+                    type="text"
+                    onKeyDown={blockNonDigits}
                     className={`${inputCls} pl-9 ${formik.touched.usageLimit && formik.errors.usageLimit ? 'border-red-500' : ''}`}
                   />
                 </div>

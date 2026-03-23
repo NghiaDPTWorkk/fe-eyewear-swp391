@@ -57,6 +57,11 @@ export default function ProfileForm() {
       }
     }
   })
+  const blockNonDigits = (e: React.KeyboardEvent) => {
+    if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
+      e.preventDefault()
+    }
+  }
 
   // Helper to format role names (e.g., OPERATION_STAFF -> Operation Staff)
   const formatRole = (roleName?: string) => {
@@ -182,6 +187,7 @@ export default function ProfileForm() {
             <input
               type="text"
               {...formik.getFieldProps('phone')}
+              onKeyDown={blockNonDigits}
               readOnly={!isStaffRole}
               className={cn(
                 'w-full px-4 py-3 border rounded-xl text-sm font-semibold transition-all focus:outline-none',

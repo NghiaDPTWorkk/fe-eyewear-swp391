@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import TryOnConsentStep from './TryOnConsentStep'
 import TryOnLoadingStep from './TryOnLoadingStep'
 import TryOnWebcamView from './TryOnWebcamView'
@@ -25,10 +26,33 @@ export default function VirtualTryOnModal({
   const [stream, setStream] = useState<MediaStream | null>(null)
   const faceLandmarker = useFaceLandmarker()
 
+  // Debug global errors
+  useEffect(() => {
+    const handleError = (e: ErrorEvent) => {
+      console.error('[GLOBAL ERROR]:', e.error)
+    }
+    window.addEventListener('error', handleError)
+    return () => window.removeEventListener('error', handleError)
+  }, [])
+
+  // Lock scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+      console.log('[VirtualTryOnModal] OPENED - scroll locked.')
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [isOpen])
+
   const stopStream = useCallback(
     (s?: MediaStream | null) => {
       const target = s ?? stream
       if (target) {
+        console.log('[VirtualTryOnModal] Stopping camera tracks.')
         target.getTracks().forEach((track) => track.stop())
       }
       setStream(null)
@@ -37,6 +61,7 @@ export default function VirtualTryOnModal({
   )
 
   const handleClose = useCallback(() => {
+    console.log('[VirtualTryOnModal] handleClose triggered.')
     faceLandmarker.stopDetection()
     faceLandmarker.cleanup()
     stopStream()
@@ -45,28 +70,35 @@ export default function VirtualTryOnModal({
   }, [onClose, stopStream, faceLandmarker])
 
   const handleAgree = useCallback(() => {
+    console.log('[VirtualTryOnModal] handleAgree (CONSENT -> LOADING).')
     setStep('LOADING')
   }, [])
 
   const handleReady = useCallback((newStream: MediaStream) => {
+    console.log('[VirtualTryOnModal] handleReady (LOADING -> TRYON).')
     setStream(newStream)
     setStep('TRYON')
   }, [])
 
   const handleLoadError = useCallback(() => {
-    stopStream()
-    setStep('CONSENT')
-    onClose()
+    console.error('[VirtualTryOnModal] handleLoadError.')
+    // Don't close immediately to let the user see the error toast
+    setTimeout(() => {
+      stopStream()
+      setStep('CONSENT')
+      onClose()
+    }, 1000)
   }, [onClose, stopStream])
 
   if (!isOpen) return null
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-md p-4 transition-all duration-500">
+  const modalContent = (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 p-4 transition-opacity duration-300 overflow-hidden">
       <div className="w-full h-full flex items-center justify-center animate-fade-in-up">
         {step === 'CONSENT' && <TryOnConsentStep onAgree={handleAgree} onDisagree={handleClose} />}
         {step === 'LOADING' && (
           <TryOnLoadingStep
+            key="loading-step"
             onReady={handleReady}
             onError={handleLoadError}
             initModel={faceLandmarker.initModel}
@@ -74,6 +106,7 @@ export default function VirtualTryOnModal({
         )}
         {step === 'TRYON' && stream && (
           <TryOnWebcamView
+            key="webcam-view"
             onClose={handleClose}
             stream={stream}
             productName={productName}
@@ -88,4 +121,6 @@ export default function VirtualTryOnModal({
       </div>
     </div>
   )
+
+  return createPortal(modalContent, document.body)
 }

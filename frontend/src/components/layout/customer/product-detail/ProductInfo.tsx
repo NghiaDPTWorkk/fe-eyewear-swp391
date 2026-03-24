@@ -376,9 +376,14 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
           size="lg"
           isFullWidth
           colorScheme="neutral"
+          type="button"
           className="h-16 rounded-2xl border-mint-300 hover:bg-mint-50 px-0"
           leftIcon={<Video className="w-6 h-6 text-primary-500" />}
-          onClick={() => setIsTryOnOpen(true)}
+          onClick={(e) => {
+            e.preventDefault()
+            console.log('[ProductInfo] Virtual Try-On clicked. Setting isTryOnOpen to true.')
+            setIsTryOnOpen(true)
+          }}
         >
           Virtual Try-On
         </Button>

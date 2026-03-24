@@ -17,7 +17,7 @@
  *  4. dọn dẹp webgl khi hủy component
  */
 
-import { useRef, useMemo, useEffect } from 'react'
+import { useRef, useMemo, useEffect, Suspense } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useGLTF, Environment, ContactShadows } from '@react-three/drei'
 import type { NormalizedLandmark } from '@mediapipe/tasks-vision'
@@ -88,22 +88,24 @@ export default function GlassesOverlay({
         camera={{ position: [0, 0, 5], fov: CAMERA_FOV, near: 0.01, far: 100 }}
         style={{ background: 'transparent' }}
       >
-        {/* ánh sáng pbr */}
-        <ambientLight intensity={0.6} />
-        <directionalLight position={[3, 4, 5]} intensity={1.4} />
-        <directionalLight position={[-2, -1, 3]} intensity={0.4} />
+        <Suspense fallback={null}>
+          {/* ánh sáng pbr */}
+          <ambientLight intensity={0.6} />
+          <directionalLight position={[3, 4, 5]} intensity={1.4} />
+          <directionalLight position={[-2, -1, 3]} intensity={0.4} />
 
-        {/* môi trường hdr để phản chiếu trên tròng kính */}
-        <Environment preset="studio" />
+          {/* môi trường hdr để phản chiếu trên tròng kính */}
+          <Environment preset="studio" />
 
-        {/* đổ bóng tiếp xúc nhẹ trên sống mũi */}
-        <ContactShadows position={[0, -0.35, 0]} opacity={0.2} scale={2} blur={2.5} far={1} />
+          {/* đổ bóng tiếp xúc nhẹ trên sống mũi */}
+          <ContactShadows position={[0, -0.35, 0]} opacity={0.2} scale={2} blur={2.5} far={1} />
 
-        <GlassesScene
-          videoRef={videoRef}
-          landmarksRef={landmarksRef}
-          transformationMatricesRef={transformationMatricesRef}
-        />
+          <GlassesScene
+            videoRef={videoRef}
+            landmarksRef={landmarksRef}
+            transformationMatricesRef={transformationMatricesRef}
+          />
+        </Suspense>
       </Canvas>
     </div>
   )

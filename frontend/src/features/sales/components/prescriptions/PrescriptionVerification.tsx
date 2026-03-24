@@ -59,6 +59,9 @@ export default function PrescriptionVerification({
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const [confirmAction, setConfirmAction] = useState<'approve' | 'reject' | null>(null)
 
+  const lens = order?.products?.[0]?.lens
+  const parameters = lens?.parameters
+
   const handleApprove = () => {
     setConfirmAction('approve')
     setIsConfirmOpen(true)
@@ -101,8 +104,10 @@ export default function PrescriptionVerification({
     const finalNote = localNote !== '' ? localNote : ((parameters as any)?.note ?? '')
 
     const success = await approveOrder(orderId, { parameters: finalParams, note: finalNote })
+    // Always close modal so user can see toast and form errors
+    setIsConfirmOpen(false)
+
     if (success) {
-      setIsConfirmOpen(false)
       refetch()
       onActionSuccess?.()
     }
@@ -110,8 +115,8 @@ export default function PrescriptionVerification({
 
   const handleConfirmReject = async (note: string) => {
     const success = await rejectOrder(orderId, order?.invoiceId, note)
+    setIsConfirmOpen(false)
     if (success) {
-      setIsConfirmOpen(false)
       refetch()
       onActionSuccess?.()
     }
@@ -151,9 +156,6 @@ export default function PrescriptionVerification({
   )
   const isRejected = ['REJECTED', 'CANCELED', 'REJECT'].includes(order.status?.toUpperCase())
 
-  const lens = order.products?.[0]?.lens
-  const parameters = lens?.parameters
-
   const isReadOnly = isReadOnlyParams || isApproved || isRejected
 
   return (
@@ -180,6 +182,21 @@ export default function PrescriptionVerification({
           )}
         </div>
       </div>
+
+      {actionError && (
+        <div className="bg-rose-50 border border-rose-100 p-5 rounded-3xl flex items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-500 shadow-sm border-l-[6px] border-l-rose-500">
+          <div className="w-12 h-12 rounded-2xl bg-rose-500 flex items-center justify-center shrink-0 shadow-lg shadow-rose-200">
+            <IoClose className="text-white" size={24} />
+          </div>
+          <div className="flex-1">
+            <h4 className="text-[11px] font-bold text-rose-500 uppercase tracking-widest mb-1.5 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+              Quick Notification: Verification Error
+            </h4>
+            <div className="text-sm font-bold text-rose-900 leading-tight">{actionError}</div>
+          </div>
+        </div>
+      )}
 
       <PrescriptionHeroSection order={order} />
 

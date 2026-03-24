@@ -218,7 +218,11 @@ export default function PrescriptionVerification({
             handleApprove={handleApprove}
             handleReject={handleReject}
             assignStaff={order.assignStaff || undefined}
-            staffName={order.staffName || profileData?.data?.name}
+            staffName={
+              isApproved || isRejected
+                ? order.staffName
+                : order.staffName || profileData?.data?.name
+            }
             actionTime={formatDate(
               isApproved
                 ? order.approvedAt || order.completedAt || order.updatedAt

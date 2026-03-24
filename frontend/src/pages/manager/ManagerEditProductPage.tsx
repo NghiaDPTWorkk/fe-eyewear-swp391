@@ -118,8 +118,8 @@ export default function ManagerEditProductPage() {
       return false
     }
     for (const v of state.variants) {
-      if (!v.sku.trim()) {
-        toast.error('All variants must have a SKU')
+      if (!v.priceText || isNaN(Number(v.priceText))) {
+        toast.error('All variants must have a valid price')
         return false
       }
     }

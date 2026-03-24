@@ -111,13 +111,10 @@ export default function ManagerAddProductPage() {
         toast.error('At least one variant is required')
         return false
       }
-      for (const v of state.variants) {
-        if (!v.sku.trim()) {
-          toast.error('All variants must have a SKU')
-          return false
-        }
+      for (let i = 0; i < state.variants.length; i++) {
+        const v = state.variants[i]
         if (!v.priceText || isNaN(Number(v.priceText))) {
-          toast.error(`Variant ${v.sku || ''} must have a valid price`)
+          toast.error(`Variant #${i + 1} must have a valid price`)
           return false
         }
       }
@@ -154,8 +151,6 @@ export default function ManagerAddProductPage() {
         categories,
         variants: state.variants.map((v) => ({
           name: v.name || undefined,
-          sku: v.sku || undefined,
-          slug: v.slug || undefined,
           price: Number(v.priceText),
           finalPrice: Number(v.finalPriceText),
           stock: Number(v.stockText),

@@ -6,8 +6,8 @@ import { useSalesStaffAction, useSalesStaffOrderDetail } from '@/features/sales/
 import { useProfile } from '@/features/staff/hooks/useProfile'
 import { Button, ConfirmationModal } from '@/shared/components/ui-core'
 import { TranscriptionForm } from './TranscriptionForm'
-import { OrderDetailsSidebar } from './OrderDetailsSidebar'
 import { LabOperationsTimeline } from './LabOperationsTimeline'
+import { PrescriptionHeroSection } from './PrescriptionHeroSection'
 import { RejectionModal } from '../common/RejectionModal'
 
 interface PrescriptionParameters {
@@ -158,7 +158,6 @@ export default function PrescriptionVerification({
 
   return (
     <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
-      {}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm text-slate-500">
           <span className="font-normal">Order Status:</span>
@@ -180,14 +179,12 @@ export default function PrescriptionVerification({
             </span>
           )}
         </div>
-        <div className="text-[11px] font-semibold text-amber-500 uppercase tracking-widest">
-          <span className="text-amber-600">24</span> Pending
-        </div>
       </div>
 
+      <PrescriptionHeroSection order={order} />
+
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {}
-        <div className="xl:col-span-2 space-y-4">
+        <div className="xl:col-span-2">
           <TranscriptionForm
             parameters={localParameters || parameters}
             onParametersChange={setLocalParameters}
@@ -216,9 +213,7 @@ export default function PrescriptionVerification({
           />
         </div>
 
-        {}
-        <div className="space-y-5">
-          <OrderDetailsSidebar order={order} />
+        <div className="xl:col-span-1">
           <LabOperationsTimeline order={order} />
         </div>
       </div>

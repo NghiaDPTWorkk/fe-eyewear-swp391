@@ -136,6 +136,8 @@ apiClient.interceptors.request.use(
     const publicRoutes = [
       '/auth/login',
       '/admin/auth/login',
+      '/auth/logout',
+      '/admin/auth/logout',
       '/products',
       '/auth/refresh-token',
       '/admin/auth/refresh-token'

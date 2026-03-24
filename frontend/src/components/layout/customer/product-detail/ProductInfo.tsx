@@ -26,6 +26,7 @@ import type {
   UseProductVariantsReturn,
   AttributeValue
 } from '@/shared/hooks/products/useProductVariants'
+import type { Variant } from '@/shared/types'
 
 interface ProductInfoProps {
   product: Product
@@ -65,7 +66,7 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
 
   const isFavorite = isInWishlist(productId)
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (variantToUse?: Variant) => {
     setPurchaseMode('cart')
     // Check for token in both possible localStorage keys
     const token = localStorage.getItem('accessToken') || localStorage.getItem('access_token')
@@ -80,12 +81,15 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
     const type = product.type || 'frame'
 
     if (type === 'frame') {
+      // If we are coming from Try-On modal with a specific variant,
+      // we might want to skip or handle lens selection differently.
+      // For now, let's keep it simple: if it's a frame, open lens modal.
       setIsLensModalOpen(true)
       return
     }
 
     // Sunglass or default frame path
-    performAction(undefined, 'cart')
+    performAction(undefined, 'cart', variantToUse)
   }
 
   const handleBuyNow = () => {
@@ -119,10 +123,12 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
 
   const performAction = async (
     lensSelection?: LensSelectionState,
-    explicitMode?: 'cart' | 'buy_now'
+    explicitMode?: 'cart' | 'buy_now',
+    variantToUse?: Variant
   ) => {
     // Validation: Check if variant is selected and in stock
-    if (!currentVariant) {
+    const v = variantToUse || currentVariant
+    if (!v) {
       toast.error('Please select a valid product variant')
       return
     }
@@ -145,7 +151,7 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
       return
     }
 
-    if (!currentVariant.sku) {
+    if (!v.sku) {
       toast.error('Unable to proceed: SKU not found for this variant')
       return
     }
@@ -158,7 +164,7 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
     if (modeToUse === 'cart') {
       try {
         // Call async add to cart with API integration
-        await addItemAsync(finalProductId, currentVariant.sku, 1, normalizedLensSelection)
+        await addItemAsync(finalProductId, v.sku || '', 1, normalizedLensSelection)
 
         // Show success message
         const actionLabel = isPreOrder ? 'Pre-ordered' : 'added to cart'
@@ -167,7 +173,7 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
             `${product.nameBase} with ${lensSelection.visionNeed} lenses ${actionLabel}!`
           )
         } else {
-          toast.success(`${currentVariant.name} ${actionLabel}!`)
+          toast.success(`${v.name} ${actionLabel}!`)
         }
 
         // Close lens modal if open
@@ -188,11 +194,11 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
       // Direct buy flow: redirect to checkout with item data
       const itemToBuy: CartItem = {
         product_id: finalProductId,
-        sku: currentVariant.sku || '',
+        sku: v.sku || '',
         quantity: 1,
         name: product.nameBase,
-        price: finalPrice,
-        image: currentVariant.imgs?.[1] || images[1] || '',
+        price: v.finalPrice ?? v.price,
+        image: v.imgs?.[0] || images[0] || '',
         addAt: new Date(),
         selected: true,
         productType: product.type,
@@ -462,7 +468,7 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
       {/* Action Buttons */}
       <div className="flex flex-col gap-4 mb-8">
         <Button
-          onClick={handleAddToCart}
+          onClick={() => handleAddToCart(currentVariant ?? undefined)}
           size="lg"
           isFullWidth
           disabled={!isValidCombination || !isInStock || isAddingToCart}
@@ -557,12 +563,25 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
         isOpen={isTryOnOpen}
         onClose={() => setIsTryOnOpen(false)}
         productName={product.nameBase}
-        productImage={currentVariant?.imgs?.[1] || images[1] || ''}
+        productImage={currentVariant?.imgs?.[0] || images[0] || ''}
         productPrice={finalPrice}
         virTryOnUrl={currentVariant?.virTryOnUrl}
-        onAddToCart={() => {
+        variants={product.variants?.filter((v) => !!v.virTryOnUrl)}
+        initialVariantIndex={
+          product.variants
+            ?.filter((v) => !!v.virTryOnUrl)
+            .findIndex((v) => v.sku === currentVariant?.sku) ?? 0
+        }
+        onVariantSelect={(index) => {
+          const filtered = product.variants?.filter((v) => !!v.virTryOnUrl) || []
+          const variant = filtered[index]
+          if (variant) {
+            variant.options.forEach((opt) => selectOption(opt.attributeName, opt.value))
+          }
+        }}
+        onAddToCart={(variant) => {
           setIsTryOnOpen(false)
-          handleAddToCart()
+          handleAddToCart(variant)
         }}
         onAddToWishlist={handleToggleWishlist}
         isFavorite={isFavorite}

@@ -35,9 +35,6 @@ export const CustomerGrowth: React.FC<CustomerGrowthProps> = ({ stats, isLoading
             )}
           </div>
         </div>
-        <button className="text-[10px] font-bold text-gray-400 hover:text-mint-600 transition-colors flex items-center gap-1 uppercase tracking-widest">
-          Regional Report <span className="text-xs">↗</span>
-        </button>
       </div>
 
       {isLoading ? (

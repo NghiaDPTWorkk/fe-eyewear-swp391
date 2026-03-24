@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useRef, useState, useMemo } from 'react'
 import { FaceLandmarker, FilesetResolver, type NormalizedLandmark } from '@mediapipe/tasks-vision'
 
 const WASM_CDN = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.32/wasm'
@@ -146,14 +146,17 @@ export function useFaceLandmarker() {
     setIsModelReady(false)
   }, [stopDetection])
 
-  return {
-    isModelLoading,
-    isModelReady,
-    landmarksRef,
-    transformationMatricesRef,
-    initModel,
-    startDetection,
-    stopDetection,
-    cleanup
-  }
+  return useMemo(
+    () => ({
+      isModelLoading,
+      isModelReady,
+      landmarksRef,
+      transformationMatricesRef,
+      initModel,
+      startDetection,
+      stopDetection,
+      cleanup
+    }),
+    [isModelLoading, isModelReady, initModel, startDetection, stopDetection, cleanup]
+  )
 }

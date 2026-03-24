@@ -66,14 +66,20 @@ export default function VirtualTryOnModal({
     [stream]
   )
 
+  useEffect(() => {
+    if (!isOpen) {
+      console.log('[VirtualTryOnModal] isOpen turned false, cleaning up.')
+      faceLandmarker.stopDetection()
+      faceLandmarker.cleanup()
+      stopStream()
+      setStep('CONSENT')
+    }
+  }, [isOpen, faceLandmarker, stopStream])
+
   const handleClose = useCallback(() => {
     console.log('[VirtualTryOnModal] handleClose triggered.')
-    faceLandmarker.stopDetection()
-    faceLandmarker.cleanup()
-    stopStream()
-    setStep('CONSENT')
     onClose()
-  }, [onClose, stopStream, faceLandmarker])
+  }, [onClose])
 
   const handleAgree = useCallback(() => {
     console.log('[VirtualTryOnModal] handleAgree (CONSENT -> LOADING).')
@@ -90,11 +96,9 @@ export default function VirtualTryOnModal({
     console.error('[VirtualTryOnModal] handleLoadError.')
     // Don't close immediately to let the user see the error toast
     setTimeout(() => {
-      stopStream()
-      setStep('CONSENT')
       onClose()
     }, 1000)
-  }, [onClose, stopStream])
+  }, [onClose])
 
   if (!isOpen) return null
 

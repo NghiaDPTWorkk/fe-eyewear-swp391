@@ -26,6 +26,9 @@ export default function SaleStaffRxVerificationPage() {
   useEffect(() => {
     if (!orderId || !order || !currentStaffId) return
 
+    // Reset denial state when orderId or order changes
+    setLockDenied(false)
+
     const checkAndAcquireLock = async () => {
       // 1. Check server-side assignment
       const assignedTo = order.assignedStaff
@@ -38,13 +41,13 @@ export default function SaleStaffRxVerificationPage() {
       // 2. Try to acquire server-side lock if not already assigned
       if (!assignedTo) {
         try {
+          // Use current query state to ensure we don't over-claim
           await orderAdminService.assignStaff(orderId, currentStaffId)
           // Refresh order data to reflect assignment
           queryClient.invalidateQueries({ queryKey: ['sales', 'order', orderId] })
         } catch (error) {
           console.error('Failed to acquire server-side lock:', error)
-          setLockDenied(true)
-          return
+          // setLockDenied(true) // Don't block purely on API error if not assigned to others
         }
       }
 
@@ -61,6 +64,12 @@ export default function SaleStaffRxVerificationPage() {
       releaseLock()
     }
   }, [orderId, order, currentStaffId, acquireLock, releaseLock, queryClient])
+
+  useEffect(() => {
+    if (lockStatus.locked) {
+      setLockDenied(true)
+    }
+  }, [lockStatus])
 
   const handleBack = async () => {
     // Release server-side lock if we are the owner

@@ -143,6 +143,7 @@ export default function PrescriptionVerification({
   }
 
   const isApproved = [
+    'ACCEPTED',
     'APPROVED',
     'VERIFIED',
     'COMPLETED',

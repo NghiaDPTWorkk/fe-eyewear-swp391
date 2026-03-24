@@ -328,8 +328,8 @@ export default function ManagerEditProductPage() {
                       }
                       className="w-full px-4 py-3 bg-white border border-neutral-200/50 rounded-2xl text-[13px] font-extrabold focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all cursor-pointer shadow-sm"
                     >
-                      <option value="AVAILABLE">✅ Available Now</option>
-                      <option value="PRE_ORDER">📦 Pre-order Mode</option>
+                      <option value="AVAILABLE"> Available Now</option>
+                      <option value="PRE_ORDER"> Pre-order Mode</option>
                     </select>
                   </label>
                 </div>
@@ -340,12 +340,12 @@ export default function ManagerEditProductPage() {
 
         {/* Integrated Action Bar - Bottom flow */}
         <div className="mt-16 flex justify-center pb-12">
-          <div className="w-full max-w-2xl bg-slate-950/95 border border-white/10 rounded-[40px] p-3 shadow-2xl flex items-center justify-between px-10 transition-all ring-1 ring-white/5">
+          <div className="w-full max-w-2xl border border-white/10 rounded-[40px] p-3 shadow-2xl flex items-center justify-between px-10 transition-all ring-1 ring-white/5">
             <button
               type="button"
               onClick={() => navigate(-1)}
               disabled={isSubmitting}
-              className="px-8 py-3 text-neutral-400 hover:text-white transition-colors text-sm font-extrabold active:scale-95 disabled:opacity-50"
+              className="px-8 py-3 text-neutral-400 hover:text-slate-950 transition-colors text-sm font-extrabold active:scale-95 disabled:opacity-50"
             >
               Discard Changes
             </button>
@@ -353,7 +353,7 @@ export default function ManagerEditProductPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-12 py-4 bg-mint-500 text-slate-950 hover:bg-mint-400 rounded-3xl text-sm font-black shadow-xl active:scale-95 transition-all flex items-center gap-3 disabled:opacity-50"
+              className="px-12 py-4 bg-mint-400 text-slate-950 hover:bg-mint-500 rounded-3xl text-sm font-black shadow-xl active:scale-95 transition-all flex items-center gap-3 disabled:opacity-50"
             >
               {isSubmitting ? (
                 <div className="w-5 h-5 border-2 border-slate-950/30 border-t-slate-950 rounded-full animate-spin" />

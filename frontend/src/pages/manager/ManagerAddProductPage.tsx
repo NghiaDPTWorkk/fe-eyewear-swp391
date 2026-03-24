@@ -374,7 +374,7 @@ export default function ManagerAddProductPage() {
         </div>
       </div>
 
-      <div className="relative min-h-[500px]">
+      <div className="relative min-h-[400px]">
         {/* STEP 1: General Info */}
         {currentStep === 1 && (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
@@ -589,12 +589,12 @@ export default function ManagerAddProductPage() {
       </div>
 
       {/* Enhanced Floating Pill Navigation Bar - Inline flow */}
-      <div className="mt-16 flex justify-center pb-12">
-        <div className="w-full max-w-4xl bg-slate-950/95 border border-white/10 rounded-[40px] p-3 shadow-2xl flex items-center justify-between px-10 transition-all ring-1 ring-white/5">
+      <div className="flex justify-center pb-12">
+        <div className="w-full max-w-4xl border border-white/10 rounded-[40px] p-3 shadow-2xl flex items-center justify-between px-10 transition-all ring-1 ring-white/5">
           <Button
             variant="ghost"
             onClick={() => (currentStep === 1 ? navigate(-1) : prevStep())}
-            className="px-8 text-neutral-400 hover:text-white hover:bg-white/5 active:scale-95 rounded-3xl h-14"
+            className="px-8 text-slate-950 bg-mint-300 hover:text-slate-950 hover:bg-mint-400 active:scale-95 rounded-3xl h-14"
           >
             {currentStep === 1 ? 'Cancel' : 'Previous Step'}
           </Button>

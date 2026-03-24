@@ -4,7 +4,8 @@ import {
   IoClose,
   IoEyeOutline,
   IoInformationCircleOutline,
-  IoPersonOutline
+  IoPersonOutline,
+  IoWarningOutline
 } from 'react-icons/io5'
 import { Button, Card, Input } from '@/shared/components/ui-core'
 
@@ -204,7 +205,7 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
   }
 
   return (
-    <Card className="p-0 border border-gray-200 overflow-hidden shadow-sm rounded-xl bg-white text-slate-700">
+    <Card className="p-0 border border-gray-200 shadow-sm rounded-xl bg-white text-slate-700 overflow-visible relative">
       <div className="px-5 py-4 bg-white border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center border border-slate-100">
@@ -229,6 +230,17 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
           </div>
         </div>
       </div>
+
+      {hasNumericErrors && (
+        <div className="px-5 py-3 bg-red-50 border-b border-red-100 flex items-center gap-3 animate-in fade-in slide-in-from-top-1 duration-300">
+          <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center shrink-0">
+            <IoWarningOutline className="text-red-600" size={18} />
+          </div>
+          <p className="text-xs font-bold text-red-700 uppercase tracking-wide">
+            Invalid parameters detected. Please correct the fields highlighted in red below.
+          </p>
+        </div>
+      )}
 
       <div className="p-5 bg-white space-y-5">
         {}
@@ -280,12 +292,14 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
                   value={parameters?.right?.SPH ?? '0.00'}
                   onChange={(e) => handleChange('right', 'SPH', e.target.value)}
                   onBlur={(e) => handleNumericBlur('right', 'SPH', e.target.value)}
-                  className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['right_SPH'] ? ' border-red-400' : ''}`}
+                  className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['right_SPH'] ? ' border-red-400 bg-red-50/10' : ''}`}
                 />
+                {numericErrors['right_SPH'] && (
+                  <p className="text-[10px] text-red-500 text-center mt-1 font-semibold animate-in fade-in duration-200">
+                    {numericErrors['right_SPH']}
+                  </p>
+                )}
               </div>
-              {numericErrors['right_SPH'] && (
-                <p className="text-[10px] text-red-500 text-center">{numericErrors['right_SPH']}</p>
-              )}
             </div>
             <div className="space-y-2">
               <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block text-center">
@@ -297,12 +311,14 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
                   value={parameters?.right?.CYL ?? '0.00'}
                   onChange={(e) => handleChange('right', 'CYL', e.target.value)}
                   onBlur={(e) => handleNumericBlur('right', 'CYL', e.target.value)}
-                  className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['right_CYL'] ? ' border-red-400' : ''}`}
+                  className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['right_CYL'] ? ' border-red-400 bg-red-50/10' : ''}`}
                 />
+                {numericErrors['right_CYL'] && (
+                  <p className="text-[10px] text-red-500 text-center mt-1 font-semibold animate-in fade-in duration-200">
+                    {numericErrors['right_CYL']}
+                  </p>
+                )}
               </div>
-              {numericErrors['right_CYL'] && (
-                <p className="text-[10px] text-red-500 text-center">{numericErrors['right_CYL']}</p>
-              )}
             </div>
             <div className="space-y-2">
               <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block text-center">
@@ -314,14 +330,14 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
                   value={parameters?.right?.AXIS ?? '0'}
                   onChange={(e) => handleChange('right', 'AXIS', e.target.value)}
                   onBlur={(e) => handleNumericBlur('right', 'AXIS', e.target.value)}
-                  className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['right_AXIS'] ? ' border-red-400' : ''} ${!isAxisRequired('right') ? 'opacity-40 cursor-not-allowed bg-slate-50' : ''}`}
+                  className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['right_AXIS'] ? ' border-red-400 bg-red-50/10' : ''} ${!isAxisRequired('right') ? 'opacity-40 cursor-not-allowed bg-slate-50' : ''}`}
                 />
+                {numericErrors['right_AXIS'] && (
+                  <p className="text-[10px] text-red-500 text-center mt-1 font-semibold animate-in fade-in duration-200">
+                    {numericErrors['right_AXIS']}
+                  </p>
+                )}
               </div>
-              {numericErrors['right_AXIS'] && (
-                <p className="text-[10px] text-red-500 text-center">
-                  {numericErrors['right_AXIS']}
-                </p>
-              )}
             </div>
             <div className="space-y-2">
               <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block text-center">
@@ -333,12 +349,14 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
                   value={parameters?.right?.ADD ?? '0.00'}
                   onChange={(e) => handleChange('right', 'ADD', e.target.value)}
                   onBlur={(e) => handleNumericBlur('right', 'ADD', e.target.value)}
-                  className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['right_ADD'] ? ' border-red-400' : ''}`}
+                  className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['right_ADD'] ? ' border-red-400 bg-red-50/10' : ''}`}
                 />
+                {numericErrors['right_ADD'] && (
+                  <p className="text-[10px] text-red-500 text-center mt-1 font-semibold animate-in fade-in duration-200">
+                    {numericErrors['right_ADD']}
+                  </p>
+                )}
               </div>
-              {numericErrors['right_ADD'] && (
-                <p className="text-[10px] text-red-500 text-center">{numericErrors['right_ADD']}</p>
-              )}
             </div>
           </div>
         </div>
@@ -359,12 +377,14 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
                   value={parameters?.left?.SPH ?? '0.00'}
                   onChange={(e) => handleChange('left', 'SPH', e.target.value)}
                   onBlur={(e) => handleNumericBlur('left', 'SPH', e.target.value)}
-                  className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['left_SPH'] ? ' border-red-400' : ''}`}
+                  className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['left_SPH'] ? ' border-red-400 bg-red-50/10' : ''}`}
                 />
+                {numericErrors['left_SPH'] && (
+                  <p className="text-[10px] text-red-500 text-center mt-1 font-semibold animate-in fade-in duration-200">
+                    {numericErrors['left_SPH']}
+                  </p>
+                )}
               </div>
-              {numericErrors['left_SPH'] && (
-                <p className="text-[10px] text-red-500 text-center">{numericErrors['left_SPH']}</p>
-              )}
             </div>
             <div className="space-y-2">
               <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block text-center">
@@ -376,12 +396,14 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
                   value={parameters?.left?.CYL ?? '0.00'}
                   onChange={(e) => handleChange('left', 'CYL', e.target.value)}
                   onBlur={(e) => handleNumericBlur('left', 'CYL', e.target.value)}
-                  className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['left_CYL'] ? ' border-red-400' : ''}`}
+                  className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['left_CYL'] ? ' border-red-400 bg-red-50/10' : ''}`}
                 />
+                {numericErrors['left_CYL'] && (
+                  <p className="text-[10px] text-red-500 text-center mt-1 font-semibold animate-in fade-in duration-200">
+                    {numericErrors['left_CYL']}
+                  </p>
+                )}
               </div>
-              {numericErrors['left_CYL'] && (
-                <p className="text-[10px] text-red-500 text-center">{numericErrors['left_CYL']}</p>
-              )}
             </div>
             <div className="space-y-2">
               <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block text-center">
@@ -393,12 +415,14 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
                   value={parameters?.left?.AXIS ?? '0'}
                   onChange={(e) => handleChange('left', 'AXIS', e.target.value)}
                   onBlur={(e) => handleNumericBlur('left', 'AXIS', e.target.value)}
-                  className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['left_AXIS'] ? ' border-red-400' : ''} ${!isAxisRequired('left') ? 'opacity-40 cursor-not-allowed bg-slate-50' : ''}`}
+                  className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['left_AXIS'] ? ' border-red-400 bg-red-50/10' : ''} ${!isAxisRequired('left') ? 'opacity-40 cursor-not-allowed bg-slate-50' : ''}`}
                 />
+                {numericErrors['left_AXIS'] && (
+                  <p className="text-[10px] text-red-500 text-center mt-1 font-semibold animate-in fade-in duration-200">
+                    {numericErrors['left_AXIS']}
+                  </p>
+                )}
               </div>
-              {numericErrors['left_AXIS'] && (
-                <p className="text-[10px] text-red-500 text-center">{numericErrors['left_AXIS']}</p>
-              )}
             </div>
             <div className="space-y-2">
               <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block text-center">
@@ -410,12 +434,14 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
                   value={parameters?.left?.ADD ?? '0.00'}
                   onChange={(e) => handleChange('left', 'ADD', e.target.value)}
                   onBlur={(e) => handleNumericBlur('left', 'ADD', e.target.value)}
-                  className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['left_ADD'] ? ' border-red-400' : ''}`}
+                  className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['left_ADD'] ? ' border-red-400 bg-red-50/10' : ''}`}
                 />
+                {numericErrors['left_ADD'] && (
+                  <p className="text-[10px] text-red-500 text-center mt-1 font-semibold animate-in fade-in duration-200">
+                    {numericErrors['left_ADD']}
+                  </p>
+                )}
               </div>
-              {numericErrors['left_ADD'] && (
-                <p className="text-[10px] text-red-500 text-center">{numericErrors['left_ADD']}</p>
-              )}
             </div>
           </div>
         </div>
@@ -480,20 +506,32 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
 
       {!isReadOnly && !isApproved && !isRejected && (
         <div className="p-5 flex gap-4 border-t border-slate-100 bg-slate-50/20">
-          <Button
-            isFullWidth
-            onClick={handleApproveWithValidation}
-            isLoading={processing}
-            disabled={!isNoteValid || hasNumericErrors}
-            className={`font-semibold h-12 rounded-xl text-sm transition-all active:scale-[0.98] border-none ${
-              isNoteValid && !hasNumericErrors
-                ? 'bg-mint-600 hover:bg-mint-700 text-white shadow-md shadow-mint-100/30'
-                : 'bg-slate-200 text-slate-400 cursor-not-allowed'
-            }`}
-            leftIcon={<IoCheckmark size={20} />}
-          >
-            Verify &amp; Submit
-          </Button>
+          <div className="flex flex-col gap-2 w-full">
+            <Button
+              isFullWidth
+              onClick={handleApproveWithValidation}
+              isLoading={processing}
+              disabled={!isNoteValid || hasNumericErrors}
+              className={`font-semibold h-12 rounded-xl text-sm transition-all active:scale-[0.98] border-none ${
+                isNoteValid && !hasNumericErrors
+                  ? 'bg-mint-600 hover:bg-mint-700 text-white shadow-md shadow-mint-100/30'
+                  : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+              }`}
+              leftIcon={<IoCheckmark size={20} />}
+            >
+              Verify &amp; Submit
+            </Button>
+            {!isNoteValid && noteTouched && (
+              <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest text-center italic">
+                ⚠ Staff Note must be at least 10 characters
+              </p>
+            )}
+            {hasNumericErrors && (
+              <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest text-center italic">
+                ⚠ Please correct numeric fields before submitting
+              </p>
+            )}
+          </div>
           <Button
             isFullWidth
             onClick={handleReject}

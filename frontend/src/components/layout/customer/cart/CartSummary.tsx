@@ -19,6 +19,7 @@ import { ShippingAddressSection } from './sections/ShippingAddressSection'
 import { PaymentMethodSection } from './sections/PaymentMethodSection'
 import { OrderSummarySection } from './sections/OrderSummarySection'
 import { VoucherSection } from './sections/VoucherSection'
+import { shippingService } from '@/shared/services/shippingService'
 
 interface CartSummaryProps {
   subtotal: number
@@ -59,6 +60,7 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
   const [selectedAddressId, setSelectedAddressId] = useState<string>('')
   const [isAddressDropdownOpen, setIsAddressDropdownOpen] = useState(false)
   const [selectedProvinceCode, setSelectedProvinceCode] = useState<number | null>(null)
+  const [shipping, setShipping] = useState<number>(20000)
 
   // Sync user info if it loads late
   useEffect(() => {
@@ -103,6 +105,19 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
     }
     initData()
   }, [user])
+
+  // Fetch shipping fee when address city changes
+  useEffect(() => {
+    const fetchShippingFee = async () => {
+      try {
+        const fee = await shippingService.getShippingFee(address.city)
+        setShipping(fee)
+      } catch (error) {
+        console.error('Failed to fetch shipping fee:', error)
+      }
+    }
+    fetchShippingFee()
+  }, [address.city])
 
   const handleSavedAddressChange = async (id: string) => {
     if (id === 'new') {
@@ -300,8 +315,6 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
       setIsProcessing(false)
     }
   }
-
-  const shipping: number = 10000
 
   let discountAmount = 0
   if (selectedVoucher) {

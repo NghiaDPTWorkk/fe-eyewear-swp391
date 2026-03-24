@@ -7,10 +7,10 @@ import { Checkbox } from '@/shared/components/ui/checkbox/Checkbox'
 
 const VALIDATION_RULES = {
   SPH: { min: -20.0, max: 20.0, step: 0.25 },
-  CYL: { min: -6.0, max: 0.0, step: 0.25 },
-  AXIS: { min: 1, max: 180, step: 1 },
-  ADD: { min: 0.0, max: 3.5, step: 0.25 },
-  PD: { min: 35, max: 80, step: 0.5 }
+  CYL: { min: -20.0, max: 20.0, step: 0.25 },
+  AXIS: { min: 0, max: 180, step: 1 },
+  ADD: { min: 0.75, max: 3.5, step: 0.25 },
+  PD: { min: 35, max: 65, step: 0.5 }
 }
 
 interface PrescriptionInputProps {
@@ -50,8 +50,8 @@ const PrescriptionInput = ({
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
         className={`w-full bg-white border ${
-          error ? 'border-red-500' : 'border-gray-100 shadow-sm'
-        } rounded-xl px-4 h-11 text-sm font-semibold focus:outline-none focus:border-primary-400 transition-colors text-center disabled:bg-gray-50 disabled:text-gray-400`}
+          error ? 'border-red-500' : 'border-slate-200'
+        } rounded-2xl px-4 h-11 text-sm font-semibold focus:outline-none focus:border-mint-500 focus:ring-1 focus:ring-mint-500 transition-all text-center disabled:bg-gray-50 disabled:text-gray-400 shadow-sm`}
         placeholder={placeholder}
       />
       {error && <p className="text-[10px] text-red-500 font-medium">{error}</p>}
@@ -308,17 +308,62 @@ export function PrescriptionForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Right Eye */}
-        <div className="space-y-4 p-4 bg-primary-50/50 rounded-2xl border border-primary-100 relative">
-          <div className="flex justify-between items-center min-h-[2rem] flex-wrap gap-2 mb-2">
-            <h4 className="font-bold text-mint-1200 flex items-center gap-2 whitespace-nowrap">
-              <span className="w-2 h-2 bg-primary-500 rounded-full shrink-0"></span>
+    <form onSubmit={handleSubmit} className="space-y-8 animate-in fade-in duration-500">
+      {/* Business Rules Header - Matching Staff UI */}
+      <div className="bg-amber-50/50 border border-amber-100 rounded-3xl p-6 flex items-start gap-4">
+        <div className="w-10 h-10 rounded-2xl bg-amber-100 flex items-center justify-center shrink-0">
+          <Info className="w-5 h-5 text-amber-600" />
+        </div>
+        <div className="flex-1">
+          <h5 className="text-[11px] font-black text-amber-800 uppercase tracking-[0.2em] mb-3">
+            Business Rules: Valid Ranges
+          </h5>
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-6">
+            <div>
+              <p className="text-[9px] font-bold text-amber-600/60 uppercase tracking-widest mb-1">
+                SPH
+              </p>
+              <p className="text-xs font-bold text-amber-900">-20.00 — +20.00</p>
+            </div>
+            <div>
+              <p className="text-[9px] font-bold text-amber-600/60 uppercase tracking-widest mb-1">
+                CYL
+              </p>
+              <p className="text-xs font-bold text-amber-900">-20.00 — +20.00</p>
+            </div>
+            <div>
+              <p className="text-[9px] font-bold text-amber-600/60 uppercase tracking-widest mb-1">
+                AXIS
+              </p>
+              <p className="text-xs font-bold text-amber-900">0 — 180</p>
+            </div>
+            <div>
+              <p className="text-[9px] font-bold text-amber-600/60 uppercase tracking-widest mb-1">
+                ADD
+              </p>
+              <p className="text-xs font-bold text-amber-900">0.75 — 3.50</p>
+            </div>
+            <div>
+              <p className="text-[9px] font-bold text-amber-600/60 uppercase tracking-widest mb-1">
+                PD
+              </p>
+              <p className="text-xs font-bold text-amber-900">35 — 65</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Right Eye (OD) */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-3 pb-2 border-b border-slate-50">
+            <div className="w-2.5 h-2.5 rounded-full bg-mint-500 shadow-[0_0_10px_rgba(74,215,176,0.4)]" />
+            <h4 className="text-sm font-bold text-slate-800 uppercase tracking-widest">
               Right Eye (OD)
             </h4>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+
+          <div className="grid grid-cols-2 gap-x-6 gap-y-6">
             <PrescriptionInput
               label="SPH (Sphere)"
               value={formData.right.SPH}
@@ -326,7 +371,7 @@ export function PrescriptionForm({
               step={VALIDATION_RULES.SPH.step}
               min={VALIDATION_RULES.SPH.min}
               max={VALIDATION_RULES.SPH.max}
-              placeholder="0"
+              placeholder="0.00"
               error={validationResults.errors['right.SPH']}
             />
             <PrescriptionInput
@@ -336,7 +381,7 @@ export function PrescriptionForm({
               step={VALIDATION_RULES.CYL.step}
               min={VALIDATION_RULES.CYL.min}
               max={VALIDATION_RULES.CYL.max}
-              placeholder="0"
+              placeholder="0.00"
               error={validationResults.errors['right.CYL']}
             />
             <PrescriptionInput
@@ -357,7 +402,7 @@ export function PrescriptionForm({
               step={VALIDATION_RULES.ADD.step}
               min={VALIDATION_RULES.ADD.min}
               max={VALIDATION_RULES.ADD.max}
-              placeholder="0"
+              placeholder="0.00"
               error={validationResults.errors['right.ADD']}
             />
           </div>
@@ -366,25 +411,23 @@ export function PrescriptionForm({
             variant="ghost"
             size="sm"
             onClick={handleCopyRightToLeft}
-            className="h-8 px-2 text-[10px] font-bold uppercase tracking-tight text-primary-600 hover:text-primary-700 hover:bg-primary-100/50 gap-1.5 rounded-lg"
-            title="Copy Right Eye to Left Eye"
+            className="h-9 px-4 text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-mint-600 hover:bg-mint-50/50 gap-2 rounded-xl transition-all"
           >
-            <Copy className="w-3 h-3 shrink-0" />
-            Same for both eyes
+            <Copy size={12} />
+            Same for left eye
           </Button>
         </div>
 
-        {/* Left Eye */}
-        <div className="space-y-4 p-4 bg-primary-50/50 rounded-2xl border border-primary-100">
-          <div className="flex justify-between items-center min-h-[2rem] flex-wrap gap-2 mb-2">
-            <h4 className="font-bold text-mint-1200 flex items-center gap-2 whitespace-nowrap">
-              <span className="w-2 h-2 bg-primary-500 rounded-full shrink-0"></span>
+        {/* Left Eye (OS) */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-3 pb-2 border-b border-slate-50">
+            <div className="w-2.5 h-2.5 rounded-full bg-slate-200" />
+            <h4 className="text-sm font-bold text-slate-800 uppercase tracking-widest">
               Left Eye (OS)
             </h4>
-            {/* Empty spacer to align with the 'Same for both eyes' button in the right eye column */}
-            <div className="h-8 hidden md:block" aria-hidden="true" />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+
+          <div className="grid grid-cols-2 gap-x-6 gap-y-6">
             <PrescriptionInput
               label="SPH (Sphere)"
               value={formData.left.SPH}
@@ -392,7 +435,7 @@ export function PrescriptionForm({
               step={VALIDATION_RULES.SPH.step}
               min={VALIDATION_RULES.SPH.min}
               max={VALIDATION_RULES.SPH.max}
-              placeholder="0"
+              placeholder="0.00"
               error={validationResults.errors['left.SPH']}
             />
             <PrescriptionInput
@@ -402,7 +445,7 @@ export function PrescriptionForm({
               step={VALIDATION_RULES.CYL.step}
               min={VALIDATION_RULES.CYL.min}
               max={VALIDATION_RULES.CYL.max}
-              placeholder="0"
+              placeholder="0.00"
               error={validationResults.errors['left.CYL']}
             />
             <PrescriptionInput
@@ -423,15 +466,15 @@ export function PrescriptionForm({
               step={VALIDATION_RULES.ADD.step}
               min={VALIDATION_RULES.ADD.min}
               max={VALIDATION_RULES.ADD.max}
-              placeholder="0"
+              placeholder="0.00"
               error={validationResults.errors['left.ADD']}
             />
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col gap-4 items-start">
-        <div className="w-full">
+      <div className="pt-6 border-t border-slate-50">
+        <div className="max-w-xs">
           <PrescriptionInput
             label="Pupillary Distance (PD)"
             value={formData.PD}
@@ -439,55 +482,57 @@ export function PrescriptionForm({
             step={VALIDATION_RULES.PD.step}
             min={VALIDATION_RULES.PD.min}
             max={VALIDATION_RULES.PD.max}
-            placeholder="0 (e.g. 63)"
+            placeholder="e.g. 63"
             error={validationResults.errors.PD}
           />
         </div>
 
-        <div className="w-full">
-          {(parseFloat(formData.PD) > 0 && parseFloat(formData.PD) < 55) ||
-          parseFloat(formData.PD) >= 75 ? (
-            <div className="p-4 bg-yellow-50/50 rounded-2xl border border-yellow-200/50">
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-xl bg-yellow-100 flex items-center justify-center shrink-0">
-                  <Info className="w-4 h-4 text-yellow-600" />
+        {((parseFloat(formData.PD) > 0 && parseFloat(formData.PD) < 55) ||
+          parseFloat(formData.PD) > 75) && (
+          <div className="mt-4 p-4 bg-yellow-50/50 rounded-2xl border border-yellow-200/50 animate-in slide-in-from-top-2">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center shrink-0 border border-yellow-100">
+                <Info className="w-5 h-5 text-yellow-600" />
+              </div>
+              <div className="flex-1 space-y-4">
+                <div>
+                  <p className="text-[11px] font-black text-yellow-800 uppercase tracking-widest mb-1">
+                    PD Note
+                  </p>
+                  <p className="text-xs text-yellow-700/80 leading-relaxed font-medium">
+                    Your PD measurement seems to be outside the normal range (55-75mm). Please
+                    verify if this is correct or intended for children.
+                  </p>
                 </div>
-                <div className="flex-1 space-y-3">
-                  <div className="space-y-1">
-                    <p className="text-[11px] font-bold text-yellow-800 uppercase tracking-wider">
-                      PD Measurement Note
-                    </p>
-                    <p className="text-xs text-yellow-700 leading-relaxed">
-                      Your PD index seems to be outside the normal range for adults (55-75mm).
-                      Please check again if this measurement is for a child (approx. 35-54mm).
-                    </p>
-                  </div>
-
-                  <Checkbox
-                    isChecked={pdConfirmed}
-                    onCheckedChange={setPdConfirmed}
-                    variant="yellow"
-                    label="I confirm this measurement is accurate"
-                    labelClassName="text-yellow-800"
-                    size="sm"
-                  />
-                </div>
+                <Checkbox
+                  isChecked={pdConfirmed}
+                  onCheckedChange={setPdConfirmed}
+                  variant="yellow"
+                  label="I confirm this measurement is accurate"
+                  labelClassName="text-yellow-800 font-bold"
+                  size="sm"
+                />
               </div>
             </div>
-          ) : null}
-        </div>
+          </div>
+        )}
       </div>
 
       {validationResults.warnings.length > 0 && (
-        <div className="space-y-2 p-4 bg-orange-50 rounded-2xl border border-orange-100">
-          <div className="flex items-center gap-2 text-orange-700 mb-1">
-            <AlertCircle className="w-4 h-4" />
-            <span className="text-xs font-bold uppercase tracking-wider">Validation Warnings</span>
+        <div className="p-5 bg-orange-50/50 rounded-3xl border border-orange-100/50 space-y-3">
+          <div className="flex items-center gap-2 text-orange-700">
+            <AlertCircle size={16} />
+            <span className="text-[10px] font-black uppercase tracking-widest">
+              Prescription Warnings
+            </span>
           </div>
-          <ul className="space-y-1">
+          <ul className="space-y-1.5">
             {validationResults.warnings.map((warning, index) => (
-              <li key={index} className="text-xs text-orange-600 flex items-start gap-2">
-                <span className="mt-1 w-1 h-1 bg-orange-400 rounded-full shrink-0"></span>
+              <li
+                key={index}
+                className="text-[11px] text-orange-600/80 font-semibold flex items-start gap-2"
+              >
+                <span className="mt-1.5 w-1 h-1 bg-orange-400 rounded-full shrink-0" />
                 {warning}
               </li>
             ))}
@@ -496,35 +541,35 @@ export function PrescriptionForm({
       )}
 
       {showDefaultCheckbox && (
-        <div className="py-3">
+        <div className="py-2">
           <Checkbox
             id="isDefault"
             isChecked={formData.isDefault}
             onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, isDefault: checked }))}
             label="Set as default prescription"
-            labelClassName="text-mint-1200"
+            labelClassName="text-slate-600 font-bold"
           />
         </div>
       )}
 
       {showConfirmCheckbox && (
-        <div className="mt-4">
+        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
           <Checkbox
             isChecked={isConfirmed}
             onCheckedChange={setIsConfirmed}
             label={confirmText}
-            labelClassName="text-gray-eyewear normal-case font-medium leading-relaxed"
+            labelClassName="text-[11px] text-slate-500 font-semibold leading-relaxed"
           />
         </div>
       )}
 
-      <div className="flex gap-4 pt-4">
+      <div className="flex gap-4 pt-6">
         {onCancel && (
           <Button
             type="button"
             variant="outline"
             onClick={onCancel}
-            className="flex-1 rounded-2xl py-6 font-bold uppercase tracking-widest text-xs border-2"
+            className="flex-1 rounded-2xl py-7 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-slate-50 border-slate-200"
           >
             {cancelLabel}
           </Button>
@@ -532,14 +577,14 @@ export function PrescriptionForm({
         <Button
           type="submit"
           disabled={isLoading || (showConfirmCheckbox && !isConfirmed) || !isFormValid()}
-          className={`flex-1 rounded-2xl py-6 font-bold uppercase tracking-widest text-xs transition-all duration-300 ${
+          className={`flex-1 rounded-2xl py-7 font-black uppercase tracking-[0.2em] text-[10px] transition-all duration-300 ${
             !isFormValid()
-              ? 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
-              : 'bg-primary-500 text-white hover:bg-primary-600 shadow-lg shadow-primary-100'
+              ? 'bg-slate-100 text-slate-300 cursor-not-allowed'
+              : 'bg-mint-600 text-white hover:bg-mint-700 shadow-xl shadow-mint-100 hover:-translate-y-0.5'
           }`}
         >
           {isLoading
-            ? 'Saving...'
+            ? 'Processing...'
             : submitLabel || (initialData ? 'Update Prescription' : 'Save Prescription')}
         </Button>
       </div>

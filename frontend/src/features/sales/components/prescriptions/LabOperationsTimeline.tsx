@@ -12,6 +12,33 @@ export const LabOperationsTimeline: React.FC<LabOperationsTimelineProps> = ({ or
   const [isModalOpen, setIsModalOpen] = useState(false)
   const status = order?.status?.toUpperCase() || 'PENDING'
 
+  const getStatusRank = (s: string) => {
+    switch (s) {
+      case 'PENDING':
+        return 1
+      case 'DEPOSITED':
+      case 'WAITING_VERIFY':
+      case 'VERIFIED':
+      case 'APPROVED':
+        return 3
+      case 'WAITING_ASSIGN':
+      case 'ASSIGNED':
+      case 'MAKING':
+        return 4
+      case 'PACKAGING':
+        return 5
+      case 'COMPLETED':
+      case 'ONBOARD':
+      case 'SHIPPED':
+      case 'DELIVERED':
+        return 6
+      default:
+        return 0
+    }
+  }
+
+  const currentRank = getStatusRank(status)
+
   const formatTime = (date?: string | Date) => {
     if (!date) return null
     try {
@@ -29,18 +56,19 @@ export const LabOperationsTimeline: React.FC<LabOperationsTimelineProps> = ({ or
     {
       key: 'ORDERED',
       label: 'Order Created',
-      desc: order.createdAt ? `Placed at ${formatTime(order.createdAt)}` : 'New order initialized',
-      isCompleted: status !== 'PENDING' && status !== 'CANCELED',
-      isActive: status === 'PENDING',
+      desc: order.createdAt
+        ? `Placed at ${formatTime(order.createdAt)}`
+        : 'Initial request received',
+      rank: 1,
       color: 'bg-slate-500'
     },
     {
       key: 'PAID',
       label: 'Payment Confirmed',
-      desc: order.depositedAt ? `Paid at ${formatTime(order.depositedAt)}` : 'Deposit verified',
-      isCompleted: !['PENDING', 'DEPOSITED', 'CANCELED'].includes(status),
-      isActive:
-        status === 'DEPOSITED' && !['WAITING_VERIFY', 'VERIFIED', 'APPROVED'].includes(status),
+      desc: order.depositedAt
+        ? `Paid at ${formatTime(order.depositedAt)}`
+        : 'Awaiting payment/deposit',
+      rank: 2,
       color: 'bg-amber-500'
     },
     {
@@ -48,26 +76,15 @@ export const LabOperationsTimeline: React.FC<LabOperationsTimelineProps> = ({ or
       label: 'Sales Verified',
       desc: order.approvedAt
         ? `Verified at ${formatTime(order.approvedAt)}`
-        : 'Checking prescription',
-      isCompleted: !['PENDING', 'DEPOSITED', 'WAITING_VERIFY', 'CANCELED'].includes(status),
-      isActive: ['WAITING_VERIFY', 'VERIFIED', 'APPROVED', 'DEPOSITED'].includes(status),
+        : 'Prescription assessment',
+      rank: 3,
       color: 'bg-indigo-500'
     },
     {
       key: 'MAKING',
       label: 'Lens Production',
-      desc: order.startedAt ? `Started at ${formatTime(order.startedAt)}` : 'Surfacing and coating',
-      isCompleted: ![
-        'PENDING',
-        'DEPOSITED',
-        'WAITING_VERIFY',
-        'ASSIGNED',
-        'WAITING_ASSIGN',
-        'VERIFIED',
-        'APPROVED',
-        'CANCELED'
-      ].includes(status),
-      isActive: ['ASSIGNED', 'MAKING', 'WAITING_ASSIGN'].includes(status),
+      desc: order.startedAt ? `Started at ${formatTime(order.startedAt)}` : 'Manufacturing in lab',
+      rank: 4,
       color: 'bg-blue-500'
     },
     {
@@ -76,16 +93,14 @@ export const LabOperationsTimeline: React.FC<LabOperationsTimelineProps> = ({ or
       desc: order.packagingAt
         ? `Inspected at ${formatTime(order.packagingAt)}`
         : 'Finalizing order',
-      isCompleted: ['COMPLETED', 'ONBOARD', 'SHIPPED', 'DELIVERED'].includes(status),
-      isActive: status === 'PACKAGING',
+      rank: 5,
       color: 'bg-purple-500'
     },
     {
       key: 'SHIPPING',
       label: 'Ready for Pickup',
       desc: order.completedAt ? `Completed at ${formatTime(order.completedAt)}` : 'Order ready',
-      isCompleted: ['ONBOARD', 'SHIPPED', 'DELIVERED'].includes(status),
-      isActive: status === 'COMPLETED',
+      rank: 6,
       color: 'bg-emerald-500'
     }
   ]
@@ -93,9 +108,9 @@ export const LabOperationsTimeline: React.FC<LabOperationsTimelineProps> = ({ or
   const mappedOrder = {
     ...(order || {}),
     orderCode: order?.orderCode || `#${order?._id?.slice(-6) || 'N/A'}`,
-    station: stages.find((s) => s.isActive)?.label || 'Completed',
+    station: stages.find((s) => s.rank === currentRank)?.label || 'Order Received',
     stationColor:
-      stages.find((s) => s.isActive)?.color.replace('bg-', 'text-') || 'text-emerald-600'
+      stages.find((s) => s.rank === currentRank)?.color.replace('bg-', 'text-') || 'text-slate-600'
   }
 
   return (
@@ -117,8 +132,8 @@ export const LabOperationsTimeline: React.FC<LabOperationsTimelineProps> = ({ or
           {}
           <div className="relative border-l border-slate-100 ml-2 space-y-6 py-1">
             {stages.map((stage, index) => {
-              const isDone = stage.isCompleted
-              const isCurrent = stage.isActive
+              const isDone = currentRank > stage.rank
+              const isCurrent = currentRank === stage.rank
 
               return (
                 <div key={index} className="pl-6 relative">

@@ -1,16 +1,13 @@
 import { useState } from 'react'
-import { toast } from 'react-hot-toast'
 import { IoCheckmark, IoClose } from 'react-icons/io5'
 import { useSearchParams } from 'react-router-dom'
 
 import { useSalesStaffAction, useSalesStaffOrderDetail } from '@/features/sales/hooks'
 import { useProfile } from '@/features/staff/hooks/useProfile'
 import { Button, ConfirmationModal } from '@/shared/components/ui-core'
-
-import { ImageViewer } from './ImageViewer'
 import { TranscriptionForm } from './TranscriptionForm'
-import { OrderDetailsSidebar } from './OrderDetailsSidebar'
 import { LabOperationsTimeline } from './LabOperationsTimeline'
+import { PrescriptionHeroSection } from './PrescriptionHeroSection'
 import { RejectionModal } from '../common/RejectionModal'
 
 interface PrescriptionParameters {
@@ -47,7 +44,7 @@ export default function PrescriptionVerification({
   onBack,
   onActionSuccess
 }: PrescriptionVerificationProps) {
-  const { approveOrder, rejectOrder, processing } = useSalesStaffAction()
+  const { approveOrder, rejectOrder, processing, error: actionError } = useSalesStaffAction()
   const { data: profileData } = useProfile()
   const [searchParams] = useSearchParams()
   const mode = searchParams.get('mode')
@@ -55,14 +52,15 @@ export default function PrescriptionVerification({
   const isReadOnlyParams = mode === 'readonly'
 
   const { data: order, isLoading: loading, refetch } = useSalesStaffOrderDetail(orderId)
-  const [rotation, setRotation] = useState(0)
-  const [zoom, setZoom] = useState(100)
 
   const [localParameters, setLocalParameters] = useState<PrescriptionParameters | null>(null)
   const [localNote, setLocalNote] = useState('')
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const [confirmAction, setConfirmAction] = useState<'approve' | 'reject' | null>(null)
+
+  const lens = order?.products?.[0]?.lens
+  const parameters = lens?.parameters
 
   const handleApprove = () => {
     setConfirmAction('approve')
@@ -106,9 +104,10 @@ export default function PrescriptionVerification({
     const finalNote = localNote !== '' ? localNote : ((parameters as any)?.note ?? '')
 
     const success = await approveOrder(orderId, { parameters: finalParams, note: finalNote })
+    // Always close modal so user can see toast and form errors
+    setIsConfirmOpen(false)
+
     if (success) {
-      toast.success('Prescription approved')
-      setIsConfirmOpen(false)
       refetch()
       onActionSuccess?.()
     }
@@ -116,9 +115,8 @@ export default function PrescriptionVerification({
 
   const handleConfirmReject = async (note: string) => {
     const success = await rejectOrder(orderId, order?.invoiceId, note)
+    setIsConfirmOpen(false)
     if (success) {
-      toast.success('Prescription rejected')
-      setIsConfirmOpen(false)
       refetch()
       onActionSuccess?.()
     }
@@ -144,28 +142,34 @@ export default function PrescriptionVerification({
     )
   }
 
-  const isApproved = [
-    'APPROVED',
-    'VERIFIED',
-    'COMPLETED',
-    'MAKING',
-    'PACKAGING',
-    'DELIVERING',
-    'DELIVERED'
-  ].includes(order.status?.toUpperCase())
-  const isPending = ['WAITING_ASSIGN', 'PENDING', 'DEPOSITED', 'WAITING_VERIFY'].includes(
+  const isApproved =
+    [
+      'ACCEPTED',
+      'APPROVED',
+      'VERIFIED',
+      'COMPLETED',
+      'MAKING',
+      'IN_PROGRESS',
+      'PRODUCTION',
+      'PENDING_LAB',
+      'PACKAGING',
+      'DELIVERING',
+      'DELIVERED',
+      'WAITING_ASSIGN',
+      'ASSIGNED'
+    ].includes(order.status?.toUpperCase()) ||
+    !!order.approvedAt ||
+    !!order.completedAt ||
+    !!order.rejectedAt
+  const isPending = ['PENDING', 'DEPOSITED', 'WAITING_VERIFY'].includes(order.status?.toUpperCase())
+  const isRejected = ['REJECTED', 'CANCELED', 'CANCELLED', 'REJECT', 'EXPIRED'].includes(
     order.status?.toUpperCase()
   )
-  const isRejected = ['REJECTED', 'CANCELED', 'REJECT'].includes(order.status?.toUpperCase())
-
-  const lens = order.products?.[0]?.lens
-  const parameters = lens?.parameters
 
   const isReadOnly = isReadOnlyParams || isApproved || isRejected
 
   return (
     <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
-      {}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm text-slate-500">
           <span className="font-normal">Order Status:</span>
@@ -187,22 +191,27 @@ export default function PrescriptionVerification({
             </span>
           )}
         </div>
-        <div className="text-[11px] font-semibold text-amber-500 uppercase tracking-widest">
-          <span className="text-amber-600">24</span> Pending
-        </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {}
-        <div className="xl:col-span-2 space-y-4">
-          <ImageViewer
-            imageUrl={order.products?.[0]?.prescriptionImageUrl}
-            zoom={zoom}
-            rotation={rotation}
-            setZoom={setZoom}
-            setRotation={setRotation}
-          />
+      {actionError && (
+        <div className="bg-rose-50 border border-rose-100 p-5 rounded-3xl flex items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-500 shadow-sm border-l-[6px] border-l-rose-500">
+          <div className="w-12 h-12 rounded-2xl bg-rose-500 flex items-center justify-center shrink-0 shadow-lg shadow-rose-200">
+            <IoClose className="text-white" size={24} />
+          </div>
+          <div className="flex-1">
+            <h4 className="text-[11px] font-bold text-rose-500 uppercase tracking-widest mb-1.5 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+              Quick Notification: Verification Error
+            </h4>
+            <div className="text-sm font-bold text-rose-900 leading-tight">{actionError}</div>
+          </div>
+        </div>
+      )}
 
+      <PrescriptionHeroSection order={order} />
+
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div className="xl:col-span-2">
           <TranscriptionForm
             parameters={localParameters || parameters}
             onParametersChange={setLocalParameters}
@@ -219,7 +228,11 @@ export default function PrescriptionVerification({
             handleApprove={handleApprove}
             handleReject={handleReject}
             assignStaff={order.assignStaff || undefined}
-            staffName={order.staffName || profileData?.data?.name}
+            staffName={
+              isApproved || isRejected
+                ? order.staffName
+                : order.staffName || profileData?.data?.name
+            }
             actionTime={formatDate(
               isApproved
                 ? order.approvedAt || order.completedAt || order.updatedAt
@@ -231,9 +244,7 @@ export default function PrescriptionVerification({
           />
         </div>
 
-        {}
-        <div className="space-y-5">
-          <OrderDetailsSidebar order={order} />
+        <div className="xl:col-span-1">
           <LabOperationsTimeline order={order} />
         </div>
       </div>
@@ -261,6 +272,7 @@ export default function PrescriptionVerification({
         confirmText="Approve"
         type="info"
         isLoading={processing}
+        error={actionError}
       />
 
       <RejectionModal
@@ -285,6 +297,7 @@ export default function PrescriptionVerification({
         }
         confirmText="Reject Now"
         isLoading={processing}
+        serverError={actionError}
       />
     </div>
   )

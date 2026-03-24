@@ -127,14 +127,13 @@ export default function LensSelectionModal({
                   onConfirm({ ...state, prescription: rx, useSavedPrescription: true })
                   onClose()
                 }}
+                onAddNew={() => setStep('MANUAL_RX')}
               />
             )}
           </div>
 
           <div className="p-6 lg:p-8 border-t border-mint-100 bg-[#F8F9FA]/50 flex justify-between items-center group/footer">
-            <button className="text-[10px] lg:text-xs font-bold text-primary-500 hover:text-primary-600 underline decoration-primary-200 underline-offset-4 uppercase tracking-widest transition-all">
-              Add insurance benefits
-            </button>
+            <button className="text-[10px] lg:text-xs font-bold text-primary-500 hover:text-primary-600 underline decoration-primary-200 underline-offset-4 uppercase tracking-widest transition-all"></button>
 
             <div className="text-right">
               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">

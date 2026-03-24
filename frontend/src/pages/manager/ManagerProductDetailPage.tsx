@@ -16,15 +16,7 @@ import {
   IoChevronBackOutline
 } from 'react-icons/io5'
 import type { AdminProductVariant } from '@/shared/types'
-
-const formatter = new Intl.NumberFormat('vi-VN')
-
-function formatPrice(price: number) {
-  if (price >= 1_000_000) {
-    return formatter.format(price) + '₫'
-  }
-  return '$' + price.toFixed(2)
-}
+import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 
 function genderLabel(g: string) {
   switch (g) {
@@ -190,11 +182,11 @@ export default function ManagerProductDetailPage() {
                   </p>
                   <div className="flex items-baseline gap-3 mt-1">
                     <h3 className="text-3xl font-bold text-slate-900 tracking-tight">
-                      {formatPrice(defaultVariant.finalPrice)}
+                      <VNDPrice amount={defaultVariant.finalPrice} />
                     </h3>
                     {defaultVariant.price !== defaultVariant.finalPrice && (
                       <span className="text-lg text-slate-400 line-through">
-                        {formatPrice(defaultVariant.price)}
+                        <VNDPrice amount={defaultVariant.price} />
                       </span>
                     )}
                   </div>
@@ -398,10 +390,12 @@ const VariantItem = React.memo(
 
           <div className="flex items-center gap-4 shrink-0 ml-4">
             <div className="text-right">
-              <p className="text-xs font-bold text-slate-800">{formatPrice(variant.finalPrice)}</p>
+              <p className="text-xs font-bold text-slate-800">
+                <VNDPrice amount={variant.finalPrice} />
+              </p>
               {variant.price !== variant.finalPrice && (
                 <p className="text-[10px] text-slate-400 line-through">
-                  {formatPrice(variant.price)}
+                  <VNDPrice amount={variant.price} />
                 </p>
               )}
             </div>

@@ -19,7 +19,7 @@ export const CartPage = () => {
       <CustomerHeader />
 
       <main className="py-8 lg:py-12">
-        <Container>
+        <Container maxWidth="1200px">
           {isLoading ? (
             <div className="flex justify-center items-center min-h-[400px]">
               <div className="text-center">
@@ -45,9 +45,9 @@ export const CartPage = () => {
             <>
               <h1 className="text-4xl font-heading font-bold text-mint-1200 mb-8">Your bag</h1>
 
-              <div className="flex flex-col lg:flex-row gap-8">
+              <div className="flex flex-col lg:flex-row gap-6 xl:gap-12 items-start">
                 {/* Main Cart Content */}
-                <div className="lg:w-2/3">
+                <div className="flex-1 w-full lg:max-w-none">
                   <div className="flex items-center gap-3 mb-6">
                     <Checkbox
                       isChecked={allSelected}
@@ -78,7 +78,7 @@ export const CartPage = () => {
                 </div>
 
                 {/* Sidebar Summary */}
-                <div className="lg:w-1/3">
+                <div className="w-full lg:w-[380px] xl:w-[420px] flex-shrink-0">
                   <CartSummary subtotal={subtotal} />
                 </div>
               </div>

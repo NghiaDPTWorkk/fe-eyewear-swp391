@@ -7,6 +7,7 @@ import { prescriptionService } from '@/features/customer/services/prescription.s
 import type { Prescription } from '@/shared/types/prescription.types'
 import { PrescriptionFormModal } from '@/shared/components/prescription/PrescriptionFormModal'
 import { toast } from 'react-hot-toast'
+import ConfirmationModal from '@/shared/components/ui-core/confirm-modal/ConfirmationModal'
 
 export function PrescriptionsPage() {
   const [prescriptions, setPrescriptions] = useState<Prescription[]>([])
@@ -14,6 +15,8 @@ export function PrescriptionsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingPrescription, setEditingPrescription] = useState<Prescription | undefined>()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [prescriptionToDelete, setPrescriptionToDelete] = useState<string | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   const fetchPrescriptions = useCallback(async () => {
     setIsLoading(true)
@@ -44,34 +47,42 @@ export function PrescriptionsPage() {
     setIsModalOpen(true)
   }
 
-  const handleDeleteClick = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this prescription?')) return
+  const handleDeleteConfirm = async () => {
+    if (!prescriptionToDelete) return
 
+    setIsDeleting(true)
     try {
-      await prescriptionService.deletePrescription(id)
-      toast.success('Prescription deleted successfully')
+      await toast.promise(prescriptionService.deletePrescription(prescriptionToDelete), {
+        loading: 'Deleting prescription...',
+        success: 'Prescription deleted successfully!',
+        error: 'Failed to delete prescription'
+      })
       fetchPrescriptions()
-    } catch (error) {
-      console.error('Failed to delete prescription:', error)
-      toast.error('Failed to delete prescription')
+      setPrescriptionToDelete(null)
+    } finally {
+      setIsDeleting(false)
     }
   }
 
   const handleSubmit = async (data: Prescription) => {
     setIsSubmitting(true)
+    const isUpdate = !!(editingPrescription && editingPrescription._id)
+    const promise = isUpdate
+      ? prescriptionService.updatePrescription(editingPrescription!._id!, data)
+      : prescriptionService.addPrescription(data)
+
+    toast.promise(promise, {
+      loading: isUpdate ? 'Updating prescription...' : 'Saving prescription...',
+      success: isUpdate ? 'Prescription updated successfully!' : 'Prescription added successfully!',
+      error: 'Failed to save prescription'
+    })
+
     try {
-      if (editingPrescription?._id) {
-        await prescriptionService.updatePrescription(editingPrescription._id, data)
-        toast.success('Prescription updated successfully')
-      } else {
-        await prescriptionService.addPrescription(data)
-        toast.success('Prescription added successfully')
-      }
+      await promise
       fetchPrescriptions()
       setIsModalOpen(false)
     } catch (error) {
       console.error('Failed to save prescription:', error)
-      toast.error('Failed to save prescription')
     } finally {
       setIsSubmitting(false)
     }
@@ -133,7 +144,7 @@ export function PrescriptionsPage() {
               key={rx._id}
               prescription={rx}
               onEdit={handleEditClick}
-              onDelete={handleDeleteClick}
+              onDelete={(id) => setPrescriptionToDelete(id)}
             />
           ))}
 
@@ -171,6 +182,17 @@ export function PrescriptionsPage() {
         onSubmit={handleSubmit}
         initialData={editingPrescription}
         isLoading={isSubmitting}
+      />
+
+      <ConfirmationModal
+        isOpen={!!prescriptionToDelete}
+        onClose={() => setPrescriptionToDelete(null)}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Prescription"
+        message="Are you sure you want to delete this prescription? This action is IRREVERSIBLE."
+        confirmText="Delete"
+        isLoading={isDeleting}
+        type="danger"
       />
     </div>
   )

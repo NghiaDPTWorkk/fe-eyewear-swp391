@@ -17,7 +17,7 @@
  *  4. dọn dẹp webgl khi hủy component
  */
 
-import { useRef, useMemo, useEffect } from 'react'
+import { useRef, useMemo, useEffect, Suspense } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useGLTF, Environment, ContactShadows } from '@react-three/drei'
 import type { NormalizedLandmark } from '@mediapipe/tasks-vision'
@@ -39,9 +39,6 @@ interface GlassesOverlayProps {
 const LEFT_EYE_OUTER = 33
 const RIGHT_EYE_OUTER = 263
 const NOSE_BRIDGE = 6
-
-//  model
-const GLB_MODEL_PATH = '/models/going.glb'
 
 // các thông số điều chỉnh
 /** tỉ lệ chiều rộng kính so với khoảng cách hai mắt */
@@ -73,7 +70,7 @@ export default function GlassesOverlay({
   videoRef,
   landmarksRef,
   transformationMatricesRef,
-  glassesImageUrl: _glassesImageUrl
+  glassesImageUrl
 }: GlassesOverlayProps) {
   return (
     <div className="absolute inset-0 pointer-events-none" style={{ transform: 'scaleX(-1)' }}>
@@ -88,42 +85,46 @@ export default function GlassesOverlay({
         camera={{ position: [0, 0, 5], fov: CAMERA_FOV, near: 0.01, far: 100 }}
         style={{ background: 'transparent' }}
       >
-        {/* ánh sáng pbr */}
-        <ambientLight intensity={0.6} />
-        <directionalLight position={[3, 4, 5]} intensity={1.4} />
-        <directionalLight position={[-2, -1, 3]} intensity={0.4} />
+        <Suspense fallback={null}>
+          {/* ánh sáng pbr */}
+          <ambientLight intensity={0.6} />
+          <directionalLight position={[3, 4, 5]} intensity={1.4} />
+          <directionalLight position={[-2, -1, 3]} intensity={0.4} />
 
-        {/* môi trường hdr để phản chiếu trên tròng kính */}
-        <Environment preset="studio" />
+          {/* môi trường hdr để phản chiếu trên tròng kính */}
+          <Environment preset="studio" />
 
-        {/* đổ bóng tiếp xúc nhẹ trên sống mũi */}
-        <ContactShadows position={[0, -0.35, 0]} opacity={0.2} scale={2} blur={2.5} far={1} />
+          {/* đổ bóng tiếp xúc nhẹ trên sống mũi */}
+          <ContactShadows position={[0, -0.35, 0]} opacity={0.2} scale={2} blur={2.5} far={1} />
 
-        <GlassesScene
-          videoRef={videoRef}
-          landmarksRef={landmarksRef}
-          transformationMatricesRef={transformationMatricesRef}
-        />
+          <GlassesScene
+            videoRef={videoRef}
+            landmarksRef={landmarksRef}
+            transformationMatricesRef={transformationMatricesRef}
+            modelUrl={glassesImageUrl}
+          />
+        </Suspense>
       </Canvas>
     </div>
   )
 }
 
-// tải trước model
-useGLTF.preload(GLB_MODEL_PATH)
+// Remove static preload as we now use dynamic URLs
 
 // scene bên trong
 function GlassesScene({
   videoRef,
   landmarksRef,
-  transformationMatricesRef
+  transformationMatricesRef,
+  modelUrl
 }: {
   videoRef: React.RefObject<HTMLVideoElement | null>
   landmarksRef: React.RefObject<NormalizedLandmark[][]>
   transformationMatricesRef: React.RefObject<Float32Array[]>
+  modelUrl: string
 }) {
   const groupRef = useRef<THREE.Group>(null)
-  const { scene } = useGLTF(GLB_MODEL_PATH)
+  const { scene } = useGLTF(modelUrl)
   const { gl } = useThree()
 
   // bộ lọc one euro cho từng thành phần

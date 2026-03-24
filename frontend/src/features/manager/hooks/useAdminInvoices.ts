@@ -99,11 +99,16 @@ const resolveInvoiceCreatedAt = (inv: any): string => {
   return ''
 }
 
-export function useAdminInvoices(page: number, limit: number, status?: string) {
+export function useAdminInvoices(
+  page: number,
+  limit: number,
+  status?: string,
+  searchQuery?: string
+) {
   return useQuery({
-    queryKey: ['admin-invoices-enriched', page, limit, status],
+    queryKey: ['admin-invoices-enriched', page, limit, status, searchQuery],
     queryFn: async () => {
-      const response = await invoiceAdminService.getInvoices(page, limit, status)
+      const response = await invoiceAdminService.getInvoices(page, limit, status, searchQuery)
       const apiData = response?.data
       const invoiceData = apiData?.invoiceList || []
       const pagination = apiData?.pagination

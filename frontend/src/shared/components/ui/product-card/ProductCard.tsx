@@ -159,8 +159,8 @@ export function ProductCard({
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
             {hasSale && (
-              <span className="text-xs text-gray-eyewear line-through">
-                <VNDPrice amount={price} />
+              <span className="text-xs text-gray-eyewear">
+                <VNDPrice className="line-through" amount={price} />
               </span>
             )}
             <span className="text-primary-500 font-bold text-xl">

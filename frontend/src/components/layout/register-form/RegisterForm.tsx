@@ -153,8 +153,8 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
         </div>
         <h3 className="text-xl font-bold text-mint-1200">Account Already Exists</h3>
         <p className="text-gray-500 text-sm px-4">
-          Email <span className="font-bold text-black">{formik.values.email}</span> is already linked
-          to a Google account. Do you want to merge this password into that account?
+          Email <span className="font-bold text-black">{formik.values.email}</span> is already
+          linked to a Google account. Do you want to merge this password into that account?
         </p>
         <div className="flex gap-4 pt-4">
           <Button variant="outline" className="flex-1" onClick={() => setMergeState('idle')}>

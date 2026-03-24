@@ -109,7 +109,9 @@ export default function AdminRequestStaffDetail() {
                 </span>
               </div>
               <div className="flex justify-between items-center text-xs">
-                <span className="font-bold text-neutral-400 uppercase tracking-widest">Requested</span>
+                <span className="font-bold text-neutral-400 uppercase tracking-widest">
+                  Requested
+                </span>
                 <span className="font-medium text-neutral-500">{requestInfo.requestedAt}</span>
               </div>
             </div>
@@ -121,7 +123,8 @@ export default function AdminRequestStaffDetail() {
                 <IoAlertCircleOutline size={20} />
               </div>
               <p className="text-[11px] font-medium text-amber-700 leading-relaxed">
-                Accepting this request will immediately overwrite the current information in the database. Please verify the contact details.
+                Accepting this request will immediately overwrite the current information in the
+                database. Please verify the contact details.
               </p>
             </div>
           </Card>
@@ -153,10 +156,15 @@ export default function AdminRequestStaffDetail() {
                 </thead>
                 <tbody className="divide-y divide-neutral-50">
                   {changes.map((change, idx) => (
-                    <tr key={idx} className={`group transition-colors ${change.isChanged ? 'bg-mint-50/20' : ''}`}>
+                    <tr
+                      key={idx}
+                      className={`group transition-colors ${change.isChanged ? 'bg-mint-50/20' : ''}`}
+                    >
                       <td className="px-6 py-5">
                         <div className="flex items-center gap-3">
-                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${change.isChanged ? 'bg-mint-100 text-mint-600' : 'bg-neutral-100 text-neutral-400'}`}>
+                          <div
+                            className={`w-8 h-8 rounded-lg flex items-center justify-center ${change.isChanged ? 'bg-mint-100 text-mint-600' : 'bg-neutral-100 text-neutral-400'}`}
+                          >
                             {change.icon}
                           </div>
                           <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-tight">
@@ -171,7 +179,9 @@ export default function AdminRequestStaffDetail() {
                       </td>
                       <td className="px-6 py-5">
                         <div className="flex items-center gap-2">
-                          <span className={`text-sm font-bold ${change.isChanged ? 'text-mint-700' : 'text-gray-900'}`}>
+                          <span
+                            className={`text-sm font-bold ${change.isChanged ? 'text-mint-700' : 'text-gray-900'}`}
+                          >
                             {change.newValue}
                           </span>
                           {change.isChanged && (

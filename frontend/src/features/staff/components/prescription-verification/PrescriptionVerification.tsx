@@ -30,6 +30,7 @@ export default function PrescriptionVerification({
 }: PrescriptionVerificationProps) {
   const [rotation, setRotation] = useState(0)
   const [zoom, setZoom] = useState(100)
+  const [confirmedFields, setConfirmedFields] = useState<Set<string>>(new Set())
 
   const { data: order, isLoading } = useSalesStaffOrderDetail(orderId || '')
 
@@ -57,7 +58,6 @@ export default function PrescriptionVerification({
     return amount.toLocaleString() + ' ₫'
   }
 
-  // Determine priority label for display
   const getPriorityLabel = () => {
     const isManufacturing = order?.type?.includes(OrderType.MANUFACTURING) || order?.isPrescription
     if (isManufacturing) return 'Prescription'
@@ -65,13 +65,47 @@ export default function PrescriptionVerification({
     return 'Regular'
   }
 
-  // Find first prescription image
   const prescriptionScan =
     order?.products?.find((p) => p.prescriptionImageUrl)?.prescriptionImageUrl ||
     'https://placehold.co/600x800/png?text=Prescription+Scan'
 
-  // Prescription Parameters (from first product)
   const firstLensParams = order?.products?.find((p) => p.lens)?.lens?.parameters
+
+  const toggleField = (id: string) => {
+    setConfirmedFields((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  const requiredFields = [
+    'r_sph',
+    'r_cyl',
+    'r_axis',
+    'r_add',
+    'l_sph',
+    'l_cyl',
+    'l_axis',
+    'l_add',
+    'pd_r',
+    'pd_l'
+  ]
+  const isAllConfirmed = requiredFields.every((f) => confirmedFields.has(f))
+
+  const renderVerificationIcon = (id: string) => (
+    <button
+      onClick={() => toggleField(id)}
+      className={`absolute right-2 top-[34px] p-1 rounded-lg transition-all z-10 ${
+        confirmedFields.has(id)
+          ? 'bg-mint-500 text-white shadow-sm'
+          : 'bg-gray-100 text-gray-300 hover:bg-gray-200'
+      }`}
+    >
+      <IoCheckmark size={14} strokeWidth={confirmedFields.has(id) ? 4 : 2} />
+    </button>
+  )
 
   return (
     <div className="space-y-6 pb-12 animate-in fade-in slide-in-from-right-4 duration-300">
@@ -161,147 +195,206 @@ export default function PrescriptionVerification({
                   <IoInformationCircleOutline size={24} />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 leading-tight">
-                    Transcription Data
-                  </h3>
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-lg font-semibold text-gray-900 leading-tight">
+                      Transcription Data
+                    </h3>
+                    <span
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest ${
+                        isAllConfirmed ? 'bg-mint-100 text-mint-700' : 'bg-rose-50 text-rose-500'
+                      }`}
+                    >
+                      {confirmedFields.size}/{requiredFields.length} Verified
+                    </span>
+                  </div>
                   <p className="text-xs font-medium text-gray-400 mt-0.5">
                     Accurately transcribe prescription details
                   </p>
                 </div>
               </div>
               <div className="flex gap-2 w-full sm:w-auto">
-                <Button size="sm" variant="outline" className="h-10 rounded-xl">
-                  Copy Previous
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-10 rounded-xl"
+                  onClick={() => setConfirmedFields(new Set(requiredFields))}
+                >
+                  Quick Approve
                 </Button>
-                <Button size="sm" variant="outline" className="h-10 rounded-xl">
-                  Clear Form
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-10 rounded-xl"
+                  onClick={() => setConfirmedFields(new Set())}
+                >
+                  Reset
                 </Button>
               </div>
             </div>
 
-            <div className="p-6 bg-white space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-mint-50/20 p-6 rounded-2xl border border-mint-100/50">
-                  <h4 className="font-semibold text-sm text-mint-800 mb-4 flex items-center gap-2">
-                    <IoEyeOutline /> Right Eye (OD)
+            <div className="p-6 bg-white space-y-8">
+              {/* Business Rules Display */}
+              <div className="bg-amber-50/50 border border-amber-100 rounded-2xl p-4 flex items-center justify-between gap-6 overflow-x-auto scroller-hide">
+                <div className="flex items-center gap-2 shrink-0">
+                  <IoInformationCircleOutline className="text-amber-600" size={18} />
+                  <span className="text-[11px] font-black text-amber-800 uppercase tracking-widest">
+                    Valid Ranges
+                  </span>
+                </div>
+                <div className="flex gap-8">
+                  <div className="flex flex-col">
+                    <span className="text-[9px] font-bold text-amber-600/60 uppercase">
+                      SPH/CYL
+                    </span>
+                    <span className="text-[11px] font-bold">±20.00</span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[9px] font-bold text-amber-600/60 uppercase">AXIS</span>
+                    <span className="text-[11px] font-bold">0-180</span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[9px] font-bold text-amber-600/60 uppercase">ADD</span>
+                    <span className="text-[11px] font-bold">0.75-3.5</span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[9px] font-bold text-amber-600/60 uppercase">PD</span>
+                    <span className="text-[11px] font-bold">35-65</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm relative">
+                  <h4 className="font-bold text-sm text-slate-800 mb-6 flex items-center gap-2 uppercase tracking-widest">
+                    <div className="w-2 h-2 rounded-full bg-mint-500" /> Right Eye (OD)
                   </h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-mint-700 uppercase tracking-widest pl-1">
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-6">
+                    <div className="space-y-1.5 relative">
+                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">
                         SPH
                       </label>
                       <Input
                         defaultValue={firstLensParams?.right?.SPH?.toString() || '-2.00'}
-                        className="font-medium h-11 border-mint-100 bg-white"
+                        className={`font-bold h-11 transition-all ${confirmedFields.has('r_sph') ? 'bg-mint-50/50 border-mint-200' : 'bg-white'}`}
                       />
+                      {renderVerificationIcon('r_sph')}
                     </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-mint-700 uppercase tracking-widest pl-1">
+                    <div className="space-y-1.5 relative">
+                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">
                         CYL
                       </label>
                       <Input
                         defaultValue={firstLensParams?.right?.CYL?.toString() || '-0.50'}
-                        className="font-medium h-11 border-mint-100 bg-white"
+                        className={`font-bold h-11 transition-all ${confirmedFields.has('r_cyl') ? 'bg-mint-50/50 border-mint-200' : 'bg-white'}`}
                       />
+                      {renderVerificationIcon('r_cyl')}
                     </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-mint-700 uppercase tracking-widest pl-1">
+                    <div className="space-y-1.5 relative">
+                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">
                         AXIS
                       </label>
                       <Input
                         defaultValue={firstLensParams?.right?.AXIS?.toString() || '180'}
-                        className="font-medium h-11 border-mint-100 bg-white"
+                        className={`font-bold h-11 transition-all ${confirmedFields.has('r_axis') ? 'bg-mint-50/50 border-mint-200' : 'bg-white'}`}
                       />
+                      {renderVerificationIcon('r_axis')}
                     </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-mint-700 uppercase tracking-widest pl-1">
+                    <div className="space-y-1.5 relative">
+                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">
                         ADD
                       </label>
                       <Input
                         defaultValue={firstLensParams?.right?.ADD?.toString() || '+1.50'}
-                        className="font-medium h-11 border-mint-100 bg-white"
+                        className={`font-bold h-11 transition-all ${confirmedFields.has('r_add') ? 'bg-mint-50/50 border-mint-200' : 'bg-white'}`}
                       />
+                      {renderVerificationIcon('r_add')}
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-neutral-50/50 p-6 rounded-2xl border border-neutral-100">
-                  <h4 className="font-semibold text-sm text-neutral-700 mb-4 flex items-center gap-2">
-                    <IoEyeOutline /> Left Eye (OS)
+                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm relative">
+                  <h4 className="font-bold text-sm text-slate-800 mb-6 flex items-center gap-2 uppercase tracking-widest">
+                    <div className="w-2 h-2 rounded-full bg-slate-200" /> Left Eye (OS)
                   </h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest pl-1">
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-6">
+                    <div className="space-y-1.5 relative">
+                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">
                         SPH
                       </label>
                       <Input
                         defaultValue={firstLensParams?.left?.SPH?.toString() || '-2.25'}
-                        className="font-medium h-11 bg-white border-neutral-100"
+                        className={`font-bold h-11 transition-all ${confirmedFields.has('l_sph') ? 'bg-mint-50/50 border-mint-200' : 'bg-white'}`}
                       />
+                      {renderVerificationIcon('l_sph')}
                     </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest pl-1">
+                    <div className="space-y-1.5 relative">
+                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">
                         CYL
                       </label>
                       <Input
                         defaultValue={firstLensParams?.left?.CYL?.toString() || '-0.75'}
-                        className="font-medium h-11 bg-white border-neutral-100"
+                        className={`font-bold h-11 transition-all ${confirmedFields.has('l_cyl') ? 'bg-mint-50/50 border-mint-200' : 'bg-white'}`}
                       />
+                      {renderVerificationIcon('l_cyl')}
                     </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest pl-1">
+                    <div className="space-y-1.5 relative">
+                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">
                         AXIS
                       </label>
                       <Input
                         defaultValue={firstLensParams?.left?.AXIS?.toString() || '170'}
-                        className="font-medium h-11 bg-white border-neutral-100"
+                        className={`font-bold h-11 transition-all ${confirmedFields.has('l_axis') ? 'bg-mint-50/50 border-mint-200' : 'bg-white'}`}
                       />
+                      {renderVerificationIcon('l_axis')}
                     </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest pl-1">
+                    <div className="space-y-1.5 relative">
+                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">
                         ADD
                       </label>
                       <Input
                         defaultValue={firstLensParams?.left?.ADD?.toString() || '+1.50'}
-                        className="font-medium h-11 bg-white border-neutral-100"
+                        className={`font-bold h-11 transition-all ${confirmedFields.has('l_add') ? 'bg-mint-50/50 border-mint-200' : 'bg-white'}`}
                       />
+                      {renderVerificationIcon('l_add')}
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                <div>
-                  <label className="text-xs font-semibold text-neutral-500 uppercase tracking-widest pl-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4 border-t border-slate-50">
+                <div className="space-y-3">
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em] pl-1">
                     Pupillary Distance (PD)
                   </label>
-                  <div className="grid grid-cols-2 gap-3 mt-2">
+                  <div className="grid grid-cols-2 gap-4">
                     <div className="relative">
                       <Input
                         defaultValue={firstLensParams?.PD?.toString() || '32.0'}
-                        className="text-center font-bold h-11 border-neutral-100"
+                        className={`text-center font-black h-11 transition-all ${confirmedFields.has('pd_r') ? 'bg-mint-50/50 border-mint-200' : 'bg-white'}`}
                       />
-                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] font-bold text-mint-600 bg-mint-50 px-1 rounded border border-mint-100">
+                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300">
                         R
                       </span>
+                      {renderVerificationIcon('pd_r')}
                     </div>
                     <div className="relative">
                       <Input
                         defaultValue={firstLensParams?.PD?.toString() || '32.0'}
-                        className="text-center font-bold h-11 border-neutral-100"
+                        className={`text-center font-black h-11 transition-all ${confirmedFields.has('pd_l') ? 'bg-mint-50/50 border-mint-200' : 'bg-white'}`}
                       />
-                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] font-bold text-mint-600 bg-mint-50 px-1 rounded border border-mint-100">
+                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300">
                         L
                       </span>
+                      {renderVerificationIcon('pd_l')}
                     </div>
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-neutral-500 uppercase tracking-widest pl-1">
-                    Notes
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em] pl-1">
+                    Notes for Lab
                   </label>
                   <textarea
-                    className="w-full mt-2 p-3 border border-neutral-200 rounded-2xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all bg-neutral-50/20"
+                    className="w-full mt-2 p-4 border border-slate-100 rounded-3xl text-xs font-semibold focus:outline-none focus:ring-4 focus:ring-mint-500/5 focus:border-mint-400 transition-all bg-slate-50/30"
                     rows={2}
                     placeholder="Enter special instructions for lab technician..."
                   />
@@ -309,22 +402,39 @@ export default function PrescriptionVerification({
               </div>
             </div>
 
-            <div className="bg-neutral-50/80 p-6 flex gap-4 border-t border-neutral-100">
-              <Button
-                isFullWidth
-                className="bg-mint-700 text-white h-12 rounded-xl"
-                leftIcon={<IoCheckmark size={20} />}
-              >
-                Verify & Submit to Lab
-              </Button>
-              <Button
-                isFullWidth
-                variant="outline"
-                className="h-12 rounded-xl border-neutral-200 text-neutral-600 hover:text-rose-600"
-                leftIcon={<IoClose size={20} />}
-              >
-                Reject Order
-              </Button>
+            <div className="bg-slate-50/50 p-8 flex gap-4 border-t border-slate-100 items-center justify-between">
+              <div className="hidden sm:block">
+                {!isAllConfirmed && (
+                  <p className="text-[10px] font-bold text-rose-400 uppercase tracking-widest flex items-center gap-2">
+                    <IoInformationCircleOutline size={14} /> Please verify all transcription fields
+                  </p>
+                )}
+                {isAllConfirmed && (
+                  <p className="text-[10px] font-bold text-mint-600 uppercase tracking-widest flex items-center gap-2">
+                    <IoCheckmark size={14} /> Ready for lab processing
+                  </p>
+                )}
+              </div>
+              <div className="flex gap-4 w-full sm:w-auto">
+                <Button
+                  className={`h-12 px-8 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all shadow-lg ${
+                    isAllConfirmed
+                      ? 'bg-mint-600 text-white shadow-mint-100 hover:bg-mint-700 hover:-translate-y-0.5'
+                      : 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none'
+                  }`}
+                  disabled={!isAllConfirmed}
+                  leftIcon={<IoCheckmark size={20} />}
+                >
+                  Verify & Submit to Lab
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-12 px-8 rounded-2xl font-black uppercase tracking-widest text-[11px] border-slate-200 text-slate-500 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-100 transition-all"
+                  leftIcon={<IoClose size={20} />}
+                >
+                  Reject Order
+                </Button>
+              </div>
             </div>
           </Card>
         </div>

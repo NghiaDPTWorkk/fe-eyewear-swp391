@@ -1,5 +1,5 @@
 import type { VisionNeed } from './types'
-import { Glasses, Info } from 'lucide-react'
+import { Glasses } from 'lucide-react'
 import { Card } from '@/shared/components/ui-core/card'
 
 interface StepVisionNeedProps {
@@ -48,14 +48,6 @@ export default function StepVisionNeed({ onSelect }: StepVisionNeedProps) {
             </div>
           </Card>
         ))}
-      </div>
-
-      <div className="mt-8 p-4 bg-primary-50 rounded-xl flex items-start gap-3">
-        <Info className="w-5 h-5 text-primary-500 mt-0.5 shrink-0" />
-        <p className="text-sm text-primary-600 leading-relaxed font-medium">
-          Not sure which one to choose?{' '}
-          <button className="underline font-bold">Try Lens Advisor</button>
-        </p>
       </div>
     </div>
   )

@@ -95,7 +95,11 @@ export default function TryOnConsentStep({ onAgree, onDisagree }: TryOnConsentSt
             colorScheme="neutral"
             size="lg"
             isFullWidth
-            onClick={onDisagree}
+            type="button"
+            onClick={() => {
+              console.log('[TryOnConsentStep] Disagree clicked.')
+              onDisagree()
+            }}
             className="rounded-2xl h-14 border-mint-300 hover:bg-mint-50"
           >
             I disagree
@@ -105,7 +109,11 @@ export default function TryOnConsentStep({ onAgree, onDisagree }: TryOnConsentSt
             colorScheme="primary"
             size="lg"
             isFullWidth
-            onClick={onAgree}
+            type="button"
+            onClick={() => {
+              console.log('[TryOnConsentStep] Agree clicked.')
+              onAgree()
+            }}
             className="rounded-2xl h-14 shadow-lg hover:shadow-xl"
           >
             I agree

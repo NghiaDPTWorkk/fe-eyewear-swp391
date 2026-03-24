@@ -19,6 +19,7 @@ interface ConfirmationModalProps {
   isLoading?: boolean
   type?: 'danger' | 'warning' | 'info'
   details?: React.ReactNode
+  error?: string | null
 }
 
 export default function ConfirmationModal({
@@ -31,7 +32,8 @@ export default function ConfirmationModal({
   cancelText = 'Cancel',
   isLoading = false,
   type = 'info',
-  details
+  details,
+  error
 }: ConfirmationModalProps) {
   if (!isOpen) return null
 
@@ -131,6 +133,20 @@ export default function ConfirmationModal({
                 : message}
             </div>
           </div>
+
+          {error && (
+            <div className="bg-rose-50 border border-rose-100 p-4 rounded-2xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="w-8 h-8 rounded-lg bg-rose-100 flex items-center justify-center shrink-0">
+                <IoAlertCircleOutline className="text-rose-600" size={18} />
+              </div>
+              <div className="flex-1">
+                <p className="text-[10px] font-bold text-rose-500 uppercase tracking-widest mb-0.5">
+                  Error Message
+                </p>
+                <p className="text-xs font-bold text-rose-800 leading-relaxed">{error}</p>
+              </div>
+            </div>
+          )}
 
           {details && (
             <div className="space-y-2">

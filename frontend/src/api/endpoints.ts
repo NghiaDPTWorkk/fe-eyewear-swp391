@@ -309,6 +309,13 @@ export const ENDPOINTS = {
       if (userId) params.append('userId', userId)
       const qs = params.toString()
       return qs ? `/admin/invoices/stats/revenue?${qs}` : '/admin/invoices/stats/revenue'
+    },
+    TOP_SALES: (month?: number, year?: number) => {
+      const p = new URLSearchParams()
+      if (month) p.append('month', String(month))
+      if (year) p.append('year', String(year))
+      const qs = p.toString()
+      return qs ? `/admin/invoices/stats/top-sales?${qs}` : '/admin/invoices/stats/top-sales'
     }
   },
   RETURN_TICKETS: {

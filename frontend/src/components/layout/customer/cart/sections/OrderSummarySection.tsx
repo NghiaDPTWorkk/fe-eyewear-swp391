@@ -1,4 +1,5 @@
 import { Shield } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 import { Button } from '@/shared/components/ui'
 
@@ -67,14 +68,34 @@ export const OrderSummarySection = ({
 
       <div className="text-center mt-6">
         <p className="text-[10px] text-gray-eyewear mb-4 leading-relaxed">
-          By clicking on the button above you agree to Glasses.com <br />
-          <a href="#" className="underline">
-            Terms and Conditions
-          </a>{' '}
+          By clicking on the button above you agree to our <br />
+          <Link
+            to="/policies/order-payment"
+            className="underline hover:text-primary-500 transition-colors"
+          >
+            Order & Payment
+          </Link>
+          ,{' '}
+          <Link
+            to="/policies/shipping"
+            className="underline hover:text-primary-500 transition-colors"
+          >
+            Shipping
+          </Link>
+          ,{' '}
+          <Link
+            to="/policies/return-warranty"
+            className="underline hover:text-primary-500 transition-colors"
+          >
+            Returns
+          </Link>{' '}
           and{' '}
-          <a href="#" className="underline">
+          <Link
+            to="/policies/privacy"
+            className="underline hover:text-primary-500 transition-colors"
+          >
             Privacy Policy
-          </a>
+          </Link>
         </p>
         <div className="flex items-center justify-center gap-2 text-xs text-mint-1200 font-bold">
           <Shield className="w-4 h-4 text-primary-500" />

@@ -13,7 +13,6 @@ import {
 import type { StaffData } from './components/staff/StaffTable'
 
 const VN_PHONE_REGEX = /^(0|\+84)(3|5|7|8|9)\d{8}$/
-const CITIZEN_ID_REGEX = /^\d{12}$/
 
 export interface CreateAdminAccountFormValues {
   name: string
@@ -189,7 +188,7 @@ export function AdminEditAccount({
             enableReinitialize={true}
             onSubmit={onSubmit}
           >
-            {({ values, errors, touched, handleChange, handleBlur, setFieldValue }) => (
+            {({ values, errors, touched, handleChange, handleBlur }) => (
               <Form className="space-y-10">
                 <div className="space-y-8">
                   <div className="bg-white p-6 rounded-3xl border border-neutral-100 shadow-sm space-y-6">

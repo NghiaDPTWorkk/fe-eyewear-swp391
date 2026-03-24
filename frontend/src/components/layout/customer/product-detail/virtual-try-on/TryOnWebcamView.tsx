@@ -5,6 +5,7 @@ import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 import { cn } from '@/lib/utils'
 import type { NormalizedLandmark } from '@mediapipe/tasks-vision'
 import GlassesOverlay from './GlassesOverlay'
+import type { Variant } from '@/shared/types/variant.types'
 
 interface TryOnWebcamViewProps {
   onClose: () => void
@@ -12,6 +13,10 @@ interface TryOnWebcamViewProps {
   productName: string
   productImage: string
   productPrice: number
+  virTryOnUrl?: string | null
+  variants?: Variant[]
+  selectedVariantIdx?: number
+  onVariantSelect?: (index: number) => void
   startDetection: (video: HTMLVideoElement) => void
   stopDetection: () => void
   landmarksRef: React.RefObject<NormalizedLandmark[][]>
@@ -27,6 +32,10 @@ export default function TryOnWebcamView({
   productName,
   productImage,
   productPrice,
+  virTryOnUrl,
+  variants = [],
+  selectedVariantIdx = 0,
+  onVariantSelect,
   startDetection,
   stopDetection,
   landmarksRef,
@@ -75,7 +84,10 @@ export default function TryOnWebcamView({
       {/* Top overlay buttons */}
       <div className="absolute top-0 left-0 right-0 z-10 flex justify-between items-start p-3">
         {/* Menu dots */}
-        <button className="w-9 h-9 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors">
+        <button
+          type="button"
+          className="w-9 h-9 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
+        >
           <div className="flex gap-0.5">
             <span className="w-1 h-1 rounded-full bg-white" />
             <span className="w-1 h-1 rounded-full bg-white" />
@@ -85,6 +97,7 @@ export default function TryOnWebcamView({
 
         <div className="flex flex-col gap-2">
           <button
+            type="button"
             onClick={onClose}
             className="w-9 h-9 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors group"
           >
@@ -119,38 +132,67 @@ export default function TryOnWebcamView({
           videoRef={videoRef}
           landmarksRef={landmarksRef}
           transformationMatricesRef={transformationMatricesRef}
-          glassesImageUrl={productImage}
+          glassesImageUrl={virTryOnUrl || productImage}
         />
 
         {/* Face guide overlay (hidden once landmarks detected) */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="w-44 h-56 rounded-[50%] border-2 border-dashed border-white/15" />
         </div>
+
+        {/* Variant Selector - Positioned over the video at the bottom */}
+        {variants.length > 1 && (
+          <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-3 overflow-x-auto pb-2 px-4 scroller-hide">
+            {variants.map((v, idx) => {
+              const isSelected = selectedVariantIdx === idx
+              const thumbUrl = v.imgs?.[0] || productImage
+
+              return (
+                <button
+                  key={v.sku || idx}
+                  onClick={() => onVariantSelect?.(idx)}
+                  className={cn(
+                    'relative w-12 h-12 rounded-full border-2 transition-all flex-shrink-0 bg-white overflow-hidden shadow-lg',
+                    isSelected
+                      ? 'border-primary-500 scale-110'
+                      : 'border-white/50 hover:border-white'
+                  )}
+                >
+                  <img src={thumbUrl} alt={v.name} className="w-full h-full object-cover" />
+                  {isSelected && (
+                    <div className="absolute inset-0 bg-primary-500/10 flex items-center justify-center">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary-500" />
+                    </div>
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        )}
       </div>
 
       {/* Bottom product bar */}
       <div className="bg-white px-4 py-3 flex items-center gap-3">
-        <button className="w-10 h-10 rounded-xl bg-primary-500 flex items-center justify-center hover:bg-primary-600 transition-colors flex-shrink-0 shadow-md">
+        <button
+          type="button"
+          className="w-10 h-10 rounded-xl bg-primary-500 flex items-center justify-center hover:bg-primary-600 transition-colors flex-shrink-0 shadow-md"
+        >
           <Camera className="w-5 h-5 text-white" />
         </button>
 
         <div className="flex items-center gap-2 flex-1 min-w-0">
-          {productImage && (
-            <img
-              src={productImage}
-              alt={productName}
-              className="w-9 h-9 rounded-lg object-cover border border-mint-200 flex-shrink-0"
-            />
-          )}
           <div className="min-w-0">
-            <p className="text-xs font-bold text-mint-1200 truncate">{productName}</p>
-            <p className="text-xs text-gray-eyewear">
+            <p className="text-sm font-bold text-mint-1200 truncate">
+              {variants[selectedVariantIdx]?.name || productName}
+            </p>
+            <p className="text-sm text-gray-eyewear">
               <VNDPrice amount={productPrice} />
             </p>
           </div>
         </div>
 
         <Button
+          type="button"
           size="sm"
           className="rounded-xl shadow-md flex-shrink-0 px-4"
           leftIcon={<ShoppingCart className="w-3.5 h-3.5" />}

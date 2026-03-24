@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { addressService, type Province, type Ward } from '@/shared/services/addressService'
 import { FormField, Input, Checkbox, Button } from '@/shared/components/ui'
 import { SearchableSelect } from '@/shared/components/ui/searchable-select/SearchableSelect'
-import { toast } from 'react-hot-toast'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
 
 import type { Address } from '@/shared/types/address.types'
 
@@ -19,6 +20,13 @@ interface AddressFormProps {
   submitLabel?: string
 }
 
+const addressSchema = Yup.object().shape({
+  street: Yup.string().required('Street address is required').trim(),
+  city: Yup.string().required('City / Province is required').trim(),
+  ward: Yup.string().required('Ward is required').trim(),
+  isDefault: Yup.boolean()
+})
+
 export function AddressForm({
   initialData,
   onSubmit,
@@ -26,30 +34,25 @@ export function AddressForm({
   isLoading,
   submitLabel = 'Save Address'
 }: AddressFormProps) {
-  const [formData, setFormData] = useState({
-    street: initialData?.street || '',
-    ward: initialData?.ward || '',
-    city: initialData?.city || '',
-    isDefault: initialData?.isDefault || false
-  })
-
-  // Sync formData when initialData changes
-  useEffect(() => {
-    if (initialData) {
-      setFormData({
-        street: initialData.street || '',
-        ward: initialData.ward || '',
-        city: initialData.city || '',
-        isDefault: !!initialData.isDefault
-      })
-    }
-  }, [initialData])
-
   const [provinces, setProvinces] = useState<Province[]>([])
   const [wards, setWards] = useState<Ward[]>([])
   const [isFetchingProvinces, setIsFetchingProvinces] = useState(false)
   const [isFetchingWards, setIsFetchingWards] = useState(false)
   const [selectedProvinceCode, setSelectedProvinceCode] = useState<number | null>(null)
+
+  const formik = useFormik({
+    initialValues: {
+      street: initialData?.street || '',
+      ward: initialData?.ward || '',
+      city: initialData?.city || '',
+      isDefault: initialData?.isDefault || false
+    },
+    validationSchema: addressSchema,
+    enableReinitialize: true,
+    onSubmit: async (values) => {
+      await onSubmit(values)
+    }
+  })
 
   // Fetch provinces on mount
   useEffect(() => {
@@ -106,85 +109,70 @@ export function AddressForm({
     const province = provinces.find((p) => p.code === code)
     if (province) {
       setSelectedProvinceCode(code)
-      setFormData({ ...formData, city: province.name, ward: '' })
+      formik.setFieldValue('city', province.name)
+      formik.setFieldValue('ward', '')
     } else {
       setSelectedProvinceCode(null)
-      setFormData({ ...formData, city: '', ward: '' })
+      formik.setFieldValue('city', '')
+      formik.setFieldValue('ward', '')
     }
   }
 
   const handleWardChange = (wardName: string) => {
-    setFormData({ ...formData, ward: wardName })
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    const street = formData.street.trim()
-    const city = formData.city.trim()
-    const ward = formData.ward.trim()
-
-    if (!street) {
-      toast.error('Street address is required')
-      return
-    }
-
-    if (!city) {
-      toast.error('City / Province is required')
-      return
-    }
-
-    if (!ward) {
-      toast.error('Ward is required')
-      return
-    }
-
-    await onSubmit({
-      ...formData,
-      street,
-      city,
-      ward
-    })
+    formik.setFieldValue('ward', wardName)
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <FormField label="Street Address" isRequired>
+    <form onSubmit={formik.handleSubmit} className="space-y-6">
+      <FormField
+        label="Street Address"
+        isRequired
+        error={formik.touched.street && formik.errors.street ? formik.errors.street : undefined}
+      >
         <Input
           placeholder="e.g. 165 Linh Trung"
-          value={formData.street}
-          onChange={(e) => setFormData({ ...formData, street: e.target.value })}
-          required
+          {...formik.getFieldProps('street')}
+          className={formik.touched.street && formik.errors.street ? 'border-red-500' : ''}
         />
       </FormField>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <SearchableSelect
-          label="City / Province"
-          placeholder="Select City"
-          options={provinces.map((p) => ({ label: p.name, value: p.code }))}
-          value={selectedProvinceCode || ''}
-          onChange={handleProvinceChange}
-          isLoading={isFetchingProvinces}
-          isDisabled={isFetchingProvinces}
-        />
+        <div className="space-y-1">
+          <SearchableSelect
+            label="City / Province"
+            placeholder="Select City"
+            options={provinces.map((p) => ({ label: p.name, value: p.code }))}
+            value={selectedProvinceCode || ''}
+            onChange={handleProvinceChange}
+            isLoading={isFetchingProvinces}
+            isDisabled={isFetchingProvinces}
+          />
+          {formik.touched.city && formik.errors.city && (
+            <p className="text-xs text-red-500 font-medium ml-1">{formik.errors.city}</p>
+          )}
+        </div>
 
-        <SearchableSelect
-          label="Ward"
-          placeholder="Select Ward"
-          options={wards.map((w) => ({ label: w.name, value: w.name }))}
-          value={formData.ward}
-          onChange={handleWardChange}
-          isLoading={isFetchingWards}
-          isDisabled={!selectedProvinceCode || isFetchingWards}
-        />
+        <div className="space-y-1">
+          <SearchableSelect
+            label="Ward"
+            placeholder="Select Ward"
+            options={wards.map((w) => ({ label: w.name, value: w.name }))}
+            value={formik.values.ward}
+            onChange={handleWardChange}
+            isLoading={isFetchingWards}
+            isDisabled={!selectedProvinceCode || isFetchingWards}
+          />
+          {formik.touched.ward && formik.errors.ward && (
+            <p className="text-xs text-red-500 font-medium ml-1">{formik.errors.ward}</p>
+          )}
+        </div>
       </div>
 
       <Checkbox
         id="isDefault"
         label="Set as default address"
-        isChecked={formData.isDefault}
-        onCheckedChange={(checked) => setFormData({ ...formData, isDefault: checked })}
+        isChecked={formik.values.isDefault}
+        onCheckedChange={(checked) => formik.setFieldValue('isDefault', checked)}
       />
 
       <div className="pt-4 flex gap-3">
@@ -200,7 +188,7 @@ export function AddressForm({
         <Button
           type="submit"
           isLoading={isLoading}
-          isDisabled={isFetchingProvinces || isFetchingWards}
+          isDisabled={isFetchingProvinces || isFetchingWards || !formik.isValid}
           isFullWidth
         >
           {submitLabel}

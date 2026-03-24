@@ -187,3 +187,46 @@ input[type='password']::-ms-clear {
 .animate-shake {
   animation: shake 0.2s ease-in-out 0s 2;
 }
+
+/* Multi-step form animations */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-in {
+  animation-duration: 500ms;
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation-name: fadeIn;
+}
+
+.slide-in-from-right-4 {
+  animation-name: slideInRight;
+}
+
+/* Custom scroller hide */
+.scroller-hide::-webkit-scrollbar {
+  display: none;
+}
+.scroller-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

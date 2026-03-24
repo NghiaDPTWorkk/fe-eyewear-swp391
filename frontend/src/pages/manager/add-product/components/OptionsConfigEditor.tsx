@@ -1,4 +1,5 @@
 import { IoAddOutline, IoTrashOutline } from 'react-icons/io5'
+import { Button } from '@/shared/components/ui/button'
 import type { ProductCreateFormState } from '../types/product-create.types'
 import { DynamicSelectField } from './DynamicSelectField'
 import { useAttributes } from '../../../../features/staff/hooks/useAttributes'
@@ -68,19 +69,18 @@ export function OptionsConfigEditor(props: {
             <h3 className="text-base font-extrabold text-gray-900 tracking-tight">
               Product Options Configuration
             </h3>
-            <p className="text-[11px] font-medium text-neutral-400 uppercase tracking-widest mt-0.5">
+            <p className="text-[11px] font-medium text-neutral-400 mt-0.5">
               Step 1: Define attributes and values
             </p>
           </div>
         </div>
-        <button
-          type="button"
+        <Button
           onClick={addAttribute}
-          className="flex items-center gap-2 text-xs font-bold text-white bg-mint-600 hover:bg-mint-700 px-5 py-3 rounded-2xl transition-all active:scale-95 shadow-lg shadow-mint-100/50 hover:shadow-mint-500/10"
+          leftIcon={<IoAddOutline size={20} />}
+          className="bg-mint-600 hover:bg-mint-700 shadow-lg shadow-mint-100/50"
         >
-          <IoAddOutline size={20} />
           Add Attribute
-        </button>
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 gap-6">
@@ -131,17 +131,18 @@ export function OptionsConfigEditor(props: {
 
             <div className="space-y-4">
               <div className="flex items-center justify-between px-1">
-                <label className="text-xs font-extrabold text-neutral-500 uppercase tracking-widest">
+                <label className="text-xs font-extrabold text-neutral-500">
                   Values ({config.values.length})
                 </label>
-                <button
-                  type="button"
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => addValue(attrIdx)}
-                  className="flex items-center gap-2 text-[11px] font-bold text-mint-600 hover:bg-mint-600 hover:text-white px-4 py-2 rounded-full border border-mint-200 bg-white transition-all shadow-sm"
+                  leftIcon={<IoAddOutline size={16} />}
+                  className="rounded-full border-mint-200 text-mint-600 hover:bg-mint-600 hover:text-white"
                 >
-                  <IoAddOutline size={16} />
                   Add Value
-                </button>
+                </Button>
               </div>
 
               {config.values.length > 0 ? (
@@ -262,14 +263,13 @@ export function OptionsConfigEditor(props: {
                 Add attributes like Color, Size or Material to generate variants automatically.
               </p>
             </div>
-            <button
-              type="button"
+            <Button
               onClick={addAttribute}
-              className="mt-2 flex items-center gap-2 text-sm font-bold text-mint-600 bg-white hover:bg-mint-50 px-8 py-3.5 rounded-2xl border border-mint-100 transition-all active:scale-95 shadow-sm"
+              leftIcon={<IoAddOutline size={20} />}
+              className="mt-2 bg-white text-mint-600 border border-mint-100 hover:bg-mint-50"
             >
-              <IoAddOutline size={20} />
               Add Your First Attribute
-            </button>
+            </Button>
           </div>
         )}
       </div>

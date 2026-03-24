@@ -33,6 +33,7 @@ export interface ProductCreateFormState {
     stockText: string
     imgs: string[]
     isDefault: boolean
+    virTryOnUrl?: string
     options: Array<{
       attributeId: string
       attributeName: string

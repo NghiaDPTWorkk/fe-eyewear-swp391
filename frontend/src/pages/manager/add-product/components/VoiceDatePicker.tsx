@@ -86,7 +86,7 @@ export function VoiceDatePicker({
       <div className="flex justify-between items-center ml-1">
         <label className="text-xs font-bold text-gray-700">{label}</label>
         {helperText && (
-          <span className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">
+          <span className="text-[10px] text-neutral-400 font-medium tracking-wide">
             {helperText}
           </span>
         )}

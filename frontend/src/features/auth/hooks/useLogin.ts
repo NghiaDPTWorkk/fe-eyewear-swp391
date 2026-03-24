@@ -35,22 +35,28 @@ export const useLogin = () => {
   // console.log('isStaffLogin:', isStaffLogin())
 
   return useMutation({
-    mutationFn: (payload: LoginRequest) => {
-      // Use staff login API if URL contains '/admin/'
+    mutationFn: async (payload: LoginRequest) => {
+      // Clear any existing tokens/cookies of the other role to ensure a clean session
+      try {
+        if (isStaffLogin()) {
+          // If logging into admin, attempt to clear customer session cookies
+          await authApi.logout()
+        } else {
+          // If logging into customer, attempt to clear staff session cookies
+          await authApi.logoutStaff()
+        }
+      } catch (err) {
+        // Silently ignore logout errors
+        console.debug('Pre-login cleanup skipped or failed:', err)
+      }
+
+      // 2. Perform the actual login
       if (isStaffLogin()) {
         return authApi.loginStaff(payload)
       }
       return authApi.loginCustomer(payload)
     },
     onSuccess: async (response: LoginResponse) => {
-      console.log('Login Success Response:', response)
-
-      // DEBUG
-      console.group('[LOGIN] Login successful')
-      console.info('document.cookie:', document.cookie || '(empty - cookie may be HttpOnly)')
-      console.info('deviceId used:', localStorage.getItem('x_device_id'))
-      console.groupEnd()
-
       // 1. Robust Token Extraction
 
       const authData = (response as any).data || response

@@ -15,6 +15,7 @@ interface RejectionModalProps {
   isLoading?: boolean
   initialNote?: string
   details?: React.ReactNode
+  serverError?: string | null
 }
 
 export function RejectionModal({
@@ -27,7 +28,8 @@ export function RejectionModal({
   cancelText = 'Cancel',
   isLoading = false,
   initialNote = '',
-  details
+  details,
+  serverError
 }: RejectionModalProps) {
   const [note, setNote] = useState(initialNote)
   const [error, setError] = useState<string | null>(null)
@@ -117,6 +119,20 @@ export function RejectionModal({
               </p>
             )}
           </div>
+
+          {serverError && (
+            <div className="bg-rose-50 border border-rose-100 p-4 rounded-2xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="w-8 h-8 rounded-lg bg-rose-100 flex items-center justify-center shrink-0">
+                <IoAlertCircleOutline className="text-rose-600" size={18} />
+              </div>
+              <div className="flex-1">
+                <p className="text-[10px] font-bold text-rose-500 uppercase tracking-widest mb-0.5">
+                  Error Message
+                </p>
+                <p className="text-xs font-bold text-rose-800 leading-relaxed">{serverError}</p>
+              </div>
+            </div>
+          )}
         </div>
 
         {}

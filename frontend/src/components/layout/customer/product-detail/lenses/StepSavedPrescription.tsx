@@ -7,9 +7,10 @@ import { toast } from 'react-hot-toast'
 
 interface StepSavedPrescriptionProps {
   onSelect: (rx: Prescription) => void
+  onAddNew: () => void
 }
 
-export default function StepSavedPrescription({ onSelect }: StepSavedPrescriptionProps) {
+export default function StepSavedPrescription({ onSelect, onAddNew }: StepSavedPrescriptionProps) {
   const [prescriptions, setPrescriptions] = useState<Prescription[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -47,7 +48,10 @@ export default function StepSavedPrescription({ onSelect }: StepSavedPrescriptio
         <div className="text-center py-12 bg-mint-50 rounded-3xl border-2 border-dashed border-mint-200">
           <FileText className="w-12 h-12 text-mint-300 mx-auto mb-4" />
           <p className="text-gray-eyewear font-medium">No saved prescriptions found.</p>
-          <button className="text-primary-500 font-bold hover:underline mt-2 uppercase text-sm tracking-wider">
+          <button
+            onClick={onAddNew}
+            className="text-primary-500 font-bold hover:underline mt-2 uppercase text-sm tracking-wider"
+          >
             Add New Prescription
           </button>
         </div>
@@ -107,13 +111,13 @@ export default function StepSavedPrescription({ onSelect }: StepSavedPrescriptio
           ))}
 
           <button
-            onClick={() => toast('Please go to Account Settings to manage prescriptions')}
+            onClick={onAddNew}
             className="w-full py-6 border-2 border-dashed border-mint-200 rounded-2xl text-gray-400 font-bold hover:border-primary-300 hover:text-primary-500 transition-all flex items-center justify-center gap-2 group"
           >
             <div className="w-8 h-8 rounded-full border-2 border-current flex items-center justify-center group-hover:scale-110 transition-transform">
               +
             </div>
-            MANAGE PRESCRIPTIONS
+            USE MANUAL ENTRY
           </button>
         </div>
       )}

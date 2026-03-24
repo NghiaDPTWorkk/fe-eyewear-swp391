@@ -50,7 +50,7 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
 }) => {
   const [confirmedFields, setConfirmedFields] = React.useState<Set<string>>(new Set())
   const [numericErrors, setNumericErrors] = React.useState<Record<string, string>>({})
-  const [noteTouched, setNoteTouched] = React.useState(false)
+  const [noteTouched, setNoteTouched] = React.useState(true)
 
   const toggleField = (id: string) => {
     setConfirmedFields((prev) => {
@@ -60,6 +60,14 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
       return next
     })
   }
+
+  const isAxisRequired = React.useCallback(
+    (eye: 'left' | 'right') => {
+      const cylVal = Number(parameters?.[eye]?.CYL) || 0
+      return cylVal !== 0
+    },
+    [parameters]
+  )
 
   const requiredFields = [
     'right_SPH',
@@ -72,24 +80,15 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
     'left_ADD',
     'common_PD'
   ]
-  const isAllConfirmed = requiredFields.every((f) => confirmedFields.has(f))
+
+  const isAllConfirmed = requiredFields.every((f) => {
+    if (f === 'right_AXIS' && !isAxisRequired('right')) return true
+    if (f === 'left_AXIS' && !isAxisRequired('left')) return true
+    return confirmedFields.has(f)
+  })
 
   const noteError = noteTouched ? validateNote(note ?? '') : null
   const isNoteValid = validateNote(note ?? '') === null
-
-  const renderVerificationIcon = (id: string) => (
-    <button
-      type="button"
-      onClick={() => toggleField(id)}
-      className={`absolute right-2 top-10 p-1 rounded-lg transition-all z-10 ${
-        confirmedFields.has(id)
-          ? 'bg-mint-500 text-white shadow-sm'
-          : 'bg-slate-100 text-slate-300 hover:bg-slate-200'
-      }`}
-    >
-      <IoCheckmark size={14} strokeWidth={confirmedFields.has(id) ? 4 : 2} />
-    </button>
-  )
 
   const validateNumericField = (field: string, value: string): string | null => {
     if (value === '' || value === '-' || value === '.') return 'Required'
@@ -113,6 +112,76 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
     }
     return null
   }
+
+  // Pre-emptive validation on mount
+  React.useEffect(() => {
+    const errors: Record<string, string> = {}
+
+    // Validate Right Eye
+    ;['SPH', 'CYL', 'AXIS', 'ADD'].forEach((field) => {
+      const val = (parameters?.right?.[field] ?? '').toString()
+      const err = validateNumericField(field, val)
+      if (err) errors[`right_${field}`] = err
+    })
+
+    // Validate Left Eye
+    ;['SPH', 'CYL', 'AXIS', 'ADD'].forEach((field) => {
+      const val = (parameters?.left?.[field] ?? '').toString()
+      const err = validateNumericField(field, val)
+      if (err) errors[`left_${field}`] = err
+    })
+
+    // Validate PD
+    const pdVal = (parameters?.PD ?? '').toString()
+    const pdErr = validateNumericField('PD', pdVal)
+    if (pdErr) errors['common_PD'] = pdErr
+
+    setNumericErrors(errors)
+  }, [parameters])
+
+  // Clear AXIS if CYL is 0
+  React.useEffect(() => {
+    if (!onParametersChange) return
+    let changed = false
+    const newParams = { ...parameters }
+
+    if (
+      !isAxisRequired('right') &&
+      parameters?.right?.AXIS !== '0' &&
+      parameters?.right?.AXIS !== 0
+    ) {
+      newParams.right = { ...newParams.right, AXIS: '0' }
+      changed = true
+    }
+    if (!isAxisRequired('left') && parameters?.left?.AXIS !== '0' && parameters?.left?.AXIS !== 0) {
+      newParams.left = { ...newParams.left, AXIS: '0' }
+      changed = true
+    }
+
+    if (changed) {
+      onParametersChange(newParams)
+    }
+  }, [
+    parameters?.right?.CYL,
+    parameters?.left?.CYL,
+    onParametersChange,
+    parameters,
+    isAxisRequired
+  ])
+
+  const renderVerificationIcon = (id: string) => (
+    <button
+      type="button"
+      onClick={() => toggleField(id)}
+      className={`absolute right-2 top-10 p-1 rounded-lg transition-all z-10 ${
+        confirmedFields.has(id)
+          ? 'bg-mint-500 text-white shadow-sm'
+          : 'bg-slate-100 text-slate-300 hover:bg-slate-200'
+      }`}
+    >
+      <IoCheckmark size={14} strokeWidth={confirmedFields.has(id) ? 4 : 2} />
+    </button>
+  )
 
   const handleChange = (eye: 'left' | 'right' | 'common', field: string, value: string) => {
     if (!onParametersChange) return
@@ -279,13 +348,13 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
                 AXIS
               </label>
               <Input
-                readOnly={isReadOnly}
+                readOnly={isReadOnly || !isAxisRequired('right')}
                 value={parameters?.right?.AXIS ?? '0'}
                 onChange={(e) => handleChange('right', 'AXIS', e.target.value)}
                 onBlur={(e) => handleNumericBlur('right', 'AXIS', e.target.value)}
-                className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['right_AXIS'] ? ' border-red-400' : ''} ${confirmedFields.has('right_AXIS') ? 'bg-mint-50/30' : ''}`}
+                className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['right_AXIS'] ? ' border-red-400' : ''} ${confirmedFields.has('right_AXIS') || !isAxisRequired('right') ? 'bg-mint-50/30' : ''} ${!isAxisRequired('right') ? 'opacity-40 cursor-not-allowed bg-slate-50' : ''}`}
               />
-              {renderVerificationIcon('right_AXIS')}
+              {isAxisRequired('right') && renderVerificationIcon('right_AXIS')}
               {numericErrors['right_AXIS'] && (
                 <p className="text-[10px] text-red-500 text-center">
                   {numericErrors['right_AXIS']}
@@ -354,13 +423,13 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
                 AXIS
               </label>
               <Input
-                readOnly={isReadOnly}
+                readOnly={isReadOnly || !isAxisRequired('left')}
                 value={parameters?.left?.AXIS ?? '0'}
                 onChange={(e) => handleChange('left', 'AXIS', e.target.value)}
                 onBlur={(e) => handleNumericBlur('left', 'AXIS', e.target.value)}
-                className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['left_AXIS'] ? ' border-red-400' : ''} ${confirmedFields.has('left_AXIS') ? 'bg-mint-50/30' : ''}`}
+                className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['left_AXIS'] ? ' border-red-400' : ''} ${confirmedFields.has('left_AXIS') || !isAxisRequired('left') ? 'bg-mint-50/30' : ''} ${!isAxisRequired('left') ? 'opacity-40 cursor-not-allowed bg-slate-50' : ''}`}
               />
-              {renderVerificationIcon('left_AXIS')}
+              {isAxisRequired('left') && renderVerificationIcon('left_AXIS')}
               {numericErrors['left_AXIS'] && (
                 <p className="text-[10px] text-red-500 text-center">{numericErrors['left_AXIS']}</p>
               )}

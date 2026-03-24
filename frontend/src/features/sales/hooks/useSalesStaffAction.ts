@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 
 import { salesService } from '../services/salesService'
-import { showError, showSuccess } from '../utils/errorHandler'
+import { showError, showSuccess, extractErrorMessage } from '../utils/errorHandler'
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/shared/constants'
 
 const DEFAULT_PARAMETERS = {
@@ -33,7 +33,8 @@ export const useSalesStaffAction = () => {
         invalidateSalesData()
         return true
       } catch (err: unknown) {
-        setError(ERROR_MESSAGES.SALES.APPROVE_INVOICE_FAILED)
+        const msg = extractErrorMessage(err)
+        setError(msg)
         showError(err)
         return false
       } finally {
@@ -53,7 +54,8 @@ export const useSalesStaffAction = () => {
         invalidateSalesData()
         return true
       } catch (err: unknown) {
-        setError(ERROR_MESSAGES.SALES.REJECT_INVOICE_FAILED)
+        const msg = extractErrorMessage(err)
+        setError(msg)
         showError(err)
         return false
       } finally {
@@ -91,7 +93,8 @@ export const useSalesStaffAction = () => {
         invalidateSalesData()
         return true
       } catch (err: unknown) {
-        setError(ERROR_MESSAGES.SALES.VERIFY_ORDER_FAILED)
+        const msg = extractErrorMessage(err)
+        setError(msg)
         showError(err)
         return false
       } finally {
@@ -115,7 +118,8 @@ export const useSalesStaffAction = () => {
         invalidateSalesData()
         return true
       } catch (err: unknown) {
-        setError(ERROR_MESSAGES.SALES.REJECT_ORDER_FAILED)
+        const msg = extractErrorMessage(err)
+        setError(msg)
         showError(err)
         return false
       } finally {

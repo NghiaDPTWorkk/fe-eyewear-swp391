@@ -41,7 +41,12 @@ export default function ManagerInvoicesPage() {
   const { complete, isLoading: isCompleting } = useComplete()
 
   const apiStatus = statusFilter === 'All' ? undefined : statusFilter
-  const { data, isLoading, isError, error, refetch } = useAdminInvoices(page, limit, apiStatus)
+  const { data, isLoading, isError, error, refetch } = useAdminInvoices(
+    page,
+    limit,
+    apiStatus,
+    searchQuery.trim() || undefined
+  )
 
   const invoiceList = useMemo(() => data?.data.invoiceList ?? [], [data])
   const pagination = data?.data.pagination
@@ -61,17 +66,9 @@ export default function ManagerInvoicesPage() {
         )
       )
     }
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase()
-      list = list.filter(
-        (inv) =>
-          inv.fullName?.toLowerCase().includes(q) ||
-          inv.invoiceCode?.toLowerCase().includes(q) ||
-          inv.phone?.includes(q)
-      )
-    }
+    // Search is now handled server-side via useAdminInvoices
     return list
-  }, [invoiceList, orderTypeFilter, searchQuery])
+  }, [invoiceList, orderTypeFilter])
 
   const metrics = useMemo(() => {
     const counts: Record<string, number> = {

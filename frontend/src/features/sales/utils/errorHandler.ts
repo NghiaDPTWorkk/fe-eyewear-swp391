@@ -10,7 +10,7 @@ interface ApiErrorResponse {
 }
 
 export class SalesStaffErrorHandler {
-  private static extractErrorMessage(error: unknown): string {
+  public static extractErrorMessage(error: unknown): string {
     if (this.isAxiosError(error)) {
       const axiosError = error as AxiosError<ApiErrorResponse>
 
@@ -178,3 +178,5 @@ export const showSuccess = SalesStaffErrorHandler.showSuccess.bind(SalesStaffErr
 export const showWarning = SalesStaffErrorHandler.showWarning.bind(SalesStaffErrorHandler)
 export const showInfo = SalesStaffErrorHandler.showInfo.bind(SalesStaffErrorHandler)
 export const handleAsync = SalesStaffErrorHandler.handleAsync.bind(SalesStaffErrorHandler)
+export const extractErrorMessage =
+  SalesStaffErrorHandler.extractErrorMessage.bind(SalesStaffErrorHandler)

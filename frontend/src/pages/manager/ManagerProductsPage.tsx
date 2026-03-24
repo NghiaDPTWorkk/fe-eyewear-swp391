@@ -10,10 +10,11 @@ import {
   IoAlertCircleOutline,
   IoChevronBackOutline,
   IoChevronForwardOutline,
-  IoFilterOutline
+  IoFilterOutline,
+  IoTrashOutline
 } from 'react-icons/io5'
 
-import { Container } from '@/components'
+import { Container, ConfirmationModal } from '@/shared/components/ui-core'
 import { PageHeader } from '@/features/sales/components/common'
 import { useAdminProducts } from '@/features/manager/hooks'
 import { toast } from 'react-hot-toast'
@@ -63,6 +64,9 @@ export default function ManagerProductsPage() {
   const [page, setPage] = useState(1)
   const limit = 10
   const [isFilterOpen, setIsFilterOpen] = useState(false)
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [productToDelete, setProductToDelete] = useState<{ id: string; name: string } | null>(null)
 
   const { data, isLoading, refetch } = useAdminProducts(
     page,
@@ -167,7 +171,7 @@ export default function ManagerProductsPage() {
               />
               <input
                 type="text"
-                placeholder="Search by name, code or SKU..."
+                placeholder="Search by product name..."
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value)
@@ -354,22 +358,13 @@ export default function ManagerProductsPage() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation()
-                            // Logic for delete would go here (or open a modal)
-                            // Since I shouldn't touch logic, I'll keep the UI element
-                            if (window.confirm('Are you sure you want to delete this product?')) {
-                              // Call delete logic if available in props/context, otherwise toast
-                              toast.success('Delete requested (logic integration pending)')
-                            }
+                            setProductToDelete({ id: p.id, name: p.nameBase })
+                            setIsDeleteModalOpen(true)
                           }}
                           className="p-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-all active:scale-90"
                           title="Delete Product"
                         >
-                          <svg
-                            viewBox="0 0 24 24"
-                            className="w-4 h-4 fill-none stroke-current stroke-2"
-                          >
-                            <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6" />
-                          </svg>
+                          <IoTrashOutline size={18} />
                         </button>
                       </div>
                     </td>
@@ -422,6 +417,25 @@ export default function ManagerProductsPage() {
           </div>
         )}
       </div>
+
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false)
+          setProductToDelete(null)
+        }}
+        onConfirm={() => {
+          // Real backend delete logic would be implemented here!
+          toast.success(`Product "${productToDelete?.name}" delete requested (integration pending)`)
+          setIsDeleteModalOpen(false)
+          setProductToDelete(null)
+        }}
+        title="Delete Product"
+        message={`Are you sure you want to delete the product "${productToDelete?.name}"? This action cannot be undone.`}
+        confirmText="Delete Product"
+        cancelText="Cancel"
+        type="danger"
+      />
     </Container>
   )
 }

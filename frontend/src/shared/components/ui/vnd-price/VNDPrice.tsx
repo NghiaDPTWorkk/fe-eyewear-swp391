@@ -15,7 +15,7 @@ export function VNDPrice({ amount, className }: VNDPriceProps) {
 
   const formatted = safeAmount.toLocaleString('vi-VN')
   return (
-    <span className={className}>
+    <span className={`whitespace-nowrap inline-flex items-baseline ${className || ''}`}>
       {formatted}
       <span style={{ fontSize: '0.75em', marginLeft: '2px', opacity: 0.7 }}>₫</span>
     </span>

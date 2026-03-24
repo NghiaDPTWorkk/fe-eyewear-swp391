@@ -331,7 +331,7 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
   const total = Math.max(0, subtotal - discountAmount + shipping)
 
   return (
-    <Card className="p-8 border-mint-300/50 sticky top-8 rounded-3xl">
+    <Card className="p-5 xl:p-8 border-mint-300/50 sticky top-8 rounded-[32px]">
       <CustomerInfoSection customerInfo={customerInfo} onUpdate={setCustomerInfo} />
 
       <ShippingAddressSection

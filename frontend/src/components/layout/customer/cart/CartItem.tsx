@@ -88,8 +88,8 @@ export const CartItem = ({
   }
 
   return (
-    <Card className="p-8 border-mint-300/50 relative group bg-white hover:shadow-md transition-shadow">
-      <div className="flex flex-col md:flex-row gap-8">
+    <Card className="p-4 sm:p-6 lg:p-7 border-mint-300/50 relative group bg-white hover:shadow-md transition-shadow">
+      <div className="flex flex-col md:flex-row gap-6 lg:gap-8">
         {/* Selection Checkbox and Image Container */}
         <div className="flex items-center gap-6">
           {!isReadOnly && (
@@ -102,7 +102,7 @@ export const CartItem = ({
             </div>
           )}
           <div className="flex flex-col items-center gap-4">
-            <div className="w-48 h-48 bg-mint-50/30 rounded-2xl overflow-hidden flex items-center justify-center border border-mint-100/50 p-4 relative group/img">
+            <div className="w-40 h-40 lg:w-48 lg:h-48 bg-mint-50/30 rounded-2xl overflow-hidden flex items-center justify-center border border-mint-100/50 p-4 relative group/img">
               <img
                 src={item.image}
                 alt={item.name}

@@ -20,9 +20,7 @@ export function Model3DUpload({ value, onChange }: Model3DUploadProps) {
 
   return (
     <div className="space-y-2">
-      <label className="text-[11px] font-extrabold text-neutral-500 ml-1 uppercase tracking-wider">
-        3D Model (.glb)
-      </label>
+      <label className="text-[11px] font-extrabold text-neutral-500 ml-1">3D Model (.glb)</label>
 
       {!value ? (
         <div

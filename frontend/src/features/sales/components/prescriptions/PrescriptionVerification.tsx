@@ -142,16 +142,23 @@ export default function PrescriptionVerification({
     )
   }
 
-  const isApproved = [
-    'ACCEPTED',
-    'APPROVED',
-    'VERIFIED',
-    'COMPLETED',
-    'MAKING',
-    'PACKAGING',
-    'DELIVERING',
-    'DELIVERED'
-  ].includes(order.status?.toUpperCase())
+  const isApproved =
+    [
+      'ACCEPTED',
+      'APPROVED',
+      'VERIFIED',
+      'COMPLETED',
+      'MAKING',
+      'IN_PROGRESS',
+      'PRODUCTION',
+      'PENDING_LAB',
+      'PACKAGING',
+      'DELIVERING',
+      'DELIVERED'
+    ].includes(order.status?.toUpperCase()) ||
+    !!order.approvedAt ||
+    !!order.completedAt ||
+    !!order.rejectedAt
   const isPending = ['WAITING_ASSIGN', 'PENDING', 'DEPOSITED', 'WAITING_VERIFY'].includes(
     order.status?.toUpperCase()
   )

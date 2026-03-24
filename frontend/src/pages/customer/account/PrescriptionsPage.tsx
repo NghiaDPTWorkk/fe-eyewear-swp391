@@ -47,31 +47,34 @@ export function PrescriptionsPage() {
   const handleDeleteClick = async (id: string) => {
     if (!window.confirm('Are you sure you want to delete this prescription?')) return
 
-    try {
-      await prescriptionService.deletePrescription(id)
-      toast.success('Prescription deleted successfully')
-      fetchPrescriptions()
-    } catch (error) {
-      console.error('Failed to delete prescription:', error)
-      toast.error('Failed to delete prescription')
-    }
+    const promise = prescriptionService.deletePrescription(id).then(() => fetchPrescriptions())
+
+    toast.promise(promise, {
+      loading: 'Deleting prescription...',
+      success: 'Prescription deleted successfully!',
+      error: 'Failed to delete prescription'
+    })
   }
 
   const handleSubmit = async (data: Prescription) => {
     setIsSubmitting(true)
+    const isUpdate = !!(editingPrescription && editingPrescription._id)
+    const promise = isUpdate
+      ? prescriptionService.updatePrescription(editingPrescription!._id!, data)
+      : prescriptionService.addPrescription(data)
+
+    toast.promise(promise, {
+      loading: isUpdate ? 'Updating prescription...' : 'Saving prescription...',
+      success: isUpdate ? 'Prescription updated successfully!' : 'Prescription added successfully!',
+      error: 'Failed to save prescription'
+    })
+
     try {
-      if (editingPrescription?._id) {
-        await prescriptionService.updatePrescription(editingPrescription._id, data)
-        toast.success('Prescription updated successfully')
-      } else {
-        await prescriptionService.addPrescription(data)
-        toast.success('Prescription added successfully')
-      }
+      await promise
       fetchPrescriptions()
       setIsModalOpen(false)
     } catch (error) {
       console.error('Failed to save prescription:', error)
-      toast.error('Failed to save prescription')
     } finally {
       setIsSubmitting(false)
     }

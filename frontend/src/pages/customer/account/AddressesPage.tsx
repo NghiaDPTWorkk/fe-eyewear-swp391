@@ -103,7 +103,15 @@ export function AddressesPage() {
                   }
                 }
               }}
-              onSetDefault={() => addr._id && setDefaultAddress(addr._id, addr)}
+              onSetDefault={() => {
+                if (addr._id) {
+                  toast.promise(setDefaultAddress(addr._id, addr), {
+                    loading: 'Setting as default...',
+                    success: 'Default address updated!',
+                    error: 'Failed to update default address'
+                  })
+                }
+              }}
             />
           ))}
 

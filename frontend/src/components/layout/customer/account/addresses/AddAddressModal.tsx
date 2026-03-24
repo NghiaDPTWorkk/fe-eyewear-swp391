@@ -2,6 +2,7 @@ import { X } from 'lucide-react'
 import { useAddressStore } from '@/store/address.store'
 import { AddressForm } from './AddressForm'
 import type { Address } from '@/shared/types/address.types'
+import { toast } from 'react-hot-toast'
 
 interface AddAddressModalProps {
   isOpen: boolean
@@ -22,16 +23,23 @@ export function AddAddressModal({ isOpen, onClose, addressToEdit }: AddAddressMo
     city: string
     isDefault: boolean
   }) => {
+    const promise =
+      isEditing && addressToEdit?._id
+        ? updateAddress(addressToEdit._id, formData)
+        : addAddress(formData)
+
+    toast.promise(promise, {
+      loading: isEditing ? 'Updating address...' : 'Adding address...',
+      success: isEditing ? 'Address updated successfully!' : 'Address added successfully!',
+      error: (err) =>
+        err?.response?.data?.message || `Failed to ${isEditing ? 'update' : 'add'} address`
+    })
+
     try {
-      if (isEditing && addressToEdit?._id) {
-        await updateAddress(addressToEdit._id, formData)
-      } else {
-        await addAddress(formData)
-      }
+      await promise
       onClose()
     } catch (error) {
-      // Error is handled in the store
-      console.log(error)
+      console.error(error)
     }
   }
 

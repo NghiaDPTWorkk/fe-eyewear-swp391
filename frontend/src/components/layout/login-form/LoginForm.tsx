@@ -6,13 +6,35 @@ import { useLogin } from '@/features/auth/hooks/useLogin'
 import { Button, Checkbox, Input, FormField, Divider } from '@/components'
 import { getOrCreateDeviceId } from '@/shared/utils/device.utils'
 import { ENDPOINTS } from '@/api/endpoints'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
 
 interface LoginFormProps {
   role?: string
 }
 
+const loginSchema = Yup.object().shape({
+  email: Yup.string().required('Email is required').email('Invalid email format'),
+  password: Yup.string()
+    .required('Password is required')
+    .min(8, 'Password must be at least 8 characters')
+})
+
 export const LoginForm = ({ role: _role }: LoginFormProps) => {
   const { mutate: login, isPending } = useLogin()
+  const [rememberMe, setRememberMe] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+
+  const formik = useFormik<LoginRequest>({
+    initialValues: {
+      email: '',
+      password: ''
+    },
+    validationSchema: loginSchema,
+    onSubmit: (values) => {
+      login(values)
+    }
+  })
 
   const handleGoogleLogin = () => {
     const deviceId = getOrCreateDeviceId()
@@ -21,42 +43,17 @@ export const LoginForm = ({ role: _role }: LoginFormProps) => {
     window.location.href = googleAuthUrl
   }
 
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  })
-
-  const [rememberMe, setRememberMe] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
-
-  const isValidEmail = formData.email.includes('@') && formData.email.includes('.')
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const payload = {
-      email: formData.email,
-      password: formData.password
-    }
-    if (!formData.email || !formData.password) return
-
-    login(payload)
-  }
-
-  const handleChange = (field: keyof LoginRequest, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
-
   return (
-    <form onSubmit={handleSubmit} className="w-full">
+    <form onSubmit={formik.handleSubmit} className="w-full">
       <FormField label="Email" className="mb-4">
         <Input
           type="email"
           placeholder="example@gmail.com"
-          value={formData.email}
-          onChange={(e) => handleChange('email', e.target.value)}
+          {...formik.getFieldProps('email')}
           size="lg"
+          className={formik.touched.email && formik.errors.email ? 'border-red-500' : ''}
           rightElement={
-            isValidEmail ? (
+            formik.values.email && !formik.errors.email ? (
               <svg className="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor">
                 <path
                   fillRule="evenodd"
@@ -67,15 +64,18 @@ export const LoginForm = ({ role: _role }: LoginFormProps) => {
             ) : undefined
           }
         />
+        {formik.touched.email && formik.errors.email && (
+          <p className="text-[11px] text-red-500 font-bold mt-1 ml-1">{formik.errors.email}</p>
+        )}
       </FormField>
 
       <FormField label="Password" className="mb-4">
         <Input
           type={showPassword ? 'text' : 'password'}
           placeholder="Input password"
-          value={formData.password}
-          onChange={(e) => handleChange('password', e.target.value)}
+          {...formik.getFieldProps('password')}
           size="lg"
+          className={formik.touched.password && formik.errors.password ? 'border-red-500' : ''}
           rightElement={
             <button
               type="button"
@@ -86,6 +86,9 @@ export const LoginForm = ({ role: _role }: LoginFormProps) => {
             </button>
           }
         />
+        {formik.touched.password && formik.errors.password && (
+          <p className="text-[11px] text-red-500 font-bold mt-1 ml-1">{formik.errors.password}</p>
+        )}
       </FormField>
 
       <div className="mb-6 flex items-center justify-between">
@@ -107,7 +110,7 @@ export const LoginForm = ({ role: _role }: LoginFormProps) => {
         isFullWidth
         size="lg"
         className="mb-4"
-        disabled={isPending}
+        disabled={isPending || !formik.isValid}
       >
         Log In
       </Button>

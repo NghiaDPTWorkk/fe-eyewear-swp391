@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { IoCloudUploadOutline, IoCloseCircle } from 'react-icons/io5'
-import { uploadSingle } from '@/lib/upload'
+import { uploadMany } from '@/lib/upload'
+import { toast } from 'react-hot-toast'
 
 interface ImageUploadProps {
   images: string[]
@@ -18,12 +19,12 @@ export function ImageUpload({ images, onChange }: ImageUploadProps) {
 
     setIsUploading(true)
     try {
-      const uploadPromises = Array.from(files).map((file) => uploadSingle(file))
-      const uploadedUrls = await Promise.all(uploadPromises)
+      const uploadedUrls = await uploadMany(Array.from(files))
       onChange([...images, ...uploadedUrls])
-    } catch (error) {
+      toast.success('Images uploaded successfully')
+    } catch (error: any) {
       console.error('Upload failed:', error)
-      alert('Failed to upload one or more images. Please contact support if problem persists.')
+      toast.error(error.message || 'Failed to upload images')
     } finally {
       setIsUploading(false)
       if (fileInputRef.current) fileInputRef.current.value = ''

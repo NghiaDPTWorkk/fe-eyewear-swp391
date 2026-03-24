@@ -1,6 +1,7 @@
 import { IoAddOutline, IoTrashOutline } from 'react-icons/io5'
 import type { ProductCreateFormState } from '../types/product-create.types'
 import { ImageUpload } from './ImageUpload'
+import { Model3DUpload } from './Model3DUpload'
 import { DynamicSelectField } from './DynamicSelectField'
 import { useAttributes } from '../../../../features/staff/hooks/useAttributes'
 import { cn } from '@/lib/utils'
@@ -35,6 +36,7 @@ export function VariantsEditor(props: {
         stockText: '',
         imgs: [],
         isDefault: false,
+        virTryOnUrl: '',
         options: []
       }
     ])
@@ -82,6 +84,7 @@ export function VariantsEditor(props: {
         stockText: '',
         imgs: [],
         isDefault: false,
+        virTryOnUrl: '',
         options: combo.map((c) => ({
           attributeId: c.attributeId,
           attributeName: c.attributeName,
@@ -288,12 +291,27 @@ export function VariantsEditor(props: {
                   </div>
                 </div>
 
-                <div className="md:col-span-2 space-y-2">
-                  <label className="text-[11px] font-extrabold text-neutral-500 ml-1">Images</label>
+                <div className="space-y-2">
+                  <label className="text-[11px] font-extrabold text-neutral-500 ml-1 uppercase tracking-wider">
+                    Images
+                  </label>
                   <ImageUpload
                     images={v.imgs}
                     onChange={(imgs) =>
                       onChange(variants.map((vv, i) => (i === variantIdx ? { ...vv, imgs } : vv)))
+                    }
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Model3DUpload
+                    value={v.virTryOnUrl}
+                    onChange={(val) =>
+                      onChange(
+                        variants.map((vv, i) =>
+                          i === variantIdx ? { ...vv, virTryOnUrl: val } : vv
+                        )
+                      )
                     }
                   />
                 </div>

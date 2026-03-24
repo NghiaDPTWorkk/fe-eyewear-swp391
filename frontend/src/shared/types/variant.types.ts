@@ -21,6 +21,7 @@ export interface Variant {
   stock: number
   imgs: string[]
   isDefault: boolean
+  virTryOnUrl?: string | null
   createdAt?: Date
   updatedAt?: Date
   deletedAt?: Date | null

@@ -51,6 +51,7 @@ export default function ManagerAddProductPage() {
         stockText: '',
         imgs: [],
         isDefault: true,
+        virTryOnUrl: '',
         options: []
       }
     ],
@@ -160,6 +161,7 @@ export default function ManagerAddProductPage() {
           stock: Number(v.stockText),
           imgs: v.imgs,
           isDefault: v.isDefault,
+          virTryOnUrl: v.virTryOnUrl || undefined,
           options: v.options.map((o) => ({
             attributeId: o.attributeId,
             attributeName: o.attributeName,

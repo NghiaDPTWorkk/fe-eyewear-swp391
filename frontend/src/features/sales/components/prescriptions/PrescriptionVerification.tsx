@@ -44,7 +44,7 @@ export default function PrescriptionVerification({
   onBack,
   onActionSuccess
 }: PrescriptionVerificationProps) {
-  const { approveOrder, rejectOrder, processing } = useSalesStaffAction()
+  const { approveOrder, rejectOrder, processing, error: actionError } = useSalesStaffAction()
   const { data: profileData } = useProfile()
   const [searchParams] = useSearchParams()
   const mode = searchParams.get('mode')
@@ -241,6 +241,7 @@ export default function PrescriptionVerification({
         confirmText="Approve"
         type="info"
         isLoading={processing}
+        error={actionError}
       />
 
       <RejectionModal
@@ -265,6 +266,7 @@ export default function PrescriptionVerification({
         }
         confirmText="Reject Now"
         isLoading={processing}
+        serverError={actionError}
       />
     </div>
   )

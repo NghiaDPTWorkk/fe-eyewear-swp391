@@ -61,6 +61,14 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
     })
   }
 
+  const isAxisRequired = React.useCallback(
+    (eye: 'left' | 'right') => {
+      const cylVal = Number(parameters?.[eye]?.CYL) || 0
+      return cylVal !== 0
+    },
+    [parameters]
+  )
+
   const requiredFields = [
     'right_SPH',
     'right_CYL',
@@ -72,7 +80,12 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
     'left_ADD',
     'common_PD'
   ]
-  const isAllConfirmed = requiredFields.every((f) => confirmedFields.has(f))
+
+  const isAllConfirmed = requiredFields.every((f) => {
+    if (f === 'right_AXIS' && !isAxisRequired('right')) return true
+    if (f === 'left_AXIS' && !isAxisRequired('left')) return true
+    return confirmedFields.has(f)
+  })
 
   const noteError = noteTouched ? validateNote(note ?? '') : null
   const isNoteValid = validateNote(note ?? '') === null
@@ -125,6 +138,36 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
 
     setNumericErrors(errors)
   }, [parameters])
+
+  // Clear AXIS if CYL is 0
+  React.useEffect(() => {
+    if (!onParametersChange) return
+    let changed = false
+    const newParams = { ...parameters }
+
+    if (
+      !isAxisRequired('right') &&
+      parameters?.right?.AXIS !== '0' &&
+      parameters?.right?.AXIS !== 0
+    ) {
+      newParams.right = { ...newParams.right, AXIS: '0' }
+      changed = true
+    }
+    if (!isAxisRequired('left') && parameters?.left?.AXIS !== '0' && parameters?.left?.AXIS !== 0) {
+      newParams.left = { ...newParams.left, AXIS: '0' }
+      changed = true
+    }
+
+    if (changed) {
+      onParametersChange(newParams)
+    }
+  }, [
+    parameters?.right?.CYL,
+    parameters?.left?.CYL,
+    onParametersChange,
+    parameters,
+    isAxisRequired
+  ])
 
   const renderVerificationIcon = (id: string) => (
     <button
@@ -305,13 +348,13 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
                 AXIS
               </label>
               <Input
-                readOnly={isReadOnly}
+                readOnly={isReadOnly || !isAxisRequired('right')}
                 value={parameters?.right?.AXIS ?? '0'}
                 onChange={(e) => handleChange('right', 'AXIS', e.target.value)}
                 onBlur={(e) => handleNumericBlur('right', 'AXIS', e.target.value)}
-                className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['right_AXIS'] ? ' border-red-400' : ''} ${confirmedFields.has('right_AXIS') ? 'bg-mint-50/30' : ''}`}
+                className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['right_AXIS'] ? ' border-red-400' : ''} ${confirmedFields.has('right_AXIS') || !isAxisRequired('right') ? 'bg-mint-50/30' : ''} ${!isAxisRequired('right') ? 'opacity-40 cursor-not-allowed bg-slate-50' : ''}`}
               />
-              {renderVerificationIcon('right_AXIS')}
+              {isAxisRequired('right') && renderVerificationIcon('right_AXIS')}
               {numericErrors['right_AXIS'] && (
                 <p className="text-[10px] text-red-500 text-center">
                   {numericErrors['right_AXIS']}
@@ -380,13 +423,13 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
                 AXIS
               </label>
               <Input
-                readOnly={isReadOnly}
+                readOnly={isReadOnly || !isAxisRequired('left')}
                 value={parameters?.left?.AXIS ?? '0'}
                 onChange={(e) => handleChange('left', 'AXIS', e.target.value)}
                 onBlur={(e) => handleNumericBlur('left', 'AXIS', e.target.value)}
-                className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['left_AXIS'] ? ' border-red-400' : ''} ${confirmedFields.has('left_AXIS') ? 'bg-mint-50/30' : ''}`}
+                className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['left_AXIS'] ? ' border-red-400' : ''} ${confirmedFields.has('left_AXIS') || !isAxisRequired('left') ? 'bg-mint-50/30' : ''} ${!isAxisRequired('left') ? 'opacity-40 cursor-not-allowed bg-slate-50' : ''}`}
               />
-              {renderVerificationIcon('left_AXIS')}
+              {isAxisRequired('left') && renderVerificationIcon('left_AXIS')}
               {numericErrors['left_AXIS'] && (
                 <p className="text-[10px] text-red-500 text-center">{numericErrors['left_AXIS']}</p>
               )}

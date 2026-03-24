@@ -12,6 +12,7 @@ interface TryOnWebcamViewProps {
   productName: string
   productImage: string
   productPrice: number
+  virTryOnUrl?: string | null
   startDetection: (video: HTMLVideoElement) => void
   stopDetection: () => void
   landmarksRef: React.RefObject<NormalizedLandmark[][]>
@@ -27,6 +28,7 @@ export default function TryOnWebcamView({
   productName,
   productImage,
   productPrice,
+  virTryOnUrl,
   startDetection,
   stopDetection,
   landmarksRef,
@@ -123,7 +125,7 @@ export default function TryOnWebcamView({
           videoRef={videoRef}
           landmarksRef={landmarksRef}
           transformationMatricesRef={transformationMatricesRef}
-          glassesImageUrl={productImage}
+          glassesImageUrl={virTryOnUrl || productImage}
         />
 
         {/* Face guide overlay (hidden once landmarks detected) */}

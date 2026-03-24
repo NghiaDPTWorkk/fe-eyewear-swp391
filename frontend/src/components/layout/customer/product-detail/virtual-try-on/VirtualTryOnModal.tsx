@@ -11,6 +11,7 @@ interface VirtualTryOnModalProps {
   productName: string
   productImage: string
   productPrice: number
+  virTryOnUrl?: string | null
   onAddToCart: () => void
   onAddToWishlist: () => void
   isFavorite: boolean
@@ -24,6 +25,7 @@ export default function VirtualTryOnModal({
   productName,
   productImage,
   productPrice,
+  virTryOnUrl,
   onAddToCart,
   onAddToWishlist,
   isFavorite
@@ -122,6 +124,7 @@ export default function VirtualTryOnModal({
             productName={productName}
             productImage={productImage}
             productPrice={productPrice}
+            virTryOnUrl={virTryOnUrl}
             startDetection={faceLandmarker.startDetection}
             stopDetection={faceLandmarker.stopDetection}
             landmarksRef={faceLandmarker.landmarksRef}

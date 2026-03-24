@@ -498,7 +498,7 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
           {/* Shine effect */}
           <div className="absolute inset-0 -translate-x-[150%] skew-x-12 bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:translate-x-[150%] transition-transform duration-1000 ease-in-out" />
         </Button>
-        {product.type !== 'lens' && (
+        {product.type !== 'lens' && currentVariant?.virTryOnUrl && (
           <Button
             variant="outline"
             size="lg"
@@ -559,6 +559,7 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
         productName={product.nameBase}
         productImage={currentVariant?.imgs?.[1] || images[1] || ''}
         productPrice={finalPrice}
+        virTryOnUrl={currentVariant?.virTryOnUrl}
         onAddToCart={() => {
           setIsTryOnOpen(false)
           handleAddToCart()

@@ -40,9 +40,6 @@ const LEFT_EYE_OUTER = 33
 const RIGHT_EYE_OUTER = 263
 const NOSE_BRIDGE = 6
 
-//  model
-const GLB_MODEL_PATH = '/models/going.glb'
-
 // các thông số điều chỉnh
 /** tỉ lệ chiều rộng kính so với khoảng cách hai mắt */
 const FACE_TO_GLASSES_RATIO = 1.7
@@ -73,7 +70,7 @@ export default function GlassesOverlay({
   videoRef,
   landmarksRef,
   transformationMatricesRef,
-  glassesImageUrl: _glassesImageUrl
+  glassesImageUrl
 }: GlassesOverlayProps) {
   return (
     <div className="absolute inset-0 pointer-events-none" style={{ transform: 'scaleX(-1)' }}>
@@ -104,6 +101,7 @@ export default function GlassesOverlay({
             videoRef={videoRef}
             landmarksRef={landmarksRef}
             transformationMatricesRef={transformationMatricesRef}
+            modelUrl={glassesImageUrl}
           />
         </Suspense>
       </Canvas>
@@ -111,21 +109,22 @@ export default function GlassesOverlay({
   )
 }
 
-// tải trước model
-useGLTF.preload(GLB_MODEL_PATH)
+// Remove static preload as we now use dynamic URLs
 
 // scene bên trong
 function GlassesScene({
   videoRef,
   landmarksRef,
-  transformationMatricesRef
+  transformationMatricesRef,
+  modelUrl
 }: {
   videoRef: React.RefObject<HTMLVideoElement | null>
   landmarksRef: React.RefObject<NormalizedLandmark[][]>
   transformationMatricesRef: React.RefObject<Float32Array[]>
+  modelUrl: string
 }) {
   const groupRef = useRef<THREE.Group>(null)
-  const { scene } = useGLTF(GLB_MODEL_PATH)
+  const { scene } = useGLTF(modelUrl)
   const { gl } = useThree()
 
   // bộ lọc one euro cho từng thành phần

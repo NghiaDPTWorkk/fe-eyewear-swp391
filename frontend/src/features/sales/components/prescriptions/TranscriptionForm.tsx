@@ -50,7 +50,7 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
 }) => {
   const [confirmedFields, setConfirmedFields] = React.useState<Set<string>>(new Set())
   const [numericErrors, setNumericErrors] = React.useState<Record<string, string>>({})
-  const [noteTouched, setNoteTouched] = React.useState(false)
+  const [noteTouched, setNoteTouched] = React.useState(true)
 
   const toggleField = (id: string) => {
     setConfirmedFields((prev) => {
@@ -77,20 +77,6 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
   const noteError = noteTouched ? validateNote(note ?? '') : null
   const isNoteValid = validateNote(note ?? '') === null
 
-  const renderVerificationIcon = (id: string) => (
-    <button
-      type="button"
-      onClick={() => toggleField(id)}
-      className={`absolute right-2 top-10 p-1 rounded-lg transition-all z-10 ${
-        confirmedFields.has(id)
-          ? 'bg-mint-500 text-white shadow-sm'
-          : 'bg-slate-100 text-slate-300 hover:bg-slate-200'
-      }`}
-    >
-      <IoCheckmark size={14} strokeWidth={confirmedFields.has(id) ? 4 : 2} />
-    </button>
-  )
-
   const validateNumericField = (field: string, value: string): string | null => {
     if (value === '' || value === '-' || value === '.') return 'Required'
     const num = parseFloat(value)
@@ -113,6 +99,46 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
     }
     return null
   }
+
+  // Pre-emptive validation on mount
+  React.useEffect(() => {
+    const errors: Record<string, string> = {}
+
+    // Validate Right Eye
+    ;['SPH', 'CYL', 'AXIS', 'ADD'].forEach((field) => {
+      const val = (parameters?.right?.[field] ?? '').toString()
+      const err = validateNumericField(field, val)
+      if (err) errors[`right_${field}`] = err
+    })
+
+    // Validate Left Eye
+    ;['SPH', 'CYL', 'AXIS', 'ADD'].forEach((field) => {
+      const val = (parameters?.left?.[field] ?? '').toString()
+      const err = validateNumericField(field, val)
+      if (err) errors[`left_${field}`] = err
+    })
+
+    // Validate PD
+    const pdVal = (parameters?.PD ?? '').toString()
+    const pdErr = validateNumericField('PD', pdVal)
+    if (pdErr) errors['common_PD'] = pdErr
+
+    setNumericErrors(errors)
+  }, [parameters])
+
+  const renderVerificationIcon = (id: string) => (
+    <button
+      type="button"
+      onClick={() => toggleField(id)}
+      className={`absolute right-2 top-10 p-1 rounded-lg transition-all z-10 ${
+        confirmedFields.has(id)
+          ? 'bg-mint-500 text-white shadow-sm'
+          : 'bg-slate-100 text-slate-300 hover:bg-slate-200'
+      }`}
+    >
+      <IoCheckmark size={14} strokeWidth={confirmedFields.has(id) ? 4 : 2} />
+    </button>
+  )
 
   const handleChange = (eye: 'left' | 'right' | 'common', field: string, value: string) => {
     if (!onParametersChange) return

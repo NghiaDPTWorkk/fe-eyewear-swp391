@@ -23,11 +23,11 @@ const ProductInfoCell: React.FC<{ productId: string; sku: string }> = ({ product
 
   return (
     <div className="flex items-center gap-5 pl-2">
-      <div className="w-12 h-12 bg-slate-50 rounded-xl overflow-hidden flex items-center justify-center border border-slate-100 group-hover:bg-white group-hover:border-mint-200 transition-all duration-300">
+      <div className="w-14 h-14 bg-white rounded-xl overflow-hidden flex items-center justify-center border border-slate-100 group-hover:border-mint-200 transition-all duration-300 relative p-1 shadow-sm">
         {isLoading ? (
           <div className="w-4 h-4 border-2 border-mint-200 border-t-mint-600 rounded-full animate-spin" />
         ) : imageUrl ? (
-          <img src={imageUrl} alt={name} className="w-full h-full object-cover" />
+          <img src={imageUrl} alt={name} className="w-full h-full object-contain" />
         ) : (
           <IoCubeOutline size={20} className="text-slate-400 group-hover:text-mint-500" />
         )}
@@ -99,10 +99,10 @@ export const PopularProducts: React.FC<PopularProductsProps> = ({ stats, isLoadi
                 onClick={() => navigate(`/manager/products/${product.productId}`)}
                 className="group hover:bg-slate-50/30 transition-all cursor-pointer"
               >
-                <td className="py-4">
+                <td className="py-2">
                   <ProductInfoCell productId={product.productId} sku={product.sku} />
                 </td>
-                <td className="py-4">
+                <td className="py-2">
                   <div className="flex items-center justify-center">
                     <span className="px-3 py-1 bg-slate-50 text-slate-600 text-[12px] font-semibold rounded-lg border border-slate-100 group-hover:bg-mint-50 group-hover:text-mint-600 group-hover:border-mint-200 transition-all">
                       {product.totalQuantity}{' '}
@@ -110,7 +110,7 @@ export const PopularProducts: React.FC<PopularProductsProps> = ({ stats, isLoadi
                     </span>
                   </div>
                 </td>
-                <td className="py-4 text-right pr-2">
+                <td className="py-2 text-right pr-2">
                   <span className="text-[14px] font-bold text-slate-800 font-mono tracking-tight">
                     {formatPrice(product.totalRevenue)}
                   </span>

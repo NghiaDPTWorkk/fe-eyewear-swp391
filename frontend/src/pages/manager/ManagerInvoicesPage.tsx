@@ -40,13 +40,7 @@ export default function ManagerInvoicesPage() {
   const { onboard, isLoading: isOnboarding } = useOnboard()
   const { complete, isLoading: isCompleting } = useComplete()
 
-  // When searching, ignore status filter to search globally as requested by user
-  // ("search ngay cả khi chọn bất kỳ filter nào")
-  const apiStatus = searchQuery.trim()
-    ? undefined
-    : statusFilter === 'All'
-      ? undefined
-      : statusFilter
+  const apiStatus = statusFilter === 'All' ? undefined : statusFilter
   const { data, isLoading, isError, error, refetch } = useAdminInvoices(
     page,
     limit,

@@ -173,7 +173,7 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
     <button
       type="button"
       onClick={() => toggleField(id)}
-      className={`absolute right-2 top-10 p-1 rounded-lg transition-all z-10 ${
+      className={`absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-lg transition-all z-10 ${
         confirmedFields.has(id)
           ? 'bg-mint-500 text-white shadow-sm'
           : 'bg-slate-100 text-slate-300 hover:bg-slate-200'
@@ -315,14 +315,16 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
               <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block text-center">
                 SPH
               </label>
-              <Input
-                readOnly={isReadOnly}
-                value={parameters?.right?.SPH ?? '0.00'}
-                onChange={(e) => handleChange('right', 'SPH', e.target.value)}
-                onBlur={(e) => handleNumericBlur('right', 'SPH', e.target.value)}
-                className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['right_SPH'] ? ' border-red-400' : ''} ${confirmedFields.has('right_SPH') ? 'bg-mint-50/30' : ''}`}
-              />
-              {renderVerificationIcon('right_SPH')}
+              <div className="relative">
+                <Input
+                  readOnly={isReadOnly}
+                  value={parameters?.right?.SPH ?? '0.00'}
+                  onChange={(e) => handleChange('right', 'SPH', e.target.value)}
+                  onBlur={(e) => handleNumericBlur('right', 'SPH', e.target.value)}
+                  className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['right_SPH'] ? ' border-red-400' : ''} ${confirmedFields.has('right_SPH') ? 'bg-mint-50/30' : ''}`}
+                />
+                {renderVerificationIcon('right_SPH')}
+              </div>
               {numericErrors['right_SPH'] && (
                 <p className="text-[10px] text-red-500 text-center">{numericErrors['right_SPH']}</p>
               )}
@@ -331,14 +333,16 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
               <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block text-center">
                 CYL
               </label>
-              <Input
-                readOnly={isReadOnly}
-                value={parameters?.right?.CYL ?? '0.00'}
-                onChange={(e) => handleChange('right', 'CYL', e.target.value)}
-                onBlur={(e) => handleNumericBlur('right', 'CYL', e.target.value)}
-                className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['right_CYL'] ? ' border-red-400' : ''} ${confirmedFields.has('right_CYL') ? 'bg-mint-50/30' : ''}`}
-              />
-              {renderVerificationIcon('right_CYL')}
+              <div className="relative">
+                <Input
+                  readOnly={isReadOnly}
+                  value={parameters?.right?.CYL ?? '0.00'}
+                  onChange={(e) => handleChange('right', 'CYL', e.target.value)}
+                  onBlur={(e) => handleNumericBlur('right', 'CYL', e.target.value)}
+                  className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['right_CYL'] ? ' border-red-400' : ''} ${confirmedFields.has('right_CYL') ? 'bg-mint-50/30' : ''}`}
+                />
+                {renderVerificationIcon('right_CYL')}
+              </div>
               {numericErrors['right_CYL'] && (
                 <p className="text-[10px] text-red-500 text-center">{numericErrors['right_CYL']}</p>
               )}
@@ -347,14 +351,16 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
               <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block text-center">
                 AXIS
               </label>
-              <Input
-                readOnly={isReadOnly || !isAxisRequired('right')}
-                value={parameters?.right?.AXIS ?? '0'}
-                onChange={(e) => handleChange('right', 'AXIS', e.target.value)}
-                onBlur={(e) => handleNumericBlur('right', 'AXIS', e.target.value)}
-                className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['right_AXIS'] ? ' border-red-400' : ''} ${confirmedFields.has('right_AXIS') || !isAxisRequired('right') ? 'bg-mint-50/30' : ''} ${!isAxisRequired('right') ? 'opacity-40 cursor-not-allowed bg-slate-50' : ''}`}
-              />
-              {isAxisRequired('right') && renderVerificationIcon('right_AXIS')}
+              <div className="relative">
+                <Input
+                  readOnly={isReadOnly || !isAxisRequired('right')}
+                  value={parameters?.right?.AXIS ?? '0'}
+                  onChange={(e) => handleChange('right', 'AXIS', e.target.value)}
+                  onBlur={(e) => handleNumericBlur('right', 'AXIS', e.target.value)}
+                  className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['right_AXIS'] ? ' border-red-400' : ''} ${confirmedFields.has('right_AXIS') || !isAxisRequired('right') ? 'bg-mint-50/30' : ''} ${!isAxisRequired('right') ? 'opacity-40 cursor-not-allowed bg-slate-50' : ''}`}
+                />
+                {isAxisRequired('right') && renderVerificationIcon('right_AXIS')}
+              </div>
               {numericErrors['right_AXIS'] && (
                 <p className="text-[10px] text-red-500 text-center">
                   {numericErrors['right_AXIS']}
@@ -365,14 +371,16 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
               <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block text-center">
                 ADD
               </label>
-              <Input
-                readOnly={isReadOnly}
-                value={parameters?.right?.ADD ?? '0.00'}
-                onChange={(e) => handleChange('right', 'ADD', e.target.value)}
-                onBlur={(e) => handleNumericBlur('right', 'ADD', e.target.value)}
-                className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['right_ADD'] ? ' border-red-400' : ''} ${confirmedFields.has('right_ADD') ? 'bg-mint-50/30' : ''}`}
-              />
-              {renderVerificationIcon('right_ADD')}
+              <div className="relative">
+                <Input
+                  readOnly={isReadOnly}
+                  value={parameters?.right?.ADD ?? '0.00'}
+                  onChange={(e) => handleChange('right', 'ADD', e.target.value)}
+                  onBlur={(e) => handleNumericBlur('right', 'ADD', e.target.value)}
+                  className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['right_ADD'] ? ' border-red-400' : ''} ${confirmedFields.has('right_ADD') ? 'bg-mint-50/30' : ''}`}
+                />
+                {renderVerificationIcon('right_ADD')}
+              </div>
               {numericErrors['right_ADD'] && (
                 <p className="text-[10px] text-red-500 text-center">{numericErrors['right_ADD']}</p>
               )}
@@ -390,14 +398,16 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
               <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block text-center">
                 SPH
               </label>
-              <Input
-                readOnly={isReadOnly}
-                value={parameters?.left?.SPH ?? '0.00'}
-                onChange={(e) => handleChange('left', 'SPH', e.target.value)}
-                onBlur={(e) => handleNumericBlur('left', 'SPH', e.target.value)}
-                className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['left_SPH'] ? ' border-red-400' : ''} ${confirmedFields.has('left_SPH') ? 'bg-mint-50/30' : ''}`}
-              />
-              {renderVerificationIcon('left_SPH')}
+              <div className="relative">
+                <Input
+                  readOnly={isReadOnly}
+                  value={parameters?.left?.SPH ?? '0.00'}
+                  onChange={(e) => handleChange('left', 'SPH', e.target.value)}
+                  onBlur={(e) => handleNumericBlur('left', 'SPH', e.target.value)}
+                  className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['left_SPH'] ? ' border-red-400' : ''} ${confirmedFields.has('left_SPH') ? 'bg-mint-50/30' : ''}`}
+                />
+                {renderVerificationIcon('left_SPH')}
+              </div>
               {numericErrors['left_SPH'] && (
                 <p className="text-[10px] text-red-500 text-center">{numericErrors['left_SPH']}</p>
               )}
@@ -406,14 +416,16 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
               <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block text-center">
                 CYL
               </label>
-              <Input
-                readOnly={isReadOnly}
-                value={parameters?.left?.CYL ?? '0.00'}
-                onChange={(e) => handleChange('left', 'CYL', e.target.value)}
-                onBlur={(e) => handleNumericBlur('left', 'CYL', e.target.value)}
-                className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['left_CYL'] ? ' border-red-400' : ''} ${confirmedFields.has('left_CYL') ? 'bg-mint-50/30' : ''}`}
-              />
-              {renderVerificationIcon('left_CYL')}
+              <div className="relative">
+                <Input
+                  readOnly={isReadOnly}
+                  value={parameters?.left?.CYL ?? '0.00'}
+                  onChange={(e) => handleChange('left', 'CYL', e.target.value)}
+                  onBlur={(e) => handleNumericBlur('left', 'CYL', e.target.value)}
+                  className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['left_CYL'] ? ' border-red-400' : ''} ${confirmedFields.has('left_CYL') ? 'bg-mint-50/30' : ''}`}
+                />
+                {renderVerificationIcon('left_CYL')}
+              </div>
               {numericErrors['left_CYL'] && (
                 <p className="text-[10px] text-red-500 text-center">{numericErrors['left_CYL']}</p>
               )}
@@ -422,14 +434,16 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
               <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block text-center">
                 AXIS
               </label>
-              <Input
-                readOnly={isReadOnly || !isAxisRequired('left')}
-                value={parameters?.left?.AXIS ?? '0'}
-                onChange={(e) => handleChange('left', 'AXIS', e.target.value)}
-                onBlur={(e) => handleNumericBlur('left', 'AXIS', e.target.value)}
-                className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['left_AXIS'] ? ' border-red-400' : ''} ${confirmedFields.has('left_AXIS') || !isAxisRequired('left') ? 'bg-mint-50/30' : ''} ${!isAxisRequired('left') ? 'opacity-40 cursor-not-allowed bg-slate-50' : ''}`}
-              />
-              {isAxisRequired('left') && renderVerificationIcon('left_AXIS')}
+              <div className="relative">
+                <Input
+                  readOnly={isReadOnly || !isAxisRequired('left')}
+                  value={parameters?.left?.AXIS ?? '0'}
+                  onChange={(e) => handleChange('left', 'AXIS', e.target.value)}
+                  onBlur={(e) => handleNumericBlur('left', 'AXIS', e.target.value)}
+                  className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['left_AXIS'] ? ' border-red-400' : ''} ${confirmedFields.has('left_AXIS') || !isAxisRequired('left') ? 'bg-mint-50/30' : ''} ${!isAxisRequired('left') ? 'opacity-40 cursor-not-allowed bg-slate-50' : ''}`}
+                />
+                {isAxisRequired('left') && renderVerificationIcon('left_AXIS')}
+              </div>
               {numericErrors['left_AXIS'] && (
                 <p className="text-[10px] text-red-500 text-center">{numericErrors['left_AXIS']}</p>
               )}
@@ -438,14 +452,16 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
               <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block text-center">
                 ADD
               </label>
-              <Input
-                readOnly={isReadOnly}
-                value={parameters?.left?.ADD ?? '0.00'}
-                onChange={(e) => handleChange('left', 'ADD', e.target.value)}
-                onBlur={(e) => handleNumericBlur('left', 'ADD', e.target.value)}
-                className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['left_ADD'] ? ' border-red-400' : ''} ${confirmedFields.has('left_ADD') ? 'bg-mint-50/30' : ''}`}
-              />
-              {renderVerificationIcon('left_ADD')}
+              <div className="relative">
+                <Input
+                  readOnly={isReadOnly}
+                  value={parameters?.left?.ADD ?? '0.00'}
+                  onChange={(e) => handleChange('left', 'ADD', e.target.value)}
+                  onBlur={(e) => handleNumericBlur('left', 'ADD', e.target.value)}
+                  className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['left_ADD'] ? ' border-red-400' : ''} ${confirmedFields.has('left_ADD') ? 'bg-mint-50/30' : ''}`}
+                />
+                {renderVerificationIcon('left_ADD')}
+              </div>
               {numericErrors['left_ADD'] && (
                 <p className="text-[10px] text-red-500 text-center">{numericErrors['left_ADD']}</p>
               )}

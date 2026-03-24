@@ -75,7 +75,10 @@ export default function TryOnWebcamView({
       {/* Top overlay buttons */}
       <div className="absolute top-0 left-0 right-0 z-10 flex justify-between items-start p-3">
         {/* Menu dots */}
-        <button className="w-9 h-9 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors">
+        <button
+          type="button"
+          className="w-9 h-9 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
+        >
           <div className="flex gap-0.5">
             <span className="w-1 h-1 rounded-full bg-white" />
             <span className="w-1 h-1 rounded-full bg-white" />
@@ -85,6 +88,7 @@ export default function TryOnWebcamView({
 
         <div className="flex flex-col gap-2">
           <button
+            type="button"
             onClick={onClose}
             className="w-9 h-9 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors group"
           >
@@ -130,7 +134,10 @@ export default function TryOnWebcamView({
 
       {/* Bottom product bar */}
       <div className="bg-white px-4 py-3 flex items-center gap-3">
-        <button className="w-10 h-10 rounded-xl bg-primary-500 flex items-center justify-center hover:bg-primary-600 transition-colors flex-shrink-0 shadow-md">
+        <button
+          type="button"
+          className="w-10 h-10 rounded-xl bg-primary-500 flex items-center justify-center hover:bg-primary-600 transition-colors flex-shrink-0 shadow-md"
+        >
           <Camera className="w-5 h-5 text-white" />
         </button>
 
@@ -151,6 +158,7 @@ export default function TryOnWebcamView({
         </div>
 
         <Button
+          type="button"
           size="sm"
           className="rounded-xl shadow-md flex-shrink-0 px-4"
           leftIcon={<ShoppingCart className="w-3.5 h-3.5" />}

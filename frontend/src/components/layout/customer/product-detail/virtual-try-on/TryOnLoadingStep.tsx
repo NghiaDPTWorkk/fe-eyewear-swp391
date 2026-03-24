@@ -16,20 +16,26 @@ export default function TryOnLoadingStep({ onReady, onError, initModel }: TryOnL
     hasRequested.current = true
 
     const initialize = async () => {
+      console.log('[TryOnLoadingStep] Initialization START.')
       try {
-        // Run camera + model init in parallel
-        const [stream] = await Promise.all([
-          navigator.mediaDevices.getUserMedia({
-            video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
-            audio: false
-          }),
-          initModel()
-        ])
+        console.log('[TryOnLoadingStep] 1. Requesting CAMERA/USER_MEDIA...')
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
+          audio: false
+        })
+        console.log('[TryOnLoadingStep] Camera READY.')
 
-        // Small delay so the user sees the loading animation
-        setTimeout(() => onReady(stream), 500)
+        console.log('[TryOnLoadingStep] 2. Initializing AI MODEL...')
+        await initModel()
+        console.log('[TryOnLoadingStep] Model READY.')
+
+        // Small delay so the user sees the loading animation finished
+        setTimeout(() => {
+          console.log('[TryOnLoadingStep] Triggering onReady callback.')
+          onReady(stream)
+        }, 300)
       } catch (err) {
-        console.error('Initialization failed:', err)
+        console.error('[TryOnLoadingStep] Initialization FAILED:', err)
         toast.error(
           'Failed to initialize Virtual Try-On. Please allow camera permissions and try again.'
         )

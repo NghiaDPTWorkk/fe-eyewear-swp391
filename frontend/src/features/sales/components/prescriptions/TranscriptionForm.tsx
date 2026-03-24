@@ -521,16 +521,6 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
             >
               Verify &amp; Submit
             </Button>
-            {!isNoteValid && noteTouched && (
-              <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest text-center italic">
-                ⚠ Staff Note must be at least 10 characters
-              </p>
-            )}
-            {hasNumericErrors && (
-              <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest text-center italic">
-                ⚠ Please correct numeric fields before submitting
-              </p>
-            )}
           </div>
           <Button
             isFullWidth

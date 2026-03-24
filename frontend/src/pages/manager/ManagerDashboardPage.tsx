@@ -31,14 +31,10 @@ export default function ManagerDashboardPage() {
   )
 
   const stats = useMemo(() => {
-    if (!revenueData?.rows || revenueData.rows.length === 0)
-      return { totalRevenue: 0, totalInvoices: 0, avgValue: 0 }
-
-    const latestRow = revenueData.rows[revenueData.rows.length - 1]
-    const totalRevenue = latestRow.totalRevenue
-    const totalInvoices = latestRow.invoiceCount
+    if (!revenueData?.rows) return { totalRevenue: 0, totalInvoices: 0, avgValue: 0 }
+    const totalRevenue = revenueData.rows.reduce((acc, row) => acc + row.totalRevenue, 0)
+    const totalInvoices = revenueData.rows.reduce((acc, row) => acc + row.invoiceCount, 0)
     const avgValue = totalInvoices > 0 ? totalRevenue / totalInvoices : 0
-
     return { totalRevenue, totalInvoices, avgValue }
   }, [revenueData])
 

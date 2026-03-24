@@ -154,14 +154,14 @@ export default function PrescriptionVerification({
       'PENDING_LAB',
       'PACKAGING',
       'DELIVERING',
-      'DELIVERED'
+      'DELIVERED',
+      'WAITING_ASSIGN',
+      'ASSIGNED'
     ].includes(order.status?.toUpperCase()) ||
     !!order.approvedAt ||
     !!order.completedAt ||
     !!order.rejectedAt
-  const isPending = ['WAITING_ASSIGN', 'PENDING', 'DEPOSITED', 'WAITING_VERIFY'].includes(
-    order.status?.toUpperCase()
-  )
+  const isPending = ['PENDING', 'DEPOSITED', 'WAITING_VERIFY'].includes(order.status?.toUpperCase())
   const isRejected = ['REJECTED', 'CANCELED', 'REJECT'].includes(order.status?.toUpperCase())
 
   const isReadOnly = isReadOnlyParams || isApproved || isRejected

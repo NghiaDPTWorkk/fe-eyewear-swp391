@@ -9,28 +9,36 @@ import {
 
 import { Container } from '@/components'
 import { PageHeader } from '@/features/sales/components/common'
-import { useRevenueStats, useReturnedOrders } from '@/features/manager/hooks'
+import { useRevenueStats, useReturnedOrders, useTopSalesStats } from '@/features/manager/hooks'
 import { formatPrice, formatDate } from '@/shared/utils'
 
 import { StatCard } from './components/dashboard/StatCard'
 import { CustomerGrowth } from './components/dashboard/CustomerGrowth'
 import { PopularProducts } from './components/dashboard/PopularProducts'
 
-import { useReturnMonthlyReport } from '@/features/manager/hooks/useReturnTickets'
-
 export default function ManagerDashboardPage() {
   const [period, setPeriod] = useState<string>('month')
 
-  const { data: revenueData, isLoading: isRevenueLoading } = useRevenueStats({ period })
+  const now = new Date()
+  const currentMonth = now.getMonth() + 1
+  const currentYear = now.getFullYear()
 
+  const { data: revenueData, isLoading: isRevenueLoading } = useRevenueStats({ period })
   const { data: returnedData, isLoading: isReturnedLoading } = useReturnedOrders({ search: '' })
-  const { data: monthlyReportData, isLoading: isMonthlyReportLoading } = useReturnMonthlyReport()
+  const { data: topSalesData, isLoading: isTopSalesLoading } = useTopSalesStats(
+    currentMonth,
+    currentYear
+  )
 
   const stats = useMemo(() => {
-    if (!revenueData?.rows) return { totalRevenue: 0, totalInvoices: 0, avgValue: 0 }
-    const totalRevenue = revenueData.rows.reduce((acc, row) => acc + row.totalRevenue, 0)
-    const totalInvoices = revenueData.rows.reduce((acc, row) => acc + row.invoiceCount, 0)
+    if (!revenueData?.rows || revenueData.rows.length === 0)
+      return { totalRevenue: 0, totalInvoices: 0, avgValue: 0 }
+
+    const latestRow = revenueData.rows[revenueData.rows.length - 1]
+    const totalRevenue = latestRow.totalRevenue
+    const totalInvoices = latestRow.invoiceCount
     const avgValue = totalInvoices > 0 ? totalRevenue / totalInvoices : 0
+
     return { totalRevenue, totalInvoices, avgValue }
   }, [revenueData])
 
@@ -112,7 +120,7 @@ export default function ManagerDashboardPage() {
               </div>
             </div>
             <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-              {['day', 'week', 'month', 'year'].map((p) => (
+              {['week', 'month', 'year'].map((p) => (
                 <button
                   key={p}
                   onClick={() => setPeriod(p)}
@@ -257,14 +265,13 @@ export default function ManagerDashboardPage() {
       {/* Middle Section: Original Dashboard Components */}
       <div className="grid grid-cols-1 gap-6">
         <div className="w-full">
-          <CustomerGrowth reportData={monthlyReportData} isLoading={isMonthlyReportLoading} />
+          <CustomerGrowth stats={topSalesData} isLoading={isTopSalesLoading} />
         </div>
       </div>
 
-      {/* Bottom Section: Dynamic Popular Products Full Width */}
       <div className="grid grid-cols-1 gap-6">
         <div className="w-full">
-          <PopularProducts />
+          <PopularProducts stats={topSalesData} isLoading={isTopSalesLoading} />
         </div>
       </div>
     </Container>

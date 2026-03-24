@@ -63,3 +63,24 @@ export interface ReturnedOrdersResponse {
   }
   returnedOrders: ReturnedOrder[]
 }
+
+export interface CitySale {
+  totalQuantity: number
+  totalAmount: number
+  invoiceCount: number
+  city: string
+}
+
+export interface ProductSale {
+  totalQuantity: number
+  totalRevenue: number
+  productId: string
+  sku: string
+}
+
+export interface TopSalesStats {
+  month: number
+  year: number
+  topCities: CitySale[]
+  topProducts: ProductSale[]
+}

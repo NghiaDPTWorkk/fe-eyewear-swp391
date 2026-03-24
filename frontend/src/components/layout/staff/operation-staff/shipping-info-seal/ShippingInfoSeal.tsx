@@ -1,4 +1,4 @@
-import LogoEyewearIcon from "@/shared/components/ui/logoeyewear/LogoEyewearIcon"
+import LogoEyewearIcon from '@/shared/components/ui/logoeyewear/LogoEyewearIcon'
 
 interface ShippingInfoSealProps {
   invoiceCode: string
@@ -24,7 +24,7 @@ export default function ShippingInfoSeal({
         <div className="w-[45%] flex flex-col pr-6 border-r-2 border-dashed border-gray-400">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center">
-              <LogoEyewearIcon className="w-6 h-6 text-white bg-black"/>
+              <LogoEyewearIcon className="w-6 h-6 text-white bg-black" />
             </div>
             <div className="text-xl font-black tracking-tight text-gray-900 uppercase">
               OpticView

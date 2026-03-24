@@ -89,7 +89,8 @@ export default function AdminSystemConfigPage() {
                   System Info
                 </h5>
                 <p className="text-xs text-indigo-700 font-medium leading-relaxed">
-                  Last updated by Admin on March 23, 2024. All changes are logged for auditing purposes.
+                  Last updated by Admin on March 23, 2024. All changes are logged for auditing
+                  purposes.
                 </p>
               </Card>
             </div>
@@ -103,7 +104,9 @@ export default function AdminSystemConfigPage() {
                     <IoBusOutline size={24} />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 font-heading">Shipping Settings</h3>
+                    <h3 className="text-xl font-bold text-gray-900 font-heading">
+                      Shipping Settings
+                    </h3>
                     <p className="text-xs font-medium text-neutral-400">
                       Configure default logistics parameters.
                     </p>

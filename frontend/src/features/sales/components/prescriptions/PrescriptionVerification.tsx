@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { toast } from 'react-hot-toast'
 import { IoCheckmark, IoClose } from 'react-icons/io5'
 import { useSearchParams } from 'react-router-dom'
 
@@ -107,7 +106,6 @@ export default function PrescriptionVerification({
 
     const success = await approveOrder(orderId, { parameters: finalParams, note: finalNote })
     if (success) {
-      toast.success('Prescription approved')
       setIsConfirmOpen(false)
       refetch()
       onActionSuccess?.()
@@ -117,7 +115,6 @@ export default function PrescriptionVerification({
   const handleConfirmReject = async (note: string) => {
     const success = await rejectOrder(orderId, order?.invoiceId, note)
     if (success) {
-      toast.success('Prescription rejected')
       setIsConfirmOpen(false)
       refetch()
       onActionSuccess?.()

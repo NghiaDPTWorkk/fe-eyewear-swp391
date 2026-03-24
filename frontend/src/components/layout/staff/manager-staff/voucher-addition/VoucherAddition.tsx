@@ -124,13 +124,17 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
       .min(Yup.ref('startedDate'), 'End date cannot be before start date'),
     minOrderValue: Yup.number()
       .min(0, 'Min order value cannot be negative')
-      .test('min-less-than-max', 'Min order value must be less than max discount cap', function (value) {
-        const { maxDiscountValue, typeDiscount } = this.parent
-        if (typeDiscount === DiscountType.PERCENTAGE && maxDiscountValue > 0) {
-          return (value || 0) < maxDiscountValue
+      .test(
+        'min-less-than-max',
+        'Min order value must be less than max discount cap',
+        function (value) {
+          const { maxDiscountValue, typeDiscount } = this.parent
+          if (typeDiscount === DiscountType.PERCENTAGE && maxDiscountValue > 0) {
+            return (value || 0) < maxDiscountValue
+          }
+          return true
         }
-        return true
-      }),
+      ),
     maxDiscountValue: Yup.number().min(0, 'Max discount cap cannot be negative'),
     applyScope: Yup.string().required(),
     status: Yup.string().required()
@@ -308,7 +312,9 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
                   placeholder="0 = no minimum"
                 />
                 {formik.touched.minOrderValue && formik.errors.minOrderValue && (
-                  <p className="text-[10px] text-red-500 font-bold">{formik.errors.minOrderValue}</p>
+                  <p className="text-[10px] text-red-500 font-bold">
+                    {formik.errors.minOrderValue}
+                  </p>
                 )}
               </FormRow>
               {isPerc && (
@@ -321,7 +327,9 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
                     placeholder="0 = unlimited"
                   />
                   {formik.touched.maxDiscountValue && formik.errors.maxDiscountValue && (
-                    <p className="text-[10px] text-red-500 font-bold">{formik.errors.maxDiscountValue}</p>
+                    <p className="text-[10px] text-red-500 font-bold">
+                      {formik.errors.maxDiscountValue}
+                    </p>
                   )}
                 </FormRow>
               )}
@@ -332,10 +340,7 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
           <Section title="Scope & Limits">
             <div className="grid grid-cols-2 gap-3">
               <FormRow label="Apply Scope">
-                <select
-                  {...formik.getFieldProps('applyScope')}
-                  className={inputCls}
-                >
+                <select {...formik.getFieldProps('applyScope')} className={inputCls}>
                   {Object.values(ApplyScope).map((scopeVal) => (
                     <option key={scopeVal} value={scopeVal}>
                       {APPLY_SCOPE_LABELS[scopeVal] ?? scopeVal}
@@ -379,7 +384,9 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
                   />
                 </div>
                 {formik.touched.startedDate && formik.errors.startedDate && (
-                  <p className="text-[10px] text-red-500 font-bold">{formik.errors.startedDate as string}</p>
+                  <p className="text-[10px] text-red-500 font-bold">
+                    {formik.errors.startedDate as string}
+                  </p>
                 )}
               </FormRow>
               <FormRow label="Valid Until">
@@ -395,7 +402,9 @@ export const VoucherAddition: React.FC<VoucherAdditionProps> = ({
                   />
                 </div>
                 {formik.touched.endedDate && formik.errors.endedDate && (
-                  <p className="text-[10px] text-red-500 font-bold">{formik.errors.endedDate as string}</p>
+                  <p className="text-[10px] text-red-500 font-bold">
+                    {formik.errors.endedDate as string}
+                  </p>
                 )}
               </FormRow>
             </div>

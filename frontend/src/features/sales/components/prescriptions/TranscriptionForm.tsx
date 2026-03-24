@@ -4,8 +4,7 @@ import {
   IoClose,
   IoEyeOutline,
   IoInformationCircleOutline,
-  IoPersonOutline,
-  IoWarningOutline
+  IoPersonOutline
 } from 'react-icons/io5'
 import { Button, Card, Input } from '@/shared/components/ui-core'
 
@@ -230,17 +229,6 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
           </div>
         </div>
       </div>
-
-      {hasNumericErrors && (
-        <div className="px-5 py-3 bg-red-50 border-b border-red-100 flex items-center gap-3 animate-in fade-in slide-in-from-top-1 duration-300">
-          <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center shrink-0">
-            <IoWarningOutline className="text-red-600" size={18} />
-          </div>
-          <p className="text-xs font-bold text-red-700 uppercase tracking-wide">
-            Invalid parameters detected. Please correct the fields highlighted in red below.
-          </p>
-        </div>
-      )}
 
       <div className="p-5 bg-white space-y-5">
         {}

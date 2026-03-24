@@ -142,15 +142,23 @@ export default function PrescriptionVerification({
     )
   }
 
-  const isApproved = [
-    'APPROVED',
-    'VERIFIED',
-    'COMPLETED',
-    'MAKING',
-    'PACKAGING',
-    'DELIVERING',
-    'DELIVERED'
-  ].includes(order.status?.toUpperCase())
+  const isApproved =
+    [
+      'ACCEPTED',
+      'APPROVED',
+      'VERIFIED',
+      'COMPLETED',
+      'MAKING',
+      'IN_PROGRESS',
+      'PRODUCTION',
+      'PENDING_LAB',
+      'PACKAGING',
+      'DELIVERING',
+      'DELIVERED'
+    ].includes(order.status?.toUpperCase()) ||
+    !!order.approvedAt ||
+    !!order.completedAt ||
+    !!order.rejectedAt
   const isPending = ['WAITING_ASSIGN', 'PENDING', 'DEPOSITED', 'WAITING_VERIFY'].includes(
     order.status?.toUpperCase()
   )
@@ -218,7 +226,11 @@ export default function PrescriptionVerification({
             handleApprove={handleApprove}
             handleReject={handleReject}
             assignStaff={order.assignStaff || undefined}
-            staffName={order.staffName || profileData?.data?.name}
+            staffName={
+              isApproved || isRejected
+                ? order.staffName
+                : order.staffName || profileData?.data?.name
+            }
             actionTime={formatDate(
               isApproved
                 ? order.approvedAt || order.completedAt || order.updatedAt

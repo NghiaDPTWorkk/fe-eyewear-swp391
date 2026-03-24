@@ -6,12 +6,15 @@ import { useAddressStore } from '@/store/address.store'
 import { AddAddressModal } from '@/components/layout/customer/account/addresses/AddAddressModal'
 import type { Address } from '@/shared/types/address.types'
 import { toast } from 'react-hot-toast'
+import ConfirmationModal from '@/shared/components/ui-core/confirm-modal/ConfirmationModal'
 
 export function AddressesPage() {
   const { addresses, fetchAddresses, setDefaultAddress, deleteAddress, isLoading, error } =
     useAddressStore()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [addressToEdit, setAddressToEdit] = useState<Address | null>(null)
+  const [addressToDelete, setAddressToDelete] = useState<string | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
     fetchAddresses()
@@ -25,6 +28,22 @@ export function AddressesPage() {
   const handleClose = () => {
     setIsModalOpen(false)
     setAddressToEdit(null)
+  }
+
+  const handleDelete = async () => {
+    if (!addressToDelete) return
+
+    setIsDeleting(true)
+    try {
+      await toast.promise(deleteAddress(addressToDelete), {
+        loading: 'Deleting address...',
+        success: 'Address deleted successfully!',
+        error: (err) => err?.response?.data?.message || 'Failed to delete address'
+      })
+      setAddressToDelete(null)
+    } finally {
+      setIsDeleting(false)
+    }
   }
 
   const isEmpty = addresses.length === 0
@@ -92,17 +111,7 @@ export function AddressesPage() {
               city={addr.city}
               isDefault={addr.isDefault}
               onEdit={() => handleEdit(addr)}
-              onDelete={() => {
-                if (window.confirm('Are you sure you want to delete this address?')) {
-                  if (addr._id) {
-                    toast.promise(deleteAddress(addr._id), {
-                      loading: 'Deleting address...',
-                      success: 'Address deleted successfully!',
-                      error: (err) => err?.response?.data?.message || 'Failed to delete address'
-                    })
-                  }
-                }
-              }}
+              onDelete={() => addr._id && setAddressToDelete(addr._id)}
               onSetDefault={() => {
                 if (addr._id) {
                   toast.promise(setDefaultAddress(addr._id, addr), {
@@ -143,6 +152,17 @@ export function AddressesPage() {
       </div>
 
       <AddAddressModal isOpen={isModalOpen} onClose={handleClose} addressToEdit={addressToEdit} />
+
+      <ConfirmationModal
+        isOpen={!!addressToDelete}
+        onClose={() => setAddressToDelete(null)}
+        onConfirm={handleDelete}
+        title="Delete Address"
+        message="Are you sure you want to delete this address? This action is IRREVERSIBLE."
+        confirmText="Delete"
+        isLoading={isDeleting}
+        type="danger"
+      />
     </div>
   )
 }

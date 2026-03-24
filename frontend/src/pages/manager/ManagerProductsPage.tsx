@@ -18,6 +18,7 @@ import { Container, ConfirmationModal } from '@/shared/components/ui-core'
 import { PageHeader } from '@/features/sales/components/common'
 import { useAdminProducts } from '@/features/manager/hooks'
 import { toast } from 'react-hot-toast'
+import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 
 const SummaryCard: React.FC<{
   label: string
@@ -50,12 +51,6 @@ const SummaryCard: React.FC<{
     </div>
   </div>
 )
-function formatPrice(price: number) {
-  if (price >= 1_000_000) {
-    return new Intl.NumberFormat('vi-VN').format(price) + '₫'
-  }
-  return '$' + price.toFixed(2)
-}
 
 export default function ManagerProductsPage() {
   const navigate = useNavigate()
@@ -324,11 +319,11 @@ export default function ManagerProductsPage() {
                     <td className="px-6 py-6 text-right font-primary">
                       <div>
                         <p className="text-sm font-bold text-gray-900 leading-none mb-1">
-                          {formatPrice(p.defaultVariantFinalPrice)}
+                          <VNDPrice amount={p.defaultVariantFinalPrice} />
                         </p>
                         {p.defaultVariantPrice !== p.defaultVariantFinalPrice && (
                           <p className="text-[10px] font-semibold text-neutral-400 line-through">
-                            {formatPrice(p.defaultVariantPrice)}
+                            <VNDPrice amount={p.defaultVariantPrice} />
                           </p>
                         )}
                       </div>

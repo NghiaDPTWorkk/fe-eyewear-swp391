@@ -54,6 +54,31 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
   const noteError = noteTouched ? validateNote(note ?? '') : null
   const isNoteValid = validateNote(note ?? '') === null
 
+  const validateNumericField = (field: string, value: string): string | null => {
+    if (value === '' || value === '-' || value === '.') return 'Required'
+    const num = parseFloat(value)
+    if (isNaN(num)) return 'Invalid number'
+
+    switch (field) {
+      case 'SPH':
+        if (num < -20 || num > 20) return 'Must be between -20 and 20'
+        break
+      case 'CYL':
+        if (num < -20 || num > 20) return 'Must be between -20 and 20'
+        break
+      case 'AXIS':
+        if (num < 0 || num > 180) return 'Must be between 0 and 180'
+        break
+      case 'ADD':
+        if (num < 0.75 || num > 3.5) return 'Must be between 0.75 and 3.5'
+        break
+      case 'PD':
+        if (num < 35 || num > 65) return 'Must be between 35 and 65'
+        break
+    }
+    return null
+  }
+
   const handleChange = (eye: 'left' | 'right' | 'common', field: string, value: string) => {
     if (!onParametersChange) return
 
@@ -69,8 +94,12 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
       return
     }
 
+    // Real-time validation
     const errorKey = `${eye}_${field}`
-    if (numericErrors[errorKey]) {
+    const error = validateNumericField(field, normalizedValue)
+    if (error) {
+      setNumericErrors((prev) => ({ ...prev, [errorKey]: error }))
+    } else {
       setNumericErrors((prev) => {
         const n = { ...prev }
         delete n[errorKey]
@@ -94,8 +123,9 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
 
   const handleNumericBlur = (eye: 'left' | 'right' | 'common', field: string, value: string) => {
     const errorKey = `${eye}_${field}`
-    if (value === '' || value === '-' || value === '.') {
-      setNumericErrors((prev) => ({ ...prev, [errorKey]: 'Required' }))
+    const error = validateNumericField(field, value)
+    if (error) {
+      setNumericErrors((prev) => ({ ...prev, [errorKey]: error }))
     } else {
       setNumericErrors((prev) => {
         const n = { ...prev }
@@ -130,6 +160,39 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
       </div>
 
       <div className="p-5 bg-white space-y-5">
+        {}
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-4">
+          <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+            <IoInformationCircleOutline className="text-amber-600" size={24} />
+          </div>
+          <div className="flex-1">
+            <h4 className="text-xs font-bold text-amber-800 uppercase tracking-widest mb-2">
+              Business Rules: Valid Ranges
+            </h4>
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+              <div className="space-y-0.5">
+                <p className="text-[10px] font-bold text-amber-600 uppercase">SPH</p>
+                <p className="text-xs font-semibold text-amber-900">-20.00 → +20.00</p>
+              </div>
+              <div className="space-y-0.5">
+                <p className="text-[10px] font-bold text-amber-600 uppercase">CYL</p>
+                <p className="text-xs font-semibold text-amber-900">-20.00 → +20.00</p>
+              </div>
+              <div className="space-y-0.5">
+                <p className="text-[10px] font-bold text-amber-600 uppercase">AXIS</p>
+                <p className="text-xs font-semibold text-amber-900">0 → 180</p>
+              </div>
+              <div className="space-y-0.5">
+                <p className="text-[10px] font-bold text-amber-600 uppercase">ADD</p>
+                <p className="text-xs font-semibold text-amber-900">0.75 → 3.50</p>
+              </div>
+              <div className="space-y-0.5">
+                <p className="text-[10px] font-bold text-amber-600 uppercase">PD</p>
+                <p className="text-xs font-semibold text-amber-900">35 → 65</p>
+              </div>
+            </div>
+          </div>
+        </div>
         {}
         <div className="bg-slate-50/40 p-5 rounded-xl border border-slate-100/60">
           <h4 className="font-semibold text-xs text-mint-600 mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
@@ -277,28 +340,20 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
             <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.15em] block">
               PUPILLARY DISTANCE (PD)
             </label>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <div className="relative">
                 <Input
                   readOnly={isReadOnly}
                   value={parameters?.PD ?? '64'}
                   onChange={(e) => handleChange('common', 'PD', e.target.value)}
-                  className="font-semibold text-slate-700 text-center border-slate-200 h-12 pr-10 rounded-xl focus:border-mint-500 focus:ring-mint-500/10 text-sm shadow-none"
+                  onBlur={(e) => handleNumericBlur('common', 'PD', e.target.value)}
+                  className={`font-semibold text-slate-700 text-center border-slate-200 h-12 rounded-xl focus:border-mint-500 focus:ring-mint-500/10 text-sm shadow-none${numericErrors['common_PD'] ? ' border-red-400' : ''}`}
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">
-                  R
-                </span>
-              </div>
-              <div className="relative">
-                <Input
-                  readOnly={isReadOnly}
-                  value={parameters?.PD ?? '64'}
-                  onChange={(e) => handleChange('common', 'PD', e.target.value)}
-                  className="font-semibold text-slate-700 text-center border-slate-200 h-12 pr-10 rounded-xl focus:border-mint-500 focus:ring-mint-500/10 text-sm shadow-none"
-                />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">
-                  L
-                </span>
+                {numericErrors['common_PD'] && (
+                  <p className="text-[10px] text-red-500 text-center mt-1">
+                    {numericErrors['common_PD']}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -342,9 +397,9 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
             isFullWidth
             onClick={handleApproveWithValidation}
             isLoading={processing}
-            disabled={!isNoteValid}
+            disabled={!isNoteValid || Object.keys(numericErrors).length > 0}
             className={`font-semibold h-12 rounded-xl text-sm transition-all active:scale-[0.98] border-none ${
-              isNoteValid
+              isNoteValid && Object.keys(numericErrors).length === 0
                 ? 'bg-mint-600 hover:bg-mint-700 text-white shadow-md shadow-mint-100/30'
                 : 'bg-slate-200 text-slate-400 cursor-not-allowed'
             }`}

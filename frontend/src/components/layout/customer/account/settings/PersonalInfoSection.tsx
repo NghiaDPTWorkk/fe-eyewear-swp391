@@ -79,7 +79,9 @@ export const PersonalInfoSection = ({ user }: PersonalInfoSectionProps) => {
             )}
             rightElement={
               formik.values.name &&
-              !formik.errors.name && <Check className="w-5 h-5 text-primary-500 animate-in fade-in" />
+              !formik.errors.name && (
+                <Check className="w-5 h-5 text-primary-500 animate-in fade-in" />
+              )
             }
           />
           {formik.touched.name && formik.errors.name && (
@@ -115,7 +117,8 @@ export const PersonalInfoSection = ({ user }: PersonalInfoSectionProps) => {
             )}
             leftElement={<Phone size={18} className="text-mint-400" />}
             rightElement={
-              formik.values.phone && !formik.errors.phone && <Check className="w-5 h-5 text-primary-500" />
+              formik.values.phone &&
+              !formik.errors.phone && <Check className="w-5 h-5 text-primary-500" />
             }
           />
           {formik.touched.phone && formik.errors.phone && (
@@ -149,7 +152,9 @@ export const PersonalInfoSection = ({ user }: PersonalInfoSectionProps) => {
                   className="hidden"
                 />
                 <span className="font-bold text-sm tracking-wide">{option.label}</span>
-                {formik.values.gender === option.id && <Check size={16} className="text-primary-500" />}
+                {formik.values.gender === option.id && (
+                  <Check size={16} className="text-primary-500" />
+                )}
               </label>
             ))}
           </div>

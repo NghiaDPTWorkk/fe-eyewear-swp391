@@ -58,7 +58,14 @@ export default function ProfileForm() {
     }
   })
   const blockNonDigits = (e: React.KeyboardEvent) => {
-    if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
+    if (
+      !/[0-9]/.test(e.key) &&
+      e.key !== 'Backspace' &&
+      e.key !== 'Tab' &&
+      e.key !== 'ArrowLeft' &&
+      e.key !== 'ArrowRight' &&
+      e.key !== 'Delete'
+    ) {
       e.preventDefault()
     }
   }

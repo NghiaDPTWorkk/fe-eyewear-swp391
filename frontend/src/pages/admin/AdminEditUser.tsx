@@ -15,8 +15,6 @@ import { Button, Container } from '@/shared/components/ui'
 import type { UpdateCustomerRequest } from '@/shared/types/customer.types'
 import { Gender } from '@/shared/utils/enums/gender.enum'
 
-const VN_PHONE_REGEX = /^(0|\+84)(3|5|7|8|9)\d{8}$/
-
 const validationSchema = Yup.object({
   name: Yup.string()
     .required('Name is required')

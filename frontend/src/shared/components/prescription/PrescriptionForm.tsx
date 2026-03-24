@@ -9,7 +9,7 @@ const VALIDATION_RULES = {
   SPH: { min: -20.0, max: 20.0, step: 0.25 },
   CYL: { min: -6.0, max: 0.0, step: 0.25 },
   AXIS: { min: 1, max: 180, step: 1 },
-  ADD: { min: 0.75, max: 3.5, step: 0.25 },
+  ADD: { min: 0.0, max: 3.5, step: 0.25 },
   PD: { min: 35, max: 80, step: 0.5 }
 }
 

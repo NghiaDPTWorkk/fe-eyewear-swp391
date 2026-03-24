@@ -1,13 +1,10 @@
 import { useState } from 'react'
-import { toast } from 'react-hot-toast'
 import { IoCheckmark, IoClose } from 'react-icons/io5'
 import { useSearchParams } from 'react-router-dom'
 
 import { useSalesStaffAction, useSalesStaffOrderDetail } from '@/features/sales/hooks'
 import { useProfile } from '@/features/staff/hooks/useProfile'
 import { Button, ConfirmationModal } from '@/shared/components/ui-core'
-
-import { ImageViewer } from './ImageViewer'
 import { TranscriptionForm } from './TranscriptionForm'
 import { OrderDetailsSidebar } from './OrderDetailsSidebar'
 import { LabOperationsTimeline } from './LabOperationsTimeline'
@@ -55,8 +52,6 @@ export default function PrescriptionVerification({
   const isReadOnlyParams = mode === 'readonly'
 
   const { data: order, isLoading: loading, refetch } = useSalesStaffOrderDetail(orderId)
-  const [rotation, setRotation] = useState(0)
-  const [zoom, setZoom] = useState(100)
 
   const [localParameters, setLocalParameters] = useState<PrescriptionParameters | null>(null)
   const [localNote, setLocalNote] = useState('')
@@ -107,7 +102,6 @@ export default function PrescriptionVerification({
 
     const success = await approveOrder(orderId, { parameters: finalParams, note: finalNote })
     if (success) {
-      toast.success('Prescription approved')
       setIsConfirmOpen(false)
       refetch()
       onActionSuccess?.()
@@ -117,7 +111,6 @@ export default function PrescriptionVerification({
   const handleConfirmReject = async (note: string) => {
     const success = await rejectOrder(orderId, order?.invoiceId, note)
     if (success) {
-      toast.success('Prescription rejected')
       setIsConfirmOpen(false)
       refetch()
       onActionSuccess?.()
@@ -195,14 +188,6 @@ export default function PrescriptionVerification({
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {}
         <div className="xl:col-span-2 space-y-4">
-          <ImageViewer
-            imageUrl={order.products?.[0]?.prescriptionImageUrl}
-            zoom={zoom}
-            rotation={rotation}
-            setZoom={setZoom}
-            setRotation={setRotation}
-          />
-
           <TranscriptionForm
             parameters={localParameters || parameters}
             onParametersChange={setLocalParameters}

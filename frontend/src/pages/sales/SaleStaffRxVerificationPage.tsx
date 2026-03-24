@@ -6,9 +6,6 @@ import { PageHeader } from '@/features/sales/components/common'
 import PrescriptionVerification from '@/features/sales/components/prescriptions/PrescriptionVerification'
 import { useSalesStaffOrderDetail, useOrderVerificationLock } from '@/features/sales/hooks'
 import { Button } from '@/shared/components/ui-core'
-import { useAuthStore } from '@/store/auth.store'
-import { orderAdminService } from '@/shared/services/admin/orderService'
-import { useQueryClient } from '@tanstack/react-query'
 
 export default function SaleStaffRxVerificationPage() {
   const { orderId } = useParams<{ orderId: string }>()
@@ -18,52 +15,17 @@ export default function SaleStaffRxVerificationPage() {
   const [lockDenied, setLockDenied] = useState(false)
 
   const { lockStatus, acquireLock, releaseLock } = useOrderVerificationLock(orderId || '')
-  const currentUser = useAuthStore((s) => s.user)
-  const queryClient = useQueryClient()
-  const currentStaffId = (currentUser as any)?._id || (currentUser as any)?.id
 
-  // Lock logic
   useEffect(() => {
-    if (!orderId || !order || !currentStaffId) return
-
-    // Reset denial state when orderId or order changes
-    setLockDenied(false)
-
-    const checkAndAcquireLock = async () => {
-      // 1. Check server-side assignment
-      const assignedTo = order.assignedStaff
-
-      if (assignedTo && assignedTo !== currentStaffId) {
-        setLockDenied(true)
-        return
-      }
-
-      // 2. Try to acquire server-side lock if not already assigned
-      if (!assignedTo) {
-        try {
-          // Use current query state to ensure we don't over-claim
-          await orderAdminService.assignStaff(orderId, currentStaffId)
-          // Refresh order data to reflect assignment
-          queryClient.invalidateQueries({ queryKey: ['sales', 'order', orderId] })
-        } catch (error) {
-          console.error('Failed to acquire server-side lock:', error)
-          // setLockDenied(true) // Don't block purely on API error if not assigned to others
-        }
-      }
-
-      // 3. Acquisition of local browser lock (for different tabs)
-      const localAcquired = acquireLock()
-      if (!localAcquired) {
-        setLockDenied(true)
-      }
+    if (!orderId) return
+    const acquired = acquireLock()
+    if (!acquired) {
+      setLockDenied(true)
     }
-
-    checkAndAcquireLock()
-
     return () => {
       releaseLock()
     }
-  }, [orderId, order, currentStaffId, acquireLock, releaseLock, queryClient])
+  }, [orderId])
 
   useEffect(() => {
     if (lockStatus.locked) {
@@ -71,18 +33,7 @@ export default function SaleStaffRxVerificationPage() {
     }
   }, [lockStatus])
 
-  const handleBack = async () => {
-    // Release server-side lock if we are the owner
-    if (order?.assignedStaff === currentStaffId) {
-      try {
-        // Passing empty string or some signal to unassign if backend allows
-        // If it doesn't allow unassigning, it will stay assigned until verified
-        await orderAdminService.assignStaff(orderId || '', '')
-      } catch (e) {
-        console.error('Failed to release server-side lock:', e)
-      }
-    }
-
+  const handleBack = () => {
     releaseLock()
     const fromPath = searchParams.get('from')
     const invoiceId = searchParams.get('invoiceId') || order?.invoiceId

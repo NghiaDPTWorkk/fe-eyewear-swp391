@@ -127,6 +127,7 @@ export default function LensSelectionModal({
                   onConfirm({ ...state, prescription: rx, useSavedPrescription: true })
                   onClose()
                 }}
+                onAddNew={() => setStep('MANUAL_RX')}
               />
             )}
           </div>

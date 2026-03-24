@@ -79,7 +79,7 @@ export function OrderStatusTracker({ status }: OrderStatusTrackerProps) {
     { label: 'Payment', code: 'PENDING' },
     { label: 'Confirmed', code: 'APPROVED' },
     { label: 'Processing', code: 'ONBOARD' },
-    { label: 'Inspected', code: 'COMPLETED' },
+    { label: 'Completed', code: 'COMPLETED' },
     { label: 'Shipping', code: 'DELIVERING' },
     { label: 'Delivered', code: 'DELIVERED' }
   ]

@@ -36,7 +36,7 @@ export const DETAILED_ORDER_STATUS = {
   DEPOSITED: 'Payment Verified',
   APPROVED: 'Order Confirmed',
   ONBOARD: 'Crafting & Processing',
-  COMPLETED: 'Quality Inspection',
+  COMPLETED: 'Completed',
   READY_TO_SHIP: 'Ready to Ship',
   DELIVERING: 'In Transit',
   DELIVERED: 'Delivered Successfully',

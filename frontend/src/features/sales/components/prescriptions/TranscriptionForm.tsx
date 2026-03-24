@@ -1,5 +1,11 @@
 import React from 'react'
-import { IoClose, IoEyeOutline, IoInformationCircleOutline, IoPersonOutline } from 'react-icons/io5'
+import {
+  IoCheckmark,
+  IoClose,
+  IoEyeOutline,
+  IoInformationCircleOutline,
+  IoPersonOutline
+} from 'react-icons/io5'
 import { Button, Card, Input } from '@/shared/components/ui-core'
 
 interface TranscriptionFormProps {

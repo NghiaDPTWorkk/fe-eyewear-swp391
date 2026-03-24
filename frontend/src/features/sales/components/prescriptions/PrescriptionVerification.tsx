@@ -162,7 +162,9 @@ export default function PrescriptionVerification({
     !!order.completedAt ||
     !!order.rejectedAt
   const isPending = ['PENDING', 'DEPOSITED', 'WAITING_VERIFY'].includes(order.status?.toUpperCase())
-  const isRejected = ['REJECTED', 'CANCELED', 'REJECT'].includes(order.status?.toUpperCase())
+  const isRejected = ['REJECTED', 'CANCELED', 'CANCELLED', 'REJECT', 'EXPIRED'].includes(
+    order.status?.toUpperCase()
+  )
 
   const isReadOnly = isReadOnlyParams || isApproved || isRejected
 

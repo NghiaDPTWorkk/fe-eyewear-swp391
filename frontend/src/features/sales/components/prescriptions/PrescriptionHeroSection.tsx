@@ -154,17 +154,10 @@ export const PrescriptionHeroSection: React.FC<PrescriptionHeroSectionProps> = (
             <div className="w-20 h-20 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-3xl font-black text-mint-600 shadow-sm uppercase">
               {order.customerName?.[0] || 'C'}
             </div>
-            <div className="absolute -top-1 -right-1 bg-white p-1 rounded-full shadow-sm border border-slate-100 flex items-center gap-1 px-1.5">
-              <div className="w-1 h-1 rounded-full bg-emerald-500" />
-              <span className="text-[7px] font-bold text-slate-400 uppercase">Active</span>
-            </div>
           </div>
           <h3 className="text-base font-bold text-slate-800 mb-1.5 tracking-tight">
             {order.customerName || order.invoice?.fullName || 'Valued Customer'}
           </h3>
-          <span className="px-3 py-1 bg-mint-50 text-mint-600 text-[9px] font-bold rounded-full uppercase tracking-widest border border-mint-100">
-            Silver Member
-          </span>
         </div>
 
         <div className="pt-6 space-y-4 border-t border-slate-50">

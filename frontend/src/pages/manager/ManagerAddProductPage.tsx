@@ -128,6 +128,14 @@ export default function ManagerAddProductPage() {
         toast.error('Pre-order target date is required')
         return false
       }
+      if (!state.preOrderConfig?.startedDate) {
+        toast.error('Pre-order start date is required')
+        return false
+      }
+      if (!state.preOrderConfig?.endedDate) {
+        toast.error('Pre-order end date is required')
+        return false
+      }
       if (
         !state.preOrderConfig?.targetQuantity ||
         Number(state.preOrderConfig.targetQuantity) <= 0
@@ -573,11 +581,34 @@ export default function ManagerAddProductPage() {
                   </div>
                   <VoiceDatePicker
                     label="Target Date"
+                    helperText="SPEAK: 'NGÀY 20 THÁNG 3'"
                     value={state.preOrderConfig?.targetDate || ''}
                     onChange={(val: string) =>
                       setState((prev: ProductCreateFormState) => ({
                         ...prev,
                         preOrderConfig: { ...prev.preOrderConfig!, targetDate: val }
+                      }))
+                    }
+                  />
+                  <VoiceDatePicker
+                    label="Start Date"
+                    helperText="SPEAK: 'HÔM NAY'"
+                    value={state.preOrderConfig?.startedDate || ''}
+                    onChange={(val: string) =>
+                      setState((prev: ProductCreateFormState) => ({
+                        ...prev,
+                        preOrderConfig: { ...prev.preOrderConfig!, startedDate: val }
+                      }))
+                    }
+                  />
+                  <VoiceDatePicker
+                    label="End Date"
+                    helperText="SPEAK: 'NGÀY MAI'"
+                    value={state.preOrderConfig?.endedDate || ''}
+                    onChange={(val: string) =>
+                      setState((prev: ProductCreateFormState) => ({
+                        ...prev,
+                        preOrderConfig: { ...prev.preOrderConfig!, endedDate: val }
                       }))
                     }
                   />

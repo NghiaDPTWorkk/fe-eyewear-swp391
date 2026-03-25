@@ -3,8 +3,6 @@ import { useSearchParams, useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import { Loader2 } from 'lucide-react'
 import { Button, Container, Card } from '@/shared/components/ui'
-import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
-import { Footer } from '@/components/layout/customer/homepage/components'
 import { invoiceService } from '@/features/customer/invoice/services/invoice.service'
 import { useCartStore } from '@/store'
 import type { InvoiceDetailData } from '@/shared/types/invoice.types'
@@ -123,8 +121,6 @@ export const PaymentResultPage = () => {
 
   return (
     <div className="min-h-screen bg-mint-50 flex flex-col font-sans text-mint-1200">
-      <CustomerHeader />
-
       <main className="flex-grow py-12 lg:py-20">
         <Container className="max-w-3xl">
           {status === 'loading' ? (
@@ -201,8 +197,6 @@ export const PaymentResultPage = () => {
           )}
         </Container>
       </main>
-
-      <Footer />
     </div>
   )
 }

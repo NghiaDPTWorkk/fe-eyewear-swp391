@@ -1,6 +1,4 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
-import { Footer } from '@/components/layout/customer/homepage/components'
 import { Container, Button } from '@/shared/components/ui'
 import { CartSummary, CartItem as CartItemComponent } from '@/components/layout/customer/cart'
 import { ArrowLeft } from 'lucide-react'
@@ -63,8 +61,6 @@ export const CheckoutPage = () => {
 
   return (
     <div className="min-h-screen bg-mint-200">
-      <CustomerHeader />
-
       <main className="py-8 lg:py-12">
         <Container>
           <div className="flex items-center gap-4 mb-8">
@@ -110,8 +106,6 @@ export const CheckoutPage = () => {
           </div>
         </Container>
       </main>
-
-      <Footer />
     </div>
   )
 }

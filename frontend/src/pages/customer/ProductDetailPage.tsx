@@ -1,8 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { useGetProductDetail } from '@/shared/hooks/products/useGetProductDetail'
-import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
 import { ImageGallery, ProductInfo } from '@/components/layout/customer/product-detail'
-import { Footer } from '@/components/layout/customer/homepage/components'
 import { useProductVariants } from '@/shared/hooks/products/useProductVariants'
 
 export const ProductDetailPage = () => {
@@ -12,7 +10,6 @@ export const ProductDetailPage = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-mint-200">
-        <CustomerHeader />
         <div className="container mx-auto px-4 py-20 flex justify-center">
           <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
@@ -23,7 +20,6 @@ export const ProductDetailPage = () => {
   if (error || !product) {
     return (
       <div className="min-h-screen bg-mint-200">
-        <CustomerHeader />
         <div className="container mx-auto px-4 py-20 text-center">
           <h2 className="text-2xl font-bold text-mint-1200">Product not found</h2>
           <p className="text-gray-eyewear mt-2">
@@ -50,8 +46,6 @@ const ProductDetailContent = ({ product, productId }: ProductDetailContentProps)
 
   return (
     <div className="min-h-screen bg-mint-200">
-      <CustomerHeader />
-
       <main className="container mx-auto px-4 py-8 lg:py-12">
         {/* Breadcrumbs */}
         <nav className="flex items-center gap-2 text-sm text-gray-eyewear mb-8">
@@ -74,8 +68,6 @@ const ProductDetailContent = ({ product, productId }: ProductDetailContentProps)
           <ProductInfo product={product} productId={productId} variantState={variantState} />
         </div>
       </main>
-
-      <Footer />
     </div>
   )
 }

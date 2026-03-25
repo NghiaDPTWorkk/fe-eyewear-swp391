@@ -1,12 +1,8 @@
-import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
-import { Footer } from '@/components/layout/customer/homepage/components'
 import { Link } from 'react-router-dom'
 
 export const PrivacyPolicyPage = () => {
   return (
     <div className="min-h-screen bg-mint-200">
-      <CustomerHeader />
-
       {/* Hero Banner */}
       <div className="bg-mint-1200 py-14 text-center">
         <h1 className="text-3xl md:text-4xl font-heading font-bold text-white mb-3">
@@ -106,8 +102,6 @@ export const PrivacyPolicyPage = () => {
           </section>
         </div>
       </div>
-
-      <Footer />
     </div>
   )
 }

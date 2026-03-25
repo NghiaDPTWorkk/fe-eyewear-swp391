@@ -8,7 +8,7 @@ import { useCartStore, useAuthStore } from '@/store'
 import { ProfileDropdown as ProjectProfileDropdown } from './ProfileDropdown'
 import LogoEyewearIcon from '@/shared/components/ui-core/logoeyewear/LogoEyewearIcon'
 
-export default function CustomerHeader() {
+export default function CustomerHeader({ isTranslucent = false }: { isTranslucent?: boolean }) {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false)
   const [searchValue, setSearchValue] = useState('')
   const searchRef = useRef<HTMLDivElement>(null)
@@ -249,6 +249,7 @@ export default function CustomerHeader() {
           </div>
         ) : null
       }
+      isTranslucent={isTranslucent}
     />
   )
 }

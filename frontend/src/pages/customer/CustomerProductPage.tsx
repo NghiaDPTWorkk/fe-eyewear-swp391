@@ -1,4 +1,3 @@
-import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
 import { useFilteredProducts } from '@/shared/hooks/products/useFilteredProducts'
 import { useProductSpecs } from '@/shared/hooks/products/useProductSpecs'
 
@@ -299,7 +298,6 @@ export const CustomerProductPage = () => {
 
   return (
     <div className="min-h-screen bg-mint-100">
-      <CustomerHeader />
       <section className="py-10 bg-mint-100">
         <div className="container mx-auto px-4">
           <div className="flex gap-6">

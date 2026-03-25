@@ -1,6 +1,6 @@
-export * from './Hero'
 export * from './BenefitsBar'
 export * from './BusinessBanner'
 export * from './Testimonials'
 export * from './Newsletter'
 export * from './Footer'
+export { default as ShaderCarousel } from './ShaderCarousel'

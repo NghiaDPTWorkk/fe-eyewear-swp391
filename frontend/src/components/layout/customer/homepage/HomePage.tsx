@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { ProductCarousel } from '@/shared/components/ui/product-carousel'
 import { useGetProductWithPagination } from '@/shared/hooks/products/useGetProductWithPagination'
-import { Hero, BenefitsBar, Footer } from './components'
+import { BenefitsBar, Footer } from './components'
 
 interface HomePageProps {
   header: ReactNode
@@ -18,8 +18,6 @@ export default function HomePage({ header }: HomePageProps) {
     <div className="min-h-screen bg-mint-200">
       {header}
 
-      {/* Hero Section */}
-      <Hero />
 
       {/* Benefits Bar */}
       <BenefitsBar />

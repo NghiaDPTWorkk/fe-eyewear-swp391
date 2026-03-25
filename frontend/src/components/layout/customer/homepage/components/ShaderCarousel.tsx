@@ -69,10 +69,12 @@ function Scene({
   speed,
   imagePaths,
   maskPath,
+  onReady,
 }: {
   speed: number
   imagePaths: string[]
   maskPath: string
+  onReady: () => void
 }) {
   const matRef = useRef<THREE.ShaderMaterial>(null)
   const textures = useTexture(imagePaths)
@@ -84,7 +86,9 @@ function Scene({
       t.minFilter = THREE.LinearFilter
       t.magFilter = THREE.LinearFilter
     })
-  }, [textures, mask])
+    // Báo hiệu Scene đã sẵn sàng vẽ
+    onReady()
+  }, [textures, mask, onReady])
 
   const uniforms = useMemo(
     () => ({
@@ -140,6 +144,7 @@ function Scene({
 // ─── Main Component ─────────────────────────────────────────────────────────────
 export default function ShaderCarousel({ imagePaths, maskPath }: ShaderCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0)
+  const [isSceneReady, setIsSceneReady] = useState(false)
   const navigate = useNavigate()
 
   const handleMove = (splide: { index: number }, newIndex: number) => {
@@ -152,11 +157,23 @@ export default function ShaderCarousel({ imagePaths, maskPath }: ShaderCarouselP
   }
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-white">
+    <div 
+      className={`relative w-full h-screen overflow-hidden bg-white transition-opacity duration-300 ${
+        isSceneReady ? 'opacity-100' : 'opacity-0'
+      }`}
+    >
       {/* ── Three.js background ── */}
       <div className="absolute inset-0 z-0">
         <Canvas camera={{ position: [0, 0, 5], fov: 75 }} dpr={[1, 2]}>
-          <Scene speed={SPLIDE_SPEED} imagePaths={imagePaths} maskPath={maskPath} />
+          <Scene 
+            speed={SPLIDE_SPEED} 
+            imagePaths={imagePaths} 
+            maskPath={maskPath} 
+            onReady={() => {
+              // Thêm 50ms đệm để Card đồ họa (GPU) kịp vẽ xong frame đầu tiên
+              setTimeout(() => setIsSceneReady(true), 50)
+            }}
+          />
         </Canvas>
       </div>
 

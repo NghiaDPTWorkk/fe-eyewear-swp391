@@ -17,7 +17,8 @@ const BreadcrumbPath = ({ paths }: BreadcrumbProps) => {
             ) : (
               <>
                 <Link
-                  to={`/operationstaff/${path.toLowerCase().replace(/\s+/g, '-')}`}
+                  // Sửa lỗi đánh máy: 'operationstaff' thành 'operation-staff'
+                  to={`/operation-staff/${path.toLowerCase().replace(/\s+/g, '-')}`}
                   className="text-neutral-400 hover:text-primary-500 transition-colors"
                 >
                   {path}

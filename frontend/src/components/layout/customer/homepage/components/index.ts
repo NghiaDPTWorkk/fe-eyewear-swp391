@@ -1,4 +1,3 @@
-export * from './Hero'
 export * from './BenefitsBar'
 export * from './BusinessBanner'
 export * from './Testimonials'

@@ -53,9 +53,7 @@ export const CustomerHomePage = () => {
               <h2 className="text-4xl font-heading font-bold text-mint-1200 mb-4 transition-transform duration-700 delay-100 transform translate-y-0">
                 NEW YEAR MUST-HAVES
               </h2>
-              <p className="text-gray-eyewear">
-                Vibrant colors are set to be a huge trend for the upcoming season.
-              </p>
+              <p className="text-gray-eyewear">Vibrant colors are set to be a huge trend for the upcoming season.</p>
             </div>
 
             <ProductCarousel products={products} itemsPerView={4} autoPlayInterval={1000} />

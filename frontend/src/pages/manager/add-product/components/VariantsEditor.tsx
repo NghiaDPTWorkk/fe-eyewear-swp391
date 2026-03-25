@@ -158,6 +158,7 @@ export function VariantsEditor(props: {
         </div>
         <div className="flex items-center gap-3">
           <Button
+            type="button"
             variant="outline"
             onClick={generateVariants}
             isDisabled={!optionsConfig.length || optionsConfig.every((c) => !c.values.length)}
@@ -167,6 +168,7 @@ export function VariantsEditor(props: {
             Auto-Generate Variants
           </Button>
           <Button
+            type="button"
             onClick={addVariant}
             leftIcon={<IoAddOutline size={20} />}
             className="bg-mint-600 hover:bg-mint-700 shadow-lg shadow-mint-100/50"
@@ -323,6 +325,7 @@ export function VariantsEditor(props: {
                       <h4 className="text-[13px] font-extrabold text-gray-900">Options</h4>
                     </div>
                     <Button
+                      type="button"
                       variant="outline"
                       size="sm"
                       onClick={() => addOption(variantIdx)}

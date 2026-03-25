@@ -75,6 +75,7 @@ export function OptionsConfigEditor(props: {
           </div>
         </div>
         <Button
+          type="button"
           onClick={addAttribute}
           leftIcon={<IoAddOutline size={20} />}
           className="bg-mint-600 hover:bg-mint-700 shadow-lg shadow-mint-100/50"
@@ -264,6 +265,7 @@ export function OptionsConfigEditor(props: {
               </p>
             </div>
             <Button
+              type="button"
               onClick={addAttribute}
               leftIcon={<IoAddOutline size={20} />}
               className="mt-2 bg-white text-mint-600 border border-mint-100 hover:bg-mint-50"

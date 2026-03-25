@@ -19,6 +19,8 @@ import { PageHeader } from '@/features/sales/components/common'
 import { useAdminProducts } from '@/features/manager/hooks'
 import { toast } from 'react-hot-toast'
 import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
+import { httpClient } from '@/api/apiClients'
+import { ENDPOINTS } from '@/api/endpoints'
 
 const SummaryCard: React.FC<{
   label: string
@@ -419,11 +421,19 @@ export default function ManagerProductsPage() {
           setIsDeleteModalOpen(false)
           setProductToDelete(null)
         }}
-        onConfirm={() => {
-          // Real backend delete logic would be implemented here!
-          toast.success(`Product "${productToDelete?.name}" delete requested (integration pending)`)
-          setIsDeleteModalOpen(false)
-          setProductToDelete(null)
+        onConfirm={async () => {
+          if (!productToDelete) return
+          try {
+            await httpClient.delete(ENDPOINTS.ADMIN.PRODUCT_DETAIL(productToDelete.id))
+            toast.success(`Product "${productToDelete.name}" deleted successfully`)
+            refetch()
+          } catch (error: any) {
+            console.error('Delete product failed:', error)
+            toast.error(error.message || 'Failed to delete product')
+          } finally {
+            setIsDeleteModalOpen(false)
+            setProductToDelete(null)
+          }
         }}
         title="Delete Product"
         message={`Are you sure you want to delete the product "${productToDelete?.name}"? This action cannot be undone.`}

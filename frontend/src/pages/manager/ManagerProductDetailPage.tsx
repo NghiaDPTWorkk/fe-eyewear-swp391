@@ -13,8 +13,14 @@ import {
   IoCheckmarkCircle,
   IoCloseCircle,
   IoChevronForwardOutline,
-  IoChevronBackOutline
+  IoChevronBackOutline,
+  IoPencilOutline,
+  IoTrashOutline
 } from 'react-icons/io5'
+import { ConfirmationModal } from '@/shared/components/ui-core'
+import { httpClient } from '@/api/apiClients'
+import { ENDPOINTS } from '@/api/endpoints'
+import { toast } from 'react-hot-toast'
 import type { AdminProductVariant } from '@/shared/types'
 import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 
@@ -44,6 +50,23 @@ export default function ManagerProductDetailPage() {
   const product = data?.data?.product
   const [selectedVariantIdx, setSelectedVariantIdx] = useState(0)
   const [imgIdx, setImgIdx] = useState(0)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  const handleDelete = async () => {
+    setIsDeleting(true)
+    try {
+      await httpClient.delete(ENDPOINTS.ADMIN.PRODUCT_DETAIL(id!))
+      toast.success('Product deleted successfully')
+      navigate('/manager/products')
+    } catch (error: any) {
+      console.error('Delete product failed:', error)
+      toast.error(error.message || 'Failed to delete product')
+    } finally {
+      setIsDeleting(false)
+      setIsDeleteModalOpen(false)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -94,7 +117,7 @@ export default function ManagerProductDetailPage() {
         />
 
         {}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between">
           <button
             onClick={() => navigate('/manager/products')}
             className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-mint-600 transition-colors"
@@ -102,6 +125,23 @@ export default function ManagerProductDetailPage() {
             <IoArrowBackOutline size={16} />
             Back to Products
           </button>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate(`/manager/products/${id}/edit`)}
+              className="flex items-center gap-2 px-6 py-2.5 bg-white border border-neutral-100 rounded-xl text-sm font-bold text-slate-600 hover:bg-neutral-50 transition-all shadow-sm active:scale-95"
+            >
+              <IoPencilOutline size={18} className="text-mint-600" />
+              Edit Product
+            </button>
+            <button
+              onClick={() => setIsDeleteModalOpen(true)}
+              className="flex items-center gap-2 px-6 py-2.5 bg-red-50 text-red-600 rounded-xl text-sm font-bold hover:bg-red-100 transition-all shadow-sm active:scale-95"
+            >
+              <IoTrashOutline size={18} />
+              Delete Product
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -329,6 +369,17 @@ export default function ManagerProductDetailPage() {
           </div>
         </div>
       </Container>
+
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDelete}
+        title="Delete Product"
+        message={`Are you sure you want to delete the product "${product?.nameBase}"? This action cannot be undone.`}
+        confirmText={isDeleting ? 'Deleting...' : 'Delete Product'}
+        cancelText="Cancel"
+        type="danger"
+      />
     </>
   )
 }

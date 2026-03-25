@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom'
 interface ShaderCarouselProps {
   imagePaths: string[]
   maskPath: string
+  onLoaded?: () => void
 }
 
 // ─── Constants ─────────────────────────────────────────────────────────────────
@@ -142,7 +143,7 @@ function Scene({
 }
 
 // ─── Main Component ─────────────────────────────────────────────────────────────
-export default function ShaderCarousel({ imagePaths, maskPath }: ShaderCarouselProps) {
+export default function ShaderCarousel({ imagePaths, maskPath, onLoaded }: ShaderCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [isSceneReady, setIsSceneReady] = useState(false)
   const navigate = useNavigate()
@@ -171,7 +172,10 @@ export default function ShaderCarousel({ imagePaths, maskPath }: ShaderCarouselP
             maskPath={maskPath} 
             onReady={() => {
               // Thêm 50ms đệm để Card đồ họa (GPU) kịp vẽ xong frame đầu tiên
-              setTimeout(() => setIsSceneReady(true), 50)
+              setTimeout(() => {
+                setIsSceneReady(true)
+                onLoaded?.()
+              }, 50)
             }}
           />
         </Canvas>
@@ -201,10 +205,10 @@ export default function ShaderCarousel({ imagePaths, maskPath }: ShaderCarouselP
                 className={`h-full w-full flex flex-col justify-end p-12 select-none ${i === 0 ? 'md:pb-100 md:pl-16' : 'md:p-24'}`}
               >
                 <div
-                  className={`transition-all duration-[900ms] ease-out ${
+                  className={`transition-all duration-[500ms] ease-out ${
                     activeIndex === i
                       ? 'opacity-100 translate-y-0 blur-none'
-                      : 'opacity-0 translate-y-16 blur-sm'
+                      : 'opacity-0 translate-y-8 blur-sm'
                   }`}
                 >
                   <h2 className="text-3xl md:text-6xl font-black text-white mb-3 uppercase tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] pointer-events-none">

@@ -5,6 +5,7 @@ export interface AiMessage {
   content: string
   createdAt: string
   updatedAt: string
+  products?: any[]
 }
 
 export interface AiMessagePagination {
@@ -33,4 +34,5 @@ export interface AiConversationData {
 
 export interface ChatReplyData {
   message: string
+  products?: any[]
 }

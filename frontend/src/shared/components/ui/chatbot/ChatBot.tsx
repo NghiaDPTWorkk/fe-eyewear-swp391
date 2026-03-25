@@ -6,6 +6,7 @@ import { useChatMessages } from '@/shared/hooks/chat/useChatMessages'
 import { useAuthStore, useChatStore } from '@/store'
 import { Link } from 'react-router-dom'
 import { ProductChatTag } from './ProductChatTag'
+import { ChatProductCard } from './ChatProductCard'
 import { useShallow } from 'zustand/react/shallow'
 import LogoEyewearIcon from '../logoeyewear/LogoEyewearIcon'
 
@@ -313,6 +314,13 @@ export const ChatBot = () => {
                       }`}
                     >
                       <MessageContent text={msg.text} isUser={msg.sender === 'user'} />
+                      {msg.sender === 'bot' && msg.products && msg.products.length > 0 && (
+                        <div className="mt-3 space-y-2">
+                          {msg.products.map((p: any) => (
+                            <ChatProductCard key={p._id} product={p} />
+                          ))}
+                        </div>
+                      )}
                     </div>
                     <span className="text-[10px] text-gray-eyewear mt-1 px-1">
                       {formatTime(msg.timestamp)}

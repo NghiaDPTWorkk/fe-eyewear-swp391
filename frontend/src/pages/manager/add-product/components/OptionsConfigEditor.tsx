@@ -5,6 +5,9 @@ import { DynamicSelectField } from './DynamicSelectField'
 import { useAttributes } from '../../../../features/staff/hooks/useAttributes'
 import { cn } from '@/lib/utils'
 
+const inputClassName =
+  'w-full px-3 py-2 bg-neutral-50 border border-neutral-100 rounded-xl text-[13px] font-bold text-gray-700 focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all placeholder:text-neutral-300'
+
 export function OptionsConfigEditor(props: {
   optionsConfig: ProductCreateFormState['optionsConfig']
   onChange: (config: ProductCreateFormState['optionsConfig']) => void
@@ -151,31 +154,15 @@ export function OptionsConfigEditor(props: {
                   {config.values.map((v, valIdx) => (
                     <div
                       key={valIdx}
-                      className="relative p-4 bg-white border border-neutral-100 rounded-[24px] shadow-sm hover:border-mint-200 transition-all flex items-center gap-3 group/val"
+                      className="relative p-5 bg-white border border-neutral-100 rounded-[28px] shadow-sm hover:border-mint-200 transition-all flex items-start gap-3 group/val"
                     >
-                      <div className="flex-1 space-y-2">
-                        <input
-                          value={v.label}
-                          onChange={(e) =>
-                            onChange(
-                              optionsConfig.map((c, i) =>
-                                i !== attrIdx
-                                  ? c
-                                  : {
-                                      ...c,
-                                      values: c.values.map((vv, vi) =>
-                                        vi === valIdx ? { ...vv, label: e.target.value } : vv
-                                      )
-                                    }
-                              )
-                            )
-                          }
-                          placeholder="Label (e.g. Red)"
-                          className="w-full text-xs font-bold border-none p-0 focus:ring-0 placeholder:text-neutral-300"
-                        />
-                        <div className="relative">
+                      <div className="flex-1 space-y-4">
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-widest ml-1 flex items-center gap-1.5">
+                            Label
+                          </label>
                           <input
-                            value={v.value}
+                            value={v.label}
                             onChange={(e) =>
                               onChange(
                                 optionsConfig.map((c, i) =>
@@ -184,54 +171,82 @@ export function OptionsConfigEditor(props: {
                                     : {
                                         ...c,
                                         values: c.values.map((vv, vi) =>
-                                          vi === valIdx ? { ...vv, value: e.target.value } : vv
+                                          vi === valIdx ? { ...vv, label: e.target.value } : vv
                                         )
                                       }
                                 )
                               )
                             }
-                            placeholder={config.showType === 'color' ? '#HEX' : 'Value'}
-                            className={cn(
-                              'w-full text-[11px] border-none p-0 focus:ring-0 text-neutral-500 placeholder:text-neutral-300',
-                              config.showType === 'color' && 'pl-6'
-                            )}
+                            placeholder="e.g. Red, XL, 52mm"
+                            className={inputClassName}
                           />
-                          {config.showType === 'color' && (
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center">
-                              <div
-                                className="w-4 h-4 rounded-full border border-neutral-100 shadow-sm"
-                                style={{ backgroundColor: v.value || '#000000' }}
-                              />
-                              <input
-                                type="color"
-                                value={v.value?.startsWith('#') ? v.value : '#000000'}
-                                onChange={(e) =>
-                                  onChange(
-                                    optionsConfig.map((c, i) =>
-                                      i !== attrIdx
-                                        ? c
-                                        : {
-                                            ...c,
-                                            values: c.values.map((vv, vi) =>
-                                              vi === valIdx ? { ...vv, value: e.target.value } : vv
-                                            )
-                                          }
-                                    )
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-extrabold text-neutral-400 uppercase tracking-widest ml-1 flex items-center gap-1.5">
+                            {config.showType === 'color' ? 'HEX CODE' : 'VALUE'}
+                          </label>
+                          <div className="relative">
+                            <input
+                              value={v.value}
+                              onChange={(e) =>
+                                onChange(
+                                  optionsConfig.map((c, i) =>
+                                    i !== attrIdx
+                                      ? c
+                                      : {
+                                          ...c,
+                                          values: c.values.map((vv, vi) =>
+                                            vi === valIdx ? { ...vv, value: e.target.value } : vv
+                                          )
+                                        }
                                   )
-                                }
-                                className="absolute inset-0 opacity-0 cursor-pointer w-4 h-4"
-                              />
-                            </div>
-                          )}
+                                )
+                              }
+                              placeholder={config.showType === 'color' ? '#000000' : 'Value'}
+                              className={cn(inputClassName, config.showType === 'color' && 'pl-11')}
+                            />
+                            {config.showType === 'color' && (
+                              <div className="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center">
+                                <div
+                                  className="w-6 h-6 rounded-full border border-neutral-200 shadow-sm"
+                                  style={{ backgroundColor: v.value || '#000000' }}
+                                />
+                                <input
+                                  type="color"
+                                  value={v.value?.startsWith('#') ? v.value : '#000000'}
+                                  onChange={(e) =>
+                                    onChange(
+                                      optionsConfig.map((c, i) =>
+                                        i !== attrIdx
+                                          ? c
+                                          : {
+                                              ...c,
+                                              values: c.values.map((vv, vi) =>
+                                                vi === valIdx
+                                                  ? { ...vv, value: e.target.value }
+                                                  : vv
+                                              )
+                                            }
+                                      )
+                                    )
+                                  }
+                                  className="absolute inset-0 opacity-0 cursor-pointer w-6 h-6"
+                                />
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => removeValue(attrIdx, valIdx)}
-                        className="p-2 text-neutral-300 hover:text-red-500 transition-colors opacity-0 group-hover/val:opacity-100"
-                      >
-                        <IoTrashOutline size={16} />
-                      </button>
+                      <div className="pt-7">
+                        <button
+                          type="button"
+                          onClick={() => removeValue(attrIdx, valIdx)}
+                          className="p-2.5 text-neutral-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all opacity-0 group-hover/val:opacity-100 shadow-sm hover:shadow"
+                        >
+                          <IoTrashOutline size={18} />
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>

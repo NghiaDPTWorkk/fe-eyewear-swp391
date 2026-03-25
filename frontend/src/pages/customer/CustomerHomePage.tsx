@@ -1,5 +1,5 @@
 import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
-import { Hero, BenefitsBar, Footer, ShaderCarousel } from '@/components/layout/customer/homepage/components'
+import { BenefitsBar, Footer, ShaderCarousel } from '@/components/layout/customer/homepage/components'
 import { ProductCarousel } from '@/shared/components/ui/product-carousel'
 import { useGetProductWithPagination } from '@/shared/hooks/products/useGetProductWithPagination'
 
@@ -9,11 +9,11 @@ export const CustomerHomePage = () => {
   const { products, loading } = typedProductsData
 
   return (
-    <div className="min-h-screen bg-mint-200">
+    <div className="min-h-screen bg-mint-200 overflow-x-hidden">
       <CustomerHeader />
 
       {/* Hero Section */}
-      <Hero />
+      {/* <Hero /> */}
 
       {/* Shader Carousel - Full Viewport */}
       <section className="relative w-screen left-1/2 -translate-x-1/2">

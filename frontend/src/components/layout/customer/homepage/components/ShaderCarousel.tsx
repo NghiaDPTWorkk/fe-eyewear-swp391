@@ -4,18 +4,19 @@ import * as THREE from 'three'
 import { useTexture } from '@react-three/drei'
 import { Splide, SplideTrack, SplideSlide } from '@splidejs/react-splide'
 import '@splidejs/react-splide/css'
+import { useNavigate } from 'react-router-dom'
 
 // ─── Constants ─────────────────────────────────────────────────────────────────
 const IMAGE_PATHS = [
   '/images/carousel/splide1.png',
   '/images/carousel/splide2.png',
-  '/images/carousel/splide3.png',
+  '/images/carousel/splide3.png'
 ]
 
 const SLIDE_CONTENT = [
   { title: 'Exquisite Craft', description: 'Timeless design meets modern engineering.' },
-  { title: 'Peak Tech',       description: 'Revolutionary protection for your eyes and style.' },
-  { title: 'Urban Vision',    description: 'The future of premium eyewear, curated for you.' },
+  { title: 'Peak Tech', description: 'Revolutionary protection for your eyes and style.' },
+  { title: 'Urban Vision', description: 'The future of premium eyewear, curated for you.' }
 ]
 
 const MASK_PATH = '/images/carousel/mask.png'
@@ -24,9 +25,9 @@ const SPLIDE_SPEED = 1400
 // ─── Module-level cmd object (bypasses Canvas fiber boundary) ──────────────────
 // Không dùng React state → không bị delay bởi batching
 const cmd = {
-  pending: false,  // true khi có lệnh chuyển mới chưa xử lý
+  pending: false, // true khi có lệnh chuyển mới chưa xử lý
   from: 0,
-  to: 0,
+  to: 0
 }
 
 // ─── Shaders ───────────────────────────────────────────────────────────────────
@@ -57,10 +58,10 @@ const fragmentShader = `
 
 // ─── Scene ─────────────────────────────────────────────────────────────────────
 function Scene({ speed }: { speed: number }) {
-  const matRef  = useRef<THREE.ShaderMaterial>(null)
+  const matRef = useRef<THREE.ShaderMaterial>(null)
   const textures = useTexture(IMAGE_PATHS)
-  const mask     = useTexture(MASK_PATH)
-  const running  = useRef(false)
+  const mask = useTexture(MASK_PATH)
+  const running = useRef(false)
 
   useEffect(() => {
     ;[...textures, mask].forEach((t) => {
@@ -71,11 +72,11 @@ function Scene({ speed }: { speed: number }) {
 
   const uniforms = useMemo(
     () => ({
-      tex1:      { value: textures[0] },
-      tex2:      { value: textures[0] },
-      mask:      { value: mask },
-      progress:  { value: 1.0 },
-      smoothing: { value: 0.15 },
+      tex1: { value: textures[0] },
+      tex2: { value: textures[0] },
+      mask: { value: mask },
+      progress: { value: 1.0 },
+      smoothing: { value: 0.15 }
     }),
     [textures, mask]
   )
@@ -85,11 +86,11 @@ function Scene({ speed }: { speed: number }) {
 
     // Lệnh mới đến → swap texture ngay lập tức rồi bắt đầu animation
     if (cmd.pending) {
-      matRef.current.uniforms.tex1.value    = textures[cmd.from]
-      matRef.current.uniforms.tex2.value    = textures[cmd.to]
+      matRef.current.uniforms.tex1.value = textures[cmd.from]
+      matRef.current.uniforms.tex2.value = textures[cmd.to]
       matRef.current.uniforms.progress.value = 0.0
       running.current = true
-      cmd.pending = false   // Reset ngay sau khi xử lý
+      cmd.pending = false // Reset ngay sau khi xử lý
     }
 
     // Chạy animation progress 0 → 1
@@ -99,7 +100,7 @@ function Scene({ speed }: { speed: number }) {
         matRef.current.uniforms.progress.value = Math.min(1.0, p + delta * (1000 / speed))
       } else {
         // Xong: cập nhật tex1 = ảnh đích để chuẩn bị transition tiếp theo
-        matRef.current.uniforms.tex1.value    = textures[cmd.to]
+        matRef.current.uniforms.tex1.value = textures[cmd.to]
         matRef.current.uniforms.progress.value = 1.0
         running.current = false
       }
@@ -123,11 +124,12 @@ function Scene({ speed }: { speed: number }) {
 // ─── Main Component ─────────────────────────────────────────────────────────────
 export default function ShaderCarousel() {
   const [activeIndex, setActiveIndex] = useState(0)
+  const navigate = useNavigate()
 
   const handleMove = (splide: { index: number }, newIndex: number) => {
     // Ghi lệnh vào module-level object ngay lập tức — không qua React
-    cmd.from    = splide.index
-    cmd.to      = newIndex
+    cmd.from = splide.index
+    cmd.to = newIndex
     cmd.pending = true
 
     setActiveIndex(newIndex)
@@ -163,14 +165,14 @@ export default function ShaderCarousel() {
           arrows: true,
           pagination: true,
           pauseOnHover: false,
-          drag: false,
+          drag: false
         }}
         className="h-full z-10"
       >
         <SplideTrack className="h-full">
           {SLIDE_CONTENT.map((content, i) => (
             <SplideSlide key={i} className="h-full">
-              <div className="h-full w-full flex flex-col justify-end p-12 md:p-24 select-none pointer-events-none">
+              <div className="h-full w-full flex flex-col justify-end p-12 md:p-24 select-none">
                 <div
                   className={`transition-all duration-[900ms] ease-out ${
                     activeIndex === i
@@ -178,12 +180,22 @@ export default function ShaderCarousel() {
                       : 'opacity-0 translate-y-16 blur-sm'
                   }`}
                 >
-                  <h2 className="text-3xl md:text-5xl font-black text-white mb-3 uppercase tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
+                  <h2 className="text-3xl md:text-5xl font-black text-white mb-3 uppercase tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] pointer-events-none">
                     {content.title}
                   </h2>
-                  <p className="text-base md:text-lg text-white/75 max-w-xl font-medium drop-shadow-lg">
+                  <p className="text-base md:text-lg text-white/75 max-w-xl font-medium drop-shadow-lg mb-6 pointer-events-none">
                     {content.description}
                   </p>
+                  <div className="flex flex-wrap gap-4">
+                    {i === SLIDE_CONTENT.length - 1 && (
+                      <button
+                        onClick={() => navigate('/eyeglasses')}
+                        className="px-8 py-4 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                      >
+                        Shop Now
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             </SplideSlide>
@@ -192,7 +204,9 @@ export default function ShaderCarousel() {
       </Splide>
 
       {/* ── Splide custom styles ── */}
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         .splide__arrow {
           background: rgba(255,255,255,0.06) !important;
           backdrop-filter: blur(20px);
@@ -224,7 +238,9 @@ export default function ShaderCarousel() {
           width: 56px !important;
           box-shadow: 0 0 12px rgba(255,255,255,0.5);
         }
-      `}} />
+      `
+        }}
+      />
     </div>
   )
 }

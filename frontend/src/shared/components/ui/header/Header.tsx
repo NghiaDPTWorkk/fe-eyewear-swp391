@@ -17,6 +17,7 @@ interface HeaderProps {
   leftJustify?: string
   centerJustify?: string
   rightJustify?: string
+  isTranslucent?: boolean
 }
 
 export default function Header({
@@ -35,7 +36,8 @@ export default function Header({
   // Custom justify
   leftJustify = 'flex-start',
   centerJustify = 'center',
-  rightJustify = 'flex-end'
+  rightJustify = 'flex-end',
+  isTranslucent = false
 }: HeaderProps) {
   const isMode1 = logoNavList !== undefined || searchNavListIcon !== undefined
   const isMode2 = logo !== undefined || navListContent !== undefined || navListIcon !== undefined
@@ -64,7 +66,13 @@ export default function Header({
 
   // Mode 2: 3 sections layout
   return (
-    <header className="w-full bg-white border-b border-mint-300 sticky top-0 z-50 shadow-sm">
+    <header
+      className={`w-full border-b sticky top-0 z-50 transition-all duration-300 ${
+        isTranslucent
+          ? 'bg-white/70 backdrop-blur-md border-white/20 shadow-sm'
+          : 'bg-white border-mint-300 shadow-sm'
+      }`}
+    >
       <Container maxWidth={containerWidth} justify={containerJustify}>
         <div className="flex items-center justify-between w-full h-[70px] gap-4">
           {logo && (

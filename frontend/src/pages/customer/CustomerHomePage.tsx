@@ -1,7 +1,25 @@
 import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
-import { BenefitsBar, Footer, ShaderCarousel } from '@/components/layout/customer/homepage/components'
+import {
+  BenefitsBar,
+  Footer,
+  ShaderCarousel
+} from '@/components/layout/customer/homepage/components'
 import { ProductCarousel } from '@/shared/components/ui/product-carousel'
 import { useGetProductWithPagination } from '@/shared/hooks/products/useGetProductWithPagination'
+import { useTexture } from '@react-three/drei'
+
+// ─── Carousel Assets ───────────────────────────────────────────────────────────
+const IMAGE_PATHS = [
+  '/images/carousel/splide1.webp',
+  '/images/carousel/splide2.webp',
+  '/images/carousel/splide3.webp'
+]
+
+const MASK_PATH = '/images/carousel/mask.png'
+
+// Preload resources as early as possible
+useTexture.preload(IMAGE_PATHS)
+useTexture.preload(MASK_PATH)
 
 export const CustomerHomePage = () => {
   // Lấy dữ liệu sản phẩm cho carousel phía dưới
@@ -10,14 +28,11 @@ export const CustomerHomePage = () => {
 
   return (
     <div className="min-h-screen bg-mint-200 overflow-x-hidden">
-      <CustomerHeader />
-
-      {/* Hero Section */}
-      {/* <Hero /> */}
+      <CustomerHeader isTranslucent />
 
       {/* Shader Carousel - Full Viewport */}
       <section className="relative w-screen left-1/2 -translate-x-1/2">
-        <ShaderCarousel />
+        <ShaderCarousel imagePaths={IMAGE_PATHS} maskPath={MASK_PATH} />
       </section>
 
       {/* Benefits Bar */}

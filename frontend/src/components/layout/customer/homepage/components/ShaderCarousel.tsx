@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo, useEffect, Suspense } from 'react'
+import { useRef, useState, useMemo, useLayoutEffect } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useTexture } from '@react-three/drei'
@@ -6,20 +6,28 @@ import { Splide, SplideTrack, SplideSlide } from '@splidejs/react-splide'
 import '@splidejs/react-splide/css'
 import { useNavigate } from 'react-router-dom'
 
+// ─── Types ─────────────────────────────────────────────────────────────────────
+interface ShaderCarouselProps {
+  imagePaths: string[]
+  maskPath: string
+}
+
 // ─── Constants ─────────────────────────────────────────────────────────────────
-const IMAGE_PATHS = [
-  '/images/carousel/splide1.png',
-  '/images/carousel/splide2.png',
-  '/images/carousel/splide3.png'
-]
-
 const SLIDE_CONTENT = [
-  { title: 'Exquisite Craft', description: 'Timeless design meets modern engineering.' },
-  { title: 'Peak Tech', description: 'Revolutionary protection for your eyes and style.' },
-  { title: 'Urban Vision', description: 'The future of premium eyewear, curated for you.' }
+  {
+    title: 'Exquisite Craft',
+    description: 'Timeless design meets modern engineering.',
+  },
+  {
+    title: 'Spring Fashion',
+    description: 'A touch of elegance for every season.',
+  },
+  {
+    title: 'Urban Vision',
+    description: 'The future of premium eyewear, curated for you.',
+  },
 ]
 
-const MASK_PATH = '/images/carousel/mask.png'
 const SPLIDE_SPEED = 1400
 
 // ─── Module-level cmd object (bypasses Canvas fiber boundary) ──────────────────
@@ -57,13 +65,21 @@ const fragmentShader = `
 `
 
 // ─── Scene ─────────────────────────────────────────────────────────────────────
-function Scene({ speed }: { speed: number }) {
+function Scene({
+  speed,
+  imagePaths,
+  maskPath,
+}: {
+  speed: number
+  imagePaths: string[]
+  maskPath: string
+}) {
   const matRef = useRef<THREE.ShaderMaterial>(null)
-  const textures = useTexture(IMAGE_PATHS)
-  const mask = useTexture(MASK_PATH)
+  const textures = useTexture(imagePaths)
+  const mask = useTexture(maskPath)
   const running = useRef(false)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     ;[...textures, mask].forEach((t) => {
       t.minFilter = THREE.LinearFilter
       t.magFilter = THREE.LinearFilter
@@ -122,7 +138,7 @@ function Scene({ speed }: { speed: number }) {
 }
 
 // ─── Main Component ─────────────────────────────────────────────────────────────
-export default function ShaderCarousel() {
+export default function ShaderCarousel({ imagePaths, maskPath }: ShaderCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0)
   const navigate = useNavigate()
 
@@ -136,20 +152,12 @@ export default function ShaderCarousel() {
   }
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-black">
+    <div className="relative w-full h-screen overflow-hidden bg-white">
       {/* ── Three.js background ── */}
       <div className="absolute inset-0 z-0">
-        <Suspense
-          fallback={
-            <div className="w-full h-full bg-gray-900 animate-pulse flex items-center justify-center text-white/20 font-black text-5xl uppercase tracking-widest">
-              OPTICVIEW
-            </div>
-          }
-        >
-          <Canvas camera={{ position: [0, 0, 5], fov: 75 }} dpr={[1, 2]}>
-            <Scene speed={SPLIDE_SPEED} />
-          </Canvas>
-        </Suspense>
+        <Canvas camera={{ position: [0, 0, 5], fov: 75 }} dpr={[1, 2]}>
+          <Scene speed={SPLIDE_SPEED} imagePaths={imagePaths} maskPath={maskPath} />
+        </Canvas>
       </div>
 
       {/* ── Splide overlay ── */}
@@ -172,7 +180,9 @@ export default function ShaderCarousel() {
         <SplideTrack className="h-full">
           {SLIDE_CONTENT.map((content, i) => (
             <SplideSlide key={i} className="h-full">
-              <div className="h-full w-full flex flex-col justify-end p-12 md:p-24 select-none">
+              <div
+                className={`h-full w-full flex flex-col justify-end p-12 select-none ${i === 0 ? 'md:pb-100 md:pl-16' : 'md:p-24'}`}
+              >
                 <div
                   className={`transition-all duration-[900ms] ease-out ${
                     activeIndex === i
@@ -180,7 +190,7 @@ export default function ShaderCarousel() {
                       : 'opacity-0 translate-y-16 blur-sm'
                   }`}
                 >
-                  <h2 className="text-3xl md:text-5xl font-black text-white mb-3 uppercase tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] pointer-events-none">
+                  <h2 className="text-3xl md:text-6xl font-black text-white mb-3 uppercase tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] pointer-events-none">
                     {content.title}
                   </h2>
                   <p className="text-base md:text-lg text-white/75 max-w-xl font-medium drop-shadow-lg mb-6 pointer-events-none">
@@ -190,7 +200,7 @@ export default function ShaderCarousel() {
                     {i === SLIDE_CONTENT.length - 1 && (
                       <button
                         onClick={() => navigate('/eyeglasses')}
-                        className="px-8 py-4 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                        className="px-8 py-4 bg-primary-500/80 backdrop-blur-md text-white font-bold rounded-2xl border border-white/20 hover:bg-primary-500/100 transition-all duration-500 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] hover:shadow-primary-500/40 transform hover:-translate-y-1 pointer-events-auto"
                       >
                         Shop Now
                       </button>

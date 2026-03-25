@@ -67,7 +67,7 @@ export default function Header({
   // Mode 2: 3 sections layout
   return (
     <header
-      className={`w-full border-b sticky top-0 z-50 transition-all duration-300 ${
+      className={`w-full border-b sticky top-0 z-100 transition-all duration-300 ${
         isTranslucent
           ? 'bg-white/70 backdrop-blur-md border-white/20 shadow-sm'
           : 'bg-white border-mint-300 shadow-sm'

@@ -1,4 +1,3 @@
-import React from 'react'
 
 interface LoadingProps {
   className?: string
@@ -9,7 +8,7 @@ export const Loading = ({ className = '', fullPage = true }: LoadingProps) => {
   return (
     <div
       className={`${
-        fullPage ? 'fixed inset-0 z-[9999]' : 'relative w-full h-full min-h-[200px]'
+        fullPage ? 'fixed inset-0 z-40' : 'relative w-full h-full min-h-[200px]'
       } bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center gap-6 select-none animate-in fade-in duration-500 ${className}`}
     >
       <div className="relative">

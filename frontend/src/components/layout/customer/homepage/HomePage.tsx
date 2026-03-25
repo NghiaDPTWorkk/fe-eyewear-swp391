@@ -17,6 +17,7 @@ export default function HomePage({ header }: HomePageProps) {
   return (
     <div className="min-h-screen bg-mint-200">
       {header}
+      
 
       {/* Hero Section */}
       <Hero />

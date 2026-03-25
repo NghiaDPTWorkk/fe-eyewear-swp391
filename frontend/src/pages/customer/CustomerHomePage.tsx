@@ -15,11 +15,9 @@ export const CustomerHomePage = () => {
       {/* Hero Section */}
       <Hero />
 
-      {/* Hiệu ứng Three.js Shader Carousel (Cloud Mask) - "Dưới cụm" Hero */}
-      <section className="py-12 bg-mint-200">
-        <div className="container mx-auto px-4">
-          <ShaderCarousel />
-        </div>
+      {/* Shader Carousel - Full Viewport */}
+      <section className="relative w-screen left-1/2 -translate-x-1/2">
+        <ShaderCarousel />
       </section>
 
       {/* Benefits Bar */}

@@ -83,8 +83,6 @@ export const CartPage = () => {
           )}
         </Container>
       </main>
-
-      </main>
     </div>
   )
 }

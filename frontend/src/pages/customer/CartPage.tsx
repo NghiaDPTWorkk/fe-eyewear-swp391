@@ -1,6 +1,4 @@
 // import { Info, Plus } from 'lucide-react'
-import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
-import { Footer } from '@/components/layout/customer/homepage/components'
 import { useCart } from '@/features/customer/cart/hooks/useCart'
 import { Container, Checkbox } from '@/shared/components/ui'
 import { EmptyCart, CartItem, CartSummary, PromoSection } from '@/components/layout/customer/cart'
@@ -16,7 +14,6 @@ export const CartPage = () => {
 
   return (
     <div className="min-h-screen bg-mint-200">
-      <CustomerHeader />
 
       <main className="py-8 lg:py-12">
         <Container maxWidth="1200px">
@@ -87,7 +84,7 @@ export const CartPage = () => {
         </Container>
       </main>
 
-      <Footer />
+      </main>
     </div>
   )
 }

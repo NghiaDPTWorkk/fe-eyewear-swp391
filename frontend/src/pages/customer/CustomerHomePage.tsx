@@ -1,7 +1,5 @@
-import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
 import {
   BenefitsBar,
-  Footer,
   ShaderCarousel
 } from '@/components/layout/customer/homepage/components'
 import { ProductCarousel } from '@/shared/components/ui/product-carousel'
@@ -28,7 +26,6 @@ export const CustomerHomePage = () => {
 
   return (
     <div className="min-h-screen bg-mint-200 overflow-x-hidden">
-      <CustomerHeader isTranslucent />
 
       {/* Shader Carousel - Full Viewport */}
       <section className="relative w-screen left-1/2 -translate-x-1/2">
@@ -58,7 +55,6 @@ export const CustomerHomePage = () => {
       </section>
 
       {/* Footer */}
-      <Footer />
     </div>
   )
 }

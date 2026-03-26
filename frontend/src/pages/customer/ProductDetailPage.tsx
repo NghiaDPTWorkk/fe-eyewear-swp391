@@ -1,6 +1,10 @@
 import { useParams } from 'react-router-dom'
 import { useGetProductDetail } from '@/shared/hooks/products/useGetProductDetail'
-import { ImageGallery, ProductInfo } from '@/components/layout/customer/product-detail'
+import {
+  ImageGallery,
+  ProductInfo,
+  ProductSpecifications
+} from '@/components/layout/customer/product-detail'
 import { useProductVariants } from '@/shared/hooks/products/useProductVariants'
 import { BenefitsBar } from '@/components/layout/customer/homepage/components/BenefitsBar'
 
@@ -70,6 +74,7 @@ const ProductDetailContent = ({ product, productId }: ProductDetailContentProps)
         </div>
       </main>
       <BenefitsBar />
+      <ProductSpecifications product={product} variantState={variantState} />
     </div>
   )
 }

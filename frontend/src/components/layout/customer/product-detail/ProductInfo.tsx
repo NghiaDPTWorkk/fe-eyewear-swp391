@@ -257,9 +257,6 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
     }
   }
 
-  // Get product description
-  const description = product.description || product.shortDescription
-
   // Calculate discount percentage if applicable
   const hasDiscount = finalPrice < price
   const discountPercentage = hasDiscount ? Math.round(((price - finalPrice) / price) * 100) : 0
@@ -351,9 +348,10 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
         </div>
       )}
 
-      {description && (
+      {/* Description moved to ProductSpecifications tabs per user request */}
+      {/* {description && (
         <p className="text-gray-eyewear leading-relaxed mb-8 max-w-xl">{description}</p>
-      )}
+      )} */}
 
       {/* Dynamic Options Rendering */}
       {attributes.length > 0 && (

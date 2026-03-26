@@ -9,9 +9,14 @@ interface ProductCarouselProps {
   products: Product[]
   autoPlayInterval?: number // Kept for compatibility but Splide uses its own options
   itemsPerView?: number
+  isAutoScroll?: boolean
 }
 
-export const ProductCarousel = ({ products, itemsPerView = 4 }: ProductCarouselProps) => {
+export const ProductCarousel = ({
+  products,
+  itemsPerView = 4,
+  isAutoScroll = true
+}: ProductCarouselProps) => {
   const navigate = useNavigate()
 
   if (products.length === 0) {
@@ -26,21 +31,27 @@ export const ProductCarousel = ({ products, itemsPerView = 4 }: ProductCarouselP
     <div className="relative group/carousel">
       <Splide
         hasTrack={false}
-        extensions={{ AutoScroll }}
+        extensions={isAutoScroll ? { AutoScroll } : {}}
         options={{
-          type: 'loop',
+          type: products.length > itemsPerView ? 'loop' : 'slide',
           drag: 'free',
           focus: 'center',
           perPage: itemsPerView,
           gap: '1.5rem',
           arrows: true,
           pagination: false,
-          autoScroll: {
-            pauseOnHover: true,
-            pauseOnFocus: false,
-            rewind: false,
-            speed: 0.5 // Chậm hơn 1 một chút theo yêu cầu
-          },
+          ...(isAutoScroll
+            ? {
+                autoScroll: {
+                  pauseOnHover: true,
+                  pauseOnFocus: false,
+                  rewind: false,
+                  speed: 0.5
+                }
+              }
+            : {
+                autoScroll: false
+              }),
           breakpoints: {
             1280: { perPage: 3 },
             768: { perPage: 2 },
@@ -55,7 +66,14 @@ export const ProductCarousel = ({ products, itemsPerView = 4 }: ProductCarouselP
             const productName = p.nameBase || 'Unnamed Product'
             const productBrand = p.brand || ''
             const productModelCode = p.skuBase || p.id || ''
-            const productImage = p.defaultVariantImage || p.imageUrl || ''
+            const productImage =
+              p.defaultVariantImage ||
+              p.imageUrl ||
+              (p.variants &&
+                p.variants.length > 0 &&
+                p.variants[0].imgs &&
+                p.variants[0].imgs[0]) ||
+              ''
 
             const originalPrice = p.defaultVariantPrice ?? 0
             const finalPrice = p.defaultVariantFinalPrice ?? originalPrice
@@ -85,10 +103,16 @@ export const ProductCarousel = ({ products, itemsPerView = 4 }: ProductCarouselP
           })}
         </SplideTrack>
 
-        {/* Custom Styling for Splide Arrows */}
         <style
           dangerouslySetInnerHTML={{
             __html: `
+          /* Ẩn splide đi cho đến khi nó được khởi tạo xong để tránh FOUC */
+          .splide:not(.is-initialized) {
+            visibility: hidden;
+            opacity: 0;
+            height: 400px; /* Chiều cao cố định ban đầu để giữ chỗ */
+          }
+
           .group\\/carousel .splide__arrow {
             background: white !important;
             width: 3.5rem !important;
@@ -118,6 +142,11 @@ export const ProductCarousel = ({ products, itemsPerView = 4 }: ProductCarouselP
           }
           .group\\/carousel .splide__arrow:hover svg {
             fill: white !important;
+          }
+          
+          /* Đảm bảo track không bị nhảy khi slide load */
+          .splide__track {
+            overflow: visible !important;
           }
         `
           }}

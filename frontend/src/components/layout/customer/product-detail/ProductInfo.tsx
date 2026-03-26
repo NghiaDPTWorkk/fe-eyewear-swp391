@@ -1,14 +1,4 @@
-import {
-  Heart,
-  ShoppingCart,
-  Video,
-  MessageCircle,
-  Truck,
-  ShieldCheck,
-  RotateCcw,
-  PenTool,
-  Zap
-} from 'lucide-react'
+import { Heart, ShoppingCart, Video, MessageCircle, Zap } from 'lucide-react'
 import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 import { useState } from 'react'
 import type { Product, StandardProduct } from '@/shared/types/product.types'
@@ -267,9 +257,6 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
     }
   }
 
-  // Get product description
-  const description = product.description || product.shortDescription
-
   // Calculate discount percentage if applicable
   const hasDiscount = finalPrice < price
   const discountPercentage = hasDiscount ? Math.round(((price - finalPrice) / price) * 100) : 0
@@ -361,9 +348,10 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
         </div>
       )}
 
-      {description && (
+      {/* Description moved to ProductSpecifications tabs per user request */}
+      {/* {description && (
         <p className="text-gray-eyewear leading-relaxed mb-8 max-w-xl">{description}</p>
-      )}
+      )} */}
 
       {/* Dynamic Options Rendering */}
       {attributes.length > 0 && (
@@ -527,8 +515,8 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
         Chat with an Expert about this frame
       </button>
 
-      {/* Feature Grid */}
-      <div className="grid grid-cols-2 gap-y-6 gap-x-8 pt-8 border-t border-mint-300">
+      {/* Feature Grid - Moved to ProductDetailPage per user request */}
+      {/* <div className="grid grid-cols-2 gap-y-6 gap-x-8 pt-8 border-t border-mint-300">
         <div className="flex items-center gap-3">
           <Truck className="w-5 h-5 text-primary-500" />
           <span className="text-sm text-gray-eyewear font-medium">Free Express Delivery</span>
@@ -539,13 +527,13 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
         </div>
         <div className="flex items-center gap-3">
           <RotateCcw className="w-5 h-5 text-primary-500" />
-          <span className="text-sm text-gray-eyewear font-medium">Easy 30-Day Returns</span>
+          <span className="text-sm text-gray-eyewear font-medium">Easy 3-Day Returns</span>
         </div>
         <div className="flex items-center gap-3">
           <PenTool className="w-5 h-5 text-primary-500" />
           <span className="text-sm text-gray-eyewear font-medium">Prescription Ready</span>
         </div>
-      </div>
+      </div> */}
 
       <LensSelectionModal
         isOpen={isLensModalOpen}

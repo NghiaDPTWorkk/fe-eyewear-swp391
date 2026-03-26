@@ -75,11 +75,7 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
     shipping: formatPrice(realOrder.invoice?.feeShip || 0),
     tax: formatPrice(0),
     discount: formatPrice(realOrder.invoice?.totalDiscount || 0),
-    total: formatPrice(
-      (realOrder.price || 0) +
-        (realOrder.invoice?.feeShip || 0) -
-        (realOrder.invoice?.totalDiscount || 0)
-    ),
+    total: formatPrice(realOrder.price || 0),
 
     customer: {
       name: realOrder.customerName || realOrder.invoice?.fullName || 'Guest Customer',

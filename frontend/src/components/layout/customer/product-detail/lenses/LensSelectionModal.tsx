@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import type { VisionNeed, LensSelectionState, PrescriptionData } from './types'
 import StepVisionNeed from './StepVisionNeed'
 import StepLensChoice from './StepLensChoice'
@@ -81,8 +82,8 @@ export default function LensSelectionModal({
     } else if (step === 'MANUAL_RX' || step === 'SAVED_RX') setStep('PRESCRIPTION_OPTION')
   }
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+  const modalContent = (
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
       <div className="bg-white w-full max-w-5xl h-[90vh] rounded-3xl overflow-hidden flex shadow-2xl animate-in zoom-in-95 duration-300">
         <ModalSidebar
           key={productImage}
@@ -150,4 +151,6 @@ export default function LensSelectionModal({
       </div>
     </div>
   )
+
+  return createPortal(modalContent, document.body)
 }

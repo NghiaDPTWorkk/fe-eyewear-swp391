@@ -39,7 +39,7 @@ export default function ConfirmationModal({
   if (!shouldRender) return null
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
         className={`fixed inset-0 bg-neutral-900/40 backdrop-blur-[2px] transition-opacity duration-300 ${

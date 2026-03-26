@@ -3,7 +3,6 @@ import { IoPersonCircleOutline, IoCalendarOutline, IoTimeOutline } from 'react-i
 import { Button } from '@/shared/components/ui-core'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import type { EnrichedInvoice } from '@/features/manager/hooks'
-import { toTitleCase } from '@/shared/utils'
 
 interface ManagerInvoiceTableProps {
   invoices: EnrichedInvoice[]
@@ -110,7 +109,7 @@ export const ManagerInvoiceTable: React.FC<ManagerInvoiceTableProps> = ({
                             : 'bg-amber-50 text-amber-600 border-amber-100'
                     }`}
                   >
-                    {toTitleCase(inv.status)}
+                    {inv.status}
                   </span>
                 </td>
                 <td className="px-6 py-6 font-primary">

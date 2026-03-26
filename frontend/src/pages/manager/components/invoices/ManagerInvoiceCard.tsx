@@ -28,7 +28,7 @@ import {
   IoShieldCheckmarkOutline,
   IoListOutline
 } from 'react-icons/io5'
-import { formatPrice, toTitleCase } from '@/shared/utils'
+import { formatPrice } from '@/shared/utils'
 
 function getInvoiceStatusBadgeClass(status: string) {
   switch (status) {
@@ -287,7 +287,7 @@ export default function ManagerInvoiceCard({
               <span
                 className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-semibold tracking-widest border ${getInvoiceStatusBadgeClass(invoice.status)}`}
               >
-                {toTitleCase(invoice.status)}
+                {invoice.status}
               </span>
             </div>
             <p className="text-xs font-semibold text-neutral-400 uppercase tracking-widest leading-none">
@@ -583,11 +583,9 @@ export default function ManagerInvoiceCard({
                           : 'bg-amber-50 text-amber-700 border-amber-100'
                       }`}
                     >
-                      {toTitleCase(
-                        invoice.status === InvoiceStatus.CANCELED || invoice.status === 'CANCEL'
-                          ? 'CANCELED'
-                          : order.status
-                      )}
+                      {invoice.status === InvoiceStatus.CANCELED || invoice.status === 'CANCEL'
+                        ? 'CANCELED'
+                        : order.status}
                     </span>
                   </div>
                 </div>
@@ -661,7 +659,7 @@ export default function ManagerInvoiceCard({
                       Order Type
                     </span>
                     <p className="text-xs font-semibold text-gray-700 font-primary truncate">
-                      {(order.type ?? []).map((t) => toTitleCase(t)).join(', ')}
+                      {(order.type ?? []).map((t) => t?.toUpperCase()).join(', ')}
                     </p>
                   </div>
                   <div className="min-w-0">

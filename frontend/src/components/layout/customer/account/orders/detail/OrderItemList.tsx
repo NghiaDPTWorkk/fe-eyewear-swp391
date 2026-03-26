@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { Card } from '@/shared/components/ui/card'
 import { PriceTag } from '@/shared/components/ui/price-tag'
 import { FileText } from 'lucide-react'
@@ -8,16 +9,52 @@ interface OrderItemListProps {
 }
 
 export function OrderItemList({ items }: OrderItemListProps) {
+  // Group identical items and calculate quantities since API doesn't provide quantity field
+  const { groupedItems, totalPieces } = useMemo(() => {
+    if (!Array.isArray(items)) return { groupedItems: [], totalPieces: 0 }
+
+    const resultMap = new Map<string, InvoiceItem & { count: number }>()
+
+    items.forEach((item) => {
+      const isManufacturing = item.type?.includes('MANUFACTURING')
+
+      // Create a stable key for grouping
+      // We use product_id (preferred) or SKU as the identifier
+      const productId = item.product?.product_id || item.product?.sku || 'no-id'
+      const lensId = item.lens?.product_id || item.lens?.sku || 'no-lens'
+
+      const groupKey = isManufacturing ? `m-${productId}-${lensId}` : `n-${productId}`
+
+      // Use the quantity from the API if present, otherwise default to 1
+      const itemQty = item.quantity || (item as any).qty || 1
+
+      const existing = resultMap.get(groupKey)
+      if (existing) {
+        existing.count += itemQty
+      } else {
+        resultMap.set(groupKey, { ...item, count: itemQty })
+      }
+    })
+
+    const finalItems = Array.from(resultMap.values())
+    const total = finalItems.reduce((acc, item) => acc + item.count, 0)
+
+    return {
+      groupedItems: finalItems,
+      totalPieces: total
+    }
+  }, [items])
+
   return (
     <Card className="p-0 border-mint-100/50 overflow-hidden">
       <div className="p-6 border-b border-mint-50 bg-mint-50/10">
         <h3 className="font-bold text-mint-1200 text-sm flex items-center gap-2 uppercase tracking-widest">
           <FileText size={16} className="text-primary-500" />
-          Order Items ({items.length})
+          Order Items ({totalPieces})
         </h3>
       </div>
       <div className="divide-y divide-mint-50/50">
-        {items.map((item, idx) => (
+        {groupedItems.map((item, idx) => (
           <div key={idx} className="p-6">
             {/* Frame Section */}
             {item.product && (
@@ -34,10 +71,15 @@ export function OrderItemList({ items }: OrderItemListProps) {
                     <h4 className="font-bold text-mint-1200 text-[15px] leading-tight">
                       {item.product.detail.name}
                     </h4>
-                    <PriceTag
-                      price={item.product.pricePerUnit}
-                      className="text-[15px] font-bold text-mint-1200"
-                    />
+                    <div className="flex flex-col items-end">
+                      <PriceTag
+                        price={item.product.pricePerUnit}
+                        className="text-[15px] font-bold text-mint-1200"
+                      />
+                      <span className="text-[11px] text-gray-400 mt-1 tracking-widest">
+                        Quantity: x{item.count}
+                      </span>
+                    </div>
                   </div>
                   <div className="flex flex-wrap gap-3 mt-3">
                     {item.product.detail.options.map((opt) => (

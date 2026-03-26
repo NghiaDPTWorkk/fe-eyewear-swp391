@@ -132,7 +132,7 @@ export function ProductCard({
       </button>
 
       {/* Product Image - Full width, no padding */}
-      <div className="aspect-square bg-gradient-to-br from-mint-100 to-mint-200 flex items-center justify-center overflow-hidden relative">
+      <div className="aspect-square bg-gray-50/50 flex items-center justify-center overflow-hidden relative">
         {image ? (
           <img
             src={image}

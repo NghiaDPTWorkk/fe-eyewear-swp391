@@ -6,8 +6,8 @@ export const Footer = () => {
     <footer className="bg-[#052e25] text-[#b5ccc7]">
       {/* Top Section: Hotline & Support */}
       <div className="border-b border-[#1a443b]">
-        <div className="container mx-auto px-4 py-10">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div className="space-y-1">
               <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#8ba39e] block">
                 Hotline
@@ -37,10 +37,10 @@ export const Footer = () => {
       </div>
 
       {/* Middle Section: Columns */}
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-16">
+      <div className="container mx-auto px-4 py-10">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
           {/* About */}
-          <div className="md:col-span-5 space-y-6">
+          <div className="md:col-span-5 space-y-4">
             <h4 className="font-heading font-bold text-white text-lg uppercase tracking-wider">
               About Our Store
             </h4>
@@ -58,11 +58,11 @@ export const Footer = () => {
           </div>
 
           {/* Quick Links */}
-          <div className="md:col-span-3 space-y-6">
+          <div className="md:col-span-3 space-y-4">
             <h4 className="font-heading font-bold text-white text-lg uppercase tracking-wider">
               Quick Links
             </h4>
-            <ul className="space-y-4">
+            <ul className="space-y-2">
               {[
                 { label: 'Privacy Policy', to: '/policies/privacy' },
                 { label: 'Shipping & Inspection', to: '/policies/shipping' },
@@ -83,11 +83,11 @@ export const Footer = () => {
           </div>
 
           {/* Store Location */}
-          <div className="md:col-span-4 space-y-6">
+          <div className="md:col-span-4 space-y-4">
             <h4 className="font-heading font-bold text-white text-lg uppercase tracking-wider">
               Store Location
             </h4>
-            <ul className="space-y-5">
+            <ul className="space-y-3">
               <li className="flex items-start gap-4 group">
                 <div className="w-10 h-10 rounded-xl bg-[#0a3d33] flex items-center justify-center flex-shrink-0 group-hover:bg-primary-500/10 transition-colors">
                   <MapPin className="w-5 h-5 text-primary-500" />
@@ -124,8 +124,8 @@ export const Footer = () => {
 
       {/* Footer Bottom */}
       <div className="border-t border-[#1a443b]">
-        <div className="container mx-auto px-4 py-10">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-8">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="text-center md:text-left space-y-2">
               <p className="text-[#8ba39e] text-xs font-normal">
                 © {new Date().getFullYear()} OpticView Eyewear. All rights reserved.

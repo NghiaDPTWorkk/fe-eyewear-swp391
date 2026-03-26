@@ -15,5 +15,23 @@ export const profileRequestService = {
     return httpClient.get<ProfileRequestDetailResponse>(
       ENDPOINTS.ADMIN.PROFILE_REQUESTS.DETAIL(id)
     )
+  },
+
+  approveRequest(id: string) {
+    return httpClient.patch<{ success: boolean; message: string }>(
+      ENDPOINTS.ADMIN.PROFILE_REQUESTS.APPROVE(id)
+    )
+  },
+
+  rejectRequest(id: string) {
+    return httpClient.patch<{ success: boolean; message: string }>(
+      ENDPOINTS.ADMIN.PROFILE_REQUESTS.REJECT(id)
+    )
+  },
+
+  cancelRequest(id: string) {
+    return httpClient.patch<{ success: boolean; message: string }>(
+      ENDPOINTS.ADMIN.PROFILE_REQUESTS.CANCEL(id)
+    )
   }
 }

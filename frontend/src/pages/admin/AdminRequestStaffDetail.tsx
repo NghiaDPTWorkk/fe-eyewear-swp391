@@ -17,6 +17,8 @@ import { profileRequestService } from '@/shared/services/admin/profileRequestSer
 import { adminAccountService } from '@/shared/services/admin/adminAccountService'
 import type { ProfileRequestDetail, AdminAccount } from '@/shared/types'
 import { formatDate } from '@/shared/utils/format.utils'
+import { toast } from 'react-hot-toast'
+import ConfirmationModal from '@/shared/components/ui/ConfirmationModal'
 
 interface ChangeItem {
   field: string
@@ -32,6 +34,8 @@ export default function AdminRequestStaffDetail() {
   const [request, setRequest] = useState<ProfileRequestDetail | null>(null)
   const [currentStaff, setCurrentStaff] = useState<AdminAccount | null>(null)
   const [loading, setLoading] = useState(true)
+  const [processing, setProcessing] = useState(false)
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,17 +43,19 @@ export default function AdminRequestStaffDetail() {
       setLoading(true)
       try {
         const reqResponse = await profileRequestService.getProfileRequestDetail(id)
-        if (reqResponse.success) {
-          setRequest(reqResponse.data)
+        if (reqResponse.success && reqResponse.data.profileRequestDetail) {
+          const detail = reqResponse.data.profileRequestDetail
+          setRequest(detail)
           
           // Fetch current staff info to compare
-          const staffResponse = await adminAccountService.getAdminAccountDetail(reqResponse.data.staffId)
+          const staffResponse = await adminAccountService.getAdminAccountDetail(detail.staffId)
           if (staffResponse.success) {
             setCurrentStaff(staffResponse.data)
           }
         }
       } catch (error) {
         console.error('Failed to fetch request detail:', error)
+        toast.error('Failed to load request details')
       } finally {
         setLoading(false)
       }
@@ -57,6 +63,48 @@ export default function AdminRequestStaffDetail() {
 
     fetchData()
   }, [id])
+
+  const handleApprove = async () => {
+    if (!id) return
+    setProcessing(true)
+    try {
+      const res = await profileRequestService.approveRequest(id)
+      if (res.success) {
+        toast.success('Profile updated successfully')
+        navigate('/admin/request-update-profile')
+      } else {
+        toast.error(res.message || 'Failed to approve request')
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Error approving request')
+    } finally {
+      setProcessing(false)
+    }
+  }
+
+  const handleReject = async () => {
+    if (!id) return
+    setIsRejectModalOpen(true)
+  }
+
+  const confirmReject = async () => {
+    if (!id) return
+    setProcessing(true)
+    try {
+      const res = await profileRequestService.rejectRequest(id)
+      if (res.success) {
+        toast.success('Request rejected')
+        setIsRejectModalOpen(false)
+        navigate('/admin/request-update-profile')
+      } else {
+        toast.error(res.message || 'Failed to reject request')
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Error rejecting request')
+    } finally {
+      setProcessing(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -126,12 +174,24 @@ export default function AdminRequestStaffDetail() {
         {/* Left: User Summary */}
         <div className="lg:col-span-1 space-y-6">
           <Card className="rounded-[32px] border border-neutral-100 shadow-xl shadow-slate-200/40 p-8 text-center bg-white">
-            <div className="relative inline-block mb-6">
-              <div className="w-24 h-24 rounded-3xl bg-neutral-100 overflow-hidden ring-4 ring-mint-50 mx-auto flex items-center justify-center">
-                <span className="text-3xl font-bold text-neutral-400">{request.name.charAt(0)}</span>
+            <div className="relative inline-block mb-10 group/avatar">
+              <div className="w-32 h-32 rounded-[38px] bg-white overflow-hidden ring-1 ring-neutral-100 p-1.5 mx-auto transition-all duration-1000 ease-out group-hover/avatar:shadow-[0_20px_50px_-15px_rgba(74,215,176,0.25)] group-hover/avatar:scale-[1.02]">
+                <div className="w-full h-full rounded-[32px] overflow-hidden bg-neutral-50 flex items-center justify-center">
+                  {currentStaff?.avatar ? (
+                    <img
+                      src={currentStaff.avatar}
+                      alt={request.name}
+                      className="w-full h-full object-cover transition-transform duration-1000 group-hover/avatar:scale-105"
+                    />
+                  ) : (
+                    <span className="text-4xl font-light text-neutral-300 font-heading">
+                      {(request.name || 'U').charAt(0)}
+                    </span>
+                  )}
+                </div>
               </div>
-              <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-mint-500 text-white flex items-center justify-center border-4 border-white">
-                <IoPersonOutline size={14} />
+              <div className="absolute -bottom-1 -right-1 w-9 h-9 rounded-2xl bg-white text-mint-500 flex items-center justify-center shadow-lg border border-neutral-50">
+                <IoShieldCheckmarkOutline size={18} />
               </div>
             </div>
             <h3 className="text-xl font-bold text-gray-900">{request.name}</h3>
@@ -211,7 +271,7 @@ export default function AdminRequestStaffDetail() {
                         </div>
                       </td>
                       <td className="px-6 py-5">
-                        <span className="text-sm font-medium text-neutral-400 line-through decoration-neutral-300">
+                        <span className={`text-sm font-medium ${change.isChanged ? 'text-neutral-400 line-through decoration-neutral-300' : 'text-gray-900'}`}>
                           {change.oldValue}
                         </span>
                       </td>
@@ -235,27 +295,56 @@ export default function AdminRequestStaffDetail() {
               </table>
             </div>
 
-            {request.status === 'PENDING' && (
+            {request.status === 'PENDING' ? (
               <div className="p-8 border-t border-neutral-100 bg-white flex gap-4 sticky bottom-0">
                 <Button
+                  onClick={handleApprove}
+                  disabled={processing}
                   variant="solid"
-                  className="flex-1 h-14 rounded-2xl bg-mint-900 hover:bg-mint-700 text-white font-bold transition-all shadow-xl shadow-mint-100/50 flex items-center justify-center gap-2"
+                  className="flex-1 h-14 rounded-2xl bg-mint-900 hover:bg-mint-700 text-white font-bold transition-all shadow-xl shadow-mint-100/50 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <IoCheckmarkCircleOutline size={20} />
-                  Accept All Changes
+                  {processing ? (
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    <>
+                      <IoCheckmarkCircleOutline size={20} />
+                      Accept All Changes
+                    </>
+                  )}
                 </Button>
                 <Button
+                  onClick={handleReject}
+                  disabled={processing}
                   variant="outline"
-                  className="px-8 h-14 rounded-2xl border-red-100 text-red-500 hover:bg-red-50 font-bold transition-all flex items-center justify-center gap-2"
+                  className="px-8 h-14 rounded-2xl border-red-100 text-red-500 hover:bg-red-50 font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <IoCloseCircleOutline size={20} />
                   Reject
                 </Button>
               </div>
+            ) : (
+              <div className="p-8 border-t border-neutral-100 bg-neutral-50/50 text-center sticky bottom-0">
+                <p className="text-sm font-semibold text-neutral-400 italic flex items-center justify-center gap-2">
+                  <IoAlertCircleOutline size={16} />
+                  This request has been {request.status.toLowerCase()} and can no longer be modified.
+                </p>
+              </div>
             )}
           </Card>
         </div>
       </div>
+
+      <ConfirmationModal
+        isOpen={isRejectModalOpen}
+        onClose={() => setIsRejectModalOpen(false)}
+        onConfirm={confirmReject}
+        title="Confirm Rejection"
+        message={`Are you sure you want to reject the profile update request for ${request.name}? This action cannot be undone.`}
+        confirmText="Yes, Reject Request"
+        cancelText="No, Keep Pending"
+        type="danger"
+        isLoading={processing}
+      />
     </Container>
   )
 }

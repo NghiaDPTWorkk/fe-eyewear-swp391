@@ -1,7 +1,12 @@
 import { useNavigate } from 'react-router-dom'
 import PageHeader from '@/features/staff/components/common/PageHeader'
-import { Container, Button } from '@/shared/components/ui'
-import { IoChevronForwardOutline, IoTimeOutline, IoCheckmarkCircleOutline } from 'react-icons/io5'
+import { Container } from '@/shared/components/ui'
+import {
+  IoCheckmarkCircleOutline,
+  IoTimeOutline,
+  IoChevronBack,
+  IoChevronForward
+} from 'react-icons/io5'
 import { PATHS } from '@/routes/paths'
 import { useEffect, useState } from 'react'
 import { profileRequestService } from '@/shared/services/admin/profileRequestService'
@@ -22,7 +27,11 @@ export default function AdminRequestUpdateProfilePage() {
       try {
         const response = await profileRequestService.getProfileRequests(currentPage, limit)
         if (response.success) {
-          setRequests(response.data.profileRequestList)
+          const sortedList = [...response.data.profileRequestList].sort((a, b) => {
+            const priority: Record<string, number> = { PENDING: 0, APPROVED: 1, REJECTED: 2 }
+            return (priority[a.status] ?? 3) - (priority[b.status] ?? 3)
+          })
+          setRequests(sortedList)
           setPagination(response.data.pagination)
         }
       } catch (error) {
@@ -35,8 +44,8 @@ export default function AdminRequestUpdateProfilePage() {
     fetchRequests()
   }, [currentPage])
 
-  const handleRowClick = (staffId: string) => {
-    navigate(`/admin/request-update-profile/${staffId}`)
+  const handleRowClick = (id: string) => {
+    navigate(`/admin/request-update-profile/${id}`)
   }
 
   return (
@@ -82,8 +91,8 @@ export default function AdminRequestUpdateProfilePage() {
                 {Array.isArray(requests) && requests.length > 0 ? (
                   requests.map((req, idx) => (
                     <tr
-                      key={req.staffId + req.createdAt + idx}
-                      onClick={() => handleRowClick(req.staffId)}
+                      key={req._id || idx}
+                      onClick={() => handleRowClick(req._id)}
                       className="group hover:bg-mint-50/30 transition-all cursor-pointer"
                     >
                       <td className="px-6 py-5">
@@ -133,7 +142,7 @@ export default function AdminRequestUpdateProfilePage() {
                       <td className="px-6 py-5">
                         <div className="flex items-center justify-center">
                           <div className="w-8 h-8 rounded-full bg-neutral-50 flex items-center justify-center text-neutral-400 group-hover:bg-mint-500 group-hover:text-white transition-all shadow-sm">
-                            <IoChevronForwardOutline size={16} />
+                            <IoChevronForward size={16} />
                           </div>
                         </div>
                       </td>
@@ -152,28 +161,40 @@ export default function AdminRequestUpdateProfilePage() {
         </div>
 
         <div className="p-6 bg-neutral-50/30 flex items-center justify-between">
-          <p className="text-xs font-medium text-neutral-400">
-            Showing {requests.length} results
+          <p className="text-sm text-neutral-500">
+            Page <span className="font-bold text-gray-900">{currentPage}</span> of{' '}
+            <span className="font-bold text-gray-900">{pagination?.totalPages || 1}</span>
           </p>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-lg h-9"
-              disabled={currentPage === 1 || loading}
+          <div className="flex items-center gap-3">
+            <button
               onClick={() => setCurrentPage((prev) => prev - 1)}
+              disabled={currentPage === 1 || loading}
+              className={`flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-xl border transition-all ${
+                currentPage === 1 || loading
+                  ? 'bg-neutral-50 text-neutral-300 border-neutral-100 cursor-not-allowed'
+                  : 'bg-white text-gray-600 border-neutral-200 hover:bg-neutral-50 hover:border-neutral-300 active:scale-95'
+              }`}
             >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-lg h-9 bg-white shadow-sm"
-              disabled={!pagination || currentPage === pagination.totalPages || loading}
+              <IoChevronBack size={14} />
+              Prev
+            </button>
+
+            <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-mint-600 text-white font-bold text-sm shadow-lg shadow-mint-100">
+              {currentPage}
+            </div>
+
+            <button
               onClick={() => setCurrentPage((prev) => prev + 1)}
+              disabled={!pagination || currentPage === pagination.totalPages || loading}
+              className={`flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-xl border transition-all ${
+                !pagination || currentPage === pagination.totalPages || loading
+                  ? 'bg-neutral-50 text-neutral-300 border-neutral-100 cursor-not-allowed'
+                  : 'bg-white text-gray-600 border-neutral-200 hover:bg-neutral-50 hover:border-neutral-300 active:scale-95'
+              }`}
             >
               Next
-            </Button>
+              <IoChevronForward size={14} />
+            </button>
           </div>
         </div>
       </div>

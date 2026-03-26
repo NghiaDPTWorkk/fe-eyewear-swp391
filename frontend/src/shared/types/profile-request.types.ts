@@ -1,4 +1,5 @@
 export interface ProfileRequest {
+  _id: string
   staffId: string
   name: string
   email: string
@@ -26,6 +27,7 @@ export interface ProfileRequestListResponse {
 }
 
 export interface ProfileRequestDetail {
+  _id: string
   staffId: string
   name: string
   email: string
@@ -39,5 +41,7 @@ export interface ProfileRequestDetail {
 export interface ProfileRequestDetailResponse {
   success: boolean
   message: string
-  data: ProfileRequestDetail
+  data: {
+    profileRequestDetail: ProfileRequestDetail
+  }
 }

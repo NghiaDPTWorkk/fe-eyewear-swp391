@@ -160,7 +160,10 @@ export const ENDPOINTS = {
     INVOICES_SHIP_CODE: (invoiceId: string) => `/ships/invoice/${invoiceId}/ship-code`,
     PROFILE_REQUESTS: {
       LIST: (page: number, limit: number) => `/admin/profile-requests?page=${page}&limit=${limit}`,
-      DETAIL: (id: string) => `/admin/profile-requests/${id}`
+      DETAIL: (id: string) => `/admin/profile-requests/${id}`,
+      APPROVE: (id: string) => `/admin/profile-requests/${id}/status/approved`,
+      REJECT: (id: string) => `/admin/profile-requests/${id}/status/rejected`,
+      CANCEL: (id: string) => `/admin/profile-requests/${id}/cancel`
     },
     CUSTOMERS_LIST: (page?: number, limit?: number, search?: string, status?: string) => {
       const params = new URLSearchParams()

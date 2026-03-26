@@ -3,11 +3,16 @@ import { Container, MetricCard, Button } from '@/shared/components/ui'
 import { SystemOverview } from './components/dashboard/SystemOverview'
 import { RecentActivities } from './components/dashboard/RecentActivities'
 import { StaffDistribution } from './components/dashboard/StaffDistribution'
-import { IoPeopleOutline, IoPersonOutline } from 'react-icons/io5'
+import {
+  IoPeopleOutline,
+  IoPersonOutline,
+  IoCartOutline,
+} from 'react-icons/io5'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { BreadcrumbPath } from '@/components/layout/staff/operation-staff/breadcrumb-path'
 import { adminAccountService } from '@/shared/services/admin/adminAccountService'
 import { customerService } from '@/shared/services/admin/customerService'
+import { useRevenueStats } from '@/features/manager/hooks/useRevenueStats'
 
 export default function AdminDashboardPage() {
   const navigate = useNavigate()
@@ -22,6 +27,8 @@ export default function AdminDashboardPage() {
     queryKey: ['admin-customers-stats'],
     queryFn: () => customerService.getCustomers({ limit: 1 })
   })
+
+  const { data: revenueData, isLoading: isRevenueLoading } = useRevenueStats({ period: 'month' })
 
   const totalStaff = staffData?.data?.pagination?.total ?? 0
   const totalUsers = customerData?.data?.pagination?.total ?? 0
@@ -60,24 +67,31 @@ export default function AdminDashboardPage() {
       {/* Metrics Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-10">
         {/* Left: Stats */}
-        <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-          <MetricCard
-            label="TOTAL USERS"
-            value={isCustomerLoading ? '...' : String(totalUsers)}
-            colorScheme="mint"
-            trend={{ value: 12.5, label: 'vs last month', isPositive: true }}
-            icon={<IoPeopleOutline size={22} />}
-          />
-          <MetricCard
-            label="TOTAL STAFF"
-            value={isStaffLoading ? '...' : String(totalStaff)}
-            colorScheme="info"
-            trend={{ value: 3.2, label: 'vs last month', isPositive: true }}
-            icon={<IoPersonOutline size={22} />}
-          />
-          <div className="lg:col-span-3">
-            <SystemOverview />
+        <div className="lg:col-span-3 space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+            <MetricCard
+              label="TOTAL USERS"
+              value={isCustomerLoading ? '...' : String(totalUsers)}
+              colorScheme="mint"
+              trend={{ value: 12.5, label: 'vs last month', isPositive: true }}
+              icon={<IoPeopleOutline size={22} />}
+            />
+            <MetricCard
+              label="TOTAL STAFF"
+              value={isStaffLoading ? '...' : String(totalStaff)}
+              colorScheme="info"
+              trend={{ value: 3.2, label: 'vs last month', isPositive: true }}
+              icon={<IoPersonOutline size={22} />}
+            />
+            <MetricCard
+              label="TOTAL ORDERS"
+              value={isRevenueLoading ? '...' : String(revenueData?.rows?.[revenueData.rows.length - 1]?.invoiceCount || 0)}
+              colorScheme="warning"
+              trend={{ value: 5.4, label: 'vs last month', isPositive: true }}
+              icon={<IoCartOutline size={22} />}
+            />
           </div>
+          <SystemOverview />
         </div>
 
         {/* Right: Staff Distribution */}

@@ -4,6 +4,7 @@ import { ProductCarousel } from '@/shared/components/ui/product-carousel'
 import { useGetProductWithPagination } from '@/shared/hooks/products/useGetProductWithPagination'
 import { useTexture } from '@react-three/drei'
 import { Loading } from '@/shared/components/ui/loading'
+import BuyTutorial from '@/components/layout/customer/homepage/components/BuyTutorial'
 
 // ─── Carousel Assets ───────────────────────────────────────────────────────────
 const IMAGE_PATHS = [
@@ -61,6 +62,7 @@ export const CustomerHomePage = () => {
             <ProductCarousel products={products} itemsPerView={4} autoPlayInterval={1000} />
           </div>
         </section>
+        <BuyTutorial />
       </div>
 
       {/* Loading Overlay - Chỉ hiện khi trang chưa sẵn sàng để tạo cảm giác mượt mà */}

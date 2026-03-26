@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
+import * as Yup from 'yup'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import { Card } from '@/shared/components/ui'
@@ -61,6 +62,61 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
   const [isAddressDropdownOpen, setIsAddressDropdownOpen] = useState(false)
   const [selectedProvinceCode, setSelectedProvinceCode] = useState<number | null>(null)
   const [shipping, setShipping] = useState<number>(20000)
+  const [errors, setErrors] = useState<Record<string, string>>({})
+
+  // Clear specific error when state changes
+  useEffect(() => {
+    if (errors.fullName) setErrors((prev) => ({ ...prev, fullName: '' }))
+  }, [customerInfo.fullName])
+
+  useEffect(() => {
+    if (errors.phone) setErrors((prev) => ({ ...prev, phone: '' }))
+  }, [customerInfo.phone])
+
+  useEffect(() => {
+    if (errors.street) setErrors((prev) => ({ ...prev, street: '' }))
+  }, [address.street])
+
+  useEffect(() => {
+    if (errors.ward) setErrors((prev) => ({ ...prev, ward: '' }))
+  }, [address.ward])
+
+  useEffect(() => {
+    if (errors.city) setErrors((prev) => ({ ...prev, city: '' }))
+  }, [address.city])
+
+  // Validation Schema
+  const validationSchema = useMemo(
+    () =>
+      Yup.object().shape({
+        fullName: Yup.string().required('Full name is required').min(2, 'Name is too short'),
+        phone: Yup.string()
+          .required('Phone number is required')
+          .matches(/^[0-9]+$/, 'Phone must contain numbers only')
+          .matches(/^(0|84)\d{8,9}$/, 'Invalid phone number format (9-10 digits)'),
+        street: Yup.string().required('Street address is required'),
+        ward: Yup.string().required('Ward is required'),
+        city: Yup.string().required('City/Province is required')
+      }),
+    []
+  )
+
+  const validate = async (data: any) => {
+    try {
+      await validationSchema.validate(data, { abortEarly: false })
+      setErrors({})
+      return true
+    } catch (err: any) {
+      const newErrors: Record<string, string> = {}
+      err.inner.forEach((error: any) => {
+        if (error.path) {
+          newErrors[error.path] = error.message
+        }
+      })
+      setErrors(newErrors)
+      return false
+    }
+  }
 
   // Sync user info if it loads late
   useEffect(() => {
@@ -179,13 +235,17 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
   }, [])
 
   const handleCheckout = async () => {
-    if (!customerInfo.fullName || !customerInfo.phone) {
-      toast.error('Please enter full customer information')
-      return
+    const payloadData = {
+      fullName: customerInfo.fullName,
+      phone: customerInfo.phone,
+      street: address.street,
+      ward: address.ward,
+      city: address.city
     }
 
-    if (!address.city || !address.ward || !address.street) {
-      toast.error('Please enter full delivery address')
+    const isValid = await validate(payloadData)
+    if (!isValid) {
+      toast.error('Please check your information and fix the errors below')
       return
     }
 
@@ -257,7 +317,7 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
         const checkoutItemsCopy = checkoutItems.map((item) => ({ ...item }))
 
         if (!isOnlinePayment) {
-          toast.success('Order placed successfully!')
+          toast.success(response.message || 'Order placed successfully!')
           const { clearCart, removeItems, items: currentItems } = useCartStore.getState()
 
           // Only clear/remove from cart if we are NOT in direct checkout mode (propItems is undefined)
@@ -332,7 +392,7 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
 
   return (
     <Card className="p-5 xl:p-8 border-mint-300/50 sticky top-8 rounded-[32px]">
-      <CustomerInfoSection customerInfo={customerInfo} onUpdate={setCustomerInfo} />
+      <CustomerInfoSection customerInfo={customerInfo} onUpdate={setCustomerInfo} errors={errors} />
 
       <ShippingAddressSection
         address={address}
@@ -348,6 +408,7 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
         onSavedAddressChange={handleSavedAddressChange}
         onProvinceChange={handleProvinceChange}
         onAddressUpdate={(updates) => setAddress((prev) => ({ ...prev, ...updates }))}
+        errors={errors}
       />
 
       <div className="border-t border-mint-100 py-6 mb-6">

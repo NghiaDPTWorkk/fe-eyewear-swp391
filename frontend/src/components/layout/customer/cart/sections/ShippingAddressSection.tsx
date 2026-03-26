@@ -23,6 +23,7 @@ interface ShippingAddressSectionProps {
   onSavedAddressChange: (id: string) => void
   onProvinceChange: (code: number, name: string) => void
   onAddressUpdate: (updates: Partial<{ street: string; ward: string; city: string }>) => void
+  errors: Record<string, string>
 }
 
 export const ShippingAddressSection = ({
@@ -38,7 +39,8 @@ export const ShippingAddressSection = ({
   onDropdownToggle,
   onSavedAddressChange,
   onProvinceChange,
-  onAddressUpdate
+  onAddressUpdate,
+  errors
 }: ShippingAddressSectionProps) => {
   const [addressSearch, setAddressSearch] = useState('')
 
@@ -192,6 +194,12 @@ export const ShippingAddressSection = ({
             <Check className="w-3 h-3 text-primary-500" />
             <span>Items will be shipped to this location</span>
           </div>
+
+          {(errors.street || errors.ward || errors.city) && (
+            <p className="text-[10px] text-red-500 mt-2 ml-1 font-bold">
+              The selected address is incomplete. Please select another or enter details manually.
+            </p>
+          )}
         </div>
       ) : (
         <div className="space-y-4">
@@ -204,7 +212,9 @@ export const ShippingAddressSection = ({
               const province = provinces.find((p) => p.code === code)
               if (province) onProvinceChange(Number(code), province.name)
             }}
+            isInvalid={!!errors.city}
           />
+          {errors.city && <p className="text-[10px] text-red-500 mt-1 ml-1">{errors.city}</p>}
 
           <SearchableSelect
             label="Ward"
@@ -213,7 +223,9 @@ export const ShippingAddressSection = ({
             value={address.ward}
             onChange={(wardName) => onAddressUpdate({ ward: String(wardName) })}
             isDisabled={!selectedProvinceCode}
+            isInvalid={!!errors.ward}
           />
+          {errors.ward && <p className="text-[10px] text-red-500 mt-1 ml-1">{errors.ward}</p>}
           <div>
             <label className="text-xs font-bold text-gray-eyewear uppercase mb-1 block">
               Street
@@ -222,8 +234,10 @@ export const ShippingAddressSection = ({
               value={address.street}
               onChange={(e) => onAddressUpdate({ street: e.target.value })}
               placeholder="e.g. Le van viet"
-              className="rounded-xl border-mint-200 focus:border-primary-500"
+              className="rounded-xl border-mint-200"
+              isInvalid={!!errors.street}
             />
+            {errors.street && <p className="text-[10px] text-red-500 mt-1 ml-1">{errors.street}</p>}
           </div>
         </div>
       )}

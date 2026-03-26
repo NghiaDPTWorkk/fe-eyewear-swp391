@@ -128,12 +128,14 @@ export const BuyTutorial: React.FC = () => {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12">
           <Link
             to="/eyeglasses"
+            onClick={() => window.scrollTo(0, 0)}
             className="min-w-[280px] px-8 py-4 bg-[#427b6f] hover:bg-[#5aab90] text-white font-bold rounded-md uppercase tracking-widest text-[11px] text-center transition-all duration-300 shadow-sm"
           >
             SHOP EYEGLASSES
           </Link>
           <Link
             to="/sunglasses"
+            onClick={() => window.scrollTo(0, 0)}
             className="min-w-[280px] px-8 py-4 bg-[#427b6f] hover:bg-[#5aab90] text-white font-bold rounded-md uppercase tracking-widest text-[11px] text-center transition-all duration-300 shadow-sm"
           >
             SHOP SUNGLASSES

@@ -1,7 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 const FaceTutorial: React.FC = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
   return (
     <div className="min-h-screen bg-white">
       {/* Premium Header Section */}
@@ -95,12 +99,14 @@ const FaceTutorial: React.FC = () => {
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           <Link
             to="/eyeglasses"
+            onClick={() => window.scrollTo(0, 0)}
             className="px-10 py-4 bg-[#427b6f] hover:bg-[#5aab90] text-white font-bold rounded-xl uppercase tracking-widest text-xs transition-all shadow-lg"
           >
             Shop Eyeglasses
           </Link>
           <Link
             to="/sunglasses"
+            onClick={() => window.scrollTo(0, 0)}
             className="px-10 py-4 bg-white border-2 border-mint-600/30 hover:border-mint-600 text-mint-800 font-bold rounded-xl uppercase tracking-widest text-xs transition-all"
           >
             Shop Sunglasses

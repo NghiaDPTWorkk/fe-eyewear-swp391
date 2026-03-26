@@ -89,12 +89,14 @@ export const FixedDetail: React.FC = () => {
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
               <Link
                 to="/eyeglasses"
-                className="w-full sm:w-auto px-10 py-4 bg-[#427b6f] hover:bg-[#5aab90] text-white font-bold rounded-lg uppercase tracking-widest text-[11px] transition-all duration-300 shadow-lg hover:shadow-[#5c649c]/30 transform hover:-translate-y-1"
+                onClick={() => window.scrollTo(0, 0)}
+                className="w-full sm:w-auto px-10 py-4 bg-[#427b6f] hover:bg-[#5aab90] text-white font-bold rounded-lg uppercase tracking-widest text-[11px] transition-all duration-300 shadow-lg hover:shadow-[#62b0a9]/30 transform hover:-translate-y-1"
               >
                 SHOP WITH INSURANCE
               </Link>
               <Link
                 to="/face-tutorial"
+                onClick={() => window.scrollTo(0, 0)}
                 className="w-full sm:w-auto px-10 py-4 bg-white border-2 border-slate-200 hover:border-slate-800 text-slate-800 font-bold rounded-lg uppercase tracking-widest text-[11px] transition-all duration-300"
               >
                 LEARN MORE

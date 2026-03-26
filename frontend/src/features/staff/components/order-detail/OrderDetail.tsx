@@ -4,12 +4,10 @@ import {
   IoMailOutline,
   IoCallOutline,
   IoLocationOutline,
-  IoCheckmarkCircle,
   IoEyeOutline,
   IoCalendarOutline,
   IoDocumentTextOutline,
   IoCubeOutline,
-  IoWalletOutline,
   IoArrowBackOutline,
   IoGlassesOutline,
   IoTimeOutline,
@@ -111,51 +109,72 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
         p.product?.defaultVariantImage ||
         p.product?.product_image
     })),
-    timeline: isPreOrder
-      ? [
-          {
-            title: 'Pre-order Placed',
-            time: realOrder.createdAt
-              ? new Date(realOrder.createdAt).toLocaleTimeString([], {
-                  hour: '2-digit',
-                  minute: '2-digit'
-                })
-              : '',
-            desc: 'Deposit confirmed and order reserved',
-            icon: IoWalletOutline
-          },
-          {
-            title: 'Supplier Notification',
-            time: 'COMPLETED',
-            desc: 'Order sent to logistics partner',
-            icon: IoCubeOutline
-          },
-          {
-            title: 'Estimated Arrival',
-            time: '14-21 DAYS',
-            desc: 'Item is expected to arrive at our local warehouse',
-            icon: IoTimeOutline
-          }
-        ]
-      : [
-          {
-            title: 'Order Created',
-            time: realOrder.createdAt
-              ? new Date(realOrder.createdAt).toLocaleTimeString([], {
-                  hour: '2-digit',
-                  minute: '2-digit'
-                })
-              : '',
-            desc: 'New order registered in system',
-            icon: IoDocumentTextOutline
-          },
-          {
-            title: 'Current Stage',
-            time: 'ACTIVE',
-            desc: `Order is currently in ${toTitleCase(realOrder.status || 'pending')} stage`,
-            icon: IoTimeOutline
-          }
-        ],
+    timeline: [
+      {
+        title: 'Order Created',
+        time: realOrder.createdAt
+          ? new Date(realOrder.createdAt).toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit'
+            })
+          : '',
+        desc: 'New order registered in system',
+        icon: IoDocumentTextOutline,
+        ts: realOrder.createdAt
+      },
+      realOrder.approvedAt && {
+        title: 'Order Approved',
+        time: new Date(realOrder.approvedAt).toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
+        desc: 'Prescription/Order verified by staff',
+        icon: IoEyeOutline,
+        ts: realOrder.approvedAt
+      },
+      realOrder.rejectedAt && {
+        title: 'Order Rejected',
+        time: new Date(realOrder.rejectedAt).toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
+        desc: `Rejected: ${realOrder.rejectionNote || 'No reason provided'}`,
+        icon: IoInformationCircleOutline,
+        ts: realOrder.rejectedAt
+      },
+      realOrder.assignedAt && {
+        title: 'Technician Assigned',
+        time: new Date(realOrder.assignedAt).toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
+        desc: 'Staff assigned to production',
+        icon: IoCubeOutline,
+        ts: realOrder.assignedAt
+      },
+      realOrder.startedAt && {
+        title: 'In Production',
+        time: new Date(realOrder.startedAt).toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
+        desc: 'Glasse crafting in progress',
+        icon: IoTimeOutline,
+        ts: realOrder.startedAt
+      },
+      realOrder.completedAt && {
+        title: 'Completed',
+        time: new Date(realOrder.completedAt).toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
+        desc: 'Order is ready for delivery',
+        icon: IoGlassesOutline,
+        ts: realOrder.completedAt
+      }
+    ]
+      .filter((t): t is any => !!t && !!t.ts)
+      .sort((a, b) => new Date(a.ts).getTime() - new Date(b.ts).getTime()),
     transactions: [
       {
         id: `TRX-${(realOrder.orderCode || '').slice(-6)}`,
@@ -377,23 +396,6 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
                     ))}
                   </div>
 
-                  <div className="pt-4 border-t border-slate-50 space-y-3">
-                    <div className="flex justify-between items-center text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                      <span>Shipping Fee</span>
-                      <span className="text-slate-700">{order.shipping}</span>
-                    </div>
-                    <div className="flex justify-between items-center text-[11px] font-bold text-rose-400 uppercase tracking-wider">
-                      <span>Total discount</span>
-                      <span className="text-rose-500">-{order.discount}</span>
-                    </div>
-                    {order.tax !== 'đ 0' && order.tax !== '0 đ' && order.tax !== '0' && (
-                      <div className="flex justify-between items-center text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                        <span>Estimate Tax</span>
-                        <span className="text-slate-700">{order.tax}</span>
-                      </div>
-                    )}
-                  </div>
-
                   <div className="pt-4 border-t border-slate-100 flex justify-between items-baseline">
                     <span className="text-sm font-black text-slate-900 uppercase tracking-[0.1em]">
                       Total Amount
@@ -429,45 +431,6 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
                   </div>
                 </div>
               ))}
-            </div>
-          </Card>
-
-          <Card className="xl:col-span-8 order-6 h-full flex flex-col p-0 overflow-hidden border border-slate-100/50 shadow-xl shadow-slate-200/40 bg-white rounded-[32px]">
-            <div className="px-8 py-6 border-b border-slate-50 flex items-center gap-3">
-              <div className="p-2 bg-slate-50 rounded-xl text-slate-500">
-                <IoWalletOutline size={20} />
-              </div>
-              <h2 className="text-lg font-semibold text-slate-800 tracking-tight">
-                Transaction History
-              </h2>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead className="bg-slate-50/50 text-[10px] uppercase font-semibold text-slate-400 tracking-[0.15em]">
-                  <tr>
-                    <th className="px-8 py-5">TXN ID</th>
-                    <th className="px-8 py-5 text-right">AMOUNT</th>
-                    <th className="px-8 py-5 text-center">STATUS</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-50">
-                  {order.transactions.map((trx, j) => (
-                    <tr key={j} className="hover:bg-slate-50/30 transition-colors">
-                      <td className="px-8 py-6 font-mono text-xs font-semibold text-slate-900 uppercase">
-                        {trx.id}
-                      </td>
-                      <td className="px-8 py-6 text-right font-semibold text-slate-900">
-                        {trx.amount}
-                      </td>
-                      <td className="px-8 py-6 text-center">
-                        <span className="px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-semibold uppercase tracking-widest rounded-lg border border-emerald-100">
-                          {trx.status.toUpperCase()}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
             </div>
           </Card>
         </div>
@@ -536,52 +499,10 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
                   </p>
                 </div>
               </div>
-              <div className="flex gap-4 pt-6 border-t border-slate-50">
-                <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center shrink-0 shadow-sm border border-slate-100 text-mint-500">
-                  <IoWalletOutline size={20} />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">
-                    Billing Method
-                  </p>
-                  <p className="text-sm font-semibold text-slate-700 leading-relaxed">
-                    Same as Shipping
-                  </p>
-                  <span className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-500 uppercase tracking-widest h-6">
-                    <IoCheckmarkCircle /> Verified
-                  </span>
-                </div>
-              </div>
             </div>
           </Card>
 
           {children && <div className="xl:col-span-12 order-5 w-full">{children}</div>}
-
-          {/* Staff Memo */}
-          <Card
-            className={cn(
-              'xl:col-span-4 order-7 h-full flex flex-col p-6 border border-slate-100/50 shadow-xl shadow-slate-200/40 rounded-[32px] relative overflow-hidden',
-              'bg-amber-50/40'
-            )}
-          >
-            <div className="absolute top-0 right-0 p-4 opacity-5">
-              <IoDocumentTextOutline size={120} />
-            </div>
-            <h2 className="text-base font-semibold tracking-tight mb-4 flex items-center gap-2 relative text-amber-600">
-              <div className="w-2 h-2 rounded-full animate-ping bg-amber-400" />
-              Staff Memo
-            </h2>
-            <textarea
-              className="w-full flex-1 min-h-[100px] p-4 rounded-3xl border border-amber-100 bg-white/60 focus:outline-none focus:ring-4 focus:ring-amber-200/20 text-xs font-medium text-slate-700 resize-none shadow-inner"
-              placeholder="Add private staff instructions..."
-              style={{ scrollbarWidth: 'none' }}
-            />
-            <div className="flex justify-end mt-4">
-              <button className="text-[10px] font-semibold uppercase tracking-[0.2em] transition-colors text-amber-700 hover:text-amber-900">
-                Save Changes
-              </button>
-            </div>
-          </Card>
         </div>
       </div>
     </div>

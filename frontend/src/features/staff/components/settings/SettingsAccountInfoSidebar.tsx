@@ -112,9 +112,7 @@ export default function AccountInfoSidebar() {
                 <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-widest mb-0.5">
                   Store Location
                 </p>
-                <p className="text-sm font-semibold text-neutral-700">
-                  {profile?.role === 'SALE_STAFF' ? 'Main Store' : 'Central Office'}
-                </p>
+                <p className="text-sm font-semibold text-neutral-700">Downtown Vision</p>
               </div>
             </div>
             <div className="flex items-start gap-3.5">

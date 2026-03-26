@@ -47,7 +47,7 @@ export default function AccountInfoSidebar() {
                 <p className="text-[10px] font-medium text-neutral-500 uppercase tracking-widest mb-0.5">
                   Store Location
                 </p>
-                <p className="text-sm font-semibold text-neutral-700">Downtown Branch #4</p>
+                <p className="text-sm font-semibold text-neutral-700">Downtown Vision</p>
               </div>
             </div>
             <div className="flex items-start gap-3.5">

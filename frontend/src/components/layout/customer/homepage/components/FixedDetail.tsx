@@ -41,25 +41,47 @@ export const FixedDetail: React.FC = () => {
               out-of-network.
             </p>
 
-            {/* Partner Logos Area */}
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-8 md:gap-12 mb-14 opacity-80 grayscale hover:grayscale-0 transition-all duration-500">
-              <div className="text-xl font-black tracking-tighter text-slate-800">eyeMed</div>
-              <div className="flex items-center gap-2">
-                <div className="w-5 h-5 bg-slate-800 rotate-45" />
-                <span className="text-xs font-bold uppercase tracking-tight text-slate-700">
-                  SuperiorVision™
+            {/* Partner Logos Area - Refined for Luxury Feel */}
+            <div className="flex flex-wrap lg:flex-nowrap items-center justify-center lg:justify-start gap-8 md:gap-10 mb-14 transition-all duration-700">
+              {/* EyeMed - Elegant Serif style */}
+              <div className="flex items-center gap-1 group">
+                <span className="text-2xl font-serif italic font-bold tracking-tight text-mint-900 group-hover:text-mint-700 transition-colors">
+                  eyeMed
                 </span>
+                <span className="w-1.5 h-1.5 bg-mint-400 rounded-full animate-pulse self-end mb-1.5" />
               </div>
-              <div className="flex items-center gap-2">
-                <div className="w-5 h-5 border-2 border-slate-800 rounded-full flex items-center justify-center">
-                  <div className="w-2 h-2 bg-slate-800 rounded-full" />
+
+              {/* SuperiorVision - Abstract Diamond Icon */}
+              <div className="flex items-center gap-3 group">
+                <div className="relative w-7 h-7 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-slate-800 rotate-45 transform group-hover:rotate-[135deg] transition-transform duration-700 rounded-sm" />
+                  <div className="absolute inset-0.5 bg-white rotate-45 rounded-sm" />
+                  <div className="w-2 h-2 bg-slate-800 rotate-45" />
                 </div>
-                <span className="text-xs font-bold uppercase tracking-tight text-slate-700">
-                  DavisVision™
-                </span>
+                <div className="flex flex-col">
+                  <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-800 leading-none">Superior</span>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400 leading-tight">Vision™</span>
+                </div>
               </div>
-              <div className="bg-slate-800 text-white px-2 py-1 text-[10px] font-bold rounded">
-                NVA
+
+              {/* DavisVision - Minimalist Lens Icon */}
+              <div className="flex items-center gap-3 group">
+                <div className="w-8 h-8 rounded-full border-2 border-slate-800 flex items-center justify-center relative">
+                  <div className="w-3.5 h-3.5 border border-slate-300 rounded-full flex items-center justify-center">
+                    <div className="w-1.5 h-1.5 bg-slate-800 rounded-full group-hover:scale-150 transition-transform" />
+                  </div>
+                  <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-mint-400 rounded-full blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-800 leading-none">Davis</span>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400 leading-tight">Vision™</span>
+                </div>
+              </div>
+
+              {/* NVA - Clean Text Badge */}
+              <div className="relative group overflow-hidden px-4 py-2 border-2 border-slate-800 rounded-sm hover:bg-slate-800 transition-colors duration-500">
+                <span className="text-sm font-black tracking-[0.15em] text-slate-800 group-hover:text-white transition-colors">NVA</span>
+                <div className="absolute top-0 right-0 w-3 h-3 bg-mint-400 translate-x-1/2 -translate-y-1/2 rotate-45" />
               </div>
             </div>
 

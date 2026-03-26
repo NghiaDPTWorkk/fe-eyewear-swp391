@@ -147,10 +147,15 @@ export const CustomerProductPage = () => {
 
   return (
     <div className="min-h-screen bg-[#f1f9f7] relative overflow-hidden">
-      {/* Dynamic Background Loang Effect */}
-      <div className="absolute top-[10%] left-[-10%] w-[500px] h-[500px] bg-primary-500/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute top-[40%] right-[-10%] w-[600px] h-[600px] bg-primary-400/5 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-[10%] left-[20%] w-[400px] h-[400px] bg-primary-300/5 rounded-full blur-[100px] pointer-events-none" />
+      {/* Dynamic Background Loang Effect - Interwoven Mint and White */}
+      <div className="absolute top-[5%] left-[-5%] w-[600px] h-[600px] bg-white rounded-full blur-[120px] pointer-events-none opacity-60" />
+      <div className="absolute top-[10%] left-[-10%] w-[500px] h-[500px] bg-primary-500/10 rounded-full blur-[120px] pointer-events-none" />
+
+      <div className="absolute top-[30%] right-[10%] w-[700px] h-[700px] bg-white rounded-full blur-[150px] pointer-events-none opacity-40" />
+      <div className="absolute top-[40%] right-[-10%] w-[600px] h-[600px] bg-primary-400/10 rounded-full blur-[140px] pointer-events-none" />
+
+      <div className="absolute bottom-[10%] left-[10%] w-[600px] h-[600px] bg-white rounded-full blur-[120px] pointer-events-none opacity-50" />
+      <div className="absolute bottom-[5%] left-[20%] w-[400px] h-[400px] bg-primary-300/10 rounded-full blur-[100px] pointer-events-none" />
 
       <section className="py-12 relative z-10">
         <div className="container mx-auto px-6">

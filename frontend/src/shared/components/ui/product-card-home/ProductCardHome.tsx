@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 
-import './ProductGlow.css'
+
 
 export interface ProductCardHomeProps {
   id: string

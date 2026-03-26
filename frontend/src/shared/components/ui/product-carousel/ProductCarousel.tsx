@@ -94,7 +94,7 @@ export const ProductCarousel = ({ products, itemsPerView = 4 }: ProductCarouselP
 
             return (
               <SplideSlide key={productId}>
-                <div className="pt-4 pb-10 px-2 w-full max-w-[320px] mx-auto">
+                <div className="pt-4 pb-10 px-2 py-5 w-full max-w-[320px] mx-auto">
                   <ProductCardHome
                     id={productId}
                     name={productName}

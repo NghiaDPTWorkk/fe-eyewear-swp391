@@ -75,12 +75,23 @@ export const useCartStore = create<CartState>((set, get) => ({
       // Call cart service
       const updatedItems = await cartService.addToCart(productId, sku, quantity, lensSelection)
 
-      // Update cart state with backend response
-      set({ items: updatedItems, isAddingToCart: false })
+      // Update cart state with backend response (preserving existing selections)
+      const previousItems = get().items
+      const mergedItems = updatedItems.map((ni) => {
+        const matchingOld = previousItems.find(
+          (oi) =>
+            oi.product_id === ni.product_id &&
+            (oi.sku || '') === (ni.sku || '') &&
+            JSON.stringify(oi.lens) === JSON.stringify(ni.lens)
+        )
+        return { ...ni, selected: matchingOld ? (matchingOld.selected ?? true) : true }
+      })
+
+      set({ items: mergedItems, isAddingToCart: false })
 
       // If backend didn't return cart data (empty array), fetch cart to get latest state
       if (updatedItems.length === 0) {
-        await get().fetchCart()
+        await get().fetchCart(true)
       }
     } catch (error: any) {
       const errorMessage = error.message || 'Failed to add item to cart'
@@ -106,7 +117,19 @@ export const useCartStore = create<CartState>((set, get) => ({
 
     try {
       const items = await cartService.getCart()
-      set({ items, isLoading: false, isInitialized: true })
+      // Preserve selection state if we already have items
+      const previousItems = get().items
+      const mergedItems = items.map((ni) => {
+        const matchingOld = previousItems.find(
+          (oi) =>
+            oi.product_id === ni.product_id &&
+            (oi.sku || '') === (ni.sku || '') &&
+            JSON.stringify(oi.lens) === JSON.stringify(ni.lens)
+        )
+        return { ...ni, selected: matchingOld ? (matchingOld.selected ?? true) : true }
+      })
+
+      set({ items: mergedItems, isLoading: false, isInitialized: true })
     } catch (error: any) {
       const errorMessage = error.message || 'Failed to fetch cart'
       set({
@@ -136,7 +159,17 @@ export const useCartStore = create<CartState>((set, get) => ({
       // Only update items if we got a valid non-empty list
       // Otherwise keep current items and do a quiet refresh
       if (updatedItems && updatedItems.length > 0) {
-        set({ items: updatedItems, isUpdating: false })
+        // Preserve selection state
+        const mergedItems = updatedItems.map((ni) => {
+          const matchingOld = previousItems.find(
+            (oi) =>
+              oi.product_id === ni.product_id &&
+              (oi.sku || '') === (ni.sku || '') &&
+              JSON.stringify(oi.lens) === JSON.stringify(ni.lens)
+          )
+          return { ...ni, selected: matchingOld ? (matchingOld.selected ?? true) : true }
+        })
+        set({ items: mergedItems, isUpdating: false })
       } else {
         await get().fetchCart(true, true)
         set({ isUpdating: false })
@@ -152,7 +185,19 @@ export const useCartStore = create<CartState>((set, get) => ({
     set({ isRemoving: true })
     try {
       const updatedItems = await cartService.removeItem(item)
-      set({ items: updatedItems, isRemoving: false })
+      // Preserve selection state for remaining items
+      const previousItems = get().items
+      const mergedItems = updatedItems.map((ni) => {
+        const matchingOld = previousItems.find(
+          (oi) =>
+            oi.product_id === ni.product_id &&
+            (oi.sku || '') === (ni.sku || '') &&
+            JSON.stringify(oi.lens) === JSON.stringify(ni.lens)
+        )
+        return { ...ni, selected: matchingOld ? (matchingOld.selected ?? true) : true }
+      })
+
+      set({ items: mergedItems, isRemoving: false })
 
       if (updatedItems.length === 0) {
         await get().fetchCart(true)
@@ -167,7 +212,19 @@ export const useCartStore = create<CartState>((set, get) => ({
     set({ isRemoving: true })
     try {
       const updatedItems = await cartService.removeItems(itemsToRemove)
-      set({ items: updatedItems, isRemoving: false })
+      // Preserve selection state for remaining items
+      const previousItems = get().items
+      const mergedItems = updatedItems.map((ni) => {
+        const matchingOld = previousItems.find(
+          (oi) =>
+            oi.product_id === ni.product_id &&
+            (oi.sku || '') === (ni.sku || '') &&
+            JSON.stringify(oi.lens) === JSON.stringify(ni.lens)
+        )
+        return { ...ni, selected: matchingOld ? (matchingOld.selected ?? true) : true }
+      })
+
+      set({ items: mergedItems, isRemoving: false })
     } catch (error: any) {
       set({ isRemoving: false })
       throw error

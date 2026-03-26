@@ -43,7 +43,6 @@ const transformBackendCartToItems = (backendCart: BackendCart): CartItem[] => {
     image: item.product?.image || '/placeholder-product.png',
     quantity: item.quantity || 1,
     addAt: item.addedAt ? new Date(item.addedAt) : new Date(),
-    selected: true,
     lens: item.lens
       ? {
           lensId: item.lens.lens_id, // Save for API

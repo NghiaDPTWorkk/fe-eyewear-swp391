@@ -10,13 +10,13 @@
 .carousel-spotlight {
   position: absolute;
   /* Kích thước vùng sáng (hiện tại bạn đặt là 400x400px) */
-  width: 400px;
-  height: 400px;
+  width: 300px;
+  height: 300px;
 
   /* Hiệu ứng tỏa tròn: tâm đậm (0.45) và mờ dần ra ngoài (0.1 -> trong suốt) */
   background: radial-gradient(
     circle,
-    rgba(16, 185, 129, 0.45) 0%,
+    rgba(20, 200, 140, 0.45) 0%,
     rgba(16, 185, 129, 0.1) 60%,
     transparent 85%
   );
@@ -28,15 +28,15 @@
   /* Vị trí gốc ban đầu */
   left: 0;
   top: 0;
-  
-  /* 
-    Dịch chuyển quầng sáng dựa trên biến CSS --mouse-x và --mouse-y từ JavaScript. 
+
+  /*
+    Dịch chuyển quầng sáng dựa trên biến CSS --mouse-x và --mouse-y từ JavaScript.
     Lệnh translate(-50%, -50%) giúp tâm quầng sáng nằm đúng ngay đầu con trỏ chuột.
     Sử dụng Calc để căn chỉnh độ lệch tâm.
   */
   transform: translate(calc(var(--mouse-x, 50%) - 50%), calc(var(--mouse-y, 50%) - 50%));
 
-  /* 
+  /*
     Độ trễ bám đuổi (0.65s): Con số này càng cao thì bóng càng "đuổi theo" chậm và mượt hơn.
     Sử dụng cubic-bezier để tạo cảm giác chuyển động vật lý tự nhiên, không bị khựng (lag-free).
   */
@@ -45,9 +45,9 @@
 
   /* Độ hiển thị: 1 khi có chuột trong vùng Carousel, 0 khi chuột rời đi */
   opacity: var(--spotlight-opacity, 0);
-  
+
   /* Làm nhòe cạnh (Blur) để quầng sáng trông sâu và cao cấp hơn */
-  filter: blur(35px); 
+  filter: blur(35px);
 }
 
 /* Lớp phụ (::after) tạo thêm một điểm sáng tập trung nhỏ hơn ở chính giữa */

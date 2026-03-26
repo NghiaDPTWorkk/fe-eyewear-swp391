@@ -10,8 +10,8 @@
 .carousel-spotlight {
   position: absolute;
   /* Kích thước vùng sáng (hiện tại bạn đặt là 400x400px) */
-  width: 200px;
-  height: 200px;
+  width: 300px;
+  height: 300px;
 
   /* Hiệu ứng tỏa tròn: tâm đậm (0.45) và mờ dần ra ngoài (0.1 -> trong suốt) */
   background: radial-gradient(

@@ -101,7 +101,7 @@ export function ProductCard({
     <div
       onClick={handleCardClick}
       className={cn(
-        'bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group relative cursor-pointer',
+        'bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group relative cursor-pointer flex flex-col h-full',
         className
       )}
     >
@@ -132,7 +132,7 @@ export function ProductCard({
       </button>
 
       {/* Product Image - Full width, no padding */}
-      <div className="aspect-square bg-gray-50/50 flex items-center justify-center overflow-hidden relative">
+      <div className="aspect-square bg-gray-50/50 flex items-center justify-center overflow-hidden relative shrink-0">
         {image ? (
           <img
             src={image}
@@ -145,38 +145,45 @@ export function ProductCard({
       </div>
 
       {/* Product Info */}
-      <div className="p-5">
-        {brand && (
-          <p className="text-xs text-primary-500 font-semibold mb-1 uppercase tracking-wide">
-            {brand}
-          </p>
-        )}
+      <div className="p-5 flex flex-col flex-grow">
+        <div className="min-h-[1.25rem]">
+          {brand && (
+            <p className="text-xs text-primary-500 font-semibold mb-1 uppercase tracking-wide">
+              {brand}
+            </p>
+          )}
+        </div>
+
         {/* Fixed height for title to prevent layout shift */}
-        <h3 className="font-bold text-mint-1200 mb-3 line-clamp-2 text-lg min-h-[3.5rem]">
+        <h3 className="font-bold text-mint-1200 mb-3 line-clamp-2 text-lg min-h-[3.5rem] flex-grow">
           {name}
         </h3>
 
-        <div className="flex items-center justify-between">
-          <div className="flex flex-col">
-            {hasSale && (
+        <div className="flex items-center justify-between mt-auto">
+          <div className="flex flex-col justify-end min-h-[3.5rem]">
+            {hasSale ? (
               <span className="text-xs text-gray-eyewear">
                 <VNDPrice className="line-through" amount={price} />
               </span>
+            ) : (
+              <div className="h-4" /> /* Placeholder for spacing symmetry */
             )}
-            <span className="text-primary-500 font-bold text-xl">
+            <span className="text-primary-500 font-bold text-xl leading-tight">
               <VNDPrice amount={finalPrice} />
             </span>
           </div>
           {onAddToCart && (
-            <Button
-              onClick={(e) => {
-                e.stopPropagation()
-                handleAddToCart()
-              }}
-              className="w-12 h-12 bg-primary-500 text-white rounded-full flex items-center justify-center hover:bg-primary-600 transition-all hover:scale-110 shadow-md"
-            >
-              <ShoppingCart className="w-6 h-6" />
-            </Button>
+            <div className="shrink-0 ml-2">
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleAddToCart()
+                }}
+                className="w-12 h-12 bg-primary-500 text-white rounded-full flex items-center justify-center hover:bg-primary-600 transition-all hover:scale-110 shadow-md p-0"
+              >
+                <ShoppingCart className="w-6 h-6" />
+              </Button>
+            </div>
           )}
         </div>
       </div>

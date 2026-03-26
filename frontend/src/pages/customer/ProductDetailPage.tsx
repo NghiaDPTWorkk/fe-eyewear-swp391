@@ -52,7 +52,7 @@ const ProductDetailContent = ({ product, productId }: ProductDetailContentProps)
   const variantState = useProductVariants(product)
 
   return (
-    <div className="min-h-screen bg-[#f1f9f7] relative overflow-hidden">
+    <div className="min-h-screen bg-[#f1f9f7] relative overflow-x-hidden">
       {/* Dynamic Background Loang Effect - Interwoven Mint and White */}
       <div className="absolute top-[5%] left-[-5%] w-[700px] h-[700px] bg-white rounded-full blur-[140px] pointer-events-none opacity-60" />
       <div className="absolute top-[10%] left-[-10%] w-[500px] h-[500px] bg-primary-500/10 rounded-full blur-[120px] pointer-events-none" />

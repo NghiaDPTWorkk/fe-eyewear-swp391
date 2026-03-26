@@ -271,89 +271,93 @@ export function HorizontalFilters({
         </div>
       </div>
 
-      {/* Active Tags Display with Smooth Transition */}
-      <div
-        className={cn(
-          'overflow-hidden transition-all duration-500 ease-in-out',
-          selectedCategories.length > 0 ||
-            selectedGenders.length > 0 ||
-            selectedBrands.length > 0 ||
-            selectedPriceRanges.length > 0
-            ? 'max-h-[200px] opacity-100 mt-6'
-            : 'max-h-0 opacity-0 mt-0'
-        )}
-      >
-        <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-mint-100/50">
-          <div className="text-[10px] font-black text-mint-900 uppercase tracking-[0.2em] mr-2">
-            Active Filters:
-          </div>
+      {/* Active Tags Display with Smooth Transition - Sticky Wrapper */}
+      <div className="sticky top-0 md:top-4 z-30">
+        <div
+          className={cn(
+            'overflow-hidden transition-all duration-500 ease-in-out',
+            selectedCategories.length > 0 ||
+              selectedGenders.length > 0 ||
+              selectedBrands.length > 0 ||
+              selectedPriceRanges.length > 0
+              ? 'max-h-[200px] opacity-100 mt-6'
+              : 'max-h-0 opacity-0 mt-0'
+          )}
+        >
+          <div className="bg-white/90 backdrop-blur-md border border-mint-100/50 p-4 rounded-2xl shadow-xl shadow-mint-900/10 px-6">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="text-[10px] font-black text-mint-900 uppercase tracking-[0.2em] mr-2">
+                Active Filters:
+              </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            {selectedCategories.map((id) => {
-              const cat = categories.find((c) => c._id === id)
-              return (
-                cat && (
+              <div className="flex flex-wrap items-center gap-2">
+                {selectedCategories.map((id) => {
+                  const cat = categories.find((c) => c._id === id)
+                  return (
+                    cat && (
+                      <button
+                        key={id}
+                        onClick={() => toggleSelection(id, selectedCategories, onCategoryChange)}
+                        className="inline-flex items-center gap-2 px-3 py-1.5 bg-mint-100 border border-mint-300 text-mint-900 rounded-lg text-xs font-bold hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-all group"
+                      >
+                        {cat.name}
+                        <X className="w-3.5 h-3.5 text-mint-600 group-hover:text-white" />
+                      </button>
+                    )
+                  )
+                })}
+
+                {selectedGenders.map((gender) => (
                   <button
-                    key={id}
-                    onClick={() => toggleSelection(id, selectedCategories, onCategoryChange)}
-                    className="inline-flex items-center gap-2 px-3 py-1 bg-mint-100 border border-mint-300 text-mint-900 rounded-lg text-xs font-bold hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-all group"
+                    key={gender}
+                    onClick={() => toggleSelection(gender, selectedGenders, onGenderChange)}
+                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-mint-100 border border-mint-300 text-mint-900 rounded-lg text-xs font-bold hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-all group"
                   >
-                    {cat.name}
+                    {GENDER_MAP[gender] || gender}
                     <X className="w-3.5 h-3.5 text-mint-600 group-hover:text-white" />
                   </button>
-                )
-              )
-            })}
+                ))}
 
-            {selectedGenders.map((gender) => (
-              <button
-                key={gender}
-                onClick={() => toggleSelection(gender, selectedGenders, onGenderChange)}
-                className="inline-flex items-center gap-2 px-3 py-1 bg-mint-100 border border-mint-300 text-mint-900 rounded-lg text-xs font-bold hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-all group"
-              >
-                {GENDER_MAP[gender] || gender}
-                <X className="w-3.5 h-3.5 text-mint-600 group-hover:text-white" />
-              </button>
-            ))}
-
-            {selectedBrands.map((brand) => (
-              <button
-                key={brand}
-                onClick={() => toggleSelection(brand, selectedBrands, onBrandChange)}
-                className="inline-flex items-center gap-2 px-3 py-1 bg-mint-100 border border-mint-300 text-mint-900 rounded-lg text-xs font-bold hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-all group"
-              >
-                {brand}
-                <X className="w-3.5 h-3.5 text-mint-600 group-hover:text-white" />
-              </button>
-            ))}
-
-            {selectedPriceRanges.map((id) => {
-              const range = priceRanges.find((r) => r.id === id)
-              return (
-                range && (
+                {selectedBrands.map((brand) => (
                   <button
-                    key={id}
-                    onClick={() => toggleSelection(id, selectedPriceRanges, onPriceRangeChange)}
-                    className="inline-flex items-center gap-2 px-3 py-1 bg-mint-100 border border-mint-300 text-mint-900 rounded-lg text-xs font-bold hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-all group"
+                    key={brand}
+                    onClick={() => toggleSelection(brand, selectedBrands, onBrandChange)}
+                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-mint-100 border border-mint-300 text-mint-900 rounded-lg text-xs font-bold hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-all group"
                   >
-                    {range.label}
+                    {brand}
                     <X className="w-3.5 h-3.5 text-mint-600 group-hover:text-white" />
                   </button>
-                )
-              )
-            })}
+                ))}
 
-            <button
-              onClick={() => {
-                onCategoryChange([])
-                onGenderChange([])
-                onBrandChange([])
-                onPriceRangeChange([])
-              }}
-              className="text-xs font-black text-red-600 hover:text-red-700 transition-colors px-4 py-1.5 hover:bg-red-50 rounded-lg"
-            >
-              Clear All Results
-            </button>
+                {selectedPriceRanges.map((id) => {
+                  const range = priceRanges.find((r) => r.id === id)
+                  return (
+                    range && (
+                      <button
+                        key={id}
+                        onClick={() => toggleSelection(id, selectedPriceRanges, onPriceRangeChange)}
+                        className="inline-flex items-center gap-2 px-3 py-1.5 bg-mint-100 border border-mint-300 text-mint-900 rounded-lg text-xs font-bold hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-all group"
+                      >
+                        {range.label}
+                        <X className="w-3.5 h-3.5 text-mint-600 group-hover:text-white" />
+                      </button>
+                    )
+                  )
+                })}
+
+                <button
+                  onClick={() => {
+                    onCategoryChange([])
+                    onGenderChange([])
+                    onBrandChange([])
+                    onPriceRangeChange([])
+                  }}
+                  className="text-xs font-black text-red-600 hover:text-red-700 transition-colors px-4 py-2 hover:bg-red-50 rounded-lg"
+                >
+                  Clear All Results
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -18,7 +18,6 @@ export default function HomePage({ header }: HomePageProps) {
     <div className="min-h-screen bg-mint-200">
       {header}
 
-
       {/* Benefits Bar */}
       <BenefitsBar />
 

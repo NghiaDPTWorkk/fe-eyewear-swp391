@@ -68,7 +68,9 @@ export function ProductCardHome({
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-slate-100">
-            <span className="text-slate-300 font-bold text-[8px] tracking-[0.2em] uppercase">No Image</span>
+            <span className="text-slate-300 font-bold text-[8px] tracking-[0.2em] uppercase">
+              No Image
+            </span>
           </div>
         )}
 
@@ -78,7 +80,7 @@ export function ProductCardHome({
             SALE {salePercent}%
           </div>
         )}
-        
+
         {/* Subtle Overlay on hover */}
         <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/[0.01] transition-colors duration-500" />
       </div>
@@ -99,7 +101,7 @@ export function ProductCardHome({
 
         {/* Pricing */}
         <div className="flex flex-col items-center gap-0.5">
-           {hasSale && renderOriginalPrice(originalPrice)}
+          {hasSale && renderOriginalPrice(originalPrice)}
           <span className="text-lg font-black text-primary-600 tracking-tighter">
             <VNDPrice amount={finalPrice} />
           </span>
@@ -107,7 +109,7 @@ export function ProductCardHome({
 
         {/* Action Indicator */}
         <div className="mt-3 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-all duration-700 transform translate-y-2 group-hover:translate-y-0">
-            <div className="w-1.5 h-1.5 rounded-full bg-primary-500/80" />
+          <div className="w-1.5 h-1.5 rounded-full bg-primary-500/80" />
         </div>
       </div>
     </div>

@@ -14,7 +14,6 @@ export const CartPage = () => {
 
   return (
     <div className="min-h-screen bg-mint-200">
-
       <main className="py-8 lg:py-12">
         <Container maxWidth="1200px">
           {isLoading ? (

@@ -17,16 +17,16 @@ interface ShaderCarouselProps {
 const SLIDE_CONTENT = [
   {
     title: 'Exquisite Craft',
-    description: 'Timeless design meets modern engineering.',
+    description: 'Timeless design meets modern engineering.'
   },
   {
     title: 'Spring Fashion',
-    description: 'A touch of elegance for every season.',
+    description: 'A touch of elegance for every season.'
   },
   {
     title: 'Urban Vision',
-    description: 'The future of premium eyewear, curated for you.',
-  },
+    description: 'The future of premium eyewear, curated for you.'
+  }
 ]
 
 const SPLIDE_SPEED = 1400
@@ -70,7 +70,7 @@ function Scene({
   speed,
   imagePaths,
   maskPath,
-  onReady,
+  onReady
 }: {
   speed: number
   imagePaths: string[]
@@ -158,7 +158,7 @@ export default function ShaderCarousel({ imagePaths, maskPath, onLoaded }: Shade
   }
 
   return (
-    <div 
+    <div
       className={`relative w-full h-screen overflow-hidden bg-white transition-opacity duration-300 ${
         isSceneReady ? 'opacity-100' : 'opacity-0'
       }`}
@@ -166,10 +166,10 @@ export default function ShaderCarousel({ imagePaths, maskPath, onLoaded }: Shade
       {/* ── Three.js background ── */}
       <div className="absolute inset-0 z-0">
         <Canvas camera={{ position: [0, 0, 5], fov: 75 }} dpr={[1, 2]}>
-          <Scene 
-            speed={SPLIDE_SPEED} 
-            imagePaths={imagePaths} 
-            maskPath={maskPath} 
+          <Scene
+            speed={SPLIDE_SPEED}
+            imagePaths={imagePaths}
+            maskPath={maskPath}
             onReady={() => {
               // Thêm 50ms đệm để Card đồ họa (GPU) kịp vẽ xong frame đầu tiên
               setTimeout(() => {

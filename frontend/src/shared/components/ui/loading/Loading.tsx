@@ -1,4 +1,3 @@
-
 interface LoadingProps {
   className?: string
   fullPage?: boolean

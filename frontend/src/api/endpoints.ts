@@ -158,7 +158,10 @@ export const ENDPOINTS = {
     },
     ORDER_APPROVE: (id: string) => `/admin/orders/${id}/status/approve`,
     INVOICES_SHIP_CODE: (invoiceId: string) => `/ships/invoice/${invoiceId}/ship-code`,
-    PROFILE_REQUESTS: '/admin/profile-requests',
+    PROFILE_REQUESTS: {
+      LIST: (page: number, limit: number) => `/admin/profile-requests?page=${page}&limit=${limit}`,
+      DETAIL: (id: string) => `/admin/profile-requests/${id}`
+    },
     CUSTOMERS_LIST: (page?: number, limit?: number, search?: string, status?: string) => {
       const params = new URLSearchParams()
       if (page) params.append('page', String(page))

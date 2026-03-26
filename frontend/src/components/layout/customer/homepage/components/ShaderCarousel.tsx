@@ -189,7 +189,7 @@ export default function ShaderCarousel({ imagePaths, maskPath, onLoaded }: Shade
           type: 'fade',
           rewind: true,
           autoplay: true,
-          interval: 6000,
+          interval: 4000,
           speed: SPLIDE_SPEED,
           arrows: true,
           pagination: true,

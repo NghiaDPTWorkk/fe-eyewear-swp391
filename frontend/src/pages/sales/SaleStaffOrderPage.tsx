@@ -118,9 +118,7 @@ export default function SaleStaffOrderPage() {
       const q = searchQuery.toLowerCase()
       list = list.filter(
         (inv: Invoice) =>
-          inv.fullName.toLowerCase().includes(q) ||
-          inv.invoiceCode.toLowerCase().includes(q) ||
-          inv.phone.includes(q)
+          inv.fullName.toLowerCase().includes(q) || inv.invoiceCode.toLowerCase().includes(q)
       )
     }
 

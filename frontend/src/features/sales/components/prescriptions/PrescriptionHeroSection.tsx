@@ -26,7 +26,7 @@ export const PrescriptionHeroSection: React.FC<PrescriptionHeroSectionProps> = (
 
   const discount = order?.invoice?.totalDiscount || 0
   const shipping = order?.invoice?.shippingFee || 10000
-  const total = order?.invoice?.totalAmount || subtotal - discount + shipping
+  const total = subtotal
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">

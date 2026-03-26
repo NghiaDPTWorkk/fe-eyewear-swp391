@@ -94,7 +94,7 @@ export const BuyTutorial: React.FC = () => {
   ]
 
   return (
-    <section className="py-24 bg-mint-200 overflow-hidden">
+    <section className="py-2 pb-20 bg-mint-200 overflow-hidden">
       <div className="container mx-auto px-4 max-w-7xl">
         <h2 className="text-[20px] font-bold text-slate-800 text-center mb-16 tracking-tight">
           Buy prescription glasses in a few easy steps

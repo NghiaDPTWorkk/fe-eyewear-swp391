@@ -34,33 +34,6 @@ export function ProductCardHome({
     }
   }
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const card = e.currentTarget
-    const rect = card.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
-
-    card.style.setProperty('--x', `${x}px`)
-    card.style.setProperty('--y', `${y}px`)
-
-    // Near-touch logic (intensity increases as mouse gets closer to center)
-    const centerX = rect.width / 2
-    const centerY = rect.height / 2
-    const distance = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2))
-    
-    // Near-touch threshold (intensity starts fading in at 350px)
-    const threshold = 350
-    const intensity = Math.max(0, 1 - distance / threshold)
-    
-    card.style.setProperty('--glow-opacity', intensity.toString())
-    card.style.setProperty('--card-mint-bg-opacity', (intensity * 0.15).toString())
-  }
-
-  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.currentTarget.style.setProperty('--glow-opacity', '0')
-    e.currentTarget.style.setProperty('--card-mint-bg-opacity', '0')
-  }
-
   const hasSale = salePercent && salePercent > 0
   const finalPrice = discountPrice || price || 0
   const originalPrice = price || 0
@@ -77,21 +50,18 @@ export function ProductCardHome({
   return (
     <div
       className={cn(
-        'relative rounded-3xl cursor-pointer glow-card',
+        'relative bg-white rounded-3xl overflow-hidden cursor-pointer transition-all duration-500 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.08)] group border border-slate-50 hover:border-slate-200 mb-2',
         className
       )}
       onClick={handleClick}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
     >
-      <div className="glow-card-content">
       {/* Shine effect overlay */}
       <div className="absolute inset-0 z-30 pointer-events-none overflow-hidden">
         <div className="absolute top-0 -left-[100%] w-[50%] h-full bg-gradient-to-r from-transparent via-white/60 to-transparent skew-x-[-25deg] group-hover:left-[150%] transition-all duration-1000 ease-in-out" />
       </div>
 
       {/* Product Image Container */}
-      <div className="relative aspect-[3/2] flex items-center justify-center overflow-hidden">
+      <div className="relative aspect-[3/2] bg-slate-50/50 flex items-center justify-center overflow-hidden">
         {image ? (
           <img
             src={image}
@@ -99,7 +69,7 @@ export function ProductCardHome({
             className="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-700 ease-out"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
+          <div className="w-full h-full flex items-center justify-center bg-slate-100">
             <span className="text-slate-300 font-bold text-[8px] tracking-[0.2em] uppercase">
               No Image
             </span>
@@ -118,7 +88,7 @@ export function ProductCardHome({
       </div>
 
       {/* Product Info (Refined spacing and height) */}
-      <div className="p-5 text-center relative">
+      <div className="p-5 text-center relative bg-white">
         {/* Model Code */}
         {modelCode && (
           <p className="text-[8.5px] text-slate-400 mb-1.5 font-black uppercase tracking-[0.15em] leading-none">
@@ -143,7 +113,6 @@ export function ProductCardHome({
         <div className="mt-3 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-all duration-700 transform translate-y-2 group-hover:translate-y-0">
           <div className="w-1.5 h-1.5 rounded-full bg-primary-500/80" />
         </div>
-      </div>
       </div>
     </div>
   )

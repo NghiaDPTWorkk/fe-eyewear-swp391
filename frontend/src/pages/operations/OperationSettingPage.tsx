@@ -1,228 +1,71 @@
-import { useState, useMemo } from 'react'
-import { Container } from '@/components'
-import { Button } from '@/shared/components/ui/button/Button'
-import { Input } from '@/shared/components/ui/input/Input'
-import { Switch } from '@/shared/components/ui'
-import { IoCameraOutline } from 'react-icons/io5'
-import { useAuthStore } from '@/store/auth.store'
-import { BreadcrumbPath } from '@/components/layout/staff/operation-staff/breadcrumb-path'
-import type { AdminAccount } from '@/shared/types'
-import { ERROR_MESSAGES } from '@/shared/constants'
+import { IoWarningOutline } from 'react-icons/io5'
+import {
+  ProfileForm,
+  PasswordForm,
+  NotificationPreferences,
+  AccountInfoSidebar
+} from '@/features/staff/components/settings'
+import { PageHeader } from '@/features/staff/components/common'
+import { useProfile } from '@/features/staff/hooks/useProfile'
 
 export default function OperationSettingPage() {
-  const { user, isLoading } = useAuthStore()
-  // Cast user to AdminAccount since this is staff page
-  const profile = user as AdminAccount | null
-
-  // Use useMemo to process profile data once
-  const initialValues = useMemo(() => {
-    const nameParts = profile?.name?.split(' ') || []
-    const lastName = nameParts.length > 0 ? nameParts[nameParts.length - 1] : ''
-    const firstName = nameParts.length > 1 ? nameParts.slice(0, -1).join(' ') : ''
-
-    return {
-      firstName,
-      lastName,
-      email: profile?.email || '',
-      phone: profile?.phone || '',
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: ''
-    }
-  }, [profile])
+  const { data: profileData, isLoading } = useProfile()
+  const profile = profileData?.data
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+      <div className="flex h-[80vh] items-center justify-center">
+        <div className="relative w-16 h-16">
+          <div className="absolute inset-0 rounded-full border-4 border-emerald-100"></div>
+          <div className="absolute inset-0 rounded-full border-4 border-emerald-500 border-t-transparent animate-spin"></div>
+        </div>
       </div>
     )
   }
-  // SOLUTION:
-  // Pass initialValues into a child component that handles the Form.
-  // Or use this data to initialize State WITHOUT needing useEffect.
-  return (
-    <SettingForm
-      key={profile?._id || 'loading'} // When profile._id exists (data loaded), component will reset state according to new data
-      initialData={initialValues}
-      profile={profile}
-      isLoading={isLoading}
-    />
-  )
-}
-
-// Separate Form component to manage State independently and cleanly
-function SettingForm({ initialData, profile, isLoading }: any) {
-  const [firstName, setFirstName] = useState(initialData.firstName)
-  const [lastName, setLastName] = useState(initialData.lastName)
-  const [email, setEmail] = useState(initialData.email)
-
-  const [notificationSound, setNotificationSound] = useState(true)
-  const [desktopAlerts, setDesktopAlerts] = useState(true)
 
   return (
-    <Container>
-      <div className="mb-4">
-        <BreadcrumbPath paths={['Dashboard', 'Settings']} />
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Staff System Settings</h1>
-        <p className="text-gray-500 mt-1">Manage your profile, preferences, and display options.</p>
-      </div>
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
+      <PageHeader
+        title="Settings"
+        subtitle="Manage your operation staff account and preferences"
+        breadcrumbs={[
+          { label: 'Dashboard', path: '/operation-staff/dashboard' },
+          { label: 'Settings' }
+        ]}
+      />
 
-      <div className="max-w-4xl space-y-6">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="mb-6">
-            <h2 className="text-lg font-bold text-gray-900">Profile Settings</h2>
-            <p className="text-sm text-gray-500">Update your photo and personal details here.</p>
+      <div className="max-w-[1400px] mx-auto">
+        {/* Verification Banner */}
+        <div className="mb-8 p-6 bg-gradient-to-r from-amber-50/80 to-orange-50/80 backdrop-blur-md border border-amber-100 rounded-[2rem] flex gap-5 shadow-sm shadow-amber-200/20">
+          <div className="w-12 h-12 rounded-2xl bg-white/80 flex items-center justify-center shrink-0 shadow-sm border border-amber-100/50">
+            <IoWarningOutline className="text-amber-500" size={24} />
           </div>
-
-          <div className="flex items-start gap-6 mb-8 pb-8 border-b border-gray-100">
-            <div className="relative">
-              <div className="w-20 h-20 rounded-full bg-emerald-100 border-2 border-white shadow-md flex items-center justify-center overflow-hidden">
-                {isLoading ? (
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
-                ) : (
-                  <img
-                    src={profile?.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah'}
-                    alt="Avatar"
-                    className="w-full h-full object-cover"
-                  />
-                )}
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="absolute bottom-0 right-0 h-auto w-auto p-1.5 bg-white rounded-full shadow border border-gray-200 text-gray-600 hover:text-primary-500 hover:bg-gray-50"
-              >
-                <IoCameraOutline size={14} />
-              </Button>
-            </div>
-
-            <div className="flex-1">
-              <div className="flex gap-4">
-                <Button variant="outline" size="sm" className="text-xs font-medium border-gray-300">
-                  Change avatar
-                </Button>
-                <span className="text-xs text-gray-400 self-center">JPG, GIF or PNG. 1MB max.</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">First name</label>
-              <Input
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                disabled={isLoading}
-                className="bg-white border-gray-200 focus:border-primary-500"
-                placeholder="Enter first name"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">Last name</label>
-              <Input
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                disabled={isLoading}
-                className="bg-white border-gray-200 focus:border-primary-500"
-                placeholder="Enter last name"
-              />
-            </div>
-          </div>
-
-          <div className="mb-6 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-xs text-blue-700 font-medium">
-              ℹ️ {ERROR_MESSAGES.AUTH.INVALID_NAME}
-            </p>
-          </div>
-
-          <div className="space-y-2 mb-6">
-            <label className="text-sm font-semibold text-gray-700">Email address</label>
-            <Input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={isLoading}
-              leftElement={<span className="text-gray-400">@</span>} // Removed pl-3 as it might be handled by Input component or require adjustment
-              className="bg-white border-gray-200 focus:border-primary-500"
-              placeholder="Enter email"
-            />
-          </div>
-        </div>
-
-        {/* Change Password Section */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="mb-6">
-            <h2 className="text-lg font-bold text-gray-900">Change Password</h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">Current Password</label>
-              <Input
-                type="password"
-                placeholder="Enter current password"
-                className="bg-white border-gray-200 focus:border-primary-500"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">New Password</label>
-              <Input
-                type="password"
-                placeholder="Enter new password"
-                className="bg-white border-gray-200 focus:border-primary-500"
-              />
-            </div>
-          </div>
-
-          {/* Password Requirements Notice */}
-          <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-            <p className="text-xs text-amber-800 font-medium">
-              ⚠️ {ERROR_MESSAGES.AUTH.PASSWORD_COMPLEXITY}
+          <div className="flex-1">
+            <h4 className="text-base font-bold text-amber-900">
+              Profile Update Approval Required
+            </h4>
+            <p className="text-sm text-amber-800/80 mt-1.5 leading-relaxed font-medium">
+              To maintain system integrity, all profile changes require{' '}
+              <span className="font-bold text-amber-900 underline decoration-amber-300 decoration-2 underline-offset-2">Admin or Manager approval</span> before
+              they take effect. Your updates will be securely submitted for review.
             </p>
           </div>
         </div>
 
-        {/* Notification Preferences */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="mb-6">
-            <h2 className="text-lg font-bold text-gray-900">Notification Preferences</h2>
-            <p className="text-sm text-gray-500">Manage how you receive notifications.</p>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Main Content Area */}
+          <div className="lg:col-span-8 space-y-8 h-full">
+            <ProfileForm key={profile?._id || 'loading'} />
+            <PasswordForm />
+            <NotificationPreferences />
           </div>
 
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-semibold text-gray-900">Notification Sounds</h3>
-                <p className="text-sm text-gray-500">
-                  Play a sound when you receive a new notification.
-                </p>
-              </div>
-              <Switch checked={notificationSound} onCheckedChange={setNotificationSound} />
-            </div>
-
-            <div className="flex items-center justify-between pt-6 border-t border-gray-100">
-              <div>
-                <h3 className="text-sm font-semibold text-gray-900">
-                  Desktop Alerts for New Orders
-                </h3>
-                <p className="text-sm text-gray-500">
-                  Receive a desktop notification when a new order comes in.
-                </p>
-              </div>
-              <Switch checked={desktopAlerts} onCheckedChange={setDesktopAlerts} />
-            </div>
+          {/* Sidebar Area */}
+          <div className="lg:col-span-4 sticky top-8">
+            <AccountInfoSidebar />
           </div>
-        </div>
-
-        <div className="flex justify-end gap-3 pt-4">
-          <Button variant="ghost" className="text-gray-500">
-            Cancel
-          </Button>
-          <Button colorScheme="primary" size="lg" className="font-semibold">
-            Save All Changes
-          </Button>
         </div>
       </div>
-    </Container>
+    </div>
   )
 }

@@ -257,7 +257,7 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
         const checkoutItemsCopy = checkoutItems.map((item) => ({ ...item }))
 
         if (!isOnlinePayment) {
-          toast.success(response.message || 'Order placed successfully!')
+          toast.success('Order placed successfully!')
           const { clearCart, removeItems, items: currentItems } = useCartStore.getState()
 
           // Only clear/remove from cart if we are NOT in direct checkout mode (propItems is undefined)

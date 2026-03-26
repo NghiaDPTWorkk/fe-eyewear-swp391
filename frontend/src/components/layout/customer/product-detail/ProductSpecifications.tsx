@@ -75,7 +75,7 @@ export const ProductSpecifications = ({
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={cn(
-                    'px-8 py-3 rounded-xl text-sm font-bold uppercase tracking-wider transition-all duration-300',
+                    'px-8 py-3 rounded-xl text-sm font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer',
                     activeTab === tab.id
                       ? 'bg-primary-500 text-white shadow-md'
                       : 'text-gray-eyewear hover:text-primary-500 hover:bg-mint-50'

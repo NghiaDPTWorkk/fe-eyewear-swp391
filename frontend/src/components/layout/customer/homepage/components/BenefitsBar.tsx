@@ -11,7 +11,7 @@ export const BenefitsBar = () => {
           {/* Benefit Item Template */}
           {[
             { Icon: Truck, title: 'Free Delivery', desc: 'Orders over 500.000đ' },
-            { Icon: RotateCcw, title: '30-Day Returns', desc: 'Hassle-free returns' },
+            { Icon: RotateCcw, title: '3-Day Returns', desc: 'Hassle-free returns' },
             { Icon: Glasses, title: 'Virtual Try-On', desc: 'Try before you buy' },
             { Icon: Headphones, title: '24/7 Support', desc: 'Expert assistance' }
           ].map((item, index) => (

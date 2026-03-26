@@ -527,7 +527,7 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
         </div>
         <div className="flex items-center gap-3">
           <RotateCcw className="w-5 h-5 text-primary-500" />
-          <span className="text-sm text-gray-eyewear font-medium">Easy 30-Day Returns</span>
+          <span className="text-sm text-gray-eyewear font-medium">Easy 3-Day Returns</span>
         </div>
         <div className="flex items-center gap-3">
           <PenTool className="w-5 h-5 text-primary-500" />

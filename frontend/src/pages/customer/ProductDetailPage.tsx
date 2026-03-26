@@ -3,7 +3,8 @@ import { useGetProductDetail } from '@/shared/hooks/products/useGetProductDetail
 import {
   ImageGallery,
   ProductInfo,
-  ProductSpecifications
+  ProductSpecifications,
+  RelatedProducts
 } from '@/components/layout/customer/product-detail'
 import { useProductVariants } from '@/shared/hooks/products/useProductVariants'
 import { BenefitsBar } from '@/components/layout/customer/homepage/components/BenefitsBar'
@@ -75,6 +76,7 @@ const ProductDetailContent = ({ product, productId }: ProductDetailContentProps)
       </main>
       <BenefitsBar />
       <ProductSpecifications product={product} variantState={variantState} />
+      <RelatedProducts currentProduct={product} />
     </div>
   )
 }

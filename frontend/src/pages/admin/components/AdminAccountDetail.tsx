@@ -14,7 +14,6 @@ interface AdminAccountDetailProps {
   onClose: () => void
   staff: StaffData | null
   onEditStaff?: (staff: StaffData) => void
-  onChangeRole?: (staff: StaffData) => void
   onDeactivate?: (id: string) => void
 }
 
@@ -32,7 +31,6 @@ export const AdminAccountDetail: React.FC<AdminAccountDetailProps> = ({
   onClose,
   staff,
   onEditStaff,
-  onChangeRole,
   onDeactivate
 }) => {
   if (!isOpen || !staff) return null
@@ -156,27 +154,18 @@ export const AdminAccountDetail: React.FC<AdminAccountDetailProps> = ({
             </div>
           </div>
 
-          {/* Actions */}
-          <div className="space-y-3 pt-6">
+          <div className="grid grid-cols-2 gap-3 pt-6">
             <button
               onClick={() => onEditStaff?.(staff)}
-              className="w-full py-4 bg-mint-900 text-white rounded-2xl text-sm font-bold shadow-xl shadow-mint-100/50 hover:bg-mint-600 transition-all active:scale-95"
+              className="py-4 bg-mint-900 text-white rounded-2xl text-sm font-bold shadow-xl shadow-mint-100/50 hover:bg-mint-600 transition-all active:scale-95"
             >
-              {isCustomer ? 'Edit User Profile' : 'Edit Staff Account'}
+              Update Profile
             </button>
-            {!isCustomer && (
-              <button
-                onClick={() => onChangeRole?.(staff)}
-                className="w-full py-4 bg-neutral-50 text-neutral-600 rounded-2xl text-sm font-bold border border-neutral-100 hover:bg-neutral-100 transition-all active:scale-95"
-              >
-                Modify Access Role
-              </button>
-            )}
             <button
               onClick={() => onDeactivate?.(staff.id)}
-              className="w-full py-4 bg-red-50 text-red-600 rounded-2xl text-sm font-bold border border-red-100 hover:bg-red-100 transition-all active:scale-95"
+              className="py-4 bg-red-50 text-red-600 rounded-2xl text-sm font-bold border border-red-100 hover:bg-red-100 transition-all active:scale-95"
             >
-              {isCustomer ? 'Ban Customer Access' : 'Deactivate Staff Access'}
+              {isCustomer ? 'Ban Access' : 'Deactivate'}
             </button>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { Truck, RotateCcw, Glasses, Headphones } from 'lucide-react'
+import { Ticket, RotateCcw, Glasses, Headphones } from 'lucide-react'
 
 export const BenefitsBar = () => {
   return (
@@ -10,8 +10,8 @@ export const BenefitsBar = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-12 lg:gap-16">
           {/* Benefit Item Template */}
           {[
-            { Icon: Truck, title: 'Free Delivery', desc: 'Orders over 500.000đ' },
-            { Icon: RotateCcw, title: '30-Day Returns', desc: 'Hassle-free returns' },
+            { Icon: Ticket, title: 'Discount Vouchers', desc: 'Available for all orders' },
+            { Icon: RotateCcw, title: '3-Day Returns', desc: 'Hassle-free returns' },
             { Icon: Glasses, title: 'Virtual Try-On', desc: 'Try before you buy' },
             { Icon: Headphones, title: '24/7 Support', desc: 'Expert assistance' }
           ].map((item, index) => (

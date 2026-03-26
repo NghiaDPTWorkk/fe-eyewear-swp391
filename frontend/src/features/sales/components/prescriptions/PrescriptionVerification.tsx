@@ -95,26 +95,26 @@ export default function PrescriptionVerification({
 
   useEffect(() => {
     const resolveName = async () => {
-      // 1. If order already has a staffName, use it
+      // 1. If we have profile data and it matches the assignStaff, use it (Fastest/most accurate)
+      if (profileData?.data?._id && order?.assignStaff === profileData.data._id) {
+        setResolvedStaffName(profileData.data.name)
+        return
+      }
+
+      // 2. If order already has a specific staffName, use it
       if (order?.staffName && order.staffName !== 'Sales Staff') {
         setResolvedStaffName(order.staffName)
         return
       }
 
-      // 2. If we are currently verifying (not approved yet), use our profile name
+      // 3. Fallback to profile name if we're in the middle of working on it (Pending)
       if (!isApproved && !isRejected && profileData?.data?.name) {
         setResolvedStaffName(profileData.data.name)
         return
       }
 
-      // 3. If we have an ID but no name, try to fetch it
+      // 4. Final attempt: Fetch if we have an ID but still no name
       if (order?.assignStaff) {
-        // If it's us, we can use profileData
-        if (order.assignStaff === profileData?.data?._id) {
-          setResolvedStaffName(profileData?.data?.name)
-          return
-        }
-
         try {
           const res = await salesService.getStaffById(order.assignStaff)
           if (res.success && res.data?.name) {
@@ -127,7 +127,7 @@ export default function PrescriptionVerification({
     }
 
     resolveName()
-  }, [order, isApproved, isRejected, profileData])
+  }, [order?.assignStaff, order?.staffName, isApproved, isRejected, profileData?.data])
 
   const handleApprove = () => {
     setConfirmAction('approve')
@@ -175,6 +175,9 @@ export default function PrescriptionVerification({
     setIsConfirmOpen(false)
 
     if (success) {
+      if (profileData?.data?.name) {
+        setResolvedStaffName(profileData.data.name)
+      }
       refetch()
       onActionSuccess?.()
     }

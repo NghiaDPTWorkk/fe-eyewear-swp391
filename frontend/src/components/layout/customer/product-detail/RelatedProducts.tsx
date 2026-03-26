@@ -88,30 +88,30 @@ export const RelatedProducts = ({ currentProduct, className }: RelatedProductsPr
   return (
     <section
       className={cn(
-        'bg-white py-24 pb-12 relative overflow-hidden transition-all duration-700 select-none',
+        'bg-white py-12 pb-8 relative overflow-hidden transition-all duration-700 select-none',
         className
       )}
-      style={{ minHeight: '400px' }}
+      style={{ minHeight: '250px' }}
     >
       {/* 
          EXACT MATCH FOR SCREENSHOT: 
          Large background decorative text - centered, light blue/gray 
       */}
-      <div className="absolute top-[35%] left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0 flex justify-center items-center w-full overflow-hidden opacity-[0.1]">
+      <div className="absolute top-[35%] left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0 flex justify-center items-center w-full overflow-hidden opacity-[0.05]">
         <h2 className="text-[60px] md:text-[90px] lg:text-[120px] font-bold text-[#4c6ef5] leading-none whitespace-nowrap tracking-tight">
           You may also like
         </h2>
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-heading font-bold text-mint-1200 mb-4 tracking-tight">
+        <div className="text-center mb-10">
+          <h2 className="text-3xl md:text-4xl font-heading font-bold text-mint-1200 mb-2 tracking-tight">
             You may also like
           </h2>
-          <div className="h-1.5 w-24 bg-primary-500 mx-auto rounded-full" />
+          <div className="h-1 w-16 bg-primary-500 mx-auto rounded-full" />
         </div>
 
-        <div className="min-h-[400px]">
+        <div className="min-h-[250px]">
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 w-full">
               {[1, 2, 3, 4].map((i) => (

@@ -198,6 +198,17 @@ export default function AdminEditStaffPage() {
                       onChange={(e) => handleAvatarChange(e, setFieldValue)}
                     />
                   </div>
+
+                  <div className="w-full space-y-2 mb-6">
+                    <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest px-1">
+                      Paste Avatar URL
+                    </label>
+                    <Field
+                      name="avatar"
+                      placeholder="https://example.com/image.jpg"
+                      className="w-full px-4 py-3 bg-neutral-50/50 border border-neutral-100 rounded-2xl text-[11px] font-bold focus:outline-none focus:ring-4 focus:ring-mint-500/5 focus:border-mint-500 transition-all"
+                    />
+                  </div>
                   
                   <div className="space-y-1">
                     <h4 className="text-xl font-bold text-gray-900">{values.name || '---'}</h4>

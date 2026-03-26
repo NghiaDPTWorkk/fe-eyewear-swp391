@@ -42,11 +42,25 @@ export const SystemOverview: React.FC<SystemOverviewProps> = ({ period, fromDate
     const maxVal = Math.max(...stats.rows.map(r => r.invoiceCount), 1)
     const stepX = width / (stats.rows.length - 1)
     
-    return stats.rows.map((r, i) => {
-      const x = i * stepX
-      const y = height - (r.invoiceCount / maxVal) * height + 30
-      return `${i === 0 ? 'M' : 'L'} ${x} ${y}`
-    }).join(' ')
+    const points = stats.rows.map((r, i) => ({
+      x: i * stepX,
+      y: height - (r.invoiceCount / maxVal) * height + 30
+    }))
+
+    if (points.length < 2) return ""
+
+    // Use cubic bezier for smooth curves
+    let d = `M ${points[0].x} ${points[0].y}`
+    
+    for (let i = 0; i < points.length - 1; i++) {
+      const p0 = points[i]
+      const p1 = points[i + 1]
+      
+      // Calculate control points
+      const cpX = (p0.x + p1.x) / 2
+      d += ` C ${cpX} ${p0.y}, ${cpX} ${p1.y}, ${p1.x} ${p1.y}`
+    }
+    return d
   }, [stats.rows])
 
   const areaPath = useMemo(() => {

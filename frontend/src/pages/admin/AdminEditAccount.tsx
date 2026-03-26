@@ -198,6 +198,36 @@ export function AdminEditAccount({
                     <div className="space-y-5">
                       <div className="space-y-1.5">
                         <label className="text-[10px] font-bold text-neutral-500 uppercase flex items-center gap-2 px-1">
+                          Avatar Profile
+                        </label>
+                        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                          <div className="w-16 h-16 rounded-2xl bg-neutral-100 border border-neutral-200 overflow-hidden flex-shrink-0">
+                            {values.avatar ? (
+                              <img src={values.avatar} alt="Preview" className="w-full h-full object-cover" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-neutral-300">
+                                <IoPersonOutline size={24} />
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex-1 space-y-2 w-full">
+                            <input
+                              name="avatar"
+                              value={values.avatar}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              placeholder="Paste image URL here..."
+                              className="w-full px-4 py-2 bg-neutral-50 border border-neutral-100 rounded-xl text-[12px] font-medium transition-all focus:outline-none focus:border-mint-500"
+                            />
+                            <p className="text-[10px] text-neutral-400 font-medium px-1">
+                              Paste an external link or use the upload button in the profile page after creation.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-neutral-500 uppercase flex items-center gap-2 px-1">
                           <IoPersonOutline /> Full Name
                         </label>
                         <input
@@ -298,6 +328,11 @@ export function AdminEditAccount({
                             className={`w-full px-4 py-3.5 bg-neutral-50 border rounded-2xl text-sm font-semibold transition-all focus:outline-none focus:ring-4 focus:ring-mint-500/10 ${touched.password && errors.password ? 'border-red-500' : 'border-neutral-100 focus:border-mint-500'}`}
                             placeholder="********"
                           />
+                          <ErrorMessage
+                            name="password"
+                            component="p"
+                            className="text-[10px] font-bold text-red-500 px-1 pt-1"
+                          />
                         </div>
                         {!isCustomer && (
                           <div className="space-y-1.5">
@@ -316,6 +351,11 @@ export function AdminEditAccount({
                               <option value="MANAGER">MANAGER</option>
                               <option value="SYSTEM_ADMIN">SYSTEM_ADMIN</option>
                             </select>
+                            <ErrorMessage
+                              name="role"
+                              component="p"
+                              className="text-[10px] font-bold text-red-500 px-1 pt-1"
+                            />
                           </div>
                         )}
                       </div>
@@ -323,7 +363,7 @@ export function AdminEditAccount({
                   </div>
                 </div>
 
-                <div className="pt-6 flex gap-3 sticky bottom-0 bg-neutral-50/10 backdrop-blur-sm pb-8 mt-10">
+                <div className="pt-6 flex gap-3 mt-10">
                   <Button
                     type="submit"
                     variant="solid"

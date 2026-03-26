@@ -221,6 +221,7 @@ export default function AdminStaffPage() {
     values: CreateAdminAccountFormValues,
     helpers: FormikHelpers<CreateAdminAccountFormValues>
   ) => {
+    console.log('--- handleSubmitStaff triggered ---', { values, isEditing: !!editingStaff });
     try {
       if (editingStaff) {
         // Update mode

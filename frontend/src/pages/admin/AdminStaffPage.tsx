@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
 import { type FormikHelpers } from 'formik'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
@@ -118,6 +118,7 @@ const SummaryCard: React.FC<{
 // ─── Page ────────────────────────────────────────────────────────────────────
 
 export default function AdminStaffPage() {
+  const navigate = useNavigate()
   const queryClient = useQueryClient()
 
   const [searchQuery, setSearchQuery] = useState('')
@@ -220,6 +221,7 @@ export default function AdminStaffPage() {
     values: CreateAdminAccountFormValues,
     helpers: FormikHelpers<CreateAdminAccountFormValues>
   ) => {
+    console.log('--- handleSubmitStaff triggered ---', { values, isEditing: !!editingStaff });
     try {
       if (editingStaff) {
         // Update mode
@@ -424,22 +426,22 @@ export default function AdminStaffPage() {
         onClose={() => setSelectedStaffId(null)}
         staff={selectedStaff}
         onEditStaff={(staff) => {
-          setEditingStaff(staff)
-          setIsEditModalOpen(true)
+          navigate(`/admin/staff/edit/${staff.id}`)
+          setSelectedStaffId(null) // Close drawer
         }}
         onDeactivate={(id) => toggleStaffStatus(id)}
       />
 
-      {/* Staff Editor Modal (Create/Edit) */}
+      {/* Staff Editor Modal - Used only for Adding New Staff */}
       <AdminEditAccount
         open={isEditModalOpen}
         onClose={() => {
           setIsEditModalOpen(false)
           setEditingStaff(null)
         }}
-        initialData={editingStaff}
+        initialData={null}
         onSubmit={handleSubmitStaff}
-        isSubmitting={createMutation.isPending || updateMutation.isPending}
+        isSubmitting={createMutation.isPending}
       />
 
       {/* Confirm Delete Modal */}

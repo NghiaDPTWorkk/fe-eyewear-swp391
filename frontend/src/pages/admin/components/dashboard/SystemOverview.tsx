@@ -1,7 +1,73 @@
-import React from 'react'
-import { IoChevronDownOutline } from 'react-icons/io5'
+import React, { useMemo } from 'react'
+import { useRevenueStats } from '@/features/manager/hooks/useRevenueStats'
+import { formatPrice } from '@/shared/utils/format.utils'
 
-export const SystemOverview: React.FC = () => {
+interface SystemOverviewProps {
+  period: string
+  fromDate: string
+  toDate: string
+  year: number
+}
+
+export const SystemOverview: React.FC<SystemOverviewProps> = ({ period, fromDate, toDate, year }) => {
+  // Sync params based on received props
+  const dateParams = React.useMemo(() => {
+    if (period === 'year') return { period, year }
+    if (period === 'day') return { period }
+    return { fromDate, toDate }
+  }, [period, fromDate, toDate, year])
+
+  const { data, isLoading } = useRevenueStats(dateParams)
+
+  const stats = useMemo(() => {
+    if (!data?.rows || data.rows.length === 0) return { total: 0, revenue: 0, rows: [] }
+    
+    // Sum up totals from all rows in the range
+    const totalOrders = data.rows.reduce((sum, r) => sum + r.invoiceCount, 0)
+    const totalRev = data.rows.reduce((sum, r) => sum + r.totalRevenue, 0)
+    
+    return {
+      total: totalOrders,
+      revenue: totalRev,
+      rows: data.rows
+    }
+  }, [data])
+
+  // Helper to generate SVG path from rows
+  const chartPath = useMemo(() => {
+    if (!stats.rows || stats.rows.length < 2) return ""
+    
+    const width = 800
+    const height = 150
+    const maxVal = Math.max(...stats.rows.map(r => r.invoiceCount), 1)
+    const stepX = width / (stats.rows.length - 1)
+    
+    const points = stats.rows.map((r, i) => ({
+      x: i * stepX,
+      y: height - (r.invoiceCount / maxVal) * height + 30
+    }))
+
+    if (points.length < 2) return ""
+
+    // Use cubic bezier for smooth curves
+    let d = `M ${points[0].x} ${points[0].y}`
+    
+    for (let i = 0; i < points.length - 1; i++) {
+      const p0 = points[i]
+      const p1 = points[i + 1]
+      
+      // Calculate control points
+      const cpX = (p0.x + p1.x) / 2
+      d += ` C ${cpX} ${p0.y}, ${cpX} ${p1.y}, ${p1.x} ${p1.y}`
+    }
+    return d
+  }, [stats.rows])
+
+  const areaPath = useMemo(() => {
+    if (!chartPath) return ""
+    return `${chartPath} L 800 180 L 0 180 Z`
+  }, [chartPath])
+
   return (
     <div className="bg-white p-6 md:p-8 rounded-3xl border border-neutral-100 shadow-sm relative overflow-hidden">
       <div className="flex flex-col sm:flex-row justify-between items-start gap-6 mb-10">
@@ -11,21 +77,18 @@ export const SystemOverview: React.FC = () => {
           </p>
           <div className="flex items-center gap-2 mt-1">
             <h3 className="text-2xl md:text-3xl font-bold text-gray-900 font-primary leading-tight">
-              12,458
+              {isLoading ? '...' : stats.total.toLocaleString()}
             </h3>
             <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-mint-50 text-mint-600">
+              {isLoading ? '' : formatPrice(stats.revenue)}
+            </span>
+            <span className="text-[10px] font-bold text-mint-600 opacity-60 ml-1">
               ↑ 12.3%
             </span>
           </div>
-          <p className="text-xs text-neutral-400 mt-1">Total API requests this month</p>
-        </div>
-        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-          <button className="flex-1 sm:flex-none flex items-center justify-between sm:justify-start gap-2 px-3 py-1.5 bg-neutral-50 rounded-xl text-[11px] font-semibold text-neutral-600 border border-neutral-100 h-9 transition-colors hover:bg-neutral-100">
-            <span>This Month</span> <IoChevronDownOutline className="opacity-60" />
-          </button>
-          <button className="flex-1 sm:flex-none flex items-center justify-between sm:justify-start gap-2 px-3 py-1.5 bg-neutral-50 rounded-xl text-[11px] font-semibold text-neutral-600 border border-neutral-100 h-9 transition-colors hover:bg-neutral-100">
-            <span>All Services</span> <IoChevronDownOutline className="opacity-60" />
-          </button>
+          <p className="text-xs text-neutral-400 mt-1">
+            Total activity for the selected {period === 'day' ? 'day' : period === 'month' ? 'range' : 'year'}
+          </p>
         </div>
       </div>
 
@@ -43,32 +106,23 @@ export const SystemOverview: React.FC = () => {
           <line x1="0" y1="80" x2="800" y2="80" stroke="#f1f5f9" strokeWidth="1" />
           <line x1="0" y1="30" x2="800" y2="30" stroke="#f1f5f9" strokeWidth="1" />
 
-          {/* Dashed reference line */}
-          <path
-            d="M 0 150 Q 50 140 100 160 T 200 130 T 300 150 T 400 120 T 500 110 T 600 140 T 700 100 T 800 80"
-            fill="none"
-            stroke="#cbd5e1"
-            strokeWidth="2"
-            strokeDasharray="4 4"
-            opacity="0.5"
-          />
           {/* Area fill */}
           <path
-            d="M 0 140 Q 50 130 100 110 T 200 90 T 300 100 T 400 70 T 500 50 T 600 80 T 700 60 T 800 40"
+            d={areaPath || "M 0 140 L 800 140"}
             fill="url(#adminChartGradient)"
             stroke="none"
           />
           {/* Main line */}
           <path
-            d="M 0 140 Q 50 130 100 110 T 200 90 T 300 100 T 400 70 T 500 50 T 600 80 T 700 60 T 800 40"
+            d={chartPath || "M 0 140 L 800 140"}
             fill="none"
             stroke="#10b981"
-            strokeWidth="4"
+            strokeWidth="3"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
 
-          {/* Tooltip dot */}
+          {/* Tooltip dot (centered for now) */}
           <line
             x1="400"
             y1="20"
@@ -82,8 +136,8 @@ export const SystemOverview: React.FC = () => {
           <circle cx="400" cy="70" r="6" fill="#10b981" stroke="white" strokeWidth="2" />
         </svg>
         <div className="flex justify-between mt-4 text-[10px] font-bold text-neutral-400 uppercase tracking-widest pl-2 font-primary opacity-60">
-          <span>Feb 01, 2026</span>
-          <span>Feb 22, 2026</span>
+          <span>{data?.fromDate ? new Date(data.fromDate).toLocaleDateString('en-GB') : '---'}</span>
+          <span>{data?.toDate ? new Date(data.toDate).toLocaleDateString('en-GB') : '---'}</span>
         </div>
       </div>
     </div>

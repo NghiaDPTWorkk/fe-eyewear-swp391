@@ -74,6 +74,8 @@ export function NavActions({
   }
 
   const handleNotificationClick = (notification: AppNotification) => {
+    if (isManager) return
+
     markAsRead(notification._id)
     const path = resolveNotificationPath(notification)
     if (path) navigate(path)
@@ -123,7 +125,10 @@ export function NavActions({
                 {notifications.map((n) => (
                   <div
                     key={n._id}
-                    className="px-5 py-4 hover:bg-neutral-50 cursor-pointer transition-colors group"
+                    className={cn(
+                      'px-5 py-4 transition-colors group',
+                      isManager ? 'cursor-default' : 'hover:bg-neutral-50 cursor-pointer'
+                    )}
                     onClick={() => handleNotificationClick(n)}
                   >
                     <div className="flex gap-3">

@@ -368,7 +368,7 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
                 )}
               </div>
 
-              <div className="w-full md:w-[380px] shrink-0 p-8 bg-white border border-slate-100 shadow-sm rounded-[32px]">
+              <div className="w-full md:w-[320px] lg:w-[380px] shrink-0 p-8 bg-white border-l border-slate-50 relative overflow-hidden">
                 <div className="space-y-6">
                   {/* Item Breakdown */}
                   <div className="space-y-4">
@@ -396,13 +396,15 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
                     ))}
                   </div>
 
-                  <div className="pt-4 border-t border-slate-100 flex justify-between items-baseline">
-                    <span className="text-sm font-black text-slate-900 uppercase tracking-[0.1em]">
+                  <div className="pt-6 border-t border-slate-100 flex flex-col gap-2">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] px-1">
                       Total Amount
                     </span>
-                    <span className="text-3xl font-black tracking-tight text-mint-600 font-mono">
-                      {order.total}
-                    </span>
+                    <div className="flex justify-between items-baseline px-1">
+                      <span className="text-4xl font-black tracking-tighter text-mint-600 font-mono">
+                        {order.total}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>

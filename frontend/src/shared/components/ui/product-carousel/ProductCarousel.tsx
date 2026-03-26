@@ -1,6 +1,8 @@
+import React, { useRef } from 'react'
 import { Splide, SplideTrack, SplideSlide } from '@splidejs/react-splide'
 import { AutoScroll } from '@splidejs/splide-extension-auto-scroll'
 import '@splidejs/react-splide/css'
+import './CarouselSpotlight.css'
 import { ProductCardHome } from '../product-card-home'
 import type { Product } from '@/shared/types/product.types'
 import { useNavigate } from 'react-router-dom'
@@ -18,6 +20,22 @@ export const ProductCarousel = ({
   isAutoScroll = true
 }: ProductCarouselProps) => {
   const navigate = useNavigate()
+  const carouselRef = useRef<HTMLDivElement>(null)
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!carouselRef.current) return
+    const rect = carouselRef.current.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    carouselRef.current.style.setProperty('--mouse-x', `${x}px`)
+    carouselRef.current.style.setProperty('--mouse-y', `${y}px`)
+    carouselRef.current.style.setProperty('--spotlight-opacity', '1')
+  }
+
+  const handleMouseLeave = () => {
+    if (!carouselRef.current) return
+    carouselRef.current.style.setProperty('--spotlight-opacity', '0')
+  }
 
   if (products.length === 0) {
     return (
@@ -28,9 +46,18 @@ export const ProductCarousel = ({
   }
 
   return (
-    <div className="relative group/carousel">
+    <div
+      ref={carouselRef}
+      className="relative group/carousel carousel-spotlight-container"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
+      {/* Dynamic Background Spotlight Layer */}
+      <div className="carousel-spotlight" />
+
       <Splide
         hasTrack={false}
+        className="splide-custom-glow"
         extensions={isAutoScroll ? { AutoScroll } : {}}
         options={{
           type: products.length > itemsPerView ? 'loop' : 'slide',
@@ -85,7 +112,7 @@ export const ProductCarousel = ({
 
             return (
               <SplideSlide key={productId}>
-                <div className="pt-4 pb-10 px-2 w-full max-w-[320px] mx-auto">
+                <div className="pt-4 pb-10 px-2 py-5 w-full max-w-[320px] mx-auto">
                   <ProductCardHome
                     id={productId}
                     name={productName}
@@ -95,7 +122,10 @@ export const ProductCarousel = ({
                     price={originalPrice}
                     discountPrice={finalPrice !== originalPrice ? finalPrice : undefined}
                     salePercent={salePercent}
-                    onClick={(id) => navigate(`/products/${id}`)}
+                    onClick={(id) => {
+                      navigate(`/products/${id}`)
+                      window.scrollTo(0, 0)
+                    }}
                   />
                 </div>
               </SplideSlide>
@@ -132,7 +162,7 @@ export const ProductCarousel = ({
             right: -1.75rem !important;
           }
           .group\\/carousel .splide__arrow svg {
-            fill: #0f172a !important;
+            fill: #131c32 !important;
             width: 1.25rem !important;
             height: 1.25rem !important;
           }

@@ -63,6 +63,11 @@ const ReturnRequestPage = lazy(() =>
     default: m.ReturnRequestPage
   }))
 )
+const FaceTutorialPage = lazy(() =>
+  import('@/pages/customer/components/FaceTutorial').then((m) => ({
+    default: m.default
+  }))
+)
 
 // Policy Pages
 const PrivacyPolicyPage = lazy(() =>
@@ -157,6 +162,14 @@ export const customerRoutes = [
         element: (
           <LazyPage>
             <ReturnWarrantyPolicyPage />
+          </LazyPage>
+        )
+      },
+      {
+        path: '/face-tutorial',
+        element: (
+          <LazyPage>
+            <FaceTutorialPage />
           </LazyPage>
         )
       },

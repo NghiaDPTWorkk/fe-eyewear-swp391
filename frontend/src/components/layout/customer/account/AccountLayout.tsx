@@ -1,12 +1,9 @@
 import { Outlet } from 'react-router-dom'
-import CustomerHeader from '@/components/layout/customer/header/CustomerHeader'
 import { AccountSidebar } from './AccountSidebar'
 
 export function AccountLayout() {
   return (
     <div className="min-h-screen bg-[#f8fafc]">
-      <CustomerHeader />
-
       <div className="max-w-[1240px] mx-auto flex gap-10 px-4">
         <aside className="hidden lg:block shrink-0">
           <AccountSidebar />

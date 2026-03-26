@@ -119,9 +119,7 @@ export function FrameSpecFields(props: {
           {specFrame.dimensionsEnabled && (
             <div className="grid grid-cols-3 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-neutral-400 uppercase ml-1">
-                  Width
-                </label>
+                <label className="text-[10px] font-bold text-neutral-400 ml-1">Width</label>
                 <input
                   value={specFrame.dimensions.widthText}
                   onChange={(e) =>
@@ -136,9 +134,7 @@ export function FrameSpecFields(props: {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-neutral-400 uppercase ml-1">
-                  Height
-                </label>
+                <label className="text-[10px] font-bold text-neutral-400 ml-1">Height</label>
                 <input
                   value={specFrame.dimensions.heightText}
                   onChange={(e) =>
@@ -153,9 +149,7 @@ export function FrameSpecFields(props: {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-neutral-400 uppercase ml-1">
-                  Depth
-                </label>
+                <label className="text-[10px] font-bold text-neutral-400 ml-1">Depth</label>
                 <input
                   value={specFrame.dimensions.depthText}
                   onChange={(e) =>

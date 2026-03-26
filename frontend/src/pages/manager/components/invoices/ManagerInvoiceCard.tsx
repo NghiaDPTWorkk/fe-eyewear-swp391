@@ -28,7 +28,7 @@ import {
   IoShieldCheckmarkOutline,
   IoListOutline
 } from 'react-icons/io5'
-import { formatPrice } from '@/shared/utils'
+import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 
 function getInvoiceStatusBadgeClass(status: string) {
   switch (status) {
@@ -376,19 +376,19 @@ export default function ManagerInvoiceCard({
                     <div className="flex justify-between items-center text-[10px] font-bold text-neutral-500 tracking-widest leading-none">
                       <span>Subtotal</span>
                       <span className="text-gray-900 font-mono">
-                        {formatPrice(fullInvoiceDetail.totalPrice || 0)}
+                        <VNDPrice amount={fullInvoiceDetail.totalPrice || 0} />
                       </span>
                     </div>
                     <div className="flex justify-between items-center text-[10px] font-bold text-neutral-500 tracking-widest leading-none">
                       <span>Shipping Fee</span>
                       <span className="text-gray-900 font-mono">
-                        + {formatPrice(fullInvoiceDetail.feeShip || 0)}
+                        + <VNDPrice amount={fullInvoiceDetail.feeShip || 0} />
                       </span>
                     </div>
                     <div className="flex justify-between items-center text-[10px] font-bold text-rose-400 tracking-widest leading-none">
                       <span>Discount</span>
                       <span className="text-rose-500 font-mono">
-                        - {formatPrice(fullInvoiceDetail.totalDiscount || 0)}
+                        - <VNDPrice amount={fullInvoiceDetail.totalDiscount || 0} />
                       </span>
                     </div>
                     <div className="pt-2 mt-2 border-t border-neutral-100 flex justify-between items-center">
@@ -396,18 +396,19 @@ export default function ManagerInvoiceCard({
                         Total Amount
                       </span>
                       <span className="text-base font-bold text-mint-600 font-primary">
-                        {(
-                          (fullInvoiceDetail.totalPrice || 0) +
-                          (fullInvoiceDetail.feeShip || 0) -
-                          (fullInvoiceDetail.totalDiscount || 0)
-                        ).toLocaleString()}{' '}
-                        đ
+                        <VNDPrice
+                          amount={
+                            (fullInvoiceDetail.totalPrice || 0) +
+                            (fullInvoiceDetail.feeShip || 0) -
+                            (fullInvoiceDetail.totalDiscount || 0)
+                          }
+                        />
                       </span>
                     </div>
                   </div>
                 ) : (
                   <p className="text-sm font-bold text-mint-600 font-primary truncate">
-                    {formatPrice(Number(invoice.finalPrice))}
+                    <VNDPrice amount={Number(invoice.finalPrice)} />
                   </p>
                 )}
               </div>
@@ -667,7 +668,7 @@ export default function ManagerInvoiceCard({
                       Price
                     </span>
                     <p className="text-xs font-semibold text-gray-700 font-primary truncate">
-                      {formatPrice(order.price)}
+                      <VNDPrice amount={order.price} />
                     </p>
                   </div>
                   <div className="min-w-0">
@@ -722,7 +723,7 @@ export default function ManagerInvoiceCard({
                                 UID: {line.product.product_id}
                               </p>
                               <p className="text-[11px] font-bold text-gray-700 mt-1">
-                                {formatPrice(line.product.pricePerUnit)} / unit
+                                <VNDPrice amount={line.product.pricePerUnit} /> / unit
                               </p>
                             </div>
                           ) : null}
@@ -741,7 +742,7 @@ export default function ManagerInvoiceCard({
                                 ID: {line.lens.lens_id}
                               </p>
                               <p className="text-[11px] font-bold text-gray-700 mt-1">
-                                {formatPrice(line.lens.pricePerUnit)} / unit
+                                <VNDPrice amount={line.lens.pricePerUnit} /> / unit
                               </p>
                               <div className="mt-2 pt-2 border-t border-neutral-50 text-[10px] font-semibold text-neutral-500 leading-normal">
                                 PD: {line.lens.parameters.PD} <br />

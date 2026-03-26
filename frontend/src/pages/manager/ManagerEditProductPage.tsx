@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { IoChevronBackOutline, IoSaveOutline } from 'react-icons/io5'
+import { IoSaveOutline } from 'react-icons/io5'
 import { PageHeader } from '@/features/sales/components/common'
 import { Container } from '@/components'
 
@@ -56,6 +56,7 @@ export default function ManagerEditProductPage() {
         imgs: [],
         isDefault: true,
         mode: 'AVAILABLE',
+        virTryOnUrl: '',
         options: []
       }
     ],
@@ -117,8 +118,8 @@ export default function ManagerEditProductPage() {
       return false
     }
     for (const v of state.variants) {
-      if (!v.sku.trim()) {
-        toast.error('All variants must have a SKU')
+      if (!v.priceText || isNaN(Number(v.priceText))) {
+        toast.error('All variants must have a valid price')
         return false
       }
     }
@@ -177,18 +178,12 @@ export default function ManagerEditProductPage() {
   } as ProductCreateFormState
 
   return (
-    <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-      {}
-      <div className="lg:col-span-12 flex items-center gap-4">
-        <button
-          onClick={() => navigate(-1)}
-          className="p-2.5 hover:bg-neutral-100 rounded-2xl transition-colors shrink-0"
-        >
-          <IoChevronBackOutline size={24} />
-        </button>
+    <div className="max-w-4xl mx-auto space-y-8 pb-48">
+      {/* Header Section */}
+      <div className="flex flex-col gap-4">
         <PageHeader
           title="Edit Product"
-          subtitle={`Modified details for: ${data.data.product.nameBase}`}
+          subtitle={`Modify details for: ${data.data.product.nameBase}`}
           breadcrumbs={[
             { label: 'Dashboard', path: '/manager/dashboard' },
             { label: 'Products', path: '/manager/products' },
@@ -199,35 +194,43 @@ export default function ManagerEditProductPage() {
       </div>
 
       <form
-        className="lg:col-span-12 grid grid-cols-1 lg:grid-cols-2 gap-6"
+        className="space-y-8"
         onSubmit={(e) => {
           e.preventDefault()
           handleSubmit()
         }}
       >
-        {}
-        <div className="space-y-5">
-          <section className="bg-white rounded-2xl border border-neutral-100/50 shadow-sm p-4 space-y-4">
-            <div className="flex items-center gap-2.5 border-b border-neutral-50 pb-3">
-              <div className="w-8 h-8 rounded-lg bg-mint-50 flex items-center justify-center text-mint-600">
-                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-none stroke-current stroke-2">
-                  <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
-                  <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+        {/* Section 1 & 2: General & Specifications combined */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          <section className="bg-white rounded-[32px] border border-neutral-100/50 shadow-sm p-8 space-y-6 h-full">
+            <div className="flex items-center gap-4 border-b border-neutral-50 pb-6">
+              <div className="w-10 h-10 rounded-2xl bg-mint-50 flex items-center justify-center text-mint-600">
+                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-none stroke-current stroke-2">
+                  <path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z" />
+                  <path d="M13 2v7h7" />
                 </svg>
               </div>
-              <h3 className="text-sm font-bold text-slate-700">General Information</h3>
+              <div>
+                <h3 className="text-lg font-extrabold text-slate-800 tracking-tight">General</h3>
+                <p className="text-xs font-bold text-slate-400">Core identity</p>
+              </div>
             </div>
             <ProductBaseFields state={createCompatibleState} onChange={handleBaseChange} />
           </section>
 
-          <section className="bg-white rounded-2xl border border-neutral-100/50 shadow-sm p-4 space-y-4">
-            <div className="flex items-center gap-2.5 border-b border-neutral-50 pb-3">
-              <div className="w-8 h-8 rounded-lg bg-mint-50 flex items-center justify-center text-mint-600">
-                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-none stroke-current stroke-2">
+          <section className="bg-white rounded-[32px] border border-neutral-100/50 shadow-sm p-8 space-y-6 h-full">
+            <div className="flex items-center gap-4 border-b border-neutral-50 pb-6">
+              <div className="w-10 h-10 rounded-2xl bg-mint-50 flex items-center justify-center text-mint-600">
+                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-none stroke-current stroke-2">
                   <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
                 </svg>
               </div>
-              <h3 className="text-sm font-bold text-slate-700">Specifications</h3>
+              <div>
+                <h3 className="text-lg font-extrabold text-slate-800 tracking-tight">
+                  Specifications
+                </h3>
+                <p className="text-xs font-bold text-slate-400">Materials & Style</p>
+              </div>
             </div>
             {state.type === 'frame' || state.type === 'sunglass' ? (
               <FrameSpecFields specFrame={state.specFrame} onChange={handleSpecFrameChange} />
@@ -237,98 +240,128 @@ export default function ManagerEditProductPage() {
           </section>
         </div>
 
-        {}
-        <div className="space-y-5">
-          <section className="bg-white rounded-2xl border border-neutral-100/50 shadow-sm p-4 space-y-4">
-            <div className="flex items-center gap-2.5 border-b border-neutral-50 pb-3">
-              <div className="w-8 h-8 rounded-lg bg-mint-50 flex items-center justify-center text-mint-600">
-                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-none stroke-current stroke-2">
+        {/* Section 3: Options & Variants */}
+        <section className="bg-white rounded-[32px] border border-neutral-100/50 shadow-sm p-8 space-y-8">
+          <div className="space-y-8">
+            <div className="flex items-center gap-4 border-b border-neutral-50 pb-6">
+              <div className="w-10 h-10 rounded-2xl bg-mint-50 flex items-center justify-center text-mint-600">
+                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-none stroke-current stroke-2">
                   <path d="M4 6h16M4 12h16m-7 6h7" />
                 </svg>
               </div>
-              <h3 className="text-sm font-bold text-slate-700">Options & Configurations</h3>
-            </div>
-            <OptionsConfigEditor
-              optionsConfig={state.optionsConfig}
-              onChange={(optionsConfig) => setState((prev) => ({ ...prev, optionsConfig }))}
-            />
-          </section>
-
-          <section className="bg-white rounded-2xl border border-neutral-100/50 shadow-sm p-4 space-y-4">
-            <div className="flex items-center gap-2.5 border-b border-neutral-50 pb-3">
-              <div className="w-8 h-8 rounded-lg bg-mint-50 flex items-center justify-center text-mint-600">
-                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-none stroke-current stroke-2">
-                  <rect x="3" y="3" width="7" height="7" />
-                  <rect x="14" y="3" width="7" height="7" />
-                  <rect x="14" y="14" width="7" height="7" />
-                  <rect x="3" y="14" width="7" height="7" />
-                </svg>
+              <div>
+                <h3 className="text-lg font-extrabold text-slate-800 tracking-tight">
+                  Configurations
+                </h3>
+                <p className="text-xs font-bold text-slate-400">Attributes and variant system</p>
               </div>
-              <h3 className="text-sm font-bold text-slate-700">Product Variants</h3>
             </div>
-            <VariantsEditor
-              variants={state.variants}
-              optionsConfig={state.optionsConfig}
-              nameBase={state.nameBase}
-              onChange={handleVariantsChange}
-            />
-          </section>
 
-          <div className="bg-neutral-50/50 rounded-2xl p-4 space-y-4 border border-neutral-100/50 shadow-sm">
-            <div className="space-y-4">
-              <h3 className="text-xs font-bold text-slate-700 tracking-wide">
-                Variant Availability Mode
+            <div className="space-y-12">
+              <div className="space-y-4">
+                <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">
+                  Custom Attributes
+                </h4>
+                <OptionsConfigEditor
+                  optionsConfig={state.optionsConfig}
+                  onChange={(optionsConfig) => setState((prev) => ({ ...prev, optionsConfig }))}
+                />
+              </div>
+
+              <div className="space-y-6">
+                <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">
+                  Product Variants
+                </h4>
+                <VariantsEditor
+                  variants={state.variants}
+                  optionsConfig={state.optionsConfig}
+                  nameBase={state.nameBase}
+                  onChange={handleVariantsChange}
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 4: Availability Mode */}
+        <section className="bg-white rounded-[32px] border border-neutral-100/50 shadow-sm p-8 space-y-6">
+          <div className="flex items-center gap-4 border-b border-neutral-50 pb-6">
+            <div className="w-10 h-10 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600">
+              <svg viewBox="0 0 24 24" className="w-5 h-5 fill-none stroke-current stroke-2">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 6v6l4 2" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-lg font-extrabold text-slate-800 tracking-tight">
+                Availability Settings
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {state.variants.map((v, idx) => {
-                  const variantLabel =
-                    v.options.map((o) => o.label).join(' · ') || `Variant #${idx + 1}`
-                  return (
-                    <div
-                      key={idx}
-                      className={`p-3 rounded-xl border transition-all ${
-                        v.mode === 'PRE_ORDER'
-                          ? 'border-amber-200 bg-amber-50/30'
-                          : 'border-emerald-200 bg-emerald-50/30'
-                      }`}
-                    >
-                      <p className="text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-wider truncate">
-                        {variantLabel}
-                      </p>
-                      <select
-                        value={v.mode}
-                        onChange={(e) =>
-                          handleVariantModeChange(idx, e.target.value as 'AVAILABLE' | 'PRE_ORDER')
-                        }
-                        className="w-full px-2 py-1.5 bg-white border border-neutral-100 rounded-lg text-[11px] font-semibold focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all cursor-pointer"
-                      >
-                        <option value="AVAILABLE">✅ Available</option>
-                        <option value="PRE_ORDER">📦 Pre-order</option>
-                      </select>
-                    </div>
-                  )
-                })}
-              </div>
+              <p className="text-xs font-bold text-slate-400">
+                Manage Pre-order status per variant
+              </p>
             </div>
+          </div>
 
-            <div className="pt-4 flex gap-3 border-t border-neutral-200/50">
-              <button
-                type="button"
-                onClick={() => navigate(-1)}
-                disabled={isSubmitting}
-                className="px-6 py-3 border border-neutral-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-white hover:shadow-sm transition-all active:scale-95 disabled:opacity-50"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="flex-1 px-8 py-3 bg-mint-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-mint-100/50 hover:bg-mint-700 hover:shadow-mint-200/50 transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50"
-              >
-                <IoSaveOutline size={18} />
-                {isSubmitting ? 'Updating...' : 'Update Product'}
-              </button>
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {state.variants.map((v, idx) => {
+              const variantLabel =
+                v.options.map((o) => o.label).join(' · ') || `Variant #${idx + 1}`
+              const isPreOrder = v.mode === 'PRE_ORDER'
+
+              return (
+                <div
+                  key={idx}
+                  className={`p-5 rounded-[24px] border transition-all duration-300 ${
+                    isPreOrder
+                      ? 'border-amber-200 bg-amber-50/20 shadow-sm shadow-amber-100/20'
+                      : 'border-emerald-100 bg-emerald-50/20 shadow-sm shadow-emerald-100/20'
+                  }`}
+                >
+                  <label className="block space-y-3 cursor-pointer">
+                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest truncate px-1">
+                      {variantLabel}
+                    </p>
+                    <select
+                      value={v.mode}
+                      onChange={(e) =>
+                        handleVariantModeChange(idx, e.target.value as 'AVAILABLE' | 'PRE_ORDER')
+                      }
+                      className="w-full px-4 py-3 bg-white border border-neutral-200/50 rounded-2xl text-[13px] font-extrabold focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all cursor-pointer shadow-sm"
+                    >
+                      <option value="AVAILABLE"> Available Now</option>
+                      <option value="PRE_ORDER"> Pre-order Mode</option>
+                    </select>
+                  </label>
+                </div>
+              )
+            })}
+          </div>
+        </section>
+
+        {/* Integrated Action Bar - Bottom flow */}
+        <div className="mt-16 flex justify-center pb-12">
+          <div className="w-full max-w-2xl border border-white/10 rounded-[40px] p-3 shadow-2xl flex items-center justify-between px-10 transition-all ring-1 ring-white/5">
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              disabled={isSubmitting}
+              className="px-8 py-3 text-neutral-400 hover:text-slate-950 transition-colors text-sm font-extrabold active:scale-95 disabled:opacity-50"
+            >
+              Discard Changes
+            </button>
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="px-12 py-4 bg-mint-400 text-slate-950 hover:bg-mint-500 rounded-3xl text-sm font-black shadow-xl active:scale-95 transition-all flex items-center gap-3 disabled:opacity-50"
+            >
+              {isSubmitting ? (
+                <div className="w-5 h-5 border-2 border-slate-950/30 border-t-slate-950 rounded-full animate-spin" />
+              ) : (
+                <IoSaveOutline size={20} />
+              )}
+              {isSubmitting ? 'Syncing...' : 'Update Product'}
+            </button>
           </div>
         </div>
       </form>

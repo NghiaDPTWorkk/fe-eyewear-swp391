@@ -40,6 +40,7 @@ export function mapProductToFormState(product: AdminProductDetail): ProductEditF
         imgs: v.imgs || [],
         isDefault: v.isDefault,
         mode: (v.mode as 'AVAILABLE' | 'PRE_ORDER') || 'AVAILABLE',
+        virTryOnUrl: v.virTryOnUrl || '',
         options: v.options.map((o) => ({
           attributeId: o.attributeId,
           attributeName: o.attributeName,
@@ -85,7 +86,8 @@ export function buildUpdatePayload(state: ProductEditFormState): Record<string, 
       stock: Number(v.stockText || 0),
       imgs: v.imgs,
       isDefault: v.isDefault,
-      mode: v.mode
+      mode: v.mode,
+      virTryOnUrl: v.virTryOnUrl || undefined
     }))
   }
 

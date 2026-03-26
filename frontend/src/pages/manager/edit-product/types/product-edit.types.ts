@@ -10,6 +10,7 @@ export interface ProductEditVariant {
   imgs: string[]
   isDefault: boolean
   mode: 'AVAILABLE' | 'PRE_ORDER'
+  virTryOnUrl?: string
   options: Array<{
     attributeId: string
     attributeName: string

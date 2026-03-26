@@ -1,6 +1,8 @@
 import { IoAddOutline, IoTrashOutline } from 'react-icons/io5'
+import { Button } from '@/shared/components/ui/button'
 import type { ProductCreateFormState } from '../types/product-create.types'
 import { ImageUpload } from './ImageUpload'
+import { Model3DUpload } from './Model3DUpload'
 import { DynamicSelectField } from './DynamicSelectField'
 import { useAttributes } from '../../../../features/staff/hooks/useAttributes'
 import { cn } from '@/lib/utils'
@@ -35,6 +37,7 @@ export function VariantsEditor(props: {
         stockText: '',
         imgs: [],
         isDefault: false,
+        virTryOnUrl: '',
         options: []
       }
     ])
@@ -82,6 +85,7 @@ export function VariantsEditor(props: {
         stockText: '',
         imgs: [],
         isDefault: false,
+        virTryOnUrl: '',
         options: combo.map((c) => ({
           attributeId: c.attributeId,
           attributeName: c.attributeName,
@@ -153,23 +157,24 @@ export function VariantsEditor(props: {
           </h3>
         </div>
         <div className="flex items-center gap-3">
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={generateVariants}
-            disabled={!optionsConfig.length || optionsConfig.every((c) => !c.values.length)}
-            className="flex items-center gap-2 text-xs font-bold text-mint-600 bg-white hover:bg-mint-50 px-4 py-2.5 rounded-2xl border border-mint-200 transition-all active:scale-95 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            isDisabled={!optionsConfig.length || optionsConfig.every((c) => !c.values.length)}
+            className="text-mint-600 border-mint-200"
+            leftIcon={<div className="w-2 h-2 bg-mint-500 rounded-full animate-pulse" />}
           >
-            <div className="w-2 h-2 bg-mint-500 rounded-full animate-pulse" />
             Auto-Generate Variants
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={addVariant}
-            className="flex items-center gap-2 text-xs font-bold text-white bg-mint-600 hover:bg-mint-700 px-4 py-2.5 rounded-2xl transition-all active:scale-95 shadow-lg shadow-mint-100/50"
+            leftIcon={<IoAddOutline size={20} />}
+            className="bg-mint-600 hover:bg-mint-700 shadow-lg shadow-mint-100/50"
           >
-            <IoAddOutline size={20} />
             Add New Variant
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -288,12 +293,25 @@ export function VariantsEditor(props: {
                   </div>
                 </div>
 
-                <div className="md:col-span-2 space-y-2">
+                <div className="space-y-2">
                   <label className="text-[11px] font-extrabold text-neutral-500 ml-1">Images</label>
                   <ImageUpload
                     images={v.imgs}
                     onChange={(imgs) =>
                       onChange(variants.map((vv, i) => (i === variantIdx ? { ...vv, imgs } : vv)))
+                    }
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Model3DUpload
+                    value={v.virTryOnUrl}
+                    onChange={(val) =>
+                      onChange(
+                        variants.map((vv, i) =>
+                          i === variantIdx ? { ...vv, virTryOnUrl: val } : vv
+                        )
+                      )
                     }
                   />
                 </div>
@@ -304,18 +322,18 @@ export function VariantsEditor(props: {
                   <div className="flex items-center justify-between px-1">
                     <div className="flex items-center gap-2">
                       <div className="w-1 h-4 bg-mint-500 rounded-full" />
-                      <h4 className="text-[13px] font-extrabold text-gray-900 uppercase tracking-wider">
-                        Options
-                      </h4>
+                      <h4 className="text-[13px] font-extrabold text-gray-900">Options</h4>
                     </div>
-                    <button
+                    <Button
                       type="button"
+                      variant="outline"
+                      size="sm"
                       onClick={() => addOption(variantIdx)}
-                      className="flex items-center gap-2 text-[11px] font-bold text-mint-600 hover:text-white hover:bg-mint-600 px-3 py-1.5 rounded-full border border-mint-200 transition-all active:scale-95 bg-white shadow-sm"
+                      leftIcon={<IoAddOutline size={16} />}
+                      className="rounded-full border-mint-200 text-mint-600 bg-white"
                     >
-                      <IoAddOutline size={16} />
                       Add Option
-                    </button>
+                    </Button>
                   </div>
 
                   {v.options.length ? (

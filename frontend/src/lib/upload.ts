@@ -14,8 +14,8 @@ export const uploadSingle = async (file: File): Promise<string> => {
     })
     return response.data.file
   } catch (error) {
-    console.error('Error uploading single image:', error)
-    throw new Error('Failed to upload image')
+    console.error('Error uploading single file:', error)
+    throw new Error('Failed to upload file')
   }
 }
 
@@ -34,7 +34,7 @@ export const uploadMany = async (files: File[]): Promise<string[]> => {
     })
     return response.data.files
   } catch (error) {
-    console.error('Error uploading many images:', error)
-    throw new Error('Failed to upload images')
+    console.error('Error uploading many files:', error)
+    throw new Error('Failed to upload files')
   }
 }

@@ -69,9 +69,7 @@ export function DynamicSelectField({
       <div className="flex justify-between items-center ml-1">
         <label className="text-sm font-bold text-gray-700">{label}</label>
         {helperText && (
-          <span className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">
-            {helperText}
-          </span>
+          <span className="text-[10px] text-neutral-400 font-medium">{helperText}</span>
         )}
       </div>
 
@@ -98,7 +96,7 @@ export function DynamicSelectField({
         </div>
 
         {isOpen && (
-          <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-neutral-100/50 rounded-[24px] shadow-2xl z-50 py-3 flex flex-col animate-in fade-in slide-in-from-top-2 duration-300 backdrop-blur-xl bg-white/95">
+          <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-neutral-100/50 rounded-[24px] shadow-2xl z-[100] py-3 flex flex-col animate-in fade-in slide-in-from-top-2 duration-300 backdrop-blur-xl bg-white/95">
             <div className="px-3 mb-2">
               <input
                 autoFocus

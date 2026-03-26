@@ -5,6 +5,7 @@ import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 import { cn } from '@/lib/utils'
 import type { NormalizedLandmark } from '@mediapipe/tasks-vision'
 import GlassesOverlay from './GlassesOverlay'
+import type { Variant } from '@/shared/types/variant.types'
 
 interface TryOnWebcamViewProps {
   onClose: () => void
@@ -12,6 +13,10 @@ interface TryOnWebcamViewProps {
   productName: string
   productImage: string
   productPrice: number
+  virTryOnUrl?: string | null
+  variants?: Variant[]
+  selectedVariantIdx?: number
+  onVariantSelect?: (index: number) => void
   startDetection: (video: HTMLVideoElement) => void
   stopDetection: () => void
   landmarksRef: React.RefObject<NormalizedLandmark[][]>
@@ -27,6 +32,10 @@ export default function TryOnWebcamView({
   productName,
   productImage,
   productPrice,
+  virTryOnUrl,
+  variants = [],
+  selectedVariantIdx = 0,
+  onVariantSelect,
   startDetection,
   stopDetection,
   landmarksRef,
@@ -123,13 +132,43 @@ export default function TryOnWebcamView({
           videoRef={videoRef}
           landmarksRef={landmarksRef}
           transformationMatricesRef={transformationMatricesRef}
-          glassesImageUrl={productImage}
+          glassesImageUrl={virTryOnUrl || productImage}
         />
 
         {/* Face guide overlay (hidden once landmarks detected) */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="w-44 h-56 rounded-[50%] border-2 border-dashed border-white/15" />
         </div>
+
+        {/* Variant Selector - Positioned over the video at the bottom */}
+        {variants.length > 1 && (
+          <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-3 overflow-x-auto pb-2 px-4 scroller-hide">
+            {variants.map((v, idx) => {
+              const isSelected = selectedVariantIdx === idx
+              const thumbUrl = v.imgs?.[0] || productImage
+
+              return (
+                <button
+                  key={v.sku || idx}
+                  onClick={() => onVariantSelect?.(idx)}
+                  className={cn(
+                    'relative w-12 h-12 rounded-full border-2 transition-all flex-shrink-0 bg-white overflow-hidden shadow-lg',
+                    isSelected
+                      ? 'border-primary-500 scale-110'
+                      : 'border-white/50 hover:border-white'
+                  )}
+                >
+                  <img src={thumbUrl} alt={v.name} className="w-full h-full object-cover" />
+                  {isSelected && (
+                    <div className="absolute inset-0 bg-primary-500/10 flex items-center justify-center">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary-500" />
+                    </div>
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        )}
       </div>
 
       {/* Bottom product bar */}
@@ -142,16 +181,11 @@ export default function TryOnWebcamView({
         </button>
 
         <div className="flex items-center gap-2 flex-1 min-w-0">
-          {productImage && (
-            <img
-              src={productImage}
-              alt={productName}
-              className="w-9 h-9 rounded-lg object-cover border border-mint-200 flex-shrink-0"
-            />
-          )}
           <div className="min-w-0">
-            <p className="text-xs font-bold text-mint-1200 truncate">{productName}</p>
-            <p className="text-xs text-gray-eyewear">
+            <p className="text-sm font-bold text-mint-1200 truncate">
+              {variants[selectedVariantIdx]?.name || productName}
+            </p>
+            <p className="text-sm text-gray-eyewear">
               <VNDPrice amount={productPrice} />
             </p>
           </div>

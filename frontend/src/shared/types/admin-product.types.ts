@@ -52,6 +52,7 @@ export interface AdminProductVariant {
   stock: number
   imgs: string[]
   isDefault: boolean
+  virTryOnUrl?: string | null
 }
 
 export interface AdminProductSpec {

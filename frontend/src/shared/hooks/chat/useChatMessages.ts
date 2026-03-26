@@ -8,6 +8,7 @@ export interface ChatMessage {
   text: string
   sender: 'user' | 'bot'
   timestamp: Date
+  products?: any[]
 }
 
 interface UseChatMessagesReturn {
@@ -32,7 +33,8 @@ function mapApiMessages(apiMessages: AiMessage[]): ChatMessage[] {
     id: m._id,
     text: m.content,
     sender: m.role === 'AI' ? 'bot' : 'user',
-    timestamp: new Date(m.createdAt)
+    timestamp: new Date(m.createdAt),
+    products: m.products
   }))
 }
 
@@ -149,7 +151,8 @@ export const useChatMessages = (): UseChatMessagesReturn => {
             id: `bot-${Date.now()}`,
             text: res.data.message,
             sender: 'bot',
-            timestamp: new Date()
+            timestamp: new Date(),
+            products: res.data.products
           }
           setMessages((prev) => [...prev, botMsg])
           // Scroll to bottom on bot response

@@ -30,6 +30,6 @@ export const profileService = {
    * Endpoint: POST /admin/profile-requests
    */
   requestProfileUpdate: async (data: ProfileUpdateRequest) => {
-    return httpClient.post<GenericApiResponse>(ENDPOINTS.ADMIN.PROFILE_REQUESTS, data)
+    return httpClient.post<GenericApiResponse>(ENDPOINTS.ADMIN.PROFILE_REQUESTS.CREATE, data)
   }
 }

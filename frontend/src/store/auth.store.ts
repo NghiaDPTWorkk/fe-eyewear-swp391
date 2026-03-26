@@ -5,6 +5,7 @@ import { authService } from '@/features/auth/services/auth.service'
 import { getRoleFromToken } from '@/shared/utils'
 
 import { useCartStore } from './cart.store'
+import { useWishlistStore } from './wishlist.store'
 
 export interface AuthState {
   user: User | AdminAccount | null
@@ -52,8 +53,9 @@ export const useAuthStore = create<AuthState>()(
         localStorage.removeItem('accessToken')
         localStorage.removeItem('access_token')
         set({ user: null, accessToken: null, isAuthenticated: false, role: null, error: null })
-        // Reset cart immediately so the header count clears without a page reload
+        // Reset cart and wishlist immediately so the header count and status clear without a page reload
         useCartStore.setState({ items: [], isInitialized: false })
+        useWishlistStore.setState({ items: [], isInitialized: false })
       },
       setLoading: (loading) => set({ isLoading: loading }),
       fetchProfile: async () => {

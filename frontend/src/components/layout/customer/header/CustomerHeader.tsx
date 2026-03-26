@@ -3,7 +3,7 @@ import { Input } from '@/components'
 import { Search, ShoppingCart, User, X, Heart } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { useCartStore, useAuthStore } from '@/store'
+import { useCartStore, useAuthStore, useWishlistStore } from '@/store'
 
 import { ProfileDropdown as ProjectProfileDropdown } from './ProfileDropdown'
 import LogoEyewearIcon from '@/shared/components/ui-core/logoeyewear/LogoEyewearIcon'
@@ -18,6 +18,7 @@ export default function CustomerHeader({ isTranslucent = false }: { isTranslucen
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
   const fetchCart = useCartStore((state) => state.fetchCart)
+  const fetchWishlist = useWishlistStore((state) => state.fetchWishlist)
   const [isBagAnimating, setIsBagAnimating] = useState(false)
 
   // đợi Component mount xong
@@ -27,11 +28,12 @@ export default function CustomerHeader({ isTranslucent = false }: { isTranslucen
     // đã mount, chúng ta coi như đã nạp xong (vì localStorage là đồng bộ)
     setHasHydrated(true)
 
-    // Fetch cart on mount if authenticated to persist badge across pages
+    // Fetch cart and wishlist on mount if authenticated to persist badge and status across pages
     if (isAuthenticated) {
       fetchCart()
+      fetchWishlist()
     }
-  }, [isAuthenticated, fetchCart])
+  }, [isAuthenticated, fetchCart, fetchWishlist])
 
   // Animation effect for cart badge
   useEffect(() => {

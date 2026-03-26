@@ -4,7 +4,8 @@ import {
   IoClose,
   IoEyeOutline,
   IoInformationCircleOutline,
-  IoPersonOutline
+  IoPersonOutline,
+  IoWarningOutline
 } from 'react-icons/io5'
 import { Button, Card, Input } from '@/shared/components/ui-core'
 
@@ -23,6 +24,14 @@ interface TranscriptionFormProps {
   staffName?: string
   actionTime?: string
   rejectionNote?: string
+}
+
+const VALIDATION_RULES = {
+  SPH: { min: -20.0, max: 20.0, step: 0.25 },
+  CYL: { min: -20.0, max: 20.0, step: 0.25 },
+  AXIS: { min: 0, max: 180, step: 1 },
+  ADD: { min: 0.75, max: 3.5, step: 0.25 },
+  PD: { min: 35, max: 65, step: 0.5 }
 }
 
 const validateNote = (value: string): string | null => {
@@ -70,21 +79,71 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
 
     switch (field) {
       case 'SPH':
-      case 'CYL':
-        if (num < -20 || num > 20) return 'Must be between -20 and 20'
+      case 'CYL': {
+        const rule = field === 'SPH' ? VALIDATION_RULES.SPH : VALIDATION_RULES.CYL
+        if (num < rule.min || num > rule.max) return `Must be between ${rule.min} and ${rule.max}`
         break
+      }
       case 'AXIS':
-        if (num < 0 || num > 180) return 'Must be between 0 and 180'
+        if (num < VALIDATION_RULES.AXIS.min || num > VALIDATION_RULES.AXIS.max)
+          return `Must be between ${VALIDATION_RULES.AXIS.min} and ${VALIDATION_RULES.AXIS.max}`
         break
       case 'ADD':
-        if (num < 0.75 || num > 3.5) return 'Must be between 0.75 and 3.5'
+        if (num < VALIDATION_RULES.ADD.min || num > VALIDATION_RULES.ADD.max)
+          return `Must be between ${VALIDATION_RULES.ADD.min} and ${VALIDATION_RULES.ADD.max}`
         break
       case 'PD':
-        if (num < 35 || num > 65) return 'Must be between 35 and 65'
+        if (num < VALIDATION_RULES.PD.min || num > VALIDATION_RULES.PD.max)
+          return `Must be between ${VALIDATION_RULES.PD.min} and ${VALIDATION_RULES.PD.max}`
         break
     }
     return null
   }
+
+  const warnings = React.useMemo(() => {
+    const w: string[] = []
+
+    const checkStep = (val: string, step: number, fieldName: string) => {
+      if (!val) return
+      const num = parseFloat(val)
+      if (isNaN(num)) return
+      if (Math.abs((num * 100) % (step * 100)) > 0.01) {
+        w.push(`${fieldName} value is usually a multiple of ${step}`)
+      }
+    }
+
+    // Individual eye warnings
+    ;(['right', 'left'] as const).forEach((eye) => {
+      const label = eye === 'right' ? 'Right Eye' : 'Left Eye'
+      const p = parameters?.[eye]
+      if (!p) return
+
+      checkStep(p.SPH, VALIDATION_RULES.SPH.step, `${label} SPH`)
+      checkStep(p.CYL, VALIDATION_RULES.CYL.step, `${label} CYL`)
+      checkStep(p.ADD, VALIDATION_RULES.ADD.step, `${label} ADD`)
+
+      // High prescription warnings
+      const sph = Math.abs(parseFloat(p.SPH))
+      const cyl = Math.abs(parseFloat(p.CYL))
+      if (sph > 10 || cyl > 4) {
+        w.push(`${label} prescription is quite high. Verify carefully.`)
+      }
+    })
+
+    // PD Step
+    if (parameters?.PD) {
+      checkStep(parameters.PD, VALIDATION_RULES.PD.step, 'PD')
+    }
+
+    // ADD Mismatch
+    const addR = parseFloat(parameters?.right?.ADD)
+    const addL = parseFloat(parameters?.left?.ADD)
+    if (!isNaN(addR) && !isNaN(addL) && addR !== addL) {
+      w.push('ADD values for both eyes are typically identical.')
+    }
+
+    return w
+  }, [parameters])
 
   // Pre-emptive validation on mount
   React.useEffect(() => {
@@ -264,6 +323,33 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
             </div>
           </div>
         </div>
+
+        {/* Prescription Warnings Section */}
+        {warnings.length > 0 && (
+          <div className="bg-orange-50 border border-orange-200 rounded-2xl p-4 flex items-start gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center shrink-0 shadow-sm border border-orange-200/50 text-orange-600">
+              <IoWarningOutline size={24} />
+            </div>
+            <div className="flex-1">
+              <h4 className="text-[10px] font-black text-orange-800 uppercase tracking-widest mb-2 flex items-center gap-2">
+                Prescription Logic Warnings
+                <span className="w-2 h-2 rounded-full bg-orange-400 animate-pulse" />
+              </h4>
+              <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1.5">
+                {warnings.map((w, i) => (
+                  <li
+                    key={i}
+                    className="text-[11px] font-bold text-orange-700/80 flex items-start gap-2"
+                  >
+                    <span className="mt-1.5 w-1 h-1 rounded-full bg-orange-400/60 shrink-0" />
+                    {w}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
+
         {}
         <div className="bg-slate-50/40 p-5 rounded-xl border border-slate-100/60">
           <h4 className="font-semibold text-xs text-mint-600 mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">

@@ -387,11 +387,6 @@ export const CustomerProductPage = () => {
                         name={product.nameBase}
                         brand={product.brand || undefined}
                         image={product.defaultVariantImage || undefined}
-                        images={
-                          product.variants && product.variants.length > 0
-                            ? product.variants[0].imgs
-                            : undefined
-                        }
                         price={originalPrice}
                         discountPrice={finalPrice !== originalPrice ? finalPrice : undefined}
                         salePercent={salePercentValue}

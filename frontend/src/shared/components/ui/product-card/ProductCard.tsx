@@ -1,4 +1,3 @@
-import { useState, useEffect, useMemo } from 'react'
 import { Button } from '@/components'
 import { cn } from '@/lib/utils'
 import { Heart, ShoppingCart, Glasses } from 'lucide-react'
@@ -15,7 +14,6 @@ export interface ProductCardProps {
   name: string
   brand?: string
   image?: string
-  images?: string[]
   price: number
   discountPrice?: number
   salePercent?: number
@@ -31,7 +29,6 @@ export function ProductCard({
   name,
   brand,
   image,
-  images,
   price,
   discountPrice,
   salePercent,
@@ -41,37 +38,11 @@ export function ProductCard({
   onClick,
   className
 }: ProductCardProps) {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [isHovered, setIsHovered] = useState(false)
-
   const { isInWishlist, toggleWishlist } = useWishlistStore()
   const isFavorite = isInWishlist(id)
 
   const location = useLocation()
   const navigate = useNavigate()
-
-  const allImages = useMemo(() => {
-    const list: string[] = []
-    if (images && images.length > 0) {
-      list.push(...images)
-    } else if (image) {
-      list.push(image)
-    }
-    return list
-  }, [images, image])
-
-  // Image rotation logic on hover
-  useEffect(() => {
-    let interval: NodeJS.Timeout
-    if (isHovered && allImages.length > 1) {
-      interval = setInterval(() => {
-        setCurrentImageIndex((prev) => (prev + 1) % Math.min(allImages.length, 4))
-      }, 1000)
-    } else {
-      setCurrentImageIndex(0)
-    }
-    return () => clearInterval(interval)
-  }, [isHovered, allImages])
 
   const handleAddToCart = () => {
     if (onAddToCart) {
@@ -161,12 +132,7 @@ export function ProductCard({
       </button>
 
       {/* Product Image - Full width, no padding */}
-      <div
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        className="aspect-square bg-gradient-to-br from-mint-100 to-mint-200 flex items-center justify-center overflow-hidden relative"
-      >
-        {/* OLD LOGIC - COMMENTED OUT
+      <div className="aspect-square bg-gradient-to-br from-mint-100 to-mint-200 flex items-center justify-center overflow-hidden relative">
         {image ? (
           <img
             src={image}
@@ -175,41 +141,6 @@ export function ProductCard({
           />
         ) : (
           <Glasses className="w-32 h-32 text-primary-500 opacity-60 group-hover:opacity-80 transition-opacity" />
-        )}
-        */}
-
-        {/* NEW ROTATION LOGIC */}
-        {allImages.length > 0 ? (
-          <div className="relative w-full h-full">
-            {allImages.slice(0, 4).map((img, idx) => (
-              <img
-                key={idx}
-                src={img}
-                alt={`${name} - ${idx + 1}`}
-                className={cn(
-                  'absolute inset-0 w-full h-full object-contain transition-all duration-700 ease-in-out',
-                  currentImageIndex === idx ? 'opacity-100 scale-110' : 'opacity-0 scale-100'
-                )}
-              />
-            ))}
-          </div>
-        ) : (
-          <Glasses className="w-32 h-32 text-primary-500 opacity-60 group-hover:opacity-80 transition-opacity" />
-        )}
-
-        {/* Hover Indicator dots if more than 1 image */}
-        {isHovered && allImages.length > 1 && (
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-10">
-            {allImages.slice(0, 4).map((_, idx) => (
-              <div
-                key={idx}
-                className={cn(
-                  'w-1.5 h-1.5 rounded-full transition-colors duration-300',
-                  currentImageIndex === idx ? 'bg-primary-500' : 'bg-gray-300'
-                )}
-              />
-            ))}
-          </div>
         )}
       </div>
 

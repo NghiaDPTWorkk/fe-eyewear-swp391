@@ -1,20 +1,34 @@
 import React, { useMemo } from 'react'
-import { IoChevronDownOutline } from 'react-icons/io5'
 import { useRevenueStats } from '@/features/manager/hooks/useRevenueStats'
 import { formatPrice } from '@/shared/utils/format.utils'
 
-export const SystemOverview: React.FC = () => {
-  const [period, setPeriod] = React.useState('month')
-  const { data, isLoading } = useRevenueStats({ period })
+interface SystemOverviewProps {
+  period: string
+  fromDate: string
+  toDate: string
+  year: number
+}
+
+export const SystemOverview: React.FC<SystemOverviewProps> = ({ period, fromDate, toDate, year }) => {
+  // Sync params based on received props
+  const dateParams = React.useMemo(() => {
+    if (period === 'year') return { period, year }
+    if (period === 'day') return { period }
+    return { fromDate, toDate }
+  }, [period, fromDate, toDate, year])
+
+  const { data, isLoading } = useRevenueStats(dateParams)
 
   const stats = useMemo(() => {
     if (!data?.rows || data.rows.length === 0) return { total: 0, revenue: 0, rows: [] }
     
-    // Get the most recent period's total
-    const latest = data.rows[data.rows.length - 1]
+    // Sum up totals from all rows in the range
+    const totalOrders = data.rows.reduce((sum, r) => sum + r.invoiceCount, 0)
+    const totalRev = data.rows.reduce((sum, r) => sum + r.totalRevenue, 0)
+    
     return {
-      total: latest.invoiceCount,
-      revenue: latest.totalRevenue,
+      total: totalOrders,
+      revenue: totalRev,
       rows: data.rows
     }
   }, [data])
@@ -54,27 +68,13 @@ export const SystemOverview: React.FC = () => {
             <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-mint-50 text-mint-600">
               {isLoading ? '' : formatPrice(stats.revenue)}
             </span>
+            <span className="text-[10px] font-bold text-mint-600 opacity-60 ml-1">
+              ↑ 12.3%
+            </span>
           </div>
           <p className="text-xs text-neutral-400 mt-1">
-            Total orders this {period === 'day' ? 'day' : period === 'month' ? 'month' : 'year'}
+            Total activity for the selected {period === 'day' ? 'day' : period === 'month' ? 'range' : 'year'}
           </p>
-        </div>
-        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-          <div className="relative">
-            <select
-              value={period}
-              onChange={(e) => setPeriod(e.target.value)}
-              className="appearance-none flex-1 sm:flex-none flex items-center justify-between sm:justify-start gap-2 px-4 py-1.5 bg-neutral-50 rounded-xl text-[11px] font-semibold text-neutral-600 border border-neutral-100 h-9 transition-colors hover:bg-neutral-100 cursor-pointer pr-8"
-            >
-              <option value="day">This Day</option>
-              <option value="month">This Month</option>
-              <option value="year">This Year</option>
-            </select>
-            <IoChevronDownOutline className="absolute right-3 top-1/2 -translate-y-1/2 opacity-60 pointer-events-none" />
-          </div>
-          <div className="flex-1 sm:flex-none flex items-center justify-between sm:justify-start gap-2 px-3 py-1.5 bg-neutral-50 rounded-xl text-[11px] font-semibold text-neutral-400 border border-neutral-50 h-9 cursor-not-allowed">
-            <span>All Services</span>
-          </div>
         </div>
       </div>
 
@@ -92,15 +92,6 @@ export const SystemOverview: React.FC = () => {
           <line x1="0" y1="80" x2="800" y2="80" stroke="#f1f5f9" strokeWidth="1" />
           <line x1="0" y1="30" x2="800" y2="30" stroke="#f1f5f9" strokeWidth="1" />
 
-          {/* Dashed reference line - simplified for real data */}
-          <path
-            d="M 0 150 L 800 150"
-            fill="none"
-            stroke="#cbd5e1"
-            strokeWidth="1"
-            strokeDasharray="4 4"
-            opacity="0.2"
-          />
           {/* Area fill */}
           <path
             d={areaPath || "M 0 140 L 800 140"}
@@ -117,7 +108,7 @@ export const SystemOverview: React.FC = () => {
             strokeLinejoin="round"
           />
 
-          {/* Tooltip dot */}
+          {/* Tooltip dot (centered for now) */}
           <line
             x1="400"
             y1="20"

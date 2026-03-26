@@ -7,13 +7,14 @@ import {
   IoPeopleOutline,
   IoPersonOutline,
   IoCartOutline,
+  IoCalendarOutline,
 } from 'react-icons/io5'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { BreadcrumbPath } from '@/components/layout/staff/operation-staff/breadcrumb-path'
 import { adminAccountService } from '@/shared/services/admin/adminAccountService'
 import { customerService } from '@/shared/services/admin/customerService'
 import { useRevenueStats } from '@/features/manager/hooks/useRevenueStats'
-
+import { useState } from 'react'
 export default function AdminDashboardPage() {
   const navigate = useNavigate()
 
@@ -28,7 +29,17 @@ export default function AdminDashboardPage() {
     queryFn: () => customerService.getCustomers({ limit: 1 })
   })
 
-  const { data: revenueData, isLoading: isRevenueLoading } = useRevenueStats({ period: 'month' })
+  const [period, setPeriod] = useState('month')
+  const [fromDate, setFromDate] = useState('2026-03-01')
+  const [toDate, setToDate] = useState('2026-03-27')
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
+
+  // Sync dates when period changes (optional, but keep simple for now)
+  const dateParams = period === 'year'
+    ? { period, year: selectedYear }
+    : { fromDate, toDate }
+
+  const { data: revenueData, isLoading: isRevenueLoading } = useRevenueStats(dateParams)
 
   const totalStaff = staffData?.data?.pagination?.total ?? 0
   const totalUsers = customerData?.data?.pagination?.total ?? 0
@@ -85,13 +96,83 @@ export default function AdminDashboardPage() {
             />
             <MetricCard
               label="TOTAL ORDERS"
-              value={isRevenueLoading ? '...' : String(revenueData?.rows?.[revenueData.rows.length - 1]?.invoiceCount || 0)}
+              value={isRevenueLoading ? '...' : String(revenueData?.rows?.reduce((sum, r) => sum + r.invoiceCount, 0) || 0)}
               colorScheme="warning"
               trend={{ value: 5.4, label: 'vs last month', isPositive: true }}
               icon={<IoCartOutline size={22} />}
             />
           </div>
-          <SystemOverview />
+
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-end gap-4 px-1">
+              <div className="flex flex-col gap-1.5">
+                <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest ml-1">Period</span>
+                <select
+                  value={period}
+                  onChange={(e) => setPeriod(e.target.value)}
+                  className="h-10 px-4 bg-white border border-neutral-200 rounded-xl text-[12px] font-bold text-gray-700 shadow-sm focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all cursor-pointer hover:bg-neutral-50"
+                >
+                  <option value="day">This Day</option>
+                  <option value="month">Custom Range</option>
+                  <option value="year">Specific Year</option>
+                </select>
+              </div>
+
+              {period === 'month' && (
+                <div className="flex flex-col gap-1.5 animate-in fade-in slide-in-from-left-2 duration-300">
+                  <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest ml-1">Date Selection</span>
+                  <div className="flex items-center gap-2">
+                    <div className="relative">
+                      <IoCalendarOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={14} />
+                      <input
+                        type="date"
+                        value={fromDate}
+                        onChange={(e) => setFromDate(e.target.value)}
+                        className="h-10 pl-9 pr-3 bg-white border border-neutral-200 rounded-xl text-[12px] font-bold text-gray-700 shadow-sm focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all"
+                      />
+                    </div>
+                    <span className="text-neutral-300 font-bold">→</span>
+                    <div className="relative">
+                      <IoCalendarOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={14} />
+                      <input
+                        type="date"
+                        value={toDate}
+                        onChange={(e) => setToDate(e.target.value)}
+                        className="h-10 pl-9 pr-3 bg-white border border-neutral-200 rounded-xl text-[12px] font-bold text-gray-700 shadow-sm focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {period === 'year' && (
+                <div className="flex flex-col gap-1.5 animate-in fade-in slide-in-from-left-2 duration-300">
+                  <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest ml-1">Select Year</span>
+                  <input
+                    type="number"
+                    value={selectedYear}
+                    min={1999}
+                    max={new Date().getFullYear()}
+                    onChange={(e) => {
+                      const val = Number(e.target.value)
+                      const currentYear = new Date().getFullYear()
+                      if (val > currentYear) setSelectedYear(currentYear)
+                      else if (val < 1999 && e.target.value.length >= 4) setSelectedYear(1999)
+                      else setSelectedYear(val)
+                    }}
+                    className="h-10 px-4 w-28 bg-white border border-neutral-200 rounded-xl text-[12px] font-bold text-gray-700 shadow-sm focus:outline-none focus:ring-4 focus:ring-mint-500/10 focus:border-mint-500 transition-all"
+                  />
+                </div>
+              )}
+            </div>
+
+            <SystemOverview
+              period={period}
+              fromDate={fromDate}
+              toDate={toDate}
+              year={selectedYear}
+            />
+          </div>
         </div>
 
         {/* Right: Staff Distribution */}

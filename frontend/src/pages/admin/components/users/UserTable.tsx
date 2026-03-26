@@ -25,21 +25,6 @@ const getUserId = (user: any): string => {
   return String(user._id || user.id || '')
 }
 
-const getUserCreatedAt = (user: any): any => {
-  return user.createdAt || user.created_at || user.createdAtDate
-}
-
-const safeFormatDate = (input?: Date | string | null) => {
-  if (!input) return '--'
-  const date = input instanceof Date ? input : new Date(input)
-  if (Number.isNaN(date.getTime())) return '--'
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    day: '2-digit',
-    year: 'numeric'
-  }).format(date)
-}
-
 export const UserTable: React.FC<UserTableProps> = ({ users, selectedUserId, onSelectUser }) => {
   return (
     <div className="overflow-x-auto">
@@ -50,14 +35,12 @@ export const UserTable: React.FC<UserTableProps> = ({ users, selectedUserId, onS
             <th className="px-6 py-5">Email</th>
             <th className="px-6 py-5">Phone</th>
             <th className="px-6 py-5">Status</th>
-            <th className="px-6 py-5">Joined</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-neutral-50">
           {users.map((user, index) => {
             const status = getStatus(user)
             const userId = getUserId(user)
-            const createdAt = getUserCreatedAt(user)
             const isSelected = selectedUserId && String(userId) === String(selectedUserId)
 
             return (
@@ -97,9 +80,6 @@ export const UserTable: React.FC<UserTableProps> = ({ users, selectedUserId, onS
                   >
                     {status}
                   </span>
-                </td>
-                <td className="px-6 py-6 text-sm font-medium text-neutral-600">
-                  {safeFormatDate(createdAt)}
                 </td>
               </tr>
             )

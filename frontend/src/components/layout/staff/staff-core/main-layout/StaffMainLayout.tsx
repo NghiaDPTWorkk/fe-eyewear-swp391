@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react'
-import { Outlet, useLocation } from 'react-router-dom'
+import { useEffect, useRef, type ReactNode } from 'react'
+import { Outlet, useLocation, ScrollRestoration } from 'react-router-dom'
 import { useLayoutStore } from '@/store/layout.store'
 import { cn } from '@/shared/utils'
 import { StaffHeader } from '@/components/layout/staff/staff-core/header'
@@ -27,9 +27,17 @@ export function StaffMainLayout({
 }: StaffMainLayoutProps) {
   const { sidebarCollapsed, toggleSidebar } = useLayoutStore()
   const location = useLocation()
+  const mainRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    if (mainRef.current) {
+      mainRef.current.scrollTo(0, 0)
+    }
+  }, [location.pathname])
 
   return (
     <div className="flex h-screen bg-white overflow-hidden w-full">
+      <ScrollRestoration />
       {/* Sidebar - fixed and handles its own transitions */}
       {sidebar}
 
@@ -61,7 +69,7 @@ export function StaffMainLayout({
 
         <main
           className={cn('h-full overflow-auto animate-fade-in-up', mainClassName)}
-          key={location.pathname}
+          ref={mainRef}
         >
           <div className={cn('w-full mx-auto', contentMaxWidth)}>
             <Outlet />

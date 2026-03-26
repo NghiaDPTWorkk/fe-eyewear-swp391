@@ -40,9 +40,17 @@ export function OrderDetailSidebar({
             </p>
             <p className="text-sm font-semibold text-slate-700">{customer.phone}</p>
           </div>
-          <button className="w-full mt-4 py-3 text-xs font-semibold border rounded-xl active:scale-95 text-mint-600 bg-mint-50/50 hover:bg-mint-50 border-mint-100/50 uppercase tracking-widest">
-            View History
-          </button>
+          <div className="flex flex-col gap-1.5 pt-4 border-t border-slate-50">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+              Customer Level
+            </p>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+              <p className="text-xs font-bold text-slate-700 uppercase tracking-tighter">
+                {customer.since === 'Member' ? 'Exclusive Member' : 'New Guest'}
+              </p>
+            </div>
+          </div>
         </div>
       </Card>
       <Card className="xl:col-span-4 h-full flex flex-col p-6 border border-slate-100/50 shadow-xl bg-white rounded-[32px]">

@@ -349,30 +349,56 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
                 )}
               </div>
 
-              <div className="w-full md:w-[380px] shrink-0 p-6 bg-slate-50/40 rounded-3xl">
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center text-sm font-semibold text-slate-400 uppercase tracking-wider">
-                    <span>Subtotal</span>
-                    <span className="text-slate-700">{order.subtotal}</span>
-                  </div>
-                  <div className="flex justify-between items-center text-sm font-semibold text-slate-400 uppercase tracking-wider">
-                    <span>Shipping</span>
-                    <span className="text-slate-700">{order.shipping}</span>
-                  </div>
-                  <div className="flex justify-between items-center text-sm font-semibold text-rose-400 uppercase tracking-wider">
-                    <span>Discount</span>
-                    <span className="text-rose-500">{order.discount}</span>
-                  </div>
-                  <div className="flex justify-between items-center text-sm font-semibold text-slate-400 uppercase tracking-wider pb-3">
-                    <span>Tax</span>
-                    <span className="text-slate-700">{order.tax}</span>
+              <div className="w-full md:w-[380px] shrink-0 p-8 bg-white border border-slate-100 shadow-sm rounded-[32px]">
+                <div className="space-y-6">
+                  {/* Item Breakdown */}
+                  <div className="space-y-4">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-50 pb-2">
+                      Item Breakdown
+                    </p>
+                    {order.items.map((item: any, i: number) => (
+                      <div key={i} className="space-y-1">
+                        <div className="flex justify-between items-start text-sm font-semibold">
+                          <span className="text-slate-800 truncate max-w-[180px]">
+                            {item.name}{' '}
+                            <span className="text-mint-600 font-bold ml-1">x{item.quantity}</span>
+                          </span>
+                          <span className="text-slate-900 font-mono tracking-tight">
+                            {formatPrice(
+                              (parseFloat(item.price.replace(/[^\d]/g, '')) || 0) * item.quantity
+                            )}
+                          </span>
+                        </div>
+                        <div className="flex justify-between text-[10px] text-slate-400 font-medium italic">
+                          <span>Unit Price</span>
+                          <span>{item.price}</span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
 
-                  <div className="pt-2 flex justify-between items-center">
-                    <span className="text-sm font-bold text-slate-900 uppercase tracking-widest">
-                      {isPreOrder ? 'Deposit Amount' : 'Total Amount'}
+                  <div className="pt-4 border-t border-slate-50 space-y-3">
+                    <div className="flex justify-between items-center text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                      <span>Shipping Fee</span>
+                      <span className="text-slate-700">{order.shipping}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-[11px] font-bold text-rose-400 uppercase tracking-wider">
+                      <span>Total discount</span>
+                      <span className="text-rose-500">-{order.discount}</span>
+                    </div>
+                    {order.tax !== 'đ 0' && order.tax !== '0 đ' && order.tax !== '0' && (
+                      <div className="flex justify-between items-center text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                        <span>Estimate Tax</span>
+                        <span className="text-slate-700">{order.tax}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="pt-4 border-t border-slate-100 flex justify-between items-baseline">
+                    <span className="text-sm font-black text-slate-900 uppercase tracking-[0.1em]">
+                      Total Amount
                     </span>
-                    <span className="text-2xl font-bold tracking-tight text-mint-600">
+                    <span className="text-3xl font-black tracking-tight text-mint-600 font-mono">
                       {order.total}
                     </span>
                   </div>
@@ -478,9 +504,17 @@ export default function OrderDetail({ orderId, onBack, isPreOrder, children }: O
                 </p>
                 <p className="text-sm font-semibold text-slate-700">{order.customer.phone}</p>
               </div>
-              <button className="w-full mt-4 py-3 text-xs font-semibold border rounded-xl transition-all uppercase tracking-widest active:scale-95 text-mint-600 bg-mint-50/50 hover:bg-mint-50 border-mint-100/50">
-                View History
-              </button>
+              <div className="flex flex-col gap-1.5 pt-4 border-t border-slate-50">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                  Customer Status
+                </p>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <p className="text-xs font-bold text-slate-700 uppercase tracking-tighter">
+                    {order.customer.name === 'Guest Customer' ? 'Guest' : 'Active Member'}
+                  </p>
+                </div>
+              </div>
             </div>
           </Card>
 

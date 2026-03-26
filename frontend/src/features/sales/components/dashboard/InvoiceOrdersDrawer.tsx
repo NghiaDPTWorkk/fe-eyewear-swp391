@@ -250,35 +250,36 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
                 Billing Information
               </h4>
               <div className="space-y-4">
-                <div className="flex justify-between items-center text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none">
-                  <span>Subtotal</span>
-                  <span className="text-slate-700 font-mono">
-                    {isDetailLoading ? (
-                      <span className="w-16 h-3 bg-slate-100 animate-pulse rounded block" />
-                    ) : (
-                      `${(currentInvoice.totalPrice || 0).toLocaleString()} ₫`
-                    )}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none">
-                  <span>Shipping Fee</span>
-                  <span className="text-slate-700 font-mono">
-                    {isDetailLoading ? (
-                      <span className="w-16 h-3 bg-slate-100 animate-pulse rounded block" />
-                    ) : (
-                      `+ ${(currentInvoice.feeShip || 0).toLocaleString()} ₫`
-                    )}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none">
-                  <span>Discount</span>
-                  <span className="text-rose-500 font-mono">
-                    {isDetailLoading ? (
-                      <span className="w-16 h-3 bg-slate-100 animate-pulse rounded block" />
-                    ) : (
-                      `- ${(currentInvoice.totalDiscount || 0).toLocaleString()} ₫`
-                    )}
-                  </span>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-neutral-50 pb-2">
+                  Orders Breakdown
+                </p>
+                {invoice.orders?.map((ord: any, idx: number) => (
+                  <div
+                    key={idx}
+                    className="flex justify-between items-center text-[11px] font-bold"
+                  >
+                    <span className="text-slate-400 uppercase tracking-tight">
+                      Order #{ord.orderCode || ord.id?.slice(-8)}
+                    </span>
+                    <span className="text-slate-700 font-mono">
+                      {(ord.price || 0).toLocaleString()} ₫
+                    </span>
+                  </div>
+                ))}
+
+                <div className="pt-2 border-t border-neutral-50 space-y-2.5">
+                  <div className="flex justify-between items-center text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+                    <span>Shipping Fee</span>
+                    <span className="text-slate-700 font-mono">
+                      + {(currentInvoice.feeShip || 0).toLocaleString()} ₫
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center text-[11px] font-bold text-rose-500 uppercase tracking-widest leading-none">
+                    <span>Discount</span>
+                    <span className="font-mono">
+                      - {(currentInvoice.totalDiscount || 0).toLocaleString()} ₫
+                    </span>
+                  </div>
                 </div>
                 <div className="pt-4 border-t border-neutral-50 flex justify-between items-center">
                   <span className="text-xs font-bold text-slate-900 uppercase tracking-widest">

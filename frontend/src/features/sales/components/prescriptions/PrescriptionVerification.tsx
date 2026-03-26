@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { IoCheckmark, IoClose } from 'react-icons/io5'
 import { useSearchParams } from 'react-router-dom'
 
 import { useSalesStaffAction, useSalesStaffOrderDetail } from '@/features/sales/hooks'
 import { useProfile } from '@/features/staff/hooks/useProfile'
+import { salesService } from '@/features/sales/services/salesService'
 import { Button, ConfirmationModal } from '@/shared/components/ui-core'
 import { TranscriptionForm } from './TranscriptionForm'
 import { LabOperationsTimeline } from './LabOperationsTimeline'
@@ -59,8 +60,74 @@ export default function PrescriptionVerification({
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const [confirmAction, setConfirmAction] = useState<'approve' | 'reject' | null>(null)
 
+  const [resolvedStaffName, setResolvedStaffName] = useState<string | undefined>(undefined)
+
   const lens = order?.products?.[0]?.lens
   const parameters = lens?.parameters
+
+  const isApproved =
+    [
+      'ACCEPTED',
+      'APPROVED',
+      'VERIFIED',
+      'COMPLETED',
+      'MAKING',
+      'IN_PROGRESS',
+      'PRODUCTION',
+      'PENDING_LAB',
+      'PACKAGING',
+      'DELIVERING',
+      'DELIVERED',
+      'WAITING_ASSIGN',
+      'ASSIGNED'
+    ].includes(order?.status?.toUpperCase() || '') ||
+    !!order?.approvedAt ||
+    !!order?.completedAt ||
+    !!order?.rejectedAt
+
+  const isRejected = ['REJECTED', 'CANCELED', 'CANCELLED', 'REJECT', 'EXPIRED'].includes(
+    order?.status?.toUpperCase() || ''
+  )
+
+  const isPending = ['PENDING', 'DEPOSITED', 'WAITING_VERIFY'].includes(
+    order?.status?.toUpperCase() || ''
+  )
+
+  useEffect(() => {
+    const resolveName = async () => {
+      // 1. If order already has a staffName, use it
+      if (order?.staffName && order.staffName !== 'Sales Staff') {
+        setResolvedStaffName(order.staffName)
+        return
+      }
+
+      // 2. If we are currently verifying (not approved yet), use our profile name
+      if (!isApproved && !isRejected && profileData?.data?.name) {
+        setResolvedStaffName(profileData.data.name)
+        return
+      }
+
+      // 3. If we have an ID but no name, try to fetch it
+      if (order?.assignStaff) {
+        // If it's us, we can use profileData
+        if (order.assignStaff === profileData?.data?._id) {
+          setResolvedStaffName(profileData?.data?.name)
+          return
+        }
+
+        try {
+          const res = await salesService.getStaffById(order.assignStaff)
+          if (res.success && res.data?.name) {
+            setResolvedStaffName(res.data.name)
+          }
+        } catch (err) {
+          console.error('Failed to resolve staff name:', err)
+        }
+      }
+    }
+
+    resolveName()
+  }, [order, isApproved, isRejected, profileData])
 
   const handleApprove = () => {
     setConfirmAction('approve')
@@ -142,30 +209,6 @@ export default function PrescriptionVerification({
     )
   }
 
-  const isApproved =
-    [
-      'ACCEPTED',
-      'APPROVED',
-      'VERIFIED',
-      'COMPLETED',
-      'MAKING',
-      'IN_PROGRESS',
-      'PRODUCTION',
-      'PENDING_LAB',
-      'PACKAGING',
-      'DELIVERING',
-      'DELIVERED',
-      'WAITING_ASSIGN',
-      'ASSIGNED'
-    ].includes(order.status?.toUpperCase()) ||
-    !!order.approvedAt ||
-    !!order.completedAt ||
-    !!order.rejectedAt
-  const isPending = ['PENDING', 'DEPOSITED', 'WAITING_VERIFY'].includes(order.status?.toUpperCase())
-  const isRejected = ['REJECTED', 'CANCELED', 'CANCELLED', 'REJECT', 'EXPIRED'].includes(
-    order.status?.toUpperCase()
-  )
-
   const isReadOnly = isReadOnlyParams || isApproved || isRejected
 
   return (
@@ -228,11 +271,7 @@ export default function PrescriptionVerification({
             handleApprove={handleApprove}
             handleReject={handleReject}
             assignStaff={order.assignStaff || undefined}
-            staffName={
-              isApproved || isRejected
-                ? order.staffName
-                : order.staffName || profileData?.data?.name
-            }
+            staffName={resolvedStaffName}
             actionTime={formatDate(
               isApproved
                 ? order.approvedAt || order.completedAt || order.updatedAt

@@ -116,26 +116,47 @@ export const PrescriptionHeroSection: React.FC<PrescriptionHeroSectionProps> = (
             </p>
           </div>
 
-          <div className="space-y-4 px-1 flex flex-col justify-center">
-            <div className="space-y-2.5">
-              <div className="flex justify-between text-[11px] font-bold font-mono">
-                <span className="text-slate-400 uppercase tracking-wider font-sans">Subtotal</span>
-                <span className="text-slate-600 tracking-wide">{formatPrice(subtotal)}</span>
-              </div>
-              <div className="flex justify-between text-[11px] font-bold font-mono">
-                <span className="text-slate-400 uppercase tracking-wider font-sans">Shipping</span>
-                <span className="text-slate-600 tracking-wide">{formatPrice(shipping)}</span>
-              </div>
-              <div className="flex justify-between text-[11px] font-bold font-mono text-rose-500">
-                <span className="uppercase tracking-wider font-sans">Discount</span>
-                <span className="tracking-wide">-{formatPrice(discount)}</span>
+          <div className="space-y-4 px-1 flex flex-col justify-center border-l border-slate-50/50 pl-6">
+            <div className="space-y-3">
+              {products.map((p: any, idx: number) => (
+                <div key={idx} className="flex flex-col gap-0.5">
+                  <div className="flex justify-between text-[11px] font-bold">
+                    <span className="text-slate-600 uppercase tracking-tight truncate max-w-[150px]">
+                      {p.product?.product_name || 'EYEWEAR FRAME'} x{p.quantity || 1}
+                    </span>
+                    <span className="text-slate-700 font-mono">
+                      {formatPrice(
+                        ((p.product?.pricePerUnit || 0) + (p.lens?.pricePerUnit || 0)) *
+                          (p.quantity || 1)
+                      )}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-[9px] text-slate-400 italic font-medium">
+                    <span>Base Price (Frame + Lens)</span>
+                    <span>
+                      {formatPrice((p.product?.pricePerUnit || 0) + (p.lens?.pricePerUnit || 0))}
+                    </span>
+                  </div>
+                </div>
+              ))}
+
+              <div className="pt-2 border-t border-slate-100/50 flex flex-col gap-2">
+                <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+                  <span>Shipping Fee</span>
+                  <span className="text-slate-600">+ {formatPrice(shipping)}</span>
+                </div>
+                <div className="flex justify-between text-[10px] font-bold text-rose-500 uppercase tracking-widest leading-none">
+                  <span>Discount Applied</span>
+                  <span>- {formatPrice(discount)}</span>
+                </div>
               </div>
             </div>
-            <div className="pt-6 border-t border-slate-100 flex justify-between items-center py-2">
-              <span className="text-[13px] font-black text-slate-900 uppercase tracking-[0.1em]">
-                Total Amount
+
+            <div className="pt-5 border-t border-slate-100 flex justify-between items-center py-2">
+              <span className="text-[13px] font-black text-slate-900 uppercase tracking-[0.12em]">
+                Verified Total
               </span>
-              <span className="text-4xl font-black text-mint-500 font-mono tracking-tighter leading-none">
+              <span className="text-3xl font-black text-mint-500 font-mono tracking-tighter leading-none">
                 {formatPrice(total)}
               </span>
             </div>
@@ -178,10 +199,22 @@ export const PrescriptionHeroSection: React.FC<PrescriptionHeroSectionProps> = (
               {order.customerPhone || order.invoice?.phone || '0910-000-000'}
             </p>
           </div>
-
-          <button className="w-full mt-4 h-10 bg-slate-50 hover:bg-mint-50 text-slate-400 hover:text-mint-600 border border-slate-100 hover:border-mint-200 font-bold text-[9px] uppercase tracking-widest rounded-xl transition-all duration-300">
-            View History
-          </button>
+          <div className="group pl-2 mt-4">
+            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1 font-mono">
+              Shipping Address
+            </p>
+            <p className="text-[12px] font-bold text-slate-700 leading-relaxed truncate-2-lines">
+              {(() => {
+                const addr = order.invoice?.address
+                if (!addr) return 'Store Pickup'
+                if (typeof addr === 'string') return addr
+                return (
+                  [addr.street, addr.ward, addr.city, addr.country].filter(Boolean).join(', ') ||
+                  'Store Pickup'
+                )
+              })()}
+            </p>
+          </div>
         </div>
       </Card>
     </div>

@@ -1,14 +1,4 @@
-import {
-  Heart,
-  ShoppingCart,
-  Video,
-  MessageCircle,
-  Truck,
-  ShieldCheck,
-  RotateCcw,
-  PenTool,
-  Zap
-} from 'lucide-react'
+import { Heart, ShoppingCart, Video, MessageCircle, Zap } from 'lucide-react'
 import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 import { useState } from 'react'
 import type { Product, StandardProduct } from '@/shared/types/product.types'
@@ -527,8 +517,8 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
         Chat with an Expert about this frame
       </button>
 
-      {/* Feature Grid */}
-      <div className="grid grid-cols-2 gap-y-6 gap-x-8 pt-8 border-t border-mint-300">
+      {/* Feature Grid - Moved to ProductDetailPage per user request */}
+      {/* <div className="grid grid-cols-2 gap-y-6 gap-x-8 pt-8 border-t border-mint-300">
         <div className="flex items-center gap-3">
           <Truck className="w-5 h-5 text-primary-500" />
           <span className="text-sm text-gray-eyewear font-medium">Free Express Delivery</span>
@@ -545,7 +535,7 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
           <PenTool className="w-5 h-5 text-primary-500" />
           <span className="text-sm text-gray-eyewear font-medium">Prescription Ready</span>
         </div>
-      </div>
+      </div> */}
 
       <LensSelectionModal
         isOpen={isLensModalOpen}

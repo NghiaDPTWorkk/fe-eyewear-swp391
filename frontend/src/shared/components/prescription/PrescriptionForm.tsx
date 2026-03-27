@@ -37,24 +37,33 @@ const PrescriptionInput = ({
   error
 }: PrescriptionInputProps) => {
   return (
-    <div className="space-y-1.5 flex flex-col">
-      <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">
-        {label}
-      </label>
-      <input
-        type="number"
-        step={step}
-        min={min}
-        max={max}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        disabled={disabled}
-        className={`w-full bg-white border ${
-          error ? 'border-red-500' : 'border-slate-200'
-        } rounded-2xl px-4 h-11 text-sm font-semibold focus:outline-none focus:border-mint-500 focus:ring-1 focus:ring-mint-500 transition-all text-center disabled:bg-gray-50 disabled:text-gray-400 shadow-sm`}
-        placeholder={placeholder}
-      />
-      {error && <p className="text-[10px] text-red-500 font-medium">{error}</p>}
+    <div className="group space-y-1.5 flex flex-col pt-1">
+      <div className="flex items-center justify-between px-1">
+        <label className="text-[11px] font-bold text-slate-500 group-hover:text-mint-600 transition-colors">
+          {label}
+        </label>
+        {disabled && (
+          <span className="text-[8px] bg-slate-100 text-slate-400 px-2 py-0.5 rounded-full font-bold uppercase">
+            Auto
+          </span>
+        )}
+      </div>
+      <div className="relative">
+        <input
+          type="number"
+          step={step}
+          min={min}
+          max={max}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          disabled={disabled}
+          className={`w-full bg-white border-2 ${
+            error ? 'border-red-500 bg-red-50/10' : 'border-slate-100'
+          } rounded-[16px] px-3 h-11 text-sm font-bold focus:outline-none focus:border-mint-500/50 focus:bg-white focus:shadow-[0_4px_12px_-4px_rgba(74,215,176,0.3)] transition-all text-center disabled:opacity-40 disabled:bg-slate-50 shadow-sm`}
+          placeholder={placeholder}
+        />
+        {error && <p className="mt-1 text-[10px] text-red-500 font-bold text-center">{error}</p>}
+      </div>
     </div>
   )
 }
@@ -87,7 +96,7 @@ export function PrescriptionForm({
   submitLabel,
   cancelLabel = 'Cancel',
   showConfirmCheckbox = false,
-  confirmText = 'I confirm that the prescription values entered above are valid.'
+  confirmText = 'I confirm that the prescription values entered above are taken from a valid (not expired) prescription issued to me, signed by a licensed optometrist or ophthalmologist.'
 }: PrescriptionFormProps) {
   // Internal state using string for inputs to allow empty values
   const [formData, setFormData] = useState<PrescriptionFormState>(() => {
@@ -131,10 +140,10 @@ export function PrescriptionForm({
       if (!val) return
       const num = parseFloat(val)
       if (num < rule.min || num > rule.max) {
-        errors[fieldName] = `Value must be between ${rule.min} and ${rule.max}`
+        errors[fieldName] = `Out of range [${rule.min}, ${rule.max}]`
       } else if (Math.abs((num * 100) % (rule.step * 100)) > 0.01) {
         // Using 100 to avoid floating point issues
-        warnings.push(`${fieldName} is usually a multiple of ${rule.step}`)
+        warnings.push(`${fieldName} Multiples of ${rule.step}`)
       }
     }
 
@@ -149,23 +158,19 @@ export function PrescriptionForm({
       // Step 3: CYL & AXIS dependency
       const cyl = parseFloat(formData[eye].CYL)
       if (cyl !== 0 && !formData[eye].AXIS) {
-        errors[`${eye}.AXIS`] = 'AXIS is required when CYL is entered'
+        errors[`${eye}.AXIS`] = 'AXIS required'
       }
 
       // Step 5: CYL Sign
       if (cyl > 0) {
-        warnings.push(
-          `Detected positive (+) CYL for ${eyeLabel}. Usually CYL is converted to negative (-).`
-        )
+        warnings.push(`(+) CYL for ${eyeLabel}`)
       }
 
       // Step 6: High Index Warning
       const sph = Math.abs(parseFloat(formData[eye].SPH))
       const absCyl = Math.abs(cyl)
       if (sph > 10 || absCyl > 4) {
-        warnings.push(
-          `${eyeLabel} prescription is quite high. Consider high-index lenses (1.74) for better comfort.`
-        )
+        warnings.push(`${eyeLabel} high. Consider 1.74 lenses.`)
       }
     })
 
@@ -173,7 +178,7 @@ export function PrescriptionForm({
     if (formData.PD) {
       const pd = parseFloat(formData.PD)
       if (pd < VALIDATION_RULES.PD.min || pd > VALIDATION_RULES.PD.max) {
-        errors.PD = `PD must be between ${VALIDATION_RULES.PD.min} - ${VALIDATION_RULES.PD.max}`
+        errors.PD = `PD [${VALIDATION_RULES.PD.min}-${VALIDATION_RULES.PD.max}]`
       }
     }
 
@@ -181,18 +186,14 @@ export function PrescriptionForm({
     const addLeft = formData.left.ADD
     const addRight = formData.right.ADD
     if (addLeft && addRight && addLeft !== addRight) {
-      warnings.push(
-        'Typically, ADD values for both eyes are identical. Please verify your prescription.'
-      )
+      warnings.push('Verify ADD equality')
     }
 
     // Step 7: SPH and ADD Logic
     const sphRight = parseFloat(formData.right.SPH)
     const addRightNum = parseFloat(formData.right.ADD)
     if (sphRight > 5 && addRightNum === 0) {
-      warnings.push(
-        'High positive SPH with ADD = 0 may be a mistake. Please check the rows on your prescription.'
-      )
+      warnings.push('Check SPH & ADD match')
     }
 
     return { errors, warnings }
@@ -231,6 +232,15 @@ export function PrescriptionForm({
       ...prev,
       left: { ...prev.right }
     }))
+    toast.success('Synced to Left', {
+      style: {
+        background: '#f6fffb',
+        color: '#1a6d53',
+        border: '1px solid #7fe3c7',
+        fontSize: '11px',
+        fontWeight: 'bold'
+      }
+    })
   }
 
   useEffect(() => {
@@ -279,7 +289,7 @@ export function PrescriptionForm({
     e.preventDefault()
     if (showConfirmCheckbox && !isConfirmed) return
     if (!isFormValid()) {
-      toast.error('Please fix validation errors before submitting.')
+      toast.error('Incomplete details.')
       return
     }
 
@@ -308,62 +318,59 @@ export function PrescriptionForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 animate-in fade-in duration-500">
-      {/* Business Rules Header - Matching Staff UI */}
-      <div className="bg-amber-50/50 border border-amber-100 rounded-3xl p-6 flex items-start gap-4">
-        <div className="w-10 h-10 rounded-2xl bg-amber-100 flex items-center justify-center shrink-0">
-          <Info className="w-5 h-5 text-amber-600" />
-        </div>
-        <div className="flex-1">
-          <h5 className="text-[11px] font-black text-amber-800 uppercase tracking-[0.2em] mb-3">
-            Business Rules: Valid Ranges
-          </h5>
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-6">
-            <div>
-              <p className="text-[9px] font-bold text-amber-600/60 uppercase tracking-widest mb-1">
-                SPH
-              </p>
-              <p className="text-xs font-bold text-amber-900">-20.00 — +20.00</p>
-            </div>
-            <div>
-              <p className="text-[9px] font-bold text-amber-600/60 uppercase tracking-widest mb-1">
-                CYL
-              </p>
-              <p className="text-xs font-bold text-amber-900">-20.00 — +20.00</p>
-            </div>
-            <div>
-              <p className="text-[9px] font-bold text-amber-600/60 uppercase tracking-widest mb-1">
-                AXIS
-              </p>
-              <p className="text-xs font-bold text-amber-900">0 — 180</p>
-            </div>
-            <div>
-              <p className="text-[9px] font-bold text-amber-600/60 uppercase tracking-widest mb-1">
-                ADD
-              </p>
-              <p className="text-xs font-bold text-amber-900">0.75 — 3.50</p>
-            </div>
-            <div>
-              <p className="text-[9px] font-bold text-amber-600/60 uppercase tracking-widest mb-1">
-                PD
-              </p>
-              <p className="text-xs font-bold text-amber-900">35 — 65</p>
-            </div>
+    <form onSubmit={handleSubmit} className="space-y-6 animate-in fade-in duration-500">
+      {/* Legend Chips - Compact */}
+      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+        {[
+          { id: 'sph', title: 'SPH', color: 'bg-indigo-50 text-indigo-600' },
+          { id: 'ast', title: 'CYL/AXIS', color: 'bg-pink-50 text-pink-600' },
+          { id: 'add', title: 'ADD', color: 'bg-amber-50 text-amber-600' },
+          { id: 'pd', title: 'PD', color: 'bg-emerald-50 text-emerald-600' }
+        ].map((item) => (
+          <div
+            key={item.id}
+            className={`px-4 py-2 rounded-xl border-2 ${item.color} shrink-0 border-current/10`}
+          >
+            <p className="text-[10px] font-bold uppercase tracking-wider">{item.title}</p>
           </div>
-        </div>
+        ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Right Eye (OD) */}
-        <div className="space-y-6">
-          <div className="flex items-center gap-3 pb-2 border-b border-slate-50">
-            <div className="w-2.5 h-2.5 rounded-full bg-mint-500 shadow-[0_0_10px_rgba(74,215,176,0.4)]" />
-            <h4 className="text-sm font-bold text-slate-800 uppercase tracking-widest">
-              Right Eye (OD)
-            </h4>
+      {/* Note Section - MOVED TO TOP */}
+      {validationResults.warnings.length > 0 && (
+        <div className="p-4 bg-amber-50/30 rounded-2xl border border-amber-200/50">
+          <div className="flex items-center gap-2 text-amber-700 mb-2">
+            <AlertCircle size={14} />
+            <span className="text-[10px] font-bold uppercase tracking-widest">Note</span>
+          </div>
+          <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {validationResults.warnings.map((warning, index) => (
+              <li
+                key={index}
+                className="text-[10px] text-slate-600 font-bold flex items-center gap-2"
+              >
+                <div className="w-1 h-1 rounded-full bg-amber-400 shrink-0" />
+                {warning}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div className="flex flex-col gap-8">
+        {/* Right Eye - TOP */}
+        <div className="p-6 bg-white rounded-[28px] border-2 border-slate-100 shadow-sm flex flex-col group/right hover:border-mint-200 transition-colors">
+          <div className="flex items-center justify-between mb-6 pb-2 border-b border-slate-50">
+            <div className="flex items-center gap-3">
+              <div className="w-2.5 h-2.5 rounded-full bg-mint-500 shadow-[0_0_8px_rgba(74,215,176,1)]" />
+              <h4 className="text-sm font-bold text-slate-800">Right Eye (OD)</h4>
+            </div>
+            <span className="px-2 py-0.5 bg-mint-50 text-mint-500 text-[9px] font-black rounded-md border border-mint-100 uppercase">
+              Right
+            </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-x-6 gap-y-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             <PrescriptionInput
               label="SPH (Sphere)"
               value={formData.right.SPH}
@@ -385,7 +392,7 @@ export function PrescriptionForm({
               error={validationResults.errors['right.CYL']}
             />
             <PrescriptionInput
-              label="AXIS (degrees)"
+              label="AXIS (Degrees)"
               value={formData.right.AXIS}
               onChange={(val) => handleEyeChange('right', 'AXIS', val)}
               step={VALIDATION_RULES.AXIS.step}
@@ -406,28 +413,34 @@ export function PrescriptionForm({
               error={validationResults.errors['right.ADD']}
             />
           </div>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={handleCopyRightToLeft}
-            className="h-9 px-4 text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-mint-600 hover:bg-mint-50/50 gap-2 rounded-xl transition-all"
-          >
-            <Copy size={12} />
-            Same for left eye
-          </Button>
+
+          <div className="mt-8 flex justify-center -mb-10 relative z-10">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={handleCopyRightToLeft}
+              className="h-10 px-6 text-[10px] font-bold text-slate-500 hover:text-white hover:bg-mint-600 gap-2 rounded-full transition-all bg-white shadow-md border-2 border-slate-100 hover:border-transparent group/sync"
+            >
+              <Copy size={12} className="group-hover/sync:rotate-12 transition-transform" />
+              Copy Right values down to Left Eye
+            </Button>
+          </div>
         </div>
 
-        {/* Left Eye (OS) */}
-        <div className="space-y-6">
-          <div className="flex items-center gap-3 pb-2 border-b border-slate-50">
-            <div className="w-2.5 h-2.5 rounded-full bg-slate-200" />
-            <h4 className="text-sm font-bold text-slate-800 uppercase tracking-widest">
-              Left Eye (OS)
-            </h4>
+        {/* Left Eye - BOTTOM */}
+        <div className="p-6 bg-slate-50/10 rounded-[28px] border-2 border-slate-100/50 flex flex-col pt-10">
+          <div className="flex items-center justify-between mb-6 pb-2 border-b border-slate-100/50">
+            <div className="flex items-center gap-3">
+              <div className="w-2.5 h-2.5 rounded-full bg-slate-300" />
+              <h4 className="text-sm font-bold text-slate-800">Left Eye (OS)</h4>
+            </div>
+            <span className="px-2 py-0.5 bg-white border border-slate-100 text-slate-400 text-[9px] font-black rounded-md uppercase">
+              Left
+            </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-x-6 gap-y-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             <PrescriptionInput
               label="SPH (Sphere)"
               value={formData.left.SPH}
@@ -449,7 +462,7 @@ export function PrescriptionForm({
               error={validationResults.errors['left.CYL']}
             />
             <PrescriptionInput
-              label="AXIS (degrees)"
+              label="AXIS (Degrees)"
               value={formData.left.AXIS}
               onChange={(val) => handleEyeChange('left', 'AXIS', val)}
               step={VALIDATION_RULES.AXIS.step}
@@ -473,8 +486,9 @@ export function PrescriptionForm({
         </div>
       </div>
 
-      <div className="pt-6 border-t border-slate-50">
-        <div className="max-w-xs">
+      {/* PD Section - Vertical Stacked for breathing room */}
+      <div className="pt-6 border-t border-slate-100 flex flex-col gap-6">
+        <div className="w-full lg:max-w-sm">
           <PrescriptionInput
             label="Pupillary Distance (PD)"
             value={formData.PD}
@@ -487,106 +501,90 @@ export function PrescriptionForm({
           />
         </div>
 
-        {((parseFloat(formData.PD) > 0 && parseFloat(formData.PD) < 55) ||
-          parseFloat(formData.PD) > 75) && (
-          <div className="mt-4 p-4 bg-yellow-50/50 rounded-2xl border border-yellow-200/50 animate-in slide-in-from-top-2">
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center shrink-0 border border-yellow-100">
-                <Info className="w-5 h-5 text-yellow-600" />
-              </div>
-              <div className="flex-1 space-y-4">
-                <div>
-                  <p className="text-[11px] font-black text-yellow-800 uppercase tracking-widest mb-1">
-                    PD Note
-                  </p>
-                  <p className="text-xs text-yellow-700/80 leading-relaxed font-medium">
-                    Your PD measurement seems to be outside the normal range (55-75mm). Please
-                    verify if this is correct or intended for children.
-                  </p>
-                </div>
-                <Checkbox
-                  isChecked={pdConfirmed}
-                  onCheckedChange={setPdConfirmed}
-                  variant="yellow"
-                  label="I confirm this measurement is accurate"
-                  labelClassName="text-yellow-800 font-bold"
-                  size="sm"
-                />
-              </div>
-            </div>
+        <div className="bg-mint-50/[0.15] rounded-2xl p-5 border border-mint-500/10 flex items-center gap-4">
+          <div className="w-10 h-10 rounded-full bg-mint-100/50 flex items-center justify-center shrink-0">
+            <Info className="w-5 h-5 text-mint-600" />
           </div>
-        )}
+          <p className="text-[12px] text-slate-600 font-medium leading-relaxed">
+            PD is the distance between your pupils. Standard measurements are typically between
+            55-75mm.
+          </p>
+        </div>
       </div>
 
-      {validationResults.warnings.length > 0 && (
-        <div className="p-5 bg-orange-50/50 rounded-3xl border border-orange-100/50 space-y-3">
-          <div className="flex items-center gap-2 text-orange-700">
-            <AlertCircle size={16} />
-            <span className="text-[10px] font-black uppercase tracking-widest">
-              Prescription Warnings
-            </span>
-          </div>
-          <ul className="space-y-1.5">
-            {validationResults.warnings.map((warning, index) => (
-              <li
-                key={index}
-                className="text-[11px] text-orange-600/80 font-semibold flex items-start gap-2"
-              >
-                <span className="mt-1.5 w-1 h-1 bg-orange-400 rounded-full shrink-0" />
-                {warning}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {showDefaultCheckbox && (
-        <div className="py-2">
-          <Checkbox
-            id="isDefault"
-            isChecked={formData.isDefault}
-            onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, isDefault: checked }))}
-            label="Set as default prescription"
-            labelClassName="text-slate-600 font-bold"
-          />
-        </div>
-      )}
-
-      {showConfirmCheckbox && (
-        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-          <Checkbox
-            isChecked={isConfirmed}
-            onCheckedChange={setIsConfirmed}
-            label={confirmText}
-            labelClassName="text-[11px] text-slate-500 font-semibold leading-relaxed"
-          />
-        </div>
-      )}
-
-      <div className="flex gap-4 pt-6">
-        {onCancel && (
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onCancel}
-            className="flex-1 rounded-2xl py-7 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-slate-50 border-slate-200"
-          >
-            {cancelLabel}
-          </Button>
-        )}
-        <Button
-          type="submit"
-          disabled={isLoading || (showConfirmCheckbox && !isConfirmed) || !isFormValid()}
-          className={`flex-1 rounded-2xl py-7 font-black uppercase tracking-[0.2em] text-[10px] transition-all duration-300 ${
-            !isFormValid()
-              ? 'bg-slate-100 text-slate-300 cursor-not-allowed'
-              : 'bg-mint-600 text-white hover:bg-mint-700 shadow-xl shadow-mint-100 hover:-translate-y-0.5'
-          }`}
+      {/* PD Unusual Range Confirmation */}
+      {((parseFloat(formData.PD) > 0 && parseFloat(formData.PD) < 55) ||
+        parseFloat(formData.PD) > 75) && (
+        <div
+          className="p-4 bg-red-50/50 rounded-2xl border border-red-100 flex items-center gap-4 cursor-pointer hover:bg-red-50 transition-colors"
+          onClick={() => setPdConfirmed(!pdConfirmed)}
         >
-          {isLoading
-            ? 'Processing...'
-            : submitLabel || (initialData ? 'Update Prescription' : 'Save Prescription')}
-        </Button>
+          <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
+          <Checkbox
+            isChecked={pdConfirmed}
+            onCheckedChange={setPdConfirmed}
+            label="I confirm this PD is correct (typical 55-75mm)"
+            labelClassName="text-[10px] text-red-800 font-bold uppercase tracking-tight cursor-pointer"
+            size="sm"
+          />
+        </div>
+      )}
+
+      {/* Footer Actions */}
+      <div className="space-y-4">
+        <div className="flex flex-col gap-4">
+          {showDefaultCheckbox && (
+            <div
+              className="flex items-center bg-slate-50/50 p-4 rounded-xl border border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer"
+              onClick={() => setFormData((prev) => ({ ...prev, isDefault: !prev.isDefault }))}
+            >
+              <Checkbox
+                id="isDefault"
+                isChecked={formData.isDefault}
+                onCheckedChange={(checked) =>
+                  setFormData((prev) => ({ ...prev, isDefault: checked }))
+                }
+                label="Set as default prescription"
+                labelClassName="text-[11px] text-slate-600 font-bold cursor-pointer"
+                size="sm"
+              />
+            </div>
+          )}
+
+          {showConfirmCheckbox && (
+            <div
+              className="flex items-start bg-mint-50/30 p-5 rounded-xl border border-mint-100/50 hover:bg-mint-50/50 transition-colors gap-4 cursor-pointer"
+              onClick={() => setIsConfirmed(!isConfirmed)}
+            >
+              <div className="pt-0.5 pointer-events-none">
+                <Checkbox isChecked={isConfirmed} onCheckedChange={setIsConfirmed} size="sm" />
+              </div>
+              <p className="text-[11px] text-slate-600 font-medium leading-relaxed pointer-events-none">
+                {confirmText}
+              </p>
+            </div>
+          )}
+        </div>
+
+        <div className="flex gap-4">
+          {onCancel && (
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={onCancel}
+              className="flex-1 h-12 rounded-xl text-sm font-bold text-slate-400 hover:bg-slate-50"
+            >
+              {cancelLabel}
+            </Button>
+          )}
+          <Button
+            type="submit"
+            disabled={isLoading || (showConfirmCheckbox && !isConfirmed) || !isFormValid()}
+            className="flex-[2] h-14 rounded-xl font-bold text-sm bg-mint-600 text-white hover:bg-mint-700 shadow-lg shadow-mint-100 transition-all active:scale-[0.98]"
+          >
+            {isLoading ? 'Processing...' : submitLabel || (initialData ? 'Update' : 'Add to Cart')}
+          </Button>
+        </div>
       </div>
     </form>
   )

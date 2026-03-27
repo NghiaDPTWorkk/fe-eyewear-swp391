@@ -60,7 +60,7 @@ export const CheckoutPage = () => {
   )
 
   return (
-    <div className="min-h-screen bg-mint-200">
+    <div className="min-h-screen bg-mint-100">
       <main className="py-8 lg:py-12">
         <Container>
           <div className="flex items-center gap-4 mb-8">

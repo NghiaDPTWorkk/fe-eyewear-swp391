@@ -113,9 +113,9 @@ export function PrescriptionsPage() {
         {!isEmpty && (
           <button
             onClick={handleAddClick}
-            className="flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-white px-6 py-4 rounded-2xl font-bold transition-all shadow-lg hover:shadow-xl uppercase tracking-widest text-xs"
+            className="flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-white px-5 py-3 rounded-xl font-bold transition-all shadow-md hover:shadow-lg uppercase tracking-widest text-[10px]"
           >
-            <Plus size={18} strokeWidth={3} />
+            <Plus size={16} strokeWidth={3} />
             Add Prescription
           </button>
         )}
@@ -132,7 +132,7 @@ export function PrescriptionsPage() {
           </p>
           <Button
             onClick={handleAddClick}
-            className="rounded-2xl px-10 py-7 bg-primary-600 text-white font-bold uppercase tracking-[0.2em] shadow-lg shadow-primary-200 hover:bg-primary-700 transition-all"
+            className="rounded-xl px-8 py-4 bg-primary-600 text-white font-bold uppercase tracking-widest text-xs shadow-lg shadow-primary-200 hover:bg-primary-700 transition-all"
           >
             Add New Prescription
           </Button>

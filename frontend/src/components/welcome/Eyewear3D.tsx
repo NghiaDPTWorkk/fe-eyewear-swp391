@@ -1,7 +1,7 @@
 import { useMemo, useRef } from 'react'
 
 import { useFrame } from '@react-three/fiber'
-import { useGLTF, MeshWobbleMaterial } from '@react-three/drei'
+import { useGLTF } from '@react-three/drei'
 
 import * as THREE from 'three'
 
@@ -10,81 +10,101 @@ export const Eyewear3D = () => {
 
   // Use a higher quality model if possible, or a well-known one
   // This is a common public model for standard shades/glasses
-  const { scene } = useGLTF(
-    'https://vazxmixjsiawhamurptp.supabase.co/storage/v1/object/public/models/shades/model.gltf'
-  )
+  // Use local model
+  // Use model2 for a realistic textured look
+  const { scene } = useGLTF('/models/model2.glb')
 
-  // Improve materials for a "premium" look
+  // Material setup (Memoized)
   useMemo(() => {
     if (!scene) return
+
+    // Normalize and center the scene internally
+    const box = new THREE.Box3().setFromObject(scene)
+    const center = box.getCenter(new THREE.Vector3())
+    scene.position.sub(center)
+
     scene.traverse((child) => {
+      const name = child.name.toLowerCase()
       if (child instanceof THREE.Mesh) {
-        // Metallic frame
-        if (
-          child.name.toLowerCase().includes('frame') ||
-          child.name.toLowerCase().includes('metal')
-        ) {
+        // High-end Metallic Texture
+        if (name.includes('frame') || name.includes('metal') || name.includes('body')) {
           child.material = new THREE.MeshStandardMaterial({
-            color: '#4ad7b0',
-            metalness: 0.9,
+            color: '#a0a0a0',
+            metalness: 1,
             roughness: 0.1,
             envMapIntensity: 2
           })
         }
-        // Glass lenses
-        if (
-          child.name.toLowerCase().includes('lens') ||
-          child.name.toLowerCase().includes('glass')
-        ) {
+        // Premium Lens Texture
+        if (name.includes('lens') || name.includes('glass')) {
           child.material = new THREE.MeshPhysicalMaterial({
-            color: '#000000',
-            metalness: 0.1,
-            roughness: 0,
-            transmission: 0.2, // Some transparency
-            thickness: 0.5,
-            clearcoat: 1,
-            clearcoatRoughness: 0,
-            envMapIntensity: 2
+            color: '#050505',
+            metalness: 0.5,
+            roughness: 0.05,
+            transmission: 0.6,
+            thickness: 1,
+            transparent: true,
+            opacity: 0.95,
+            envMapIntensity: 3
           })
         }
       }
     })
   }, [scene])
 
-  // Automatic animation sequence (10s cycle)
+  // Collect arms for animation
+  const arms = useMemo(() => {
+    if (!scene) return []
+    const results: THREE.Object3D[] = []
+    scene.traverse((child) => {
+      const name = child.name.toLowerCase()
+      if (name.includes('arm') || name.includes('temple') || name.includes('side')) {
+        results.push(child)
+      }
+    })
+    return results
+  }, [scene])
+
+  // Animation Sequence
   useFrame((state) => {
     const t = state.clock.getElapsedTime()
+    if (!modelRef.current) return
 
-    if (modelRef.current) {
-      // Smooth rotation
-      modelRef.current.rotation.y = Math.sin(t / 2) * 0.5
-      modelRef.current.rotation.x = Math.cos(t / 4) * 0.2
-      modelRef.current.rotation.z = Math.sin(t / 8) * 0.1
+    if (t < 3) {
+      // 1. Entrance (Slide in from right)
+      const progress = t / 3
+      modelRef.current.position.x = 8 * (1 - progress)
 
-      // Heartbeat pulse every 5 seconds or just a gentle float
-      const pulse = 1 + Math.sin(t * 2) * 0.05
-      modelRef.current.scale.set(pulse, pulse, pulse)
-
-      // Floating movement (up/down)
-      modelRef.current.position.y = Math.sin(t) * 0.2
+      // Gradually unfold arms
+      arms.forEach((arm) => {
+        const isLeft = arm.position.x < 0
+        const foldAngle = isLeft ? -Math.PI / 2 : Math.PI / 2
+        arm.rotation.y = foldAngle * (1 - progress)
+      })
+      modelRef.current.rotation.y = 0
+    } else if (t < 7) {
+      // 2. Slow rotation
+      const progress = (t - 3) / 4
+      modelRef.current.position.x = 0
+      modelRef.current.rotation.y = progress * Math.PI * 2
+      arms.forEach((arm) => (arm.rotation.y = 0))
+    } else {
+      // 3. Resting
+      modelRef.current.position.x = 0
+      modelRef.current.rotation.y = 0
+      modelRef.current.position.y = Math.sin(t) * 0.1
     }
   })
 
   return (
-    <group ref={modelRef} dispose={null} scale={[1, 1, 1]} position={[0, 0, 0]}>
-      {/* Fallback box if model fails to load, but using Suspense in parent */}
-      <primitive object={scene} scale={2} />
-
-      {/* Decorative aura/glow around the model */}
-      <mesh position={[0, 0, -1]} rotation={[0, 0, 0]}>
-        <sphereGeometry args={[1.5, 32, 32]} />
-        <MeshWobbleMaterial color="#4ad7b0" opacity={0.03} transparent speed={2} factor={0.4} />
-      </mesh>
+    <group ref={modelRef} dispose={null} scale={[8, 8, 8]} position={[8, 0, 0]}>
+      <primitive object={scene} />
+      {/* Local lights for the model */}
+      <pointLight position={[2, 2, 2]} intensity={20} color="#ffffff" />
+      <pointLight position={[-2, -2, 2]} intensity={10} color="#4ad7b0" />
     </group>
   )
 }
 
-// Preload the model
-useGLTF.preload(
-  'https://vazxmixjsiawhamurptp.supabase.co/storage/v1/object/public/models/shades/model.gltf'
-)
+// Preload model2
+useGLTF.preload('/models/model2.glb')

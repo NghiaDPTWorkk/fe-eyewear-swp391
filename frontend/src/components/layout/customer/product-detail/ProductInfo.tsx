@@ -297,7 +297,7 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
         {hasDiscount && (
           <>
             <span className="text-xl text-gray-eyewear line-through">
-              <VNDPrice amount={price} />
+              <VNDPrice className="line-through" amount={price} />
             </span>
             <span className="px-2 py-1 bg-red-100 text-red-600 rounded-full text-xs font-bold">
               -{discountPercentage}%

@@ -97,6 +97,14 @@ const ReturnWarrantyPolicyPage = lazy(() =>
 
 export const customerRoutes = [
   {
+    path: '/',
+    element: (
+      <LazyPage>
+        <WelcomePage />
+      </LazyPage>
+    )
+  },
+  {
     element: (
       <AuthGuard requireAuth={false}>
         <LazyPage>
@@ -106,14 +114,6 @@ export const customerRoutes = [
     ),
     children: [
       {
-        path: '/',
-        element: (
-          <LazyPage>
-            <WelcomePage />
-          </LazyPage>
-        )
-      },
-      {
         path: '/home',
         element: (
           <LazyPage>
@@ -121,6 +121,7 @@ export const customerRoutes = [
           </LazyPage>
         )
       },
+
       {
         path: '/products',
         element: (

@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils'
 import { X, ChevronDown, Search } from 'lucide-react'
 import type { SpecCategory } from '@/shared/types/productSpecs.types'
 import { useState, useRef, useEffect } from 'react'
+import { Checkbox } from '@/shared/components/ui/checkbox'
 
 export interface HorizontalFiltersProps {
   categories: SpecCategory[]
@@ -43,36 +44,56 @@ const FilterDropdown = ({
   activeDropdown: string | null
   setActiveDropdown: (id: string | null) => void
   children: React.ReactNode
-}) => (
-  <div className="relative">
-    <button
-      onClick={() => setActiveDropdown(activeDropdown === id ? null : id)}
-      className={cn(
-        'flex items-center gap-2 text-[11px] font-black uppercase tracking-widest transition-all',
-        activeDropdown === id || count
-          ? 'text-primary-600'
-          : 'text-gray-eyewear hover:text-mint-1200'
-      )}
-    >
-      {label}
-      {count ? (
-        <span className="ml-1 text-[10px] bg-primary-100 px-1.5 py-0.5 rounded-full">{count}</span>
-      ) : null}
-      <ChevronDown
-        className={cn(
-          'w-3 h-3 transition-transform duration-300',
-          activeDropdown === id && 'rotate-180'
-        )}
-      />
-    </button>
+}) => {
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
-    {activeDropdown === id && (
-      <div className="absolute top-full left-0 mt-4 w-64 bg-white border border-mint-100 shadow-2xl rounded-2xl p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-        <div className="space-y-2 max-h-60 overflow-y-auto custom-scrollbar">{children}</div>
-      </div>
-    )}
-  </div>
-)
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        activeDropdown === id &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setActiveDropdown(null)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [activeDropdown, id, setActiveDropdown])
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setActiveDropdown(activeDropdown === id ? null : id)}
+        className={cn(
+          'flex items-center gap-2 text-[11px] font-black uppercase tracking-widest transition-all',
+          activeDropdown === id || count
+            ? 'text-primary-600'
+            : 'text-gray-eyewear hover:text-mint-1200'
+        )}
+      >
+        {label}
+        {count ? (
+          <span className="ml-1 text-[10px] bg-primary-100 px-1.5 py-0.5 rounded-full">
+            {count}
+          </span>
+        ) : null}
+        <ChevronDown
+          className={cn(
+            'w-3 h-3 transition-transform duration-300',
+            activeDropdown === id && 'rotate-180'
+          )}
+        />
+      </button>
+
+      {activeDropdown === id && (
+        <div className="absolute top-full left-0 mt-4 w-64 bg-white border border-mint-100 shadow-2xl rounded-2xl p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="space-y-2 max-h-60 overflow-y-auto custom-scrollbar">{children}</div>
+        </div>
+      )}
+    </div>
+  )
+}
 
 export function HorizontalFilters({
   categories,
@@ -94,18 +115,6 @@ export function HorizontalFilters({
 }: HorizontalFiltersProps) {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [isSearchFocused, setIsSearchFocused] = useState(false)
-  const containerRef = useRef<HTMLDivElement>(null)
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setActiveDropdown(null)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
 
   const toggleSelection = (
     value: string,
@@ -119,7 +128,7 @@ export function HorizontalFilters({
   }
 
   return (
-    <div className={cn('space-y-6 mb-12', className)} ref={containerRef}>
+    <div className={cn('space-y-6 mb-12', className)}>
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 border-y border-mint-200/60 py-8">
         {/* Horizontal Filters Container */}
         <div className="flex flex-wrap items-center gap-12">
@@ -140,13 +149,12 @@ export function HorizontalFilters({
                 key={category._id}
                 className="flex items-center gap-3 p-2 hover:bg-mint-50 rounded-lg cursor-pointer group transition-colors"
               >
-                <input
-                  type="checkbox"
-                  checked={selectedCategories.includes(category._id)}
-                  onChange={() =>
+                <Checkbox
+                  isChecked={selectedCategories.includes(category._id)}
+                  onCheckedChange={() =>
                     toggleSelection(category._id, selectedCategories, onCategoryChange)
                   }
-                  className="w-4 h-4 rounded border-mint-300 text-primary-600 focus:ring-primary-500"
+                  size="sm"
                 />
                 <span className="text-sm font-medium text-mint-1200 group-hover:text-primary-700">
                   {category.name}
@@ -168,11 +176,10 @@ export function HorizontalFilters({
                 key={gender}
                 className="flex items-center gap-3 p-2 hover:bg-mint-50 rounded-lg cursor-pointer group transition-colors"
               >
-                <input
-                  type="checkbox"
-                  checked={selectedGenders.includes(gender)}
-                  onChange={() => toggleSelection(gender, selectedGenders, onGenderChange)}
-                  className="w-4 h-4 rounded border-mint-300 text-primary-600 focus:ring-primary-500"
+                <Checkbox
+                  isChecked={selectedGenders.includes(gender)}
+                  onCheckedChange={() => toggleSelection(gender, selectedGenders, onGenderChange)}
+                  size="sm"
                 />
                 <span className="text-sm font-medium text-mint-1200 group-hover:text-primary-700">
                   {GENDER_MAP[gender] || gender}
@@ -194,13 +201,12 @@ export function HorizontalFilters({
                 key={range.id}
                 className="flex items-center gap-3 p-2 hover:bg-mint-50 rounded-lg cursor-pointer group transition-colors"
               >
-                <input
-                  type="checkbox"
-                  checked={selectedPriceRanges.includes(range.id)}
-                  onChange={() =>
+                <Checkbox
+                  isChecked={selectedPriceRanges.includes(range.id)}
+                  onCheckedChange={() =>
                     toggleSelection(range.id, selectedPriceRanges, onPriceRangeChange)
                   }
-                  className="w-4 h-4 rounded border-mint-300 text-primary-600 focus:ring-primary-500"
+                  size="sm"
                 />
                 <span className="text-sm font-medium text-mint-1200 group-hover:text-primary-700">
                   {range.label}
@@ -222,11 +228,10 @@ export function HorizontalFilters({
                 key={brand}
                 className="flex items-center gap-3 p-2 hover:bg-mint-50 rounded-lg cursor-pointer group transition-colors"
               >
-                <input
-                  type="checkbox"
-                  checked={selectedBrands.includes(brand)}
-                  onChange={() => toggleSelection(brand, selectedBrands, onBrandChange)}
-                  className="w-4 h-4 rounded border-mint-300 text-primary-600 focus:ring-primary-500"
+                <Checkbox
+                  isChecked={selectedBrands.includes(brand)}
+                  onCheckedChange={() => toggleSelection(brand, selectedBrands, onBrandChange)}
+                  size="sm"
                 />
                 <span className="text-sm font-medium text-mint-1200 group-hover:text-primary-700">
                   {brand}

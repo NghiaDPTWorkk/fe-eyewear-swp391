@@ -84,7 +84,7 @@ export default function CustomerHeader({ isTranslucent = false }: { isTranslucen
     <Header
       containerWidth="1200px"
       logo={
-        <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
+        <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/home')}>
           <LogoEyewearIcon
             className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl shadow-md"
             iconClassName="w-7 h-7 text-white"
@@ -98,18 +98,19 @@ export default function CustomerHeader({ isTranslucent = false }: { isTranslucen
         !isSearchExpanded ? (
           <nav className="flex items-center gap-8 transition-all duration-300">
             <button
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/home')}
               className={`${
-                isActive('/') ? 'text-mint-1200 font-semibold' : 'text-gray-eyewear font-medium'
+                isActive('/home') ? 'text-mint-1200 font-semibold' : 'text-gray-eyewear font-medium'
               } hover:text-primary-500 transition-all relative group cursor-pointer`}
             >
               Home
               <span
                 className={`absolute bottom-0 left-0 w-full h-0.5 bg-primary-500 transform ${
-                  isActive('/') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                  isActive('/home') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
                 } transition-transform`}
               ></span>
             </button>
+
             <button
               onClick={() => navigate('/eyeglasses')}
               className={`${

@@ -15,6 +15,10 @@ const AccountLayout = lazy(() =>
 const LandingPage = lazy(() =>
   import('@/pages/LandingPage').then((m) => ({ default: m.LandingPage }))
 )
+const WelcomePage = lazy(() =>
+  import('@/pages/WelcomePage').then((m) => ({ default: m.WelcomePage }))
+)
+
 const CustomerProductPage = lazy(() =>
   import('@/pages/customer/CustomerProductPage').then((m) => ({ default: m.CustomerProductPage }))
 )
@@ -93,6 +97,14 @@ const ReturnWarrantyPolicyPage = lazy(() =>
 
 export const customerRoutes = [
   {
+    path: '/',
+    element: (
+      <LazyPage>
+        <WelcomePage />
+      </LazyPage>
+    )
+  },
+  {
     element: (
       <AuthGuard requireAuth={false}>
         <LazyPage>
@@ -102,13 +114,14 @@ export const customerRoutes = [
     ),
     children: [
       {
-        path: '/',
+        path: '/home',
         element: (
           <LazyPage>
             <LandingPage />
           </LazyPage>
         )
       },
+
       {
         path: '/products',
         element: (

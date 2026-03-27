@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { PATHS } from '@/routes/paths'
 import { Card } from '@/shared/components/ui/card'
 import { Button } from '@/shared/components/ui/button'
 import { invoiceService } from '@/features/customer/invoice/services/invoice.service'
@@ -94,7 +95,9 @@ export function CustomerOrderDetailPage() {
       <div className="p-10 text-center">
         <p className="text-danger-500 font-bold mb-6">{error || 'Order not found'}</p>
         <Button
-          onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/account/orders'))}
+          onClick={() =>
+            window.history.length > 1 ? navigate(-1) : navigate(PATHS.ACCOUNT.ORDERS)
+          }
           variant="outline"
           className="rounded-xl"
         >
@@ -137,7 +140,7 @@ export function CustomerOrderDetailPage() {
 
         {invoice.status === InvoiceStatus.DELIVERED && (
           <Button
-            onClick={() => navigate(`/account/orders/${invoiceId}/return`)}
+            onClick={() => navigate(PATHS.ACCOUNT.ORDER_RETURN(invoiceId!))}
             className="rounded-2xl bg-white border-mint-100 text-mint-1200 hover:bg-danger-50 hover:text-danger-600 hover:border-danger-100 font-bold px-6 h-12 shadow-sm"
           >
             Request Return

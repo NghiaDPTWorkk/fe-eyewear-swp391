@@ -3,6 +3,8 @@ import { Button } from '@/shared/components/ui/button'
 import { PriceTag } from '@/shared/components/ui/price-tag'
 import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 import { Trash2 } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { PATHS } from '@/routes/paths'
 
 interface FavoriteItemProps {
   id: string
@@ -18,6 +20,7 @@ interface FavoriteItemProps {
 }
 
 export function FavoriteItem({
+  id,
   brand,
   name,
   image,
@@ -28,11 +31,18 @@ export function FavoriteItem({
   onRemove,
   onAddToCart
 }: FavoriteItemProps) {
+  const navigate = useNavigate()
+  const handleNavigate = () => {
+    navigate(PATHS.PRODUCT.DETAIL(id))
+  }
   return (
     <Card className="p-0 border-mint-100/50 hover:shadow-lg transition-all overflow-hidden group mb-6">
       <div className="flex flex-col sm:flex-row">
         {/* Product Image Area */}
-        <div className="w-full sm:w-[45%] bg-[#F9FBFC] p-8 flex items-center justify-center relative min-h-[200px]">
+        <div
+          onClick={handleNavigate}
+          className="w-full sm:w-[45%] bg-[#F9FBFC] p-8 flex items-center justify-center relative min-h-[200px] cursor-pointer"
+        >
           <span className="absolute top-4 left-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
             Universal Fit
           </span>
@@ -47,7 +57,7 @@ export function FavoriteItem({
         <div className="flex-1 p-8 flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-start mb-4">
-              <div className="flex flex-col gap-1">
+              <div onClick={handleNavigate} className="flex flex-col gap-1 cursor-pointer">
                 <div className="flex items-center gap-3">
                   <h3 className="text-xl font-bold text-mint-1200">{brand}</h3>
                   {discount && (
@@ -105,7 +115,7 @@ export function FavoriteItem({
               <div className="flex items-baseline gap-2">
                 {originalPrice && (
                   <span className="text-xs text-gray-300 line-through font-bold">
-                    <VNDPrice amount={originalPrice} />
+                    <VNDPrice className="line-through" amount={originalPrice} />
                   </span>
                 )}
                 <PriceTag price={price} className="text-xl font-bold text-mint-1200" />

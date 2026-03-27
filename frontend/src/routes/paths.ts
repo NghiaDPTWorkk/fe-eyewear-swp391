@@ -24,6 +24,8 @@ export const PATHS = {
   ACCOUNT: {
     SETTINGS: '/account/settings',
     ORDERS: '/account/orders',
+    ORDER_DETAIL: (id: string) => `/account/orders/${id}`,
+    ORDER_RETURN: (id: string) => `/account/orders/${id}/return`,
     ADDRESSES: '/account/addresses',
     PRESCRIPTIONS: '/account/prescriptions',
     FAVORITES: '/account/favorites'

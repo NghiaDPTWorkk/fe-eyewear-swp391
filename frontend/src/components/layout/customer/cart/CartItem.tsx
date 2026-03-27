@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import type { CartItem as CartItemType } from '@/shared/types'
 import { useCartStore } from '@/store/cart.store'
 import { Checkbox, Card } from '@/shared/components/ui'
+import { useNavigate } from 'react-router-dom'
+import { PATHS } from '@/routes/paths'
 
 interface CartItemProps {
   item: CartItemType
@@ -39,7 +41,7 @@ export const CartItem = ({
       ;(e.target as HTMLInputElement).blur()
     }
   }
-
+  const navigate = useNavigate()
   // Dynamic data from item
   // Calculate totals
   const frameUnitPrice = item.price
@@ -102,7 +104,10 @@ export const CartItem = ({
             </div>
           )}
           <div className="flex flex-col items-center gap-4">
-            <div className="w-40 h-40 lg:w-48 lg:h-48 bg-mint-50/30 rounded-2xl overflow-hidden flex items-center justify-center border border-mint-100/50 p-4 relative group/img">
+            <div
+              onClick={() => navigate(PATHS.PRODUCT.DETAIL(item.product_id))}
+              className="cursor-pointer w-40 h-40 lg:w-48 lg:h-48 bg-mint-50/30 rounded-2xl overflow-hidden flex items-center justify-center border border-mint-100/50 p-4 relative group/img"
+            >
               <img
                 src={item.image}
                 alt={item.name}
@@ -165,7 +170,10 @@ export const CartItem = ({
               {/* Lens Row */}
               {item.lens && (
                 <div className="flex gap-4 pl-6 py-3 border-l-2 border-mint-100 mb-6 bg-mint-50/20 rounded-r-xl">
-                  <div className="w-12 h-12 bg-white rounded-lg border border-mint-100 flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
+                  <div
+                    onClick={() => navigate(PATHS.PRODUCT.DETAIL(item.product_id))}
+                    className=" cursor-pointer w-12 h-12 bg-white rounded-lg border border-mint-100 flex items-center justify-center shrink-0 overflow-hidden shadow-sm"
+                  >
                     {item.lens.image ? (
                       <img
                         src={item.lens.image}

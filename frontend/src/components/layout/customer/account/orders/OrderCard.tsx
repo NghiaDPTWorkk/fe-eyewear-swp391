@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { PATHS } from '@/routes/paths'
 import { Card } from '@/shared/components/ui/card'
 import { PriceTag } from '@/shared/components/ui/price-tag'
 import { Button } from '@/shared/components/ui/button'
@@ -172,7 +173,10 @@ export function OrderCard({
     <Card className="p-6 mb-6 hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition-all duration-300 border-mint-100/40 group bg-white rounded-[20px]">
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Product Image - Precise Aspect Ratio */}
-        <div className="w-full lg:w-40 h-32 rounded-xl overflow-hidden bg-[#F8FAFB] flex-shrink-0 border border-mint-50/30 flex items-center justify-center p-6">
+        <div
+          onClick={() => navigate(PATHS.ACCOUNT.ORDER_DETAIL(realId))}
+          className="cursor-pointer w-full lg:w-40 h-32 rounded-xl overflow-hidden bg-[#F8FAFB] flex-shrink-0 border border-mint-50/30 flex items-center justify-center p-6"
+        >
           <img
             src={image}
             alt={name}
@@ -254,7 +258,7 @@ export function OrderCard({
 
           <div className="flex lg:flex-col gap-3 flex-1 lg:flex-none">
             <Button
-              onClick={() => navigate(`/account/orders/${realId}`)}
+              onClick={() => navigate(PATHS.ACCOUNT.ORDER_DETAIL(realId))}
               variant="outline"
               className="flex-1 lg:flex-none h-10 rounded-xl px-6 border-mint-100 text-mint-1200 font-bold text-[10px] uppercase tracking-[0.15em] hover:bg-mint-50 hover:border-mint-200 transition-all shadow-sm"
             >
@@ -290,7 +294,7 @@ export function OrderCard({
                     ? 'bg-primary-500 text-white hover:bg-primary-600'
                     : 'bg-white border-mint-100 text-mint-1200 hover:bg-danger-50 hover:text-danger-600 hover:border-danger-100 shadow-sm'
                 )}
-                onClick={() => navigate(`/account/orders/${realId}/return`)}
+                onClick={() => navigate(PATHS.ACCOUNT.ORDER_RETURN(realId))}
               >
                 Return
               </Button>

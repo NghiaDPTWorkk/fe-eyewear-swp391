@@ -3,12 +3,15 @@ import { Card } from '@/shared/components/ui/card'
 import { PriceTag } from '@/shared/components/ui/price-tag'
 import { FileText } from 'lucide-react'
 import type { InvoiceItem } from '@/shared/types/invoice.types'
+import { useNavigate } from 'react-router-dom'
+import { PATHS } from '@/routes/paths'
 
 interface OrderItemListProps {
   items: InvoiceItem[]
 }
 
 export function OrderItemList({ items }: OrderItemListProps) {
+  const navigate = useNavigate()
   // Group identical items and calculate quantities (respecting quantity field if present)
   const { groupedItems } = useMemo(() => {
     if (!Array.isArray(items)) return { groupedItems: [] }
@@ -55,7 +58,13 @@ export function OrderItemList({ items }: OrderItemListProps) {
           <div key={idx} className="p-6">
             {/* Frame Section */}
             {item.product && (
-              <div className="flex gap-5 mb-5">
+              <div
+                onClick={() =>
+                  item.product?.product_id &&
+                  navigate(PATHS.PRODUCT.DETAIL(item.product.product_id))
+                }
+                className="flex gap-5 mb-5 cursor-pointer hover:bg-mint-50/30 p-2 rounded-2xl transition-all"
+              >
                 <div className="w-20 h-20 rounded-xl bg-[#F8FAFB] border border-mint-50/40 flex-shrink-0 p-3">
                   <img
                     src={item.product.detail.imgs[0]}
@@ -90,7 +99,12 @@ export function OrderItemList({ items }: OrderItemListProps) {
             )}
             {/* Lens Section */}
             {item.lens && (
-              <div className="flex gap-4 ml-8 pl-8 border-l border-mint-50 border-dashed">
+              <div
+                onClick={() =>
+                  item.lens?.product_id && navigate(PATHS.PRODUCT.DETAIL(item.lens.product_id))
+                }
+                className="flex gap-4 ml-8 pl-8 border-l border-mint-50 border-dashed cursor-pointer hover:bg-mint-50/20 p-2 rounded-xl transition-all"
+              >
                 <div className="w-14 h-14 rounded-xl bg-primary-50/30 border border-primary-100/20 flex-shrink-0 p-2.5">
                   <img
                     src={item.lens.detail.imgs[0]}

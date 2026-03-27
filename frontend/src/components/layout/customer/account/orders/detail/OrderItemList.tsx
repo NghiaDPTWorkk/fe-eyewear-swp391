@@ -9,9 +9,9 @@ interface OrderItemListProps {
 }
 
 export function OrderItemList({ items }: OrderItemListProps) {
-  // Group identical items and calculate quantities since API doesn't provide quantity field
-  const { groupedItems, totalPieces } = useMemo(() => {
-    if (!Array.isArray(items)) return { groupedItems: [], totalPieces: 0 }
+  // Group identical items and calculate quantities (respecting quantity field if present)
+  const { groupedItems } = useMemo(() => {
+    if (!Array.isArray(items)) return { groupedItems: [] }
 
     const resultMap = new Map<string, InvoiceItem & { count: number }>()
 
@@ -37,11 +37,8 @@ export function OrderItemList({ items }: OrderItemListProps) {
     })
 
     const finalItems = Array.from(resultMap.values())
-    const total = finalItems.reduce((acc, item) => acc + item.count, 0)
-
     return {
-      groupedItems: finalItems,
-      totalPieces: total
+      groupedItems: finalItems
     }
   }, [items])
 
@@ -50,7 +47,7 @@ export function OrderItemList({ items }: OrderItemListProps) {
       <div className="p-6 border-b border-mint-50 bg-mint-50/10">
         <h3 className="font-bold text-mint-1200 text-sm flex items-center gap-2 uppercase tracking-widest">
           <FileText size={16} className="text-primary-500" />
-          Order Items ({totalPieces})
+          Order Items ({groupedItems.length})
         </h3>
       </div>
       <div className="divide-y divide-mint-50/50">
@@ -72,12 +69,9 @@ export function OrderItemList({ items }: OrderItemListProps) {
                       {item.product.detail.name}
                     </h4>
                     <div className="flex flex-col items-end">
-                      <PriceTag
-                        price={item.product.pricePerUnit}
-                        className="text-[15px] font-bold text-mint-1200"
-                      />
-                      <span className="text-[11px] text-gray-400 mt-1 tracking-widest">
-                        Quantity: x{item.count}
+                      <span className="text-[11px] text-gray-500 mt-1 font-semibold tracking-widest uppercase">
+                        {item.count} ×{' '}
+                        <PriceTag price={item.product.pricePerUnit} className="inline ml-1" />
                       </span>
                     </div>
                   </div>

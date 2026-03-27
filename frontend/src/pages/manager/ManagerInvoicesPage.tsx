@@ -216,7 +216,11 @@ export default function ManagerInvoicesPage() {
         onOrderTypeChange={handleOrderTypeChange}
         isFilterOpen={isFilterOpen}
         setIsFilterOpen={setIsFilterOpen}
-        onRefetch={refetchInvoices}
+        onReset={() => {
+          setSearchParams(new URLSearchParams())
+          setPage(1)
+          refetchInvoices()
+        }}
         isLoading={isLoading}
       />
       <div className="bg-white rounded-3xl border border-neutral-50/50 shadow-sm overflow-hidden">

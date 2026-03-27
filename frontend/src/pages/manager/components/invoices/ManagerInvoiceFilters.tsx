@@ -19,7 +19,7 @@ interface ManagerInvoiceFiltersProps {
   onOrderTypeChange: (type: string) => void
   isFilterOpen: boolean
   setIsFilterOpen: (open: boolean) => void
-  onRefetch: () => void
+  onReset: () => void
   isLoading: boolean
 }
 
@@ -32,7 +32,7 @@ export const ManagerInvoiceFilters: React.FC<ManagerInvoiceFiltersProps> = ({
   onOrderTypeChange,
   isFilterOpen,
   setIsFilterOpen,
-  onRefetch,
+  onReset,
   isLoading
 }) => {
   return (
@@ -135,7 +135,7 @@ export const ManagerInvoiceFilters: React.FC<ManagerInvoiceFiltersProps> = ({
               variant="outline"
               size="sm"
               className="rounded-xl border-neutral-200 h-[42px] w-[42px] bg-white"
-              onClick={onRefetch}
+              onClick={onReset}
               disabled={isLoading}
             >
               <IoRefreshOutline className={isLoading ? 'animate-spin' : ''} />

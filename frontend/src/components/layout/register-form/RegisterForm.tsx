@@ -1,21 +1,20 @@
 import { useState, useRef } from 'react'
-import { Button, Divider, FormField, Input } from '@/components'
-import { Eye, EyeOff } from 'lucide-react'
 import type { RegisterRequest } from '@/shared/types'
 import { Gender } from '@/shared/utils/enums/gender.enum'
 import { useRegister } from '@/features/auth/hooks/useRegister'
 import { authService } from '@/features/auth/services/auth.service'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
+import { SIGN_UP_SVG_PATHS } from '@/shared/constants/svg-paths'
 
 interface RegisterFormProps {
   onSubmit?: (data: RegisterRequest) => void
   isPending?: boolean
 }
 
-export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
+export const RegisterForm = ({ isPending: _isPending = false }: RegisterFormProps) => {
   const navigate = useNavigate()
   const registerMutation = useRegister()
 
@@ -140,9 +139,9 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
 
   if (mergeState === 'prompt') {
     return (
-      <div className="w-full text-center space-y-6 pt-6">
-        <div className="mx-auto w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-4">
-          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="space-y-6 pt-6 text-center">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-50 text-blue-500">
+          <svg className="size-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -151,23 +150,25 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
             />
           </svg>
         </div>
-        <h3 className="text-xl font-bold text-mint-1200">Account Already Exists</h3>
-        <p className="text-gray-500 text-sm px-4">
-          Email <span className="font-bold text-black">{formik.values.email}</span> is already
+        <h3 className="text-xl font-bold text-[#00362d]">Account Already Exists</h3>
+        <p className="px-4 text-sm text-[#00362d]/60">
+          Email <span className="font-bold text-[#00362d]">{formik.values.email}</span> is already
           linked to a Google account. Do you want to merge this password into that account?
         </p>
         <div className="flex gap-4 pt-4">
-          <Button variant="outline" className="flex-1" onClick={() => setMergeState('idle')}>
+          <button
+            className="h-12 flex-1 rounded-xl border border-[#00684e]/20 font-bold text-[#00362d] transition-colors hover:bg-gray-50"
+            onClick={() => setMergeState('idle')}
+          >
             Cancel
-          </Button>
-          <Button
-            colorScheme="primary"
-            className="flex-1"
+          </button>
+          <button
+            className="h-12 flex-1 rounded-xl bg-[#00684e] font-bold text-[#c6ffe6] transition-opacity hover:opacity-90 disabled:opacity-50"
             onClick={handleRequestMerge}
             disabled={isMerging}
           >
             Confirm
-          </Button>
+          </button>
         </div>
       </div>
     )
@@ -175,12 +176,12 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
 
   if (mergeState === 'otp') {
     return (
-      <div className="w-full text-center space-y-8 pt-8">
+      <div className="space-y-8 pt-8 text-center">
         <div className="space-y-2">
-          <h3 className="text-2xl font-bold text-mint-1200">OTP Verification</h3>
-          <p className="text-gray-500 text-sm">
+          <h3 className="text-2xl font-bold text-[#00362d]">OTP Verification</h3>
+          <p className="text-sm text-[#00362d]/60">
             Enter the 4-digit code sent to{' '}
-            <span className="font-bold text-black">{formik.values.email}</span>
+            <span className="font-bold text-[#00362d]">{formik.values.email}</span>
           </p>
         </div>
 
@@ -197,185 +198,200 @@ export const RegisterForm = ({ isPending = false }: RegisterFormProps) => {
               value={digit}
               onChange={(e) => handleOtpChange(index, e.target.value)}
               onKeyDown={(e) => handleOtpKeyDown(index, e)}
-              className="w-16 h-16 text-center text-3xl font-bold border-2 border-mint-300 rounded-xl focus:border-primary-500 focus:outline-none transition-colors"
+              className="size-16 rounded-xl border-2 border-[#bdfeed] text-center text-3xl font-bold text-[#00362d] transition-colors focus:border-[#00684e] focus:outline-none"
             />
           ))}
         </div>
 
         <div className="space-y-4 pt-4">
-          <Button
-            colorScheme="primary"
-            size="lg"
-            isFullWidth
+          <button
+            className="h-14 w-full rounded-xl bg-[#00684e] text-lg font-bold text-[#c6ffe6] transition-opacity hover:opacity-90 disabled:opacity-50"
             onClick={handleVerifyOtp}
             disabled={isMerging || otpArr.join('').length < 4}
           >
             Confirm
-          </Button>
-          <Button
-            variant="ghost"
-            isFullWidth
+          </button>
+          <button
             onClick={() => setMergeState('idle')}
-            className="text-gray-500"
+            className="w-full text-sm font-bold text-[#00362d]/60 hover:text-[#00362d]"
           >
             Go back
-          </Button>
+          </button>
         </div>
       </div>
     )
   }
 
   return (
-    <form onSubmit={formik.handleSubmit} className="w-full">
-      <Divider className="mb-4" />
-
-      {/* Name Input */}
-      <FormField label="Full Name" className="mb-6">
-        <Input
-          type="text"
-          placeholder="Enter your full name"
-          {...formik.getFieldProps('name')}
-          size="lg"
-          className={formik.touched.name && formik.errors.name ? 'border-red-500' : ''}
-        />
-        {formik.touched.name && formik.errors.name && (
-          <p className="text-[11px] text-red-500 font-bold mt-1 ml-1">{formik.errors.name}</p>
-        )}
-      </FormField>
-
-      {/* Email Input */}
-      <FormField label="Email" className="mb-6">
-        <Input
-          type="email"
-          placeholder="example@gmail.com"
-          {...formik.getFieldProps('email')}
-          size="lg"
-          className={formik.touched.email && formik.errors.email ? 'border-red-500' : ''}
-          rightElement={
-            formik.values.email && !formik.errors.email ? (
-              <svg className="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor">
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
+    <form onSubmit={formik.handleSubmit} className="flex w-full flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        {/* Full Name */}
+        <div className="flex flex-col gap-0.5">
+          <label className="text-[11px] font-bold uppercase tracking-[1.2px] text-[#00362d]">
+            Full Name
+          </label>
+          <div className="relative">
+            <div className="rounded-[10px] bg-[#d7fff3] focus-within:ring-1 focus-within:ring-[#00684e]/20">
+              <div className="flex items-center px-11 py-2.5">
+                <input
+                  type="text"
+                  placeholder="Alex Sterling"
+                  {...formik.getFieldProps('name')}
+                  className="w-full bg-transparent text-[15px] text-[#00362d] outline-none placeholder:text-[#80b8aa]"
                 />
+              </div>
+            </div>
+            <div className="absolute left-4 top-1/2 -translate-y-1/2">
+              <svg className="size-[13.33px]" fill="none" viewBox="0 0 13.33 13.33">
+                <path d={SIGN_UP_SVG_PATHS.user} fill="#00684E" />
               </svg>
-            ) : undefined
-          }
-        />
-        {formik.touched.email && formik.errors.email && (
-          <p className="text-[11px] text-red-500 font-bold mt-1 ml-1">{formik.errors.email}</p>
-        )}
-      </FormField>
+            </div>
+          </div>
+          {formik.touched.name && formik.errors.name && (
+            <p className="ml-1 mt-0.5 text-[11px] font-bold text-red-500">{formik.errors.name}</p>
+          )}
+        </div>
 
-      {/* Phone Input */}
-      <FormField label="Phone Number" className="mb-6">
-        <Input
-          type="tel"
-          placeholder="0123456789"
-          {...formik.getFieldProps('phone')}
-          onKeyDown={blockNonDigits}
-          size="lg"
-          className={formik.touched.phone && formik.errors.phone ? 'border-red-500' : ''}
-          rightElement={
-            formik.values.phone && !formik.errors.phone ? (
-              <svg className="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor">
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
+        {/* Email Address */}
+        <div className="flex flex-col gap-0.5">
+          <label className="text-[11px] font-bold uppercase tracking-[1.2px] text-[#00362d]">
+            Email Address
+          </label>
+          <div className="relative">
+            <div className="rounded-[10px] bg-[#d7fff3] focus-within:ring-1 focus-within:ring-[#00684e]/20">
+              <div className="flex items-center px-11 py-2.5">
+                <input
+                  type="email"
+                  placeholder="alex@atelier.com"
+                  {...formik.getFieldProps('email')}
+                  className="w-full bg-transparent text-[15px] text-[#00362d] outline-none placeholder:text-[#80b8aa]"
                 />
+              </div>
+            </div>
+            <div className="absolute left-4 top-1/2 -translate-y-1/2">
+              <svg className="size-[16.67px]" fill="none" viewBox="0 0 16.67 13.33">
+                <path d={SIGN_UP_SVG_PATHS.email} fill="#00684E" />
               </svg>
-            ) : undefined
-          }
-        />
-        {formik.touched.phone && formik.errors.phone && (
-          <p className="text-[11px] text-red-500 font-bold mt-1 ml-1">{formik.errors.phone}</p>
-        )}
-      </FormField>
+            </div>
+          </div>
+          {formik.touched.email && formik.errors.email && (
+            <p className="ml-1 mt-0.5 text-[11px] font-bold text-red-500">{formik.errors.email}</p>
+          )}
+        </div>
 
-      {/* Password Input */}
-      <FormField label="Password" className="mb-6">
-        <Input
-          type={showPassword ? 'text' : 'password'}
-          placeholder="Input password"
-          {...formik.getFieldProps('password')}
-          size="lg"
-          className={formik.touched.password && formik.errors.password ? 'border-red-500' : ''}
-          rightElement={
+        {/* Phone Number */}
+        <div className="flex flex-col gap-0.5">
+          <label className="text-[11px] font-bold uppercase tracking-[1.2px] text-[#00362d]">
+            Phone Number
+          </label>
+          <div className="relative">
+            <div className="rounded-[10px] bg-[#d7fff3] focus-within:ring-1 focus-within:ring-[#00684e]/20">
+              <div className="flex items-center px-11 py-2.5">
+                <input
+                  type="tel"
+                  placeholder="+1 (555) 000-0000"
+                  {...formik.getFieldProps('phone')}
+                  onKeyDown={blockNonDigits}
+                  className="w-full bg-transparent text-[15px] text-[#00362d] outline-none placeholder:text-[#80b8aa]"
+                />
+              </div>
+            </div>
+            <div className="absolute left-4 top-1/2 -translate-y-1/2">
+              <svg className="size-[15px]" fill="none" viewBox="0 0 15 15">
+                <path d={SIGN_UP_SVG_PATHS.phone} fill="#00684E" />
+              </svg>
+            </div>
+          </div>
+          {formik.touched.phone && formik.errors.phone && (
+            <p className="ml-1 mt-0.5 text-[11px] font-bold text-red-500">{formik.errors.phone}</p>
+          )}
+        </div>
+
+        {/* Password */}
+        <div className="flex flex-col gap-0.5">
+          <label className="text-[11px] font-bold uppercase tracking-[1.2px] text-[#00362d]">
+            Password
+          </label>
+          <div className="relative">
+            <div className="rounded-[10px] bg-[#d7fff3] focus-within:ring-1 focus-within:ring-[#00684e]/20">
+              <div className="flex items-center px-11 py-2.5">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  {...formik.getFieldProps('password')}
+                  className="w-full bg-transparent text-[15px] text-[#00362d] outline-none placeholder:text-[#80b8aa]"
+                />
+              </div>
+            </div>
+            <div className="absolute left-4 top-1/2 -translate-y-1/2">
+              <svg className="h-[17.5px] w-[13.33px]" fill="none" viewBox="0 0 13.33 17.5">
+                <path d={SIGN_UP_SVG_PATHS.password} fill="#00684E" />
+              </svg>
+            </div>
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="text-gray-400 hover:text-gray-600 focus:outline-none"
+              className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer opacity-60 hover:opacity-100"
             >
-              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              <svg className="h-[15px] w-[22px]" fill="none" viewBox="0 0 22 15">
+                <path d={SIGN_UP_SVG_PATHS.eye} fill="#00684E" />
+              </svg>
             </button>
-          }
-        />
-        {formik.touched.password && formik.errors.password && (
-          <p className="text-[11px] text-red-500 font-bold mt-1 ml-1">{formik.errors.password}</p>
-        )}
-      </FormField>
-
-      {/* Gender Selection */}
-      <FormField label="Gender" className="mb-6">
-        <div className="flex gap-4">
-          <label className="flex items-center cursor-pointer">
-            <input
-              type="radio"
-              name="gender"
-              value={Gender.MALE}
-              checked={formik.values.gender === Gender.MALE}
-              onChange={() => formik.setFieldValue('gender', Gender.MALE)}
-              className="mr-2"
-            />
-            <span>Male</span>
-          </label>
-          <label className="flex items-center cursor-pointer">
-            <input
-              type="radio"
-              name="gender"
-              value={Gender.FEMALE}
-              checked={formik.values.gender === Gender.FEMALE}
-              onChange={() => formik.setFieldValue('gender', Gender.FEMALE)}
-              className="mr-2"
-            />
-            <span>Female</span>
-          </label>
-          <label className="flex items-center cursor-pointer">
-            <input
-              type="radio"
-              name="gender"
-              value={Gender.NON_BINARY}
-              checked={formik.values.gender === Gender.NON_BINARY}
-              onChange={() => formik.setFieldValue('gender', Gender.NON_BINARY)}
-              className="mr-2"
-            />
-            <span>Other</span>
-          </label>
+          </div>
+          {formik.touched.password && formik.errors.password && (
+            <p className="ml-1 mt-0.5 text-[11px] font-bold text-red-500">
+              {formik.errors.password}
+            </p>
+          )}
         </div>
-      </FormField>
 
-      {/* Register Button */}
-      <Button
-        type="submit"
-        variant="solid"
-        colorScheme="primary"
-        isFullWidth
-        size="lg"
-        className="mb-4 h-12 rounded-xl text-sm font-bold shadow-lg shadow-mint-100"
-        disabled={isPending || registerMutation.isPending || !formik.isValid}
-      >
-        Sign Up
-      </Button>
+        {/* Gender Selection */}
+        <div className="flex flex-col gap-1 pb-2">
+          <label className="text-[11px] font-bold uppercase tracking-[1.2px] text-[#00362d]">
+            Gender
+          </label>
+          <div className="flex gap-4">
+            {[
+              { label: 'Male', value: Gender.MALE },
+              { label: 'Female', value: Gender.FEMALE },
+              { label: 'Other', value: Gender.NON_BINARY }
+            ].map((g) => (
+              <label key={g.value} className="flex cursor-pointer items-center gap-2">
+                <div
+                  className={`relative size-3.5 rounded-full border border-[#00684e] transition-colors ${
+                    formik.values.gender === g.value ? 'bg-[#00684e]' : 'bg-[#d7fff3]'
+                  }`}
+                  onClick={() => formik.setFieldValue('gender', g.value)}
+                >
+                  {formik.values.gender === g.value && (
+                    <div className="absolute inset-0.5 rounded-full bg-white" />
+                  )}
+                </div>
+                <span className="text-[13px] font-medium text-[#00362d]">{g.label}</span>
+              </label>
+            ))}
+          </div>
+          {formik.touched.gender && formik.errors.gender && (
+            <p className="ml-1 mt-0.5 text-[11px] font-bold text-red-500">{formik.errors.gender}</p>
+          )}
+        </div>
 
-      {/* Login Link */}
-      <p className="text-center text-sm text-gray-500">
-        Already have an account?{' '}
-        <a href="/login" className="font-medium text-primary-600 hover:text-primary-700">
-          Log In
-        </a>
-      </p>
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={registerMutation.isPending || !formik.isValid}
+          className="relative flex h-[60px] w-full cursor-pointer items-center justify-center rounded-[12px] bg-[#00684e] text-lg font-bold text-[#c6ffe6] shadow-[0_10px_15px_-3px_rgba(0,104,78,0.2)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {registerMutation.isPending ? 'Creating Account...' : 'Create Account'}
+        </button>
+
+        <p className="text-center text-[16px] text-[#00362d]">
+          Already have an account?{' '}
+          <Link to="/login" className="font-bold text-[#00684e] hover:underline">
+            Log In
+          </Link>
+        </p>
+      </div>
     </form>
   )
 }

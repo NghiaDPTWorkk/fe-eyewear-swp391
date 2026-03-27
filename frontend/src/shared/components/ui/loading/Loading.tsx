@@ -16,7 +16,7 @@ export const Loading = ({ className = '', fullPage = true }: LoadingProps) => {
 
         {/* Branded Logo Square */}
         <div className="w-14 h-14 bg-mint-500 rounded-2xl flex items-center justify-center shadow-xl shadow-mint-200 relative z-10">
-          <span className="text-white font-bold text-2xl leading-none">O</span>
+          <span className="text-white font-bold text-2xl leading-none">E</span>
         </div>
 
         {/* Modern orbital spinner around logo */}
@@ -26,7 +26,7 @@ export const Loading = ({ className = '', fullPage = true }: LoadingProps) => {
 
       <div className="flex flex-col items-center gap-2 mt-2">
         <h3 className="text-[11px] font-black text-slate-800 tracking-[0.4em] uppercase pl-[0.4em]">
-          OpticView
+          Eyewear
         </h3>
         <div className="flex items-center gap-1.5 opacity-40">
           <span className="w-1 h-1 bg-mint-400 rounded-full animate-bounce [animation-delay:-0.3s]" />

@@ -194,7 +194,7 @@ export default function CustomerHeader({ isTranslucent = false }: { isTranslucen
       navListIcon={
         !isSearchExpanded ? (
           <div className="flex items-center gap-4 transition-all duration-300">
-            <div onClick={() => setIsSearchExpanded(true)} className="cursor-pointer">
+            {/* <div onClick={() => setIsSearchExpanded(true)} className="cursor-pointer">
               <Input
                 placeholder={'Search glasses, frames...'}
                 size="sm"
@@ -209,7 +209,7 @@ export default function CustomerHeader({ isTranslucent = false }: { isTranslucen
                 className="w-full bg-mint-300 border-mint-300 rounded-xl"
                 onFocus={() => setIsSearchExpanded(true)}
               />
-            </div>
+            </div> */}
             <button
               className="p-2 hover:bg-mint-200 rounded-full transition-all relative group cursor-pointer"
               aria-label="Wishlist"

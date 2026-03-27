@@ -76,19 +76,19 @@ export default function Header({
       <Container maxWidth={containerWidth} justify={containerJustify}>
         <div className="flex items-center justify-between w-full h-[70px] gap-4">
           {logo && (
-            <div className="flex" style={{ justifyContent: leftJustify }}>
+            <div className="flex-1 flex items-center" style={{ justifyContent: leftJustify }}>
               {logo}
             </div>
           )}
 
           {navListContent && (
-            <div className="flex-1 flex" style={{ justifyContent: centerJustify }}>
+            <div className="flex-1 flex items-center" style={{ justifyContent: centerJustify }}>
               {navListContent}
             </div>
           )}
 
           {navListIcon && (
-            <div className="flex" style={{ justifyContent: rightJustify }}>
+            <div className="flex-1 flex items-center" style={{ justifyContent: rightJustify }}>
               {navListIcon}
             </div>
           )}

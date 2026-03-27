@@ -97,10 +97,9 @@ export default function SaleStaffOrderPage() {
 
   const {
     invoices: invoiceList,
-    pagination,
     loading: isLoading,
     fetchInvoices: refetch
-  } = useSalesStaffInvoices(page, limit, statusFilter, searchQuery, isInvoicesActive)
+  } = useSalesStaffInvoices(1, 100, statusFilter, searchQuery, isInvoicesActive)
 
   const selectedInvoice = useMemo(
     () => invoiceList.find((inv) => inv.id === selectedInvoiceId) ?? null,
@@ -140,11 +139,17 @@ export default function SaleStaffOrderPage() {
     return list
   }, [invoiceList, searchQuery, orderTypeFilter, statusFilter])
 
-  const serverTotal = pagination?.total || 0
-  const adjustedTotalPages =
-    filteredInvoices.length === 0 && page === 1 ? 1 : pagination?.totalPages || 1
+  const total = filteredInvoices.length
+  const totalPages = Math.max(1, Math.ceil(total / limit))
+  const safePage = Math.min(page, totalPages)
 
-  const paginatedInvoices = filteredInvoices
+  const paginatedInvoices = useMemo(() => {
+    const start = (safePage - 1) * limit
+    return filteredInvoices.slice(start, start + limit)
+  }, [filteredInvoices, safePage, limit])
+
+  const { invoices: metricsInvoices } = useSalesStaffInvoices(1, 100, 'All', '', isInvoicesActive)
+  const globalReturnHook = useReturnPageTickets(staffId || '', true)
 
   const metrics = useMemo(() => {
     const counts: Record<string, number> = {
@@ -153,7 +158,7 @@ export default function SaleStaffOrderPage() {
       [OrderType.RETURN]: 0,
       [OrderType.PRE_ORDER]: 0
     }
-    invoiceList.forEach((inv: Invoice) => {
+    metricsInvoices.forEach((inv: Invoice) => {
       if (inv.orders && inv.orders.length > 0) {
         inv.orders.forEach((o) => {
           const types = Array.isArray(o.type) ? o.type : [o.type]
@@ -171,10 +176,9 @@ export default function SaleStaffOrderPage() {
       }
     })
 
-    // Override RETURN count with real data from returnHook
-    counts[OrderType.RETURN] = returnHook.pagination.total || 0
+    // Override RETURN count with real data from globalReturnHook (unfiltered)
+    counts[OrderType.RETURN] = globalReturnHook.pagination.total || 0
 
-    // Recalculate total with the updated return count
     const totalWithReturns = Object.values(counts).reduce((a, b) => a + b, 0) || 1
 
     const pct = (key: string) => Math.round((counts[key] / totalWithReturns) * 100)
@@ -212,7 +216,7 @@ export default function SaleStaffOrderPage() {
         trend: { label: 'of total', value: pct(OrderType.PRE_ORDER), isPositive: true }
       }
     ]
-  }, [invoiceList, returnHook.pagination.total])
+  }, [metricsInvoices, globalReturnHook.pagination.total])
 
   const handleStatusChange = (status: string) => {
     setSearchParams((prev) => {
@@ -467,10 +471,10 @@ export default function SaleStaffOrderPage() {
                   processing={processing}
                   isLockedByOther={isLockedByOther}
                 />
-                {(serverTotal > 0 || filteredInvoices.length > 0) && (
+                {filteredInvoices.length > 0 && (
                   <OrderPagination
-                    page={page}
-                    totalPages={adjustedTotalPages}
+                    page={safePage}
+                    totalPages={totalPages}
                     isLoading={isLoading}
                     onPageChange={setPage}
                   />

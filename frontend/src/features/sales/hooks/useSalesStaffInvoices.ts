@@ -57,11 +57,45 @@ export function useSalesStaffInvoices(
                 orderIds.map(async (item) => {
                   const orderId = (typeof item === 'string' ? item : item.id || item._id) as string
                   if (!orderId) return null
+
+                  // Optimization: If item is an object and has type/status, use it directly
+                  if (typeof item === 'object' && 'type' in item) {
+                    const o = item as any
+                    const isMfg = (Array.isArray(o.type) ? o.type : [o.type]).some((t: string) =>
+                      String(t).includes(OrderType.MANUFACTURING)
+                    )
+                    const verifiedStatuses = [
+                      OrderStatus.VERIFIED,
+                      OrderStatus.APPROVE,
+                      OrderStatus.APPROVED,
+                      OrderStatus.WAITING_ASSIGN,
+                      OrderStatus.ASSIGNED,
+                      OrderStatus.MAKING,
+                      OrderStatus.PACKAGING,
+                      OrderStatus.COMPLETED,
+                      OrderStatus.ONBOARD,
+                      OrderStatus.DELIVERED,
+                      OrderStatus.DELIVERING,
+                      OrderStatus.SHIPPED,
+                      OrderStatus.PROCESSING
+                    ]
+                    const isVerified = (verifiedStatuses as string[]).includes(
+                      o.status?.toUpperCase()
+                    )
+                    return {
+                      id: orderId,
+                      type: o.type,
+                      status: o.status,
+                      isPrescription: isMfg,
+                      isVerified: isVerified
+                    }
+                  }
+
                   try {
                     const detailRes = await salesService.getOrderById(orderId)
                     const o = detailRes.data.order
 
-                    const isMfg = (Array.isArray(o.type) ? o.type : [o.type]).some((t) =>
+                    const isMfg = (Array.isArray(o.type) ? o.type : [o.type]).some((t: string) =>
                       String(t).includes(OrderType.MANUFACTURING)
                     )
 

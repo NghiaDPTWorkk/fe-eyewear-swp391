@@ -1,6 +1,7 @@
 import { Card } from '@/shared/components/ui/card'
 import { cn } from '@/lib/utils'
 import { DETAILED_ORDER_STATUS, InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
+import { CircleX, CircleDollarSign } from 'lucide-react'
 
 interface OrderStatusTrackerProps {
   status: InvoiceStatus
@@ -94,34 +95,32 @@ export function OrderStatusTracker({ status }: OrderStatusTrackerProps) {
     return (
       <Card
         className={cn(
-          'p-6 mb-8 border-2 border-dashed',
+          'p-10 mb-8 border-2 border-dashed flex flex-col items-center text-center',
           isRefunded ? 'border-primary-100 bg-primary-50/10' : 'border-danger-100 bg-danger-50/10'
         )}
       >
-        <div className="flex items-center gap-4">
-          <div
+        <div
+          className={cn(
+            'w-16 h-16 rounded-full flex items-center justify-center mb-6',
+            isRefunded ? 'bg-primary-100 text-primary-600' : 'bg-danger-100 text-danger-600'
+          )}
+        >
+          {isRefunded ? <CircleDollarSign size={32} /> : <CircleX size={32} />}
+        </div>
+        <div>
+          <h4
             className={cn(
-              'w-12 h-12 rounded-full flex items-center justify-center text-2xl',
-              isRefunded ? 'bg-primary-100 text-primary-600' : 'bg-danger-100 text-danger-600'
+              'text-xl font-bold uppercase tracking-widest mb-2',
+              isRefunded ? 'text-primary-600' : 'text-danger-600'
             )}
           >
-            {isRefunded ? '💰' : '⚠️'}
-          </div>
-          <div>
-            <p
-              className={cn(
-                'font-bold uppercase tracking-wider text-xs mb-1',
-                isRefunded ? 'text-primary-600' : 'text-danger-600'
-              )}
-            >
-              {DETAILED_ORDER_STATUS[status]}
-            </p>
-            <p className="text-sm font-medium text-gray-600">
-              {isRefunded
-                ? 'Your order has been refunded. Please check your bank account.'
-                : 'This order has been closed. Please contact support if you have questions.'}
-            </p>
-          </div>
+            {DETAILED_ORDER_STATUS[status]}
+          </h4>
+          <p className="text-sm font-medium text-gray-600 max-w-md mx-auto leading-relaxed">
+            {isRefunded
+              ? 'Your order has been refunded. Please check your bank account or contact us for more information.'
+              : 'This order has been closed and cancelled. Please contact support if you have any questions or concerns.'}
+          </p>
         </div>
       </Card>
     )

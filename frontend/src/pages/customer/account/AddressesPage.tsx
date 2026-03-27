@@ -49,7 +49,7 @@ export function AddressesPage() {
   const isEmpty = addresses.length === 0
 
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
       <div className="flex justify-between items-end mb-8">
         <div>
           <h2 className="text-[32px] font-bold text-mint-1200 mb-2">My Addresses</h2>
@@ -96,7 +96,7 @@ export function AddressesPage() {
               setAddressToEdit(null)
               setIsModalOpen(true)
             }}
-            className="rounded-2xl px-10 py-7 bg-primary-600 text-white font-bold uppercase tracking-[0.2em] shadow-lg shadow-primary-200 hover:bg-primary-700 transition-all font-heading"
+            className="rounded-2xl px-8 py-4 bg-primary-600 text-white font-bold uppercase tracking-[0.1em] shadow-lg shadow-primary-200 hover:bg-primary-700 transition-all font-heading text-sm"
           >
             Add your first address
           </Button>

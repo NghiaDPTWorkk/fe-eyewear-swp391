@@ -1,4 +1,4 @@
-import { Glasses, FilePlus, ShoppingCart, Layers, MoveRight } from 'lucide-react'
+import { Glasses, FilePlus, ShoppingCart, Layers } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 export const BuySteps = () => {
@@ -55,19 +55,13 @@ export const BuySteps = () => {
             to="/eyeglasses"
             className="group relative px-10 py-4 bg-mint-1200 text-white font-bold rounded-xl overflow-hidden shadow-lg hover:shadow-primary-500/30 transition-all active:scale-95"
           >
-            <span className="relative z-10 flex items-center gap-2">
-              SHOP EYEGLASSES
-              <MoveRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </span>
+            <span className="relative z-10 flex items-center justify-center">SHOP EYEGLASSES</span>
           </Link>
           <Link
             to="/sunglasses"
             className="group relative px-10 py-4 bg-mint-1200 text-white font-bold rounded-xl overflow-hidden shadow-lg hover:shadow-primary-500/30 transition-all active:scale-95"
           >
-            <span className="relative z-10 flex items-center gap-2">
-              SHOP SUNGLASSES
-              <MoveRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </span>
+            <span className="relative z-10 flex items-center justify-center">SHOP SUNGLASSES</span>
           </Link>
         </div>
       </div>

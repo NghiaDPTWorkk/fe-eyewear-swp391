@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Eye, EyeOff } from 'lucide-react'
 import type { LoginRequest } from '@/shared/types'
 import { useLogin } from '@/features/auth/hooks/useLogin'
-import { Button, Checkbox, Input, FormField, Divider } from '@/components'
 import { getOrCreateDeviceId } from '@/shared/utils/device.utils'
 import { ENDPOINTS } from '@/api/endpoints'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
+import { SIGN_IN_SVG_PATHS } from '@/shared/constants/svg-paths'
+import { Checkbox } from '@/shared/components/ui/checkbox/Checkbox'
 
 interface LoginFormProps {
   role?: string
@@ -44,119 +44,136 @@ export const LoginForm = ({ role: _role }: LoginFormProps) => {
   }
 
   return (
-    <form onSubmit={formik.handleSubmit} className="w-full">
-      <FormField label="Email" className="mb-4">
-        <Input
-          type="email"
-          placeholder="example@gmail.com"
-          {...formik.getFieldProps('email')}
-          size="lg"
-          className={formik.touched.email && formik.errors.email ? 'border-red-500' : ''}
-          rightElement={
-            formik.values.email && !formik.errors.email ? (
-              <svg className="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor">
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
+    <form onSubmit={formik.handleSubmit} className="flex w-full flex-col gap-6">
+      {/* Form Fields */}
+      <div className="flex w-full flex-col gap-4">
+        {/* Email Field */}
+        <div className="flex w-full flex-col gap-2">
+          <label className="text-[12px] font-bold uppercase tracking-[1.2px] text-[#00362d]">
+            Email
+          </label>
+          <div className="relative">
+            <div className="rounded-[12px] bg-[#d7fff3] transition-all focus-within:ring-2 focus-within:ring-[#00684e]/20">
+              <div className="flex items-center px-12 py-4">
+                <input
+                  type="email"
+                  placeholder="name@domain.com"
+                  {...formik.getFieldProps('email')}
+                  className="w-full bg-transparent text-[16px] text-[#00362d] outline-none placeholder:text-[#80b8aa]"
                 />
+              </div>
+            </div>
+            <div className="absolute left-4 top-1/2 -translate-y-1/2">
+              <svg className="size-[16.67px]" fill="none" viewBox="0 0 16.67 13.33">
+                <path d={SIGN_IN_SVG_PATHS.email} fill="#00684E" />
               </svg>
-            ) : undefined
-          }
-        />
-        {formik.touched.email && formik.errors.email && (
-          <p className="text-[11px] text-red-500 font-bold mt-1 ml-1">{formik.errors.email}</p>
-        )}
-      </FormField>
+            </div>
+          </div>
+          {formik.touched.email && formik.errors.email && (
+            <p className="ml-1 mt-1 text-[11px] font-bold text-red-500">{formik.errors.email}</p>
+          )}
+        </div>
 
-      <FormField label="Password" className="mb-4">
-        <Input
-          type={showPassword ? 'text' : 'password'}
-          placeholder="Input password"
-          {...formik.getFieldProps('password')}
-          size="lg"
-          className={formik.touched.password && formik.errors.password ? 'border-red-500' : ''}
-          rightElement={
+        {/* Password Field */}
+        <div className="flex w-full flex-col gap-2">
+          <label className="text-[12px] font-bold uppercase tracking-[1.2px] text-[#00362d]">
+            Password
+          </label>
+          <div className="relative">
+            <div className="rounded-[12px] bg-[#d7fff3] transition-all focus-within:ring-2 focus-within:ring-[#00684e]/20">
+              <div className="flex items-center px-12 py-4">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  {...formik.getFieldProps('password')}
+                  className="w-full bg-transparent text-[16px] text-[#00362d] outline-none placeholder:text-[#80b8aa]"
+                />
+              </div>
+            </div>
+            <div className="absolute left-4 top-1/2 -translate-y-1/2">
+              <svg className="size-[17.5px]" fill="none" viewBox="0 0 13.33 17.5">
+                <path d={SIGN_IN_SVG_PATHS.password} fill="#00684E" />
+              </svg>
+            </div>
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="text-gray-400 hover:text-gray-600 focus:outline-none"
+              className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer opacity-60 hover:opacity-100"
             >
-              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              <svg className="h-[15px] w-[22px]" fill="none" viewBox="0 0 22 15">
+                <path d={SIGN_IN_SVG_PATHS.eye} fill="#00684E" />
+              </svg>
             </button>
-          }
-        />
-        {formik.touched.password && formik.errors.password && (
-          <p className="text-[11px] text-red-500 font-bold mt-1 ml-1">{formik.errors.password}</p>
-        )}
-      </FormField>
+          </div>
+          {formik.touched.password && formik.errors.password && (
+            <p className="ml-1 mt-1 text-[11px] font-bold text-red-500">{formik.errors.password}</p>
+          )}
+        </div>
 
-      <div className="mb-6 flex items-center justify-between">
-        <Checkbox
-          isChecked={rememberMe}
-          onCheckedChange={setRememberMe}
-          label="Remember me"
-          size="sm"
-        />
-        <a href="#" className="text-sm font-medium text-primary-600 hover:text-primary-700">
-          Forgot Password?
-        </a>
+        {/* Remember & Forgot */}
+        <div className="flex items-center justify-between">
+          <Checkbox
+            isChecked={rememberMe}
+            onCheckedChange={setRememberMe}
+            label="Remember me"
+            size="md"
+            labelClassName="text-[14px] font-medium text-[#00362d]"
+          />
+          <a href="#" className="text-[14px] font-bold text-[#00362d] hover:underline">
+            Forgot Password?
+          </a>
+        </div>
       </div>
 
-      <Button
-        type="submit"
-        variant="solid"
-        colorScheme="primary"
-        isFullWidth
-        size="lg"
-        className="mb-4"
-        disabled={isPending || !formik.isValid}
-      >
-        Log In
-      </Button>
-      {_role !== 'staff' && (
-        <>
-          <Divider className="mb-4" />
+      {/* Actions */}
+      <div className="flex flex-col gap-3 pb-2">
+        <button
+          type="submit"
+          disabled={isPending || !formik.isValid}
+          className="relative flex h-[50px] w-full cursor-pointer items-center justify-center rounded-[10px] bg-[#00684e] text-base font-bold text-[#c6ffe6] shadow-[0_10px_15px_-3px_rgba(0,104,78,0.15)] transition-all hover:bg-[#005a42] disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {isPending ? 'Logging in...' : 'Log In'}
+        </button>
 
-          <button
-            type="button"
-            className="mb-6 flex w-full items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-700 shadow-sm transition-all hover:bg-gray-50 hover:shadow-md active:scale-[0.98]"
-            onClick={handleGoogleLogin}
-          >
-            <svg className="h-5 w-5" viewBox="0 0 24 24">
-              <path
-                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                fill="#4285F4"
-              />
-              <path
-                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-1.02.68-2.33 1.08-3.71 1.08-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                fill="#34A853"
-              />
-              <path
-                d="M5.84 14.12c-.22-.66-.35-1.36-.35-2.12s.13-1.5.35-2.12V7.04H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.96l3.66-2.84z"
-                fill="#FBBC05"
-              />
-              <path
-                d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.04l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                fill="#EA4335"
-              />
-            </svg>
-            Sign in with Google
-          </button>
-          <p className="text-center text-sm text-gray-500">
-            Don't have an account?{' '}
-            <Link to="/register" className="font-medium text-primary-600 hover:text-primary-700">
-              Sign Up
-            </Link>
-          </p>
-        </>
-      )}
+        {_role !== 'staff' && (
+          <>
+            <div className="relative flex items-center justify-center py-2">
+              <div className="h-px w-full bg-[#00684e]/10"></div>
+              <span className="absolute bg-white px-4 text-[12px] font-bold uppercase tracking-[1.2px] text-[#00362d]/40">
+                Or
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleGoogleLogin}
+              className="flex h-[50px] w-full items-center justify-center gap-3 rounded-[10px] border border-[#00684e]/20 bg-white font-bold text-[#00362d] transition-all hover:bg-gray-50 text-[14px]"
+            >
+              <svg className="size-4" viewBox="0 0 20 20">
+                <path d={SIGN_IN_SVG_PATHS.google_g} fill="#4285F4" />
+                <path d={SIGN_IN_SVG_PATHS.google_green} fill="#34A853" />
+                <path d={SIGN_IN_SVG_PATHS.google_yellow} fill="#FBBC05" />
+                <path d={SIGN_IN_SVG_PATHS.google_red} fill="#EA4335" />
+              </svg>
+              Sign in with Google
+            </button>
+
+            <p className="text-center text-[16px] text-[#00362d]">
+              Don't have an account?{' '}
+              <Link to="/register" className="font-bold text-[#00684e] hover:underline">
+                Sign Up
+              </Link>
+            </p>
+          </>
+        )}
+      </div>
+
       {_role !== 'staff' && (
-        <div className="mt-6 pt-2 border-t border-gray-100 text-center">
+        <div className="border-t border-gray-100 pt-6 text-center">
           <span className="text-xs text-gray-400">Are you a staff member? </span>
           <Link
             to="/admin/login"
-            className="text-xs font-semibold text-gray-500 hover:text-primary-600 transition-colors"
+            className="text-xs font-semibold text-gray-500 transition-colors hover:text-[#00684e]"
           >
             Staff Portal
           </Link>

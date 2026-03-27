@@ -13,6 +13,12 @@ export const PATHS = {
     SUNGLASSES: '/products/sunglasses',
     LENSES: '/products/lenses'
   },
+  POLICIES: {
+    PRIVACY: '/policies/privacy',
+    ORDER_PAYMENT: '/policies/order-payment',
+    SHIPPING: '/policies/shipping',
+    RETURN_WARRANTY: '/policies/return-warranty'
+  },
   CART: '/cart',
   CHECKOUT: '/checkout',
   ACCOUNT: {

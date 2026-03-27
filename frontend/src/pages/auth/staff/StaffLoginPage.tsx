@@ -2,6 +2,7 @@ import { LoginForm } from '@/components/layout/login-form'
 import { SIGN_IN_SVG_PATHS } from '@/shared/constants/svg-paths'
 import signinPremium from '@/assets/images/signin-premium.png'
 import { Link } from 'react-router-dom'
+import { PATHS } from '@/routes/paths'
 import { CosmicBackground } from '@/components/layout/CosmicBackground'
 
 export const StaffLoginPage = () => {
@@ -86,27 +87,35 @@ export const StaffLoginPage = () => {
             </div>
 
             <div className="flex flex-wrap justify-center gap-8 text-[12px] font-medium text-white/60">
-              <Link to="#" className="transition-colors hover:text-[#4ad7b0]">
+              <Link to={PATHS.POLICIES.PRIVACY} className="transition-colors hover:text-[#4ad7b0]">
                 Internal Policy
               </Link>
-              <Link to="#" className="transition-colors hover:text-[#4ad7b0]">
-                System Status
+              <Link
+                to={PATHS.POLICIES.ORDER_PAYMENT}
+                className="transition-colors hover:text-[#4ad7b0]"
+              >
+                Terms of Service
               </Link>
-              <Link to="#" className="transition-colors hover:text-[#4ad7b0]">
+              <Link to={PATHS.POLICIES.SHIPPING} className="transition-colors hover:text-[#4ad7b0]">
                 Support
               </Link>
             </div>
 
             <div className="flex gap-4">
-              <div className="group flex size-9 items-center justify-center rounded-full border border-white/10 bg-white/5 transition-all hover:bg-[#4ad7b0]">
+              <a
+                href="https://eyewear-optic.shop/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex size-9 items-center justify-center rounded-full border border-white/10 bg-white/5 transition-all hover:bg-[#4ad7b0]"
+              >
                 <svg
                   className="size-[14px] transition-colors group-hover:fill-black"
                   fill="none"
                   viewBox="0 0 16.67 16.67"
                 >
-                  <path d={SIGN_IN_SVG_PATHS.facebook} fill="white" />
+                  <path d={SIGN_IN_SVG_PATHS.globe} fill="white" />
                 </svg>
-              </div>
+              </a>
             </div>
           </div>
         </footer>

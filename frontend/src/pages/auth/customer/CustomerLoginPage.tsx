@@ -2,6 +2,7 @@ import { LoginForm } from '@/components/layout/login-form'
 import { SIGN_IN_SVG_PATHS } from '@/shared/constants/svg-paths'
 import signinPremium from '@/assets/images/signin-premium.png'
 import { Link } from 'react-router-dom'
+import { PATHS } from '@/routes/paths'
 import { CosmicBackground } from '@/components/layout/CosmicBackground'
 
 export const CustomerLoginPage = () => {
@@ -81,20 +82,31 @@ export const CustomerLoginPage = () => {
           </div>
 
           <div className="flex flex-wrap justify-center gap-8 text-[12px] font-medium text-white/60">
-            <Link to="#" className="transition-colors hover:text-[#4ad7b0]">
+            <Link to={PATHS.POLICIES.PRIVACY} className="transition-colors hover:text-[#4ad7b0]">
               Privacy Policy
             </Link>
-            <Link to="#" className="transition-colors hover:text-[#4ad7b0]">
+            <Link
+              to={PATHS.POLICIES.ORDER_PAYMENT}
+              className="transition-colors hover:text-[#4ad7b0]"
+            >
               Terms of Service
             </Link>
-            <Link to="#" className="transition-colors hover:text-[#4ad7b0]">
-              Shipping / Returns
+            <Link to={PATHS.POLICIES.SHIPPING} className="transition-colors hover:text-[#4ad7b0]">
+              Shipping
+            </Link>
+            <Link
+              to={PATHS.POLICIES.RETURN_WARRANTY}
+              className="transition-colors hover:text-[#4ad7b0]"
+            >
+              Returns
             </Link>
           </div>
 
           <div className="flex gap-4">
             <a
-              href="#"
+              href="https://eyewear-optic.shop/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="group flex size-9 items-center justify-center rounded-full border border-white/10 bg-white/5 transition-all hover:bg-[#4ad7b0]"
             >
               <svg
@@ -102,11 +114,13 @@ export const CustomerLoginPage = () => {
                 fill="none"
                 viewBox="0 0 16.67 16.67"
               >
-                <path d={SIGN_IN_SVG_PATHS.facebook} fill="white" />
+                <path d={SIGN_IN_SVG_PATHS.globe} fill="white" />
               </svg>
             </a>
             <a
-              href="#"
+              href="https://eyewear-optic.shop/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="group flex size-9 items-center justify-center rounded-full border border-white/10 bg-white/5 transition-all hover:bg-[#4ad7b0]"
             >
               <svg

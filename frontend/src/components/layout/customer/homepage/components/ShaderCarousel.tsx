@@ -217,16 +217,19 @@ export default function ShaderCarousel({ imagePaths, maskPath, onLoaded }: Shade
                   <p className="text-base md:text-lg text-white/75 max-w-xl font-medium drop-shadow-lg mb-6 pointer-events-none">
                     {content.description}
                   </p>
-                  <div className="flex flex-wrap gap-4">
-                    {i === SLIDE_CONTENT.length - 1 && (
+                  {i === 2 && (
+                    <div className="flex flex-wrap gap-4">
                       <button
-                        onClick={() => navigate('/eyeglasses')}
+                        onClick={() => {
+                          navigate('/eyeglasses')
+                          window.scrollTo(0, 0)
+                        }}
                         className="px-8 py-4 bg-primary-500/80 backdrop-blur-md text-white font-bold rounded-2xl border border-white/20 hover:bg-primary-500/100 transition-all duration-500 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] hover:shadow-primary-500/40 transform hover:-translate-y-1 pointer-events-auto"
                       >
                         Shop Now
                       </button>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </SplideSlide>

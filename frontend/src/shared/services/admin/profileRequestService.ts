@@ -1,8 +1,5 @@
 import { ENDPOINTS, httpClient } from '@/api'
-import type {
-  ProfileRequestListResponse,
-  ProfileRequestDetailResponse
-} from '@/shared/types'
+import type { ProfileRequestListResponse, ProfileRequestDetailResponse } from '@/shared/types'
 
 export const profileRequestService = {
   getProfileRequests(page: number = 1, limit: number = 10) {
@@ -12,9 +9,7 @@ export const profileRequestService = {
   },
 
   getProfileRequestDetail(id: string) {
-    return httpClient.get<ProfileRequestDetailResponse>(
-      ENDPOINTS.ADMIN.PROFILE_REQUESTS.DETAIL(id)
-    )
+    return httpClient.get<ProfileRequestDetailResponse>(ENDPOINTS.ADMIN.PROFILE_REQUESTS.DETAIL(id))
   },
 
   approveRequest(id: string) {

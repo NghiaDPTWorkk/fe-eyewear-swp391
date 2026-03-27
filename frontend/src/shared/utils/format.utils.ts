@@ -15,7 +15,7 @@ export function formatPrice(price: number | undefined | null): string {
  */
 export function formatDate(date: string | Date | undefined | null): string {
   if (!date) return '—'
-  
+
   if (typeof date === 'string' && date.includes('/')) {
     // Handle DD/MM/YYYY or HH:mm:ss DD/MM/YYYY
     const parts = date.split(' ')
@@ -37,7 +37,7 @@ export function formatDate(date: string | Date | undefined | null): string {
 
   const d = typeof date === 'string' ? new Date(date) : date
   if (isNaN(d.getTime())) return String(date)
-    
+
   return d.toLocaleDateString('en-GB', {
     day: '2-digit',
     month: 'short',

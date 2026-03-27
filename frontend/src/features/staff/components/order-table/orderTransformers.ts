@@ -23,7 +23,6 @@ const calculateTimeElapsed = (createdAt: string): string => {
  * Helper: Map status sang màu
  */
 const getStatusColor = (status: string): string => {
-  // ========== START NEW CODE ==========
   const statusColorMap: Record<string, string> = {
     [OrderStatus.PENDING]: 'bg-yellow-100 text-yellow-600',
     [OrderStatus.ASSIGNED]: 'bg-blue-100 text-blue-600',
@@ -33,7 +32,6 @@ const getStatusColor = (status: string): string => {
     [OrderStatus.CANCELED]: 'bg-red-100 text-red-600',
     [OrderStatus.REFUNDED]: 'bg-gray-100 text-gray-600'
   }
-  // ========== END NEW CODE ==========
   return statusColorMap[status] || 'bg-gray-100 text-gray-600'
 }
 

@@ -29,6 +29,7 @@ import ConfirmationModal from '@/shared/components/ui/ConfirmationModal'
 import ShippingInfoSeal from '@/components/layout/staff/operation-staff/shipping-info-seal/ShippingInfoSeal'
 import { createPortal } from 'react-dom'
 import toast from 'react-hot-toast'
+import { toTitleCase } from '@/shared/utils'
 
 export default function OperationShippingHandoverPage() {
   const { invoiceId } = useParams<{ invoiceId: string }>()
@@ -156,7 +157,7 @@ export default function OperationShippingHandoverPage() {
           </p>
         </div>
         <span className="px-6 py-2 bg-blue-100 text-blue-700 border border-blue-200 rounded-full text-xs font-bold uppercase tracking-widest">
-          {invoice.status.replace(/_/g, ' ')}
+          {toTitleCase(invoice.status)}
         </span>
       </div>
 

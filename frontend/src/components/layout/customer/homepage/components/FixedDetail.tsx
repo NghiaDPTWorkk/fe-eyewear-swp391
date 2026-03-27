@@ -5,8 +5,8 @@ export const FixedDetail: React.FC = () => {
   return (
     <div className="w-full bg-mint-200">
       {/* Top Decoration Banner */}
-      <div className="w-full bg-gradient-to-r from-[#eaf7f4] to-[#a3ddd0] py-3 text-center">
-        <p className="text-[10px] md:text-[11px] font-bold tracking-[0.15em] text-slate-700 uppercase">
+      <div className="w-full bg-gradient-to-r from-[#eaf7f4] to-[#a3ddd0] py-10 text-center">
+        <p className="text-[30px] md:text-[20px] font-bold tracking-[0.15em] text-slate-700 uppercase">
           RAY-BAN & OAKLEY META AI GLASSES NOW WITH AN EXTRA 10% OFF LENSES
         </p>
       </div>
@@ -59,8 +59,12 @@ export const FixedDetail: React.FC = () => {
                   <div className="w-2 h-2 bg-slate-800 rotate-45" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-800 leading-none">Superior</span>
-                  <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400 leading-tight">Vision™</span>
+                  <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-800 leading-none">
+                    Superior
+                  </span>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400 leading-tight">
+                    Vision™
+                  </span>
                 </div>
               </div>
 
@@ -73,14 +77,20 @@ export const FixedDetail: React.FC = () => {
                   <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-mint-400 rounded-full blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-800 leading-none">Davis</span>
-                  <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400 leading-tight">Vision™</span>
+                  <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-800 leading-none">
+                    Davis
+                  </span>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400 leading-tight">
+                    Vision™
+                  </span>
                 </div>
               </div>
 
               {/* NVA - Clean Text Badge */}
               <div className="relative group overflow-hidden px-4 py-2 border-2 border-slate-800 rounded-sm hover:bg-slate-800 transition-colors duration-500">
-                <span className="text-sm font-black tracking-[0.15em] text-slate-800 group-hover:text-white transition-colors">NVA</span>
+                <span className="text-sm font-black tracking-[0.15em] text-slate-800 group-hover:text-white transition-colors">
+                  NVA
+                </span>
                 <div className="absolute top-0 right-0 w-3 h-3 bg-mint-400 translate-x-1/2 -translate-y-1/2 rotate-45" />
               </div>
             </div>

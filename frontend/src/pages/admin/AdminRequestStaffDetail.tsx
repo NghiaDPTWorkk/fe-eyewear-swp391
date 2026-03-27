@@ -46,7 +46,7 @@ export default function AdminRequestStaffDetail() {
         if (reqResponse.success && reqResponse.data.profileRequestDetail) {
           const detail = reqResponse.data.profileRequestDetail
           setRequest(detail)
-          
+
           // Fetch current staff info to compare
           const staffResponse = await adminAccountService.getAdminAccountDetail(detail.staffId)
           if (staffResponse.success) {
@@ -200,9 +200,13 @@ export default function AdminRequestStaffDetail() {
             <div className="pt-6 border-t border-neutral-50 flex flex-col gap-3">
               <div className="flex justify-between items-center text-xs">
                 <span className="font-bold text-neutral-400 uppercase tracking-widest">Status</span>
-                <span className={`font-bold px-3 py-1 rounded-full uppercase tracking-tighter ${
-                  request.status === 'PENDING' ? 'bg-amber-50 text-amber-600' : 'bg-mint-50 text-mint-600'
-                }`}>
+                <span
+                  className={`font-bold px-3 py-1 rounded-full uppercase tracking-tighter ${
+                    request.status === 'PENDING'
+                      ? 'bg-amber-50 text-amber-600'
+                      : 'bg-mint-50 text-mint-600'
+                  }`}
+                >
                   {request.status}
                 </span>
               </div>
@@ -210,7 +214,9 @@ export default function AdminRequestStaffDetail() {
                 <span className="font-bold text-neutral-400 uppercase tracking-widest">
                   Requested
                 </span>
-                <span className="font-medium text-neutral-500">{formatDate(request.createdAt)}</span>
+                <span className="font-medium text-neutral-500">
+                  {formatDate(request.createdAt)}
+                </span>
               </div>
             </div>
           </Card>
@@ -271,7 +277,9 @@ export default function AdminRequestStaffDetail() {
                         </div>
                       </td>
                       <td className="px-6 py-5">
-                        <span className={`text-sm font-medium ${change.isChanged ? 'text-neutral-400 line-through decoration-neutral-300' : 'text-gray-900'}`}>
+                        <span
+                          className={`text-sm font-medium ${change.isChanged ? 'text-neutral-400 line-through decoration-neutral-300' : 'text-gray-900'}`}
+                        >
                           {change.oldValue}
                         </span>
                       </td>
@@ -326,7 +334,8 @@ export default function AdminRequestStaffDetail() {
               <div className="p-8 border-t border-neutral-100 bg-neutral-50/50 text-center sticky bottom-0">
                 <p className="text-sm font-semibold text-neutral-400 italic flex items-center justify-center gap-2">
                   <IoAlertCircleOutline size={16} />
-                  This request has been {request.status.toLowerCase()} and can no longer be modified.
+                  This request has been {request.status.toLowerCase()} and can no longer be
+                  modified.
                 </p>
               </div>
             )}

@@ -72,7 +72,7 @@ export const RecentActivities: React.FC = () => {
           </p>
           <h3 className="text-lg font-bold text-gray-900 font-primary">Profile Requests</h3>
         </div>
-        <button 
+        <button
           onClick={() => navigate('/admin/request-update-profile')}
           className="px-4 py-1.5 bg-neutral-50 rounded-xl text-[11px] font-semibold text-neutral-600 border border-neutral-100 hover:bg-neutral-100 transition-colors"
         >
@@ -84,7 +84,9 @@ export const RecentActivities: React.FC = () => {
         {loading ? (
           <div className="py-10 flex flex-col items-center justify-center gap-2">
             <div className="w-8 h-8 border-2 border-mint-500 border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-[10px] font-semibold text-neutral-400 uppercase tracking-widest">Loading...</p>
+            <p className="text-[10px] font-semibold text-neutral-400 uppercase tracking-widest">
+              Loading...
+            </p>
           </div>
         ) : activities.length > 0 ? (
           activities.map((activity) => {
@@ -101,9 +103,7 @@ export const RecentActivities: React.FC = () => {
                   {config.icon}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-gray-900 truncate">
-                    {config.label}
-                  </p>
+                  <p className="text-sm font-semibold text-gray-900 truncate">{config.label}</p>
                   <p className="text-[11px] font-medium text-neutral-400 truncate">
                     By {activity.name} ({activity.email})
                   </p>

@@ -50,7 +50,11 @@ export default function AdminEditStaffPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
 
-  const { data: staffData, isLoading, isError } = useQuery({
+  const {
+    data: staffData,
+    isLoading,
+    isError
+  } = useQuery({
     queryKey: ['admin-staff-detail', id],
     queryFn: () => adminAccountService.getAdminAccountDetail(id!),
     enabled: !!id
@@ -72,15 +76,16 @@ export default function AdminEditStaffPage() {
   const staff = staffData?.data
 
   const initialValues = useMemo(() => {
-    if (!staff) return {
-      name: '',
-      citizenId: '',
-      phone: '',
-      email: '',
-      password: '',
-      role: 'SALE_STAFF',
-      avatar: ''
-    }
+    if (!staff)
+      return {
+        name: '',
+        citizenId: '',
+        phone: '',
+        email: '',
+        password: '',
+        role: 'SALE_STAFF',
+        avatar: ''
+      }
     return {
       name: staff.name || '',
       citizenId: staff.citizenId || '',
@@ -124,7 +129,11 @@ export default function AdminEditStaffPage() {
     return (
       <Container className="py-20 text-center">
         <h2 className="text-2xl font-bold text-red-500">Error loading staff details</h2>
-        <Button onClick={() => navigate('/admin/staff')} variant="outline" className="mt-6 rounded-2xl">
+        <Button
+          onClick={() => navigate('/admin/staff')}
+          variant="outline"
+          className="mt-6 rounded-2xl"
+        >
           Back to Staff List
         </Button>
       </Container>
@@ -141,11 +150,18 @@ export default function AdminEditStaffPage() {
               onClick={() => navigate('/admin/staff')}
               className="w-12 h-12 rounded-2xl bg-white/80 backdrop-blur-xl border border-white/50 flex items-center justify-center text-neutral-400 hover:text-mint-600 hover:scale-105 transition-all shadow-sm active:scale-95 group mb-4"
             >
-              <IoArrowBackOutline size={20} className="group-hover:-translate-x-0.5 transition-transform" />
+              <IoArrowBackOutline
+                size={20}
+                className="group-hover:-translate-x-0.5 transition-transform"
+              />
             </button>
             <div className="mb-4">
-              <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Edit Staff Profile</h1>
-              <p className="text-sm font-bold text-neutral-400 uppercase tracking-widest mt-1">Management Console</p>
+              <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
+                Edit Staff Profile
+              </h1>
+              <p className="text-sm font-bold text-neutral-400 uppercase tracking-widest mt-1">
+                Management Console
+              </p>
             </div>
           </div>
         </Container>
@@ -170,11 +186,11 @@ export default function AdminEditStaffPage() {
                   <div className="relative group mb-6">
                     <div className="w-40 h-40 rounded-full bg-gradient-to-br from-mint-100 to-sky-100 p-1.5 shadow-inner">
                       <div className="w-full h-full rounded-full bg-white overflow-hidden border-4 border-white shadow-xl">
-                        {(avatarPreview || values.avatar) ? (
-                          <img 
-                            src={avatarPreview || values.avatar} 
-                            alt={values.name} 
-                            className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-500" 
+                        {avatarPreview || values.avatar ? (
+                          <img
+                            src={avatarPreview || values.avatar}
+                            alt={values.name}
+                            className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-500"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-neutral-200">
@@ -209,7 +225,7 @@ export default function AdminEditStaffPage() {
                       className="w-full px-4 py-3 bg-neutral-50/50 border border-neutral-100 rounded-2xl text-[11px] font-bold focus:outline-none focus:ring-4 focus:ring-mint-500/5 focus:border-mint-500 transition-all"
                     />
                   </div>
-                  
+
                   <div className="space-y-1">
                     <h4 className="text-xl font-bold text-gray-900">{values.name || '---'}</h4>
                     <span className="inline-flex px-3 py-1 bg-mint-50 text-mint-600 rounded-full text-[10px] font-bold uppercase tracking-widest border border-mint-100">
@@ -228,7 +244,9 @@ export default function AdminEditStaffPage() {
                       <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest mb-1 flex items-center gap-1">
                         <IoTimeOutline className="text-amber-500" /> Joined
                       </p>
-                      <p className="text-[12px] font-bold text-gray-600">{staff.createdAt?.split(' ')[1]}</p>
+                      <p className="text-[12px] font-bold text-gray-600">
+                        {staff.createdAt?.split(' ')[1]}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -244,20 +262,32 @@ export default function AdminEditStaffPage() {
                     </h5>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider px-1">Full Identity Name</label>
+                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider px-1">
+                          Full Identity Name
+                        </label>
                         <Field
                           name="name"
                           className={`w-full px-5 py-4 bg-neutral-50/50 border rounded-2xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-mint-500/5 ${touched.name && errors.name ? 'border-red-400 bg-red-50/10' : 'border-neutral-100 focus:border-mint-500'}`}
                         />
-                        <ErrorMessage name="name" component="p" className="text-[9px] font-bold text-red-500 px-1 pt-1" />
+                        <ErrorMessage
+                          name="name"
+                          component="p"
+                          className="text-[9px] font-bold text-red-500 px-1 pt-1"
+                        />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider px-1">ID Number (Citizen ID)</label>
+                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider px-1">
+                          ID Number (Citizen ID)
+                        </label>
                         <Field
                           name="citizenId"
                           className={`w-full px-5 py-4 bg-neutral-50/50 border rounded-2xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-mint-500/5 ${touched.citizenId && errors.citizenId ? 'border-red-400 bg-red-50/10' : 'border-neutral-100 focus:border-mint-500'}`}
                         />
-                        <ErrorMessage name="citizenId" component="p" className="text-[9px] font-bold text-red-500 px-1 pt-1" />
+                        <ErrorMessage
+                          name="citizenId"
+                          component="p"
+                          className="text-[9px] font-bold text-red-500 px-1 pt-1"
+                        />
                       </div>
                     </div>
                   </section>
@@ -277,7 +307,11 @@ export default function AdminEditStaffPage() {
                           type="email"
                           className={`w-full px-5 py-4 bg-neutral-50/50 border rounded-2xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-mint-500/5 ${touched.email && errors.email ? 'border-red-400 bg-red-50/10' : 'border-neutral-100 focus:border-mint-500'}`}
                         />
-                        <ErrorMessage name="email" component="p" className="text-[9px] font-bold text-red-500 px-1 pt-1" />
+                        <ErrorMessage
+                          name="email"
+                          component="p"
+                          className="text-[9px] font-bold text-red-500 px-1 pt-1"
+                        />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider px-1 inline-flex items-center gap-1.5">
@@ -287,7 +321,11 @@ export default function AdminEditStaffPage() {
                           name="phone"
                           className={`w-full px-5 py-4 bg-neutral-50/50 border rounded-2xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-mint-500/5 ${touched.phone && errors.phone ? 'border-red-400 bg-red-50/10' : 'border-neutral-100 focus:border-mint-500'}`}
                         />
-                        <ErrorMessage name="phone" component="p" className="text-[9px] font-bold text-red-500 px-1 pt-1" />
+                        <ErrorMessage
+                          name="phone"
+                          component="p"
+                          className="text-[9px] font-bold text-red-500 px-1 pt-1"
+                        />
                       </div>
                     </div>
                   </section>
@@ -299,7 +337,9 @@ export default function AdminEditStaffPage() {
                     </h5>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider px-1">Access Role Level</label>
+                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider px-1">
+                          Access Role Level
+                        </label>
                         <Field
                           as="select"
                           name="role"
@@ -312,14 +352,20 @@ export default function AdminEditStaffPage() {
                         </Field>
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider px-1">Reset Password (Optional)</label>
+                        <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider px-1">
+                          Reset Password (Optional)
+                        </label>
                         <Field
                           name="password"
                           type="password"
                           placeholder="leave empty to keep current"
                           className={`w-full px-5 py-4 bg-neutral-50/50 border rounded-2xl text-sm font-bold transition-all focus:outline-none focus:ring-4 focus:ring-mint-500/5 ${touched.password && errors.password ? 'border-red-400 bg-red-50/10' : 'border-neutral-100 focus:border-mint-500'}`}
                         />
-                        <ErrorMessage name="password" component="p" className="text-[9px] font-bold text-red-500 px-1 pt-1" />
+                        <ErrorMessage
+                          name="password"
+                          component="p"
+                          className="text-[9px] font-bold text-red-500 px-1 pt-1"
+                        />
                       </div>
                     </div>
                   </section>

@@ -39,8 +39,9 @@
     Độ trễ bám đuổi (0.65s): Con số này càng cao thì bóng càng "đuổi theo" chậm và mượt hơn.
     Sử dụng cubic-bezier để tạo cảm giác chuyển động vật lý tự nhiên, không bị khựng (lag-free).
   */
-  transition: transform 0.65s cubic-bezier(0.23, 1, 0.32, 1),
-              opacity 0.8s ease;
+  transition:
+    transform 0.65s cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 0.8s ease;
 
   /* Độ hiển thị: 1 khi có chuột trong vùng Carousel, 0 khi chuột rời đi */
   opacity: var(--spotlight-opacity, 0);
@@ -51,7 +52,7 @@
 
 /* Lớp phụ (::after) tạo thêm một điểm sáng tập trung nhỏ hơn ở chính giữa */
 .carousel-spotlight::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: 50px; /* Thu nhỏ so với lớp nền chính */
   /* Màu xanh mint sáng hơn (rgba 50, 197, 148) để tạo điểm nhấn chiều sâu */

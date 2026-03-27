@@ -27,7 +27,7 @@ export const PATHS = {
     SETTINGS: '/admin/settings',
     SUPPORT: '/admin/support'
   },
-  SALESTAFF: {
+  SALESSTAFF: {
     DASHBOARD: '/sale-staff/dashboard',
     CUSTOMERS: '/sale-staff/customers',
     PRESCRIPTION_ORDERS: '/sale-staff/orders/prescription-orders',

@@ -41,13 +41,13 @@ export default function OperationSettingPage() {
             <IoWarningOutline className="text-amber-500" size={24} />
           </div>
           <div className="flex-1">
-            <h4 className="text-base font-bold text-amber-900">
-              Profile Update Approval Required
-            </h4>
+            <h4 className="text-base font-bold text-amber-900">Profile Update Approval Required</h4>
             <p className="text-sm text-amber-800/80 mt-1.5 leading-relaxed font-medium">
               To maintain system integrity, all profile changes require{' '}
-              <span className="font-bold text-amber-900 underline decoration-amber-300 decoration-2 underline-offset-2">Admin or Manager approval</span> before
-              they take effect. Your updates will be securely submitted for review.
+              <span className="font-bold text-amber-900 underline decoration-amber-300 decoration-2 underline-offset-2">
+                Admin or Manager approval
+              </span>{' '}
+              before they take effect. Your updates will be securely submitted for review.
             </p>
           </div>
         </div>

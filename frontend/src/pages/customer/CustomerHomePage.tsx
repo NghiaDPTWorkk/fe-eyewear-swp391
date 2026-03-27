@@ -1,5 +1,10 @@
 import { useState, useMemo, useEffect } from 'react'
-import { BenefitsBar, ShaderCarousel, FixedDetail, BuyTutorial } from '@/components/layout/customer/homepage/components'
+import {
+  BenefitsBar,
+  ShaderCarousel,
+  FixedDetail,
+  BuyTutorial
+} from '@/components/layout/customer/homepage/components'
 import { ProductCarousel } from '@/shared/components/ui/product-carousel'
 import { useGetProductWithPagination } from '@/shared/hooks/products/useGetProductWithPagination'
 import { useTexture } from '@react-three/drei'
@@ -65,7 +70,7 @@ export const CustomerHomePage = () => {
             <ProductCarousel products={products} itemsPerView={4} autoPlayInterval={1000} />
           </div>
         </section>
-        <section className="py-15 bg-mint-200">
+        <section className="py-16 bg-mint-200">
           <FixedDetail />
         </section>
         <BuyTutorial />

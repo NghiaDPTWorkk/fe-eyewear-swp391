@@ -91,7 +91,7 @@ export default function SaleStaffPreOrdersPage() {
 
   const handleViewFullDetails = () => {
     if (selectedOrderId) {
-      navigate(PATHS.SALESTAFF.PRE_ORDER_DETAIL(selectedOrderId))
+      navigate(PATHS.SALESSTAFF.PRE_ORDER_DETAIL(selectedOrderId))
       setIsDrawerOpen(false)
     }
   }

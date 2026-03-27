@@ -49,14 +49,12 @@ interface OrderTableProps {
 const getOrderTypeStyles = (type: string, role: string) => {
   if (role === 'sales') {
     switch (type) {
-      // ========== START NEW CODE ==========
       case OrderType.NORMAL:
         return 'bg-emerald-50 text-emerald-600'
       case OrderType.PRE_ORDER:
         return 'bg-amber-50 text-amber-600'
       case OrderType.MANUFACTURING:
         return 'bg-indigo-50 text-indigo-600'
-      // ========== END NEW CODE ==========
       default:
         return 'bg-neutral-50 text-neutral-600'
     }
@@ -93,8 +91,16 @@ export default function OrderTable({
   const navigate = useNavigate()
   const { setCount } = useOrderCountStore()
 
-  const handleViewOrder = (orderId: string) => {
-    navigate(PATHS.OPERATIONSTAFF.ORDER_DETAIL(orderId))
+  const handleViewOrder = (order: Order) => {
+    if (isSales) {
+      if (order.orderType === OrderType.PRE_ORDER) {
+        navigate(PATHS.SALESSTAFF.PRE_ORDER_DETAIL(order.id))
+      } else {
+        navigate(PATHS.SALESSTAFF.REGULAR_DETAIL(order.id))
+      }
+    } else {
+      navigate(PATHS.OPERATIONSTAFF.ORDER_DETAIL(order.id))
+    }
   }
 
   // Dùng orders từ props nếu có, không thì dùng mock data
@@ -125,7 +131,10 @@ export default function OrderTable({
               isSales ? 'h-1 bg-neutral-100' : 'h-1.5 bg-gray-200'
             )}
           >
-            <div className="bg-emerald-400 h-full w-1/2 rounded-full"></div>
+            <div
+              className="bg-emerald-400 h-full rounded-full transition-all duration-500"
+              style={{ width: order.currentStatus === 'COMPLETED' ? '100%' : '50%' }}
+            ></div>
           </div>
         </div>
       ),
@@ -212,7 +221,7 @@ export default function OrderTable({
               size="sm"
               colorScheme="secondary"
               className="p-2"
-              onClick={() => handleViewOrder(order.id)}
+              onClick={() => handleViewOrder(order)}
             >
               <IoEyeOutline size={20} />
             </Button>
@@ -227,7 +236,7 @@ export default function OrderTable({
             isDisabled={!order.isNextActive || order.currentStatus === 'COMPLETED'}
             title={isSales ? 'Details' : 'Next'}
             rightIcon={!isSales ? <IoChevronForward /> : undefined}
-            onClick={() => handleViewOrder(order.id)}
+            onClick={() => handleViewOrder(order)}
           >
             {isSales && <IoChevronForward size={18} />}
             {!isSales && 'Next'}

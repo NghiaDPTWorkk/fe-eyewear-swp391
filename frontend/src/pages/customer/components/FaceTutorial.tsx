@@ -12,11 +12,15 @@ const FaceTutorial: React.FC = () => {
       <div className="bg-mint-200 py-5 md:py-10 border-b border-mint-300">
         <div className="container mx-auto px-2 max-w-6xl">
           <h1 className="text-3xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">
-            Find Your Perfect Match:<br />
-            <span className="text-mint-800 underline decoration-mint-400 decoration-4 underline-offset-8">A Guide to Face Shapes</span>
+            Find Your Perfect Match:
+            <br />
+            <span className="text-mint-800 underline decoration-mint-400 decoration-4 underline-offset-8">
+              A Guide to Face Shapes
+            </span>
           </h1>
           <p className="text-lg md:text-xl text-slate-600 max-w-2xl font-medium leading-relaxed">
-            Selecting the right eyewear is an art. Discover how to identify your face shape and choose the frames that highlight your best features.
+            Selecting the right eyewear is an art. Discover how to identify your face shape and
+            choose the frames that highlight your best features.
           </p>
         </div>
       </div>
@@ -28,7 +32,9 @@ const FaceTutorial: React.FC = () => {
           <div className="w-full lg:w-5/12">
             <div className="bg-mint-200 rounded-[3rem] p-6 md:p-8 shadow-sm border border-slate-100 flex flex-col items-center">
               <div className="mb-8 text-center w-full">
-                <h2 className="text-xl md:text-2xl font-bold text-slate-800 mb-2">Visualizing Your Shape</h2>
+                <h2 className="text-xl md:text-2xl font-bold text-slate-800 mb-2">
+                  Visualizing Your Shape
+                </h2>
                 <p className="text-slate-500 font-medium italic text-[10px] md:text-xs">
                   * This guide is for reference purposes only.
                 </p>
@@ -56,7 +62,9 @@ const FaceTutorial: React.FC = () => {
                 <div>
                   <h3 className="text-lg font-bold text-slate-800 mb-2">Contrast is Key</h3>
                   <p className="text-sm text-slate-600 leading-relaxed font-medium">
-                    The frame shape should provide a distinct contrast to your face shape. For instance, if you have a softer, round face, angular and geometric frames will add structure and definition.
+                    The frame shape should provide a distinct contrast to your face shape. For
+                    instance, if you have a softer, round face, angular and geometric frames will
+                    add structure and definition.
                   </p>
                 </div>
               </div>
@@ -70,7 +78,9 @@ const FaceTutorial: React.FC = () => {
                 <div>
                   <h3 className="text-lg font-bold text-slate-800 mb-2">Scale & Balance</h3>
                   <p className="text-sm text-slate-600 leading-relaxed font-medium">
-                    The scale of your frames should be proportionate to the size of your facial features. Ensure the frames don&apos;t overwhelm small features or look too diminutive on larger profiles.
+                    The scale of your frames should be proportionate to the size of your facial
+                    features. Ensure the frames don&apos;t overwhelm small features or look too
+                    diminutive on larger profiles.
                   </p>
                 </div>
               </div>
@@ -84,7 +94,9 @@ const FaceTutorial: React.FC = () => {
                 <div>
                   <h3 className="text-lg font-bold text-slate-800 mb-2">Color Harmony</h3>
                   <p className="text-sm text-slate-600 leading-relaxed font-medium">
-                    Choose a frame color that complements your skin undertones (warm or cool) and eye color. The right shade can brighten your appearance and complete your professional look.
+                    Choose a frame color that complements your skin undertones (warm or cool) and
+                    eye color. The right shade can brighten your appearance and complete your
+                    professional look.
                   </p>
                 </div>
               </div>

@@ -3,12 +3,7 @@ import { Container, MetricCard, Button } from '@/shared/components/ui'
 import { SystemOverview } from './components/dashboard/SystemOverview'
 import { RecentActivities } from './components/dashboard/RecentActivities'
 import { StaffDistribution } from './components/dashboard/StaffDistribution'
-import {
-  IoPeopleOutline,
-  IoPersonOutline,
-  IoCartOutline,
-  IoCalendarOutline,
-} from 'react-icons/io5'
+import { IoPeopleOutline, IoPersonOutline, IoCartOutline, IoCalendarOutline } from 'react-icons/io5'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { BreadcrumbPath } from '@/components/layout/staff/operation-staff/breadcrumb-path'
 import { adminAccountService } from '@/shared/services/admin/adminAccountService'
@@ -35,9 +30,7 @@ export default function AdminDashboardPage() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
 
   // Sync dates when period changes (optional, but keep simple for now)
-  const dateParams = period === 'year'
-    ? { period, year: selectedYear }
-    : { fromDate, toDate }
+  const dateParams = period === 'year' ? { period, year: selectedYear } : { fromDate, toDate }
 
   const { data: revenueData, isLoading: isRevenueLoading } = useRevenueStats(dateParams)
 
@@ -96,7 +89,11 @@ export default function AdminDashboardPage() {
             />
             <MetricCard
               label="TOTAL ORDERS"
-              value={isRevenueLoading ? '...' : String(revenueData?.rows?.reduce((sum, r) => sum + r.invoiceCount, 0) || 0)}
+              value={
+                isRevenueLoading
+                  ? '...'
+                  : String(revenueData?.rows?.reduce((sum, r) => sum + r.invoiceCount, 0) || 0)
+              }
               colorScheme="warning"
               trend={{ value: 5.4, label: 'vs last month', isPositive: true }}
               icon={<IoCartOutline size={22} />}
@@ -106,7 +103,9 @@ export default function AdminDashboardPage() {
           <div className="space-y-4">
             <div className="flex flex-wrap items-end gap-4 px-1">
               <div className="flex flex-col gap-1.5">
-                <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest ml-1">Period</span>
+                <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest ml-1">
+                  Period
+                </span>
                 <select
                   value={period}
                   onChange={(e) => setPeriod(e.target.value)}
@@ -120,10 +119,15 @@ export default function AdminDashboardPage() {
 
               {period === 'month' && (
                 <div className="flex flex-col gap-1.5 animate-in fade-in slide-in-from-left-2 duration-300">
-                  <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest ml-1">Date Selection</span>
+                  <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest ml-1">
+                    Date Selection
+                  </span>
                   <div className="flex items-center gap-2">
                     <div className="relative">
-                      <IoCalendarOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={14} />
+                      <IoCalendarOutline
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
+                        size={14}
+                      />
                       <input
                         type="date"
                         value={fromDate}
@@ -133,7 +137,10 @@ export default function AdminDashboardPage() {
                     </div>
                     <span className="text-neutral-300 font-bold">→</span>
                     <div className="relative">
-                      <IoCalendarOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={14} />
+                      <IoCalendarOutline
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
+                        size={14}
+                      />
                       <input
                         type="date"
                         value={toDate}
@@ -147,7 +154,9 @@ export default function AdminDashboardPage() {
 
               {period === 'year' && (
                 <div className="flex flex-col gap-1.5 animate-in fade-in slide-in-from-left-2 duration-300">
-                  <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest ml-1">Select Year</span>
+                  <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest ml-1">
+                    Select Year
+                  </span>
                   <input
                     type="number"
                     value={selectedYear}

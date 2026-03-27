@@ -9,7 +9,12 @@ interface SystemOverviewProps {
   year: number
 }
 
-export const SystemOverview: React.FC<SystemOverviewProps> = ({ period, fromDate, toDate, year }) => {
+export const SystemOverview: React.FC<SystemOverviewProps> = ({
+  period,
+  fromDate,
+  toDate,
+  year
+}) => {
   // Sync params based on received props
   const dateParams = React.useMemo(() => {
     if (period === 'year') return { period, year }
@@ -21,11 +26,11 @@ export const SystemOverview: React.FC<SystemOverviewProps> = ({ period, fromDate
 
   const stats = useMemo(() => {
     if (!data?.rows || data.rows.length === 0) return { total: 0, revenue: 0, rows: [] }
-    
+
     // Sum up totals from all rows in the range
     const totalOrders = data.rows.reduce((sum, r) => sum + r.invoiceCount, 0)
     const totalRev = data.rows.reduce((sum, r) => sum + r.totalRevenue, 0)
-    
+
     return {
       total: totalOrders,
       revenue: totalRev,
@@ -35,27 +40,27 @@ export const SystemOverview: React.FC<SystemOverviewProps> = ({ period, fromDate
 
   // Helper to generate SVG path from rows
   const chartPath = useMemo(() => {
-    if (!stats.rows || stats.rows.length < 2) return ""
-    
+    if (!stats.rows || stats.rows.length < 2) return ''
+
     const width = 800
     const height = 150
-    const maxVal = Math.max(...stats.rows.map(r => r.invoiceCount), 1)
+    const maxVal = Math.max(...stats.rows.map((r) => r.invoiceCount), 1)
     const stepX = width / (stats.rows.length - 1)
-    
+
     const points = stats.rows.map((r, i) => ({
       x: i * stepX,
       y: height - (r.invoiceCount / maxVal) * height + 30
     }))
 
-    if (points.length < 2) return ""
+    if (points.length < 2) return ''
 
     // Use cubic bezier for smooth curves
     let d = `M ${points[0].x} ${points[0].y}`
-    
+
     for (let i = 0; i < points.length - 1; i++) {
       const p0 = points[i]
       const p1 = points[i + 1]
-      
+
       // Calculate control points
       const cpX = (p0.x + p1.x) / 2
       d += ` C ${cpX} ${p0.y}, ${cpX} ${p1.y}, ${p1.x} ${p1.y}`
@@ -64,7 +69,7 @@ export const SystemOverview: React.FC<SystemOverviewProps> = ({ period, fromDate
   }, [stats.rows])
 
   const areaPath = useMemo(() => {
-    if (!chartPath) return ""
+    if (!chartPath) return ''
     return `${chartPath} L 800 180 L 0 180 Z`
   }, [chartPath])
 
@@ -82,12 +87,11 @@ export const SystemOverview: React.FC<SystemOverviewProps> = ({ period, fromDate
             <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-mint-50 text-mint-600">
               {isLoading ? '' : formatPrice(stats.revenue)}
             </span>
-            <span className="text-[10px] font-bold text-mint-600 opacity-60 ml-1">
-              ↑ 12.3%
-            </span>
+            <span className="text-[10px] font-bold text-mint-600 opacity-60 ml-1">↑ 12.3%</span>
           </div>
           <p className="text-xs text-neutral-400 mt-1">
-            Total activity for the selected {period === 'day' ? 'day' : period === 'month' ? 'range' : 'year'}
+            Total activity for the selected{' '}
+            {period === 'day' ? 'day' : period === 'month' ? 'range' : 'year'}
           </p>
         </div>
       </div>
@@ -107,14 +111,10 @@ export const SystemOverview: React.FC<SystemOverviewProps> = ({ period, fromDate
           <line x1="0" y1="30" x2="800" y2="30" stroke="#f1f5f9" strokeWidth="1" />
 
           {/* Area fill */}
-          <path
-            d={areaPath || "M 0 140 L 800 140"}
-            fill="url(#adminChartGradient)"
-            stroke="none"
-          />
+          <path d={areaPath || 'M 0 140 L 800 140'} fill="url(#adminChartGradient)" stroke="none" />
           {/* Main line */}
           <path
-            d={chartPath || "M 0 140 L 800 140"}
+            d={chartPath || 'M 0 140 L 800 140'}
             fill="none"
             stroke="#10b981"
             strokeWidth="3"
@@ -136,7 +136,9 @@ export const SystemOverview: React.FC<SystemOverviewProps> = ({ period, fromDate
           <circle cx="400" cy="70" r="6" fill="#10b981" stroke="white" strokeWidth="2" />
         </svg>
         <div className="flex justify-between mt-4 text-[10px] font-bold text-neutral-400 uppercase tracking-widest pl-2 font-primary opacity-60">
-          <span>{data?.fromDate ? new Date(data.fromDate).toLocaleDateString('en-GB') : '---'}</span>
+          <span>
+            {data?.fromDate ? new Date(data.fromDate).toLocaleDateString('en-GB') : '---'}
+          </span>
           <span>{data?.toDate ? new Date(data.toDate).toLocaleDateString('en-GB') : '---'}</span>
         </div>
       </div>

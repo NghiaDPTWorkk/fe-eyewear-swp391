@@ -203,7 +203,11 @@ export function AdminEditAccount({
                         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
                           <div className="w-16 h-16 rounded-2xl bg-neutral-100 border border-neutral-200 overflow-hidden flex-shrink-0">
                             {values.avatar ? (
-                              <img src={values.avatar} alt="Preview" className="w-full h-full object-cover" />
+                              <img
+                                src={values.avatar}
+                                alt="Preview"
+                                className="w-full h-full object-cover"
+                              />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center text-neutral-300">
                                 <IoPersonOutline size={24} />
@@ -220,7 +224,8 @@ export function AdminEditAccount({
                               className="w-full px-4 py-2 bg-neutral-50 border border-neutral-100 rounded-xl text-[12px] font-medium transition-all focus:outline-none focus:border-mint-500"
                             />
                             <p className="text-[10px] text-neutral-400 font-medium px-1">
-                              Paste an external link or use the upload button in the profile page after creation.
+                              Paste an external link or use the upload button in the profile page
+                              after creation.
                             </p>
                           </div>
                         </div>

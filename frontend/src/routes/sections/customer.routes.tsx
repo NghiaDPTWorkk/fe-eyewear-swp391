@@ -15,6 +15,10 @@ const AccountLayout = lazy(() =>
 const LandingPage = lazy(() =>
   import('@/pages/LandingPage').then((m) => ({ default: m.LandingPage }))
 )
+const WelcomePage = lazy(() =>
+  import('@/pages/WelcomePage').then((m) => ({ default: m.WelcomePage }))
+)
+
 const CustomerProductPage = lazy(() =>
   import('@/pages/customer/CustomerProductPage').then((m) => ({ default: m.CustomerProductPage }))
 )
@@ -103,6 +107,14 @@ export const customerRoutes = [
     children: [
       {
         path: '/',
+        element: (
+          <LazyPage>
+            <WelcomePage />
+          </LazyPage>
+        )
+      },
+      {
+        path: '/home',
         element: (
           <LazyPage>
             <LandingPage />

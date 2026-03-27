@@ -140,6 +140,7 @@ export function AddressForm({
         <div className="space-y-1">
           <SearchableSelect
             label="City / Province"
+            isRequired
             placeholder="Select City"
             options={provinces.map((p) => ({ label: p.name, value: p.code }))}
             value={selectedProvinceCode || ''}
@@ -155,6 +156,7 @@ export function AddressForm({
         <div className="space-y-1">
           <SearchableSelect
             label="Ward"
+            isRequired
             placeholder="Select Ward"
             options={wards.map((w) => ({ label: w.name, value: w.name }))}
             value={formik.values.ward}

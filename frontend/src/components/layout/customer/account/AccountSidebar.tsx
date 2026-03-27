@@ -80,7 +80,7 @@ export function AccountSidebar() {
                   key={item.label}
                   onClick={() => navigate(item.path)}
                   className={cn(
-                    'flex items-center gap-4 p-4 rounded-xl transition-all h-[72px] border border-transparent',
+                    'flex items-center gap-4 p-4 rounded-xl transition-all h-[72px] border border-transparent cursor-pointer',
                     isActive
                       ? 'bg-white text-primary-600 shadow-sm border-mint-50'
                       : 'text-gray-eyewear hover:bg-mint-50/50'
@@ -116,7 +116,7 @@ export function AccountSidebar() {
 
       <button
         onClick={handleLogout}
-        className="w-full flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-danger-50 group transition-all mt-auto mb-10 border border-transparent hover:border-danger-100"
+        className="w-full flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-danger-50 group transition-all mt-auto mb-10 border border-transparent hover:border-danger-100 cursor-pointer"
       >
         <div className="w-10 h-10 rounded-xl bg-danger-50 flex items-center justify-center border border-danger-100/20 group-hover:bg-white group-hover:border-danger-200 text-danger-500 shadow-sm transition-all">
           <LogOut size={20} />

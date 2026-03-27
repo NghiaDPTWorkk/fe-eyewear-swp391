@@ -17,6 +17,7 @@ interface SearchableSelectProps {
   isLoading?: boolean
   isInvalid?: boolean
   className?: string
+  isRequired?: boolean
 }
 
 export function SearchableSelect({
@@ -28,7 +29,8 @@ export function SearchableSelect({
   isDisabled = false,
   isLoading = false,
   isInvalid = false,
-  className
+  className,
+  isRequired = false
 }: SearchableSelectProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [search, setSearch] = useState('')
@@ -71,7 +73,7 @@ export function SearchableSelect({
     <div className={cn('relative w-full group', className)} ref={containerRef}>
       {label && (
         <label className="text-sm font-bold text-mint-1200 mb-1.5 block uppercase tracking-wider">
-          {label}
+          {label} {isRequired && <span className="text-red-500">*</span>}
         </label>
       )}
 

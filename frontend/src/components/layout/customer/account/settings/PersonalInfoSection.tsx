@@ -69,7 +69,9 @@ export const PersonalInfoSection = ({ user }: PersonalInfoSectionProps) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
         {/* Full Name */}
         <div className="flex flex-col gap-2 md:col-span-2">
-          <label className="text-sm font-semibold text-mint-1100 ml-1">Full name *</label>
+          <label className="text-sm font-semibold text-mint-1100 ml-1">
+            Full name <span className="text-red-500">*</span>
+          </label>
           <Input
             {...formik.getFieldProps('name')}
             placeholder="Enter your full name"

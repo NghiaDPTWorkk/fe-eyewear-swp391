@@ -187,7 +187,7 @@ export function OrderCard({
               <div className="flex items-center gap-4">
                 <span
                   className={cn(
-                    'px-3 py-1 rounded-lg text-[10px] font-bold tracking-[0.08em] uppercase',
+                    'px-3 py-1 rounded-lg text-[10px] font-bold tracking-[0.08em] uppercase cursor-pointer',
                     config.bgColor,
                     config.textColor
                   )}

@@ -206,7 +206,7 @@ export function OrdersPage() {
           <button
             onClick={() => handleViewChange('active')}
             className={cn(
-              'px-6 py-2 text-[10px] font-bold uppercase tracking-[0.1em] rounded-lg transition-all',
+              'px-6 py-2 text-[10px] font-bold uppercase tracking-[0.1em] rounded-lg transition-all cursor-pointer',
               activeView === 'active'
                 ? 'bg-white text-primary-600 shadow-sm border border-mint-100/10'
                 : 'text-gray-400 hover:text-mint-1200'
@@ -217,7 +217,7 @@ export function OrdersPage() {
           <button
             onClick={() => handleViewChange('returns')}
             className={cn(
-              'px-6 py-2 text-[10px] font-bold uppercase tracking-[0.1em] rounded-lg transition-all',
+              'px-6 py-2 text-[10px] font-bold uppercase tracking-[0.1em] rounded-lg transition-all cursor-pointer',
               activeView === 'returns'
                 ? 'bg-white text-primary-600 shadow-sm border border-mint-100/10'
                 : 'text-gray-400 hover:text-mint-1200'
@@ -238,7 +238,7 @@ export function OrdersPage() {
                 key={tab.id}
                 onClick={() => handleTabChange(tab.id)}
                 className={cn(
-                  'px-4 py-2 text-[11px] font-bold uppercase tracking-widest transition-all relative group whitespace-nowrap',
+                  'px-4 py-2 text-[11px] font-bold uppercase tracking-widest transition-all relative group whitespace-nowrap cursor-pointer',
                   isActive ? 'text-mint-1200' : 'text-gray-400 hover:text-mint-800'
                 )}
               >
@@ -423,7 +423,7 @@ export function OrdersPage() {
       </div>
 
       {/* Support Footer */}
-      <div className="mt-12 p-8 border border-dashed border-mint-200 rounded-3xl flex justify-between items-center bg-white/50">
+      <div className="mt-12 mb-20 p-8 border border-dashed border-mint-200 rounded-3xl flex justify-between items-center bg-white/50">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 bg-primary-50 rounded-full flex items-center justify-center text-primary-600 font-bold text-xl">
             ?

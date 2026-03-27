@@ -86,7 +86,7 @@ export const ChangePasswordSection = () => {
           <>
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium text-gray-eyewear ml-1">
-                Current password *
+                Current password <span className="text-red-500">*</span>
               </label>
               <Input
                 type={showCurrentPassword ? 'text' : 'password'}
@@ -111,7 +111,9 @@ export const ChangePasswordSection = () => {
         )}
 
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-gray-eyewear ml-1">New password *</label>
+          <label className="text-sm font-medium text-gray-eyewear ml-1">
+            New password <span className="text-red-500">*</span>
+          </label>
           <Input
             type={showNewPassword ? 'text' : 'password'}
             placeholder="••••••••"
@@ -132,7 +134,7 @@ export const ChangePasswordSection = () => {
 
         <div className="flex flex-col gap-2">
           <label className="text-sm font-medium text-gray-eyewear ml-1">
-            Confirm new password *
+            Confirm new password <span className="text-red-500">*</span>
           </label>
           <Input
             type={showConfirmPassword ? 'text' : 'password'}

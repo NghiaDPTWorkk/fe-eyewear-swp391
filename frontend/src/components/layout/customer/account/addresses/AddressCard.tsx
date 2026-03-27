@@ -56,11 +56,21 @@ export function AddressCard({
         </p>
       </div>
 
-      <div className="flex items-center justify-between mt-6 pt-6 border-t border-dashed border-mint-100">
+      <div
+        className={cn(
+          'flex items-center justify-between mt-6 pt-6 border-t border-dashed',
+          isDefault ? 'border-primary-500/30' : 'border-mint-100'
+        )}
+      >
         <div className="flex gap-1">
           <button
             onClick={onEdit}
-            className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-all"
+            className={cn(
+              'p-2 rounded-lg transition-all',
+              isDefault
+                ? 'text-primary-600 hover:bg-primary-50'
+                : 'text-gray-400 hover:text-primary-600 hover:bg-primary-50'
+            )}
           >
             <Edit2 size={16} />
           </button>

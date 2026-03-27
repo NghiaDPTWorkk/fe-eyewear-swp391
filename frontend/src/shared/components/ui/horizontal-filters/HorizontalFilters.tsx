@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 import { X, ChevronDown, Search } from 'lucide-react'
 import type { SpecCategory } from '@/shared/types/productSpecs.types'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { Checkbox } from '@/shared/components/ui/checkbox'
 
 export interface HorizontalFiltersProps {
@@ -28,7 +28,8 @@ const GENDER_MAP: Record<string, string> = {
   M: 'Men',
   F: 'Women',
   UNISEX: 'Unisex',
-  unisex: 'Unisex'
+  unisex: 'Unisex',
+  N: 'None'
 }
 
 const FilterDropdown = ({
@@ -67,7 +68,7 @@ const FilterDropdown = ({
       <button
         onClick={() => setActiveDropdown(activeDropdown === id ? null : id)}
         className={cn(
-          'flex items-center gap-2 text-[11px] font-black uppercase tracking-widest transition-all',
+          'flex items-center gap-2 text-[11px] font-black uppercase tracking-widest transition-all cursor-pointer',
           activeDropdown === id || count
             ? 'text-primary-600'
             : 'text-gray-eyewear hover:text-mint-1200'
@@ -129,6 +130,22 @@ export function HorizontalFilters({
     onChange(newSelected)
   }
 
+  // Deduplicate genders for display but keep original keys mapping to them
+  const displayGenders = useMemo(() => {
+    const list = genders.length > 0 ? genders : ['M', 'F', 'UNISEX']
+    const unique = new Map<string, string>()
+
+    list.forEach((gender) => {
+      const label = GENDER_MAP[gender] || gender
+      // If we already have this label, don't add another one
+      if (!unique.has(label)) {
+        unique.set(label, gender)
+      }
+    })
+
+    return Array.from(unique.values())
+  }, [genders])
+
   return (
     <div className={cn('space-y-6 mb-12', className)}>
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 border-y border-mint-200/60 py-8">
@@ -159,7 +176,13 @@ export function HorizontalFilters({
                   size="sm"
                 />
                 <span className="text-sm font-medium text-mint-1200 group-hover:text-primary-700">
-                  {category.name}
+                  {category.name
+                    .split(' ')
+                    .map((word) => {
+                      if (word.toUpperCase() === 'UV') return 'UV'
+                      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+                    })
+                    .join(' ')}
                 </span>
               </label>
             ))}
@@ -173,7 +196,7 @@ export function HorizontalFilters({
             activeDropdown={activeDropdown}
             setActiveDropdown={setActiveDropdown}
           >
-            {(genders.length > 0 ? genders : ['M', 'F', 'UNISEX']).map((gender) => (
+            {displayGenders.map((gender) => (
               <label
                 key={gender}
                 className="flex items-center gap-3 p-2 hover:bg-mint-50 rounded-lg cursor-pointer group transition-colors"
@@ -306,7 +329,7 @@ export function HorizontalFilters({
                       <button
                         key={id}
                         onClick={() => toggleSelection(id, selectedCategories, onCategoryChange)}
-                        className="inline-flex items-center gap-2 px-3 py-1.5 bg-mint-100 border border-mint-300 text-mint-900 rounded-lg text-xs font-bold hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-all group"
+                        className="inline-flex items-center gap-2 px-3 py-1.5 bg-mint-100 border border-mint-300 text-mint-900 rounded-lg text-xs font-bold hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-all group cursor-pointer"
                       >
                         {cat.name}
                         <X className="w-3.5 h-3.5 text-mint-600 group-hover:text-white" />
@@ -319,7 +342,7 @@ export function HorizontalFilters({
                   <button
                     key={gender}
                     onClick={() => toggleSelection(gender, selectedGenders, onGenderChange)}
-                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-mint-100 border border-mint-300 text-mint-900 rounded-lg text-xs font-bold hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-all group"
+                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-mint-100 border border-mint-300 text-mint-900 rounded-lg text-xs font-bold hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-all group cursor-pointer"
                   >
                     {GENDER_MAP[gender] || gender}
                     <X className="w-3.5 h-3.5 text-mint-600 group-hover:text-white" />
@@ -330,7 +353,7 @@ export function HorizontalFilters({
                   <button
                     key={brand}
                     onClick={() => toggleSelection(brand, selectedBrands, onBrandChange)}
-                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-mint-100 border border-mint-300 text-mint-900 rounded-lg text-xs font-bold hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-all group"
+                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-mint-100 border border-mint-300 text-mint-900 rounded-lg text-xs font-bold hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-all group cursor-pointer"
                   >
                     {brand}
                     <X className="w-3.5 h-3.5 text-mint-600 group-hover:text-white" />
@@ -344,7 +367,7 @@ export function HorizontalFilters({
                       <button
                         key={id}
                         onClick={() => toggleSelection(id, selectedPriceRanges, onPriceRangeChange)}
-                        className="inline-flex items-center gap-2 px-3 py-1.5 bg-mint-100 border border-mint-300 text-mint-900 rounded-lg text-xs font-bold hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-all group"
+                        className="inline-flex items-center gap-2 px-3 py-1.5 bg-mint-100 border border-mint-300 text-mint-900 rounded-lg text-xs font-bold hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-all group cursor-pointer"
                       >
                         {range.label}
                         <X className="w-3.5 h-3.5 text-mint-600 group-hover:text-white" />
@@ -360,7 +383,7 @@ export function HorizontalFilters({
                     onBrandChange([])
                     onPriceRangeChange([])
                   }}
-                  className="text-xs font-black text-red-600 hover:text-red-700 transition-colors px-4 py-2 hover:bg-red-50 rounded-lg"
+                  className="text-xs font-black text-red-600 hover:text-red-700 transition-colors px-4 py-2 hover:bg-red-50 rounded-lg cursor-pointer"
                 >
                   Clear All Results
                 </button>

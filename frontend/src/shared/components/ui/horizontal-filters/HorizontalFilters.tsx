@@ -21,6 +21,7 @@ export interface HorizontalFiltersProps {
   onSearchChange: (query: string) => void
   className?: string
   totalResults?: number
+  isLoading?: boolean
 }
 
 const GENDER_MAP: Record<string, string> = {
@@ -111,7 +112,8 @@ export function HorizontalFilters({
   searchQuery,
   onSearchChange,
   className,
-  totalResults
+  totalResults,
+  isLoading = false
 }: HorizontalFiltersProps) {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [isSearchFocused, setIsSearchFocused] = useState(false)
@@ -254,7 +256,8 @@ export function HorizontalFilters({
             <Search
               className={cn(
                 'w-5 h-5 transition-colors duration-500',
-                isSearchFocused ? 'text-primary-500' : 'text-mint-800'
+                isSearchFocused ? 'text-primary-500' : 'text-mint-800',
+                isLoading && 'animate-pulse text-primary-400'
               )}
             />
             <input

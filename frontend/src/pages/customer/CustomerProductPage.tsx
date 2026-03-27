@@ -1,4 +1,4 @@
-import { useMemo, useState, useRef } from 'react'
+import { useMemo, useState, useRef, useEffect } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useFilteredProducts } from '@/shared/hooks/products/useFilteredProducts'
 import { useProductSpecs } from '@/shared/hooks/products/useProductSpecs'
@@ -6,6 +6,8 @@ import { OperationPagination } from '@/shared/components/ui/pagination'
 import { CategoryHero } from '@/shared/components/ui/category-hero'
 import { HorizontalFilters } from '@/shared/components/ui/horizontal-filters'
 import { ProductCard } from '@/shared/components/ui/product-card'
+import { useDebounce } from '@/shared/hooks/useDebounce'
+import { cn } from '@/lib/utils'
 
 // Static data for filters
 const priceRanges = [
@@ -50,7 +52,26 @@ export const CustomerProductPage = () => {
   const limit = 12
 
   // Read search query from URL
+  const [searchInput, setSearchInput] = useState(searchParams.get('search') || '')
+  const debouncedSearch = useDebounce(searchInput, 400)
+
+  // Sync debounced search back to searchParams
+  useEffect(() => {
+    const currentSearch = searchParams.get('search') || ''
+    if (debouncedSearch !== currentSearch) {
+      setSearchParams(debouncedSearch ? { search: debouncedSearch } : {}, {
+        replace: true,
+        preventScrollReset: true
+      })
+      setPage(1)
+    }
+  }, [debouncedSearch, setSearchParams, searchParams])
+
+  // Sync searchInput when URL searchParams changes (e.g., from external navigate)
   const searchQuery = searchParams.get('search') || ''
+  useEffect(() => {
+    setSearchInput(searchQuery)
+  }, [searchQuery])
 
   const productType = useMemo(() => {
     const path = location.pathname
@@ -137,8 +158,7 @@ export const CustomerProductPage = () => {
   }
 
   const handleSearchChange = (query: string) => {
-    setSearchParams(query ? { search: query } : {})
-    setPage(1)
+    setSearchInput(query)
   }
 
   const handleShopClick = () => {
@@ -183,15 +203,16 @@ export const CustomerProductPage = () => {
               priceRanges={priceRanges}
               selectedPriceRanges={selectedPriceRanges}
               onPriceRangeChange={handlePriceRangeChange}
-              searchQuery={searchQuery}
+              searchQuery={searchInput}
               onSearchChange={handleSearchChange}
               totalResults={products.length}
+              isLoading={loading}
             />
           </div>
 
           <div className="flex flex-col gap-10">
-            <div className="flex-1">
-              {loading ? (
+            <div className="flex flex-col gap-10 min-h-[600px] relative">
+              {loading && products.length === 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16">
                   {[...Array(8)].map((_, i) => (
                     <div key={i} className="aspect-[4/5] bg-mint-50 animate-pulse rounded-[32px]" />
@@ -207,7 +228,12 @@ export const CustomerProductPage = () => {
                 </div>
               ) : (
                 <>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16 transition-all duration-700">
+                  <div
+                    className={cn(
+                      'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16 transition-all duration-700',
+                      loading && 'opacity-40 pointer-events-none'
+                    )}
+                  >
                     {products.map((product, index) => {
                       const originalPrice = product.defaultVariantPrice || 0
                       const finalPrice = product.defaultVariantFinalPrice || originalPrice
@@ -237,8 +263,8 @@ export const CustomerProductPage = () => {
                     })}
                   </div>
 
-                  {/* Pagination */}
-                  <div className="mt-20">
+                  {/* Pagination hide if searching to prevent jump */}
+                  <div className={cn('mt-20 transition-opacity', loading && 'opacity-0')}>
                     <OperationPagination
                       page={currentPage}
                       totalPages={totalPages}

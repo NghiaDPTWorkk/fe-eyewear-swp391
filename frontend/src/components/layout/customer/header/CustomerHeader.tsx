@@ -211,14 +211,14 @@ export default function CustomerHeader({ isTranslucent = false }: { isTranslucen
               />
             </div>
             <button
-              className="p-2 hover:bg-mint-200 rounded-full transition-all relative group"
+              className="p-2 hover:bg-mint-200 rounded-full transition-all relative group cursor-pointer"
               aria-label="Wishlist"
               onClick={() => navigate('/account/favorites')}
             >
               <Heart className="w-5 h-5 text-gray-eyewear group-hover:text-primary-500 transition-colors" />
             </button>
             <button
-              className="p-2 hover:bg-mint-200 rounded-full transition-all relative group"
+              className="p-2 hover:bg-mint-200 rounded-full transition-all relative group cursor-pointer"
               aria-label="Shopping Cart"
               onClick={() => navigate('/cart')}
             >
@@ -240,7 +240,7 @@ export default function CustomerHeader({ isTranslucent = false }: { isTranslucen
               <ProjectProfileDropdown />
             ) : (
               <button
-                className="p-2 hover:bg-mint-200 rounded-full transition-all group flex items-center gap-2"
+                className="p-2 hover:bg-mint-200 rounded-full transition-all group flex items-center gap-2 cursor-pointer"
                 aria-label="Login"
                 onClick={() => navigate('/login', { state: { from: location } })}
               >

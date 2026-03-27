@@ -42,7 +42,7 @@ export function ProfileDropdown() {
       onMouseLeave={() => setIsOpen(false)}
     >
       <button
-        className="p-2 hover:bg-mint-200 rounded-full transition-all group flex items-center gap-2"
+        className="p-2 hover:bg-mint-200 rounded-full transition-all group flex items-center gap-2 cursor-pointer"
         aria-label="User Profile"
         onClick={() => navigate('/account/settings')}
       >
@@ -74,7 +74,7 @@ export function ProfileDropdown() {
                 key={item.label}
                 to={item.to}
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-neutral-50 group transition-all"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-neutral-50 group transition-all cursor-pointer"
               >
                 <div className="w-9 h-9 rounded-lg bg-neutral-50 flex items-center justify-center group-hover:bg-white group-hover:shadow-sm border border-transparent group-hover:border-neutral-100 transition-all text-neutral-500 group-hover:text-primary-500">
                   <item.icon className="w-5 h-5" />
@@ -92,7 +92,7 @@ export function ProfileDropdown() {
 
           <div className="p-3 bg-neutral-50/50 border-t border-neutral-50 font-sans">
             <button
-              className="flex items-center gap-3 w-full px-4 py-3 rounded-xl hover:bg-danger-50 group transition-all border border-transparent hover:border-danger-100"
+              className="flex items-center gap-3 w-full px-4 py-3 rounded-xl hover:bg-danger-50 group transition-all border border-transparent hover:border-danger-100 cursor-pointer"
               onClick={handleLogout}
             >
               <div className="w-9 h-9 rounded-lg bg-danger-50 flex items-center justify-center border border-danger-100/20 group-hover:bg-white group-hover:border-danger-200 text-danger-500 shadow-sm transition-all">

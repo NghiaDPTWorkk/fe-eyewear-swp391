@@ -1,4 +1,3 @@
-// import { Info, Plus } from 'lucide-react'
 import { useCart } from '@/features/customer/cart/hooks/useCart'
 import { Container, Checkbox } from '@/shared/components/ui'
 import { EmptyCart, CartItem, CartSummary, PromoSection } from '@/components/layout/customer/cart'
@@ -42,7 +41,6 @@ export const CartPage = () => {
               <h1 className="text-4xl font-heading font-bold text-mint-1200 mb-8">Your bag</h1>
 
               <div className="flex flex-col lg:flex-row gap-6 xl:gap-12 items-start">
-                {/* Main Cart Content */}
                 <div className="flex-1 w-full lg:max-w-none">
                   <div className="flex items-center gap-3 mb-6">
                     <Checkbox
@@ -73,7 +71,6 @@ export const CartPage = () => {
                   <PromoSection />
                 </div>
 
-                {/* Sidebar Summary */}
                 <div className="w-full lg:w-[380px] xl:w-[420px] flex-shrink-0">
                   <CartSummary subtotal={subtotal} />
                 </div>

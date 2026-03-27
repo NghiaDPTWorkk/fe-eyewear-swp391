@@ -9,7 +9,10 @@ export const CartPage = () => {
   const allSelected = items.length > 0 && items.every((item) => item.selected)
   const selectedCount = selectedItems.length
 
-  const subtotal = selectedItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  const subtotal = selectedItems.reduce(
+    (sum, item) => sum + (item.price + (item.lens?.price || 0)) * item.quantity,
+    0
+  )
 
   return (
     <div className="min-h-screen bg-mint-100">

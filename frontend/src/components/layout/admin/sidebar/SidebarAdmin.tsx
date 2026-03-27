@@ -17,7 +17,7 @@ interface SidebarAdminProps {
 
 export function SidebarAdmin({
   logo,
-  storeName = 'OpticView HQ',
+  storeName = 'Eyewear HQ',
   storeIcon,
   children,
   userWidget

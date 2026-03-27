@@ -111,7 +111,7 @@ export default function OperationLayout() {
       logo={
         <div className="flex items-center gap-2">
           <LogoEyewearIcon className="w-8 h-8" />
-          <span className="font-semibold text-gray-900">OpticView</span>
+          <span className="font-semibold text-gray-900">Eyewear</span>
         </div>
       }
       userWidget={

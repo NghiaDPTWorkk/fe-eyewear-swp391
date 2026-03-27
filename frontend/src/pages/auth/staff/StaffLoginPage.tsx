@@ -17,8 +17,7 @@ export const StaffLoginPage = () => {
           <div>
             <h1 className="mb-2 text-3xl font-bold text-primary-950">Sign In</h1>
             <p className="mb-6 text-sm text-gray-eyewear">
-              Internal Access Only. Sign in to manage operations and services with OpticView
-              Eyewear.
+              Internal Access Only. Sign in to manage operations and services with Eyewear.
             </p>
 
             <LoginForm role="staff" />

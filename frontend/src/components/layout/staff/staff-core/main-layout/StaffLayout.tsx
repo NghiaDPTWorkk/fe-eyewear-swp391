@@ -23,7 +23,7 @@ interface StaffLayoutProps {
 
 export function StaffLayout({
   sidebarContent,
-  storeName = 'OpticView',
+  storeName = 'Eyewear',
   storeIcon = <IoStorefront />,
   searchPlaceholder = 'Search...',
   mainClassName,
@@ -37,7 +37,7 @@ export function StaffLayout({
       logo={
         <div className="flex items-center gap-2">
           <LogoEyewearIcon className="w-8 h-8" />
-          <span className="font-semibold text-gray-900">OpticView</span>
+          <span className="font-semibold text-gray-900">Eyewear</span>
         </div>
       }
       storeName={storeName}

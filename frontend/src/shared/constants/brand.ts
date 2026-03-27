@@ -1,10 +1,10 @@
 import { LAYOUT } from '@/shared/constants/layout'
 
 export const BRAND_CONFIG = {
-  name: 'OpticView',
+  name: 'Eyewear',
   tagline: 'Your Vision, Our Mission',
   logo: {
-    initial: 'O',
+    initial: 'E',
     bgColor: 'bg-primary-500',
     textColor: 'text-white'
   }

@@ -115,8 +115,9 @@ export const WelcomePage = () => {
   }, [])
 
   const handleGoToWebsite = () => {
+    sessionStorage.setItem('metWelcome', 'true')
     setIsExiting(true)
-    setTimeout(() => navigate('/home'), 1200)
+    setTimeout(() => navigate('/'), 1200)
   }
 
   return (

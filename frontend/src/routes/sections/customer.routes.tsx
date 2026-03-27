@@ -1,7 +1,7 @@
 import { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
 import { LazyPage } from '@/pages/LazyPage'
-import { AuthGuard } from '@/routes/guards'
+import { AuthGuard, SplashGuard } from '@/routes/guards'
 
 // Layouts
 const CustomerLayout = lazy(() => import('@/components/layout/customer/CustomerLayout'))
@@ -97,24 +97,28 @@ const ReturnWarrantyPolicyPage = lazy(() =>
 
 export const customerRoutes = [
   {
-    path: '/',
+    path: '/welcome',
     element: (
-      <LazyPage>
-        <WelcomePage />
-      </LazyPage>
+      <SplashGuard>
+        <LazyPage>
+          <WelcomePage />
+        </LazyPage>
+      </SplashGuard>
     )
   },
   {
     element: (
-      <AuthGuard requireAuth={false}>
-        <LazyPage>
-          <CustomerLayout />
-        </LazyPage>
-      </AuthGuard>
+      <SplashGuard>
+        <AuthGuard requireAuth={false}>
+          <LazyPage>
+            <CustomerLayout />
+          </LazyPage>
+        </AuthGuard>
+      </SplashGuard>
     ),
     children: [
       {
-        path: '/home',
+        index: true,
         element: (
           <LazyPage>
             <LandingPage />

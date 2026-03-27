@@ -34,6 +34,10 @@ export function AuthGuard({ children, allowedRoles, requireAuth = true }: AuthGu
     return <LazyPage children={<div></div>}></LazyPage>
   }
 
+  if (isAuthenticated) {
+    sessionStorage.setItem('metWelcome', 'true')
+  }
+
   if (!isAuthenticated) {
     if (!requireAuth) {
       return <>{children}</>

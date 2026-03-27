@@ -1,5 +1,4 @@
-import React, { useState, useEffect, Suspense, Component } from 'react'
-
+import React, { useState, useEffect, Suspense, Component, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Canvas } from '@react-three/fiber'
 import {
@@ -7,15 +6,13 @@ import {
   PresentationControls,
   Float,
   ContactShadows,
-  Text as DreiText,
   Stars,
   Sparkles
 } from '@react-three/drei'
 
 import { Eyewear3D } from '@/components/welcome/Eyewear3D'
-import { Loading } from '@/shared/components/ui/loading'
 
-// Error Boundary Component to handle 3D loading failures
+// Error Boundary
 class ErrorBoundary extends Component<
   { children: React.ReactNode; fallback: React.ReactNode },
   { hasError: boolean }
@@ -33,169 +30,263 @@ class ErrorBoundary extends Component<
   }
 }
 
-// Fallback 3D shape if model fails to load
 const FallbackBox = () => (
   <mesh rotation={[0, 45, 0]}>
     <boxGeometry args={[1.5, 0.8, 0.1]} />
-    <meshStandardMaterial color="#4ad7b0" metalness={0.8} roughness={0.2} />
-    <DreiText position={[0, 0, 0.1]} fontSize={0.1} color="white">
-      Premium Eyewear
-    </DreiText>
+    <meshStandardMaterial color="#ffffff" metalness={0.8} roughness={0.2} />
   </mesh>
 )
 
+// Letter Reveal Helper Component - Optimized for no-flash entrance
+const StaggeredText = ({
+  text,
+  delayOffset = 0,
+  className = ''
+}: {
+  text: string
+  delayOffset?: number
+  className?: string
+}) => {
+  return (
+    <span className={className}>
+      {text.split('').map((char, i) => (
+        <span
+          key={i}
+          className="inline-block opacity-0 translate-y-2 transition-all duration-[1000ms] cubic-bezier(0.16, 1, 0.3, 1)"
+          style={{
+            animation: `revealLetter 1000ms cubic-bezier(0.16, 1, 0.3, 1) forwards`,
+            animationDelay: `${delayOffset + i * 40}ms`
+          }}
+        >
+          {char === ' ' ? '\u00A0' : char}
+        </span>
+      ))}
+      <style>{`
+        @keyframes revealLetter {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+    </span>
+  )
+}
+
+interface TrailPoint {
+  x: number
+  y: number
+  id: number
+  time: number
+}
+
 export const WelcomePage = () => {
-  const [showButton, setShowButton] = useState(false)
+  const [showContent, setShowContent] = useState(false)
   const [isExiting, setIsExiting] = useState(false)
+  const [trail, setTrail] = useState<TrailPoint[]>([])
+  const [currentTime, setCurrentTime] = useState(() => Date.now())
   const navigate = useNavigate()
+  const pointIdRef = useRef(0)
 
   useEffect(() => {
-    // Show button after 5 seconds
-    const timer = setTimeout(() => {
-      setShowButton(true)
-    }, 5000)
+    // Reveal content after a short delay
+    const timer = setTimeout(() => setShowContent(true), 800)
 
-    return () => clearTimeout(timer)
+    const handleMouseMove = (e: MouseEvent) => {
+      const newPoint = {
+        x: e.clientX,
+        y: e.clientY,
+        id: ++pointIdRef.current,
+        time: Date.now()
+      }
+      setTrail((prev) => [...prev.slice(-60), newPoint])
+    }
+
+    const cleanupLoop = setInterval(() => {
+      const now = Date.now()
+      setCurrentTime(now)
+      setTrail((prev) => prev.filter((p) => now - p.time < 3500))
+    }, 50)
+
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => {
+      clearTimeout(timer)
+      clearInterval(cleanupLoop)
+      window.removeEventListener('mousemove', handleMouseMove)
+    }
   }, [])
 
   const handleGoToWebsite = () => {
     setIsExiting(true)
-    setTimeout(() => {
-      navigate('/home')
-    }, 1000) // Duration of exit animation
+    setTimeout(() => navigate('/home'), 1200)
   }
 
   return (
     <div
-      className={`relative w-full h-screen overflow-hidden bg-[#0d0d0d] transition-opacity duration-1000 ${isExiting ? 'opacity-0' : 'opacity-100'}`}
+      style={{ backgroundColor: '#000' }} // Force black background immediately
+      className={`relative w-full h-screen overflow-hidden transition-opacity duration-1000 cursor-default ${isExiting ? 'opacity-0' : 'opacity-100'}`}
     >
-      {/* Subtle Dynamic Background Gradient (Replaces Heavy SVG Noise) */}
-      <div className="absolute inset-0 z-0 bg-radial-gradient from-[#1a1a1a] to-[#0d0d0d] opacity-50"></div>
-
-      {/* Hero Typography - Behind the model */}
-      <div className="absolute inset-0 flex items-center justify-center z-0 select-none overflow-hidden">
-        <h1
-          className="text-[20vw] font-black text-white/[0.03] leading-none tracking-tighter whitespace-nowrap transform -rotate-12 translate-x-10"
-          style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
-        >
-          DOWNTOWN VISION
-        </h1>
+      {/* Immersive Galaxy Background Layer (z-0) */}
+      <div className="absolute inset-0 z-0 bg-black overflow-hidden pointer-events-none">
+        {/* Central Dedicated Mint Glow ONLY */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70vw] h-[70vw] bg-[radial-gradient(circle,rgba(74,215,176,0.25)_0%,transparent_70%)] opacity-80 blur-[80px] animate-pulse"></div>
       </div>
 
-      {/* 3D Background / Ambient Scene */}
-      <div className="absolute inset-0 z-10 transition-transform duration-[2000ms] ease-out">
-        <Canvas shadows camera={{ position: [0, 0, 4], fov: 40 }} dpr={[1, 2]}>
-          <color attach="background" args={['#0d0d0d']} />
-          <ambientLight intensity={0.4} />
+      {/* Persistent Mouse Trail (z-10) */}
+      <div className="absolute inset-0 z-10 pointer-events-none overflow-hidden">
+        {trail.map((p) => {
+          const age = currentTime - p.time
+          const opacity = Math.max(0, 0.22 - age / 3500)
+          return (
+            <div
+              key={p.id}
+              className="absolute pointer-events-none transition-opacity duration-500"
+              style={{
+                left: p.x,
+                top: p.y,
+                transform: `translate(-50%, -50%) scale(${1 - age / 4500})`,
+                width: '180px',
+                height: '180px',
+                background: 'radial-gradient(circle, rgba(74,215,176,0.25) 0%, transparent 70%)',
+                filter: 'blur(35px)',
+                opacity: opacity,
+                mixBlendMode: 'screen'
+              }}
+            />
+          )
+        })}
+      </div>
 
+      {/* Main 3D Canvas (z-20) */}
+      <div className="absolute inset-0 z-20 pointer-events-none">
+        <Canvas
+          shadows
+          camera={{ position: [0, 0, 4], fov: 38 }}
+          dpr={[1, 2]}
+          gl={{ alpha: true, antialias: true }}
+        >
+          <ambientLight intensity={0.6} />
           <Suspense fallback={null}>
             <Stars
-              radius={100}
-              depth={50}
-              count={1000}
-              factor={2}
-              saturation={0}
+              radius={120}
+              depth={60}
+              count={2000}
+              factor={8}
+              saturation={1}
               fade
-              speed={0.2}
+              speed={0.6}
             />
-            <Sparkles count={20} scale={6} size={1} speed={0.2} opacity={0.2} color="#4ad7b0" />
+            <Sparkles
+              count={200}
+              scale={20}
+              size={8}
+              speed={1.2}
+              opacity={0.6}
+              color="#4ad7b0"
+              noise={1}
+            />
+            <Sparkles
+              count={50}
+              scale={15}
+              size={15}
+              speed={1.5}
+              opacity={0.5}
+              color="#ffffff"
+              noise={1}
+            />
 
-            {/* Optimized Essential Lighting */}
-            <pointLight position={[5, 5, 2]} intensity={25} color="#ffffff" />
-            <pointLight position={[-5, -5, 2]} intensity={15} color="#4ad7b0" />
+            <spotLight
+              position={[0, 10, 5]}
+              intensity={120}
+              angle={0.3}
+              penumbra={1}
+              color="#ffffff"
+            />
+            <pointLight position={[3, 2, 2]} intensity={60} color="#ffffff" />
+            <pointLight position={[-3, -2, 2]} intensity={40} color="#4ad7b0" />
 
             <ErrorBoundary fallback={<FallbackBox />}>
               <PresentationControls
                 global
-                rotation={[0, 0.4, 0]}
-                polar={[-Math.PI / 4, Math.PI / 4]}
-                azimuth={[-Math.PI / 2, Math.PI / 2]}
+                rotation={[0, 0, 0]}
+                polar={[-Math.PI / 8, Math.PI / 8]}
+                azimuth={[-Math.PI / 6, Math.PI / 6]}
               >
-                <Float speed={1.5} rotationIntensity={1} floatIntensity={1}>
+                <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
                   <Eyewear3D />
                 </Float>
               </PresentationControls>
             </ErrorBoundary>
-
             <ContactShadows
               position={[0, -1.8, 0]}
-              opacity={0.7}
-              scale={12}
-              blur={2.5}
+              opacity={0.6}
+              scale={10}
+              blur={3}
               far={4}
               color="#000000"
             />
             <Environment preset="night" />
-
-            {/* Minimal Background Element */}
-            <mesh position={[-8, 4, -12]}>
-              <sphereGeometry args={[4, 32, 32]} />
-              <meshBasicMaterial color="#4ad7b0" opacity={0.02} transparent />
-            </mesh>
           </Suspense>
         </Canvas>
       </div>
 
-      {/* Foreground Content */}
-      <div className="absolute inset-0 flex flex-col items-center justify-between py-16 pointer-events-none z-20">
-        {/* Branding */}
+      {/* Content Overlay */}
+      <div className="absolute inset-0 z-30 flex flex-col items-center pointer-events-none">
         <div
-          className={`mt-10 transition-all duration-[1500ms] delay-500 transform ${showButton ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
+          className={`mt-[12vh] flex flex-col items-center transition-all duration-[2000ms] cubic-bezier(0.16, 1, 0.3, 1) ${showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
         >
-          <div className="flex flex-col items-center">
-            <span className="text-[#4ad7b0] font-mono text-sm tracking-[0.5em] mb-4 uppercase pl-[0.5em]">
-              Immersive 2026
-            </span>
-            <h2 className="text-4xl md:text-6xl font-black text-white tracking-widest uppercase">
-              REVEALING <span className="italic">THE FUTURE</span>
-            </h2>
+          <div className="mb-4 px-4 py-1 border border-white/10 bg-white/5 backdrop-blur-md rounded-full text-[10px] tracking-[0.4em] text-white/40 uppercase font-mono">
+            Downtown Vision / Optic
+          </div>
+
+          <h1 className="text-6xl md:text-[5rem] font-thin text-white tracking-[-0.03em] leading-tight text-center min-h-[6rem]">
+            {/* Staggered Letter Reveal - Only render when showContent is true */}
+            {showContent && (
+              <>
+                <StaggeredText text="The Future of" delayOffset={500} />{' '}
+                <StaggeredText
+                  text="Vision."
+                  delayOffset={1200}
+                  className="font-bold text-[#4ad7b0] drop-shadow-[0_0_35px_rgba(74,215,176,0.7)]"
+                />
+              </>
+            )}
+          </h1>
+        </div>
+
+        <div className="mt-auto mb-[10vh] flex flex-col items-center">
+          <p
+            className={`mb-10 text-white/20 max-w-md text-center text-sm font-light leading-relaxed tracking-wide px-6 transition-all duration-[1500ms] delay-500 ${showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+          >
+            Embark on a journey through precision and luxury. Experience eyewear crafted from the
+            stars.
+          </p>
+          <div
+            className={`transition-all duration-[1500ms] delay-1000 ${showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+          >
+            <button
+              onClick={handleGoToWebsite}
+              className="pointer-events-auto cursor-default relative group flex items-center justify-center overflow-hidden"
+            >
+              <div className="absolute inset-0 border border-white/10 bg-white/5 backdrop-blur-xl rounded-full transition-all duration-500 group-hover:bg-white group-hover:border-white"></div>
+              <div className="relative px-12 py-5 font-semibold text-white/80 group-hover:text-black tracking-[0.2em] transition-colors duration-500 uppercase text-xs flex items-center gap-4">
+                Shopping Now
+                <svg
+                  className="w-4 h-4 transition-transform duration-500 group-hover:translate-x-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
+                </svg>
+              </div>
+            </button>
           </div>
         </div>
-
-        {/* Dynamic Action Button */}
-        <div
-          className={`mb-10 transition-all duration-[1000ms] ease-out transform ${showButton ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-20 opacity-0 scale-95'}`}
-        >
-          {showButton && (
-            <div className="flex flex-col items-center gap-6">
-              <button
-                id="welcome-go-btn"
-                onClick={handleGoToWebsite}
-                className="pointer-events-auto relative group flex items-center justify-center p-1"
-              >
-                <span className="absolute inset-0 bg-white rounded-full transition-transform duration-500 group-hover:scale-105 opacity-0 group-hover:opacity-10"></span>
-                <span className="relative bg-transparent border border-white/30 text-white font-bold py-5 px-14 rounded-full text-lg tracking-[0.2em] transition-all duration-500 uppercase flex items-center gap-4 hover:bg-white hover:text-black hover:border-white">
-                  START THE EXPERIENCE
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 8l4 4m0 0l-4 4m4-4H3"
-                    />
-                  </svg>
-                </span>
-              </button>
-
-              <div className="text-white/30 font-mono text-[10px] tracking-[0.3em] uppercase">
-                Explore Downtown Vision in 3D
-              </div>
-            </div>
-          )}
-        </div>
       </div>
-
-      {/* Screen Edge Decor */}
-      <div className="absolute top-1/2 -left-32 -rotate-90 text-white/10 font-mono text-xs tracking-widest select-none z-30">
-        01 / 04 — AUTHENTIC VISIONARY GEAR
-      </div>
-      <div className="absolute top-1/2 -right-32 rotate-90 text-white/10 font-mono text-xs tracking-widest select-none z-30">
-        LAT 51.5074° N — LONG 0.1278° W
-      </div>
-
-      <Suspense fallback={<Loading />}>
-        <div className="hidden" />
-      </Suspense>
     </div>
   )
 }

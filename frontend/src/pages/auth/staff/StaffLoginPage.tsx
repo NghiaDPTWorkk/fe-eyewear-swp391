@@ -2,108 +2,115 @@ import { LoginForm } from '@/components/layout/login-form'
 import { SIGN_IN_SVG_PATHS } from '@/shared/constants/svg-paths'
 import signinPremium from '@/assets/images/signin-premium.png'
 import { Link } from 'react-router-dom'
+import { CosmicBackground } from '@/components/layout/CosmicBackground'
 
 export const StaffLoginPage = () => {
   return (
-    <div className="flex h-screen w-full flex-col overflow-hidden bg-mint-300">
-      <div className="flex-1 overflow-y-auto p-4 lg:p-8">
-        <div className="flex h-full min-h-fit items-center justify-center">
-          <div className="grid w-full max-w-[1024px] grid-cols-1 overflow-hidden rounded-[12px] bg-white shadow-[0_20px_40px_0_rgba(0,54,45,0.06)] lg:grid-cols-2">
-            {/* Left Side: Product Imagery */}
-            <div className="animate-slide-in-left relative hidden flex-col items-start justify-center bg-[#00362d] lg:flex">
-              <div className="absolute inset-0 bg-[#00362d] opacity-30 mix-blend-multiply" />
-              <div className="absolute inset-0 mix-blend-overlay">
-                <img
-                  src={signinPremium}
-                  alt="Premium Eyewear"
-                  className="animate-zoom-in-subtle h-full w-full object-cover"
-                />
+    <CosmicBackground>
+      <div className="flex flex-1 flex-col overflow-y-auto">
+        <div className="flex-1 p-4 lg:p-28">
+          <div className="flex h-full min-h-fit items-center justify-center">
+            <div className="grid w-full max-w-[1024px] grid-cols-1 overflow-hidden rounded-[32px] backdrop-blur-2xl lg:grid-cols-2">
+              {/* Left Side: Product Imagery */}
+              <div className="animate-slide-in-left relative hidden flex-col items-start justify-center overflow-hidden bg-black/40 lg:flex">
+                <div className="absolute inset-0 z-0">
+                  <img
+                    src={signinPremium}
+                    alt="Premium Eyewear"
+                    className="animate-zoom-in-subtle h-full w-full object-cover opacity-80"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                </div>
+
+                {/* Lens Filter Element */}
+                <div className="absolute left-10 top-10 z-10 flex size-24 items-center justify-center rounded-full border border-white/20 bg-white/5 backdrop-blur-md">
+                  <div className="h-[15px] w-[22px]">
+                    <svg className="size-full" fill="none" viewBox="0 0 33 22.5">
+                      <path d={SIGN_IN_SVG_PATHS.lens_container} fill="#4ad7b0" />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Text Overlay */}
+                <div className="relative z-10 flex h-full w-full flex-col justify-end p-12">
+                  <div className="mb-2">
+                    <p className="text-[10px] font-bold uppercase tracking-[1.2px] text-[#4ad7b0]">
+                      Staff Portal
+                    </p>
+                  </div>
+                  <div className="mb-4">
+                    <h2 className="text-[40px] font-extrabold leading-[1.1] tracking-[-1.5px] text-white">
+                      Precision
+                      <br />
+                      Management
+                      <br />
+                      Excellence.
+                    </h2>
+                  </div>
+                  <div className="max-w-xs">
+                    <p className="text-[14px] leading-[1.5] text-white/50">
+                      Internal Access Only. Sign in to manage operations and services with OpticView
+                      Eyewear.
+                    </p>
+                  </div>
+                </div>
               </div>
 
-              {/* Lens Filter Element */}
-              <div className="absolute left-8 top-8 flex size-24 items-center justify-center rounded-full border border-white/20 bg-white/10 backdrop-blur-md">
-                <div className="h-[15px] w-[22px]">
-                  <svg className="size-full" fill="none" viewBox="0 0 33 22.5">
-                    <path d={SIGN_IN_SVG_PATHS.lens_container} fill="#C6FFE6" />
-                  </svg>
-                </div>
-              </div>
+              {/* Right Side: Sign-In Form */}
+              <div className="animate-slide-in-right flex flex-col items-center justify-center bg-transparent p-8 lg:p-12">
+                <div className="w-full max-w-[380px]">
+                  <div className="mb-10">
+                    <h1 className="mb-2 text-[32px] font-bold tracking-[-1px] text-white">
+                      Sign In
+                    </h1>
+                    <p className="text-[15px] text-white/40">
+                      Welcome back. Enter your staff credentials.
+                    </p>
+                  </div>
 
-              {/* Text Overlay */}
-              <div className="relative z-10 flex h-full w-full flex-col justify-end bg-gradient-to-t from-[#00362d]/15 to-transparent p-12">
-                <div className="mb-2">
-                  <p className="text-[10px] font-bold uppercase tracking-[1.2px] text-[#c6ffe6]">
-                    Staff Portal
-                  </p>
+                  <LoginForm role="staff" variant="dark" />
                 </div>
-                <div className="mb-4">
-                  <h2 className="text-[36px] font-extrabold leading-[1.1] tracking-[-1.5px] text-[#c6ffe6]">
-                    Precision
-                    <br />
-                    Management
-                    <br />
-                    Excellence.
-                  </h2>
-                </div>
-                <div className="max-w-xs">
-                  <p className="text-[14px] leading-[1.5] text-[#c6ffe6]/80">
-                    Internal Access Only. Sign in to manage operations and services with OpticView
-                    Eyewear.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Side: Sign-In Form */}
-            <div className="animate-slide-in-right flex flex-col items-center justify-center p-6 lg:p-10">
-              <div className="w-full max-w-[380px]">
-                <div className="mb-6">
-                  <h1 className="mb-1 text-[32px] font-bold tracking-[-0.9px] text-[#00362d]">
-                    Sign In
-                  </h1>
-                  <p className="text-[14px] text-[#00362d]">
-                    Welcome back. Enter your staff credentials.
-                  </p>
-                </div>
-
-                <LoginForm role="staff" />
               </div>
             </div>
           </div>
         </div>
+
+        {/* Footer */}
+        <footer className="w-full border-t border-white/5 bg-black/40 px-12 py-5 backdrop-blur-md">
+          <div className="mx-auto flex max-w-[1024px] flex-col items-center justify-between gap-6 lg:flex-row lg:gap-0">
+            <div className="flex flex-col gap-1">
+              <h3 className="text-[18px] font-bold text-white">Eyewear Optic</h3>
+              <p className="text-[12px] text-white/40">
+                © 2026 Eyewear Optic. All rights reserved.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-8 text-[12px] font-medium text-white/60">
+              <Link to="#" className="transition-colors hover:text-[#4ad7b0]">
+                Internal Policy
+              </Link>
+              <Link to="#" className="transition-colors hover:text-[#4ad7b0]">
+                System Status
+              </Link>
+              <Link to="#" className="transition-colors hover:text-[#4ad7b0]">
+                Support
+              </Link>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="group flex size-9 items-center justify-center rounded-full border border-white/10 bg-white/5 transition-all hover:bg-[#4ad7b0]">
+                <svg
+                  className="size-[14px] transition-colors group-hover:fill-black"
+                  fill="none"
+                  viewBox="0 0 16.67 16.67"
+                >
+                  <path d={SIGN_IN_SVG_PATHS.facebook} fill="white" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
-
-      {/* Footer */}
-      <footer className="w-full bg-[#d7fff3] px-12 py-6">
-        <div className="mx-auto flex max-w-[1024px] flex-col items-center justify-between gap-4 border-t border-[#00684e]/10 pt-4 lg:flex-row lg:gap-0">
-          <div className="flex flex-col gap-1">
-            <h3 className="text-[18px] font-bold text-[#00362d]">Eyewear Atelier</h3>
-            <p className="text-[12px] text-[#00362d]/60">
-              © 2024 Eyewear Atelier. All rights reserved.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-6 text-[12px] font-medium text-[#00362d]">
-            <Link to="#" className="hover:underline">
-              Internal Policy
-            </Link>
-            <Link to="#" className="hover:underline">
-              System Status
-            </Link>
-            <Link to="#" className="hover:underline">
-              Support
-            </Link>
-          </div>
-
-          <div className="flex gap-3">
-            <div className="flex size-8 items-center justify-center rounded-full bg-[#b0f6e4] transition-colors hover:bg-[#a0e6d4]">
-              <svg className="size-[14px]" fill="none" viewBox="0 0 16.67 16.67">
-                <path d={SIGN_IN_SVG_PATHS.facebook} fill="#00362D" />
-              </svg>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </CosmicBackground>
   )
 }

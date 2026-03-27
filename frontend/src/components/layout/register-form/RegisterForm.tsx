@@ -12,11 +12,23 @@ import { SIGN_UP_SVG_PATHS } from '@/shared/constants/svg-paths'
 interface RegisterFormProps {
   onSubmit?: (data: RegisterRequest) => void
   isPending?: boolean
+  variant?: 'light' | 'dark'
 }
 
-export const RegisterForm = ({ isPending: _isPending = false }: RegisterFormProps) => {
+export const RegisterForm = ({
+  isPending: _isPending = false,
+  variant = 'light'
+}: RegisterFormProps) => {
   const navigate = useNavigate()
   const registerMutation = useRegister()
+
+  const isDark = variant === 'light'
+  const textColor = isDark ? 'text-[#00362d]' : 'text-white'
+  const labelColor = isDark ? 'text-[#00362d]' : 'text-[#4ad7b0]'
+  const inputBg = isDark ? 'bg-white/5 border border-white/10' : 'bg-[#d7fff3]'
+  const inputTextColor = isDark ? 'text-white' : 'text-[#00362d]'
+  const placeholderColor = isDark ? 'placeholder:text-white/30' : 'placeholder:text-[#80b8aa]'
+  const iconColor = isDark ? '#00684E' : '#4ad7b0'
 
   const validationSchema = Yup.object().shape({
     name: Yup.string()
@@ -140,7 +152,9 @@ export const RegisterForm = ({ isPending: _isPending = false }: RegisterFormProp
   if (mergeState === 'prompt') {
     return (
       <div className="space-y-6 pt-6 text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-50 text-blue-500">
+        <div
+          className={`mx-auto flex h-16 w-16 items-center justify-center rounded-full ${isDark ? 'bg-blue-50 text-blue-500' : 'bg-[#4ad7b0]/10 text-[#4ad7b0]'}`}
+        >
           <svg className="size-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
@@ -150,20 +164,20 @@ export const RegisterForm = ({ isPending: _isPending = false }: RegisterFormProp
             />
           </svg>
         </div>
-        <h3 className="text-xl font-bold text-[#00362d]">Account Already Exists</h3>
-        <p className="px-4 text-sm text-[#00362d]/60">
-          Email <span className="font-bold text-[#00362d]">{formik.values.email}</span> is already
+        <h3 className={`text-xl font-bold ${textColor}`}>Account Already Exists</h3>
+        <p className={`px-4 text-sm ${isDark ? 'text-[#00362d]/60' : 'text-white/40'}`}>
+          Email <span className={`font-bold ${textColor}`}>{formik.values.email}</span> is already
           linked to a Google account. Do you want to merge this password into that account?
         </p>
         <div className="flex gap-4 pt-4">
           <button
-            className="h-12 flex-1 rounded-xl border border-[#00684e]/20 font-bold text-[#00362d] transition-colors hover:bg-gray-50"
+            className={`h-12 flex-1 rounded-xl border ${isDark ? 'border-[#00684e]/20 text-[#00362d] hover:bg-gray-50' : 'border-white/10 text-white hover:bg-white/5'} font-bold transition-colors`}
             onClick={() => setMergeState('idle')}
           >
             Cancel
           </button>
           <button
-            className="h-12 flex-1 rounded-xl bg-[#00684e] font-bold text-[#c6ffe6] transition-opacity hover:opacity-90 disabled:opacity-50"
+            className={`h-12 flex-1 rounded-xl ${isDark ? 'bg-[#00684e] text-[#c6ffe6] hover:opacity-90' : 'bg-[#4ad7b0] text-black hover:bg-[#3bc7a0]'} font-bold transition-opacity disabled:opacity-50`}
             onClick={handleRequestMerge}
             disabled={isMerging}
           >
@@ -178,10 +192,10 @@ export const RegisterForm = ({ isPending: _isPending = false }: RegisterFormProp
     return (
       <div className="space-y-8 pt-8 text-center">
         <div className="space-y-2">
-          <h3 className="text-2xl font-bold text-[#00362d]">OTP Verification</h3>
-          <p className="text-sm text-[#00362d]/60">
+          <h3 className={`text-2xl font-bold ${textColor}`}>OTP Verification</h3>
+          <p className={`text-sm ${isDark ? 'text-[#00362d]/60' : 'text-white/40'}`}>
             Enter the 4-digit code sent to{' '}
-            <span className="font-bold text-[#00362d]">{formik.values.email}</span>
+            <span className={`font-bold ${textColor}`}>{formik.values.email}</span>
           </p>
         </div>
 
@@ -198,14 +212,14 @@ export const RegisterForm = ({ isPending: _isPending = false }: RegisterFormProp
               value={digit}
               onChange={(e) => handleOtpChange(index, e.target.value)}
               onKeyDown={(e) => handleOtpKeyDown(index, e)}
-              className="size-16 rounded-xl border-2 border-[#bdfeed] text-center text-3xl font-bold text-[#00362d] transition-colors focus:border-[#00684e] focus:outline-none"
+              className={`size-16 rounded-xl border-2 ${isDark ? 'border-[#bdfeed] text-[#00362d] focus:border-[#00684e]' : 'border-white/10 bg-white/5 text-white focus:border-[#4ad7b0]'} text-center text-3xl font-bold transition-colors focus:outline-none`}
             />
           ))}
         </div>
 
         <div className="space-y-4 pt-4">
           <button
-            className="h-14 w-full rounded-xl bg-[#00684e] text-lg font-bold text-[#c6ffe6] transition-opacity hover:opacity-90 disabled:opacity-50"
+            className={`h-14 w-full rounded-xl ${isDark ? 'bg-[#00684e] text-[#c6ffe6] hover:opacity-90' : 'bg-[#4ad7b0] text-black hover:bg-[#3bc7a0]'} text-lg font-bold transition-opacity disabled:opacity-50`}
             onClick={handleVerifyOtp}
             disabled={isMerging || otpArr.join('').length < 4}
           >
@@ -213,7 +227,7 @@ export const RegisterForm = ({ isPending: _isPending = false }: RegisterFormProp
           </button>
           <button
             onClick={() => setMergeState('idle')}
-            className="w-full text-sm font-bold text-[#00362d]/60 hover:text-[#00362d]"
+            className={`w-full text-sm font-bold ${isDark ? 'text-[#00362d]/60 hover:text-[#00362d]' : 'text-white/40 hover:text-white'}`}
           >
             Go back
           </button>
@@ -227,23 +241,25 @@ export const RegisterForm = ({ isPending: _isPending = false }: RegisterFormProp
       <div className="flex flex-col gap-2">
         {/* Full Name */}
         <div className="flex flex-col gap-0.5">
-          <label className="text-[11px] font-bold uppercase tracking-[1.2px] text-[#00362d]">
+          <label className={`text-[11px] font-bold uppercase tracking-[1.2px] ${labelColor}`}>
             Full Name
           </label>
           <div className="relative">
-            <div className="rounded-[10px] bg-[#d7fff3] focus-within:ring-1 focus-within:ring-[#00684e]/20">
+            <div
+              className={`rounded-[10px] ${inputBg} focus-within:ring-1 focus-within:ring-[#4ad7b0]/20`}
+            >
               <div className="flex items-center px-11 py-2.5">
                 <input
                   type="text"
                   placeholder="Alex Sterling"
                   {...formik.getFieldProps('name')}
-                  className="w-full bg-transparent text-[15px] text-[#00362d] outline-none placeholder:text-[#80b8aa]"
+                  className={`w-full bg-transparent text-[15px] ${inputTextColor} outline-none ${placeholderColor}`}
                 />
               </div>
             </div>
             <div className="absolute left-4 top-1/2 -translate-y-1/2">
               <svg className="size-[13.33px]" fill="none" viewBox="0 0 13.33 13.33">
-                <path d={SIGN_UP_SVG_PATHS.user} fill="#00684E" />
+                <path d={SIGN_UP_SVG_PATHS.user} fill={iconColor} />
               </svg>
             </div>
           </div>
@@ -254,23 +270,25 @@ export const RegisterForm = ({ isPending: _isPending = false }: RegisterFormProp
 
         {/* Email Address */}
         <div className="flex flex-col gap-0.5">
-          <label className="text-[11px] font-bold uppercase tracking-[1.2px] text-[#00362d]">
+          <label className={`text-[11px] font-bold uppercase tracking-[1.2px] ${labelColor}`}>
             Email Address
           </label>
           <div className="relative">
-            <div className="rounded-[10px] bg-[#d7fff3] focus-within:ring-1 focus-within:ring-[#00684e]/20">
+            <div
+              className={`rounded-[10px] ${inputBg} focus-within:ring-1 focus-within:ring-[#4ad7b0]/20`}
+            >
               <div className="flex items-center px-11 py-2.5">
                 <input
                   type="email"
                   placeholder="alex@atelier.com"
                   {...formik.getFieldProps('email')}
-                  className="w-full bg-transparent text-[15px] text-[#00362d] outline-none placeholder:text-[#80b8aa]"
+                  className={`w-full bg-transparent text-[15px] ${inputTextColor} outline-none ${placeholderColor}`}
                 />
               </div>
             </div>
             <div className="absolute left-4 top-1/2 -translate-y-1/2">
               <svg className="size-[16.67px]" fill="none" viewBox="0 0 16.67 13.33">
-                <path d={SIGN_UP_SVG_PATHS.email} fill="#00684E" />
+                <path d={SIGN_UP_SVG_PATHS.email} fill={iconColor} />
               </svg>
             </div>
           </div>
@@ -281,24 +299,26 @@ export const RegisterForm = ({ isPending: _isPending = false }: RegisterFormProp
 
         {/* Phone Number */}
         <div className="flex flex-col gap-0.5">
-          <label className="text-[11px] font-bold uppercase tracking-[1.2px] text-[#00362d]">
+          <label className={`text-[11px] font-bold uppercase tracking-[1.2px] ${labelColor}`}>
             Phone Number
           </label>
           <div className="relative">
-            <div className="rounded-[10px] bg-[#d7fff3] focus-within:ring-1 focus-within:ring-[#00684e]/20">
+            <div
+              className={`rounded-[10px] ${inputBg} focus-within:ring-1 focus-within:ring-[#4ad7b0]/20`}
+            >
               <div className="flex items-center px-11 py-2.5">
                 <input
                   type="tel"
                   placeholder="+1 (555) 000-0000"
                   {...formik.getFieldProps('phone')}
                   onKeyDown={blockNonDigits}
-                  className="w-full bg-transparent text-[15px] text-[#00362d] outline-none placeholder:text-[#80b8aa]"
+                  className={`w-full bg-transparent text-[15px] ${inputTextColor} outline-none ${placeholderColor}`}
                 />
               </div>
             </div>
             <div className="absolute left-4 top-1/2 -translate-y-1/2">
               <svg className="size-[15px]" fill="none" viewBox="0 0 15 15">
-                <path d={SIGN_UP_SVG_PATHS.phone} fill="#00684E" />
+                <path d={SIGN_UP_SVG_PATHS.phone} fill={iconColor} />
               </svg>
             </div>
           </div>
@@ -309,23 +329,25 @@ export const RegisterForm = ({ isPending: _isPending = false }: RegisterFormProp
 
         {/* Password */}
         <div className="flex flex-col gap-0.5">
-          <label className="text-[11px] font-bold uppercase tracking-[1.2px] text-[#00362d]">
+          <label className={`text-[11px] font-bold uppercase tracking-[1.2px] ${labelColor}`}>
             Password
           </label>
           <div className="relative">
-            <div className="rounded-[10px] bg-[#d7fff3] focus-within:ring-1 focus-within:ring-[#00684e]/20">
+            <div
+              className={`rounded-[10px] ${inputBg} focus-within:ring-1 focus-within:ring-[#4ad7b0]/20`}
+            >
               <div className="flex items-center px-11 py-2.5">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   {...formik.getFieldProps('password')}
-                  className="w-full bg-transparent text-[15px] text-[#00362d] outline-none placeholder:text-[#80b8aa]"
+                  className={`w-full bg-transparent text-[15px] ${inputTextColor} outline-none ${placeholderColor}`}
                 />
               </div>
             </div>
             <div className="absolute left-4 top-1/2 -translate-y-1/2">
               <svg className="h-[17.5px] w-[13.33px]" fill="none" viewBox="0 0 13.33 17.5">
-                <path d={SIGN_UP_SVG_PATHS.password} fill="#00684E" />
+                <path d={SIGN_UP_SVG_PATHS.password} fill={iconColor} />
               </svg>
             </div>
             <button
@@ -334,7 +356,7 @@ export const RegisterForm = ({ isPending: _isPending = false }: RegisterFormProp
               className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer opacity-60 hover:opacity-100"
             >
               <svg className="h-[15px] w-[22px]" fill="none" viewBox="0 0 22 15">
-                <path d={SIGN_UP_SVG_PATHS.eye} fill="#00684E" />
+                <path d={SIGN_UP_SVG_PATHS.eye} fill={iconColor} />
               </svg>
             </button>
           </div>
@@ -347,7 +369,7 @@ export const RegisterForm = ({ isPending: _isPending = false }: RegisterFormProp
 
         {/* Gender Selection */}
         <div className="flex flex-col gap-1 pb-2">
-          <label className="text-[11px] font-bold uppercase tracking-[1.2px] text-[#00362d]">
+          <label className={`text-[11px] font-bold uppercase tracking-[1.2px] ${labelColor}`}>
             Gender
           </label>
           <div className="flex gap-4">
@@ -358,16 +380,26 @@ export const RegisterForm = ({ isPending: _isPending = false }: RegisterFormProp
             ].map((g) => (
               <label key={g.value} className="flex cursor-pointer items-center gap-2">
                 <div
-                  className={`relative size-3.5 rounded-full border border-[#00684e] transition-colors ${
-                    formik.values.gender === g.value ? 'bg-[#00684e]' : 'bg-[#d7fff3]'
+                  className={`relative size-3.5 rounded-full border border-[#4ad7b0] transition-colors ${
+                    formik.values.gender === g.value
+                      ? 'bg-[#4ad7b0]'
+                      : isDark
+                        ? 'bg-[#d7fff3]'
+                        : 'bg-white/5'
                   }`}
                   onClick={() => formik.setFieldValue('gender', g.value)}
                 >
                   {formik.values.gender === g.value && (
-                    <div className="absolute inset-0.5 rounded-full bg-white" />
+                    <div
+                      className={`absolute inset-0.5 rounded-full ${isDark ? 'bg-white' : 'bg-black'}`}
+                    />
                   )}
                 </div>
-                <span className="text-[13px] font-medium text-[#00362d]">{g.label}</span>
+                <span
+                  className={`text-[13px] font-medium ${isDark ? 'text-[#00362d]' : 'text-white/60'}`}
+                >
+                  {g.label}
+                </span>
               </label>
             ))}
           </div>
@@ -380,14 +412,17 @@ export const RegisterForm = ({ isPending: _isPending = false }: RegisterFormProp
         <button
           type="submit"
           disabled={registerMutation.isPending || !formik.isValid}
-          className="relative flex h-[60px] w-full cursor-pointer items-center justify-center rounded-[12px] bg-[#00684e] text-lg font-bold text-[#c6ffe6] shadow-[0_10px_15px_-3px_rgba(0,104,78,0.2)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          className={`relative flex h-[60px] w-full cursor-pointer items-center justify-center rounded-[12px] ${isDark ? 'bg-[#00684e] text-[#c6ffe6] hover:opacity-90' : 'bg-[#4ad7b0] text-black hover:bg-[#3bc7a0]'} text-lg font-bold shadow-[0_10px_15px_-3px_rgba(0,104,78,0.2)] transition-opacity disabled:cursor-not-allowed disabled:opacity-50`}
         >
           {registerMutation.isPending ? 'Creating Account...' : 'Create Account'}
         </button>
 
-        <p className="text-center text-[16px] text-[#00362d]">
+        <p className={`text-center text-[16px] ${isDark ? 'text-[#00362d]' : 'text-white/40'}`}>
           Already have an account?{' '}
-          <Link to="/login" className="font-bold text-[#00684e] hover:underline">
+          <Link
+            to="/login"
+            className={`font-bold ${isDark ? 'text-[#00684e]' : 'text-[#4ad7b0]'} hover:underline`}
+          >
             Log In
           </Link>
         </p>

@@ -2,65 +2,64 @@ import { RegisterForm } from '@/components/layout/register-form/RegisterForm'
 import { SIGN_UP_SVG_PATHS } from '@/shared/constants/svg-paths'
 import signupPremium from '@/assets/images/signup-premium.png'
 import { Link } from 'react-router-dom'
+import { CosmicBackground } from '@/components/layout/CosmicBackground'
 
 export const RegisterPage = () => {
   return (
-    <div className="flex h-screen w-full flex-col overflow-hidden bg-mint-300">
-      <div className="flex-1 overflow-y-auto p-4 lg:p-8">
+    <CosmicBackground>
+      <div className="flex-1 overflow-y-auto p-4 lg:p-15">
         <div className="flex h-full min-h-fit items-center justify-center">
-          <div className="grid w-full max-w-[1024px] grid-cols-1 overflow-hidden rounded-[12px] bg-white shadow-[0_20px_40px_0_rgba(0,54,45,0.06)] lg:grid-cols-2">
-            {/* Sign-Up Form (Now on Left, Slides in from Right across to Left) */}
-            <div className="animate-slide-in-right flex flex-col items-center justify-center p-4 lg:p-8">
+          <div className="grid w-full max-w-[1024px] grid-cols-1 overflow-hidden rounded-[32px] backdrop-blur-2xl lg:grid-cols-2">
+            {/* Sign-Up Form */}
+            <div className="animate-slide-in-right flex flex-col items-center justify-center bg-transparent p-8 lg:p-12">
               <div className="w-full max-w-[380px]">
-                <div className="mb-4">
-                  <h1 className="mb-0.5 text-[28px] font-bold tracking-[-0.9px] text-[#00362d]">
-                    Sign Up
-                  </h1>
-                  <p className="text-[14px] text-[#00362d]">
+                <div className="mb-10">
+                  <h1 className="mb-2 text-[32px] font-bold tracking-[-1px] text-white">Sign Up</h1>
+                  <p className="text-[15px] text-white/40">
                     Create your account to start your visionary journey.
                   </p>
                 </div>
 
-                <RegisterForm />
+                <RegisterForm variant="dark" />
               </div>
             </div>
 
-            {/* Product Imagery (Now on Right, Slides in from Left across to Right) */}
-            <div className="animate-slide-in-left relative hidden flex-col items-start justify-center bg-[#bdfeed] lg:flex">
-              <div className="absolute inset-0 bg-[#00362d] opacity-30 mix-blend-multiply" />
-              <div className="absolute inset-0 mix-blend-overlay">
+            {/* Right Side: Product Imagery */}
+            <div className="animate-slide-in-left relative hidden flex-col items-start justify-center overflow-hidden bg-black/40 lg:flex">
+              <div className="absolute inset-0 bg-[#ffffff] opacity-70 mix-blend-multiply">
                 <img
                   src={signupPremium}
                   alt="Premium Eyewear"
-                  className="animate-zoom-in-subtle h-full w-full object-cover"
+                  className="animate-zoom-in-subtle h-full w-full object-cover opacity-80"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
               </div>
 
               {/* Floating Element Icon */}
-              <div className="absolute left-8 top-8 flex size-24 items-center justify-center rounded-full border border-white/20 bg-white/10 backdrop-blur-md">
+              <div className="absolute left-10 top-10 z-10 flex size-24 items-center justify-center rounded-full border border-white/20 bg-white/5 backdrop-blur-md">
                 <div className="h-[15px] w-[22px]">
                   <svg className="size-full" fill="none" viewBox="0 0 33 22.5">
-                    <path d={SIGN_UP_SVG_PATHS.lens_container} fill="#D7FFF3" />
+                    <path d={SIGN_UP_SVG_PATHS.lens_container} fill="#4ad7b0" />
                   </svg>
                 </div>
               </div>
 
               {/* Text Overlay */}
-              <div className="relative z-10 flex h-full w-full flex-col justify-end bg-gradient-to-t from-[#00362d]/20 to-transparent p-12">
+              <div className="relative z-10 flex h-full w-full flex-col justify-end p-12">
                 <div className="mb-2">
-                  <p className="text-[10px] font-bold uppercase tracking-[1.2px] text-[#D7FFF3]">
+                  <p className="text-[10px] font-bold uppercase tracking-[1.2px] text-[#4ad7b0]">
                     The Atelier Series
                   </p>
                 </div>
                 <div className="mb-4">
-                  <h2 className="text-[36px] font-extrabold leading-[1.1] tracking-[-1.5px] text-white">
+                  <h2 className="text-[40px] font-extrabold leading-[1.1] tracking-[-1.5px] text-white">
                     Define Your
                     <br />
                     Vision.
                   </h2>
                 </div>
                 <div className="max-w-xs">
-                  <p className="text-[14px] leading-[1.5] text-[#d7fff3]/80">
+                  <p className="text-[14px] leading-[1.5] text-white/50">
                     Join our digital atelier and discover a curated collection designed for the
                     lucid visionary.
                   </p>
@@ -72,47 +71,53 @@ export const RegisterPage = () => {
       </div>
 
       {/* Footer */}
-      <footer className="w-full bg-[#d7fff3] px-12 py-6">
-        <div className="mx-auto flex max-w-[1024px] flex-col items-center justify-between gap-4 border-t border-[#00684e]/10 pt-4 lg:flex-row lg:gap-0">
+      <footer className="w-full border-t border-white/5 bg-black/40 px-12 py-3 backdrop-blur-md">
+        <div className="mx-auto flex max-w-[1024px] flex-col items-center justify-between gap-6 lg:flex-row lg:gap-0">
           <div className="flex flex-col gap-1">
-            <h3 className="text-[18px] font-bold text-[#00362d]">Eyewear Atelier</h3>
-            <p className="text-[12px] text-[#00362d]/60">
-              © 2024 Eyewear Atelier. All rights reserved.
-            </p>
+            <h3 className="text-[18px] font-bold text-white">Eyewear Optic</h3>
+            <p className="text-[12px] text-white/40">© 2026 Eyewear Optic. All rights reserved.</p>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-6 text-[12px] font-medium text-[#00362d]">
-            <Link to="#" className="hover:underline">
+          <div className="flex flex-wrap justify-center gap-8 text-[12px] font-medium text-white/60">
+            <Link to="#" className="transition-colors hover:text-[#4ad7b0]">
               Privacy Policy
             </Link>
-            <Link to="#" className="hover:underline">
+            <Link to="#" className="transition-colors hover:text-[#4ad7b0]">
               Terms of Service
             </Link>
-            <Link to="#" className="hover:underline">
+            <Link to="#" className="transition-colors hover:text-[#4ad7b0]">
               Shipping / Returns
             </Link>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex gap-4">
             <a
               href="#"
-              className="flex size-8 items-center justify-center rounded-full bg-[#b0f6e4] transition-colors hover:bg-[#a0e6d4]"
+              className="group flex size-9 items-center justify-center rounded-full border border-white/10 bg-white/5 transition-all hover:bg-[#4ad7b0]"
             >
-              <svg className="size-[14px]" fill="none" viewBox="0 0 16.67 16.67">
-                <path d={SIGN_UP_SVG_PATHS.facebook} fill="#00362D" />
+              <svg
+                className="size-[14px] transition-colors group-hover:fill-black"
+                fill="none"
+                viewBox="0 0 16.67 16.67"
+              >
+                <path d={SIGN_UP_SVG_PATHS.facebook} fill="white" />
               </svg>
             </a>
             <a
               href="#"
-              className="flex size-8 items-center justify-center rounded-full bg-[#b0f6e4] transition-colors hover:bg-[#a0e6d4]"
+              className="group flex size-9 items-center justify-center rounded-full border border-white/10 bg-white/5 transition-all hover:bg-[#4ad7b0]"
             >
-              <svg className="h-[14px] w-[13px]" fill="none" viewBox="0 0 15 16.67">
-                <path d={SIGN_UP_SVG_PATHS.share} fill="#00362D" />
+              <svg
+                className="h-[14px] w-[13px] transition-colors group-hover:fill-black"
+                fill="none"
+                viewBox="0 0 15 16.67"
+              >
+                <path d={SIGN_UP_SVG_PATHS.share} fill="white" />
               </svg>
             </a>
           </div>
         </div>
       </footer>
-    </div>
+    </CosmicBackground>
   )
 }

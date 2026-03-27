@@ -46,11 +46,11 @@ export const VoucherSection = ({
   }
 
   return (
-    <div className="mb-8 border-t border-mint-100 pt-8 animate-in fade-in duration-700">
+    <div className="mb-8 border-t border-mint-200/50 pt-8 animate-in fade-in duration-700">
       <div className="flex items-center justify-between mb-5">
         <h2 className="text-xl font-black text-mint-1200 flex items-center gap-3 font-heading">
           <div className="relative">
-            <Tag className="w-5 h-5 text-primary-500 transform -rotate-12 group-hover:rotate-0 transition-transform duration-500" />
+            <Tag className="w-5 h-5 text-mint-700 transform -rotate-12 group-hover:rotate-0 transition-transform duration-500" />
             <Sparkles className="w-2.5 h-2.5 text-yellow-400 absolute -top-1 -right-1 animate-pulse" />
           </div>
           Vouchers
@@ -58,7 +58,7 @@ export const VoucherSection = ({
         {vouchers.length > 0 && (
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="text-[10px] font-black text-primary-600 hover:text-primary-700 transition-all uppercase tracking-widest bg-primary-50 px-3 py-1.5 rounded-full border border-primary-100/50 hover:bg-primary-100"
+            className="text-[10px] font-black text-mint-700 hover:text-mint-800 transition-all uppercase tracking-widest bg-mint-50 px-3 py-1.5 rounded-full border border-mint-200/50 hover:bg-mint-100"
           >
             {isOpen ? 'Close' : selectedVoucher ? 'Switch' : 'View all'}
           </button>
@@ -67,10 +67,10 @@ export const VoucherSection = ({
 
       {/* Selected Voucher UI */}
       {selectedVoucher && !isOpen && (
-        <div className="relative group overflow-hidden bg-gradient-to-br from-primary-500 to-primary-600 border border-primary-400 rounded-2xl p-4 flex items-center justify-between shadow-lg shadow-primary-500/20 transform hover:scale-[1.02] transition-all duration-500">
+        <div className="relative group overflow-hidden bg-gradient-to-br from-mint-600 to-mint-700 border border-mint-500/50 rounded-2xl p-4 flex items-center justify-between shadow-lg shadow-mint-500/20 transform hover:scale-[1.02] transition-all duration-500">
           {/* Decorative notches */}
-          <div className="absolute -left-2.5 top-1/2 -translate-y-1/2 w-5 h-5 bg-white rounded-full border border-primary-500 z-10" />
-          <div className="absolute -right-2.5 top-1/2 -translate-y-1/2 w-5 h-5 bg-white rounded-full border border-primary-500 z-10" />
+          <div className="absolute -left-2.5 top-1/2 -translate-y-1/2 w-5 h-5 bg-mint-100 rounded-full border border-mint-500/50 z-10" />
+          <div className="absolute -right-2.5 top-1/2 -translate-y-1/2 w-5 h-5 bg-mint-100 rounded-full border border-mint-500/50 z-10" />
           <div className="absolute left-[3rem] top-0 h-full w-[1px] border-l-2 border-dashed border-white/20 z-0" />
 
           <div className="flex items-center gap-4 pl-3 z-10">
@@ -82,7 +82,7 @@ export const VoucherSection = ({
                 <span className="font-black text-base text-white tracking-wider uppercase">
                   {selectedVoucher.code}
                 </span>
-                <span className="px-1.5 py-0.5 bg-white text-primary-600 text-[8px] font-black rounded-full uppercase shadow-sm">
+                <span className="px-1.5 py-0.5 bg-white text-mint-700 text-[8px] font-black rounded-full uppercase shadow-sm">
                   Applied
                 </span>
               </div>
@@ -103,11 +103,11 @@ export const VoucherSection = ({
       {!selectedVoucher && !isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="w-full flex items-center justify-between p-4 bg-gradient-to-br from-white to-mint-50/50 border-2 border-dashed border-mint-200 rounded-2xl hover:border-primary-400 hover:shadow-md transition-all group overflow-hidden relative"
+          className="w-full flex items-center justify-between p-4 bg-gradient-to-br from-white to-mint-50/50 border-2 border-dashed border-mint-300 rounded-2xl hover:border-mint-500 hover:shadow-md transition-all group overflow-hidden relative"
         >
           <div className="flex items-center gap-3 relative z-10">
-            <div className="w-10 h-10 rounded-xl bg-mint-50 flex items-center justify-center group-hover:bg-primary-100 group-hover:scale-110 transition-all duration-500 shadow-sm border border-mint-200/50">
-              <Ticket className="w-5 h-5 text-mint-500 group-hover:text-primary-500 transform group-hover:-rotate-12 transition-all" />
+            <div className="w-10 h-10 rounded-xl bg-mint-50 flex items-center justify-center group-hover:bg-mint-100 group-hover:scale-110 transition-all duration-500 shadow-sm border border-mint-200/50">
+              <Ticket className="w-5 h-5 text-mint-500 group-hover:text-mint-700 transform group-hover:-rotate-12 transition-all" />
             </div>
             <div className="text-left">
               <span className="block font-black text-xs text-mint-1200 uppercase tracking-widest">
@@ -119,7 +119,7 @@ export const VoucherSection = ({
             </div>
           </div>
           <ChevronRight
-            className="w-5 h-5 text-mint-300 group-hover:text-primary-500 group-hover:translate-x-1 transition-all"
+            className="w-5 h-5 text-mint-400 group-hover:text-mint-700 group-hover:translate-x-1 transition-all"
             strokeWidth={3}
           />
         </button>
@@ -129,14 +129,14 @@ export const VoucherSection = ({
       {isOpen && (
         <div className="space-y-3 animate-in fade-in slide-in-from-top-4 duration-500">
           {isLoading ? (
-            <div className="flex flex-col items-center py-8 bg-mint-50/30 rounded-2xl border border-mint-100 italic text-mint-600">
+            <div className="flex flex-col items-center py-8 bg-mint-50/50 rounded-2xl border border-mint-200/50 italic text-mint-600 shadow-inner">
               <div className="relative mb-2">
-                <div className="w-6 h-6 border-3 border-primary-500/20 border-t-primary-500 rounded-full animate-spin" />
+                <div className="w-6 h-6 border-3 border-mint-500/20 border-t-mint-700 rounded-full animate-spin" />
               </div>
               Finding deals...
             </div>
           ) : vouchers.length === 0 ? (
-            <div className="text-center py-8 bg-mint-50/30 rounded-2xl border border-mint-100 border-dashed">
+            <div className="text-center py-8 bg-mint-50/50 rounded-2xl border border-mint-200 border-dashed">
               <p className="text-mint-800 font-black text-[10px] uppercase tracking-widest">
                 No Vouchers Found
               </p>
@@ -153,28 +153,28 @@ export const VoucherSection = ({
                     onClick={() => eligible && handleSelect(voucher)}
                     className={`relative group rounded-2xl border-2 transition-all duration-500 overflow-hidden ${
                       isSelected
-                        ? 'border-primary-500 bg-primary-50'
+                        ? 'border-mint-600 bg-mint-50'
                         : eligible
-                          ? 'border-mint-100 bg-white hover:border-primary-400 hover:shadow-lg cursor-pointer'
+                          ? 'border-mint-200 bg-white hover:border-mint-500 hover:shadow-lg cursor-pointer'
                           : 'border-mint-50 bg-mint-50/50 grayscale opacity-60 cursor-not-allowed'
                     }`}
                   >
                     {/* Ticket notches */}
-                    <div className="absolute -left-2.5 top-1/2 -translate-y-1/2 w-5 h-5 bg-white rounded-full border border-inherit z-10" />
-                    <div className="absolute -right-2.5 top-1/2 -translate-y-1/2 w-5 h-5 bg-white rounded-full border border-inherit z-10" />
-                    <div className="absolute right-[4rem] top-0 h-full w-[1px] border-l border-dashed border-mint-100 z-0" />
+                    <div className="absolute -left-2.5 top-1/2 -translate-y-1/2 w-5 h-5 bg-mint-100 rounded-full border border-inherit z-10" />
+                    <div className="absolute -right-2.5 top-1/2 -translate-y-1/2 w-5 h-5 bg-mint-100 rounded-full border border-inherit z-10" />
+                    <div className="absolute right-[4rem] top-0 h-full w-[1px] border-l border-dashed border-mint-200 z-0" />
 
                     <div className="p-4 pr-[5rem] relative z-10">
                       <div className="flex items-center gap-2 mb-1.5">
                         <span
                           className={`text-sm font-black tracking-wider uppercase font-heading ${
-                            isSelected ? 'text-primary-600' : 'text-mint-1200'
+                            isSelected ? 'text-mint-800' : 'text-mint-1200'
                           }`}
                         >
                           {voucher.code}
                         </span>
                         {isSelected && (
-                          <div className="bg-primary-500 p-0.5 rounded-full shadow-md shadow-primary-500/30">
+                          <div className="bg-mint-700 p-0.5 rounded-full shadow-md shadow-mint-500/30">
                             <Check className="w-2.5 h-2.5 text-white" strokeWidth={4} />
                           </div>
                         )}
@@ -184,7 +184,7 @@ export const VoucherSection = ({
                         <p className="text-[10px] font-black text-mint-1000 uppercase tracking-wide">
                           {voucher.name}
                         </p>
-                        <p className="text-[9px] text-mint-500 font-bold flex items-center gap-1.5 uppercase tracking-widest">
+                        <p className="text-[9px] text-mint-600 font-bold flex items-center gap-1.5 uppercase tracking-widest">
                           {eligible ? (
                             `Exp: ${new Date(voucher.endedDate).toLocaleDateString('vi-VN')}`
                           ) : (
@@ -198,7 +198,9 @@ export const VoucherSection = ({
                       {/* Right-side Discount Area */}
                       <div
                         className={`absolute right-0 top-0 h-full w-[4rem] flex items-center justify-center p-2 font-black text-center ${
-                          isSelected ? 'bg-primary-500 text-white' : 'bg-mint-50 text-mint-1200'
+                          isSelected
+                            ? 'bg-mint-600 text-white'
+                            : 'bg-mint-50 text-mint-1200 shadow-inner'
                         }`}
                       >
                         <div className="transform -rotate-90 whitespace-nowrap text-[10px] tracking-widest font-black uppercase">

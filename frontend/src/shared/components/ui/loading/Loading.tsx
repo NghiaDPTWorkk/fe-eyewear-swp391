@@ -1,3 +1,5 @@
+import LogoEyewearIcon from '@/shared/components/ui-core/logoeyewear/LogoEyewearIcon'
+
 interface LoadingProps {
   className?: string
   fullPage?: boolean
@@ -15,8 +17,8 @@ export const Loading = ({ className = '', fullPage = true }: LoadingProps) => {
         <div className="absolute inset-0 bg-mint-400 rounded-2xl blur-xl opacity-20 animate-pulse" />
 
         {/* Branded Logo Square */}
-        <div className="w-14 h-14 bg-mint-500 rounded-2xl flex items-center justify-center shadow-xl shadow-mint-200 relative z-10">
-          <span className="text-white font-bold text-2xl leading-none">E</span>
+        <div className="w-14 h-14 flex items-center justify-center relative z-10 scale-150">
+          <LogoEyewearIcon />
         </div>
 
         {/* Modern orbital spinner around logo */}

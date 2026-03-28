@@ -378,7 +378,11 @@ export const RegisterForm = ({
               { label: 'Female', value: Gender.FEMALE },
               { label: 'Other', value: Gender.NON_BINARY }
             ].map((g) => (
-              <label key={g.value} className="flex cursor-pointer items-center gap-2">
+              <label
+                key={g.value}
+                className="flex cursor-pointer items-center gap-2"
+                onClick={() => formik.setFieldValue('gender', g.value)}
+              >
                 <div
                   className={`relative size-3.5 rounded-full border border-[#4ad7b0] transition-colors ${
                     formik.values.gender === g.value
@@ -387,7 +391,6 @@ export const RegisterForm = ({
                         ? 'bg-[#d7fff3]'
                         : 'bg-white/5'
                   }`}
-                  onClick={() => formik.setFieldValue('gender', g.value)}
                 >
                   {formik.values.gender === g.value && (
                     <div

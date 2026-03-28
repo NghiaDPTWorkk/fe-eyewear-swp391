@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils'
 import { useState } from 'react'
 import { VNDPrice } from '@/shared/components/ui/vnd-price/VNDPrice'
 import type { UseProductVariantsReturn } from '@/shared/hooks/products/useProductVariants'
+import { Product3DViewer } from './Product3DViewer'
 import type { Variant } from '@/shared/types'
 
 interface ProductSpecificationsProps {
@@ -11,7 +12,7 @@ interface ProductSpecificationsProps {
   className?: string
 }
 
-type TabType = 'details' | 'variants'
+type TabType = 'details' | 'variants' | '3d'
 
 export const ProductSpecifications = ({
   product,
@@ -19,7 +20,16 @@ export const ProductSpecifications = ({
   className
 }: ProductSpecificationsProps) => {
   const { spec, type, brand, nameBase, description, variants } = product
-  const [activeTab, setActiveTab] = useState<TabType>('details')
+
+  // Support for 3D model
+  const currentVirTryOnUrl = variantState?.currentVariant?.virTryOnUrl
+  const has3DModel = !!currentVirTryOnUrl || variants?.some((v) => !!v.virTryOnUrl)
+
+  // Initialize active tab based on 3D model availability
+  const [activeTab, setActiveTab] = useState<TabType>(has3DModel ? '3d' : 'details')
+
+  // Automatically switch to '3d' if it's the first time 3D model becomes available
+  // (Optional: depending on UX preference, but here we enforce 3D as first tab)
 
   const handleVariantClick = (v: Variant) => {
     if (variantState) {
@@ -58,10 +68,13 @@ export const ProductSpecifications = ({
     )
   }
 
-  const tabs: { id: TabType; label: string }[] = [
-    { id: 'details', label: 'Details' },
-    { id: 'variants', label: 'Available Variants' }
-  ]
+  const tabs: { id: TabType; label: string }[] = []
+
+  if (has3DModel) {
+    tabs.push({ id: '3d', label: '3D Experience' })
+  }
+
+  tabs.push({ id: 'details', label: 'Details' }, { id: 'variants', label: 'Available Variants' })
 
   return (
     <section className={cn('bg-mint-50/50 pb-24 pt-16', className)}>
@@ -225,6 +238,36 @@ export const ProductSpecifications = ({
                     <p className="text-gray-eyewear font-medium">
                       No other variants available for this product.
                     </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === '3d' && (
+              <div className="relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="text-center mb-10">
+                  <h3 className="text-3xl font-heading font-bold text-mint-1200 mb-4">
+                    Product Immersion
+                  </h3>
+                  <p className="text-gray-eyewear/70 max-w-2xl mx-auto">
+                    Take a closer look at the intricate details and superior craftsmanship of our
+                    {nameBase} through this interactive 3D model.
+                  </p>
+                </div>
+
+                {currentVirTryOnUrl ? (
+                  <Product3DViewer modelUrl={currentVirTryOnUrl} />
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-20 bg-mint-50/50 rounded-3xl border border-dashed border-mint-200">
+                    <p className="text-gray-eyewear font-bold mb-4">
+                      Please select a variant to view its 3D model
+                    </p>
+                    <button
+                      onClick={() => setActiveTab('variants')}
+                      className="px-6 py-2 bg-primary-500 text-white rounded-xl font-bold hover:bg-primary-600 transition-colors shadow-md"
+                    >
+                      Choose Variant
+                    </button>
                   </div>
                 )}
               </div>

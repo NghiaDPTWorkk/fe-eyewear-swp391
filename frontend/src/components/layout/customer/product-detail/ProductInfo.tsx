@@ -228,7 +228,7 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
     }
 
     const productUrl = `${window.location.origin}/products/${product.id || productId}`
-    const message = `I'm interested in this product: ${product.nameBase}. Can you tell me more about it? ${productUrl}`
+    const message = `Tôi đang quan tâm đến sản phẩm này: ${product.nameBase}. Bạn có thể tư vấn thêm cho tôi được không? ${productUrl}`
     sendMessage(message)
   }
 

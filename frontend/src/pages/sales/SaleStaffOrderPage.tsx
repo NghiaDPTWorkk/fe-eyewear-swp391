@@ -298,11 +298,7 @@ export default function SaleStaffOrderPage() {
       }
     }
     if (s === InvoiceStatus.DEPOSITED) {
-      if (
-        invoice.hasManufacturing &&
-        invoice.totalOrdersCount &&
-        invoice.approvedOrdersCount === invoice.totalOrdersCount
-      ) {
+      if (invoice.totalOrdersCount && invoice.approvedOrdersCount === invoice.totalOrdersCount) {
         return { label: 'READY TO APPROVE', color: 'bg-mint-50 text-mint-600 border-mint-200' }
       }
       return hasMfg
@@ -572,7 +568,7 @@ export default function SaleStaffOrderPage() {
                             <div className="flex flex-wrap gap-1.5">
                               {(Array.isArray(order.type)
                                 ? order.type
-                                : [order.type || 'REGULAR']
+                                : [order.type || 'NORMAL']
                               ).map((t: any, idx: number) => (
                                 <span
                                   key={idx}

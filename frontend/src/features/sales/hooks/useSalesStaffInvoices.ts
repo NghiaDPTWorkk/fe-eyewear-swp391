@@ -60,7 +60,7 @@ export function useSalesStaffInvoices(
                   status: o.status || 'UNKNOWN'
                 }
               }
-              return o
+              return { id: String(o), type: [], status: 'UNKNOWN' }
             })
 
             const hasManufacturing =
@@ -97,7 +97,7 @@ export function useSalesStaffInvoices(
                   const isMfg = (Array.isArray(o.type) ? o.type : [o.type]).some((t: string) =>
                     String(t).includes(OrderType.MANUFACTURING)
                   )
-                  const isVerified = (
+                  const isAcceptedStatus = (
                     [
                       OrderStatus.VERIFIED,
                       OrderStatus.APPROVE,
@@ -114,6 +114,7 @@ export function useSalesStaffInvoices(
                       OrderStatus.PROCESSING
                     ] as string[]
                   ).includes(o.status?.toUpperCase())
+                  const isVerified = isAcceptedStatus || !isMfg
 
                   return {
                     id: orderId,
@@ -130,7 +131,7 @@ export function useSalesStaffInvoices(
                   const isMfg = (Array.isArray(o.type) ? o.type : [o.type]).some((t: string) =>
                     String(t).includes(OrderType.MANUFACTURING)
                   )
-                  const isVerified = (
+                  const isAcceptedStatus = (
                     [
                       OrderStatus.VERIFIED,
                       OrderStatus.APPROVE,
@@ -147,6 +148,7 @@ export function useSalesStaffInvoices(
                       OrderStatus.PROCESSING
                     ] as string[]
                   ).includes(o.status?.toUpperCase())
+                  const isVerified = isAcceptedStatus || !isMfg
 
                   return {
                     id: o._id,

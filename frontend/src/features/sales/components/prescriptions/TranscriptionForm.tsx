@@ -658,7 +658,7 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
         </div>
       )}
 
-      {isRejected && (
+      {(isRejected || isCanceled) && (
         <div className="p-6 bg-white border-t border-rose-50/50">
           <div className="bg-rose-50/30 border border-rose-100 rounded-[32px] p-8 transition-all duration-300">
             <div className="flex flex-col gap-6">
@@ -667,10 +667,12 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
                   <IoClose size={32} className="text-white stroke-[3.5]" />
                 </div>
                 <div className="flex flex-col">
-                  <h3 className="text-lg font-bold text-rose-600 tracking-tight">Order Rejected</h3>
+                  <h3 className="text-lg font-bold text-rose-600 tracking-tight">
+                    {rejectionNote ? 'Order Rejected' : 'Order Canceled'}
+                  </h3>
                   {actionTime && (
                     <p className="text-[11px] text-rose-400 font-medium">
-                      Rejected on {actionTime}
+                      {rejectionNote ? 'Rejected' : 'Canceled'} on {actionTime}
                     </p>
                   )}
                 </div>
@@ -682,72 +684,26 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
                   </div>
                   <div>
                     <p className="text-[10px] text-rose-400 font-bold uppercase tracking-widest leading-none mb-1.5">
-                      SALES STAFF
+                      {rejectionNote ? 'SALES STAFF' : 'CUSTOMER'}
                     </p>
                     <p className="text-sm font-bold text-slate-800">
-                      {staffName || assignStaff || 'Sales Staff'}
+                      {rejectionNote
+                        ? staffName || assignStaff || 'Sales Staff'
+                        : canceledByName || 'Customer'}
                     </p>
                   </div>
                 </div>
-                {rejectionNote && (
+                {(rejectionNote || cancelNote) && (
                   <div className="bg-white/60 border border-rose-100/60 rounded-2xl p-5 max-w-xl animate-in fade-in slide-in-from-top-2 duration-500">
                     <p className="text-[10px] text-rose-500 font-bold uppercase tracking-widest mb-3 flex items-center gap-2 font-heading">
-                      <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-                      REJECTION NOTE
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full bg-rose-500 ${rejectionNote ? 'animate-pulse' : ''}`}
+                      />
+                      {rejectionNote ? 'REJECTION NOTE' : 'CUSTOMER NOTE'}
                     </p>
                     <div className="relative pl-4 border-l-2 border-rose-200">
                       <p className="text-sm text-slate-700 leading-relaxed font-semibold italic">
-                        "{rejectionNote}"
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {isCanceled && (
-        <div className="p-6 bg-white border-t border-rose-50/50">
-          <div className="bg-rose-50/30 border border-rose-100 rounded-[32px] p-8 transition-all duration-300">
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center gap-5">
-                <div className="w-14 h-14 rounded-2xl bg-rose-500 text-white flex items-center justify-center flex-shrink-0 shadow-lg shadow-rose-100">
-                  <IoClose size={32} className="text-white stroke-[3.5]" />
-                </div>
-                <div className="flex flex-col">
-                  <h3 className="text-lg font-bold text-rose-600 tracking-tight">Order Canceled</h3>
-                  {actionTime && (
-                    <p className="text-[11px] text-rose-400 font-medium">
-                      Canceled on {actionTime}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <div className="flex flex-col gap-4 ml-[76px]">
-                <div className="max-w-fit bg-white border border-rose-200 rounded-2xl p-4 flex items-center gap-4 shadow-sm border-neutral-100">
-                  <div className="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center border border-rose-100">
-                    <IoPersonOutline className="text-rose-400" size={20} />
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-rose-400 font-bold uppercase tracking-widest leading-none mb-1.5">
-                      CUSTOMER
-                    </p>
-                    <p className="text-sm font-bold text-slate-800">
-                      {canceledByName || 'Customer'}
-                    </p>
-                  </div>
-                </div>
-                {cancelNote && (
-                  <div className="bg-white/60 border border-rose-100/60 rounded-2xl p-5 max-w-xl animate-in fade-in slide-in-from-top-2 duration-500">
-                    <p className="text-[10px] text-rose-500 font-bold uppercase tracking-widest mb-3 flex items-center gap-2 font-heading">
-                      <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-                      CUSTOMER NOTE
-                    </p>
-                    <div className="relative pl-4 border-l-2 border-rose-200">
-                      <p className="text-sm text-slate-700 leading-relaxed font-semibold italic">
-                        "{cancelNote}"
+                        "{rejectionNote || cancelNote}"
                       </p>
                     </div>
                   </div>

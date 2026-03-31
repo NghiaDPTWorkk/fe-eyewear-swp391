@@ -10,7 +10,7 @@ export function useSalesStaffInvoices(
   status: string = 'All',
   search?: string,
   enabled: boolean = true,
-  skipEnrichment: boolean = false
+  skipEnrichment: boolean = true
 ) {
   const query = useQuery({
     queryKey: ['sales', 'invoices', { page, limit, status, search, skipEnrichment }],
@@ -47,6 +47,7 @@ export function useSalesStaffInvoices(
       const apiData = response?.data
       const invoiceData = apiData?.invoiceList || []
       const pagination = apiData?.pagination || { totalPages: 1, total: 0 }
+
       if (skipEnrichment) {
         return {
           invoices: invoiceData.map((inv: any) => {
@@ -87,17 +88,17 @@ export function useSalesStaffInvoices(
         invoiceData.map(async (inv: any) => {
           try {
             const orderIds = (inv.orders || []) as (string | { id?: string; _id?: string })[]
-            const ordersWithDetails = (
-              await Promise.all(
-                orderIds.map(async (item) => {
-                  const orderId = (typeof item === 'string' ? item : item.id || item._id) as string
-                  if (!orderId) return null
-                  if (typeof item === 'object' && 'type' in item) {
-                    const o = item as any
-                    const isMfg = (Array.isArray(o.type) ? o.type : [o.type]).some((t: string) =>
-                      String(t).includes(OrderType.MANUFACTURING)
-                    )
-                    const verifiedStatuses = [
+            const ordersWithDetails = await Promise.all(
+              orderIds.map(async (item) => {
+                const orderId = (typeof item === 'string' ? item : item.id || item._id) as string
+                if (!orderId) return null
+                if (typeof item === 'object' && 'type' in item && 'status' in item) {
+                  const o = item as any
+                  const isMfg = (Array.isArray(o.type) ? o.type : [o.type]).some((t: string) =>
+                    String(t).includes(OrderType.MANUFACTURING)
+                  )
+                  const isVerified = (
+                    [
                       OrderStatus.VERIFIED,
                       OrderStatus.APPROVE,
                       OrderStatus.APPROVED,
@@ -111,26 +112,26 @@ export function useSalesStaffInvoices(
                       OrderStatus.DELIVERING,
                       OrderStatus.SHIPPED,
                       OrderStatus.PROCESSING
-                    ]
-                    const isVerified = (verifiedStatuses as string[]).includes(
-                      o.status?.toUpperCase()
-                    )
-                    return {
-                      id: orderId,
-                      type: o.type,
-                      status: o.status,
-                      isPrescription: isMfg,
-                      isVerified: isVerified
-                    }
-                  }
+                    ] as string[]
+                  ).includes(o.status?.toUpperCase())
 
-                  try {
-                    const detailRes = await salesService.getOrderById(orderId)
-                    const o = detailRes.data.order
-                    const isMfg = (Array.isArray(o.type) ? o.type : [o.type]).some((t: string) =>
-                      String(t).includes(OrderType.MANUFACTURING)
-                    )
-                    const verifiedStatuses = [
+                  return {
+                    id: orderId,
+                    type: o.type,
+                    status: o.status,
+                    isPrescription: isMfg,
+                    isVerified: isVerified
+                  }
+                }
+
+                try {
+                  const detailRes = await salesService.getOrderById(orderId)
+                  const o = detailRes.data.order
+                  const isMfg = (Array.isArray(o.type) ? o.type : [o.type]).some((t: string) =>
+                    String(t).includes(OrderType.MANUFACTURING)
+                  )
+                  const isVerified = (
+                    [
                       OrderStatus.VERIFIED,
                       OrderStatus.APPROVE,
                       OrderStatus.APPROVED,
@@ -144,38 +145,37 @@ export function useSalesStaffInvoices(
                       OrderStatus.DELIVERING,
                       OrderStatus.SHIPPED,
                       OrderStatus.PROCESSING
-                    ]
-                    const isVerified = (verifiedStatuses as string[]).includes(
-                      o.status?.toUpperCase()
-                    )
-                    return {
-                      id: o._id,
-                      type: o.type,
-                      status: o.status,
-                      isPrescription: isMfg,
-                      isVerified: isVerified
-                    }
-                  } catch {
-                    return {
-                      id: orderId,
-                      type: [],
-                      status: 'UNKNOWN',
-                      isPrescription: false,
-                      isVerified: false
-                    }
-                  }
-                })
-              )
-            ).filter(Boolean) as any[]
+                    ] as string[]
+                  ).includes(o.status?.toUpperCase())
 
-            const approvedCount = ordersWithDetails.filter((o) => o && o.isVerified).length
-            const hasManufacturing = ordersWithDetails.some((o) => o.isPrescription)
+                  return {
+                    id: o._id,
+                    type: o.type,
+                    status: o.status,
+                    isPrescription: isMfg,
+                    isVerified: isVerified
+                  }
+                } catch {
+                  return {
+                    id: orderId,
+                    type: [],
+                    status: 'UNKNOWN',
+                    isPrescription: false,
+                    isVerified: false
+                  }
+                }
+              })
+            )
+
+            const finalOrders = ordersWithDetails.filter(Boolean) as any[]
+            const approvedCount = finalOrders.filter((o) => o && o.isVerified).length
+            const hasManufacturing = finalOrders.some((o) => o.isPrescription)
 
             return {
               ...inv,
               id: inv.id || inv._id,
-              orders: ordersWithDetails,
-              totalOrdersCount: ordersWithDetails.length,
+              orders: finalOrders,
+              totalOrdersCount: finalOrders.length,
               approvedOrdersCount: approvedCount,
               hasManufacturing
             } as unknown as Invoice

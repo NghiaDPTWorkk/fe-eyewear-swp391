@@ -217,13 +217,10 @@ export default function PrescriptionVerification({
             <span className="px-3 py-1 bg-mint-50 text-mint-600 font-semibold rounded-full text-[10px] border border-mint-200 uppercase tracking-widest flex items-center gap-1.5 shadow-sm">
               <IoCheckmark size={14} className="text-mint-600" /> VERIFIED
             </span>
-          ) : isCanceled ? (
+          ) : isCanceled || isRejected ? (
             <span className="px-3 py-1 bg-rose-50 text-rose-600 font-semibold rounded-full text-[10px] border border-rose-200 uppercase tracking-widest shadow-sm flex items-center gap-1.5">
-              <IoClose size={14} className="text-rose-600" /> CANCELED
-            </span>
-          ) : isRejected ? (
-            <span className="px-3 py-1 bg-rose-50 text-rose-600 font-semibold rounded-full text-[10px] border border-rose-200 uppercase tracking-widest shadow-sm flex items-center gap-1.5">
-              <IoClose size={14} className="text-rose-600" /> REJECTED
+              <IoClose size={14} className="text-rose-600" />{' '}
+              {order.invoice?.rejectedNote || order.rejectedNote ? 'REJECTED' : 'CANCELED'}
             </span>
           ) : isPending ? (
             <span className="px-3 py-1 bg-amber-50 text-amber-600 font-semibold rounded-full text-[10px] border border-amber-200 uppercase tracking-widest shadow-sm">
@@ -283,9 +280,7 @@ export default function PrescriptionVerification({
                   ? (order?.invoice as any)?.updatedAt || order.updatedAt
                   : order.rejectedAt || order.updatedAt
             )}
-            rejectionNote={
-              isRejected ? order.invoice?.rejectedNote || order.rejectedNote || '' : ''
-            }
+            rejectionNote={order.invoice?.rejectedNote || order.rejectedNote || ''}
           />
         </div>
 

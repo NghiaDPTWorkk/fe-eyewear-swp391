@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import type { LoginRequest } from '@/shared/types'
 import { useLogin } from '@/features/auth/hooks/useLogin'
 import { getOrCreateDeviceId } from '@/shared/utils/device.utils'
@@ -23,6 +23,7 @@ const loginSchema = Yup.object().shape({
 
 export const LoginForm = ({ role: _role, variant = 'light' }: LoginFormProps) => {
   const { mutate: login, isPending } = useLogin()
+  const location = useLocation()
   const [rememberMe, setRememberMe] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
@@ -48,6 +49,13 @@ export const LoginForm = ({ role: _role, variant = 'light' }: LoginFormProps) =>
     const deviceId = getOrCreateDeviceId()
     const baseUrl = `${import.meta.env.VITE_API_URL}/api/v1`
     const googleAuthUrl = `${baseUrl}${ENDPOINTS.AUTH.GOOGLE}?state=${deviceId}`
+
+    // Save intended redirect path if available
+    const from = (location.state as any)?.from?.pathname || '/'
+    if (from !== '/login' && from !== '/register') {
+      localStorage.setItem('redirect_after_login', from)
+    }
+
     window.location.href = googleAuthUrl
   }
 
@@ -179,6 +187,7 @@ export const LoginForm = ({ role: _role, variant = 'light' }: LoginFormProps) =>
               Don't have an account?{' '}
               <Link
                 to="/register"
+                state={{ from: (location.state as any)?.from }}
                 className={`font-bold ${isDark ? 'text-[#00684e]' : 'text-[#4ad7b0]'} hover:underline`}
               >
                 Sign Up

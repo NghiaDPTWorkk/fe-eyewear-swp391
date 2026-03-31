@@ -4,7 +4,7 @@ import { IconButton } from '@/shared/components/ui/icon-button'
 import { Input } from '@/shared/components/ui/input'
 import { useChatMessages } from '@/shared/hooks/chat/useChatMessages'
 import { useAuthStore, useChatStore } from '@/store'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ProductChatTag } from './ProductChatTag'
 // import { ChatProductCard } from './ChatProductCard'
 import { useShallow } from 'zustand/react/shallow'
@@ -136,6 +136,7 @@ const MessageContent = ({ text: originalText, isUser }: MessageContentProps) => 
 
 export const ChatBot = () => {
   const { isAuthenticated } = useAuthStore()
+  const location = useLocation()
   const { isOpen, openChat, closeChat, pendingMessage, clearPendingMessage } = useChatStore(
     useShallow((state) => ({
       isOpen: state.isOpen,
@@ -260,6 +261,7 @@ export const ChatBot = () => {
               </p>
               <Link
                 to="/login"
+                state={{ from: location }}
                 className="w-full py-2.5 bg-primary-500 text-white rounded-xl font-medium hover:bg-primary-600 transition-colors"
                 onClick={() => setIsOpen(false)}
               >

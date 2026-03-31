@@ -21,6 +21,7 @@ interface LensSelectionModalProps {
   productId?: string
   sku?: string
   isPreOrder?: boolean
+  purchaseMode?: 'cart' | 'buy_now'
 }
 
 type Step = 'VISION_NEED' | 'LENS_CHOICE' | 'PRESCRIPTION_OPTION' | 'MANUAL_RX' | 'SAVED_RX'
@@ -37,7 +38,8 @@ export default function LensSelectionModal({
   productPrice,
   productId,
   sku,
-  isPreOrder = false
+  isPreOrder = false,
+  purchaseMode = 'cart'
 }: LensSelectionModalProps) {
   const [step, setStep] = useState<Step>(
     productType === 'lens' ? 'PRESCRIPTION_OPTION' : 'VISION_NEED'
@@ -116,6 +118,7 @@ export default function LensSelectionModal({
             {step === 'MANUAL_RX' && (
               <StepManualPrescription
                 isPreOrder={isPreOrder}
+                purchaseMode={purchaseMode}
                 onSubmit={(rx: PrescriptionData) => {
                   onConfirm({ ...state, prescription: rx, useSavedPrescription: false })
                   onClose()

@@ -152,7 +152,7 @@ export default function StepLensChoice({ onSelect }: StepLensChoiceProps) {
                   </span>
                   {price < originalPrice && (
                     <span className="text-xs text-gray-400 line-through">
-                      <VNDPrice amount={originalPrice} />
+                      <VNDPrice className="line-through" amount={originalPrice} />
                     </span>
                   )}
                 </div>

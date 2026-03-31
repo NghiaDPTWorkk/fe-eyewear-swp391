@@ -26,7 +26,9 @@ export const GoogleCallbackPage = () => {
           toast.success('Login successful!')
 
           // Redirect to home or intended page
-          navigate('/')
+          const redirectTo = localStorage.getItem('redirect_after_login') || '/'
+          localStorage.removeItem('redirect_after_login')
+          navigate(redirectTo)
         } catch (error) {
           console.error('Login failed:', error)
           toast.error('Failed to complete login. Please try again.')

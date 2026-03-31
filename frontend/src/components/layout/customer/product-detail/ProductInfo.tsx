@@ -545,6 +545,7 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
         productPrice={finalPrice}
         productId={productId}
         sku={currentVariant?.sku || ''}
+        purchaseMode={purchaseMode}
       />
 
       <VirtualTryOnModal

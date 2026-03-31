@@ -9,10 +9,11 @@ export function useSalesStaffInvoices(
   limit: number = 10,
   status: string = 'All',
   search?: string,
-  enabled: boolean = true
+  enabled: boolean = true,
+  skipEnrichment: boolean = false
 ) {
   const query = useQuery({
-    queryKey: ['sales', 'invoices', { page, limit, status, search }],
+    queryKey: ['sales', 'invoices', { page, limit, status, search, skipEnrichment }],
     enabled: !!enabled,
     queryFn: async () => {
       let apiStatus: string | undefined = undefined
@@ -46,19 +47,28 @@ export function useSalesStaffInvoices(
       const apiData = response?.data
       const invoiceData = apiData?.invoiceList || []
       const pagination = apiData?.pagination || { totalPages: 1, total: 0 }
+      if (skipEnrichment) {
+        return {
+          invoices: invoiceData.map((inv: any) => ({
+            ...inv,
+            id: inv.id || inv._id,
+            orders: inv.orders || [],
+            totalOrdersCount: inv.totalOrdersCount || inv.orders?.length || 0,
+            approvedOrdersCount: inv.approvedOrdersCount || 0
+          })),
+          pagination
+        }
+      }
 
       const enrichedInvoices = await Promise.all(
         invoiceData.map(async (inv: any) => {
           try {
             const orderIds = (inv.orders || []) as (string | { id?: string; _id?: string })[]
-
             const ordersWithDetails = (
               await Promise.all(
                 orderIds.map(async (item) => {
                   const orderId = (typeof item === 'string' ? item : item.id || item._id) as string
                   if (!orderId) return null
-
-                  // Optimization: If item is an object and has type/status, use it directly
                   if (typeof item === 'object' && 'type' in item) {
                     const o = item as any
                     const isMfg = (Array.isArray(o.type) ? o.type : [o.type]).some((t: string) =>
@@ -94,11 +104,9 @@ export function useSalesStaffInvoices(
                   try {
                     const detailRes = await salesService.getOrderById(orderId)
                     const o = detailRes.data.order
-
                     const isMfg = (Array.isArray(o.type) ? o.type : [o.type]).some((t: string) =>
                       String(t).includes(OrderType.MANUFACTURING)
                     )
-
                     const verifiedStatuses = [
                       OrderStatus.VERIFIED,
                       OrderStatus.APPROVE,
@@ -117,7 +125,6 @@ export function useSalesStaffInvoices(
                     const isVerified = (verifiedStatuses as string[]).includes(
                       o.status?.toUpperCase()
                     )
-
                     return {
                       id: o._id,
                       type: o.type,

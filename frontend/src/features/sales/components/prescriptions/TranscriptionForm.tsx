@@ -17,6 +17,9 @@ interface TranscriptionFormProps {
   isReadOnly: boolean
   isApproved: boolean
   isRejected: boolean
+  isCanceled?: boolean
+  canceledByName?: string
+  cancelNote?: string
   processing: boolean
   handleApprove: () => void
   handleReject: () => void
@@ -49,6 +52,9 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
   isReadOnly,
   isApproved,
   isRejected,
+  isCanceled = false,
+  canceledByName,
+  cancelNote,
   processing,
   handleApprove,
   handleReject,
@@ -112,7 +118,6 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
       }
     }
 
-    // Individual eye warnings
     ;(['right', 'left'] as const).forEach((eye) => {
       const label = eye === 'right' ? 'Right Eye' : 'Left Eye'
       const p = parameters?.[eye]
@@ -122,7 +127,6 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
       checkStep(p.CYL, VALIDATION_RULES.CYL.step, `${label} CYL`)
       checkStep(p.ADD, VALIDATION_RULES.ADD.step, `${label} ADD`)
 
-      // High prescription warnings
       const sph = Math.abs(parseFloat(p.SPH))
       const cyl = Math.abs(parseFloat(p.CYL))
       if (sph > 10 || cyl > 4) {
@@ -130,12 +134,10 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
       }
     })
 
-    // PD Step
     if (parameters?.PD) {
       checkStep(parameters.PD, VALIDATION_RULES.PD.step, 'PD')
     }
 
-    // ADD Mismatch
     const addR = parseFloat(parameters?.right?.ADD)
     const addL = parseFloat(parameters?.left?.ADD)
     if (!isNaN(addR) && !isNaN(addL) && addR !== addL) {
@@ -145,25 +147,20 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
     return w
   }, [parameters])
 
-  // Pre-emptive validation on mount
   React.useEffect(() => {
     const errors: Record<string, string> = {}
 
-    // Validate Right Eye
     ;['SPH', 'CYL', 'AXIS', 'ADD'].forEach((field) => {
       const val = (parameters?.right?.[field] ?? '').toString()
       const err = validateNumericField(field, val)
       if (err) errors[`right_${field}`] = err
     })
-
-    // Validate Left Eye
     ;['SPH', 'CYL', 'AXIS', 'ADD'].forEach((field) => {
       const val = (parameters?.left?.[field] ?? '').toString()
       const err = validateNumericField(field, val)
       if (err) errors[`left_${field}`] = err
     })
 
-    // Validate PD
     const pdVal = (parameters?.PD ?? '').toString()
     const pdErr = validateNumericField('PD', pdVal)
     if (pdErr) errors['common_PD'] = pdErr
@@ -171,7 +168,6 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
     setNumericErrors(errors)
   }, [parameters])
 
-  // Clear AXIS if CYL is 0
   React.useEffect(() => {
     if (!onParametersChange) return
     let changed = false
@@ -290,7 +286,6 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
       </div>
 
       <div className="p-5 bg-white space-y-5">
-        {}
         <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-4">
           <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
             <IoInformationCircleOutline className="text-amber-600" size={24} />
@@ -324,7 +319,6 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
           </div>
         </div>
 
-        {/* Prescription Warnings Section */}
         {warnings.length > 0 && (
           <div className="bg-orange-50 border border-orange-200 rounded-2xl p-4 flex items-start gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
             <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center shrink-0 shadow-sm border border-orange-200/50 text-orange-600">
@@ -350,7 +344,6 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
           </div>
         )}
 
-        {}
         <div className="bg-slate-50/40 p-5 rounded-xl border border-slate-100/60">
           <h4 className="font-semibold text-xs text-mint-600 mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
             <IoEyeOutline size={16} className="text-mint-500" /> RIGHT EYE (OD)
@@ -435,7 +428,6 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
           </div>
         </div>
 
-        {}
         <div className="bg-slate-50/40 p-5 rounded-xl border border-slate-100/60">
           <h4 className="font-semibold text-xs text-mint-600 mb-4 flex items-center gap-2 uppercase tracking-[0.15em]">
             <IoEyeOutline size={16} className="text-mint-500" /> LEFT EYE (OS)
@@ -520,9 +512,7 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
           </div>
         </div>
 
-        {}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start pt-2">
-          {}
           <div className="space-y-3">
             <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.15em] block">
               PUPILLARY DISTANCE (PD)
@@ -545,7 +535,6 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
             </div>
           </div>
 
-          {}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.15em] block">
@@ -578,7 +567,7 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
         </div>
       </div>
 
-      {!isReadOnly && !isApproved && !isRejected && (
+      {!isReadOnly && !isApproved && !isRejected && !isCanceled && (
         <div className="p-5 flex gap-4 border-t border-slate-100 bg-slate-50/20">
           <div className="flex flex-col gap-2 w-full">
             <Button
@@ -691,7 +680,7 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
                   </div>
                   <div>
                     <p className="text-[10px] text-rose-400 font-semibold uppercase tracking-widest leading-none mb-1.5">
-                      REJECTED BY
+                      SALES STAFF
                     </p>
                     <p className="text-sm font-semibold text-slate-800">
                       {staffName || assignStaff || 'Sales Staff'}
@@ -703,11 +692,62 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
                   <div className="bg-white/90 border border-rose-100/60 rounded-2xl p-5 max-w-xl shadow-sm animate-in fade-in slide-in-from-top-2 duration-500">
                     <p className="text-[10px] text-rose-500 font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-                      REJECTION REASON
+                      REJECTION NOTE
                     </p>
                     <div className="relative pl-4 border-l-2 border-rose-200">
                       <p className="text-sm text-slate-700 leading-relaxed font-semibold italic">
                         "{rejectionNote || (parameters as any).note}"
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {isCanceled && (
+        <div className="p-6 bg-white border-t border-rose-50/50">
+          <div className="bg-rose-50/40 border border-rose-100 rounded-3xl p-8 transition-all duration-300">
+            <div className="flex flex-col gap-6">
+              <div className="flex items-center gap-5">
+                <div className="w-14 h-14 rounded-2xl bg-rose-500 text-white flex items-center justify-center flex-shrink-0 shadow-lg shadow-rose-100">
+                  <IoClose size={32} className="text-white stroke-[3.5]" />
+                </div>
+                <div className="flex flex-col">
+                  <h3 className="text-lg font-bold text-rose-600 tracking-tight">Order Canceled</h3>
+                  {actionTime && (
+                    <p className="text-[11px] text-rose-400 font-medium">
+                      Canceled on {actionTime}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-4 ml-[76px]">
+                <div className="max-w-fit bg-white border border-rose-100 rounded-2xl p-4 flex items-center gap-4 shadow-sm">
+                  <div className="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center border border-rose-100">
+                    <IoPersonOutline className="text-rose-400" size={20} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-rose-400 font-semibold uppercase tracking-widest leading-none mb-1.5">
+                      CUSTOMER
+                    </p>
+                    <p className="text-sm font-semibold text-slate-800">
+                      {canceledByName || 'Customer'}
+                    </p>
+                  </div>
+                </div>
+
+                {cancelNote && (
+                  <div className="bg-white/90 border border-rose-100/60 rounded-2xl p-5 max-w-xl shadow-sm animate-in fade-in slide-in-from-top-2 duration-500">
+                    <p className="text-[10px] text-rose-500 font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                      CUSTOMER NOTE
+                    </p>
+                    <div className="relative pl-4 border-l-2 border-rose-200">
+                      <p className="text-sm text-slate-600 leading-relaxed font-semibold italic">
+                        "{cancelNote}"
                       </p>
                     </div>
                   </div>

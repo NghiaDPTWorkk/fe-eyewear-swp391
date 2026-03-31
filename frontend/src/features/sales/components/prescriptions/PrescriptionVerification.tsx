@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { IoCheckmark, IoClose } from 'react-icons/io5'
 import { useSearchParams } from 'react-router-dom'
-
 import { useSalesStaffAction, useSalesStaffOrderDetail } from '@/features/sales/hooks'
 import { useProfile } from '@/features/staff/hooks/useProfile'
 import { salesService } from '@/features/sales/services/salesService'
@@ -49,24 +48,26 @@ export default function PrescriptionVerification({
   const { data: profileData } = useProfile()
   const [searchParams] = useSearchParams()
   const mode = searchParams.get('mode')
-
   const isReadOnlyParams = mode === 'readonly'
-
   const { data: order, isLoading: loading, refetch } = useSalesStaffOrderDetail(orderId)
-
   const [localParameters, setLocalParameters] = useState<PrescriptionParameters | null>(null)
   const [localNote, setLocalNote] = useState('')
-
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const [confirmAction, setConfirmAction] = useState<'approve' | 'reject' | null>(null)
-
   const [resolvedStaffName, setResolvedStaffName] = useState<string | undefined>(undefined)
 
   const lens = order?.products?.[0]?.lens
   const parameters = lens?.parameters
 
+  const invoiceStatus = (order?.invoice?.status || '').toUpperCase()
+  const isInvoiceCanceled = ['CANCELED', 'CANCEL', 'CANCELLED'].includes(invoiceStatus)
+  const isInvoiceRejected = ['REJECTED', 'REJECT'].includes(invoiceStatus)
+  const orderStatus = order?.status?.toUpperCase() || ''
+
+  const isCanceled = ['CANCELED', 'CANCELLED', 'CANCEL'].includes(orderStatus) || isInvoiceCanceled
   const isApproved =
-    [
+    !isCanceled &&
+    ([
       'ACCEPTED',
       'APPROVED',
       'VERIFIED',
@@ -80,40 +81,36 @@ export default function PrescriptionVerification({
       'DELIVERED',
       'WAITING_ASSIGN',
       'ASSIGNED'
-    ].includes(order?.status?.toUpperCase() || '') ||
-    !!order?.approvedAt ||
-    !!order?.completedAt ||
-    !!order?.rejectedAt
+    ].includes(orderStatus) ||
+      !!order?.approvedAt ||
+      !!order?.completedAt ||
+      (!!order?.rejectedAt && !isInvoiceCanceled))
 
-  const isRejected = ['REJECTED', 'CANCELED', 'CANCELLED', 'REJECT', 'EXPIRED'].includes(
-    order?.status?.toUpperCase() || ''
-  )
+  const isRejected =
+    !isCanceled && (['REJECTED', 'REJECT', 'EXPIRED'].includes(orderStatus) || isInvoiceRejected)
 
-  const isPending = ['PENDING', 'DEPOSITED', 'WAITING_VERIFY'].includes(
-    order?.status?.toUpperCase() || ''
-  )
+  const isPending =
+    ['PENDING', 'DEPOSITED', 'WAITING_VERIFY'].includes(orderStatus) &&
+    !isCanceled &&
+    !isInvoiceRejected
+
+  const canceledByName = order?.customerName || (order?.invoice as any)?.fullName || 'Customer'
+  const cancelNote = (order?.invoice as any)?.note || ''
 
   useEffect(() => {
     const resolveName = async () => {
-      // 1. If we have profile data and it matches the assignStaff, use it (Fastest/most accurate)
       if (profileData?.data?._id && order?.assignStaff === profileData.data._id) {
         setResolvedStaffName(profileData.data.name)
         return
       }
-
-      // 2. If order already has a specific staffName, use it
       if (order?.staffName && order.staffName !== 'Sales Staff') {
         setResolvedStaffName(order.staffName)
         return
       }
-
-      // 3. Fallback to profile name if we're in the middle of working on it (Pending)
       if (!isApproved && !isRejected && profileData?.data?.name) {
         setResolvedStaffName(profileData.data.name)
         return
       }
-
-      // 4. Final attempt: Fetch if we have an ID but still no name
       if (order?.assignStaff) {
         try {
           const res = await salesService.getStaffById(order.assignStaff)
@@ -125,7 +122,6 @@ export default function PrescriptionVerification({
         }
       }
     }
-
     resolveName()
   }, [order?.assignStaff, order?.staffName, isApproved, isRejected, profileData?.data])
 
@@ -169,9 +165,7 @@ export default function PrescriptionVerification({
     }
 
     const finalNote = localNote !== '' ? localNote : ((parameters as any)?.note ?? '')
-
     const success = await approveOrder(orderId, { parameters: finalParams, note: finalNote })
-    // Always close modal so user can see toast and form errors
     setIsConfirmOpen(false)
 
     if (success) {
@@ -212,7 +206,7 @@ export default function PrescriptionVerification({
     )
   }
 
-  const isReadOnly = isReadOnlyParams || isApproved || isRejected
+  const isReadOnly = isReadOnlyParams || isApproved || isRejected || isCanceled
 
   return (
     <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
@@ -223,9 +217,13 @@ export default function PrescriptionVerification({
             <span className="px-3 py-1 bg-mint-50 text-mint-600 font-semibold rounded-full text-[10px] border border-mint-200 uppercase tracking-widest flex items-center gap-1.5 shadow-sm">
               <IoCheckmark size={14} className="text-mint-600" /> VERIFIED
             </span>
+          ) : isCanceled ? (
+            <span className="px-3 py-1 bg-rose-50 text-rose-600 font-semibold rounded-full text-[10px] border border-rose-200 uppercase tracking-widest shadow-sm flex items-center gap-1.5">
+              <IoClose size={14} className="text-rose-600" /> CANCELED
+            </span>
           ) : isRejected ? (
-            <span className="px-3 py-1 bg-rose-50 text-rose-600 font-semibold rounded-full text-[10px] border border-rose-200 uppercase tracking-widest shadow-sm">
-              <IoClose size={14} className="text-rose-600 inline mr-1" /> REJECTED
+            <span className="px-3 py-1 bg-rose-50 text-rose-600 font-semibold rounded-full text-[10px] border border-rose-200 uppercase tracking-widest shadow-sm flex items-center gap-1.5">
+              <IoClose size={14} className="text-rose-600" /> REJECTED
             </span>
           ) : isPending ? (
             <span className="px-3 py-1 bg-amber-50 text-amber-600 font-semibold rounded-full text-[10px] border border-amber-200 uppercase tracking-widest shadow-sm">
@@ -262,7 +260,7 @@ export default function PrescriptionVerification({
             parameters={localParameters || parameters}
             onParametersChange={setLocalParameters}
             note={
-              isApproved
+              isApproved || isCanceled
                 ? order.staffNote || (parameters as any)?.note || ''
                 : localNote || (parameters as any)?.note || ''
             }
@@ -270,6 +268,9 @@ export default function PrescriptionVerification({
             isReadOnly={isReadOnly}
             isApproved={isApproved}
             isRejected={isRejected}
+            isCanceled={isCanceled}
+            canceledByName={canceledByName}
+            cancelNote={cancelNote}
             processing={processing}
             handleApprove={handleApprove}
             handleReject={handleReject}
@@ -278,7 +279,9 @@ export default function PrescriptionVerification({
             actionTime={formatDate(
               isApproved
                 ? order.approvedAt || order.completedAt || order.updatedAt
-                : order.rejectedAt || order.updatedAt
+                : isCanceled
+                  ? (order?.invoice as any)?.updatedAt || order.updatedAt
+                  : order.rejectedAt || order.updatedAt
             )}
             rejectionNote={
               isRejected ? order.invoice?.rejectedNote || order.rejectedNote || '' : ''

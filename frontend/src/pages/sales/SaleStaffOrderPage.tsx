@@ -16,7 +16,6 @@ import { StatusFilterBar } from '@/features/sales/components/orders/StatusFilter
 import { RealtimeStatusBar } from '@/features/sales/components/orders/RealtimeStatusBar'
 import { LockBlockedModal } from '@/features/sales/components/orders/InvoiceLockBadge'
 import { PageHeader, RejectionModal } from '@/features/sales/components/common'
-
 import {
   useSalesStaffAction,
   useSalesStaffInvoices,
@@ -24,13 +23,11 @@ import {
   useSalesStaffRealtime
 } from '@/features/sales/hooks'
 import { type Invoice } from '@/features/sales/types'
-
 import { ConfirmationModal } from '@/shared/components/ui-core/confirm-modal'
 import { Button } from '@/shared/components/ui-core/button'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import { OrderType } from '@/shared/utils/enums/order.enum'
 import { useAuthStore } from '@/store/auth.store'
-
 import {
   ReturnTicketsTable,
   ReturnTicketDrawer,
@@ -44,16 +41,12 @@ export default function SaleStaffOrderPage() {
   const statusFilter = searchParams.get('status') ?? 'All'
   const orderTypeFilter = searchParams.get('orderType') ?? 'All'
   const searchQuery = searchParams.get('search') ?? ''
-
   const currentUser = useAuthStore((s) => s.user)
   const staffId = (currentUser as any)?._id || (currentUser as any)?.id || undefined
-
   const { acquireLock, releaseLock, isLockedByOther, lockedCount } = useInvoiceLock(staffId)
   const [showLockBlockedModal, setShowLockBlockedModal] = useState(false)
   const [lockedInvoiceId, setLockedInvoiceId] = useState<string | null>(null)
-
   const { isRefreshing, refresh, getLastUpdatedLabel } = useSalesStaffRealtime()
-
   const { approveInvoice, rejectInvoice, processing } = useSalesStaffAction()
   const [page, setPage] = useState(1)
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<string | null>(null)
@@ -62,15 +55,12 @@ export default function SaleStaffOrderPage() {
   const [invoiceToProcess, setInvoiceToProcess] = useState<string | null>(null)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const limit = 8
-
   const [verifyTicket, setVerifyTicket] = useState<ReturnTicketData | null>(null)
   const [drawerTicket, setDrawerTicket] = useState<ReturnTicketData | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
-
   const isReturnsActive = statusFilter === 'RETURNS'
   const isHistoryActive = statusFilter === 'REFUNDED_HISTORY'
   const isInvoicesActive = !isReturnsActive && !isHistoryActive
-
   const returnHook = useReturnPageTickets(staffId || '', isReturnsActive)
   const historyHook = useMyReturnHistory(isHistoryActive)
 
@@ -82,7 +72,7 @@ export default function SaleStaffOrderPage() {
       historyHook.setSearch(searchQuery)
       historyHook.setCurrentPage(page)
     }
-  }, [statusFilter, searchQuery, page]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [statusFilter, searchQuery, page])
 
   const setSearchQuery = (query: string) => {
     const next = new URLSearchParams(searchParams)
@@ -99,7 +89,7 @@ export default function SaleStaffOrderPage() {
     invoices: invoiceList,
     loading: isLoading,
     fetchInvoices: refetch
-  } = useSalesStaffInvoices(1, 100, statusFilter, searchQuery, isInvoicesActive)
+  } = useSalesStaffInvoices(1, 40, statusFilter, searchQuery, isInvoicesActive)
 
   const selectedInvoice = useMemo(
     () => invoiceList.find((inv) => inv.id === selectedInvoiceId) ?? null,
@@ -108,11 +98,9 @@ export default function SaleStaffOrderPage() {
 
   const filteredInvoices = useMemo(() => {
     let list = invoiceList
-
     if (statusFilter === InvoiceStatus.DEPOSITED) {
       list = list.filter((inv: Invoice) => inv.orders?.some((o) => o.isPrescription))
     }
-
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase()
       list = list.filter(
@@ -120,7 +108,6 @@ export default function SaleStaffOrderPage() {
           inv.fullName.toLowerCase().includes(q) || inv.invoiceCode.toLowerCase().includes(q)
       )
     }
-
     if (orderTypeFilter !== 'All') {
       list = list.filter((inv: Invoice) =>
         inv.orders?.some((o: any) => {
@@ -129,26 +116,30 @@ export default function SaleStaffOrderPage() {
         })
       )
     }
-
     list = list.sort((a: Invoice, b: Invoice) => {
       const dateA = new Date(a.createdAt).getTime()
       const dateB = new Date(b.createdAt).getTime()
       return dateB - dateA
     })
-
     return list
   }, [invoiceList, searchQuery, orderTypeFilter, statusFilter])
 
   const total = filteredInvoices.length
   const totalPages = Math.max(1, Math.ceil(total / limit))
   const safePage = Math.min(page, totalPages)
-
   const paginatedInvoices = useMemo(() => {
     const start = (safePage - 1) * limit
     return filteredInvoices.slice(start, start + limit)
   }, [filteredInvoices, safePage, limit])
 
-  const { invoices: metricsInvoices } = useSalesStaffInvoices(1, 100, 'All', '', isInvoicesActive)
+  const { invoices: metricsInvoices } = useSalesStaffInvoices(
+    1,
+    80,
+    'All',
+    '',
+    isInvoicesActive,
+    true
+  )
   const globalReturnHook = useReturnPageTickets(staffId || '', true)
 
   const metrics = useMemo(() => {
@@ -175,12 +166,8 @@ export default function SaleStaffOrderPage() {
         counts[OrderType.NORMAL]++
       }
     })
-
-    // Override RETURN count with real data from globalReturnHook (unfiltered)
     counts[OrderType.RETURN] = globalReturnHook.pagination.total || 0
-
     const totalWithReturns = Object.values(counts).reduce((a, b) => a + b, 0) || 1
-
     const pct = (key: string) => Math.round((counts[key] / totalWithReturns) * 100)
     return [
       {
@@ -241,16 +228,16 @@ export default function SaleStaffOrderPage() {
     setSearchParams(new URLSearchParams())
     setPage(1)
   }
-  const statusTabs = useMemo(() => {
-    const allTabs = [
+  const statusTabs = useMemo(
+    () => [
       { label: 'All Invoices', value: 'All' },
       { label: 'Pending', value: InvoiceStatus.DEPOSITED },
       { label: 'Approved', value: 'APPROVED_OR_REJECTED' },
       { label: 'Returns', value: 'RETURNS' },
       { label: 'History', value: 'REFUNDED_HISTORY' }
-    ]
-    return allTabs
-  }, [])
+    ],
+    []
+  )
 
   const getStatusBadgeProps = (invoice: Invoice) => {
     const s = invoice.status
@@ -259,7 +246,6 @@ export default function SaleStaffOrderPage() {
         String(t).includes(OrderType.MANUFACTURING)
       )
     )
-
     if (statusFilter === 'APPROVED_OR_REJECTED') {
       if (s === InvoiceStatus.REJECTED || s === 'REJECTED') {
         return { label: 'REJECTED', color: 'bg-rose-50 text-rose-600 border-rose-100' }
@@ -280,7 +266,6 @@ export default function SaleStaffOrderPage() {
         return { label: 'ACCEPTED', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' }
       }
     }
-
     if (s === InvoiceStatus.DEPOSITED) {
       if (
         invoice.hasManufacturing &&
@@ -296,7 +281,6 @@ export default function SaleStaffOrderPage() {
         ? { label: 'PENDING', color: 'bg-amber-50 text-amber-600 border-amber-100' }
         : { label: 'WAITING ASSIGN', color: 'bg-blue-50 text-blue-600 border-blue-100' }
     }
-
     if (s === InvoiceStatus.APPROVED || s === 'APPROVED')
       return { label: 'APPROVED', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' }
     if (s === InvoiceStatus.REJECTED || s === 'REJECTED')
@@ -305,14 +289,11 @@ export default function SaleStaffOrderPage() {
       return { label: 'CANCELED', color: 'bg-rose-50 text-rose-600 border-rose-100' }
     if (s === InvoiceStatus.REFUNDED || s === 'REFUNDED')
       return { label: 'REFUNDED', color: 'bg-purple-50 text-purple-600 border-purple-100' }
-
     return {
       label: String(s).toUpperCase() || 'UNKNOWN',
       color: 'bg-slate-50 text-slate-400 border-slate-100'
     }
   }
-
-  // Early return for Verify View
 
   const handleApproveClick = (invoiceId: string) => {
     if (isLockedByOther(invoiceId)) {
@@ -371,7 +352,6 @@ export default function SaleStaffOrderPage() {
               noMargin
             />
           </div>
-
           {verifyTicket.staffVerify === staffId && (
             <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-mint-50 border border-mint-100 w-fit text-mint-700 shadow-sm animate-in slide-in-from-left-4 duration-300">
               <IoLockClosedOutline size={14} className="text-mint-600" />
@@ -380,7 +360,6 @@ export default function SaleStaffOrderPage() {
               </span>
             </div>
           )}
-
           <ReturnVerifyView
             ticket={verifyTicket}
             onActionSuccess={() => {
@@ -536,11 +515,10 @@ export default function SaleStaffOrderPage() {
                   </span>
                 </div>
               </div>
-
               <div className="max-h-[240px] overflow-y-auto pr-1 space-y-3 custom-scrollbar">
                 {invoiceList
                   .find((inv) => inv.id === invoiceToProcess)
-                  ?.orders?.map((order, i) => (
+                  ?.orders?.map((order: any, i: number) => (
                     <div
                       key={order.id || i}
                       className="group flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100 hover:border-mint-200 hover:shadow-md hover:shadow-mint-50/50 transition-all duration-300"
@@ -564,7 +542,7 @@ export default function SaleStaffOrderPage() {
                             {(Array.isArray(order.type)
                               ? order.type
                               : [order.type || 'REGULAR']
-                            ).map((t, idx) => (
+                            ).map((t: any, idx: number) => (
                               <span
                                 key={idx}
                                 className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-[9px] font-medium uppercase tracking-wide border border-slate-200/50"
@@ -575,7 +553,6 @@ export default function SaleStaffOrderPage() {
                           </div>
                         </div>
                       </div>
-
                       <div className="flex items-center">
                         <span
                           className={`px-3 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider border shadow-sm transition-all ${
@@ -600,7 +577,6 @@ export default function SaleStaffOrderPage() {
                     </div>
                   ))}
               </div>
-
               <div className="p-3 bg-mint-50/40 rounded-2xl border border-mint-100/40">
                 <p className="text-[11px] font-medium text-mint-700 leading-relaxed text-center">
                   Once approved, all listed items will be marked as{' '}
@@ -625,7 +601,6 @@ export default function SaleStaffOrderPage() {
         onConfirm={confirmRejection}
         isLoading={processing}
       />
-
       <LockBlockedModal
         isOpen={showLockBlockedModal}
         invoiceId={lockedInvoiceId}

@@ -74,37 +74,44 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
     [parameters]
   )
 
-  const noteError = noteTouched ? validateNote(note ?? '') : null
+  const noteError = !isReadOnly && noteTouched ? validateNote(note ?? '') : null
   const isNoteValid = validateNote(note ?? '') === null
-  const hasNumericErrors = Object.keys(numericErrors).length > 0
+  const hasNumericErrors = !isReadOnly && Object.keys(numericErrors).length > 0
 
-  const validateNumericField = (field: string, value: string): string | null => {
-    if (value === '' || value === '-' || value === '.') return 'Required'
-    const num = parseFloat(value)
-    if (isNaN(num)) return 'Invalid number'
+  const validateNumericField = React.useCallback(
+    (field: string, value: string): string | null => {
+      if (isReadOnly) return null
+      if (value === '' || value === '-' || value === '.') return 'Required'
+      const num = parseFloat(value)
+      if (isNaN(num)) return 'Invalid number'
 
-    switch (field) {
-      case 'SPH':
-      case 'CYL': {
-        const rule = field === 'SPH' ? VALIDATION_RULES.SPH : VALIDATION_RULES.CYL
-        if (num < rule.min || num > rule.max) return `Must be between ${rule.min} and ${rule.max}`
-        break
+      switch (field) {
+        case 'SPH':
+        case 'CYL': {
+          const rule = field === 'SPH' ? VALIDATION_RULES.SPH : VALIDATION_RULES.CYL
+          if (num < rule.min || num > rule.max) return `Must be between ${rule.min} and ${rule.max}`
+          break
+        }
+        case 'AXIS':
+          if (num < VALIDATION_RULES.AXIS.min || num > VALIDATION_RULES.AXIS.max)
+            return `Must be between ${VALIDATION_RULES.AXIS.min} and ${VALIDATION_RULES.AXIS.max}`
+          break
+        case 'ADD':
+          if (num < VALIDATION_RULES.ADD.min || num > VALIDATION_RULES.ADD.max)
+            return `Must be between ${VALIDATION_RULES.ADD.min} and ${VALIDATION_RULES.ADD.max}`
+          break
+        case 'PD':
+          if (num < VALIDATION_RULES.PD.min || num > VALIDATION_RULES.PD.max)
+            return `Must be between ${VALIDATION_RULES.PD.min} and ${VALIDATION_RULES.PD.max}`
+          break
       }
-      case 'AXIS':
-        if (num < VALIDATION_RULES.AXIS.min || num > VALIDATION_RULES.AXIS.max)
-          return `Must be between ${VALIDATION_RULES.AXIS.min} and ${VALIDATION_RULES.AXIS.max}`
-        break
-      case 'ADD':
-        if (num < VALIDATION_RULES.ADD.min || num > VALIDATION_RULES.ADD.max)
-          return `Must be between ${VALIDATION_RULES.ADD.min} and ${VALIDATION_RULES.ADD.max}`
-        break
-      case 'PD':
-        if (num < VALIDATION_RULES.PD.min || num > VALIDATION_RULES.PD.max)
-          return `Must be between ${VALIDATION_RULES.PD.min} and ${VALIDATION_RULES.PD.max}`
-        break
-    }
-    return null
-  }
+      return null
+    },
+    [isReadOnly]
+  )
+
+  // ... (rest of the logic remains unchanged until the return part)
+  // I will just replace the bottom section carefully to avoid missing lines.
 
   const warnings = React.useMemo(() => {
     const w: string[] = []
@@ -166,7 +173,7 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
     if (pdErr) errors['common_PD'] = pdErr
 
     setNumericErrors(errors)
-  }, [parameters])
+  }, [parameters, validateNumericField])
 
   React.useEffect(() => {
     if (!onParametersChange) return
@@ -600,8 +607,8 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
       )}
 
       {isApproved && (
-        <div className="p-6 bg-white border-t border-neutral-50/50 text-slate-600">
-          <div className="bg-neutral-50 border border-neutral-100 rounded-3xl p-8 transition-all duration-300">
+        <div className="p-6 bg-white border-t border-neutral-50/50">
+          <div className="bg-neutral-50/50 border border-neutral-100 rounded-[32px] p-8 transition-all duration-300">
             <div className="flex flex-col gap-6">
               <div className="flex items-center gap-5">
                 <div className="w-14 h-14 rounded-2xl bg-mint-500 text-white flex items-center justify-center flex-shrink-0 shadow-lg shadow-mint-100">
@@ -618,26 +625,24 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
                   )}
                 </div>
               </div>
-
               <div className="flex flex-col gap-4 ml-[76px]">
-                <div className="max-w-fit bg-white border border-neutral-100 rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-all">
-                  <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-100">
-                    <IoPersonOutline className="text-slate-400" size={20} />
+                <div className="max-w-fit bg-white border border-neutral-200 rounded-2xl p-4 flex items-center gap-4 shadow-sm">
+                  <div className="w-10 h-10 rounded-xl bg-mint-50 flex items-center justify-center border border-mint-100">
+                    <IoPersonOutline className="text-mint-500" size={20} />
                   </div>
                   <div>
-                    <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest leading-none mb-1.5">
-                      APPROVED BY
+                    <p className="text-[10px] text-mint-500 font-bold uppercase tracking-widest leading-none mb-1.5">
+                      SALES STAFF
                     </p>
-                    <p className="text-sm font-semibold text-slate-800">
+                    <p className="text-sm font-bold text-slate-800">
                       {staffName || assignStaff || 'Sales Staff'}
                     </p>
                   </div>
                 </div>
-
                 {note && (
-                  <div className="bg-white/90 border border-mint-100/60 rounded-2xl p-5 max-w-xl shadow-sm animate-in fade-in slide-in-from-top-2 duration-500">
-                    <p className="text-[10px] text-mint-600 font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-mint-500" />
+                  <div className="bg-white/60 border border-mint-100/60 rounded-2xl p-5 max-w-xl animate-in fade-in slide-in-from-top-2 duration-500">
+                    <p className="text-[10px] text-mint-600 font-bold uppercase tracking-widest mb-3 flex items-center gap-2 font-heading">
+                      <span className="w-1.5 h-1.5 rounded-full bg-mint-500" />
                       LAB INSTRUCTIONS
                     </p>
                     <div className="relative pl-4 border-l-2 border-mint-200">
@@ -655,16 +660,14 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
 
       {isRejected && (
         <div className="p-6 bg-white border-t border-rose-50/50">
-          <div className="bg-rose-50/40 border border-rose-100 rounded-3xl p-8 transition-all duration-300">
+          <div className="bg-rose-50/30 border border-rose-100 rounded-[32px] p-8 transition-all duration-300">
             <div className="flex flex-col gap-6">
               <div className="flex items-center gap-5">
                 <div className="w-14 h-14 rounded-2xl bg-rose-500 text-white flex items-center justify-center flex-shrink-0 shadow-lg shadow-rose-100">
                   <IoClose size={32} className="text-white stroke-[3.5]" />
                 </div>
                 <div className="flex flex-col">
-                  <h3 className="text-lg font-bold text-rose-600 tracking-tight">
-                    Disputed and Rejected
-                  </h3>
+                  <h3 className="text-lg font-bold text-rose-600 tracking-tight">Order Rejected</h3>
                   {actionTime && (
                     <p className="text-[11px] text-rose-400 font-medium">
                       Rejected on {actionTime}
@@ -672,31 +675,29 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
                   )}
                 </div>
               </div>
-
               <div className="flex flex-col gap-4 ml-[76px]">
-                <div className="max-w-fit bg-white border border-rose-100 rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-all">
+                <div className="max-w-fit bg-white border border-rose-100 rounded-2xl p-4 flex items-center gap-4 shadow-sm">
                   <div className="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center border border-rose-100">
                     <IoPersonOutline className="text-rose-400" size={20} />
                   </div>
                   <div>
-                    <p className="text-[10px] text-rose-400 font-semibold uppercase tracking-widest leading-none mb-1.5">
+                    <p className="text-[10px] text-rose-400 font-bold uppercase tracking-widest leading-none mb-1.5">
                       SALES STAFF
                     </p>
-                    <p className="text-sm font-semibold text-slate-800">
+                    <p className="text-sm font-bold text-slate-800">
                       {staffName || assignStaff || 'Sales Staff'}
                     </p>
                   </div>
                 </div>
-
-                {(rejectionNote || (parameters as any).note) && (
-                  <div className="bg-white/90 border border-rose-100/60 rounded-2xl p-5 max-w-xl shadow-sm animate-in fade-in slide-in-from-top-2 duration-500">
-                    <p className="text-[10px] text-rose-500 font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+                {rejectionNote && (
+                  <div className="bg-white/60 border border-rose-100/60 rounded-2xl p-5 max-w-xl animate-in fade-in slide-in-from-top-2 duration-500">
+                    <p className="text-[10px] text-rose-500 font-bold uppercase tracking-widest mb-3 flex items-center gap-2 font-heading">
+                      <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
                       REJECTION NOTE
                     </p>
                     <div className="relative pl-4 border-l-2 border-rose-200">
                       <p className="text-sm text-slate-700 leading-relaxed font-semibold italic">
-                        "{rejectionNote || (parameters as any).note}"
+                        "{rejectionNote}"
                       </p>
                     </div>
                   </div>
@@ -706,9 +707,10 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
           </div>
         </div>
       )}
+
       {isCanceled && (
         <div className="p-6 bg-white border-t border-rose-50/50">
-          <div className="bg-rose-50/40 border border-rose-100 rounded-3xl p-8 transition-all duration-300">
+          <div className="bg-rose-50/30 border border-rose-100 rounded-[32px] p-8 transition-all duration-300">
             <div className="flex flex-col gap-6">
               <div className="flex items-center gap-5">
                 <div className="w-14 h-14 rounded-2xl bg-rose-500 text-white flex items-center justify-center flex-shrink-0 shadow-lg shadow-rose-100">
@@ -723,30 +725,28 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
                   )}
                 </div>
               </div>
-
               <div className="flex flex-col gap-4 ml-[76px]">
-                <div className="max-w-fit bg-white border border-rose-100 rounded-2xl p-4 flex items-center gap-4 shadow-sm">
+                <div className="max-w-fit bg-white border border-rose-200 rounded-2xl p-4 flex items-center gap-4 shadow-sm border-neutral-100">
                   <div className="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center border border-rose-100">
                     <IoPersonOutline className="text-rose-400" size={20} />
                   </div>
                   <div>
-                    <p className="text-[10px] text-rose-400 font-semibold uppercase tracking-widest leading-none mb-1.5">
+                    <p className="text-[10px] text-rose-400 font-bold uppercase tracking-widest leading-none mb-1.5">
                       CUSTOMER
                     </p>
-                    <p className="text-sm font-semibold text-slate-800">
+                    <p className="text-sm font-bold text-slate-800">
                       {canceledByName || 'Customer'}
                     </p>
                   </div>
                 </div>
-
                 {cancelNote && (
-                  <div className="bg-white/90 border border-rose-100/60 rounded-2xl p-5 max-w-xl shadow-sm animate-in fade-in slide-in-from-top-2 duration-500">
-                    <p className="text-[10px] text-rose-500 font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                  <div className="bg-white/60 border border-rose-100/60 rounded-2xl p-5 max-w-xl animate-in fade-in slide-in-from-top-2 duration-500">
+                    <p className="text-[10px] text-rose-500 font-bold uppercase tracking-widest mb-3 flex items-center gap-2 font-heading">
+                      <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
                       CUSTOMER NOTE
                     </p>
                     <div className="relative pl-4 border-l-2 border-rose-200">
-                      <p className="text-sm text-slate-600 leading-relaxed font-semibold italic">
+                      <p className="text-sm text-slate-700 leading-relaxed font-semibold italic">
                         "{cancelNote}"
                       </p>
                     </div>

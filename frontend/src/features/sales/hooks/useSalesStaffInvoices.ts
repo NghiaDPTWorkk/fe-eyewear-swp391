@@ -49,13 +49,36 @@ export function useSalesStaffInvoices(
       const pagination = apiData?.pagination || { totalPages: 1, total: 0 }
       if (skipEnrichment) {
         return {
-          invoices: invoiceData.map((inv: any) => ({
-            ...inv,
-            id: inv.id || inv._id,
-            orders: inv.orders || [],
-            totalOrdersCount: inv.totalOrdersCount || inv.orders?.length || 0,
-            approvedOrdersCount: inv.approvedOrdersCount || 0
-          })),
+          invoices: invoiceData.map((inv: any) => {
+            const rawOrders = (inv.orders || []) as any[]
+            const processedOrders = rawOrders.map((o) => {
+              if (typeof o === 'object' && o !== null) {
+                return {
+                  id: o.id || o._id,
+                  type: o.type || [],
+                  status: o.status || 'UNKNOWN'
+                }
+              }
+              return o
+            })
+
+            const hasManufacturing =
+              inv.hasManufacturing ||
+              processedOrders.some((o) =>
+                (Array.isArray(o.type) ? o.type : [o.type]).some((t: any) =>
+                  String(t).includes(OrderType.MANUFACTURING)
+                )
+              )
+
+            return {
+              ...inv,
+              id: inv.id || inv._id,
+              orders: processedOrders,
+              totalOrdersCount: inv.totalOrdersCount || processedOrders.length || 0,
+              approvedOrdersCount: inv.approvedOrdersCount || 0,
+              hasManufacturing
+            }
+          }),
           pagination
         }
       }

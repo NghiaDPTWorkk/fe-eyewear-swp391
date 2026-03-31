@@ -72,7 +72,7 @@ export default function SaleStaffOrderPage() {
       historyHook.setSearch(searchQuery)
       historyHook.setCurrentPage(page)
     }
-  }, [statusFilter, searchQuery, page])
+  }, [statusFilter, searchQuery, page, returnHook, historyHook])
 
   const setSearchQuery = (query: string) => {
     const next = new URLSearchParams(searchParams)
@@ -138,8 +138,9 @@ export default function SaleStaffOrderPage() {
     'All',
     '',
     isInvoicesActive,
-    true
+    false
   )
+
   const globalReturnHook = useReturnPageTickets(staffId || '', true)
 
   const metrics = useMemo(() => {
@@ -149,23 +150,40 @@ export default function SaleStaffOrderPage() {
       [OrderType.RETURN]: 0,
       [OrderType.PRE_ORDER]: 0
     }
+    const typeEntries = Object.values(OrderType)
+
     metricsInvoices.forEach((inv: Invoice) => {
-      if (inv.orders && inv.orders.length > 0) {
-        inv.orders.forEach((o) => {
-          const types = Array.isArray(o.type) ? o.type : [o.type]
-          if (types.some((t: OrderType | string) => String(t).includes(OrderType.NORMAL)))
-            counts[OrderType.NORMAL]++
-          if (types.some((t: OrderType | string) => String(t).includes(OrderType.MANUFACTURING)))
-            counts[OrderType.MANUFACTURING]++
-          if (types.some((t: OrderType | string) => String(t).includes(OrderType.RETURN)))
-            counts[OrderType.RETURN]++
-          if (types.some((t: OrderType | string) => String(t).includes(OrderType.PRE_ORDER)))
-            counts[OrderType.PRE_ORDER]++
-        })
+      const invoiceTypes = new Set<string>()
+
+      if (!inv.orders || inv.orders.length === 0) {
+        invoiceTypes.add(OrderType.NORMAL)
       } else {
-        counts[OrderType.NORMAL]++
+        inv.orders.forEach((o: any) => {
+          if (typeof o === 'object' && o !== null && o.type) {
+            const types = Array.isArray(o.type) ? o.type : [o.type]
+            types.forEach((t: any) => {
+              typeEntries.forEach((typeKey: string) => {
+                if (String(t).includes(typeKey)) {
+                  invoiceTypes.add(typeKey)
+                }
+              })
+            })
+          } else {
+            invoiceTypes.add(OrderType.NORMAL)
+          }
+        })
       }
+
+      const hasMfg = (inv as any).hasManufacturing || false
+      if (hasMfg) invoiceTypes.add(OrderType.MANUFACTURING)
+
+      invoiceTypes.forEach((typeKey: string) => {
+        if (counts[typeKey] !== undefined) {
+          counts[typeKey]++
+        }
+      })
     })
+
     counts[OrderType.RETURN] = globalReturnHook.pagination.total || 0
     const totalWithReturns = Object.values(counts).reduce((a, b) => a + b, 0) || 1
     const pct = (key: string) => Math.round((counts[key] / totalWithReturns) * 100)

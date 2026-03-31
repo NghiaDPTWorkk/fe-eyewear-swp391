@@ -224,7 +224,7 @@ export const WelcomePage = () => {
               far={4}
               color="#000000"
             />
-            <Environment preset="night" />
+            <Environment files="/images/dikhololo_night_1k.hdr" />
           </Suspense>
         </Canvas>
       </div>

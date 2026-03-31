@@ -9,10 +9,11 @@ export function useSalesStaffInvoices(
   limit: number = 10,
   status: string = 'All',
   search?: string,
-  enabled: boolean = true
+  enabled: boolean = true,
+  skipEnrichment: boolean = true
 ) {
   const query = useQuery({
-    queryKey: ['sales', 'invoices', { page, limit, status, search }],
+    queryKey: ['sales', 'invoices', { page, limit, status, search, skipEnrichment }],
     enabled: !!enabled,
     queryFn: async () => {
       let apiStatus: string | undefined = undefined
@@ -47,105 +48,136 @@ export function useSalesStaffInvoices(
       const invoiceData = apiData?.invoiceList || []
       const pagination = apiData?.pagination || { totalPages: 1, total: 0 }
 
-      const enrichedInvoices = await Promise.all(
-        invoiceData.map(async (inv: any) => {
-          try {
-            const orderIds = (inv.orders || []) as (string | { id?: string; _id?: string })[]
+      if (skipEnrichment) {
+        return {
+          invoices: invoiceData.map((inv: any) => {
+            const rawOrders = (inv.orders || []) as any[]
+            const processedOrders = rawOrders.map((o) => {
+              if (typeof o === 'object' && o !== null) {
+                return {
+                  id: o.id || o._id,
+                  type: o.type || [],
+                  status: o.status || 'UNKNOWN'
+                }
+              }
+              return { id: String(o), type: [], status: 'UNKNOWN' }
+            })
 
-            const ordersWithDetails = (
-              await Promise.all(
-                orderIds.map(async (item) => {
-                  const orderId = (typeof item === 'string' ? item : item.id || item._id) as string
-                  if (!orderId) return null
-
-                  // Optimization: If item is an object and has type/status, use it directly
-                  if (typeof item === 'object' && 'type' in item) {
-                    const o = item as any
-                    const isMfg = (Array.isArray(o.type) ? o.type : [o.type]).some((t: string) =>
-                      String(t).includes(OrderType.MANUFACTURING)
-                    )
-                    const verifiedStatuses = [
-                      OrderStatus.VERIFIED,
-                      OrderStatus.APPROVE,
-                      OrderStatus.APPROVED,
-                      OrderStatus.WAITING_ASSIGN,
-                      OrderStatus.ASSIGNED,
-                      OrderStatus.MAKING,
-                      OrderStatus.PACKAGING,
-                      OrderStatus.COMPLETED,
-                      OrderStatus.ONBOARD,
-                      OrderStatus.DELIVERED,
-                      OrderStatus.DELIVERING,
-                      OrderStatus.SHIPPED,
-                      OrderStatus.PROCESSING
-                    ]
-                    const isVerified = (verifiedStatuses as string[]).includes(
-                      o.status?.toUpperCase()
-                    )
-                    return {
-                      id: orderId,
-                      type: o.type,
-                      status: o.status,
-                      isPrescription: isMfg,
-                      isVerified: isVerified
-                    }
-                  }
-
-                  try {
-                    const detailRes = await salesService.getOrderById(orderId)
-                    const o = detailRes.data.order
-
-                    const isMfg = (Array.isArray(o.type) ? o.type : [o.type]).some((t: string) =>
-                      String(t).includes(OrderType.MANUFACTURING)
-                    )
-
-                    const verifiedStatuses = [
-                      OrderStatus.VERIFIED,
-                      OrderStatus.APPROVE,
-                      OrderStatus.APPROVED,
-                      OrderStatus.WAITING_ASSIGN,
-                      OrderStatus.ASSIGNED,
-                      OrderStatus.MAKING,
-                      OrderStatus.PACKAGING,
-                      OrderStatus.COMPLETED,
-                      OrderStatus.ONBOARD,
-                      OrderStatus.DELIVERED,
-                      OrderStatus.DELIVERING,
-                      OrderStatus.SHIPPED,
-                      OrderStatus.PROCESSING
-                    ]
-                    const isVerified = (verifiedStatuses as string[]).includes(
-                      o.status?.toUpperCase()
-                    )
-
-                    return {
-                      id: o._id,
-                      type: o.type,
-                      status: o.status,
-                      isPrescription: isMfg,
-                      isVerified: isVerified
-                    }
-                  } catch {
-                    return {
-                      id: orderId,
-                      type: [],
-                      status: 'UNKNOWN',
-                      isPrescription: false,
-                      isVerified: false
-                    }
-                  }
-                })
+            const hasManufacturing =
+              inv.hasManufacturing ||
+              processedOrders.some((o) =>
+                (Array.isArray(o.type) ? o.type : [o.type]).some((t: any) =>
+                  String(t).includes(OrderType.MANUFACTURING)
+                )
               )
-            ).filter(Boolean) as any[]
-
-            const approvedCount = ordersWithDetails.filter((o) => o && o.isVerified).length
-            const hasManufacturing = ordersWithDetails.some((o) => o.isPrescription)
 
             return {
               ...inv,
               id: inv.id || inv._id,
-              orders: ordersWithDetails,
-              totalOrdersCount: ordersWithDetails.length,
+              orders: processedOrders,
+              totalOrdersCount: inv.totalOrdersCount || processedOrders.length || 0,
+              approvedOrdersCount: inv.approvedOrdersCount || 0,
+              hasManufacturing
+            }
+          }),
+          pagination
+        }
+      }
+
+      const enrichedInvoices = await Promise.all(
+        invoiceData.map(async (inv: any) => {
+          try {
+            const orderIds = (inv.orders || []) as (string | { id?: string; _id?: string })[]
+            const ordersWithDetails = await Promise.all(
+              orderIds.map(async (item) => {
+                const orderId = (typeof item === 'string' ? item : item.id || item._id) as string
+                if (!orderId) return null
+                if (typeof item === 'object' && 'type' in item && 'status' in item) {
+                  const o = item as any
+                  const isMfg = (Array.isArray(o.type) ? o.type : [o.type]).some((t: string) =>
+                    String(t).includes(OrderType.MANUFACTURING)
+                  )
+                  const isAcceptedStatus = (
+                    [
+                      OrderStatus.VERIFIED,
+                      OrderStatus.APPROVE,
+                      OrderStatus.APPROVED,
+                      OrderStatus.WAITING_ASSIGN,
+                      OrderStatus.ASSIGNED,
+                      OrderStatus.MAKING,
+                      OrderStatus.PACKAGING,
+                      OrderStatus.COMPLETED,
+                      OrderStatus.ONBOARD,
+                      OrderStatus.DELIVERED,
+                      OrderStatus.DELIVERING,
+                      OrderStatus.SHIPPED,
+                      OrderStatus.PROCESSING
+                    ] as string[]
+                  ).includes(o.status?.toUpperCase())
+                  const isVerified = isAcceptedStatus || !isMfg
+
+                  return {
+                    id: orderId,
+                    type: o.type,
+                    status: o.status,
+                    isPrescription: isMfg,
+                    isVerified: isVerified
+                  }
+                }
+
+                try {
+                  const detailRes = await salesService.getOrderById(orderId)
+                  const o = detailRes.data.order
+                  const isMfg = (Array.isArray(o.type) ? o.type : [o.type]).some((t: string) =>
+                    String(t).includes(OrderType.MANUFACTURING)
+                  )
+                  const isAcceptedStatus = (
+                    [
+                      OrderStatus.VERIFIED,
+                      OrderStatus.APPROVE,
+                      OrderStatus.APPROVED,
+                      OrderStatus.WAITING_ASSIGN,
+                      OrderStatus.ASSIGNED,
+                      OrderStatus.MAKING,
+                      OrderStatus.PACKAGING,
+                      OrderStatus.COMPLETED,
+                      OrderStatus.ONBOARD,
+                      OrderStatus.DELIVERED,
+                      OrderStatus.DELIVERING,
+                      OrderStatus.SHIPPED,
+                      OrderStatus.PROCESSING
+                    ] as string[]
+                  ).includes(o.status?.toUpperCase())
+                  const isVerified = isAcceptedStatus || !isMfg
+
+                  return {
+                    id: o._id,
+                    type: o.type,
+                    status: o.status,
+                    isPrescription: isMfg,
+                    isVerified: isVerified
+                  }
+                } catch {
+                  return {
+                    id: orderId,
+                    type: [],
+                    status: 'UNKNOWN',
+                    isPrescription: false,
+                    isVerified: false
+                  }
+                }
+              })
+            )
+
+            const finalOrders = ordersWithDetails.filter(Boolean) as any[]
+            const approvedCount = finalOrders.filter((o) => o && o.isVerified).length
+            const hasManufacturing = finalOrders.some((o) => o.isPrescription)
+
+            return {
+              ...inv,
+              id: inv.id || inv._id,
+              orders: finalOrders,
+              totalOrdersCount: finalOrders.length,
               approvedOrdersCount: approvedCount,
               hasManufacturing
             } as unknown as Invoice

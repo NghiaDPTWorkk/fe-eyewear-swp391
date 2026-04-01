@@ -29,6 +29,8 @@ interface CartState {
   clearCart: () => Promise<void>
   setLoading: (loading: boolean) => void
   totalItems: () => number
+  _updateVersion: number
+  _updateTimers: Record<string, ReturnType<typeof setTimeout>>
 }
 
 export const useCartStore = create<CartState>((set, get) => ({
@@ -141,10 +143,17 @@ export const useCartStore = create<CartState>((set, get) => ({
     }
   },
 
+  // Internal version counter to handle rapid updates (not exposed to components)
+  _updateVersion: 0,
+  // Debounce timers for quantity updates per item key
+  _updateTimers: {} as Record<string, ReturnType<typeof setTimeout>>,
+
   updateQuantity: async (item, quantity) => {
     const previousItems = get().items
+    const itemKey = `${item.product_id}-${item.sku || ''}-${JSON.stringify(item.lens)}`
+
+    // 1. Optimistic update only — no server data replaces items
     set({
-      isUpdating: true,
       items: previousItems.map((i) => {
         const isSameProduct = i.product_id === item.product_id
         const isSameSku = (i.sku || '') === (item.sku || '')
@@ -153,32 +162,32 @@ export const useCartStore = create<CartState>((set, get) => ({
       })
     })
 
-    try {
-      const updatedItems = await cartService.updateQuantity(item, quantity)
-
-      // Only update items if we got a valid non-empty list
-      // Otherwise keep current items and do a quiet refresh
-      if (updatedItems && updatedItems.length > 0) {
-        // Preserve selection state
-        const mergedItems = updatedItems.map((ni) => {
-          const matchingOld = previousItems.find(
-            (oi) =>
-              oi.product_id === ni.product_id &&
-              (oi.sku || '') === (ni.sku || '') &&
-              JSON.stringify(oi.lens) === JSON.stringify(ni.lens)
-          )
-          return { ...ni, selected: matchingOld ? (matchingOld.selected ?? true) : true }
-        })
-        set({ items: mergedItems, isUpdating: false })
-      } else {
-        await get().fetchCart(true, true)
-        set({ isUpdating: false })
-      }
-    } catch (error: any) {
-      // Rollback on error
-      set({ items: previousItems, isUpdating: false })
-      throw error
+    // 2. Clear any pending debounce for this item
+    const timers = get()._updateTimers
+    if (timers[itemKey]) {
+      clearTimeout(timers[itemKey])
     }
+
+    // 3. Debounce: wait 500ms before calling API (rapid clicks = only last call fires)
+    return new Promise<void>((resolve, reject) => {
+      const timer = setTimeout(async () => {
+        set({ isUpdating: true })
+        try {
+          await cartService.updateQuantity(item, quantity)
+          // Success: do NOT replace items. Optimistic state is already correct.
+          set({ isUpdating: false })
+          resolve()
+        } catch (error: any) {
+          // Rollback to state before the entire chain of rapid updates
+          set({ items: previousItems, isUpdating: false })
+          reject(error)
+        }
+      }, 500)
+
+      set({
+        _updateTimers: { ...get()._updateTimers, [itemKey]: timer }
+      })
+    })
   },
 
   removeItem: async (item) => {

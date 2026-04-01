@@ -12,6 +12,7 @@ import { Checkbox } from '@/shared/components/ui/checkbox/Checkbox'
 interface LoginFormProps {
   role?: string
   variant?: 'light' | 'dark'
+  onForgotPassword?: () => void
 }
 
 const loginSchema = Yup.object().shape({
@@ -21,7 +22,7 @@ const loginSchema = Yup.object().shape({
     .min(8, 'Password must be at least 8 characters')
 })
 
-export const LoginForm = ({ role: _role, variant = 'light' }: LoginFormProps) => {
+export const LoginForm = ({ role: _role, variant = 'light', onForgotPassword }: LoginFormProps) => {
   const { mutate: login, isPending } = useLogin()
   const location = useLocation()
   const [rememberMe, setRememberMe] = useState(false)
@@ -139,12 +140,13 @@ export const LoginForm = ({ role: _role, variant = 'light' }: LoginFormProps) =>
             size="md"
             labelClassName={`text-[14px] font-medium ${isDark ? 'text-[#00362d]' : 'text-white/60'}`}
           />
-          <a
-            href="#"
+          <button
+            type="button"
+            onClick={onForgotPassword}
             className={`text-[14px] font-bold ${isDark ? 'text-[#00362d]' : 'text-white/80'} hover:underline`}
           >
             Forgot Password?
-          </a>
+          </button>
         </div>
       </div>
 

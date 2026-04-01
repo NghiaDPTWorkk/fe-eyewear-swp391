@@ -21,7 +21,10 @@ export const ENDPOINTS = {
     CHANGE_DEFAULT: (id: string) => `/customer/profile/address/change-default/${id}`,
     GOOGLE: '/auth/google',
     REQUEST_MERGE: '/auth/request-merge-account',
-    VERIFY_MERGE_OTP: '/auth/request-merge-account/verify-otp'
+    VERIFY_MERGE_OTP: '/auth/request-merge-account/verify-otp',
+    REQUEST_RESET_PASSWORD: '/auth/request-reset-password',
+    VERIFY_RESET_PASSWORD_OTP: '/auth/request-reset-password/verify-otp',
+    RESET_PASSWORD: '/auth/reset-password'
   },
 
   // Products

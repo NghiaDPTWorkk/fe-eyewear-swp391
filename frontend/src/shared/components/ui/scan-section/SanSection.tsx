@@ -22,7 +22,7 @@ export default function SanSection({ orderId }: { orderId?: string }) {
             Auto generated
           </button> */}
         </div>
-        <div className="mt-2 text-xs text-gray-500">OrderID: {'ex: REG-001'}</div>
+        <div className="mt-2 text-xs text-gray-500">Order must be in "PACKAGING" status to packed successfully.</div>
       </div>
     </div>
   )

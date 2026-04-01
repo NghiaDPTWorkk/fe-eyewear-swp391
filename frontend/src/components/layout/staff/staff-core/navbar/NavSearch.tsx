@@ -101,7 +101,7 @@ export function NavSearch({
       id: o._id,
       searchCode: o.orderCode,
       type: 'order' as const,
-      icon: <BsReceipt className="text-blue-500" />
+      icon: <BsReceipt className="text-mint-600" />
     })),
     ...(productData?.data?.adminProducts || []).map((p: any) => ({
       id: p._id,
@@ -152,9 +152,10 @@ export function NavSearch({
     [navigate, location.pathname, historyKey]
   )
 
-  // Xử lý khi chọn từ lịch sử — chỉ điền vào input và search lại
+  // Xử lý khi chọn từ lịch sử — điền vào input và search (có thể tự click nếu cần)
   const handleSelectHistory = useCallback((searchCode: string) => {
     setInputValue(searchCode)
+    // setIsOpen(false) // Không đóng liền để user thấy kết quả search của history đó
   }, [])
 
   const inputStyles =
@@ -180,7 +181,7 @@ export function NavSearch({
         : 'text-neutral-400'
 
   return (
-    <div className={cn('flex items-center gap-3 w-full pr-2', className)}>
+    <div className={cn('flex items-center gap-2 sm:gap-3 w-full pr-0 sm:pr-2', className)}>
       <Button
         onClick={toggleSidebar}
         className="lg:hidden p-2 rounded-lg text-neutral-500 hover:bg-neutral-50 transition-colors cursor-pointer"
@@ -188,7 +189,7 @@ export function NavSearch({
         <HiMenuAlt2 className="text-2xl" />
       </Button>
 
-      <div ref={wrapperRef} className={cn('max-w-lg flex-1 relative', inputContainerClassName)}>
+      <div ref={wrapperRef} className={cn('flex-1 relative', inputContainerClassName)}>
         {/* Hidden inputs to trick browsers that try to autofill the search bar */}
         <input type="email" style={{ display: 'none' }} aria-hidden="true" />
         <input type="password" style={{ display: 'none' }} aria-hidden="true" />
@@ -213,9 +214,14 @@ export function NavSearch({
             autoComplete="one-time-code"
             data-lpignore="true"
             className={cn(
-              'w-full h-10 pl-10 pr-4 text-sm font-medium transition-all duration-200 outline-none rounded-xl border',
+              'w-full h-10 pl-10 pr-10 sm:pr-4 text-sm font-medium transition-all duration-200 outline-none rounded-xl border',
               inputStyles
             )}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && searchResults.length > 0) {
+                handleSelect(searchResults[0])
+              }
+            }}
           />
 
           {/* Loading indicator nhỏ trong input */}

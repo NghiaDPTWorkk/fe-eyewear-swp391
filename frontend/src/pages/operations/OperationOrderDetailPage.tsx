@@ -377,9 +377,11 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
 
       {/* Progress Tracker */}
       {(() => {
-        const orderStatus = orderDetailData.status
-        const orderType = orderDetailData.type?.[0] || orderDetailData.type
-        const invoiceStatus = orderDetailData.invoice?.status
+        const orderStatus = orderDetailData?.status
+        const orderType = orderDetailData?.type?.[0] || orderDetailData?.type
+        const invoiceStatus = orderDetailData?.invoice?.status
+
+        if (!orderStatus) return null
 
         const activeStep = getOrderProgressStep(orderStatus, orderType, invoiceStatus)
 

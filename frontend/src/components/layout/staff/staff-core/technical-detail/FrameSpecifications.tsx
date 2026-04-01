@@ -27,7 +27,7 @@ const FrameSpecifications = ({
 
   return (
     <div>
-      <div className="flex items-center gap-7 mb-7 ps-2">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-7 mb-7 ps-2">
         <div className="flex items-baseline gap-2">
           <span className="text-[10px] uppercase tracking-[0.1em] font-bold text-neutral-500">
             Quantity
@@ -37,7 +37,7 @@ const FrameSpecifications = ({
 
         {sku && (
           <>
-            <div className="w-px h-3 bg-neutral-200 self-center"></div>
+            <div className="hidden sm:block w-px h-3 bg-neutral-200 self-center"></div>
             <div className="flex items-baseline gap-2">
               <span className="text-[10px] uppercase tracking-[0.1em] font-bold text-neutral-500">
                 Frame SKU
@@ -49,7 +49,7 @@ const FrameSpecifications = ({
       </div>
       <div className="flex flex-col md:flex-row gap-6">
         <div
-          className="w-50 h-50 md:w-1/3 bg-gray-50 rounded-lg py-3 flex justify-center cursor-pointer transition-all duration-300 overflow-hidden"
+          className="w-full md:w-1/3 bg-gray-50 rounded-lg py-3 flex justify-center cursor-pointer transition-all duration-300 overflow-hidden group"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >

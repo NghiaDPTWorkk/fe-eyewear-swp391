@@ -59,6 +59,13 @@ export const ProductCarousel = ({
         hasTrack={false}
         className="splide-custom-glow"
         extensions={isAutoScroll ? { AutoScroll } : {}}
+        onClick={(_splide: any, slide: any) => {
+          const productId = (slide.slide as HTMLElement).getAttribute('data-product-id')
+          if (productId) {
+            navigate(`/products/${productId}`)
+            window.scrollTo(0, 0)
+          }
+        }}
         options={{
           type: products.length > itemsPerView ? 'loop' : 'slide',
           drag: 'free',
@@ -73,7 +80,7 @@ export const ProductCarousel = ({
                   pauseOnHover: true,
                   pauseOnFocus: false,
                   rewind: false,
-                  speed: 0.5
+                  speed: 0.7
                 }
               }
             : {
@@ -111,7 +118,7 @@ export const ProductCarousel = ({
             }
 
             return (
-              <SplideSlide key={productId}>
+              <SplideSlide key={productId} data-product-id={productId}>
                 <div className="pt-4 pb-10 px-2 py-5 w-full max-w-[320px] mx-auto">
                   <ProductCardHome
                     id={productId}
@@ -122,10 +129,6 @@ export const ProductCarousel = ({
                     price={originalPrice}
                     discountPrice={finalPrice !== originalPrice ? finalPrice : undefined}
                     salePercent={salePercent}
-                    onClick={(id) => {
-                      navigate(`/products/${id}`)
-                      window.scrollTo(0, 0)
-                    }}
                   />
                 </div>
               </SplideSlide>
@@ -173,10 +176,10 @@ export const ProductCarousel = ({
           .group\\/carousel .splide__arrow:hover svg {
             fill: white !important;
           }
-          
+
           /* Đảm bảo track không bị nhảy khi slide load */
           .splide__track {
-            overflow: visible !important;
+            /* Mặc định Splide đã là overflow: hidden, t sẽ không ghi đè thành visible nữa để nó không bị bung ra */
           }
         `
           }}

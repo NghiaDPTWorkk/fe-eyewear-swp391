@@ -96,7 +96,7 @@ export default function CustomerHeader({ isTranslucent = false }: { isTranslucen
       }
       navListContent={
         !isSearchExpanded ? (
-          <nav className="flex items-center gap-4 sm:gap-8 transition-all duration-300">
+          <nav className="flex items-center gap-1.5 min-[380px]:gap-3 sm:gap-8 transition-all duration-300">
             <button
               onClick={() => navigate('/')}
               className={`${
@@ -117,10 +117,10 @@ export default function CustomerHeader({ isTranslucent = false }: { isTranslucen
                 isActive('/eyeglasses') || isActive('/products')
                   ? 'text-mint-1200 font-semibold'
                   : 'text-gray-eyewear font-medium'
-              } hover:text-primary-500 transition-all relative group cursor-pointer text-[13px] sm:text-base`}
+              } hover:text-primary-500 transition-all relative group cursor-pointer text-[12px] min-[400px]:text-[13px] sm:text-base`}
             >
               <span className="hidden sm:inline">Eyeglasses</span>
-              <span className="sm:hidden">Frames</span>
+              <span className="sm:hidden tracking-tighter">Frames</span>
               <span
                 className={`absolute bottom-0 left-0 w-full h-0.5 bg-primary-500 transform ${
                   isActive('/eyeglasses') || isActive('/products')
@@ -135,9 +135,10 @@ export default function CustomerHeader({ isTranslucent = false }: { isTranslucen
                 isActive('/sunglasses')
                   ? 'text-mint-1200 font-semibold'
                   : 'text-gray-eyewear font-medium'
-              } hover:text-primary-500 transition-all relative group cursor-pointer text-[13px] sm:text-base`}
+              } hover:text-primary-500 transition-all relative group cursor-pointer text-[12px] min-[400px]:text-[13px] sm:text-base`}
             >
-              Sunglasses
+              <span className="hidden sm:inline">Sunglasses</span>
+              <span className="sm:hidden tracking-tighter">Sun</span>
               <span
                 className={`absolute bottom-0 left-0 w-full h-0.5 bg-primary-500 transform ${
                   isActive('/sunglasses') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
@@ -150,9 +151,9 @@ export default function CustomerHeader({ isTranslucent = false }: { isTranslucen
                 isActive('/lenses')
                   ? 'text-mint-1200 font-semibold'
                   : 'text-gray-eyewear font-medium'
-              } hover:text-primary-500 transition-all relative group cursor-pointer text-[13px] sm:text-base hidden xs:block`}
+              } hover:text-primary-500 transition-all relative group cursor-pointer text-[12px] min-[400px]:text-[13px] sm:text-base`}
             >
-              Lenses
+              <span className="tracking-tighter">Lenses</span>
               <span
                 className={`absolute bottom-0 left-0 w-full h-0.5 bg-primary-500 transform ${
                   isActive('/lenses') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'

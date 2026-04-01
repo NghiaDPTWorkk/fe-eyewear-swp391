@@ -217,7 +217,7 @@ export default function ShaderCarousel({ imagePaths, maskPath, onLoaded }: Shade
                   <p className="text-base md:text-lg text-white/75 max-w-xl font-medium drop-shadow-lg mb-6 pointer-events-none">
                     {content.description}
                   </p>
-                  {i === 2 && (
+                  {(i === 0 || i === 2) && (
                     <div className="flex flex-wrap gap-4">
                       <button
                         onClick={() => {

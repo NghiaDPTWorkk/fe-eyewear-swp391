@@ -159,7 +159,7 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
                       'PROCESSING'
                     ].includes(status)
 
-                    if (isAccepted) {
+                    if (isAccepted || (!hasManufacturing && !order.isPrescription)) {
                       return {
                         label: 'ACCEPTED',
                         className: 'bg-emerald-50 text-emerald-600 border-emerald-100'
@@ -179,7 +179,7 @@ export const InvoiceOrdersDrawer: React.FC<InvoiceOrdersDrawerProps> = ({
                   const displayType = (() => {
                     if (hasManufacturing || order.isPrescription) return 'PRESCRIPTION'
                     if (hasPreOrder) return 'PRE-ORDER'
-                    return (orderTypes.join(' & ') || 'REGULAR').toUpperCase()
+                    return (orderTypes.join(' & ') || 'NORMAL').toUpperCase()
                   })()
 
                   return (

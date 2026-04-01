@@ -3,7 +3,7 @@ import type { RegisterRequest } from '@/shared/types'
 import { Gender } from '@/shared/utils/enums/gender.enum'
 import { useRegister } from '@/features/auth/hooks/useRegister'
 import { authService } from '@/features/auth/services/auth.service'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, useLocation } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
@@ -20,6 +20,7 @@ export const RegisterForm = ({
   variant = 'light'
 }: RegisterFormProps) => {
   const navigate = useNavigate()
+  const location = useLocation()
   const registerMutation = useRegister()
 
   const isDark = variant === 'light'
@@ -424,6 +425,7 @@ export const RegisterForm = ({
           Already have an account?{' '}
           <Link
             to="/login"
+            state={{ from: (location.state as any)?.from }}
             className={`font-bold ${isDark ? 'text-[#00684e]' : 'text-[#4ad7b0]'} hover:underline`}
           >
             Log In

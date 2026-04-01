@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { IoChevronBackOutline, IoLockClosedOutline, IoWarningOutline } from 'react-icons/io5'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
-
 import { PageHeader } from '@/features/sales/components/common'
 import PrescriptionVerification from '@/features/sales/components/prescriptions/PrescriptionVerification'
 import { useSalesStaffOrderDetail, useOrderVerificationLock } from '@/features/sales/hooks'
@@ -13,11 +12,17 @@ export default function SaleStaffRxVerificationPage() {
   const { data: order } = useSalesStaffOrderDetail(orderId || '')
   const [searchParams] = useSearchParams()
   const [lockDenied, setLockDenied] = useState(false)
-
   const { lockStatus, acquireLock, releaseLock } = useOrderVerificationLock(orderId || '')
 
   useEffect(() => {
-    if (!orderId) return
+    if (!orderId || !order) return
+    const orderStatus = (order?.status || '').toUpperCase()
+    const invoiceStatus = ((order as any)?.invoice?.status || '').toUpperCase()
+    const isCanceledOrRejected =
+      ['CANCELED', 'CANCEL', 'CANCELLED', 'REJECTED', 'REJECT', 'EXPIRED'].includes(orderStatus) ||
+      ['CANCELED', 'CANCEL', 'CANCELLED', 'REJECTED', 'REJECT'].includes(invoiceStatus)
+
+    if (isCanceledOrRejected) return
     const acquired = acquireLock()
     if (!acquired) {
       setLockDenied(true)
@@ -25,7 +30,7 @@ export default function SaleStaffRxVerificationPage() {
     return () => {
       releaseLock()
     }
-  }, [orderId])
+  }, [orderId, order?.status])
 
   useEffect(() => {
     if (lockStatus.locked) {
@@ -37,7 +42,6 @@ export default function SaleStaffRxVerificationPage() {
     releaseLock()
     const fromPath = searchParams.get('from')
     const invoiceId = searchParams.get('invoiceId') || order?.invoiceId
-
     if (fromPath && invoiceId) {
       navigate(`${fromPath}?invoiceId=${invoiceId}`)
     } else if (fromPath) {
@@ -52,6 +56,15 @@ export default function SaleStaffRxVerificationPage() {
   const handleActionSuccess = () => {
     window.dispatchEvent(new CustomEvent('orderUpdated'))
   }
+
+  const isOrderCanceledOrRejected = (() => {
+    const orderStatus = (order?.status || '').toUpperCase()
+    const invoiceStatus = ((order as any)?.invoice?.status || '').toUpperCase()
+    return (
+      ['CANCELED', 'CANCEL', 'CANCELLED', 'REJECTED', 'REJECT', 'EXPIRED'].includes(orderStatus) ||
+      ['CANCELED', 'CANCEL', 'CANCELLED', 'REJECTED', 'REJECT'].includes(invoiceStatus)
+    )
+  })()
 
   if (lockDenied) {
     const blockerName = lockStatus.locked ? lockStatus.staffName : 'Another staff'
@@ -74,8 +87,6 @@ export default function SaleStaffRxVerificationPage() {
             noMargin
           />
         </div>
-
-        {}
         <div className="rounded-2xl border border-amber-200 bg-amber-50/60 p-8 flex flex-col items-center gap-5 text-center shadow-sm">
           <div className="w-16 h-16 rounded-2xl bg-amber-100 flex items-center justify-center shadow-inner">
             <IoLockClosedOutline size={32} className="text-amber-600" />
@@ -120,13 +131,12 @@ export default function SaleStaffRxVerificationPage() {
           noMargin
         />
       </div>
-
-      {}
-      <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-mint-50 border border-mint-100 w-fit text-mint-700">
-        <IoLockClosedOutline size={14} />
-        <span className="text-xs font-semibold">You are currently verifying this order</span>
-      </div>
-
+      {!isOrderCanceledOrRejected && (
+        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-mint-50 border border-mint-100 w-fit text-mint-700">
+          <IoLockClosedOutline size={14} />
+          <span className="text-xs font-semibold">You are currently verifying this order</span>
+        </div>
+      )}
       <PrescriptionVerification
         orderId={orderId || ''}
         onBack={handleBack}

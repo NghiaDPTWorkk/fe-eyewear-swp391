@@ -51,17 +51,8 @@ export default function OperationPackingPage() {
     setCurrentPage(1)
   }
 
-  // ═══════════════════════════════════════════════════
-  // DATA FLOW:
-  // 1. OperationDashboardPage gọi API → lưu vào Zustand store (useOrderCountStore).
-  // 2. Trang này ĐỌC THẲNG từ store → không cần fetch API riêng.
-  // 3. useMemo() filter client-side theo status PACKAGING + date range
-  //    → truyền vào <OrderTable> và <OperationPagination>.
-  // ═══════════════════════════════════════════════════
   const { orders: allOrders, isLoading, isError } = useOrderCountStore()
 
-  // ─── Bước 1: Filter client-side ───────────────────
-  // Lọc từ allOrders theo status=PACKAGING, sau đó theo date range + type
   const { filteredOrders, total } = useMemo(() => {
     let filtered = allOrders.filter((o) => o.currentStatus === 'PACKAGING')
 
@@ -121,10 +112,10 @@ export default function OperationPackingPage() {
 
   return (
     <Container>
-      <div className="mb-4">
+      <div className="mb-6">
         <BreadcrumbPath paths={['Dashboard', 'Packing Station']} />
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Packing Station</h1>
-        <p className="text-gray-500 mt-1">Package and prepare orders for shipping.</p>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">Packing Station</h1>
+        <p className="text-sm md:text-base text-gray-500 mt-1">Package and prepare orders for shipping.</p>
       </div>
 
       <FilterButtonList

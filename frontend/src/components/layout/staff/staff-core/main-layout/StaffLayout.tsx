@@ -37,7 +37,9 @@ export function StaffLayout({
       logo={
         <div className="flex items-center gap-2">
           <LogoEyewearIcon className="w-8 h-8" />
-          <span className="font-semibold text-gray-900">Eyewear</span>
+          <span className="text-md sm:text-xl font-heading font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent hidden sm:block">
+            Eyewear
+          </span>
         </div>
       }
       storeName={storeName}

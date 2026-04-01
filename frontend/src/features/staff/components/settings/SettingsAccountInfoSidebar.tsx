@@ -1,52 +1,15 @@
-import { useState } from 'react'
 import { useProfile } from '@/features/staff/hooks/useProfile'
-import { Card, Button } from '@/shared/components/ui-core'
-import ConfirmationModal from '@/shared/components/ui-core/confirm-modal/ConfirmationModal'
-import { toast } from 'react-hot-toast'
+import { Card } from '@/shared/components/ui-core'
 import {
   IoStorefrontOutline,
   IoCalendarOutline,
   IoTimeOutline,
-  IoGlobeOutline,
-  IoTrashOutline
+  IoGlobeOutline
 } from 'react-icons/io5'
 
 export default function AccountInfoSidebar() {
   const { data: profileData, isLoading } = useProfile()
   const profile = profileData?.data
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-
-  const handleDeleteAccount = () => {
-    setIsDeleteModalOpen(false)
-    toast.success(
-      () => (
-        <div className="flex flex-col gap-1">
-          <p className="font-bold text-slate-900">Request Submitted</p>
-          <p className="text-xs text-slate-500 font-medium">
-            Your account deletion is waiting for Admin approval.
-          </p>
-        </div>
-      ),
-      {
-        duration: 6000,
-        icon: (
-          <div className="w-10 h-10 rounded-full bg-mint-50 flex items-center justify-center text-mint-600 shadow-sm border border-mint-100 flex-shrink-0 animate-bounce">
-            <IoTimeOutline size={20} />
-          </div>
-        ),
-        style: {
-          borderRadius: '24px',
-          background: 'rgba(255, 255, 255, 0.9)',
-          backdropFilter: 'blur(12px)',
-          border: '1px solid rgba(226, 232, 240, 0.8)',
-          boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
-          padding: '16px 20px',
-          maxWidth: '400px'
-        }
-      }
-    )
-  }
-
   const getInitials = (name: string): string => {
     if (!name) return '??'
     const words = name.trim().split(' ')
@@ -202,38 +165,6 @@ export default function AccountInfoSidebar() {
           </div>
         </div>
       </Card>
-
-      {/* Danger Zone */}
-      <Card className="p-8 border border-red-100 shadow-sm shadow-red-50 bg-white rounded-2xl">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center shrink-0">
-            <IoTrashOutline className="text-red-600" size={20} />
-          </div>
-          <h3 className="text-lg font-semibold text-red-700">Danger Zone</h3>
-        </div>
-        <p className="text-sm text-red-600/70 mb-8 font-normal leading-relaxed">
-          Once you delete your account, there is no going back. Please be certain.
-        </p>
-        <Button
-          variant="solid"
-          colorScheme="danger"
-          onClick={() => setIsDeleteModalOpen(true)}
-          className="w-full h-11 rounded-xl font-semibold shadow-md shadow-rose-100 hover:shadow-rose-200 transition-all active:scale-95 bg-rose-600 hover:bg-rose-700 border-none px-6 cursor-pointer"
-        >
-          Delete Account
-        </Button>
-      </Card>
-
-      <ConfirmationModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={handleDeleteAccount}
-        title="Delete Your Account?"
-        message="Are you absolutely sure? This will submit a permanent deletion request for your staff account. This action is IRREVERSIBLE and requires Admin/Manager approval before final execution."
-        confirmText="Request Deletion"
-        cancelText="Keep Account"
-        type="danger"
-      />
     </div>
   )
 }

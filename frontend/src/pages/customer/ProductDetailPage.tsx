@@ -65,7 +65,7 @@ const ProductDetailContent = ({ product, productId }: ProductDetailContentProps)
 
       <main className="container mx-auto px-4 py-8 lg:py-12 relative z-10">
         {/* Breadcrumbs */}
-        <nav className="flex items-center gap-2 text-sm text-gray-eyewear mb-8">
+        <nav className="flex items-center gap-2 text-sm text-gray-eyewear mb-8 overflow-x-auto whitespace-nowrap pb-2 custom-scrollbar">
           <a href="/" className="hover:text-primary-500 font-medium transition-colors">
             Home
           </a>

@@ -4,11 +4,13 @@ import { PrescriptionForm } from '@/shared/components/prescription/PrescriptionF
 interface StepManualPrescriptionProps {
   onSubmit: (rx: PrescriptionData) => void
   isPreOrder?: boolean
+  purchaseMode?: 'cart' | 'buy_now'
 }
 
 export default function StepManualPrescription({
   onSubmit,
-  isPreOrder
+  isPreOrder,
+  purchaseMode = 'cart'
 }: StepManualPrescriptionProps) {
   return (
     <div className="animate-in fade-in slide-in-from-right-4 duration-500">
@@ -28,7 +30,9 @@ export default function StepManualPrescription({
         onSubmit={onSubmit}
         showDefaultCheckbox={false}
         showConfirmCheckbox={true}
-        submitLabel={isPreOrder ? 'Pre-order Now' : 'Add to Cart'}
+        submitLabel={
+          isPreOrder ? 'Pre-order Now' : purchaseMode === 'buy_now' ? 'Buy Now' : 'Add to Cart'
+        }
         confirmText="By clicking this box, I confirm that the prescription values entered above are taken from a valid (not expired) prescription issued to me, signed by a licensed optometrist or ophthalmologist."
       />
     </div>

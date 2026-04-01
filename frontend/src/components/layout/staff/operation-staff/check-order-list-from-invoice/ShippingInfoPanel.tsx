@@ -40,7 +40,7 @@ export default function ShippingInfoPanel({
       {/* Invoice Info */}
       <div className="mb-4 pb-4 border-b border-gray-200">
         <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Invoice ID</p>
-        <p className="text-base font-semibold text-gray-900">{invoiceCode}</p>
+        <p className="text-base font-semibold text-gray-900 break-all">{invoiceCode}</p>
         <p className="text-sm text-gray-600 mt-1">Customer: {fullName}</p>
         <p className="text-sm text-gray-600 mt-1">Phone number: {phone}</p>
       </div>
@@ -54,7 +54,7 @@ export default function ShippingInfoPanel({
         {shipCode ? (
           <>
             <p className="text-xs text-gray-500 uppercase tracking-wide mb-1 mt-4">Ship Code</p>
-            <p className="w-full px-6 py-5 rounded-xl font-mono text-lg tracking-wider transition-all flex items-center justify-center gap-2 border-2 border-dashed bg-gray-50 text-gray-800 border-gray-300 hover:bg-mint-50 hover:border-mint-700 cursor-pointer ">
+            <p className="w-full px-6 py-5 rounded-xl font-mono text-lg tracking-wider transition-all flex items-center justify-center gap-2 border-2 border-dashed bg-gray-50 text-gray-800 border-gray-300 hover:bg-mint-50 hover:border-mint-700 cursor-pointer break-all mb-4">
               {shipCode}
             </p>
           </>

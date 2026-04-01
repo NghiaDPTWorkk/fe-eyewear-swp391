@@ -38,7 +38,8 @@ const getStatusColor = (status: string): string => {
 /**
  * Helper: Map type array sang enum OrderType value
  */
-const getOrderType = (types: string[]): string => {
+const getOrderType = (types: string[] | undefined): string => {
+  if (!types || !Array.isArray(types)) return OrderType.NORMAL
   if (types.includes('PRE_ORDER') || types.includes('PRE-ORDER')) return OrderType.PRE_ORDER
   if (types.includes('MANUFACTURING')) return OrderType.MANUFACTURING
   if (types.includes('NORMAL')) return OrderType.NORMAL
@@ -52,13 +53,13 @@ const getOrderType = (types: string[]): string => {
 const getWaitingFor = (order: OperationOrder): string | undefined => {
   if (order.status === 'AWAITING_STOCK') {
     // Lấy tên sản phẩm đầu tiên đang chờ
-    const firstProduct = order.products[0]
+    const firstProduct = order.products?.[0]
     if (firstProduct?.product?.sku) {
       return `Gọng ${firstProduct.product.sku}`
     }
     return 'Gọng Titan'
   }
-  if (order.status === 'IN_PROGRESS' && order.products[0]?.lens) {
+  if (order.status === 'IN_PROGRESS' && order.products?.[0]?.lens) {
     return `Tròng ${order.products[0].lens.sku}`
   }
   return undefined

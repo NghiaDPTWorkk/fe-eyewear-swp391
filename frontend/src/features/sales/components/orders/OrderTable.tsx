@@ -75,7 +75,6 @@ export const OrderTable: React.FC<OrderTableProps> = ({
               const isSelected = selectedInvoiceId === inv.id
               const isLocked = isLockedByOther ? isLockedByOther(inv.id) : false
               const isReadyToApprove =
-                inv.hasManufacturing &&
                 inv.status === InvoiceStatus.DEPOSITED &&
                 (inv.totalOrdersCount || 0) > 0 &&
                 (inv.approvedOrdersCount || 0) === (inv.totalOrdersCount || 0)

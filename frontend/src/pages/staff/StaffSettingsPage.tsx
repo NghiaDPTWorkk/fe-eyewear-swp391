@@ -1,4 +1,5 @@
 import { IoWarningOutline } from 'react-icons/io5'
+import { Container } from '@/components'
 
 import {
   ProfileForm,
@@ -23,7 +24,7 @@ export default function StaffSettingsPage({
   const profile = profileData?.data
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <Container className="space-y-8 animate-in fade-in duration-500">
       <PageHeader
         title="Settings"
         subtitle={`Manage your ${roleName.toLowerCase()} account and preferences`}
@@ -62,6 +63,6 @@ export default function StaffSettingsPage({
           </div>
         </div>
       </div>
-    </div>
+    </Container>
   )
 }

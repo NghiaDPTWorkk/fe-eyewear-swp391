@@ -1,6 +1,7 @@
 import { useAuthStore } from '@/store'
 import { PenTool, Database, Lock } from 'lucide-react'
 import { Card, Button } from '@/shared/components/ui-core'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 interface StepPrescriptionOptionProps {
   onSelect: (option: 'manual' | 'saved') => void
@@ -8,6 +9,8 @@ interface StepPrescriptionOptionProps {
 
 export default function StepPrescriptionOption({ onSelect }: StepPrescriptionOptionProps) {
   const { isAuthenticated } = useAuthStore()
+  const navigate = useNavigate()
+  const location = useLocation()
 
   // handleSavedSelect is no longer needed as logic is embedded in JSX
 
@@ -80,7 +83,7 @@ export default function StepPrescriptionOption({ onSelect }: StepPrescriptionOpt
                 <p className="text-xs font-bold text-mint-1200 mb-2">
                   Login required to use saved prescriptions
                 </p>
-                <Button size="sm" onClick={() => (window.location.href = '/login')}>
+                <Button size="sm" onClick={() => navigate('/login', { state: { from: location } })}>
                   Log In Now
                 </Button>
               </div>

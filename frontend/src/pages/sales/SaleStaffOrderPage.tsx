@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect, lazy, Suspense } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import {
   IoFlashOutline,
@@ -8,15 +8,12 @@ import {
   IoChevronBackOutline,
   IoLockClosedOutline
 } from 'react-icons/io5'
-import { InvoiceOrdersDrawer } from '@/features/sales/components/dashboard/InvoiceOrdersDrawer'
 import { OrderMetrics } from '@/features/sales/components/orders/OrderMetrics'
 import { OrderPagination } from '@/features/sales/components/orders/OrderPagination'
 import { OrderTable } from '@/features/sales/components/orders/OrderTable'
 import { StatusFilterBar } from '@/features/sales/components/orders/StatusFilterBar'
 import { RealtimeStatusBar } from '@/features/sales/components/orders/RealtimeStatusBar'
-import { LockBlockedModal } from '@/features/sales/components/orders/InvoiceLockBadge'
-import { PageHeader, RejectionModal } from '@/features/sales/components/common'
-
+import { PageHeader } from '@/features/sales/components/common'
 import {
   useSalesStaffAction,
   useSalesStaffInvoices,
@@ -24,38 +21,49 @@ import {
   useSalesStaffRealtime
 } from '@/features/sales/hooks'
 import { type Invoice } from '@/features/sales/types'
-
-import { ConfirmationModal } from '@/shared/components/ui-core/confirm-modal'
 import { Button } from '@/shared/components/ui-core/button'
 import { InvoiceStatus } from '@/shared/utils/enums/invoice.enum'
 import { OrderType } from '@/shared/utils/enums/order.enum'
 import { useAuthStore } from '@/store/auth.store'
-
-import {
-  ReturnTicketsTable,
-  ReturnTicketDrawer,
-  ReturnVerifyView
-} from '@/features/sales/components/returns'
+import { ReturnTicketsTable, ReturnVerifyView } from '@/features/sales/components/returns'
 import type { ReturnTicketData } from '@/shared/types/return-ticket.types'
 import { useReturnPageTickets, useMyReturnHistory } from '@/features/sales/hooks/useReturnTickets'
+
+const InvoiceOrdersDrawer = lazy(() =>
+  import('@/features/sales/components/dashboard/InvoiceOrdersDrawer').then((m) => ({
+    default: m.InvoiceOrdersDrawer
+  }))
+)
+const ReturnTicketDrawer = lazy(() =>
+  import('@/features/sales/components/returns').then((m) => ({ default: m.ReturnTicketDrawer }))
+)
+const ConfirmationModal = lazy(() =>
+  import('@/shared/components/ui-core/confirm-modal').then((m) => ({
+    default: m.ConfirmationModal
+  }))
+)
+const RejectionModal = lazy(() =>
+  import('@/features/sales/components/common').then((m) => ({ default: m.RejectionModal }))
+)
+const LockBlockedModal = lazy(() =>
+  import('@/features/sales/components/orders/InvoiceLockBadge').then((m) => ({
+    default: m.LockBlockedModal
+  }))
+)
 
 export default function SaleStaffOrderPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const statusFilter = searchParams.get('status') ?? 'All'
   const orderTypeFilter = searchParams.get('orderType') ?? 'All'
   const searchQuery = searchParams.get('search') ?? ''
-
   const currentUser = useAuthStore((s) => s.user)
   const staffId = (currentUser as any)?._id || (currentUser as any)?.id || undefined
-
   const { acquireLock, releaseLock, isLockedByOther, lockedCount } = useInvoiceLock(staffId)
   const [showLockBlockedModal, setShowLockBlockedModal] = useState(false)
   const [lockedInvoiceId, setLockedInvoiceId] = useState<string | null>(null)
-
   const { isRefreshing, refresh, getLastUpdatedLabel } = useSalesStaffRealtime()
-
   const { approveInvoice, rejectInvoice, processing } = useSalesStaffAction()
-  const [page, setPage] = useState(1)
+  const [page, setPage] = useState(parseInt(searchParams.get('page') || '1'))
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<string | null>(null)
   const [showConfirmModal, setShowConfirmModal] = useState(false)
   const [showRejectModal, setShowRejectModal] = useState(false)
@@ -74,15 +82,26 @@ export default function SaleStaffOrderPage() {
   const returnHook = useReturnPageTickets(staffId || '', isReturnsActive)
   const historyHook = useMyReturnHistory(isHistoryActive)
 
+  const { setSearch: setReturnSearch, setCurrentPage: setReturnPage } = returnHook
+  const { setSearch: setHistorySearch, setCurrentPage: setHistoryPage } = historyHook
+
   useEffect(() => {
     if (statusFilter === 'RETURNS') {
-      returnHook.setSearch(searchQuery)
-      returnHook.setCurrentPage(page)
+      setReturnSearch(searchQuery)
+      setReturnPage(page)
     } else if (statusFilter === 'REFUNDED_HISTORY') {
-      historyHook.setSearch(searchQuery)
-      historyHook.setCurrentPage(page)
+      setHistorySearch(searchQuery)
+      setHistoryPage(page)
     }
-  }, [statusFilter, searchQuery, page]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [
+    statusFilter,
+    searchQuery,
+    page,
+    setReturnSearch,
+    setReturnPage,
+    setHistorySearch,
+    setHistoryPage
+  ])
 
   const setSearchQuery = (query: string) => {
     const next = new URLSearchParams(searchParams)
@@ -98,29 +117,26 @@ export default function SaleStaffOrderPage() {
   const {
     invoices: invoiceList,
     loading: isLoading,
-    fetchInvoices: refetch
-  } = useSalesStaffInvoices(1, 100, statusFilter, searchQuery, isInvoicesActive)
+    fetchInvoices: refetch,
+    pagination
+  } = useSalesStaffInvoices(page, limit, statusFilter, searchQuery, isInvoicesActive, false)
+
+  const { invoices: metricsInvoices } = useSalesStaffInvoices(
+    1,
+    100,
+    'All',
+    '',
+    isInvoicesActive,
+    false
+  )
 
   const selectedInvoice = useMemo(
     () => invoiceList.find((inv) => inv.id === selectedInvoiceId) ?? null,
     [invoiceList, selectedInvoiceId]
   )
 
-  const filteredInvoices = useMemo(() => {
-    let list = invoiceList
-
-    if (statusFilter === InvoiceStatus.DEPOSITED) {
-      list = list.filter((inv: Invoice) => inv.orders?.some((o) => o.isPrescription))
-    }
-
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase()
-      list = list.filter(
-        (inv: Invoice) =>
-          inv.fullName.toLowerCase().includes(q) || inv.invoiceCode.toLowerCase().includes(q)
-      )
-    }
-
+  const filteredInvoicesForLocal = useMemo(() => {
+    let list = [...invoiceList]
     if (orderTypeFilter !== 'All') {
       list = list.filter((inv: Invoice) =>
         inv.orders?.some((o: any) => {
@@ -129,27 +145,8 @@ export default function SaleStaffOrderPage() {
         })
       )
     }
-
-    list = list.sort((a: Invoice, b: Invoice) => {
-      const dateA = new Date(a.createdAt).getTime()
-      const dateB = new Date(b.createdAt).getTime()
-      return dateB - dateA
-    })
-
     return list
-  }, [invoiceList, searchQuery, orderTypeFilter, statusFilter])
-
-  const total = filteredInvoices.length
-  const totalPages = Math.max(1, Math.ceil(total / limit))
-  const safePage = Math.min(page, totalPages)
-
-  const paginatedInvoices = useMemo(() => {
-    const start = (safePage - 1) * limit
-    return filteredInvoices.slice(start, start + limit)
-  }, [filteredInvoices, safePage, limit])
-
-  const { invoices: metricsInvoices } = useSalesStaffInvoices(1, 100, 'All', '', isInvoicesActive)
-  const globalReturnHook = useReturnPageTickets(staffId || '', true)
+  }, [invoiceList, orderTypeFilter])
 
   const metrics = useMemo(() => {
     const counts: Record<string, number> = {
@@ -158,30 +155,42 @@ export default function SaleStaffOrderPage() {
       [OrderType.RETURN]: 0,
       [OrderType.PRE_ORDER]: 0
     }
+    const typeEntries = Object.values(OrderType)
+
     metricsInvoices.forEach((inv: Invoice) => {
-      if (inv.orders && inv.orders.length > 0) {
-        inv.orders.forEach((o) => {
-          const types = Array.isArray(o.type) ? o.type : [o.type]
-          if (types.some((t: OrderType | string) => String(t).includes(OrderType.NORMAL)))
-            counts[OrderType.NORMAL]++
-          if (types.some((t: OrderType | string) => String(t).includes(OrderType.MANUFACTURING)))
-            counts[OrderType.MANUFACTURING]++
-          if (types.some((t: OrderType | string) => String(t).includes(OrderType.RETURN)))
-            counts[OrderType.RETURN]++
-          if (types.some((t: OrderType | string) => String(t).includes(OrderType.PRE_ORDER)))
-            counts[OrderType.PRE_ORDER]++
-        })
-      } else {
+      if (!inv.orders || inv.orders.length === 0) {
         counts[OrderType.NORMAL]++
+        return
       }
+
+      const invoiceTypes = new Set<string>()
+      inv.orders.forEach((o: any) => {
+        const types = Array.isArray(o.type) ? o.type : o.type ? [o.type] : []
+        types.forEach((t: any) => {
+          typeEntries.forEach((typeKey: string) => {
+            if (String(t).includes(typeKey)) {
+              invoiceTypes.add(typeKey)
+            }
+          })
+        })
+
+        if (o.isPrescription) {
+          invoiceTypes.add(OrderType.MANUFACTURING)
+        }
+      })
+
+      if (inv.hasManufacturing) invoiceTypes.add(OrderType.MANUFACTURING)
+
+      invoiceTypes.forEach((typeKey: string) => {
+        if (counts[typeKey] !== undefined) {
+          counts[typeKey]++
+        }
+      })
     })
 
-    // Override RETURN count with real data from globalReturnHook (unfiltered)
-    counts[OrderType.RETURN] = globalReturnHook.pagination.total || 0
+    const totalCount = Object.values(counts).reduce((a, b) => a + b, 0) || 1
+    const pct = (key: string) => Math.round((counts[key] / totalCount) * 100)
 
-    const totalWithReturns = Object.values(counts).reduce((a, b) => a + b, 0) || 1
-
-    const pct = (key: string) => Math.round((counts[key] / totalWithReturns) * 100)
     return [
       {
         type: OrderType.NORMAL,
@@ -216,12 +225,13 @@ export default function SaleStaffOrderPage() {
         trend: { label: 'of total', value: pct(OrderType.PRE_ORDER), isPositive: true }
       }
     ]
-  }, [metricsInvoices, globalReturnHook.pagination.total])
+  }, [metricsInvoices])
 
   const handleStatusChange = (status: string) => {
     setSearchParams((prev) => {
       if (status === 'All') prev.delete('status')
       else prev.set('status', status)
+      prev.delete('page')
       return prev
     })
     setPage(1)
@@ -231,26 +241,34 @@ export default function SaleStaffOrderPage() {
     setSearchParams((prev) => {
       if (type === 'All') prev.delete('orderType')
       else prev.set('orderType', type)
+      prev.delete('page')
       return prev
     })
     setPage(1)
     setIsFilterOpen(false)
   }
 
+  const handlePageChange = (p: number) => {
+    setPage(p)
+    setSearchParams((prev) => {
+      prev.set('page', p.toString())
+      return prev
+    })
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   const handleResetFilters = () => {
     setSearchParams(new URLSearchParams())
     setPage(1)
   }
-  const statusTabs = useMemo(() => {
-    const allTabs = [
-      { label: 'All Invoices', value: 'All' },
-      { label: 'Pending', value: InvoiceStatus.DEPOSITED },
-      { label: 'Approved', value: 'APPROVED_OR_REJECTED' },
-      { label: 'Returns', value: 'RETURNS' },
-      { label: 'History', value: 'REFUNDED_HISTORY' }
-    ]
-    return allTabs
-  }, [])
+
+  const statusTabs = [
+    { label: 'All Invoices', value: 'All' },
+    { label: 'Pending', value: InvoiceStatus.DEPOSITED },
+    { label: 'Approved', value: 'APPROVED_OR_REJECTED' },
+    { label: 'Returns', value: 'RETURNS' },
+    { label: 'History', value: 'REFUNDED_HISTORY' }
+  ]
 
   const getStatusBadgeProps = (invoice: Invoice) => {
     const s = invoice.status
@@ -259,7 +277,6 @@ export default function SaleStaffOrderPage() {
         String(t).includes(OrderType.MANUFACTURING)
       )
     )
-
     if (statusFilter === 'APPROVED_OR_REJECTED') {
       if (s === InvoiceStatus.REJECTED || s === 'REJECTED') {
         return { label: 'REJECTED', color: 'bg-rose-50 text-rose-600 border-rose-100' }
@@ -280,23 +297,14 @@ export default function SaleStaffOrderPage() {
         return { label: 'ACCEPTED', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' }
       }
     }
-
     if (s === InvoiceStatus.DEPOSITED) {
-      if (
-        invoice.hasManufacturing &&
-        invoice.totalOrdersCount &&
-        invoice.approvedOrdersCount === invoice.totalOrdersCount
-      ) {
-        return {
-          label: 'READY TO APPROVE',
-          color: 'bg-mint-50 text-mint-600 border-mint-200'
-        }
+      if (invoice.totalOrdersCount && invoice.approvedOrdersCount === invoice.totalOrdersCount) {
+        return { label: 'READY TO APPROVE', color: 'bg-mint-50 text-mint-600 border-mint-200' }
       }
       return hasMfg
         ? { label: 'PENDING', color: 'bg-amber-50 text-amber-600 border-amber-100' }
         : { label: 'WAITING ASSIGN', color: 'bg-blue-50 text-blue-600 border-blue-100' }
     }
-
     if (s === InvoiceStatus.APPROVED || s === 'APPROVED')
       return { label: 'APPROVED', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' }
     if (s === InvoiceStatus.REJECTED || s === 'REJECTED')
@@ -305,14 +313,11 @@ export default function SaleStaffOrderPage() {
       return { label: 'CANCELED', color: 'bg-rose-50 text-rose-600 border-rose-100' }
     if (s === InvoiceStatus.REFUNDED || s === 'REFUNDED')
       return { label: 'REFUNDED', color: 'bg-purple-50 text-purple-600 border-purple-100' }
-
     return {
       label: String(s).toUpperCase() || 'UNKNOWN',
       color: 'bg-slate-50 text-slate-400 border-slate-100'
     }
   }
-
-  // Early return for Verify View
 
   const handleApproveClick = (invoiceId: string) => {
     if (isLockedByOther(invoiceId)) {
@@ -371,7 +376,6 @@ export default function SaleStaffOrderPage() {
               noMargin
             />
           </div>
-
           {verifyTicket.staffVerify === staffId && (
             <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-mint-50 border border-mint-100 w-fit text-mint-700 shadow-sm animate-in slide-in-from-left-4 duration-300">
               <IoLockClosedOutline size={14} className="text-mint-600" />
@@ -380,7 +384,6 @@ export default function SaleStaffOrderPage() {
               </span>
             </div>
           )}
-
           <ReturnVerifyView
             ticket={verifyTicket}
             onActionSuccess={() => {
@@ -442,7 +445,7 @@ export default function SaleStaffOrderPage() {
                   setDrawerOpen(true)
                 }}
                 onVerifyClick={(t) => setVerifyTicket(t)}
-                onPageChange={setPage}
+                onPageChange={handlePageChange}
                 showAction={true}
               />
             ) : statusFilter === 'REFUNDED_HISTORY' ? (
@@ -457,13 +460,13 @@ export default function SaleStaffOrderPage() {
                   setDrawerOpen(true)
                 }}
                 onVerifyClick={(t) => setVerifyTicket(t)}
-                onPageChange={setPage}
+                onPageChange={handlePageChange}
                 showAction={true}
               />
             ) : (
               <>
                 <OrderTable
-                  invoices={paginatedInvoices}
+                  invoices={filteredInvoicesForLocal}
                   selectedInvoiceId={selectedInvoiceId}
                   setSelectedInvoiceId={setSelectedInvoiceId}
                   getStatusBadgeProps={getStatusBadgeProps}
@@ -471,12 +474,12 @@ export default function SaleStaffOrderPage() {
                   processing={processing}
                   isLockedByOther={isLockedByOther}
                 />
-                {filteredInvoices.length > 0 && (
+                {pagination && pagination.totalPages > 1 && (
                   <OrderPagination
-                    page={safePage}
-                    totalPages={totalPages}
+                    page={page}
+                    totalPages={pagination.totalPages}
                     isLoading={isLoading}
-                    onPageChange={setPage}
+                    onPageChange={handlePageChange}
                   />
                 )}
               </>
@@ -485,155 +488,150 @@ export default function SaleStaffOrderPage() {
         </div>
       )}
 
-      <InvoiceOrdersDrawer
-        isOpen={!!selectedInvoiceId && statusFilter !== InvoiceStatus.REFUNDED}
-        onClose={() => setSelectedInvoiceId(null)}
-        invoice={selectedInvoice}
-      />
+      <Suspense fallback={null}>
+        {selectedInvoiceId && (
+          <InvoiceOrdersDrawer
+            isOpen={!!selectedInvoiceId && statusFilter !== InvoiceStatus.REFUNDED}
+            onClose={() => setSelectedInvoiceId(null)}
+            invoice={selectedInvoice}
+          />
+        )}
 
-      <ReturnTicketDrawer
-        ticket={drawerTicket}
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        currentStaffId={staffId || ''}
-        onGoToVerify={(t) => {
-          setVerifyTicket(t)
-          setDrawerOpen(false)
-        }}
-      />
+        <ReturnTicketDrawer
+          ticket={drawerTicket}
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+          currentStaffId={staffId || ''}
+          onGoToVerify={(t) => {
+            setVerifyTicket(t)
+            setDrawerOpen(false)
+          }}
+        />
 
-      <ConfirmationModal
-        isOpen={showConfirmModal}
-        onClose={() => {
-          if (invoiceToProcess) releaseLock(invoiceToProcess)
-          setShowConfirmModal(false)
-          setInvoiceToProcess(null)
-        }}
-        onConfirm={confirmApproval}
-        title="Approve Invoice"
-        message={
-          <div className="space-y-2">
-            <p className="text-slate-600">Are you sure you want to approve this invoice?</p>
-            <p className="text-slate-500 text-sm">
-              All orders within this invoice will be marked as{' '}
-              <span className="text-mint-600 font-semibold uppercase">verified</span> and proceed to
-              the next stage.
-            </p>
-          </div>
-        }
-        details={
-          invoiceToProcess && (
-            <div className="space-y-4 pt-2">
-              <div className="flex justify-between items-center pb-2 border-b border-slate-100">
-                <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
-                  Items to Approve
-                </span>
-                <div className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-mint-500 animate-pulse" />
-                  <span className="text-[11px] font-bold text-mint-600 uppercase">
-                    {invoiceList.find((inv) => inv.id === invoiceToProcess)?.orders?.length || 0}{' '}
-                    Total
+        <ConfirmationModal
+          isOpen={showConfirmModal}
+          onClose={() => {
+            if (invoiceToProcess) releaseLock(invoiceToProcess)
+            setShowConfirmModal(false)
+            setInvoiceToProcess(null)
+          }}
+          onConfirm={confirmApproval}
+          title="Approve Invoice"
+          message={
+            <div className="space-y-2">
+              <p className="text-slate-600">Are you sure you want to approve this invoice?</p>
+              <p className="text-slate-500 text-sm">
+                All orders within this invoice will be marked as{' '}
+                <span className="text-mint-600 font-semibold uppercase">verified</span> and proceed
+                to the next stage.
+              </p>
+            </div>
+          }
+          details={
+            invoiceToProcess && (
+              <div className="space-y-4 pt-2">
+                <div className="flex justify-between items-center pb-2 border-b border-slate-100">
+                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
+                    Items to Approve
                   </span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-mint-500 animate-pulse" />
+                    <span className="text-[11px] font-bold text-mint-600 uppercase">
+                      {invoiceList.find((inv) => inv.id === invoiceToProcess)?.orders?.length || 0}{' '}
+                      Total
+                    </span>
+                  </div>
+                </div>
+                <div className="max-h-[240px] overflow-y-auto pr-1 space-y-3 custom-scrollbar">
+                  {invoiceList
+                    .find((inv) => inv.id === invoiceToProcess)
+                    ?.orders?.map((order: any, i: number) => (
+                      <div
+                        key={order.id || i}
+                        className="group flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100 hover:border-mint-200 hover:shadow-md hover:shadow-mint-50/50 transition-all duration-300"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-mint-50 group-hover:text-mint-600 transition-colors">
+                            <IoReceiptOutline size={20} />
+                          </div>
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-semibold text-slate-700 font-mono tracking-tight leading-none group-hover:text-mint-600 transition-colors">
+                                #{order.orderCode || order.id?.slice(-8)}
+                              </span>
+                              {order.isPrescription && (
+                                <span className="px-2 py-0.5 bg-rose-50 text-rose-500 rounded-md text-[8px] font-bold uppercase tracking-tight border border-rose-100/50">
+                                  RX
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex flex-wrap gap-1.5">
+                              {(Array.isArray(order.type)
+                                ? order.type
+                                : [order.type || 'NORMAL']
+                              ).map((t: any, idx: number) => (
+                                <span
+                                  key={idx}
+                                  className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-[9px] font-medium uppercase tracking-wide border border-slate-200/50"
+                                >
+                                  {String(t).replace(/_/g, ' ')}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center">
+                          <span
+                            className={`px-3 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider border shadow-sm transition-all ${
+                              [
+                                'VERIFIED',
+                                'APPROVE',
+                                'APPROVED',
+                                'WAITING_ASSIGN',
+                                'ASSIGNED',
+                                'MAKING',
+                                'PACKAGING',
+                                'COMPLETED',
+                                'ONBOARD'
+                              ].includes(String(order.status).toUpperCase())
+                                ? 'bg-emerald-50 text-emerald-600 border-emerald-100 shadow-emerald-50'
+                                : 'bg-amber-50 text-amber-600 border-amber-100 shadow-amber-50'
+                            }`}
+                          >
+                            {String(order.status).replace(/_/g, ' ')}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
                 </div>
               </div>
+            )
+          }
+          confirmText="Approve Invoice"
+          type="info"
+          isLoading={processing}
+        />
 
-              <div className="max-h-[240px] overflow-y-auto pr-1 space-y-3 custom-scrollbar">
-                {invoiceList
-                  .find((inv) => inv.id === invoiceToProcess)
-                  ?.orders?.map((order, i) => (
-                    <div
-                      key={order.id || i}
-                      className="group flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100 hover:border-mint-200 hover:shadow-md hover:shadow-mint-50/50 transition-all duration-300"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-mint-50 group-hover:text-mint-600 transition-colors">
-                          <IoReceiptOutline size={20} />
-                        </div>
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-semibold text-slate-700 font-mono tracking-tight leading-none group-hover:text-mint-600 transition-colors">
-                              #{order.orderCode || order.id?.slice(-8)}
-                            </span>
-                            {order.isPrescription && (
-                              <span className="px-2 py-0.5 bg-rose-50 text-rose-500 rounded-md text-[8px] font-bold uppercase tracking-tight border border-rose-100/50">
-                                RX
-                              </span>
-                            )}
-                          </div>
-                          <div className="flex flex-wrap gap-1.5">
-                            {(Array.isArray(order.type)
-                              ? order.type
-                              : [order.type || 'REGULAR']
-                            ).map((t, idx) => (
-                              <span
-                                key={idx}
-                                className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-[9px] font-medium uppercase tracking-wide border border-slate-200/50"
-                              >
-                                {String(t).replace(/_/g, ' ')}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
+        <RejectionModal
+          isOpen={showRejectModal}
+          onClose={() => {
+            if (invoiceToProcess) releaseLock(invoiceToProcess)
+            setShowRejectModal(false)
+            setInvoiceToProcess(null)
+          }}
+          onConfirm={confirmRejection}
+          isLoading={processing}
+        />
 
-                      <div className="flex items-center">
-                        <span
-                          className={`px-3 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider border shadow-sm transition-all ${
-                            [
-                              'VERIFIED',
-                              'APPROVE',
-                              'APPROVED',
-                              'WAITING_ASSIGN',
-                              'ASSIGNED',
-                              'MAKING',
-                              'PACKAGING',
-                              'COMPLETED',
-                              'ONBOARD'
-                            ].includes(String(order.status).toUpperCase())
-                              ? 'bg-emerald-50 text-emerald-600 border-emerald-100 shadow-emerald-50'
-                              : 'bg-amber-50 text-amber-600 border-amber-100 shadow-amber-50'
-                          }`}
-                        >
-                          {String(order.status).replace(/_/g, ' ')}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-              </div>
-
-              <div className="p-3 bg-mint-50/40 rounded-2xl border border-mint-100/40">
-                <p className="text-[11px] font-medium text-mint-700 leading-relaxed text-center">
-                  Once approved, all listed items will be marked as{' '}
-                  <span className="font-bold text-mint-900">VERIFIED</span> and shifted to the{' '}
-                  <span className="font-bold text-mint-900">PACKAGING</span> stage.
-                </p>
-              </div>
-            </div>
-          )
-        }
-        confirmText="Approve Invoice"
-        type="info"
-        isLoading={processing}
-      />
-      <RejectionModal
-        isOpen={showRejectModal}
-        onClose={() => {
-          if (invoiceToProcess) releaseLock(invoiceToProcess)
-          setShowRejectModal(false)
-          setInvoiceToProcess(null)
-        }}
-        onConfirm={confirmRejection}
-        isLoading={processing}
-      />
-
-      <LockBlockedModal
-        isOpen={showLockBlockedModal}
-        invoiceId={lockedInvoiceId}
-        onClose={() => {
-          setShowLockBlockedModal(false)
-          setLockedInvoiceId(null)
-        }}
-      />
+        <LockBlockedModal
+          isOpen={showLockBlockedModal}
+          invoiceId={lockedInvoiceId}
+          onClose={() => {
+            setShowLockBlockedModal(false)
+            setLockedInvoiceId(null)
+          }}
+        />
+      </Suspense>
     </div>
   )
 }

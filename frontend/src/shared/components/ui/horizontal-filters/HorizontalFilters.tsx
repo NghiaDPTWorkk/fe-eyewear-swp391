@@ -285,7 +285,7 @@ export function HorizontalFilters({
             />
             <input
               type="text"
-              placeholder="Search by name, brand or style..."
+              placeholder="Search by product name"
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
               onFocus={() => setIsSearchFocused(true)}

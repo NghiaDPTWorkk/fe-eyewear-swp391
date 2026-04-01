@@ -5,7 +5,7 @@ export const FixedDetail: React.FC = () => {
   return (
     <div className="w-full bg-mint-200">
       {/* Top Decoration Banner */}
-      <div className="w-full bg-gradient-to-r from-[#eaf7f4] to-[#a3ddd0] py-10 text-center">
+      <div className="w-full bg-gradient-to-r from-[#eaf7f4] to-[#a3ddd0] py-10 mb-20 text-center">
         <p className="px-6 text-sm sm:text-lg md:text-xl font-bold tracking-[0.1em] sm:tracking-[0.15em] text-slate-700 uppercase leading-relaxed">
           RAY-BAN & OAKLEY META AI GLASSES NOW WITH AN EXTRA 10% OFF LENSES
         </p>

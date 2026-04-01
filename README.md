@@ -160,6 +160,6 @@ This project is developed for educational purposes as part of the SWP391 course 
 
 **University:** FPT University
 
-Built with React, TypeScript, and Spring Boot
+Built with React, TypeScript, and ExpressJs.
 
 

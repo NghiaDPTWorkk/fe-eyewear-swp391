@@ -96,8 +96,8 @@ export const BuyTutorial: React.FC = () => {
   return (
     <section className="py-2 pb-20 bg-mint-200 overflow-hidden">
       <div className="container mx-auto px-4 max-w-7xl">
-        <h2 className="text-[20px] font-bold text-slate-800 text-center mb-16 tracking-tight">
-          Buy prescription glasses in a few easy steps
+        <h2 className="text-2xl md:text-[28px] font-bold text-slate-800 text-center mb-16 md:mb-24 tracking-tight leading-tight">
+          Buy prescription glasses <br className="sm:hidden" /> in a few easy steps
         </h2>
 
         {/* Steps Container */}
@@ -106,10 +106,10 @@ export const BuyTutorial: React.FC = () => {
           <div className="hidden lg:block absolute top-[1.5rem] left-[10%] right-[10%] h-[1px] bg-slate-400" />
 
           {/* Desktop Layout: Horizontal | Mobile Layout: Vertical List */}
-          <div className="flex flex-col lg:flex-row items-stretch lg:items-start justify-between relative z-10 w-full">
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-start justify-between relative z-10 w-full gap-4 lg:gap-0">
             {steps.map((step, index) => (
               <React.Fragment key={index}>
-                <div className="flex flex-row lg:flex-col items-center lg:items-center text-left lg:text-center px-0 lg:px-4 py-8 lg:py-0 border-b lg:border-none border-mint-300 last:border-none flex-1">
+                <div className="flex flex-col sm:flex-row lg:flex-col items-center sm:items-start lg:items-center text-center sm:text-left lg:text-center px-4 sm:px-6 lg:px-4 py-8 lg:py-0 bg-white/40 lg:bg-transparent rounded-2xl lg:rounded-none border border-mint-200/50 lg:border-none flex-1 transition-all hover:bg-white/60 lg:hover:bg-transparent">
                   {/* Icon Container - Matching section background to cut the line */}
                   <div className="bg-mint-200 px-6 mr-6 lg:mr-0 lg:mb-8 text-black flex-shrink-0">
                     {step.icon}
@@ -125,18 +125,18 @@ export const BuyTutorial: React.FC = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-16 md:mt-24">
           <Link
             to="/eyeglasses"
             onClick={() => window.scrollTo(0, 0)}
-            className="min-w-[280px] px-8 py-4 bg-[#427b6f] hover:bg-[#5aab90] text-white font-bold rounded-md uppercase tracking-widest text-[11px] text-center transition-all duration-300 shadow-sm"
+            className="w-full sm:w-auto min-w-[280px] px-10 py-5 bg-[#427b6f] hover:bg-[#5aab90] text-white font-bold rounded-xl uppercase tracking-widest text-[11px] text-center transition-all duration-500 shadow-lg hover:shadow-[#427b6f]/20 transform hover:-translate-y-1"
           >
             SHOP EYEGLASSES
           </Link>
           <Link
             to="/sunglasses"
             onClick={() => window.scrollTo(0, 0)}
-            className="min-w-[280px] px-8 py-4 bg-[#427b6f] hover:bg-[#5aab90] text-white font-bold rounded-md uppercase tracking-widest text-[11px] text-center transition-all duration-300 shadow-sm"
+            className="w-full sm:w-auto min-w-[280px] px-10 py-5 bg-[#427b6f] hover:bg-[#5aab90] text-white font-bold rounded-xl uppercase tracking-widest text-[11px] text-center transition-all duration-500 shadow-lg hover:shadow-[#427b6f]/20 transform hover:-translate-y-1"
           >
             SHOP SUNGLASSES
           </Link>

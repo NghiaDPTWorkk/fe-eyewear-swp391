@@ -159,7 +159,7 @@ export default function ShaderCarousel({ imagePaths, maskPath, onLoaded }: Shade
 
   return (
     <div
-      className={`relative w-full h-screen overflow-hidden bg-white transition-opacity duration-300 ${
+      className={`relative w-full h-[600px] md:h-screen overflow-hidden bg-white transition-opacity duration-300 ${
         isSceneReady ? 'opacity-100' : 'opacity-0'
       }`}
     >

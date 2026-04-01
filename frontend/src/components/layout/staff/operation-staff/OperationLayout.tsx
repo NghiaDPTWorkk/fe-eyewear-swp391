@@ -5,7 +5,6 @@ import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layou
 import {
   SidebarStaff,
   UserWidgetWithLogout,
-  ThemeToggle,
   NavActions,
   NavSearch
 } from '@/components/layout/staff/staff-core'
@@ -111,7 +110,9 @@ export default function OperationLayout() {
       logo={
         <div className="flex items-center gap-2">
           <LogoEyewearIcon className="w-8 h-8" />
-          <span className="font-semibold text-gray-900">Eyewear</span>
+          <span className="text-md sm:text-xl font-heading font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent hidden sm:block">
+            Eyewear
+          </span>
         </div>
       }
       userWidget={
@@ -197,7 +198,7 @@ export default function OperationLayout() {
           active={location.pathname === '/operation-staff/support'}
           onClick={() => navigate('/operation-staff/support')}
         />
-        <ThemeToggle />
+        {/* <ThemeToggle /> */}
       </SidebarStaff.MenuSection>
     </SidebarStaff>
   )

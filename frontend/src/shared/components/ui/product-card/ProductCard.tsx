@@ -107,7 +107,7 @@ export function ProductCard({
     >
       {/* Sale Badge - Top left corner with opacity */}
       {hasSale && (
-        <div className="absolute top-0 left-0 z-10 bg-primary-500/90 text-white px-3 py-1.5 rounded-br-2xl text-xs font-bold shadow-lg">
+        <div className="absolute top-0 left-0 z-10 bg-primary-500/90 text-white px-2 py-1 sm:px-3 sm:py-1.5 rounded-br-xl sm:rounded-br-2xl text-[10px] sm:text-xs font-bold shadow-lg">
           -{salePercent}%
         </div>
       )}
@@ -118,12 +118,12 @@ export function ProductCard({
           e.stopPropagation()
           handleAddToWishlist()
         }}
-        className="absolute top-3 right-3 z-10 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center group-hover:opacity-100 transition-all hover:bg-white hover:scale-110"
+        className="absolute top-2 right-2 sm:top-3 sm:right-3 z-10 w-7 h-7 sm:w-9 sm:h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center group-hover:opacity-100 transition-all hover:bg-white hover:scale-110"
         aria-label="Add to wishlist"
       >
         <Heart
           className={cn(
-            'w-4 h-4 transition-colors',
+            'w-3.5 h-3.5 sm:w-4 h-4 transition-colors',
             isFavorite
               ? 'text-primary-500 fill-primary-500'
               : 'text-gray-eyewear hover:text-primary-500'
@@ -145,43 +145,43 @@ export function ProductCard({
       </div>
 
       {/* Product Info */}
-      <div className="p-5 flex flex-col flex-grow">
-        <div className="min-h-[1.25rem]">
+      <div className="p-3 sm:p-5 flex flex-col flex-grow">
+        <div className="min-h-[1rem] sm:min-h-[1.25rem]">
           {brand && (
-            <p className="text-xs text-primary-500 font-semibold mb-1 uppercase tracking-wide">
+            <p className="text-[10px] sm:text-xs text-primary-500 font-semibold mb-1 uppercase tracking-wide">
               {brand}
             </p>
           )}
         </div>
 
         {/* Fixed height for title to prevent layout shift */}
-        <h3 className="font-bold text-mint-1200 mb-3 line-clamp-2 text-lg min-h-[3.5rem] flex-grow">
+        <h3 className="font-bold text-mint-1200 mb-1 sm:mb-3 line-clamp-2 text-sm sm:text-lg min-h-[2.5rem] sm:min-h-[3.5rem] flex-grow">
           {name}
         </h3>
 
         <div className="flex items-center justify-between mt-auto">
-          <div className="flex flex-col justify-end min-h-[3.5rem]">
+          <div className="flex flex-col justify-end min-h-[2.5rem] sm:min-h-[3.5rem]">
             {hasSale ? (
-              <span className="text-xs text-gray-eyewear">
+              <span className="text-[10px] sm:text-xs text-gray-eyewear">
                 <VNDPrice className="line-through" amount={price} />
               </span>
             ) : (
-              <div className="h-4" /> /* Placeholder for spacing symmetry */
+              <div className="h-3 sm:h-4" /> /* Placeholder for spacing symmetry */
             )}
-            <span className="text-primary-500 font-bold text-xl leading-tight">
+            <span className="text-primary-500 font-bold text-sm sm:text-xl leading-tight">
               <VNDPrice amount={finalPrice} />
             </span>
           </div>
           {onAddToCart && (
-            <div className="shrink-0 ml-2">
+            <div className="shrink-0 ml-1 sm:ml-2">
               <Button
                 onClick={(e) => {
                   e.stopPropagation()
                   handleAddToCart()
                 }}
-                className="w-12 h-12 bg-primary-500 text-white rounded-full flex items-center justify-center hover:bg-primary-600 transition-all hover:scale-110 shadow-md p-0"
+                className="w-8 h-8 sm:w-12 sm:h-12 bg-primary-500 text-white rounded-full flex items-center justify-center hover:bg-primary-600 transition-all hover:scale-110 shadow-md p-0"
               >
-                <ShoppingCart className="w-6 h-6" />
+                <ShoppingCart className="w-4 h-4 sm:w-6 h-6" />
               </Button>
             </div>
           )}

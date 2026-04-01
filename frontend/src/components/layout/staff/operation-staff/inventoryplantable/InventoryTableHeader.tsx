@@ -5,19 +5,16 @@ export const InventoryTableHeader = () => {
         <th className="px-6 py-4 text-[11px] font-bold text-neutral-500 uppercase tracking-wider">
           SKU
         </th>
-        <th className="px-6 py-4 text-[11px] font-bold text-neutral-500 uppercase tracking-wider">
-          MANAGER
-        </th>
-        <th className="px-6 py-4 text-[11px] font-bold text-neutral-500 uppercase tracking-wider">
+        <th className="px-6 py-4 text-[11px] font-bold text-neutral-500 uppercase tracking-wider text-center">
           TARGET QTY
         </th>
-        <th className="px-6 py-4 text-[11px] font-bold text-neutral-500 uppercase tracking-wider">
+        <th className="px-6 py-4 text-[11px] font-bold text-neutral-500 uppercase tracking-wider text-center">
           STATUS
         </th>
-        <th className="px-6 py-4 text-[11px] font-bold text-neutral-500 uppercase tracking-wider">
+        <th className="px-6 py-4 text-[11px] font-bold text-neutral-500 uppercase tracking-wider text-center">
           CREATED AT
         </th>
-        <th className="px-6 py-4 text-[11px] font-bold text-neutral-500 uppercase tracking-wider">
+        <th className="px-6 py-4 text-[11px] font-bold text-neutral-500 uppercase tracking-wider text-center">
           ACTION
         </th>
       </tr>

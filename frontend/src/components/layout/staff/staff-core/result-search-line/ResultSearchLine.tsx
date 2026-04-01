@@ -33,7 +33,7 @@ export default function ResultSearchLine({
           isHistory
             ? 'bg-neutral-50 text-neutral-400 group-hover:bg-neutral-100 group-hover:text-neutral-500'
             : icon
-              ? 'bg-neutral-50 text-neutral-500 group-hover:bg-white border group-hover:border-neutral-100 group-hover:shadow-sm'
+              ? 'bg-mint-50 text-mint-600 group-hover:bg-white border group-hover:border-neutral-100 group-hover:shadow-sm'
               : 'bg-mint-50 text-mint-600 group-hover:bg-mint-100'
         )}
       >

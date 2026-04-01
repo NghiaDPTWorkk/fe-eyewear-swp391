@@ -75,10 +75,10 @@ export default function OperationPreOrdersPage() {
 
   return (
     <Container>
-      <div className="mb-4">
+      <div className="mb-6">
         <BreadcrumbPath paths={['Dashboard', 'Logistics Waiting Station']} />
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Pre-order Tracking</h1>
-        <p className="text-gray-500 mt-1">Monitor pre-orders waiting for product availability.</p>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">Pre-order Tracking</h1>
+        <p className="text-sm md:text-base text-gray-500 mt-1">Monitor pre-orders waiting for product availability.</p>
       </div>
 
       <FilterButtonList

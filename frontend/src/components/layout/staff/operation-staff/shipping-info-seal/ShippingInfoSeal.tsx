@@ -18,10 +18,10 @@ export default function ShippingInfoSeal({
   totalPrice
 }: ShippingInfoSealProps) {
   return (
-    <div className="bg-white p-8 font-sans max-w-2xl mx-auto w-full border border-gray-300">
-      <div className="flex gap-8">
+    <div className="bg-white p-4 sm:p-8 font-sans max-w-2xl mx-auto w-full border border-gray-300 overflow-hidden">
+      <div className="flex flex-col sm:flex-row gap-4 sm:gap-8">
         {/* Left Section */}
-        <div className="w-[45%] flex flex-col pr-6 border-r-2 border-dashed border-gray-400">
+        <div className="w-full sm:w-[45%] flex flex-col sm:pr-6 sm:border-r-2 sm:border-dashed border-gray-400 pb-6 sm:pb-0 border-b-2 sm:border-b-0 border-dashed">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center">
               <LogoEyewearIcon className="w-6 h-6 text-white bg-black" />
@@ -52,13 +52,13 @@ export default function ShippingInfoSeal({
         </div>
 
         {/* Right Section */}
-        <div className="w-[55%] flex flex-col justify-between pl-2">
+        <div className="w-full sm:w-[55%] flex flex-col justify-between pl-0 sm:pl-2 pt-6 sm:pt-0">
           <div className="space-y-4">
             <div className="flex flex-col gap-1">
               <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">
                 Order ID:
               </span>
-              <div className="text-lg font-bold text-gray-900 border-b-2 border-dotted border-gray-300 pb-1">
+              <div className="text-lg font-bold text-gray-900 border-b-2 border-dotted border-gray-300 pb-1 break-all">
                 {invoiceCode}
               </div>
             </div>
@@ -94,7 +94,7 @@ export default function ShippingInfoSeal({
               <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">
                 Ship Code:
               </span>
-              <div className="text-sm font-mono border-b-2 border-dotted border-gray-300 pb-1">
+              <div className="text-sm font-mono border-b-2 border-dotted border-gray-300 pb-1 break-all">
                 {shipCode || 'N/A'}
               </div>
             </div>

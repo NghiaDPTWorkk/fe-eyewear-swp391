@@ -1,4 +1,5 @@
 import { PageHeader, SupportContent } from '@/features/staff'
+import { Container } from '@/components'
 
 interface StaffSupportPageProps {
   dashboardPath: string
@@ -71,7 +72,7 @@ export default function StaffSupportPage({
   ]
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
+    <Container className="space-y-6 animate-in fade-in duration-500">
       <PageHeader
         title="Support & Risk Guidelines"
         subtitle="Important guidelines and bug reporting"
@@ -84,6 +85,6 @@ export default function StaffSupportPage({
         criticalReminder="Violation of data security policies or financial transaction guidelines may result in immediate suspension and legal action. When in doubt, always escalate to your supervisor."
         accentColor="mint"
       />
-    </div>
+    </Container>
   )
 }

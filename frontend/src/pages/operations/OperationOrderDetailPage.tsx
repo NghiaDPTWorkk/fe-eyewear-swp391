@@ -16,9 +16,11 @@ import LensSpecifications from '@/components/layout/staff/staff-core/technical-d
 import FrameSpecifications from '@/components/layout/staff/staff-core/technical-detail/FrameSpecifications'
 import { PATHS } from '@/routes/paths'
 import { ProcessTracker } from '@/components/layout/staff/staff-core/process-tracker'
-import { IoArrowBack } from 'react-icons/io5'
+import { IoArrowBack} from 'react-icons/io5'
 import { getOrderProgressStep } from '@/shared/utils/order-status.utils'
-import type React from 'react'
+import ConfirmationModal from '@/shared/components/ui/ConfirmationModal'
+import PolicyImplementOrder from '@/components/layout/staff/operation-staff/policystaff/PolicyImplementOrder'
+import React, { useState } from 'react'
 
 export default function OperationOrderDetailPage() {
   const { orderId } = useParams<{ orderId: string }>()
@@ -92,8 +94,15 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
   const updateMaking = useUpdateStatusToMaking()
 
   const queryClient = useQueryClient()
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false)
 
   const handleStartProcessing = () => {
+    setIsConfirmModalOpen(true)
+  }
+
+  const confirmStartProcessing = () => {
+    setIsConfirmModalOpen(false)
+
     // BE can return type as an array ['PRE-ORDER', 'MANUFACTURING'] or string 'MANUFACTURING'
     const orderTypes = Array.isArray(orderDetailData?.type)
       ? (orderDetailData.type as string[])
@@ -303,7 +312,6 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
             sph: parameters.right.SPH.toString(),
             cyl: parameters.right.CYL.toString(),
             axis: `${parameters.right.AXIS}°`,
-            prism: '-',
             add: parameters.right.ADD?.toString() || '-'
           },
           {
@@ -311,7 +319,6 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
             sph: parameters.left.SPH.toString(),
             cyl: parameters.left.CYL.toString(),
             axis: `${parameters.left.AXIS}°`,
-            prism: '-',
             add: parameters.left.ADD?.toString() || '-'
           }
         ],
@@ -377,9 +384,11 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
 
       {/* Progress Tracker */}
       {(() => {
-        const orderStatus = orderDetailData.status
-        const orderType = orderDetailData.type?.[0] || orderDetailData.type
-        const invoiceStatus = orderDetailData.invoice?.status
+        const orderStatus = orderDetailData?.status
+        const orderType = orderDetailData?.type?.[0] || orderDetailData?.type
+        const invoiceStatus = orderDetailData?.invoice?.status
+
+        if (!orderStatus) return null
 
         const activeStep = getOrderProgressStep(orderStatus, orderType, invoiceStatus)
 
@@ -401,6 +410,9 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
           {renderedFrameComponent}
         </div>
       )}
+
+      {/* Policy Reminder */}
+      <PolicyImplementOrder />
 
       {/* Action Button */}
       <div className="flex justify-end gap-3 mt-4">
@@ -425,6 +437,18 @@ function OrderDetailContent({ orderDetailData, orderCode, navigate }: OrderDetai
           </Button>
         )}
       </div>
+
+      <ConfirmationModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={confirmStartProcessing}
+        title="Confirm Order Start"
+        message="Are you sure you want to start processing this order? Please ensure you have reviewed all specifications according to the guidelines."
+        confirmText="Confirm Start"
+        cancelText="Cancel"
+        isLoading={updateMaking.isPending || updatePackaging.isPending}
+        type="info"
+      />
     </Container>
   )
 }

@@ -81,8 +81,8 @@ export const ProductSpecifications = ({
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
           {/* Tab Headers */}
-          <div className="flex justify-center mb-12">
-            <div className="inline-flex p-1.5 bg-white rounded-2xl shadow-sm border border-mint-100">
+          <div className="flex justify-center mb-12 overflow-x-auto pb-4 custom-scrollbar">
+            <div className="inline-flex p-1.5 bg-white rounded-2xl shadow-sm border border-mint-100 whitespace-nowrap">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
@@ -100,7 +100,7 @@ export const ProductSpecifications = ({
             </div>
           </div>
 
-          <div className="bg-white border border-mint-100 rounded-[3rem] p-8 md:p-14 shadow-xl shadow-mint-200/50 relative overflow-hidden group">
+          <div className="bg-white border border-mint-100 rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-10 md:p-14 shadow-xl shadow-mint-200/50 relative overflow-hidden group">
             {/* Background decorative glows */}
             <div className="absolute -top-32 -right-32 w-80 h-80 bg-primary-50/40 blur-3xl rounded-full pointer-events-none transition-colors duration-700 group-hover:bg-primary-100/40" />
             <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-mint-100/30 blur-3xl rounded-full pointer-events-none transition-colors duration-700 group-hover:bg-primary-100/30" />

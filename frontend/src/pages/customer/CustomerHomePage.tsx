@@ -55,14 +55,13 @@ export const CustomerHomePage = () => {
         {/* Benefits Bar */}
         <BenefitsBar />
 
-        {/* Khu vực sản phẩm nổi bật */}
-        <section className="py-16 bg-mint-200">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-heading font-bold text-mint-1200 mb-4 transition-transform duration-700 delay-100 transform translate-y-0">
+        <section className="py-20 md:py-32 bg-mint-200">
+          <div className="container mx-auto px-6">
+            <div className="text-center mb-16 md:mb-24">
+              <h2 className="text-3xl md:text-5xl font-heading font-bold text-mint-1200 mb-6 transition-transform duration-700 delay-100 transform translate-y-0 tracking-tight">
                 NEW YEAR MUST-HAVES
               </h2>
-              <p className="text-gray-eyewear">
+              <p className="text-sm md:text-base text-gray-eyewear max-w-xl mx-auto opacity-80">
                 Vibrant colors are set to be a huge trend for the upcoming season.
               </p>
             </div>
@@ -70,7 +69,7 @@ export const CustomerHomePage = () => {
             <ProductCarousel products={products} itemsPerView={4} autoPlayInterval={1000} />
           </div>
         </section>
-        <section className="py-16 bg-mint-200">
+        <section className="py-10 md:py-24 bg-mint-200">
           <FixedDetail />
         </section>
         <BuyTutorial />

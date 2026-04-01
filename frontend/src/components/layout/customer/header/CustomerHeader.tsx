@@ -86,22 +86,22 @@ export default function CustomerHeader({ isTranslucent = false }: { isTranslucen
       logo={
         <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
           <LogoEyewearIcon
-            className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl shadow-md"
-            iconClassName="w-7 h-7 text-white"
+            className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl shadow-md"
+            iconClassName="w-6 h-6 sm:w-7 sm:h-7 text-white"
           />
-          <span className="text-2xl font-heading font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent">
+          <span className="text-xl sm:text-2xl font-heading font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent hidden sm:block">
             Eyewear
           </span>
         </div>
       }
       navListContent={
         !isSearchExpanded ? (
-          <nav className="flex items-center gap-8 transition-all duration-300">
+          <nav className="flex items-center gap-1.5 min-[380px]:gap-3 sm:gap-8 transition-all duration-300">
             <button
               onClick={() => navigate('/')}
               className={`${
                 isActive('/') ? 'text-mint-1200 font-semibold' : 'text-gray-eyewear font-medium'
-              } hover:text-primary-500 transition-all relative group cursor-pointer`}
+              } hover:text-primary-500 transition-all relative group cursor-pointer text-[13px] sm:text-base`}
             >
               Home
               <span
@@ -117,9 +117,10 @@ export default function CustomerHeader({ isTranslucent = false }: { isTranslucen
                 isActive('/eyeglasses') || isActive('/products')
                   ? 'text-mint-1200 font-semibold'
                   : 'text-gray-eyewear font-medium'
-              } hover:text-primary-500 transition-all relative group cursor-pointer`}
+              } hover:text-primary-500 transition-all relative group cursor-pointer text-[12px] min-[400px]:text-[13px] sm:text-base`}
             >
-              Eyeglasses
+              <span className="hidden sm:inline">Eyeglasses</span>
+              <span className="sm:hidden tracking-tighter">Frames</span>
               <span
                 className={`absolute bottom-0 left-0 w-full h-0.5 bg-primary-500 transform ${
                   isActive('/eyeglasses') || isActive('/products')
@@ -134,9 +135,10 @@ export default function CustomerHeader({ isTranslucent = false }: { isTranslucen
                 isActive('/sunglasses')
                   ? 'text-mint-1200 font-semibold'
                   : 'text-gray-eyewear font-medium'
-              } hover:text-primary-500 transition-all relative group cursor-pointer`}
+              } hover:text-primary-500 transition-all relative group cursor-pointer text-[12px] min-[400px]:text-[13px] sm:text-base`}
             >
-              Sunglasses
+              <span className="hidden sm:inline">Sunglasses</span>
+              <span className="sm:hidden tracking-tighter">Sun</span>
               <span
                 className={`absolute bottom-0 left-0 w-full h-0.5 bg-primary-500 transform ${
                   isActive('/sunglasses') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
@@ -149,9 +151,9 @@ export default function CustomerHeader({ isTranslucent = false }: { isTranslucen
                 isActive('/lenses')
                   ? 'text-mint-1200 font-semibold'
                   : 'text-gray-eyewear font-medium'
-              } hover:text-primary-500 transition-all relative group cursor-pointer`}
+              } hover:text-primary-500 transition-all relative group cursor-pointer text-[12px] min-[400px]:text-[13px] sm:text-base`}
             >
-              Lenses
+              <span className="tracking-tighter">Lenses</span>
               <span
                 className={`absolute bottom-0 left-0 w-full h-0.5 bg-primary-500 transform ${
                   isActive('/lenses') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
@@ -194,39 +196,23 @@ export default function CustomerHeader({ isTranslucent = false }: { isTranslucen
       }
       navListIcon={
         !isSearchExpanded ? (
-          <div className="flex items-center gap-4 transition-all duration-300">
-            {/* <div onClick={() => setIsSearchExpanded(true)} className="cursor-pointer">
-              <Input
-                placeholder={'Search glasses, frames...'}
-                size="sm"
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                onKeyDown={handleSearchKeyDown}
-                leftElement={
-                  <span className="pointer-events-none flex items-center justify-center">
-                    <Search className="text-gray-eyewear" />
-                  </span>
-                }
-                className="w-full bg-mint-300 border-mint-300 rounded-xl"
-                onFocus={() => setIsSearchExpanded(true)}
-              />
-            </div> */}
+          <div className="flex items-center gap-2 sm:gap-4 transition-all duration-300">
             <button
-              className="p-2 hover:bg-mint-200 rounded-full transition-all relative group cursor-pointer"
+              className="p-1.5 sm:p-2 hover:bg-mint-200 rounded-full transition-all relative group cursor-pointer shrink-0"
               aria-label="Wishlist"
               onClick={() => navigate('/account/favorites')}
             >
-              <Heart className="w-5 h-5 text-gray-eyewear group-hover:text-primary-500 transition-colors" />
+              <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-gray-eyewear group-hover:text-primary-500 transition-colors" />
             </button>
             <button
-              className="p-2 hover:bg-mint-200 rounded-full transition-all relative group cursor-pointer"
+              className="p-1.5 sm:p-2 hover:bg-mint-200 rounded-full transition-all relative group cursor-pointer shrink-0"
               aria-label="Shopping Cart"
               onClick={() => navigate('/cart')}
             >
-              <ShoppingCart className="w-5 h-5 text-gray-eyewear group-hover:text-primary-500 transition-colors" />
+              <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 text-gray-eyewear group-hover:text-primary-500 transition-colors" />
               {totalItems > 0 && (
                 <span
-                  className={`absolute -top-1 -right-1 w-5 h-5 bg-primary-500 text-white text-xs rounded-full flex items-center justify-center font-semibold shadow-md ${
+                  className={`absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-primary-500 text-white text-[10px] sm:text-xs rounded-full flex items-center justify-center font-semibold shadow-md ${
                     isBagAnimating ? 'animate-bump' : ''
                   }`}
                 >
@@ -235,17 +221,18 @@ export default function CustomerHeader({ isTranslucent = false }: { isTranslucen
               )}
             </button>
             {!hasHydrated ? (
-              // Placeholder để giữ layout ổn định trong khi chờ hydrate
-              <div className="w-9 h-9" />
+              <div className="w-8 h-8 sm:w-9 sm:h-9" />
             ) : isAuthenticated ? (
-              <ProjectProfileDropdown />
+              <div className="shrink-0 scale-90 sm:scale-100 origin-right">
+                <ProjectProfileDropdown />
+              </div>
             ) : (
               <button
-                className="p-2 hover:bg-mint-200 rounded-full transition-all group flex items-center gap-2 cursor-pointer"
+                className="p-1.5 sm:p-2 hover:bg-mint-200 rounded-full transition-all group flex items-center gap-2 cursor-pointer shrink-0"
                 aria-label="Login"
                 onClick={() => navigate('/login', { state: { from: location } })}
               >
-                <User className="w-5 h-5 text-gray-eyewear group-hover:text-primary-500 transition-colors" />
+                <User className="w-4 h-4 sm:w-5 sm:h-5 text-gray-eyewear group-hover:text-primary-500 transition-colors" />
                 <span className="text-sm font-medium text-gray-eyewear hidden md:block">Login</span>
               </button>
             )}

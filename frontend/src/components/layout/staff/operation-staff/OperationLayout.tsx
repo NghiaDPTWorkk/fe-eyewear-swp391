@@ -5,7 +5,6 @@ import { StaffMainLayout } from '@/components/layout/staff/staff-core/main-layou
 import {
   SidebarStaff,
   UserWidgetWithLogout,
-  ThemeToggle,
   NavActions,
   NavSearch
 } from '@/components/layout/staff/staff-core'
@@ -197,7 +196,7 @@ export default function OperationLayout() {
           active={location.pathname === '/operation-staff/support'}
           onClick={() => navigate('/operation-staff/support')}
         />
-        <ThemeToggle />
+        {/* <ThemeToggle /> */}
       </SidebarStaff.MenuSection>
     </SidebarStaff>
   )

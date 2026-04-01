@@ -202,7 +202,7 @@ export default function ShaderCarousel({ imagePaths, maskPath, onLoaded }: Shade
           {SLIDE_CONTENT.map((content, i) => (
             <SplideSlide key={i} className="h-full">
               <div
-                className={`h-full w-full flex flex-col justify-end p-12 select-none ${i === 0 ? 'md:pb-100 md:pl-16' : 'md:p-24'}`}
+                className={`h-full w-full flex flex-col justify-end p-12 select-none ${i === 0 ? 'md:pb-100 md:pl-25' : 'md:p-24'}`}
               >
                 <div
                   className={`transition-all duration-[500ms] ease-out ${

@@ -89,6 +89,7 @@ export function NavActions({
 
   // Determine base path for dynamic links
   const isOperation = location.pathname.startsWith('/operation-staff')
+  const isSale = location.pathname.startsWith('/sale-staff')
   const basePrefix = isOperation ? '/operation-staff' : '/sale-staff'
 
   useEffect(() => {
@@ -172,7 +173,10 @@ export function NavActions({
                 {notifications.map((n) => (
                   <div
                     key={n.id}
-                    className="px-5 py-4 hover:bg-neutral-50 cursor-pointer transition-colors group"
+                    className={cn(
+                      'px-5 py-4 transition-colors group',
+                      isSale ? 'cursor-default' : 'hover:bg-neutral-50 cursor-pointer'
+                    )}
                   >
                     <div className="flex gap-3">
                       <div className={cn('w-2 h-2 rounded-full mt-1.5 shrink-0', n.color)} />

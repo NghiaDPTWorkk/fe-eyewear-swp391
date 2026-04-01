@@ -117,7 +117,9 @@ export const PaymentResultPage = () => {
 
   const amount = searchParams.get('vnp_Amount')
     ? Number(searchParams.get('vnp_Amount')) / 100
-    : (invoiceData?.invoice.totalPrice || 0) + (invoiceData?.invoice.feeShip || 0)
+    : (invoiceData?.invoice.totalPrice || 0) +
+      (invoiceData?.invoice.feeShip || 0) -
+      (invoiceData?.invoice.totalDiscount || 0)
 
   return (
     <div className="min-h-screen bg-mint-50 flex flex-col font-sans text-mint-1200">

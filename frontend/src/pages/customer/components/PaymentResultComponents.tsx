@@ -179,11 +179,7 @@ export const OrderInvoiceDetails = ({ invoiceData }: OrderInvoiceDetailsProps) =
     <div className="pt-8 border-t border-dashed border-mint-200 space-y-4">
       <div className="flex justify-between text-mint-800/70 font-medium">
         <span>Subtotal</span>
-        <VNDPrice
-          amount={
-            (invoiceData?.invoice.totalPrice || 0) + (invoiceData?.invoice.totalDiscount || 0)
-          }
-        />
+        <VNDPrice amount={invoiceData?.invoice.totalPrice || 0} />
       </div>
       {invoiceData?.invoice.totalDiscount && invoiceData.invoice.totalDiscount > 0 ? (
         <div className="flex justify-between text-mint-800/70 font-medium">
@@ -205,7 +201,11 @@ export const OrderInvoiceDetails = ({ invoiceData }: OrderInvoiceDetailsProps) =
         <span>Total</span>
         <div className="text-primary-600 tracking-tight">
           <VNDPrice
-            amount={(invoiceData?.invoice.totalPrice || 0) + (invoiceData?.invoice.feeShip || 0)}
+            amount={
+              (invoiceData?.invoice.totalPrice || 0) +
+              (invoiceData?.invoice.feeShip || 0) -
+              (invoiceData?.invoice.totalDiscount || 0)
+            }
           />
         </div>
       </div>

@@ -16,11 +16,11 @@ export const FixedDetail: React.FC = () => {
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
           {/* Left: Premium Visual */}
           <div className="w-full lg:w-[45%] relative">
-            <div className="rounded-[2.5rem] overflow-hidden shadow-2xl max-h-[400px] md:max-h-[600px] bg-white p-4">
+            <div className="rounded-[2.5rem] overflow-hidden shadow-2xl max-h-[400px] md:max-h-[600px] bg-white">
               <img
                 src="/images/present/present2.png"
                 alt="Premium Eyewear"
-                className="w-full h-auto object-contain"
+                className="w-full h-full object-cover"
               />
               {/* Subtle Overlay for Premium Feel */}
               <div className="absolute inset-0 bg-gradient-to-tr from-mint-500/10 to-transparent pointer-events-none" />

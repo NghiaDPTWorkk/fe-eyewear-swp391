@@ -1,5 +1,5 @@
 # OpticEyewear Shop - E-commerce Platform
-  Live Website: https://eyewear-optic.shop/
+  Live Website: <a href="https://eyewear-optic.shop/" target="_blank">https://eyewear-optic.shop/</a>
   
 OpticEyewear Shop is a high-performance, full-stack e-commerce platform specifically designed for the eyewear industry. Developed as a core project for the Software Development Project (SWP391) course at FPT University, this application provides a seamless shopping experience for customers while offering robust management tools for staff and operators.
 

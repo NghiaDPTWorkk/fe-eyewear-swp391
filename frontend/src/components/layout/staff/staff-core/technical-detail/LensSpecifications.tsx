@@ -3,7 +3,6 @@ interface PrescriptionItem {
   sph: string
   cyl: string
   axis: string
-  prism: string
   add: string
 }
 
@@ -33,7 +32,6 @@ const LensSpecifications = ({ prescription, details }: LensSpecificationsProps) 
                 Cylinder (CYL)
               </th>
               <th className="px-3 py-3 text-center text-xs font-medium text-neutral-600">AXIS</th>
-              <th className="px-3 py-3 text-center text-xs font-medium text-neutral-600">Prism</th>
               <th className="px-3 py-3 text-center text-xs font-medium text-neutral-600">
                 Addition
               </th>
@@ -53,9 +51,6 @@ const LensSpecifications = ({ prescription, details }: LensSpecificationsProps) 
                 </td>
                 <td className="px-3 py-3 text-center font-mono text-sm font-semibold text-gray-900">
                   {item.axis}
-                </td>
-                <td className="px-3 py-3 text-center font-mono text-sm text-gray-400">
-                  {item.prism}
                 </td>
                 <td className="px-3 py-3 text-center font-mono text-sm text-gray-400">
                   {item.add}

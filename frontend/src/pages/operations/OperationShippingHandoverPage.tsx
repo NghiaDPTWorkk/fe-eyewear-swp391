@@ -188,7 +188,7 @@ export default function OperationShippingHandoverPage() {
 
       <div className="grid grid-cols-12 gap-6 mt-4">
         {/* Left Column */}
-        <div className="col-span-12 lg:col-span-7 space-y-6">
+        <div className="col-span-12 xl:col-span-7 space-y-6">
           {/* Scan Invoice ID Section */}
           <ScanInvoiceCode invoiceCode={invoice.invoiceCode} />
 
@@ -317,7 +317,7 @@ export default function OperationShippingHandoverPage() {
 
         {/* Right Column - Shipping Information */}
         <div
-          className={`col-span-12 lg:col-span-5 transition-all duration-500 ease-in-out ${
+          className={`col-span-12 xl:col-span-5 transition-all duration-500 ease-in-out ${
             allOrdersCompleted
               ? 'opacity-100 translate-y-0'
               : 'opacity-30 translate-y-4 pointer-events-none grayscale'

@@ -6,7 +6,7 @@ export const FixedDetail: React.FC = () => {
     <div className="w-full bg-mint-200">
       {/* Top Decoration Banner */}
       <div className="w-full bg-gradient-to-r from-[#eaf7f4] to-[#a3ddd0] py-10 text-center">
-        <p className="text-[30px] md:text-[20px] font-bold tracking-[0.15em] text-slate-700 uppercase">
+        <p className="px-6 text-sm sm:text-lg md:text-xl font-bold tracking-[0.1em] sm:tracking-[0.15em] text-slate-700 uppercase leading-relaxed">
           RAY-BAN & OAKLEY META AI GLASSES NOW WITH AN EXTRA 10% OFF LENSES
         </p>
       </div>
@@ -15,12 +15,12 @@ export const FixedDetail: React.FC = () => {
       <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
           {/* Left: Premium Visual */}
-          <div className="w-full lg:w-[40%] relative">
-            <div className="rounded-[2.5rem] overflow-hidden shadow-2xl max-h-[600px]">
+          <div className="w-full lg:w-[45%] relative">
+            <div className="rounded-[2.5rem] overflow-hidden shadow-2xl max-h-[400px] md:max-h-[600px] bg-white">
               <img
                 src="/images/present/present2.png"
                 alt="Premium Eyewear"
-                className="w-full h-auto object-contain"
+                className="w-full h-full object-cover"
               />
               {/* Subtle Overlay for Premium Feel */}
               <div className="absolute inset-0 bg-gradient-to-tr from-mint-500/10 to-transparent pointer-events-none" />
@@ -32,7 +32,7 @@ export const FixedDetail: React.FC = () => {
 
           {/* Right: Insurance Info */}
           <div className="w-full lg:w-1/2 text-center lg:text-left">
-            <h2 className="text-2xl md:text-5xl font-bold text-mint-800 mb-6 leading-[1.15]">
+            <h2 className="text-3xl md:text-5xl font-bold text-mint-800 mb-6 leading-[1.1] md:leading-[1.15]">
               Purchasing with insurance,
               <br className="hidden md:block" /> made easy.
             </h2>

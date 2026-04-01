@@ -159,7 +159,7 @@ export default function ShaderCarousel({ imagePaths, maskPath, onLoaded }: Shade
 
   return (
     <div
-      className={`relative w-full h-screen overflow-hidden bg-white transition-opacity duration-300 ${
+      className={`relative w-full h-[600px] md:h-screen overflow-hidden bg-white transition-opacity duration-300 ${
         isSceneReady ? 'opacity-100' : 'opacity-0'
       }`}
     >
@@ -202,7 +202,7 @@ export default function ShaderCarousel({ imagePaths, maskPath, onLoaded }: Shade
           {SLIDE_CONTENT.map((content, i) => (
             <SplideSlide key={i} className="h-full">
               <div
-                className={`h-full w-full flex flex-col justify-end p-12 select-none ${i === 0 ? 'md:pb-100 md:pl-16' : 'md:p-24'}`}
+                className={`h-full w-full flex flex-col justify-end p-12 select-none ${i === 0 ? 'md:pb-100 md:pl-25' : 'md:p-24'}`}
               >
                 <div
                   className={`transition-all duration-[500ms] ease-out ${
@@ -217,7 +217,7 @@ export default function ShaderCarousel({ imagePaths, maskPath, onLoaded }: Shade
                   <p className="text-base md:text-lg text-white/75 max-w-xl font-medium drop-shadow-lg mb-6 pointer-events-none">
                     {content.description}
                   </p>
-                  {i === 2 && (
+                  {(i === 0 || i === 2) && (
                     <div className="flex flex-wrap gap-4">
                       <button
                         onClick={() => {

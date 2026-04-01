@@ -286,7 +286,7 @@ export const ProductInfo = ({ product, productId, variantState }: ProductInfoPro
         </button>
       </div>
 
-      <h1 className="text-4xl lg:text-5xl font-heading font-bold text-mint-1200 mb-4">
+      <h1 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-mint-1200 mb-4">
         {product.nameBase}
       </h1>
 

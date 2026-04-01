@@ -68,6 +68,7 @@ export function StaffMainLayout({
         />
 
         <main
+          key={location.pathname}
           className={cn('h-full overflow-auto animate-fade-in-up', mainClassName)}
           ref={mainRef}
         >

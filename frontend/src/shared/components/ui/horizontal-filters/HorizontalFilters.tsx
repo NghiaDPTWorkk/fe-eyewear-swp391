@@ -148,10 +148,10 @@ export function HorizontalFilters({
 
   return (
     <div className={cn('space-y-6 mb-12', className)}>
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 border-y border-mint-200/60 py-8">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 sm:gap-8 border-y border-mint-200/60 py-6 sm:py-8">
         {/* Horizontal Filters Container */}
-        <div className="flex flex-wrap items-center gap-12">
-          <span className="text-[10px] font-black tracking-[0.3em] text-mint-900 uppercase">
+        <div className="flex flex-wrap items-center gap-6 sm:gap-12">
+          <span className="text-[10px] font-black tracking-[0.2em] sm:tracking-[0.3em] text-mint-900 uppercase">
             Filters:
           </span>
 
@@ -270,7 +270,7 @@ export function HorizontalFilters({
         <div className="relative group lg:w-[400px]">
           <div
             className={cn(
-              'flex items-center gap-4 px-8 py-4 bg-white border rounded-full transition-all duration-500',
+              'flex items-center gap-3 sm:gap-4 px-5 py-3 sm:px-8 sm:py-4 bg-white border rounded-full transition-all duration-500',
               isSearchFocused
                 ? 'border-primary-500 ring-8 ring-primary-500/5 shadow-2xl'
                 : 'border-mint-200'

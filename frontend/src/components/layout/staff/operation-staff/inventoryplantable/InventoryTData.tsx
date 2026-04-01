@@ -13,7 +13,6 @@ export const InventoryTData = ({ results, onViewDetail, onNext }: InventoryTData
         <InventoryTr
           key={batch._id}
           batch={batch}
-          managerName={batch.managerResponsibility || 'Unassigned'}
           onViewDetail={onViewDetail}
           onNext={onNext}
         />

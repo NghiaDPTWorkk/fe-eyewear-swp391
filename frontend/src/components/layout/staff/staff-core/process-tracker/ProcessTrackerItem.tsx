@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { cn } from '@/lib/utils'
 
 interface ProgressTrackerItemProps {
   icon: ReactNode
@@ -20,11 +21,16 @@ export default function ProgressTrackerItem({
   return (
     <div className="flex flex-col items-center flex-1">
       <div
-        className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 ${circleClass}`}
+        className={cn(
+          'w-8 h-8 sm:w-12 sm:h-12 rounded-full flex items-center justify-center mb-1 sm:mb-2 transition-all duration-300',
+          circleClass
+        )}
       >
         {icon}
       </div>
-      <span className={`text-xs text-center ${textClass}`}>{label}</span>
+      <span className={cn('text-[10px] sm:text-xs text-center hidden sm:block', textClass)}>
+        {label}
+      </span>
     </div>
   )
 }

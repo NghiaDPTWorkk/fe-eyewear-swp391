@@ -216,7 +216,6 @@ docker-compose up -d --build
 | ---------------- | --------------------------------------- |
 | Live Demo | https://eyewear-optic.shop/            |
 | Frontend (dev)   | http://localhost:3000                   |
-| Backend API      | https://eyewear-backend.xyz/api/v1     |
 
 ---
 

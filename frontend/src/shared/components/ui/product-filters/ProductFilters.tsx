@@ -65,16 +65,16 @@ export function ProductFilters({
   priceResetKey,
   className
 }: ProductFiltersProps) {
-  const toggleSelection = (
-    value: string,
-    selected: string[],
-    onChange: (values: string[]) => void
-  ) => {
-    const newSelected = selected.includes(value)
-      ? selected.filter((v) => v !== value)
-      : [...selected, value]
-    onChange(newSelected)
-  }
+  // const toggleSelection = (
+  //   value: string,
+  //   selected: string[],
+  //   onChange: (values: string[]) => void
+  // ) => {
+  //   const newSelected = selected.includes(value)
+  //     ? selected.filter((v) => v !== value)
+  //     : [...selected, value]
+  //   onChange(newSelected)
+  // }
 
   // Helper to group and deduplicate specs by label (case-insensitive)
   const getUniqueSpecs = (rawValues: string[], labelMap?: Record<string, string>) => {
@@ -131,9 +131,13 @@ export function ProductFilters({
                   >
                     <Checkbox
                       isChecked={selectedCategories.includes(category._id)}
-                      onCheckedChange={() =>
-                        toggleSelection(category._id, selectedCategories, onCategoryChange)
-                      }
+                      onCheckedChange={() => {
+                        if (selectedCategories.includes(category._id)) {
+                          onCategoryChange([])
+                        } else {
+                          onCategoryChange([category._id])
+                        }
+                      }}
                     />
                     <span className="text-sm text-mint-1200 group-hover:text-primary-500 transition-colors">
                       {category.name}

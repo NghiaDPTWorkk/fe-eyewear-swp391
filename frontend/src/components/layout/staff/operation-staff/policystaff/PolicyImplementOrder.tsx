@@ -10,7 +10,7 @@ export default function PolicyImplementOrder() {
           Operational Guidelines & Policy
         </h3>
       </div>
-      
+
       <div className="p-6 space-y-6">
         <div className="grid md:grid-cols-2 gap-6">
           <div className="flex gap-4">
@@ -20,7 +20,8 @@ export default function PolicyImplementOrder() {
             <div>
               <h4 className="text-slate-900 font-bold text-sm mb-1">Quality Assurance</h4>
               <p className="text-slate-500 text-xs leading-relaxed">
-                Staff must perform their tasks with high responsibility. Every item should be double-checked against the order specifications before moving to the next station.
+                Staff must perform their tasks with high responsibility. Every item should be
+                double-checked against the order specifications before moving to the next station.
               </p>
             </div>
           </div>
@@ -32,7 +33,9 @@ export default function PolicyImplementOrder() {
             <div>
               <h4 className="text-slate-900 font-bold text-sm mb-1">Correct Item Fulfillment</h4>
               <p className="text-slate-500 text-xs leading-relaxed">
-                Ensuring the correct SKU, color, and lens parameters is mandatory. Any errors leading to wrong product delivery may result in compensation liabilities as per company policy.
+                Ensuring the correct SKU, color, and lens parameters is mandatory. Any errors
+                leading to wrong product delivery may result in compensation liabilities as per
+                company policy.
               </p>
             </div>
           </div>
@@ -44,7 +47,9 @@ export default function PolicyImplementOrder() {
               <div className="w-2 h-2 rounded-full bg-amber-500" />
             </div>
             <p className="text-[11px] text-slate-600 font-medium italic leading-relaxed">
-              * By clicking "Start Processing", you acknowledge that you have read and understood the fulfillment requirements for this specific order. Compliance with technical standards is strictly required for all operation staff.
+              * By clicking "Start Processing", you acknowledge that you have read and understood
+              the fulfillment requirements for this specific order. Compliance with technical
+              standards is strictly required for all operation staff.
             </p>
           </div>
         </div>

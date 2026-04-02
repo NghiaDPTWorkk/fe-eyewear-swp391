@@ -12,11 +12,9 @@ import { PageHeader, SalesMetricCard } from '@/features/sales/components/common'
 import { Charts } from '@/features/sales/components/dashboard/Charts'
 import { InvoiceOrdersDrawer } from '@/features/sales/components/dashboard/InvoiceOrdersDrawer'
 import { Table } from '@/features/sales/components/dashboard/Table'
-import { useDashboard, useSalesStaffInvoices } from '@/features/sales/hooks'
-import { useRevenueStats } from '@/features/manager/hooks'
+import { useDashboard, useSalesStaffInvoices, useOrderTypeStats } from '@/features/sales/hooks'
 
 import { Card } from '@/shared/components/ui-core'
-import { formatPrice } from '@/shared/utils'
 
 import type { Invoice } from '@/features/sales/types'
 
@@ -30,7 +28,7 @@ export default function SaleStaffDashboardPage() {
     pagination
   } = useSalesStaffInvoices(1, 8, 'DEPOSITED')
 
-  const { invoices: processedInvoices } = useSalesStaffInvoices(1, 20, 'APPROVED_OR_REJECTED')
+  const { stats: orderStats } = useOrderTypeStats()
 
   const { selectedOrderId, isDrawerOpen, openDrawer, closeDrawer } = useDashboard()
 
@@ -69,29 +67,7 @@ export default function SaleStaffDashboardPage() {
     }
   }, [fetchInvoices])
 
-  const { data: revenueData } = useRevenueStats({ period: 'month' })
-
   const metrics = useMemo(() => {
-    const statsRevenue =
-      revenueData?.rows?.reduce(
-        (acc: number, r: { totalRevenue: number }) => acc + r.totalRevenue,
-        0
-      ) || 0
-    const statsInvoices =
-      revenueData?.rows?.reduce(
-        (acc: number, r: { invoiceCount: number }) => acc + r.invoiceCount,
-        0
-      ) || 0
-
-    const totalProcessedOrders = processedInvoices.reduce(
-      (sum: number, inv: Invoice) => sum + (inv.totalOrdersCount || 0),
-      0
-    )
-    const approvedOrders = processedInvoices.reduce(
-      (sum: number, inv: Invoice) => sum + (inv.approvedOrdersCount || 0),
-      0
-    )
-
     const pendingCount = pagination?.total || pendingInvoices.length
 
     return [
@@ -103,35 +79,32 @@ export default function SaleStaffDashboardPage() {
         colorScheme: 'warning' as const
       },
       {
-        label: 'Total Revenue',
-        value: formatPrice(statsRevenue),
+        label: 'Regular Orders',
+        value: String(orderStats?.totalNormal || 0),
         icon: <IoWalletOutline className="text-2xl" />,
         trend: {
-          label: 'this month',
-          value: statsRevenue ? 1 : 0,
+          label: 'global count',
+          value: orderStats?.totalNormal || 0,
           isPositive: true
         },
         colorScheme: 'success' as const
       },
       {
-        label: 'Closed Invoices',
-        value: String(statsInvoices),
-        icon: <IoTicketOutline className="text-2xl" />,
-        trend: { label: 'in month', value: statsInvoices, isPositive: true },
-        colorScheme: 'danger' as const
+        label: 'Manufacturing',
+        value: String(orderStats?.totalManu || 0),
+        icon: <IoFlagOutline className="text-2xl" />,
+        trend: { label: 'total', value: orderStats?.totalManu || 0, isPositive: true },
+        colorScheme: 'primary' as const
       },
       {
-        label: 'Recent Quality',
-        value:
-          totalProcessedOrders > 0
-            ? `${Math.round((approvedOrders / totalProcessedOrders) * 100)}%`
-            : '0%',
-        subValue: `${approvedOrders}/${totalProcessedOrders} orders passed`,
-        icon: <IoFlagOutline className="text-2xl" />,
-        colorScheme: 'primary' as const
+        label: 'Total Invoices',
+        value: String(orderStats?.total || 0),
+        icon: <IoTicketOutline className="text-2xl" />,
+        trend: { label: 'in system', value: orderStats?.total || 0, isPositive: true },
+        colorScheme: 'info' as const
       }
     ]
-  }, [pendingInvoices, pagination?.total, revenueData, processedInvoices])
+  }, [pendingInvoices, pagination?.total, orderStats])
 
   const handleInvoiceClick = (invoice: Invoice) => {
     openDrawer(invoice.id)
@@ -193,7 +166,6 @@ export default function SaleStaffDashboardPage() {
         isOpen={isDrawerOpen}
         onClose={handleCloseDrawer}
         invoice={selectedInvoice}
-        showManageAllOrders={false}
       />
     </div>
   )

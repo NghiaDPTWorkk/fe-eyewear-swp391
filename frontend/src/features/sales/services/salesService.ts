@@ -57,5 +57,12 @@ export const salesService = {
 
   getStaffById: async (id: string) => {
     return httpClient.get<{ success: boolean; data: any }>(`/admin/admin-accounts/${id}`)
+  },
+
+  getOrderTypeStats: async () => {
+    return httpClient.get<{
+      success: boolean
+      data: { total: number; totalManu: number; totalNormal: number; totalPreOrder: number }
+    }>(ENDPOINTS.ADMIN.INVOICE_STATS_ORDER_TYPE)
   }
 }

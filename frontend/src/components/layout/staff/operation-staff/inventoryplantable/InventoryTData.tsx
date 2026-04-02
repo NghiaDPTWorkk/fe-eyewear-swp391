@@ -10,12 +10,7 @@ export const InventoryTData = ({ results, onViewDetail, onNext }: InventoryTData
   return (
     <tbody className="divide-y divide-slate-50">
       {results.map((batch) => (
-        <InventoryTr
-          key={batch._id}
-          batch={batch}
-          onViewDetail={onViewDetail}
-          onNext={onNext}
-        />
+        <InventoryTr key={batch._id} batch={batch} onViewDetail={onViewDetail} onNext={onNext} />
       ))}
     </tbody>
   )

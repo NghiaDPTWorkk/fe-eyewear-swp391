@@ -10,6 +10,7 @@ import {
 import { Container } from '@/components'
 import { PageHeader } from '@/features/sales/components/common'
 import { useRevenueStats, useReturnedOrders, useTopSalesStats } from '@/features/manager/hooks'
+import { useOrderTypeStats } from '@/features/sales/hooks'
 import { formatPrice, formatDate } from '@/shared/utils'
 
 import { StatCard } from './components/dashboard/StatCard'
@@ -29,6 +30,7 @@ export default function ManagerDashboardPage() {
     currentMonth,
     currentYear
   )
+  const { stats: orderStats } = useOrderTypeStats()
 
   const stats = useMemo(() => {
     if (!revenueData?.rows || revenueData.rows.length === 0)
@@ -80,23 +82,25 @@ export default function ManagerDashboardPage() {
           value={formatPrice(stats.totalRevenue)}
           variant="mint"
           icon={<IoTrendingUpOutline />}
-          trend={{ value: 'Real-time', isPositive: true }}
+          trend={{ value: 'This Month', isPositive: true }}
         />
         <StatCard
           label="Total Invoices"
-          value={stats.totalInvoices.toString()}
+          value={orderStats?.total.toString() || stats.totalInvoices.toString()}
           icon={<IoSwapHorizontalOutline />}
-          trend={{ value: 'Updated', isPositive: true }}
+          trend={{ value: 'Global Count', isPositive: true }}
         />
         <StatCard
-          label="Avg. Order"
-          value={formatPrice(stats.avgValue)}
+          label="Manufacturing"
+          value={orderStats?.totalManu.toString() || '0'}
           icon={<IoBarChartOutline />}
+          trend={{ value: 'Total Orders', isPositive: true }}
         />
         <StatCard
           label="Total Returns"
           value={returnedData?.pagination.total.toString() || '0'}
           icon={<IoRefreshOutline />}
+          trend={{ value: 'All Time', isPositive: false }}
         />
       </div>
 

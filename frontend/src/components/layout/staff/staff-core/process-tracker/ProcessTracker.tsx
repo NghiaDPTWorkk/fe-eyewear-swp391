@@ -16,9 +16,15 @@ interface ProcessTrackerProps {
 
 const DEFAULT_STEPS = [
   { icon: <IoTimeOutline className="text-white w-4 h-4 sm:w-6 sm:h-6" />, label: 'Pending' },
-  { icon: <IoConstructOutline className="text-white w-4 h-4 sm:w-6 sm:h-6" />, label: 'Processing' },
+  {
+    icon: <IoConstructOutline className="text-white w-4 h-4 sm:w-6 sm:h-6" />,
+    label: 'Processing'
+  },
   { icon: <IoCubeOutline className="text-white w-4 h-4 sm:w-6 sm:h-6" />, label: 'Packaging' },
-  { icon: <IoCubeOutline className="text-white w-4 h-4 sm:w-6 sm:h-6" />, label: 'Ready for Pickup' },
+  {
+    icon: <IoCubeOutline className="text-white w-4 h-4 sm:w-6 sm:h-6" />,
+    label: 'Ready for Pickup'
+  },
   { icon: <IoCarOutline className="text-white w-4 h-4 sm:w-6 sm:h-6" />, label: 'Shipping' }
 ]
 

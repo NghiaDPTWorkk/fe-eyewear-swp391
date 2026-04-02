@@ -24,8 +24,7 @@ export default function SaleStaffDashboardPage() {
   const {
     invoices: pendingInvoices,
     loading,
-    fetchInvoices,
-    pagination
+    fetchInvoices
   } = useSalesStaffInvoices(1, 8, 'DEPOSITED')
 
   const { stats: orderStats } = useOrderTypeStats()
@@ -68,7 +67,7 @@ export default function SaleStaffDashboardPage() {
   }, [fetchInvoices])
 
   const metrics = useMemo(() => {
-    const pendingCount = pagination?.total || pendingInvoices.length
+    const pendingCount = orderStats?.total || 0
 
     return [
       {
@@ -104,7 +103,7 @@ export default function SaleStaffDashboardPage() {
         colorScheme: 'info' as const
       }
     ]
-  }, [pendingInvoices, pagination?.total, orderStats])
+  }, [orderStats])
 
   const handleInvoiceClick = (invoice: Invoice) => {
     openDrawer(invoice.id)

@@ -124,7 +124,7 @@ export default function ManagerDashboardPage() {
               </div>
             </div>
             <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-              {['week', 'month', 'year'].map((p) => (
+              {['week', 'month'].map((p) => (
                 <button
                   key={p}
                   onClick={() => setPeriod(p)}

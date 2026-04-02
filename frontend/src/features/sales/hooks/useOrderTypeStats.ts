@@ -9,7 +9,7 @@ export function useOrderTypeStats(enabled: boolean = true) {
       return response.data
     },
     enabled,
-    staleTime: 30000 // Cache for 30 seconds
+    staleTime: 0 // Always fetch fresh data for stats
   })
 
   return {

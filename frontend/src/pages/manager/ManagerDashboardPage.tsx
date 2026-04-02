@@ -91,10 +91,10 @@ export default function ManagerDashboardPage() {
           trend={{ value: 'Global Count', isPositive: true }}
         />
         <StatCard
-          label="Manufacturing"
-          value={orderStats?.totalManu.toString() || '0'}
+          label="Avg. Order"
+          value={formatPrice(stats.avgValue)}
           icon={<IoBarChartOutline />}
-          trend={{ value: 'Total Orders', isPositive: true }}
+          trend={{ value: 'This Month', isPositive: true }}
         />
         <StatCard
           label="Total Returns"

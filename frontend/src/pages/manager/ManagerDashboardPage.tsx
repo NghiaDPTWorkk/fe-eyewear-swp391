@@ -3,8 +3,7 @@ import {
   IoTrendingUpOutline,
   IoSwapHorizontalOutline,
   IoBarChartOutline,
-  IoRefreshOutline,
-  IoArrowBackCircleOutline
+  IoRefreshOutline
 } from 'react-icons/io5'
 
 import { Container } from '@/components'
@@ -19,13 +18,20 @@ import { PopularProducts } from './components/dashboard/PopularProducts'
 
 export default function ManagerDashboardPage() {
   const [period, setPeriod] = useState<string>('month')
+  const [fromDate, setFromDate] = useState<string>('')
+  const [toDate, setToDate] = useState<string>('')
 
   const now = new Date()
   const currentMonth = now.getMonth() + 1
   const currentYear = now.getFullYear()
 
-  const { data: revenueData, isLoading: isRevenueLoading } = useRevenueStats({ period })
-  const { data: returnedData, isLoading: isReturnedLoading } = useReturnedOrders({ search: '' })
+  const { data: revenueData, isLoading: isRevenueLoading } = useRevenueStats({
+    period: period === 'custom' ? undefined : period,
+    fromDate: period === 'custom' ? fromDate : undefined,
+    toDate: period === 'custom' ? toDate : undefined,
+    enabled: period === 'custom' ? !!(fromDate && toDate) : true
+  })
+  const { data: returnedData } = useReturnedOrders({ search: '' })
   const { data: topSalesData, isLoading: isTopSalesLoading } = useTopSalesStats(
     currentMonth,
     currentYear
@@ -106,8 +112,8 @@ export default function ManagerDashboardPage() {
 
       {/* Main Content Section: Dynamic Sales Report Integration */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Dynamic Revenue Chart Component */}
-        <div className="lg:col-span-8 bg-white p-6 md:p-8 rounded-3xl border-none shadow-sm ring-1 ring-neutral-100/50 relative">
+        {/* Dynamic Revenue Chart Component - Expanded to full width */}
+        <div className="lg:col-span-12 bg-white p-6 md:p-8 rounded-3xl border-none shadow-sm ring-1 ring-neutral-100/50 relative">
           <div className="flex flex-col sm:flex-row justify-between items-start gap-6 mb-10">
             <div>
               <p className="text-[12px] font-bold text-slate-400 tracking-wider uppercase mb-1 leading-none">
@@ -124,7 +130,7 @@ export default function ManagerDashboardPage() {
               </div>
             </div>
             <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-              {['week', 'month'].map((p) => (
+              {['week', 'month', 'custom'].map((p) => (
                 <button
                   key={p}
                   onClick={() => setPeriod(p)}
@@ -139,6 +145,33 @@ export default function ManagerDashboardPage() {
               ))}
             </div>
           </div>
+
+          {period === 'custom' && (
+            <div className="flex flex-wrap gap-4 mb-8 p-4 bg-neutral-50 rounded-2xl border border-neutral-100 animate-in slide-in-from-top-2 duration-300">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+                  From Date
+                </label>
+                <input
+                  type="date"
+                  value={fromDate}
+                  onChange={(e) => setFromDate(e.target.value)}
+                  className="px-4 py-2 bg-white border border-neutral-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-mint-500/20 focus:border-mint-500 transition-all"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+                  To Date
+                </label>
+                <input
+                  type="date"
+                  value={toDate}
+                  onChange={(e) => setToDate(e.target.value)}
+                  className="px-4 py-2 bg-white border border-neutral-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-mint-500/20 focus:border-mint-500 transition-all"
+                />
+              </div>
+            </div>
+          )}
 
           <div className="relative h-64 w-full">
             {isRevenueLoading && (
@@ -201,66 +234,6 @@ export default function ManagerDashboardPage() {
                 <span>{chartInfo.points[0].period}</span>
                 <span>{chartInfo.points[chartInfo.points.length - 1].period}</span>
               </div>
-            )}
-          </div>
-        </div>
-
-        {/* Dynamic Return Requests Sidebar Integration */}
-        <div className="lg:col-span-4 bg-white p-8 rounded-3xl border-none shadow-sm ring-1 ring-neutral-100/50 flex flex-col h-full">
-          <div className="flex justify-between items-center mb-8">
-            <p className="text-[12px] font-bold text-slate-400 tracking-wider uppercase leading-none">
-              Active Returns
-            </p>
-            <div className="p-3 rounded-2xl bg-amber-50 text-amber-600 shadow-sm">
-              <IoArrowBackCircleOutline size={18} />
-            </div>
-          </div>
-
-          <div className="mb-8">
-            <div className="flex items-center gap-2 mb-2">
-              <h4 className="text-2xl font-bold text-slate-900 tracking-tight">
-                {returnedData?.pagination.total || 0}
-              </h4>
-              <span className="text-[10px] font-semibold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full uppercase tracking-wider">
-                Returns
-              </span>
-            </div>
-            <p className="text-xs text-neutral-400 font-medium">
-              Recent return activity in your store.
-            </p>
-          </div>
-
-          <div className="flex-1 space-y-4 overflow-y-auto max-h-[300px] pr-2 scroller-hide">
-            {isReturnedLoading ? (
-              <div className="flex justify-center py-4">
-                <div className="w-6 h-6 border-2 border-amber-200 border-t-amber-500 rounded-full animate-spin" />
-              </div>
-            ) : returnedData?.returnedOrders.length === 0 ? (
-              <p className="text-xs text-center text-slate-300 font-medium py-10 italic">
-                No active returns
-              </p>
-            ) : (
-              returnedData?.returnedOrders.slice(0, 5).map((item, idx) => (
-                <div
-                  key={idx}
-                  className="p-4 bg-neutral-50 rounded-2xl border border-neutral-100 group hover:border-amber-200 transition-colors"
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                      #RT-{item.returnTicket.id.slice(-6).toUpperCase()}
-                    </span>
-                    <span className="text-[10px] font-bold text-amber-600 uppercase">
-                      {item.returnTicket.status}
-                    </span>
-                  </div>
-                  <p className="text-xs font-semibold text-slate-800 line-clamp-1">
-                    {item.returnTicket.reason}
-                  </p>
-                  <p className="text-[10px] text-slate-400 mt-1">
-                    {formatDate(item.returnTicket.createdAt)}
-                  </p>
-                </div>
-              ))
             )}
           </div>
         </div>

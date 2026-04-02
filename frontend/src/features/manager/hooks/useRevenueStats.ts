@@ -8,9 +8,11 @@ export function useRevenueStats(params: {
   fromDate?: string
   toDate?: string
   userId?: string
+  enabled?: boolean
 }) {
   return useQuery({
     queryKey: ['revenue-stats', params],
+    enabled: params.enabled !== false,
     queryFn: async () => {
       const res = await httpClient.get<ApiResponse<RevenueStats>>(
         ENDPOINTS.REPORTS.REVENUE(params.period, params.fromDate, params.toDate, params.userId)

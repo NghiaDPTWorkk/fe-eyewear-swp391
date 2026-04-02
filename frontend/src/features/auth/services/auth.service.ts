@@ -56,5 +56,17 @@ export const authService = {
 
   verifyMergeOtp: async (payload: { email: string; otp: string }) => {
     return await authApi.verifyMergeOtp(payload)
+  },
+
+  requestResetPassword: async (payload: { email: string }) => {
+    return await authApi.requestResetPassword(payload)
+  },
+
+  verifyResetPasswordOtp: async (payload: { email: string; otp: string }) => {
+    return await authApi.verifyResetPasswordOtp(payload)
+  },
+
+  resetPassword: async (payload: { password: string }, token: string) => {
+    return await authApi.resetPassword(payload, token)
   }
 }

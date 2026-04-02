@@ -85,6 +85,11 @@ export default function ManagerAddProductPage() {
     setState((prev: ProductCreateFormState) => ({ ...prev, variants }))
   }
 
+  const hasAnyVariantQuantity = state.variants.some((v) => {
+    const stock = Number(v.stockText)
+    return v.stockText.trim() !== '' && !isNaN(stock) && stock > 0
+  })
+
   const validateStep = (step: number) => {
     if (step === 1) {
       if (!state.nameBase.trim()) {
@@ -123,6 +128,11 @@ export default function ManagerAddProductPage() {
   }
 
   const handleSubmit = async () => {
+    if (state.isPreOrder && hasAnyVariantQuantity) {
+      toast.error('Khi đã nhập quantity cho variant thì không thể tạo pre-order.')
+      return false
+    }
+
     if (state.isPreOrder) {
       if (!state.preOrderConfig?.targetDate) {
         toast.error('Pre-order target date is required')
@@ -518,6 +528,7 @@ export default function ManagerAddProductPage() {
                       type="checkbox"
                       className="sr-only peer"
                       checked={state.isPreOrder}
+                      disabled={hasAnyVariantQuantity}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         handleBaseChange({ isPreOrder: e.target.checked })
                       }

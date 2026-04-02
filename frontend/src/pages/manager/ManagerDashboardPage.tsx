@@ -10,6 +10,7 @@ import {
 import { Container } from '@/components'
 import { PageHeader } from '@/features/sales/components/common'
 import { useRevenueStats, useReturnedOrders, useTopSalesStats } from '@/features/manager/hooks'
+import { useOrderTypeStats } from '@/features/sales/hooks'
 import { formatPrice, formatDate } from '@/shared/utils'
 
 import { StatCard } from './components/dashboard/StatCard'
@@ -29,6 +30,7 @@ export default function ManagerDashboardPage() {
     currentMonth,
     currentYear
   )
+  const { stats: orderStats } = useOrderTypeStats()
 
   const stats = useMemo(() => {
     if (!revenueData?.rows || revenueData.rows.length === 0)
@@ -41,6 +43,10 @@ export default function ManagerDashboardPage() {
 
     return { totalRevenue, totalInvoices, avgValue }
   }, [revenueData])
+
+  const revenueOverviewTitle = useMemo(() => {
+    return period === 'week' ? 'Revenue Overview This Week' : 'Revenue Overview This Month'
+  }, [period])
 
   const chartInfo = useMemo(() => {
     if (!revenueData?.rows?.length) return { path: '', area: '', points: [], maxHex: 0 }
@@ -80,23 +86,25 @@ export default function ManagerDashboardPage() {
           value={formatPrice(stats.totalRevenue)}
           variant="mint"
           icon={<IoTrendingUpOutline />}
-          trend={{ value: 'Real-time', isPositive: true }}
+          trend={{ value: 'This Month', isPositive: true }}
         />
         <StatCard
           label="Total Invoices"
-          value={stats.totalInvoices.toString()}
+          value={orderStats?.total.toString() || stats.totalInvoices.toString()}
           icon={<IoSwapHorizontalOutline />}
-          trend={{ value: 'Updated', isPositive: true }}
+          trend={{ value: 'Global Count', isPositive: true }}
         />
         <StatCard
           label="Avg. Order"
           value={formatPrice(stats.avgValue)}
           icon={<IoBarChartOutline />}
+          trend={{ value: 'This Month', isPositive: true }}
         />
         <StatCard
           label="Total Returns"
           value={returnedData?.pagination.total.toString() || '0'}
           icon={<IoRefreshOutline />}
+          trend={{ value: 'All Time', isPositive: false }}
         />
       </div>
 
@@ -107,7 +115,7 @@ export default function ManagerDashboardPage() {
           <div className="flex flex-col sm:flex-row justify-between items-start gap-6 mb-10">
             <div>
               <p className="text-[12px] font-bold text-slate-400 tracking-wider uppercase mb-1 leading-none">
-                Revenue Overview
+                {revenueOverviewTitle}
               </p>
               <div className="flex items-center gap-2 mt-1">
                 <h3 className="text-2xl font-bold text-slate-900 tracking-tight">
@@ -120,7 +128,7 @@ export default function ManagerDashboardPage() {
               </div>
             </div>
             <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-              {['week', 'month', 'year'].map((p) => (
+              {['week', 'month'].map((p) => (
                 <button
                   key={p}
                   onClick={() => setPeriod(p)}

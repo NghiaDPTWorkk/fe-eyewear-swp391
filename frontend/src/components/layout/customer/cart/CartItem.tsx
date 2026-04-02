@@ -27,7 +27,11 @@ export const CartItem = ({
   const [localQty, setLocalQty] = useState(item.quantity.toString())
 
   useEffect(() => {
-    setLocalQty(item.quantity.toString())
+    // ync if the server quantity genuinely differs from what the input shows
+    const parsed = parseInt(localQty)
+    if (isNaN(parsed) || parsed !== item.quantity) {
+      setLocalQty(item.quantity.toString())
+    }
   }, [item.quantity])
 
   const handleQtyChange = (e: React.ChangeEvent<HTMLInputElement>) => {

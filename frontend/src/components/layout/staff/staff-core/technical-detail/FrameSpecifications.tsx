@@ -49,14 +49,14 @@ const FrameSpecifications = ({
       </div>
       <div className="flex flex-col md:flex-row gap-6">
         <div
-          className="w-full md:w-1/3 bg-gray-50 rounded-lg py-3 flex justify-center cursor-pointer transition-all duration-300 overflow-hidden group"
+          className="w-full md:w-1/3 bg-gray-50 rounded-lg flex justify-center cursor-pointer transition-all duration-300 overflow-hidden group h-[300px] md:h-auto"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
           <img
             src={currentImage}
             alt="Frame"
-            className="max-w-full h-auto object-contain transition-all duration-500 scale-100 group-hover:scale-110"
+            className="w-full h-full object-cover transition-all duration-500 scale-100 group-hover:scale-110"
           />
         </div>
 

@@ -49,8 +49,14 @@ export const ProductSpecifications = ({
     if (!/^[a-zA-Z,\s]+$/.test(str)) return str
 
     return str
-      .split(/[,\s]+/)
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .split(',')
+      .map((part) =>
+        part
+          .trim()
+          .split(/\s+/)
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+          .join(' ')
+      )
       .join(', ')
   }
 

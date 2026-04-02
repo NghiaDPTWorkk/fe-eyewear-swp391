@@ -170,9 +170,14 @@ export function HorizontalFilters({
               >
                 <Checkbox
                   isChecked={selectedCategories.includes(category._id)}
-                  onCheckedChange={() =>
-                    toggleSelection(category._id, selectedCategories, onCategoryChange)
-                  }
+                  onCheckedChange={() => {
+                    // Single-select: toggle off if already selected, otherwise select only this one
+                    if (selectedCategories.includes(category._id)) {
+                      onCategoryChange([])
+                    } else {
+                      onCategoryChange([category._id])
+                    }
+                  }}
                   size="sm"
                 />
                 <span className="text-sm font-medium text-mint-1200 group-hover:text-primary-700">
@@ -285,7 +290,7 @@ export function HorizontalFilters({
             />
             <input
               type="text"
-              placeholder="Search by name, brand or style..."
+              placeholder="Search by product name"
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
               onFocus={() => setIsSearchFocused(true)}

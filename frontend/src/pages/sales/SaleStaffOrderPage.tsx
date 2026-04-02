@@ -18,7 +18,8 @@ import {
   useSalesStaffAction,
   useSalesStaffInvoices,
   useInvoiceLock,
-  useSalesStaffRealtime
+  useSalesStaffRealtime,
+  useOrderTypeStats
 } from '@/features/sales/hooks'
 import { type Invoice } from '@/features/sales/types'
 import { Button } from '@/shared/components/ui-core/button'
@@ -121,14 +122,7 @@ export default function SaleStaffOrderPage() {
     pagination
   } = useSalesStaffInvoices(page, limit, statusFilter, searchQuery, isInvoicesActive, false)
 
-  const { invoices: metricsInvoices } = useSalesStaffInvoices(
-    1,
-    100,
-    'All',
-    '',
-    isInvoicesActive,
-    false
-  )
+  const { stats: orderStats, refetch: refetchStats } = useOrderTypeStats(isInvoicesActive)
 
   const selectedInvoice = useMemo(
     () => invoiceList.find((inv) => inv.id === selectedInvoiceId) ?? null,
@@ -149,83 +143,55 @@ export default function SaleStaffOrderPage() {
   }, [invoiceList, orderTypeFilter])
 
   const metrics = useMemo(() => {
-    const counts: Record<string, number> = {
-      [OrderType.NORMAL]: 0,
-      [OrderType.MANUFACTURING]: 0,
-      [OrderType.RETURN]: 0,
-      [OrderType.PRE_ORDER]: 0
-    }
-    const typeEntries = Object.values(OrderType)
-
-    metricsInvoices.forEach((inv: Invoice) => {
-      if (!inv.orders || inv.orders.length === 0) {
-        counts[OrderType.NORMAL]++
-        return
-      }
-
-      const invoiceTypes = new Set<string>()
-      inv.orders.forEach((o: any) => {
-        const types = Array.isArray(o.type) ? o.type : o.type ? [o.type] : []
-        types.forEach((t: any) => {
-          typeEntries.forEach((typeKey: string) => {
-            if (String(t).includes(typeKey)) {
-              invoiceTypes.add(typeKey)
-            }
-          })
-        })
-
-        if (o.isPrescription) {
-          invoiceTypes.add(OrderType.MANUFACTURING)
-        }
-      })
-
-      if (inv.hasManufacturing) invoiceTypes.add(OrderType.MANUFACTURING)
-
-      invoiceTypes.forEach((typeKey: string) => {
-        if (counts[typeKey] !== undefined) {
-          counts[typeKey]++
-        }
-      })
-    })
-
-    const totalCount = Object.values(counts).reduce((a, b) => a + b, 0) || 1
-    const pct = (key: string) => Math.round((counts[key] / totalCount) * 100)
+    if (!orderStats) return []
 
     return [
       {
         type: OrderType.NORMAL,
         label: 'Regular Orders',
-        value: counts[OrderType.NORMAL],
+        value: orderStats.totalNormal,
         icon: <IoReceiptOutline className="text-2xl" />,
         colorScheme: 'mint' as const,
-        trend: { label: 'of total', value: pct(OrderType.NORMAL), isPositive: true }
+        trend: {
+          label: 'of total',
+          value: Math.round((orderStats.totalNormal / (orderStats.total || 1)) * 100),
+          isPositive: true
+        }
       },
       {
         type: OrderType.MANUFACTURING,
         label: 'Consultations',
-        value: counts[OrderType.MANUFACTURING],
+        value: orderStats.totalManu,
         icon: <IoFlashOutline className="text-2xl" />,
         colorScheme: 'secondary' as const,
-        trend: { label: 'of total', value: pct(OrderType.MANUFACTURING), isPositive: true }
+        trend: {
+          label: 'of total',
+          value: Math.round((orderStats.totalManu / (orderStats.total || 1)) * 100),
+          isPositive: true
+        }
       },
       {
         type: OrderType.RETURN,
         label: 'Returns',
-        value: counts[OrderType.RETURN],
+        value: 0,
         icon: <IoRepeatOutline className="text-2xl" />,
         colorScheme: 'danger' as const,
-        trend: { label: 'of total', value: pct(OrderType.RETURN), isPositive: false }
+        trend: { label: 'of total', value: 0, isPositive: false }
       },
       {
         type: OrderType.PRE_ORDER,
         label: 'Pre-Orders',
-        value: counts[OrderType.PRE_ORDER],
+        value: orderStats.totalPreOrder,
         icon: <IoCubeOutline className="text-2xl" />,
         colorScheme: 'info' as const,
-        trend: { label: 'of total', value: pct(OrderType.PRE_ORDER), isPositive: true }
+        trend: {
+          label: 'of total',
+          value: Math.round((orderStats.totalPreOrder / (orderStats.total || 1)) * 100),
+          isPositive: true
+        }
       }
     ]
-  }, [metricsInvoices])
+  }, [orderStats])
 
   const handleStatusChange = (status: string) => {
     setSearchParams((prev) => {
@@ -339,7 +305,7 @@ export default function SaleStaffOrderPage() {
     if (invoiceToProcess) {
       await approveInvoice(invoiceToProcess)
       releaseLock(invoiceToProcess)
-      refetch()
+      await Promise.all([refetch(), refetchStats()])
       setShowConfirmModal(false)
       setInvoiceToProcess(null)
     }
@@ -349,7 +315,7 @@ export default function SaleStaffOrderPage() {
     if (invoiceToProcess) {
       await rejectInvoice(invoiceToProcess, note)
       releaseLock(invoiceToProcess)
-      refetch()
+      await Promise.all([refetch(), refetchStats()])
       setShowRejectModal(false)
       setInvoiceToProcess(null)
     }

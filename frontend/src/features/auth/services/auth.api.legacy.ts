@@ -80,6 +80,34 @@ export const authApi = {
   },
 
   /**
+   * Yêu cầu reset mật khẩu
+   */
+  requestResetPassword: (payload: { email: string }) => {
+    return httpClient.post<ApiResponse<any>>(ENDPOINTS.AUTH.REQUEST_RESET_PASSWORD, payload)
+  },
+
+  /**
+   * Xác thực OTP reset mật khẩu
+   */
+  verifyResetPasswordOtp: (payload: { email: string; otp: string }) => {
+    return httpClient.post<ApiResponse<{ resetPasswordToken: string }>>(
+      ENDPOINTS.AUTH.VERIFY_RESET_PASSWORD_OTP,
+      payload
+    )
+  },
+
+  /**
+   * Reset mật khẩu mới
+   */
+  resetPassword: (payload: { password: string }, token: string) => {
+    return httpClient.post<ApiResponse<any>>(ENDPOINTS.AUTH.RESET_PASSWORD, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+  },
+
+  /**
    * Đăng xuất khỏi hệ thống
    */
   logout: () => {

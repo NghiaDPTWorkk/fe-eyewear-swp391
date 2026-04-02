@@ -198,7 +198,7 @@ export function useSalesStaffInvoices(
         pagination
       }
     },
-    staleTime: 60000
+    staleTime: 0
   })
 
   return {

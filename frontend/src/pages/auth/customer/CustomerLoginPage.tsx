@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { LoginForm } from '@/components/layout/login-form'
+import { ForgotPasswordForm } from '@/components/layout/forgot-password-form'
 import { SIGN_IN_SVG_PATHS } from '@/shared/constants/svg-paths'
 import signinPremium from '@/assets/images/signin-premium.png'
 import { Link } from 'react-router-dom'
@@ -6,6 +8,8 @@ import { PATHS } from '@/routes/paths'
 import { CosmicBackground } from '@/components/layout/CosmicBackground'
 
 export const CustomerLoginPage = () => {
+  const [view, setView] = useState<'login' | 'forgot-password'>('login')
+
   return (
     <CosmicBackground>
       <div className="flex-1 overflow-y-auto p-4 lg:p-5">
@@ -56,17 +60,29 @@ export const CustomerLoginPage = () => {
               </div>
             </div>
 
-            {/* Right Side: Sign-In Form */}
+            {/* Right Side: Form */}
             <div className="animate-slide-in-left flex flex-col items-center justify-center bg-transparent p-8 lg:p-12">
               <div className="w-full max-w-[380px]">
-                <div className="mb-10">
-                  <h1 className="mb-2 text-[32px] font-bold tracking-[-1px] text-white">Sign In</h1>
+                <div className={`mb-10 transition-all duration-500`}>
+                  <h1 className="mb-2 text-[32px] font-bold tracking-[-1px] text-white">
+                    {view === 'login' ? 'Sign In' : 'Forgot Password'}
+                  </h1>
                   <p className="text-[15px] text-white/40">
-                    Welcome back. Enter your details to continue.
+                    {view === 'login'
+                      ? 'Welcome back. Enter your details to continue.'
+                      : 'Follow the steps to reset your password.'}
                   </p>
                 </div>
 
-                <LoginForm role="customer" variant="dark" />
+                {view === 'login' ? (
+                  <LoginForm
+                    role="customer"
+                    variant="dark"
+                    onForgotPassword={() => setView('forgot-password')}
+                  />
+                ) : (
+                  <ForgotPasswordForm variant="dark" onBackToLogin={() => setView('login')} />
+                )}
               </div>
             </div>
           </div>

@@ -8,7 +8,6 @@ import {
 } from '@/components/layout/customer/product-detail'
 import { useProductVariants } from '@/shared/hooks/products/useProductVariants'
 import { BenefitsBar } from '@/components/layout/customer/homepage/components/BenefitsBar'
-import { BuySteps } from '@/shared/components/ui/buy-steps'
 
 export const ProductDetailPage = () => {
   const { id } = useParams<{ id: string }>()
@@ -42,6 +41,7 @@ export const ProductDetailPage = () => {
 
 // Separate component so useProductVariants hook can be called after product is loaded
 import type { Product } from '@/shared/types/product.types'
+import { BuyTutorial } from '@/components/layout/customer/homepage/components'
 
 interface ProductDetailContentProps {
   product: Product
@@ -90,7 +90,10 @@ const ProductDetailContent = ({ product, productId }: ProductDetailContentProps)
         <BenefitsBar />
         <ProductSpecifications product={product} variantState={variantState} />
         <RelatedProducts currentProduct={product} />
-        <BuySteps />
+        {/* <BuySteps /> */}
+        <section className="pt-16 md:pt-24 bg-mint-200">
+          <BuyTutorial />
+        </section>
       </div>
     </div>
   )

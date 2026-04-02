@@ -4,6 +4,7 @@ import { RouterProvider } from 'react-router-dom'
 import { router } from './routes'
 
 import { Toaster } from 'react-hot-toast'
+import { ChunkErrorBoundary } from '@/shared/components/ui/error-boundary/ChunkErrorBoundary'
 import { useSocketNotifications } from './socket/useSocketNotifications'
 
 function App() {
@@ -11,7 +12,9 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <ChunkErrorBoundary>
+        <RouterProvider router={router} />
+      </ChunkErrorBoundary>
       <Toaster
         position="bottom-right"
         toastOptions={{

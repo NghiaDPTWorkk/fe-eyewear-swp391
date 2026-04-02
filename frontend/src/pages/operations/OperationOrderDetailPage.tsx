@@ -16,7 +16,7 @@ import LensSpecifications from '@/components/layout/staff/staff-core/technical-d
 import FrameSpecifications from '@/components/layout/staff/staff-core/technical-detail/FrameSpecifications'
 import { PATHS } from '@/routes/paths'
 import { ProcessTracker } from '@/components/layout/staff/staff-core/process-tracker'
-import { IoArrowBack} from 'react-icons/io5'
+import { IoArrowBack } from 'react-icons/io5'
 import { getOrderProgressStep } from '@/shared/utils/order-status.utils'
 import ConfirmationModal from '@/shared/components/ui/ConfirmationModal'
 import PolicyImplementOrder from '@/components/layout/staff/operation-staff/policystaff/PolicyImplementOrder'

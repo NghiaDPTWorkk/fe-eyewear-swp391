@@ -54,7 +54,7 @@ export const useFilteredProducts = (filters: ProductFilterParams): UseFilteredPr
       if (filters.style && filters.style.length > 0) params.style = filters.style
       if (filters.gender && filters.gender.length > 0) params.gender = filters.gender
       if (filters.categories && filters.categories.length > 0) {
-        params.categories = filters.categories.join(',')
+        params.category = filters.categories
       }
       if (filters.minPrice !== undefined) params.minPrice = filters.minPrice
       if (filters.maxPrice !== undefined) params.maxPrice = filters.maxPrice

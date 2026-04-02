@@ -13,11 +13,8 @@ import { Charts } from '@/features/sales/components/dashboard/Charts'
 import { InvoiceOrdersDrawer } from '@/features/sales/components/dashboard/InvoiceOrdersDrawer'
 import { Table } from '@/features/sales/components/dashboard/Table'
 import { useDashboard, useSalesStaffInvoices, useOrderTypeStats } from '@/features/sales/hooks'
-import { useRevenueStats } from '@/features/manager/hooks'
 
 import { Card } from '@/shared/components/ui-core'
-
-import { formatPrice } from '@/shared/utils'
 
 import type { Invoice } from '@/features/sales/types'
 
@@ -56,8 +53,6 @@ export default function SaleStaffDashboardPage() {
     [pendingInvoices, selectedOrderId]
   )
 
-  const { data: revenueData } = useRevenueStats({ period: 'month' })
-
   useEffect(() => {
     fetchInvoices()
 
@@ -72,15 +67,14 @@ export default function SaleStaffDashboardPage() {
   }, [fetchInvoices])
 
   const metrics = useMemo(() => {
-    const totalRevenue =
-      revenueData?.rows?.reduce((acc: number, r: any) => acc + r.totalRevenue, 0) || 0
+    const pendingCount = orderStats?.total || 0
 
     return [
       {
-        label: 'Total Revenue',
-        value: formatPrice(totalRevenue),
+        label: 'Pending Invoices',
+        value: String(pendingCount),
         icon: <IoClipboardOutline className="text-2xl" />,
-        trend: { label: 'this month', value: totalRevenue, isPositive: true },
+        trend: { label: 'awaiting action', value: pendingCount, isPositive: true },
         colorScheme: 'warning' as const
       },
       {
@@ -109,7 +103,7 @@ export default function SaleStaffDashboardPage() {
         colorScheme: 'info' as const
       }
     ]
-  }, [orderStats, revenueData?.rows])
+  }, [orderStats])
 
   const handleInvoiceClick = (invoice: Invoice) => {
     openDrawer(invoice.id)

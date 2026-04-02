@@ -14,7 +14,6 @@ import { OrderType } from '@/shared/utils/enums/order.enum'
 import { PageHeader } from '@/features/sales/components/common'
 
 import { useAdminInvoices, useComplete, useOnboard } from '@/features/manager/hooks'
-import { useOrderTypeStats } from '@/features/sales/hooks'
 
 import ManagerOrderDrawer from './components/invoices/ManagerOrderDrawer'
 import { ManagerMetricCard } from './components/invoices/ManagerMetricCard'
@@ -42,22 +41,20 @@ export default function ManagerInvoicesPage() {
 
   const apiStatus = statusFilter === 'All' ? undefined : statusFilter
 
-  // NEW: Use stats API for counts (Same as Sale Staff)
-  const { stats: orderStats, refetch: refetchStats } = useOrderTypeStats()
+  // Global metrics data (unfiltered)
+  const { data: metricsData } = useAdminInvoices(1, 100, undefined, undefined)
+  const metricsInvoices = useMemo(() => metricsData?.data.invoiceList ?? [], [metricsData])
 
-  // Table data: Optimized to fetch only 8 items with Server-side pagination
+  // Table data (filtered by status/search but large limit for client-side sub-filtering)
   const {
     data,
     isLoading,
     isError,
     error,
     refetch: refetchInvoices
-  } = useAdminInvoices(page, limit, apiStatus, searchQuery.trim() || undefined)
+  } = useAdminInvoices(1, 100, apiStatus, searchQuery.trim() || undefined)
 
   const invoiceList = useMemo(() => data?.data.invoiceList ?? [], [data])
-  const pagination = data?.data.pagination
-  const totalPages = pagination?.totalPages ?? 1
-
   const selectedInvoice = useMemo(
     () => invoiceList.find((inv) => inv.id === selectedInvoiceId) ?? null,
     [invoiceList, selectedInvoiceId]
@@ -74,67 +71,105 @@ export default function ManagerInvoicesPage() {
         )
       )
     }
+    // Search is now handled server-side via useAdminInvoices
     return list
   }, [invoiceList, orderTypeFilter])
 
+  const total = filteredInvoices.length
+  const totalPages = Math.max(1, Math.ceil(total / limit))
+  const safePage = Math.min(page, totalPages)
+
+  const paginatedInvoices = useMemo(() => {
+    const start = (safePage - 1) * limit
+    return filteredInvoices.slice(start, start + limit)
+  }, [filteredInvoices, safePage, limit])
+
   const metrics = useMemo(() => {
-    const totalCount = orderStats?.total || 1
+    const counts: Record<string, number> = {
+      [OrderType.NORMAL]: 0,
+      [OrderType.MANUFACTURING]: 0,
+      [OrderType.RETURN]: 0,
+      [OrderType.PRE_ORDER]: 0
+    }
+
+    const typeEntries = Object.values(OrderType)
+
+    for (const inv of metricsInvoices) {
+      if (!inv.orders || inv.orders.length === 0) {
+        counts[OrderType.NORMAL]++
+        continue
+      }
+
+      // Track types already counted for this invoice for the metrics cards
+      const invoiceTypes = new Set<string>()
+      for (const o of inv.orders) {
+        const types = Array.isArray(o.type) ? o.type : [o.type]
+        types.forEach((t) => {
+          typeEntries.forEach((typeKey) => {
+            if (String(t).includes(typeKey)) {
+              invoiceTypes.add(typeKey)
+            }
+          })
+        })
+      }
+      invoiceTypes.forEach((typeKey) => {
+        counts[typeKey]++
+      })
+    }
+
+    const totalCount = Object.values(counts).reduce((a, b) => a + b, 0) || 1
 
     return [
       {
         type: OrderType.NORMAL,
         label: 'Regular Orders',
-        value: orderStats?.totalNormal || 0,
+        value: counts[OrderType.NORMAL],
         icon: <IoReceiptOutline className="text-2xl" />,
         colorScheme: 'mint' as const,
         trend: {
           label: 'of total',
-          value: orderStats?.totalNormal
-            ? Math.round((orderStats.totalNormal / totalCount) * 100)
-            : 0,
+          value: Math.round((counts[OrderType.NORMAL] / totalCount) * 100),
           isPositive: true
         }
       },
       {
         type: OrderType.MANUFACTURING,
         label: 'Consultations',
-        value: orderStats?.totalManu || 0,
+        value: counts[OrderType.MANUFACTURING],
         icon: <IoFlashOutline className="text-2xl" />,
         colorScheme: 'secondary' as const,
         trend: {
           label: 'of total',
-          value: orderStats?.totalManu ? Math.round((orderStats.totalManu / totalCount) * 100) : 0,
+          value: Math.round((counts[OrderType.MANUFACTURING] / totalCount) * 100),
           isPositive: true
         }
       },
       {
         type: OrderType.RETURN,
         label: 'Returns',
-        value: 0, // No data for returns in this API yet
+        value: counts[OrderType.RETURN],
         icon: <IoRepeatOutline className="text-2xl" />,
         colorScheme: 'danger' as const,
         trend: {
           label: 'of total',
-          value: 0,
+          value: Math.round((counts[OrderType.RETURN] / totalCount) * 100),
           isPositive: false
         }
       },
       {
         type: OrderType.PRE_ORDER,
         label: 'Pre-Orders',
-        value: orderStats?.totalPreOrder || 0,
+        value: counts[OrderType.PRE_ORDER],
         icon: <IoCubeOutline className="text-2xl" />,
         colorScheme: 'info' as const,
         trend: {
           label: 'of total',
-          value: orderStats?.totalPreOrder
-            ? Math.round((orderStats.totalPreOrder / totalCount) * 100)
-            : 0,
+          value: Math.round((counts[OrderType.PRE_ORDER] / totalCount) * 100),
           isPositive: true
         }
       }
     ]
-  }, [orderStats])
+  }, [metricsInvoices])
 
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const handleStatusChange = (status: string) => {
@@ -190,7 +225,7 @@ export default function ManagerInvoicesPage() {
       />
       <div className="bg-white rounded-3xl border border-neutral-50/50 shadow-sm overflow-hidden">
         <ManagerInvoiceTable
-          invoices={filteredInvoices}
+          invoices={paginatedInvoices}
           isLoading={isLoading}
           errorMessage={isError ? (error as Error)?.message || 'Error loading invoices' : null}
           selectedInvoiceId={selectedInvoiceId}
@@ -198,14 +233,14 @@ export default function ManagerInvoicesPage() {
         />
         <div className="p-6 bg-white border-t border-neutral-50/50 flex items-center justify-between">
           <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest pl-2">
-            Page {page} of {totalPages}
+            Page {safePage} of {totalPages}
           </p>
           <div className="flex gap-2">
             <Button
               variant="outline"
               size="sm"
               className="rounded-xl px-2 border-neutral-200"
-              disabled={page === 1 || isLoading}
+              disabled={safePage === 1 || isLoading}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
             >
               <IoChevronBackOutline />
@@ -214,7 +249,7 @@ export default function ManagerInvoicesPage() {
               variant="outline"
               size="sm"
               className="rounded-xl px-2 border-neutral-200"
-              disabled={page >= totalPages || isLoading}
+              disabled={safePage >= totalPages || isLoading}
               onClick={() => setPage((p) => p + 1)}
             >
               <IoChevronForwardOutline />
@@ -229,15 +264,13 @@ export default function ManagerInvoicesPage() {
         isOnboarding={isOnboarding || isCompleting}
         onOnboard={async (id) => {
           await onboard(id)
-          await Promise.all([refetchInvoices(), refetchStats()])
+          refetchInvoices()
         }}
         onComplete={async (id) => {
           await complete(id)
-          await Promise.all([refetchInvoices(), refetchStats()])
+          refetchInvoices()
         }}
-        onRefetch={async () => {
-          await Promise.all([refetchInvoices(), refetchStats()])
-        }}
+        onRefetch={refetchInvoices}
       />
     </Container>
   )

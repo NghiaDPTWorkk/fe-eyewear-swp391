@@ -44,6 +44,10 @@ export default function ManagerDashboardPage() {
     return { totalRevenue, totalInvoices, avgValue }
   }, [revenueData])
 
+  const revenueOverviewTitle = useMemo(() => {
+    return period === 'week' ? 'Revenue Overview This Week' : 'Revenue Overview This Month'
+  }, [period])
+
   const chartInfo = useMemo(() => {
     if (!revenueData?.rows?.length) return { path: '', area: '', points: [], maxHex: 0 }
     const rows = revenueData.rows
@@ -111,7 +115,7 @@ export default function ManagerDashboardPage() {
           <div className="flex flex-col sm:flex-row justify-between items-start gap-6 mb-10">
             <div>
               <p className="text-[12px] font-bold text-slate-400 tracking-wider uppercase mb-1 leading-none">
-                Revenue Overview
+                {revenueOverviewTitle}
               </p>
               <div className="flex items-center gap-2 mt-1">
                 <h3 className="text-2xl font-bold text-slate-900 tracking-tight">

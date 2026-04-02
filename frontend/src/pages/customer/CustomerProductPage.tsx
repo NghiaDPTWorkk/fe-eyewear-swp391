@@ -215,7 +215,10 @@ export const CustomerProductPage = () => {
               {loading && products.length === 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-8 sm:gap-x-8 sm:gap-y-16">
                   {[...Array(8)].map((_, i) => (
-                    <div key={i} className="aspect-[4/5] bg-mint-50 animate-pulse rounded-[24px] sm:rounded-[32px]" />
+                    <div
+                      key={i}
+                      className="aspect-[4/5] bg-mint-50 animate-pulse rounded-[24px] sm:rounded-[32px]"
+                    />
                   ))}
                 </div>
               ) : error ? (

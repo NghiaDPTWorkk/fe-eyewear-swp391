@@ -44,7 +44,9 @@ export default function OrderSummaryOnlyCode({
             <span className="text-[14px] font-black text-slate-900 leading-none tracking-tighter">
               {(price ?? orderData?.price)?.toLocaleString('vi-VN')}
             </span>
-            <span className="text-[10px] font-bold text-slate-400 uppercase leading-none italic">₫</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase leading-none italic">
+              ₫
+            </span>
           </div>
         ) : (
           <span className="text-[10px] font-bold text-slate-300 italic">No price</span>

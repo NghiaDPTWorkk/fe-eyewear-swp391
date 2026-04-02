@@ -201,7 +201,8 @@ export const ENDPOINTS = {
     PRE_ORDER_IMPORTS: (page: number = 1, limit: number = 10) =>
       `/admin/pre-order-imports?page=${page}&limit=${limit}`,
     PRE_ORDER_IMPORT_DETAIL: (id: string) => `/admin/pre-order-imports/${id}`,
-    IMPORT_PRODUCTS: '/admin/import-products'
+    IMPORT_PRODUCTS: '/admin/import-products',
+    INVOICE_STATS_ORDER_TYPE: '/admin/invoices/stats/order-type-total'
   },
 
   ADMINS: {

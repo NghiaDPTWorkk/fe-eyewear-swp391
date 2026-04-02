@@ -19,8 +19,8 @@ export const useSalesStaffAction = () => {
   const [error, setError] = useState<string | null>(null)
   const queryClient = useQueryClient()
 
-  const invalidateSalesData = useCallback(() => {
-    queryClient.invalidateQueries({ queryKey: ['sales'] })
+  const invalidateSalesData = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: ['sales'] })
   }, [queryClient])
 
   const approveInvoice = useCallback(
@@ -30,7 +30,7 @@ export const useSalesStaffAction = () => {
       try {
         await salesService.approveInvoice(id)
         showSuccess(SUCCESS_MESSAGES.SALES.INVOICE_APPROVED)
-        invalidateSalesData()
+        await invalidateSalesData()
         return true
       } catch (err: unknown) {
         const msg = extractErrorMessage(err)
@@ -51,7 +51,7 @@ export const useSalesStaffAction = () => {
       try {
         await salesService.rejectInvoice(id, note)
         showSuccess(SUCCESS_MESSAGES.SALES.INVOICE_REJECTED)
-        invalidateSalesData()
+        await invalidateSalesData()
         return true
       } catch (err: unknown) {
         const msg = extractErrorMessage(err)
@@ -90,7 +90,7 @@ export const useSalesStaffAction = () => {
           note: finalData?.note !== undefined ? finalData.note : DEFAULT_APPROVE_NOTE
         })
         showSuccess(SUCCESS_MESSAGES.SALES.ORDER_VERIFIED)
-        invalidateSalesData()
+        await invalidateSalesData()
         return true
       } catch (err: unknown) {
         const msg = extractErrorMessage(err)
@@ -115,7 +115,7 @@ export const useSalesStaffAction = () => {
 
         await salesService.rejectInvoice(invoiceId, note)
         showSuccess(SUCCESS_MESSAGES.SALES.BATCH_REJECTED)
-        invalidateSalesData()
+        await invalidateSalesData()
         return true
       } catch (err: unknown) {
         const msg = extractErrorMessage(err)

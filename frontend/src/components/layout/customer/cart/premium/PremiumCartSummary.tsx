@@ -271,8 +271,7 @@ export const PremiumCartSummary = ({ subtotal, items: propItems }: PremiumCartSu
   if (selectedVoucher) {
     if (selectedVoucher.typeDiscount === 'PERCENTAGE') {
       discountAmount = (subtotal * selectedVoucher.value) / 100
-      if (selectedVoucher.maxDiscountValue > 0)
-        discountAmount = Math.min(discountAmount, selectedVoucher.maxDiscountValue)
+      discountAmount = Math.min(discountAmount, selectedVoucher.maxDiscountValue)
     } else discountAmount = selectedVoucher.value
   }
   const total = Math.max(0, subtotal - discountAmount + shipping)
@@ -359,6 +358,7 @@ export const PremiumCartSummary = ({ subtotal, items: propItems }: PremiumCartSu
               total={total}
               isProcessing={isProcessing}
               onCheckout={handleCheckout}
+              hasVoucher={!!selectedVoucher}
             />
 
             <div className="mt-8 pt-6 border-t border-mint-100 flex items-center justify-center gap-6">

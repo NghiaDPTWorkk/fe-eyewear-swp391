@@ -380,9 +380,7 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
   if (selectedVoucher) {
     if (selectedVoucher.typeDiscount === 'PERCENTAGE') {
       discountAmount = (subtotal * selectedVoucher.value) / 100
-      if (selectedVoucher.maxDiscountValue > 0) {
-        discountAmount = Math.min(discountAmount, selectedVoucher.maxDiscountValue)
-      }
+      discountAmount = Math.min(discountAmount, selectedVoucher.maxDiscountValue)
     } else {
       discountAmount = selectedVoucher.value
     }
@@ -441,6 +439,7 @@ export const CartSummary = ({ subtotal, items: propItems }: CartSummaryProps) =>
         total={total}
         isProcessing={isProcessing}
         onCheckout={handleCheckout}
+        hasVoucher={!!selectedVoucher}
       />
     </Card>
   )

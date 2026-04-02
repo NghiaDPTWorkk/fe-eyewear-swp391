@@ -10,6 +10,7 @@ interface OrderSummarySectionProps {
   total: number
   isProcessing: boolean
   onCheckout: () => void
+  hasVoucher?: boolean
 }
 
 export const OrderSummarySection = ({
@@ -18,7 +19,8 @@ export const OrderSummarySection = ({
   shipping,
   total,
   isProcessing,
-  onCheckout
+  onCheckout,
+  hasVoucher = false
 }: OrderSummarySectionProps) => {
   return (
     <>
@@ -29,8 +31,8 @@ export const OrderSummarySection = ({
             <VNDPrice amount={subtotal} />
           </span>
         </div>
-        {discount > 0 && (
-          <div className="flex justify-between text-primary-600">
+        {(discount > 0 || hasVoucher) && (
+          <div className="flex justify-between text-red-500">
             <span className="font-medium">Discount</span>
             <span className="font-bold">
               -<VNDPrice amount={discount} />

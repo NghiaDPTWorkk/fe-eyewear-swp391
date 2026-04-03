@@ -21,11 +21,7 @@ import type { Invoice } from '@/features/sales/types'
 export default function SaleStaffDashboardPage() {
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const {
-    invoices: pendingInvoices,
-    loading,
-    fetchInvoices
-  } = useSalesStaffInvoices(1, 8, 'DEPOSITED')
+  const { invoices: pendingInvoices, loading, fetchInvoices } = useSalesStaffInvoices(1, 8, 'all')
 
   const { stats: orderStats } = useOrderTypeStats()
 

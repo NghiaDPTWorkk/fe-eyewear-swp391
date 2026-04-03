@@ -254,7 +254,7 @@ export default function PrescriptionVerification({
                   </div>
                   <div className="flex flex-col">
                     <span className="text-[9px] font-bold text-amber-600/60 uppercase">ADD</span>
-                    <span className="text-[11px] font-bold">0.75-3.5</span>
+                    <span className="text-[11px] font-bold">0.75-3.5 (Optional)</span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-[9px] font-bold text-amber-600/60 uppercase">PD</span>

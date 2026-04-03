@@ -67,14 +67,12 @@ export default function SaleStaffDashboardPage() {
   }, [fetchInvoices])
 
   const metrics = useMemo(() => {
-    const pendingCount = orderStats?.total || 0
-
     return [
       {
-        label: 'Pending Invoices',
-        value: String(pendingCount),
+        label: 'Total Invoice',
+        value: String(orderStats?.total || 0),
         icon: <IoClipboardOutline className="text-2xl" />,
-        trend: { label: 'awaiting action', value: pendingCount, isPositive: true },
+        trend: { label: 'all invoices', value: orderStats?.total || 0, isPositive: true },
         colorScheme: 'warning' as const
       },
       {
@@ -96,10 +94,14 @@ export default function SaleStaffDashboardPage() {
         colorScheme: 'primary' as const
       },
       {
-        label: 'Total Invoices',
-        value: String(orderStats?.total || 0),
+        label: 'Pre-order',
+        value: String(orderStats?.totalPreOrder || 0),
         icon: <IoTicketOutline className="text-2xl" />,
-        trend: { label: 'in system', value: orderStats?.total || 0, isPositive: true },
+        trend: {
+          label: 'pre-order count',
+          value: orderStats?.totalPreOrder || 0,
+          isPositive: true
+        },
         colorScheme: 'info' as const
       }
     ]

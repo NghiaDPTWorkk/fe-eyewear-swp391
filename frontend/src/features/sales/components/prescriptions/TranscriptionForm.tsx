@@ -81,7 +81,16 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
   const validateNumericField = React.useCallback(
     (field: string, value: string): string | null => {
       if (isReadOnly) return null
-      if (value === '' || value === '-' || value === '.') return 'Required'
+
+      // Check if empty/placeholder
+      const isEmpty = value === '' || value === '-' || value === '.'
+
+      // Special handling for ADD: it's optional
+      if (field === 'ADD' && (isEmpty || parseFloat(value) === 0)) {
+        return null
+      }
+
+      if (isEmpty) return 'Required'
       const num = parseFloat(value)
       if (isNaN(num)) return 'Invalid number'
 
@@ -97,6 +106,7 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
             return `Must be between ${VALIDATION_RULES.AXIS.min} and ${VALIDATION_RULES.AXIS.max}`
           break
         case 'ADD':
+          // Range validation only for non-zero values
           if (num < VALIDATION_RULES.ADD.min || num > VALIDATION_RULES.ADD.max)
             return `Must be between ${VALIDATION_RULES.ADD.min} and ${VALIDATION_RULES.ADD.max}`
           break
@@ -316,7 +326,7 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
               </div>
               <div className="space-y-0.5">
                 <p className="text-[10px] font-bold text-amber-600 uppercase">ADD</p>
-                <p className="text-xs font-semibold text-amber-900">0.75 → 3.50</p>
+                <p className="text-xs font-semibold text-amber-900">0.75 → 3.50 (Optional)</p>
               </div>
               <div className="space-y-0.5">
                 <p className="text-[10px] font-bold text-amber-600 uppercase">PD</p>

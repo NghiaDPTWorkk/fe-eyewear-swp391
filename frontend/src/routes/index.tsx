@@ -1,6 +1,7 @@
 import { lazy } from 'react'
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, type RouteObject } from 'react-router-dom'
 import { LazyPage } from '@/pages/LazyPage'
+import RootErrorPage from '@/pages/RootErrorPage'
 
 // Route Sections
 import { authRoutes } from './sections/auth.routes'
@@ -14,19 +15,29 @@ const NotFoundPage = lazy(() =>
   import('@/pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage }))
 )
 
-export const router = createBrowserRouter([
+const appRoutes = [
   ...customerRoutes,
   ...authRoutes,
   ...saleRoutes,
   ...operationRoutes,
   ...managerRoutes,
-  ...adminRoutes,
+  ...adminRoutes
+]
+
+const routesWithErrorBoundary = appRoutes.map((route) => ({
+  ...route,
+  errorElement: route.errorElement ?? <RootErrorPage />
+}))
+
+export const router = createBrowserRouter([
+  ...routesWithErrorBoundary,
   {
     path: '*',
     element: (
       <LazyPage>
         <NotFoundPage />
       </LazyPage>
-    )
+    ),
+    errorElement: <RootErrorPage />
   }
 ])

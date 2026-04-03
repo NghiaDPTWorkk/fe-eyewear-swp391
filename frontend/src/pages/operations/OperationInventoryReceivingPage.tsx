@@ -180,15 +180,6 @@ export default function OperationInventoryReceivingPage() {
 
   const [selectedDetailId, setSelectedDetailId] = useState<string | null>(null)
 
-  // ═══════════════════════════════════════════════════
-  // DATA FLOW (khác các trang Order):
-  // 1. Trang này tự gọi API thông qua hook usePreOrderImports()
-  //    → fetch 1000 records cùng lúc để xử lý client-side.
-  // 2. allBatches = tất cả lô hàng trả về từ API (PENDING + DONE).
-  // 3. useMemo() filter theo status (URL param) → phân trang client-side
-  //    → truyền vào <InventoryTable> và <OperationPagination>.
-  // ═══════════════════════════════════════════════════
-  // Bước 1: Gọi API lấy toàn bộ lô hàng (bulk fetch 1000 records)
   const {
     data: allData,
     isLoading: isLoadingData,

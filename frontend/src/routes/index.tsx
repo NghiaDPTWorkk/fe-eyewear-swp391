@@ -15,7 +15,7 @@ const NotFoundPage = lazy(() =>
   import('@/pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage }))
 )
 
-const appRoutes = [
+const appRoutes: RouteObject[] = [
   ...customerRoutes,
   ...authRoutes,
   ...saleRoutes,

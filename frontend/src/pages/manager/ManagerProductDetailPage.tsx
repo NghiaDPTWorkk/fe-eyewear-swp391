@@ -42,6 +42,18 @@ function capitalize(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
 }
 
+function toStringArray(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.filter((item): item is string => typeof item === 'string' && item.trim().length > 0)
+  }
+
+  if (typeof value === 'string' && value.trim().length > 0) {
+    return [value]
+  }
+
+  return []
+}
+
 export default function ManagerProductDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -102,6 +114,8 @@ export default function ManagerProductDetailPage() {
   const currentImg = images[imgIdx] ?? ''
   const defaultVariant = product.variants.find((v) => v.isDefault) ?? product.variants[0]
   const spec = product.spec
+  const featureList = toStringArray(spec?.feature)
+  const materialList = toStringArray(spec?.material)
 
   return (
     <>
@@ -266,7 +280,7 @@ export default function ManagerProductDetailPage() {
                     <div>
                       <p className="text-[11px] font-medium text-slate-400">Features</p>
                       <p className="text-sm font-bold text-slate-800 mt-0.5">
-                        {spec?.feature?.length ?? 0}
+                        {featureList.length}
                       </p>
                     </div>
                   </>
@@ -301,11 +315,11 @@ export default function ManagerProductDetailPage() {
 
                 {product.type === 'lens' ? (
                   <div className="space-y-5">
-                    {spec.feature && spec.feature.length > 0 && (
+                    {featureList.length > 0 && (
                       <div>
                         <p className="text-[11px] font-medium text-slate-400 mb-2">Features</p>
                         <div className="flex flex-wrap gap-2">
-                          {spec.feature.map((f) => (
+                          {featureList.map((f) => (
                             <span
                               key={f}
                               className="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-semibold bg-sky-50 text-sky-700 ring-1 ring-sky-100"
@@ -324,7 +338,7 @@ export default function ManagerProductDetailPage() {
                   </div>
                 ) : (
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                    <SpecItem label="Material" value={spec.material?.join(', ') || '—'} />
+                    <SpecItem label="Material" value={materialList.join(', ') || '—'} />
                     <SpecItem label="Shape" value={spec.shape || '—'} />
                     <SpecItem label="Style" value={spec.style || '—'} />
                     <SpecItem label="Gender" value={genderLabel(spec.gender || '—')} />

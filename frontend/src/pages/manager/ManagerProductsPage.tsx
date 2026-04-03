@@ -276,11 +276,17 @@ export default function ManagerProductsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-50">
-                {products.map((p) => (
+                {products.map((p) => {
+                  const productId = (p as any).id || (p as any)._id
+
+                  return (
                   <tr
-                    key={p.id}
+                    key={productId}
                     className="group hover:bg-neutral-50 transition-colors cursor-pointer"
-                    onClick={() => navigate(`/manager/products/${p.id}`)}
+                    onClick={() => {
+                      if (!productId) return
+                      navigate(`/manager/products/${productId}`)
+                    }}
                   >
                     <td className="px-6 py-6">
                       <div className="flex items-center gap-4">
@@ -340,7 +346,8 @@ export default function ManagerProductsPage() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation()
-                            navigate(`/manager/products/${p.id}/edit`)
+                            if (!productId) return
+                            navigate(`/manager/products/${productId}/edit`)
                           }}
                           className="p-2.5 bg-mint-50 text-mint-600 rounded-xl hover:bg-mint-100 transition-all active:scale-90"
                           title="Edit Product"
@@ -355,7 +362,8 @@ export default function ManagerProductsPage() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation()
-                            setProductToDelete({ id: p.id, name: p.nameBase })
+                            if (!productId) return
+                            setProductToDelete({ id: productId, name: p.nameBase })
                             setIsDeleteModalOpen(true)
                           }}
                           className="p-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-all active:scale-90"
@@ -366,7 +374,8 @@ export default function ManagerProductsPage() {
                       </div>
                     </td>
                   </tr>
-                ))}
+                  )
+                })}
               </tbody>
             </table>
           </div>

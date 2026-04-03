@@ -260,6 +260,9 @@ export default function ManagerDashboardPage() {
                   <p className="text-xs font-semibold text-slate-800 line-clamp-1">
                     {item.returnTicket.reason}
                   </p>
+                  <p className="text-[11px] font-semibold text-amber-700 mt-1">
+                    Refund: {formatPrice(item.returnTicket.money || 0)}
+                  </p>
                   <p className="text-[10px] text-slate-400 mt-1">
                     {formatDate(item.returnTicket.createdAt)}
                   </p>

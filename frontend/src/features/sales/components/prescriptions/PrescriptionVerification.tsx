@@ -136,33 +136,38 @@ export default function PrescriptionVerification({
   }
 
   const handleConfirm = async () => {
-    const rawParams = localParameters ||
-      parameters || {
-        left: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
-        right: { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
-        PD: 64
-      }
+    const rawParams = localParameters || parameters || {}
 
-    const finalParams = {
-      ...rawParams,
-      left: rawParams.left
-        ? {
-            SPH: Number(rawParams.left.SPH) || 0,
-            CYL: Number(rawParams.left.CYL) || 0,
-            AXIS: Number(rawParams.left.AXIS) || 0,
-            ADD: Number(rawParams.left.ADD) || 0
-          }
-        : { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
-      right: rawParams.right
-        ? {
-            SPH: Number(rawParams.right.SPH) || 0,
-            CYL: Number(rawParams.right.CYL) || 0,
-            AXIS: Number(rawParams.right.AXIS) || 0,
-            ADD: Number(rawParams.right.ADD) || 0
-          }
-        : { SPH: 0, CYL: 0, AXIS: 0, ADD: 0 },
-      PD: Number(rawParams.PD) || 64
+    const toOptionalNumber = (value: unknown): number | undefined => {
+      if (value === null || value === undefined || value === '') return undefined
+      const num = Number(value)
+      return Number.isNaN(num) ? undefined : num
     }
+
+    const pickEyeParams = (eye: any) => {
+      const out: Record<string, number> = {}
+      const sph = toOptionalNumber(eye?.SPH)
+      const cyl = toOptionalNumber(eye?.CYL)
+      const axis = toOptionalNumber(eye?.AXIS)
+      const add = toOptionalNumber(eye?.ADD)
+
+      if (sph !== undefined) out.SPH = sph
+      if (cyl !== undefined) out.CYL = cyl
+      if (axis !== undefined) out.AXIS = axis
+      if (add !== undefined) out.ADD = add
+
+      return out
+    }
+
+    const finalParams: Record<string, any> = {}
+
+    const left = pickEyeParams((rawParams as any).left)
+    const right = pickEyeParams((rawParams as any).right)
+    const pd = toOptionalNumber((rawParams as any).PD)
+
+    if (Object.keys(left).length > 0) finalParams.left = left
+    if (Object.keys(right).length > 0) finalParams.right = right
+    if (pd !== undefined) finalParams.PD = pd
 
     const finalNote = localNote !== '' ? localNote : ((parameters as any)?.note ?? '')
     const success = await approveOrder(orderId, { parameters: finalParams, note: finalNote })

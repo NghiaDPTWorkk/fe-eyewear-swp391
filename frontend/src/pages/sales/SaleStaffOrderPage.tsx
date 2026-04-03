@@ -76,26 +76,28 @@ export default function SaleStaffOrderPage() {
   const [drawerTicket, setDrawerTicket] = useState<ReturnTicketData | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
 
-  const isReturnsActive = statusFilter === 'RETURNS'
+  const isReturnOrderTypeMode = orderTypeFilter === OrderType.RETURN
+  const isReturnsActive = statusFilter === 'RETURNS' || isReturnOrderTypeMode
   const isHistoryActive = statusFilter === 'REFUNDED_HISTORY'
   const isInvoicesActive = !isReturnsActive && !isHistoryActive
 
-  const returnHook = useReturnPageTickets(staffId || '', isReturnsActive)
+  const returnHook = useReturnPageTickets(staffId || '', true)
   const historyHook = useMyReturnHistory(isHistoryActive)
 
   const { setSearch: setReturnSearch, setCurrentPage: setReturnPage } = returnHook
   const { setSearch: setHistorySearch, setCurrentPage: setHistoryPage } = historyHook
 
   useEffect(() => {
-    if (statusFilter === 'RETURNS') {
+    if (isReturnsActive && !isHistoryActive) {
       setReturnSearch(searchQuery)
       setReturnPage(page)
-    } else if (statusFilter === 'REFUNDED_HISTORY') {
+    } else if (isHistoryActive) {
       setHistorySearch(searchQuery)
       setHistoryPage(page)
     }
   }, [
-    statusFilter,
+    isReturnsActive,
+    isHistoryActive,
     searchQuery,
     page,
     setReturnSearch,
@@ -145,6 +147,10 @@ export default function SaleStaffOrderPage() {
   const metrics = useMemo(() => {
     if (!orderStats) return []
 
+    const returnCount = returnHook.pagination.total
+    const totalCount =
+      orderStats.totalNormal + orderStats.totalManu + orderStats.totalPreOrder + returnCount || 1
+
     return [
       {
         type: OrderType.NORMAL,
@@ -154,7 +160,7 @@ export default function SaleStaffOrderPage() {
         colorScheme: 'mint' as const,
         trend: {
           label: 'of total',
-          value: Math.round((orderStats.totalNormal / (orderStats.total || 1)) * 100),
+          value: Math.round((orderStats.totalNormal / totalCount) * 100),
           isPositive: true
         }
       },
@@ -166,17 +172,21 @@ export default function SaleStaffOrderPage() {
         colorScheme: 'secondary' as const,
         trend: {
           label: 'of total',
-          value: Math.round((orderStats.totalManu / (orderStats.total || 1)) * 100),
+          value: Math.round((orderStats.totalManu / totalCount) * 100),
           isPositive: true
         }
       },
       {
         type: OrderType.RETURN,
         label: 'Returns',
-        value: 0,
+        value: returnCount,
         icon: <IoRepeatOutline className="text-2xl" />,
         colorScheme: 'danger' as const,
-        trend: { label: 'of total', value: 0, isPositive: false }
+        trend: {
+          label: 'of total',
+          value: Math.round((returnCount / totalCount) * 100),
+          isPositive: false
+        }
       },
       {
         type: OrderType.PRE_ORDER,
@@ -186,12 +196,12 @@ export default function SaleStaffOrderPage() {
         colorScheme: 'info' as const,
         trend: {
           label: 'of total',
-          value: Math.round((orderStats.totalPreOrder / (orderStats.total || 1)) * 100),
+          value: Math.round((orderStats.totalPreOrder / totalCount) * 100),
           isPositive: true
         }
       }
     ]
-  }, [orderStats])
+  }, [orderStats, returnHook.pagination.total])
 
   const handleStatusChange = (status: string) => {
     setSearchParams((prev) => {
@@ -399,7 +409,7 @@ export default function SaleStaffOrderPage() {
             orderTypeFilter={orderTypeFilter}
           />
           <div className="bg-white border-none shadow-xl shadow-slate-200/40 ring-1 ring-neutral-100/50 rounded-3xl overflow-hidden min-h-[200px]">
-            {statusFilter === 'RETURNS' ? (
+            {isReturnsActive && !isHistoryActive ? (
               <ReturnTicketsTable
                 tickets={returnHook.tickets}
                 isLoading={returnHook.isLoading}

@@ -44,6 +44,11 @@ const validateNote = (value: string): string | null => {
   return null
 }
 
+const toInputValue = (value: unknown): string => {
+  if (value === null || value === undefined) return ''
+  return String(value)
+}
+
 export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
   parameters,
   onParametersChange,
@@ -373,7 +378,7 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
               <div className="relative">
                 <Input
                   readOnly={isReadOnly}
-                  value={parameters?.right?.SPH ?? '0.00'}
+                  value={toInputValue(parameters?.right?.SPH)}
                   onChange={(e) => handleChange('right', 'SPH', e.target.value)}
                   onBlur={(e) => handleNumericBlur('right', 'SPH', e.target.value)}
                   className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['right_SPH'] ? ' border-red-400 bg-red-50/10' : ''}`}
@@ -392,7 +397,7 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
               <div className="relative">
                 <Input
                   readOnly={isReadOnly}
-                  value={parameters?.right?.CYL ?? '0.00'}
+                  value={toInputValue(parameters?.right?.CYL)}
                   onChange={(e) => handleChange('right', 'CYL', e.target.value)}
                   onBlur={(e) => handleNumericBlur('right', 'CYL', e.target.value)}
                   className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['right_CYL'] ? ' border-red-400 bg-red-50/10' : ''}`}
@@ -411,7 +416,7 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
               <div className="relative">
                 <Input
                   readOnly={isReadOnly || !isAxisRequired('right')}
-                  value={parameters?.right?.AXIS ?? '0'}
+                  value={toInputValue(parameters?.right?.AXIS)}
                   onChange={(e) => handleChange('right', 'AXIS', e.target.value)}
                   onBlur={(e) => handleNumericBlur('right', 'AXIS', e.target.value)}
                   className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['right_AXIS'] ? ' border-red-400 bg-red-50/10' : ''} ${!isAxisRequired('right') ? 'opacity-40 cursor-not-allowed bg-slate-50' : ''}`}
@@ -430,7 +435,7 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
               <div className="relative">
                 <Input
                   readOnly={isReadOnly}
-                  value={parameters?.right?.ADD ?? '0.00'}
+                  value={toInputValue(parameters?.right?.ADD)}
                   onChange={(e) => handleChange('right', 'ADD', e.target.value)}
                   onBlur={(e) => handleNumericBlur('right', 'ADD', e.target.value)}
                   className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['right_ADD'] ? ' border-red-400 bg-red-50/10' : ''}`}
@@ -457,7 +462,7 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
               <div className="relative">
                 <Input
                   readOnly={isReadOnly}
-                  value={parameters?.left?.SPH ?? '0.00'}
+                  value={toInputValue(parameters?.left?.SPH)}
                   onChange={(e) => handleChange('left', 'SPH', e.target.value)}
                   onBlur={(e) => handleNumericBlur('left', 'SPH', e.target.value)}
                   className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['left_SPH'] ? ' border-red-400 bg-red-50/10' : ''}`}
@@ -476,7 +481,7 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
               <div className="relative">
                 <Input
                   readOnly={isReadOnly}
-                  value={parameters?.left?.CYL ?? '0.00'}
+                  value={toInputValue(parameters?.left?.CYL)}
                   onChange={(e) => handleChange('left', 'CYL', e.target.value)}
                   onBlur={(e) => handleNumericBlur('left', 'CYL', e.target.value)}
                   className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['left_CYL'] ? ' border-red-400 bg-red-50/10' : ''}`}
@@ -495,7 +500,7 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
               <div className="relative">
                 <Input
                   readOnly={isReadOnly || !isAxisRequired('left')}
-                  value={parameters?.left?.AXIS ?? '0'}
+                  value={toInputValue(parameters?.left?.AXIS)}
                   onChange={(e) => handleChange('left', 'AXIS', e.target.value)}
                   onBlur={(e) => handleNumericBlur('left', 'AXIS', e.target.value)}
                   className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['left_AXIS'] ? ' border-red-400 bg-red-50/10' : ''} ${!isAxisRequired('left') ? 'opacity-40 cursor-not-allowed bg-slate-50' : ''}`}
@@ -514,7 +519,7 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
               <div className="relative">
                 <Input
                   readOnly={isReadOnly}
-                  value={parameters?.left?.ADD ?? '0.00'}
+                  value={toInputValue(parameters?.left?.ADD)}
                   onChange={(e) => handleChange('left', 'ADD', e.target.value)}
                   onBlur={(e) => handleNumericBlur('left', 'ADD', e.target.value)}
                   className={`bg-white border-slate-200 focus:border-mint-500 focus:ring-mint-500/10 font-semibold text-slate-700 text-center h-12 rounded-xl text-sm transition-all shadow-none${numericErrors['left_ADD'] ? ' border-red-400 bg-red-50/10' : ''}`}
@@ -538,7 +543,7 @@ export const TranscriptionForm: React.FC<TranscriptionFormProps> = ({
               <div className="relative">
                 <Input
                   readOnly={isReadOnly}
-                  value={parameters?.PD ?? '64'}
+                  value={toInputValue(parameters?.PD)}
                   onChange={(e) => handleChange('common', 'PD', e.target.value)}
                   onBlur={(e) => handleNumericBlur('common', 'PD', e.target.value)}
                   className={`font-semibold text-slate-700 text-center border-slate-200 h-12 rounded-xl focus:border-mint-500 focus:ring-mint-500/10 text-sm shadow-none${numericErrors['common_PD'] ? ' border-red-400' : ''}`}

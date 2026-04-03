@@ -80,18 +80,7 @@ export default function PrescriptionVerification({
     })
   }
 
-  const requiredFields = [
-    'r_sph',
-    'r_cyl',
-    'r_axis',
-    'r_add',
-    'l_sph',
-    'l_cyl',
-    'l_axis',
-    'l_add',
-    'pd_r',
-    'pd_l'
-  ]
+  const requiredFields = ['r_sph', 'r_cyl', 'r_axis', 'l_sph', 'l_cyl', 'l_axis', 'pd_r', 'pd_l']
   const isAllConfirmed = requiredFields.every((f) => confirmedFields.has(f))
 
   const renderVerificationIcon = (id: string) => (

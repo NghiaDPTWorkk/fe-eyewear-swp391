@@ -31,7 +31,12 @@ export function useSalesStaffInvoices(
           InvoiceStatus.CANCELED
         ].join(',')
       } else if (status === 'All') {
-        apiStatus = undefined
+        apiStatuses = [
+          InvoiceStatus.PENDING,
+          InvoiceStatus.DEPOSITED,
+          InvoiceStatus.APPROVED,
+          InvoiceStatus.ONBOARD
+        ].join(',')
       } else {
         apiStatus = status
       }

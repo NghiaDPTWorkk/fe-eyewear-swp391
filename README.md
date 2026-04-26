@@ -19,7 +19,7 @@ The project tackles the unique complexities of eyewear retail — custom prescri
 │  TanStack Query  │       │                     │      │                      │
 └──────────────────┘       └────────┬───────┬────┘      └──────────────────────┘
                                     │       │
-                           ┌────────▼──┐ ┌──▼───────────────┐
+                           ┌────────▼──┐ ┌──▼────────────────┐
                            │  Payment  │ │  Background Job   │
                            │  Service  │ │                   │
                            │           │ │  BullMQ           │

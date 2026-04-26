@@ -11,7 +11,7 @@ The project tackles the unique complexities of eyewear retail — custom prescri
 ## System Architecture
 
 ```
-┌──────────────────┐       ┌────────────────────┐      ┌──────────────────────┐
+┌──────────────────┐       ┌─────────────────────┐      ┌──────────────────────┐
 │   Frontend Web   │       │   Backend Server    │      │      Database        │
 │                  │◄─────►│                     │◄────►│                      │
 │  React · Vite    │       │  Node.js · Express  │      │  MongoDB · Redis     │

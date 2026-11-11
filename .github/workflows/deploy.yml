@@ -62,7 +62,7 @@ jobs:
 
           echo "Triggering Coolify deployment..."
           curl --fail-with-body \
-            --request GET "$COOLIFY_WEBHOOK_URL" \
+            --request POST "$COOLIFY_WEBHOOK_URL" \
             --header "Authorization: Bearer $COOLIFY_TOKEN"
 
           echo "Coolify deployment triggered successfully!"

@@ -45,6 +45,7 @@ jobs:
           tags: ${{ steps.image_tag.outputs.image }}
           build-args: |
             VITE_API_URL=${{ secrets.VITE_API_URL || 'https://eyewear-be.ngocthang.io.vn' }}
+            VITE_ADDRESS_API_URL=${{ secrets.VITE_ADDRESS_API_URL || 'https://province-api-deploy-v1.vercel.app' }}
             VITE_APP_NAME=Eyewear Shop
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -52,13 +53,16 @@ jobs:
       - name: Trigger Coolify Webhook
         env:
           COOLIFY_WEBHOOK_URL: ${{ secrets.COOLIFY_WEBHOOK_URL }}
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
         run: |
-          if [ -z "$COOLIFY_WEBHOOK_URL" ]; then
-            echo "::warning ::COOLIFY_WEBHOOK_URL is not set yet. Skipping webhook trigger."
-            echo "Once you configure the resource on Coolify, add COOLIFY_WEBHOOK_URL to GitHub Secrets."
-          else
-            echo "Triggering Coolify deployment..."
-            RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X GET "$COOLIFY_WEBHOOK_URL" || curl -s -w "\nHTTP_STATUS:%{http_code}" -X POST "$COOLIFY_WEBHOOK_URL")
-            echo "$RESPONSE"
-            echo "Coolify deployment triggered successfully!"
+          if [ -z "$COOLIFY_WEBHOOK_URL" ] || [ -z "$COOLIFY_TOKEN" ]; then
+            echo "::error ::COOLIFY_WEBHOOK_URL or COOLIFY_TOKEN is missing."
+            exit 1
           fi
+
+          echo "Triggering Coolify deployment..."
+          curl --fail-with-body \
+            --request GET "$COOLIFY_WEBHOOK_URL" \
+            --header "Authorization: Bearer $COOLIFY_TOKEN"
+
+          echo "Coolify deployment triggered successfully!"

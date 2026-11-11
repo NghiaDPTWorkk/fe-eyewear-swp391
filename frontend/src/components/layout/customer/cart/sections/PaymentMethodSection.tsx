@@ -30,7 +30,7 @@ export const PaymentMethodSection = ({
             }`}
           >
             <img
-              src="https://stcd02206177151.cloud.edgevnpay.vn/assets/images/logo-icon/logo-primary.svg"
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShgnbjrAVo2seMwVruBKFu_6VOXPBEBxpiQUV5m57mtg&s=10"
               alt="VNPay"
               className="h-6"
             />
@@ -45,7 +45,7 @@ export const PaymentMethodSection = ({
             }`}
           >
             <img
-              src="https://payos.vn/wp-content/uploads/2025/06/Casso-payOSLogo-1.svg"
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRx3jAbhSvDMxWMEWmHpe78nGI4nXUjI_G2v9zXyYG7Zw&s"
               alt="PayOS"
               className="h-8"
             />

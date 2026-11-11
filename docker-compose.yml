@@ -5,6 +5,7 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_API_URL: ${VITE_API_URL:-https://eyewear-backend.xyz}
+        VITE_ADDRESS_API_URL: ${VITE_ADDRESS_API_URL:-https://province-api-deploy-v1.vercel.app}
         VITE_APP_NAME: ${VITE_APP_NAME:-Eyewear Shop}
     container_name: eyewear-frontend
     ports:

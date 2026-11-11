@@ -15,9 +15,11 @@ COPY . .
 
 # Truyền biến môi trường tại build-time (Vite inline các biến VITE_* khi build)
 ARG VITE_API_URL
+ARG VITE_ADDRESS_API_URL
 ARG VITE_APP_NAME
 
 ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_ADDRESS_API_URL=$VITE_ADDRESS_API_URL
 ENV VITE_APP_NAME=$VITE_APP_NAME
 
 # Build the application (dùng vite build trực tiếp, bỏ qua validate để tránh lỗi trên CI)
